@@ -2,8 +2,8 @@ package fi.vm.sade.viestintapalvelu;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.startup.Tomcat;
-import org.glassfish.jersey.server.ResourceConfig;
-import org.glassfish.jersey.servlet.ServletContainer;
+
+import com.sun.jersey.spi.container.servlet.ServletContainer;
 
 public class Launcher {
 	public static void main(String[] args) throws Exception {
@@ -12,9 +12,9 @@ public class Launcher {
 
 		Context ctx = tomcat.addContext("/",
 				System.getProperty("java.io.tmpdir"));
-		ResourceConfig resourceConfig = ResourceConfig
-				.forApplication(new ViestintapalveluApplication());
-		ServletContainer container = new ServletContainer(resourceConfig);
+
+		ServletContainer container = new ServletContainer(
+				new ViestintapalveluApplication());
 		Tomcat.addServlet(ctx, "viestintapalvelu", container);
 		ctx.addServletMapping("/*", "viestintapalvelu");
 
