@@ -1,4 +1,8 @@
 viestintapalvelu
 ================
 
-OPH Viestintäpalvelu
+OPH Viestintäpalvel
+
+Ville Peurala
+Iina Sipilä
+
