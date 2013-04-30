@@ -8,6 +8,7 @@
   <url>http://reaktor.fi</url>
   <properties>
     <tomcat.version>7.0.39</tomcat.version>
+    <jersey.version>1.17.1</jersey.version>
   </properties>
   <dependencies>
     <dependency>
@@ -25,32 +26,20 @@
         <artifactId>tomcat-embed-jasper</artifactId>
         <version>${tomcat.version}</version>
     </dependency>
-<!--
-    <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
-        <artifactId>jersey-server</artifactId>
-        <version>2.0-m13-3</version>
-    </dependency>
-    <dependency>
-        <groupId>org.glassfish.jersey.containers</groupId>
-        <artifactId>jersey-container-servlet</artifactId>
-        <version>2.0-m13-3</version>
-    </dependency>
--->
     <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-server</artifactId>
-        <version>1.17.1</version>
+        <version>${jersey.version}</version>
     </dependency>
     <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-servlet</artifactId>
-        <version>1.17.1</version>
+        <version>${jersey.version}</version>
     </dependency>
     <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-json</artifactId>
-        <version>1.17.1</version>
+        <version>${jersey.version}</version>
     </dependency>
     <dependency>
         <groupId>org.apache.pdfbox</groupId>
