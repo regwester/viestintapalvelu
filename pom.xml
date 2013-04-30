@@ -9,6 +9,11 @@
   <properties>
     <tomcat.version>7.0.39</tomcat.version>
     <jersey.version>1.17.1</jersey.version>
+    <guice.version>3.0</guice.version>
+    <pdfbox.version>1.8.1</pdfbox.version>
+    <google.http.client.version>1.14.1-beta</google.http.client.version>
+    <junit.version>4.11</junit.version>
+    <http.client.version>4.2.5</http.client.version>
   </properties>
   <dependencies>
     <dependency>
@@ -42,10 +47,38 @@
         <version>${jersey.version}</version>
     </dependency>
     <dependency>
+        <groupId>com.sun.jersey.contribs</groupId>
+        <artifactId>jersey-guice</artifactId>
+        <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>${guice.version}</version>
+    </dependency>
+    <dependency>
         <groupId>org.apache.pdfbox</groupId>
         <artifactId>pdfbox</artifactId>
-        <version>1.8.1</version>
+        <version>${pdfbox.version}</version>
     </dependency>
+    <dependency>
+	    <groupId>com.google.http-client</groupId>
+	    <artifactId>google-http-client</artifactId>
+	    <version>${google.http.client.version}</version>
+	    <scope>test</scope>
+    </dependency>
+    <dependency>
+	    <groupId>org.apache.httpcomponents</groupId>
+	    <artifactId>httpclient</artifactId>
+	    <version>${http.client.version}</version>
+	    <scope>test</scope>
+    </dependency>        
+    <dependency>
+	    <groupId>junit</groupId>
+	    <artifactId>junit</artifactId>
+	    <version>${junit.version}</version>
+	    <scope>test</scope>
+    </dependency>     
   </dependencies>
   <build>
     <finalName>viestintapalvelu</finalName>
