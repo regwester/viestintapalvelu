@@ -30,6 +30,11 @@
         <artifactId>jersey-server</artifactId>
         <version>2.0-m13-3</version>
     </dependency>
+    <dependency>
+        <groupId>org.glassfish.jersey.containers</groupId>
+        <artifactId>jersey-container-servlet</artifactId>
+        <version>2.0-m13-3</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>viestintapalvelu</finalName>
