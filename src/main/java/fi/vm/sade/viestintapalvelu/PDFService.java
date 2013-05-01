@@ -1,57 +1,66 @@
 package fi.vm.sade.viestintapalvelu;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.List;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.edit.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDFont;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import fr.opensagres.xdocreport.converter.ConverterTypeTo;
+import fr.opensagres.xdocreport.converter.ConverterTypeVia;
+import fr.opensagres.xdocreport.converter.Options;
+import fr.opensagres.xdocreport.core.XDocReportException;
+import fr.opensagres.xdocreport.document.IXDocReport;
+import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
+import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class PDFService {
 	
-	public void createDocuments(List<String> students) {
-		for (String student : students) {
-			createDocumentFor(student);
+	public void createDocuments(List<String> hakijat) throws Exception {
+		for (String hakija : hakijat) {
+			writeDocument(hakija, createDocument(hakija));
 		}
 	}
+
+	private byte[] createDocument(String hakija) throws Exception {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		IXDocReport report = readTemplate();
+		report.process(createDataContext(hakija, report), out);
+		Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM);
+		report.convert(createDataContext(hakija, report), options, out);
+		return out.toByteArray();
+	}
+
+	private IContext createDataContext(String hakija, IXDocReport report) throws XDocReportException {
+		IContext context = report.createContext();
+		context.put("hakijan_nimi", hakija);
+		return context;
+	}
+
+	private IXDocReport readTemplate() throws FileNotFoundException, IOException, XDocReportException {
+		InputStream in = getClass().getResourceAsStream("/jalkiohjauskirje.odt");
+		return XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
+	}
 	
-	private void createDocumentFor(String student) {
-		PDDocument doc = null;
-		OutputStream fos = null;
+	private void writeDocument(String name, byte[] document) throws IOException {
+		FileOutputStream fos = null;
 		try {
-			doc = new PDDocument();
-			PDPage page = new PDPage();
-			doc.addPage(page);
-			PDFont font = PDType1Font.HELVETICA_BOLD;
-			PDPageContentStream stream = new PDPageContentStream(doc, page);
-			stream.beginText();
-			stream.setFont(font, 24);
-			stream.moveTextPositionByAmount(100, 700);
-			stream.drawString(student);
-			stream.endText();
-			stream.close();
-			fos = new FileOutputStream("documents/"+student+".pdf", false);
-			doc.save(fos);
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (COSVisitorException e) {
-			e.printStackTrace();
+			File file = new File("target/documents/"+name+".pdf");
+			file.getParentFile().mkdirs();
+			fos = new FileOutputStream(file, false);
+			fos.write(document, 0, document.length);
 		} finally {
-			try {
-				doc.close();
-			} catch (IOException e) {
-				e.printStackTrace();
+			if (fos != null) {
+				fos.close();
 			}
 		}
 	}
 	
-	public static void main(String[] args) {
+	public static void main(String[] args) throws Exception {
 		new PDFService().createDocuments(Arrays.asList(args));
 	}
 
