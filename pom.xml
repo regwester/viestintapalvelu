@@ -8,6 +8,13 @@
   <url>http://reaktor.fi</url>
   <properties>
     <tomcat.version>7.0.39</tomcat.version>
+    <jersey.version>1.17.1</jersey.version>
+    <guice.version>3.0</guice.version>
+    <pdfbox.version>1.8.1</pdfbox.version>
+    <junit.version>4.11</junit.version>
+    <http.client.version>4.2.5</http.client.version>
+    <xdocreport.version>1.0.0</xdocreport.version>
+    <itext.version>2.1.7</itext.version>
   </properties>
   <dependencies>
     <dependency>
@@ -26,45 +33,67 @@
         <version>${tomcat.version}</version>
     </dependency>
     <dependency>
-        <groupId>org.glassfish.jersey.core</groupId>
+        <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-server</artifactId>
-        <version>2.0-m13-3</version>
+        <version>${jersey.version}</version>
     </dependency>
     <dependency>
-        <groupId>org.glassfish.jersey.containers</groupId>
-        <artifactId>jersey-container-servlet</artifactId>
-        <version>2.0-m13-3</version>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-servlet</artifactId>
+        <version>${jersey.version}</version>
     </dependency>
     <dependency>
-        <groupId>org.apache.pdfbox</groupId>
-        <artifactId>pdfbox</artifactId>
-        <version>1.8.1</version>
+        <groupId>com.sun.jersey</groupId>
+        <artifactId>jersey-json</artifactId>
+        <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.sun.jersey.contribs</groupId>
+        <artifactId>jersey-guice</artifactId>
+        <version>${jersey.version}</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.inject</groupId>
+        <artifactId>guice</artifactId>
+        <version>${guice.version}</version>
     </dependency>
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
 		<artifactId>fr.opensagres.xdocreport.document.odt</artifactId>
-		<version>1.0.0</version>
+		<version>${xdocreport.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
 		<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
-		<version>1.0.0</version>
+		<version>${xdocreport.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
 		<artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
-		<version>1.0.0</version>
+		<version>${xdocreport.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
 		<artifactId>fr.opensagres.xdocreport.converter.odt.odfdom</artifactId>
-		<version>1.0.0</version>
+		<version>${xdocreport.version}</version>
 	</dependency>
 	<dependency>
 	    <groupId>com.lowagie</groupId>
 	    <artifactId>itext</artifactId>
-	    <version>2.1.7</version>
+	    <version>${itext.version}</version>
 	</dependency>
+    <dependency>
+		<groupId>org.apache.httpcomponents</groupId>
+		<artifactId>httpclient</artifactId>
+		<version>${http.client.version}</version>
+		<scope>test</scope>
+    </dependency>        
+    <dependency>
+		<groupId>junit</groupId>
+		<artifactId>junit</artifactId>
+		<version>${junit.version}</version>
+		<scope>test</scope>
+    </dependency>     
   </dependencies>
   <build>
     <finalName>viestintapalvelu</finalName>

@@ -19,19 +19,27 @@ import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class PDFService {
-	
-	public void createDocuments(List<String> hakijat) throws Exception {
+		
+	public void createDocuments(List<String> hakijat) {
 		for (String hakija : hakijat) {
 			writeDocument(hakija, createDocument(hakija));
 		}
 	}
 
-	private byte[] createDocument(String hakija) throws Exception {
+	private byte[] createDocument(String hakija) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		IXDocReport report = readTemplate();
-		report.process(createDataContext(hakija, report), out);
-		Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM);
-		report.convert(createDataContext(hakija, report), options, out);
+		try {
+			IXDocReport report = readTemplate();
+			report.process(createDataContext(hakija, report), out);
+			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM);
+			report.convert(createDataContext(hakija, report), options, out);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		} catch (XDocReportException e) {
+			e.printStackTrace();
+		}
 		return out.toByteArray();
 	}
 
@@ -46,16 +54,23 @@ public class PDFService {
 		return XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
 	}
 	
-	private void writeDocument(String name, byte[] document) throws IOException {
+	private void writeDocument(String name, byte[] document) {
 		FileOutputStream fos = null;
 		try {
 			File file = new File("target/documents/"+name+".pdf");
 			file.getParentFile().mkdirs();
 			fos = new FileOutputStream(file, false);
 			fos.write(document, 0, document.length);
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
 		} finally {
 			if (fos != null) {
-				fos.close();
+				try {
+					fos.close();
+				} catch (IOException e) {
+				}
 			}
 		}
 	}
