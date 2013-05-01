@@ -1,9 +1,11 @@
 package fi.vm.sade.viestintapalvelu;
 
+import java.io.File;
+
 import javax.servlet.ServletException;
 
+import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 
 import com.google.inject.Guice;
@@ -11,7 +13,6 @@ import com.google.inject.Injector;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 public class Launcher {
-	private static final String SERVLET_NAME = "viestintapalvelu";
 	private static final int DEFAULT_PORT = 8080;
 
 	public static void main(String[] args) throws Exception {
@@ -24,14 +25,25 @@ public class Launcher {
 		tomcat.setBaseDir(tempDir());
 		tomcat.setPort(DEFAULT_PORT);
 
-		StandardContext ctx = (StandardContext) tomcat.addContext("/",
-				tempDir());
+		// AccessLogValve accessLogValve = new AccessLogValve();
+		// accessLogValve.setDirectory(tempDir());
+		// tomcat.getHost().getPipeline().addValve(accessLogValve);
+
+		File staticResources = new File("src/main/resources");
+
+		// Context rootCtx = tomcat.addContext("/",
+		// staticResources.getAbsolutePath());
+		Context apiCtx = tomcat.addContext("/api/v1", tempDir());
 
 		Injector injector = Guice.createInjector(new ViestintapalveluModule());
 
-		Tomcat.addServlet(ctx, SERVLET_NAME,
+		Tomcat.addServlet(apiCtx, "api",
 				injector.getInstance(GuiceContainer.class));
-		ctx.addServletMapping("/*", SERVLET_NAME);
+		apiCtx.addServletMapping("/*", "api");
+
+		// Tomcat.addServlet(rootCtx, "default",
+		// DefaultServlet.class.getName());
+		// rootCtx.addServletMapping("/*", "default");
 
 		tomcat.start();
 		return tomcat;

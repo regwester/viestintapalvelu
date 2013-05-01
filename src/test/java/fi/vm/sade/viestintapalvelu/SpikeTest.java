@@ -24,7 +24,7 @@ public class SpikeTest {
 		new File("target/documents/Jussi.pdf").delete();
 		Launcher.start();
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost("http://localhost:8080/spike");
+		HttpPost httpPost = new HttpPost("http://localhost:8080/api/v1/spike");
 		httpPost.setHeader("Content-Type", "application/json");
 		// TODO vpeurala 30.4.2013: special characters don't work, encoding
 		// problem somewhere
