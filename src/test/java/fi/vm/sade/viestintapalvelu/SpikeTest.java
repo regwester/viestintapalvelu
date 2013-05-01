@@ -8,9 +8,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 import org.apache.http.HttpResponse;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 /*
@@ -18,11 +20,15 @@ import org.junit.Test;
  * Sipilä"]' -i http://localhost:8080/spike
  */
 public class SpikeTest {
+	@BeforeClass
+	public static void setUp() throws Exception {
+		Launcher.start();
+	}
+
 	@Test
-	public void test() throws Exception {
+	public void restApiWorks() throws Exception {
 		new File("target/documents/Pekka.pdf").delete();
 		new File("target/documents/Jussi.pdf").delete();
-		Launcher.start();
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpPost httpPost = new HttpPost("http://localhost:8080/api/v1/spike");
 		httpPost.setHeader("Content-Type", "application/json");
@@ -34,6 +40,15 @@ public class SpikeTest {
 		assertEquals("{\"status\":\"ok\"}", readResponseBody(response));
 		assertTrue(new File("target/documents/Pekka.pdf").exists());
 		assertTrue(new File("target/documents/Jussi.pdf").exists());
+	}
+
+	@Test
+	public void staticResourcesWork() throws Exception {
+		DefaultHttpClient httpClient = new DefaultHttpClient();
+		HttpGet httpGet = new HttpGet("http://localhost:8080/index.html");
+		HttpResponse response = httpClient.execute(httpGet);
+		assertEquals(200, response.getStatusLine().getStatusCode());
+		assertEquals("hello world\n", readResponseBody(response));
 	}
 
 	private String readResponseBody(HttpResponse response) throws IOException {

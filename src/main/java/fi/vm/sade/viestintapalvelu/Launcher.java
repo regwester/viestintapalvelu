@@ -6,6 +6,7 @@ import javax.servlet.ServletException;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
+import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
 
 import com.google.inject.Guice;
@@ -25,14 +26,10 @@ public class Launcher {
 		tomcat.setBaseDir(tempDir());
 		tomcat.setPort(DEFAULT_PORT);
 
-		// AccessLogValve accessLogValve = new AccessLogValve();
-		// accessLogValve.setDirectory(tempDir());
-		// tomcat.getHost().getPipeline().addValve(accessLogValve);
-
 		File staticResources = new File("src/main/resources");
 
-		// Context rootCtx = tomcat.addContext("/",
-		// staticResources.getAbsolutePath());
+		Context rootCtx = tomcat.addContext("/",
+				staticResources.getAbsolutePath());
 		Context apiCtx = tomcat.addContext("/api/v1", tempDir());
 
 		Injector injector = Guice.createInjector(new ViestintapalveluModule());
@@ -41,9 +38,8 @@ public class Launcher {
 				injector.getInstance(GuiceContainer.class));
 		apiCtx.addServletMapping("/*", "api");
 
-		// Tomcat.addServlet(rootCtx, "default",
-		// DefaultServlet.class.getName());
-		// rootCtx.addServletMapping("/*", "default");
+		Tomcat.addServlet(rootCtx, "default", DefaultServlet.class.getName());
+		rootCtx.addServletMapping("/*", "default");
 
 		tomcat.start();
 		return tomcat;
