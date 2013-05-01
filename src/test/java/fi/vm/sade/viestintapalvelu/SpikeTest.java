@@ -14,12 +14,11 @@ import org.junit.Test;
 
 /*
  * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
- * Sipilä"]' http://localhost:8080/spike
+ * Sipilä"]' -i http://localhost:8080/spike
  */
 public class SpikeTest {
 	@Test
 	public void test() throws Exception {
-		new PDFService();
 		new File("target/documents/Pekka.pdf").delete();
 		new File("target/documents/Jussi.pdf").delete();
 		Launcher.start();
@@ -33,6 +32,7 @@ public class SpikeTest {
 		HttpResponse response = httpClient.execute(httpPost);
 		System.out.println(response);
 		System.out.println(Arrays.asList(response.getAllHeaders()));
+		System.out.println(response.getEntity());
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertTrue(new File("target/documents/Pekka.pdf").exists());
 		assertTrue(new File("target/documents/Jussi.pdf").exists());
