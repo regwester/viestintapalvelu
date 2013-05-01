@@ -14,17 +14,27 @@ import org.codehaus.jettison.json.JSONArray;
 import org.codehaus.jettison.json.JSONException;
 import org.codehaus.jettison.json.JSONObject;
 
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+
 /**
  * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
- * Sipilä"]' http://localhost:8080/spike
+ * Sipil√§"]' http://localhost:8080/spike
  */
+@Singleton
 @Path("spike")
 public class SpikeResource {
+	private IPDFService pdfService;
+
+	@Inject
+	public SpikeResource(IPDFService pdfService) {
+		this.pdfService = pdfService;
+	}
+
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
 	public JSONObject post(JSONArray input) throws JSONException {
-		PDFService pdfService = new PDFService();
 		List<String> list = new ArrayList<String>();
 		for (int i = 0; i < input.length(); i++) {
 			list.add(input.getString(i));

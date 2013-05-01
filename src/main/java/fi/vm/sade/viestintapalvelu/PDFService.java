@@ -18,7 +18,7 @@ import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
-public class PDFService {
+public class PDFService implements IPDFService {
 		
 	public void createDocuments(List<String> hakijat) {
 		for (String hakija : hakijat) {
