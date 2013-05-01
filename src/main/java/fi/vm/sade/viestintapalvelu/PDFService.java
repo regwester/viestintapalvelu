@@ -18,8 +18,8 @@ import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
-public class PDFService implements IPDFService {
-		
+public class PDFService {
+
 	public void createDocuments(List<String> hakijat) {
 		for (String hakija : hakijat) {
 			writeDocument(hakija, createDocument(hakija));
@@ -31,7 +31,8 @@ public class PDFService implements IPDFService {
 		try {
 			IXDocReport report = readTemplate();
 			report.process(createDataContext(hakija, report), out);
-			Options options = Options.getTo(ConverterTypeTo.PDF).via(ConverterTypeVia.ODFDOM);
+			Options options = Options.getTo(ConverterTypeTo.PDF).via(
+					ConverterTypeVia.ODFDOM);
 			report.convert(createDataContext(hakija, report), options, out);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
@@ -43,21 +44,25 @@ public class PDFService implements IPDFService {
 		return out.toByteArray();
 	}
 
-	private IContext createDataContext(String hakija, IXDocReport report) throws XDocReportException {
+	private IContext createDataContext(String hakija, IXDocReport report)
+			throws XDocReportException {
 		IContext context = report.createContext();
 		context.put("hakijan_nimi", hakija);
 		return context;
 	}
 
-	private IXDocReport readTemplate() throws FileNotFoundException, IOException, XDocReportException {
-		InputStream in = getClass().getResourceAsStream("/jalkiohjauskirje.odt");
-		return XDocReportRegistry.getRegistry().loadReport(in, TemplateEngineKind.Velocity);
+	private IXDocReport readTemplate() throws FileNotFoundException,
+			IOException, XDocReportException {
+		InputStream in = getClass()
+				.getResourceAsStream("/jalkiohjauskirje.odt");
+		return XDocReportRegistry.getRegistry().loadReport(in,
+				TemplateEngineKind.Velocity);
 	}
-	
+
 	private void writeDocument(String name, byte[] document) {
 		FileOutputStream fos = null;
 		try {
-			File file = new File("target/documents/"+name+".pdf");
+			File file = new File("target/documents/" + name + ".pdf");
 			file.getParentFile().mkdirs();
 			fos = new FileOutputStream(file, false);
 			fos.write(document, 0, document.length);
@@ -74,7 +79,7 @@ public class PDFService implements IPDFService {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		new PDFService().createDocuments(Arrays.asList(args));
 	}

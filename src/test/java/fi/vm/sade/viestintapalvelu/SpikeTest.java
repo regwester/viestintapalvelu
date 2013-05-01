@@ -4,7 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
-import java.util.Arrays;
+import java.io.IOException;
+import java.io.InputStream;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
@@ -28,13 +29,20 @@ public class SpikeTest {
 		// TODO vpeurala 30.4.2013: special characters don't work, encoding
 		// problem somewhere
 		httpPost.setEntity(new StringEntity("['Pekka', 'Jussi']"));
-		System.out.println("Now sending request from client");
 		HttpResponse response = httpClient.execute(httpPost);
-		System.out.println(response);
-		System.out.println(Arrays.asList(response.getAllHeaders()));
-		System.out.println(response.getEntity());
 		assertEquals(200, response.getStatusLine().getStatusCode());
+		assertEquals("{\"status\":\"ok\"}", readResponseBody(response));
 		assertTrue(new File("target/documents/Pekka.pdf").exists());
 		assertTrue(new File("target/documents/Jussi.pdf").exists());
+	}
+
+	private String readResponseBody(HttpResponse response) throws IOException {
+		InputStream stream = response.getEntity().getContent();
+		StringBuilder stringBuilder = new StringBuilder();
+		int c = -1;
+		while ((c = stream.read()) != -1) {
+			stringBuilder.append((char) c);
+		}
+		return stringBuilder.toString();
 	}
 }

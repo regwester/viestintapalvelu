@@ -10,9 +10,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 public class ViestintapalveluModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
-		bind(GuiceFilter.class);
-		bind(GuiceContainer.class);
-		bind(IPDFService.class).toInstance(new PDFService());
+		bind(PDFService.class);
 		bind(SpikeResource.class);
 
 		Map<String, String> jerseyParameters = new HashMap<String, String>();

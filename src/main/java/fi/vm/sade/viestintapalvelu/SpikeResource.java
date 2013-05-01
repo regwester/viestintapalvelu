@@ -24,10 +24,10 @@ import com.google.inject.Singleton;
 @Singleton
 @Path("spike")
 public class SpikeResource {
-	private IPDFService pdfService;
+	private PDFService pdfService;
 
 	@Inject
-	public SpikeResource(IPDFService pdfService) {
+	public SpikeResource(PDFService pdfService) {
 		this.pdfService = pdfService;
 	}
 
