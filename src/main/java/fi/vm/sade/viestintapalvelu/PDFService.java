@@ -19,6 +19,11 @@ import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class PDFService {
+	public byte[] printAddressLabels(AddressLabelBatch input) {
+		// TODO vpeurala 2.5.2013: Implement
+		return createDocument("Matti Makkonen");
+	}
+
 	public void createDocuments(List<String> hakijat) {
 		for (String hakija : hakijat) {
 			writeDocument(hakija, createDocument(hakija));

@@ -48,7 +48,6 @@ public class SpikeTest {
 		HttpGet httpGet = new HttpGet("http://localhost:8080/index.html");
 		HttpResponse response = httpClient.execute(httpGet);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("hello world\n", readResponseBody(response));
 	}
 
 	private String readResponseBody(HttpResponse response) throws IOException {
