@@ -1,1 +1,24 @@
-hello world
+<!DOCTYPE html>
+<html ng-app>
+<head>
+  <title>Viestintäpalvelu</title>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+</head>
+<body ng-controller='ViestintapalveluController'>
+  <h1>Viestintäpalvelu</h1>
+  <form action="/api/v1/download" method="POST">
+    <p>Hakijan nimi:</p>
+    <input type="text" name="hakija">
+    <input type="submit" value="Luo PDF">
+  </form>
+  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+  <script>
+    function ViestintapalveluController($scope) {
+      $scope.download = function(hakija) {
+        $http.post('/api/v1/download', '{"hakija": "' + hakija + '"}');
+        $location.path('/api/v1/download');
+      };
+    }
+  </script>
+</body>
+</html>

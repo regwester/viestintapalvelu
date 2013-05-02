@@ -12,6 +12,7 @@ public class ViestintapalveluModule extends JerseyServletModule {
 	protected void configureServlets() {
 		bind(PDFService.class);
 		bind(SpikeResource.class);
+		bind(PDFDownloadResource.class);
 
 		Map<String, String> jerseyParameters = new HashMap<String, String>();
 		jerseyParameters.put("com.sun.jersey.config.feature.Trace", "true");

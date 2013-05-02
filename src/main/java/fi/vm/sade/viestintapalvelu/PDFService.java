@@ -19,14 +19,13 @@ import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class PDFService {
-
 	public void createDocuments(List<String> hakijat) {
 		for (String hakija : hakijat) {
 			writeDocument(hakija, createDocument(hakija));
 		}
 	}
 
-	private byte[] createDocument(String hakija) {
+	public byte[] createDocument(String hakija) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			IXDocReport report = readTemplate();
