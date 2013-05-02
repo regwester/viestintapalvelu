@@ -27,8 +27,8 @@ public class AddressLabelResource {
 	@Produces("application/pdf")
 	public byte[] post(AddressLabelBatch input,
 			@Context HttpServletResponse response) throws JSONException {
-		response.setHeader("Content-Disposition", "attachment; filename=\""
-				+ input + ".pdf\"");
+		response.setHeader("Content-Disposition",
+				"attachment; filename=\"addresslabels.pdf\"");
 		return pdfService.printAddressLabels(input);
 	}
 }

@@ -4,51 +4,31 @@ public class AddressLabel {
 	/**
 	 * Etunimi. Esim. "Ville".
 	 */
-	private final String firstName;
-	/**
-	 * Toinen nimi. Esim. "Aleksi".
-	 */
-	private final String middleName;
+	private String firstName;
 	/**
 	 * Sukunimi. Esim. "Peurala".
 	 */
-	private final String lastName;
+	private String lastName;
 
 	/**
 	 * Katuosoite. Esim. "Pengerkatu 20 B 27".
 	 */
-	private final String streetAddress;
+	private String streetAddress;
 	/**
 	 * Postinumero. Esim. "00500".
 	 */
-	private final String postalCode;
+	private String postalCode;
 	/**
 	 * Postitoimipaikka. Esim. "Helsinki".
 	 */
-	private final String postOffice;
+	private String postOffice;
 	/**
 	 * Maa, jos muu kuin Suomi. Esim. "Sweden".
 	 */
-	private final String country;
-
-	public AddressLabel(String firstName, String middleName, String lastName,
-			String streetAddress, String postalCode, String postOffice,
-			String country) {
-		this.firstName = firstName;
-		this.middleName = middleName;
-		this.lastName = lastName;
-		this.streetAddress = streetAddress;
-		this.postalCode = postalCode;
-		this.postOffice = postOffice;
-		this.country = country;
-	}
+	private String country;
 
 	public String getFirstName() {
 		return firstName;
-	}
-
-	public String getMiddleName() {
-		return middleName;
 	}
 
 	public String getLastName() {
