@@ -6,6 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Scanner;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -48,6 +49,27 @@ public class SpikeTest {
 		HttpGet httpGet = new HttpGet("http://localhost:8080/index.html");
 		HttpResponse response = httpClient.execute(httpGet);
 		assertEquals(200, response.getStatusLine().getStatusCode());
+	}
+
+	@Test
+	public void addressLabelPrinting() throws Exception {
+		String json = new Scanner(getClass().getResourceAsStream(
+				"/addresslabelbatch1.json"), "UTF-8").useDelimiter("\u001a")
+				.next();
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(
+				"http://localhost:8080/api/v1/addresslabel");
+		post.setHeader("Content-Type", "application/json");
+		post.setEntity(new StringEntity(json));
+		HttpResponse response = client.execute(post);
+		assertEquals(200, response.getStatusLine().getStatusCode());
+		assertEquals("Content-Type: application/pdf",
+				response.getFirstHeader("Content-Type").toString());
+		assertEquals(
+				"Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
+				response.getFirstHeader("Content-Disposition").toString());
+		assertEquals("Content-Length: 31008",
+				response.getFirstHeader("Content-Length").toString());
 	}
 
 	private String readResponseBody(HttpResponse response) throws IOException {

@@ -1,0 +1,21 @@
+{
+  "templateName": "osoitetarrat",
+  "addressLabels": [
+    {
+      "firstName": "Marko",
+      "lastName": "Sibakov",
+      "streetAddress": "Tohtorinkatu 18 A 4",
+      "postalCode": "00100",
+      "postOffice": "Helsinki eli Stadi"
+    },
+    {
+      "firstName": "Mujahid",
+      "middleName": "bin",
+      "lastName": "Risto",
+      "streetAddress": "Kristiinankaupunginkatu 177 B 149",
+      "postalCode": "65330",
+      "postOffice": "Kristiinankaupunki",
+      "country": "Finland"
+    }
+  ]
+}
