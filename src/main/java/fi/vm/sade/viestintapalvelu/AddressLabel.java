@@ -5,6 +5,18 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 @XmlRootElement
 public class AddressLabel {
+
+	public AddressLabel() {}
+	
+	public AddressLabel(String firstName, String lastName, String streetAddress, String postalCode, String postOffice, String country) {
+		this.firstName = firstName;
+		this.lastName = lastName;
+		this.streetAddress = streetAddress;
+		this.postalCode = postalCode;
+		this.postOffice = postOffice;
+		this.country = country;
+	}
+	
 	/**
 	 * Etunimi. Esim. "Ville".
 	 */

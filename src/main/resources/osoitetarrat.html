@@ -1,0 +1,41 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title>Osoitetarrat</title>
+  <style type="text/css">
+	@page {
+		margin: 0;
+		padding: 0;
+	}
+	body {
+		font-size: 11px;
+		margin: 0;
+	}
+  	.osoitetarra {
+  		width: 70mm;
+  		height: 37mm;
+  		float: left;
+  		border-bottom: 0.01mm solid black;
+  		border-right: 0.01mm solid black;
+  	}
+  	.osoitetarra>div:first-child {
+  		margin-top: 5mm;
+  	}
+  	.osoitetarra>div {
+  		margin-left: 10mm;
+  	}
+  </style>
+</head>
+<body>
+#foreach( $label in $labelList )
+	<div class='osoitetarra'>
+		<div>$label.firstName $label.lastName</div>
+		<div>$label.streetAddress</div>
+		<div>$label.postalCode $label.postOffice</div>
+		<div>$label.country</div>
+	</div>
+#end
+</body>
+</html>

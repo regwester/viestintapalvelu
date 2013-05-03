@@ -12,6 +12,13 @@ public class AddressLabelBatch {
 	@XmlElement
 	private List<AddressLabel> addressLabels;
 
+	public AddressLabelBatch() {}
+	
+	public AddressLabelBatch(String templateName, List<AddressLabel> labels) {
+		this.templateName = templateName;
+		this.addressLabels = labels;
+	}
+
 	public String getTemplateName() {
 		return templateName;
 	}

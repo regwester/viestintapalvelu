@@ -82,6 +82,21 @@
 	    <artifactId>itext</artifactId>
 	    <version>${itext.version}</version>
 	</dependency>
+	<dependency>
+		<groupId>org.xhtmlrenderer</groupId>
+		<artifactId>flying-saucer-core</artifactId>
+		<version>9.0.2</version>
+	</dependency>
+	<dependency>
+		<groupId>org.xhtmlrenderer</groupId>
+		<artifactId>flying-saucer-pdf</artifactId>
+		<version>9.0.2</version>
+	</dependency>
+	<dependency>
+		<groupId>jtidy</groupId>
+		<artifactId>jtidy</artifactId>
+		<version>4aug2000r7-dev</version>
+	</dependency>
     <dependency>
 		<groupId>org.apache.httpcomponents</groupId>
 		<artifactId>httpclient</artifactId>
