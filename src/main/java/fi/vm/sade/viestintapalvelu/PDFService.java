@@ -6,7 +6,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.List;
 
 import fr.opensagres.xdocreport.converter.ConverterTypeTo;
@@ -26,7 +25,8 @@ public class PDFService {
 			IXDocReport report = readTemplate(input.getTemplateName());
 			Options options = Options.getTo(ConverterTypeTo.PDF).via(
 					ConverterTypeVia.ODFDOM);
-			report.convert(createDataContext(input.getAddressLabels(), report), options, out);
+			report.convert(createDataContext(input.getAddressLabels(), report),
+					options, out);
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		} catch (IOException e) {
@@ -66,8 +66,9 @@ public class PDFService {
 		context.put("hakijan_nimi", hakija);
 		return context;
 	}
-	
-	private IContext createDataContext(List<AddressLabel> labels, IXDocReport report) throws XDocReportException {
+
+	private IContext createDataContext(List<AddressLabel> labels,
+			IXDocReport report) throws XDocReportException {
 		IContext context = report.createContext();
 		context.put("labels", labels);
 		FieldsMetadata metadata = new FieldsMetadata();
@@ -81,10 +82,9 @@ public class PDFService {
 		return context;
 	}
 
-	private IXDocReport readTemplate(String templateName) throws FileNotFoundException,
-			IOException, XDocReportException {
-		InputStream in = getClass()
-				.getResourceAsStream(templateName);
+	private IXDocReport readTemplate(String templateName)
+			throws FileNotFoundException, IOException, XDocReportException {
+		InputStream in = getClass().getResourceAsStream(templateName);
 		return XDocReportRegistry.getRegistry().loadReport(in,
 				TemplateEngineKind.Velocity);
 	}
@@ -110,17 +110,20 @@ public class PDFService {
 		}
 	}
 
-	public static void main(String[] args) throws Exception {
-		AddressLabelBatch batch = new AddressLabelBatch();
-		List<AddressLabel> labels = new ArrayList<AddressLabel>();
-		labels.add(new AddressLabel("Meiju", "", "Aalto-Setala", "Kauriintie 3 D 31", "00740", "HELSINKI", "Suomi"));
-		labels.add(new AddressLabel("Aarnio", "", "Lumi", "Tilkankatu 7b 24", "00300", "HELSINKI", "Suomi"));
-		labels.add(new AddressLabel("Maria", "", "Abbas-Hashimi", "Petter wetterin tie 6 c 46", "00810", "Helsinki", "Suomi"));
-		labels.add(new AddressLabel("Hodan", "", "Abdi", "Postirestante", "00840", "Helsinki", "Suomi"));
-		batch.setAddressLabels(labels);
-		batch.setTemplateName("/osoitetarrat.odt");
-		PDFService service = new PDFService();
-		service.writeDocument("tarrat", service.printAddressLabels(batch));
-	}
-
+	// public static void main(String[] args) throws Exception {
+	// AddressLabelBatch batch = new AddressLabelBatch();
+	// List<AddressLabel> labels = new ArrayList<AddressLabel>();
+	// labels.add(new AddressLabel("Meiju", "", "Aalto-Setala",
+	// "Kauriintie 3 D 31", "00740", "HELSINKI", "Suomi"));
+	// labels.add(new AddressLabel("Aarnio", "", "Lumi", "Tilkankatu 7b 24",
+	// "00300", "HELSINKI", "Suomi"));
+	// labels.add(new AddressLabel("Maria", "", "Abbas-Hashimi",
+	// "Petter wetterin tie 6 c 46", "00810", "Helsinki", "Suomi"));
+	// labels.add(new AddressLabel("Hodan", "", "Abdi", "Postirestante",
+	// "00840", "Helsinki", "Suomi"));
+	// batch.setAddressLabels(labels);
+	// batch.setTemplateName("/osoitetarrat.odt");
+	// PDFService service = new PDFService();
+	// service.writeDocument("tarrat", service.printAddressLabels(batch));
+	// }
 }

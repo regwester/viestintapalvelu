@@ -1,5 +1,8 @@
 package fi.vm.sade.viestintapalvelu;
 
+import java.io.IOException;
+
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -26,7 +29,9 @@ public class AddressLabelResource {
 	@Consumes("application/json")
 	@Produces("application/pdf")
 	public byte[] post(AddressLabelBatch input,
-			@Context HttpServletResponse response) throws JSONException {
+			@Context HttpServletRequest request,
+			@Context HttpServletResponse response) throws JSONException,
+			IOException {
 		response.setHeader("Content-Disposition",
 				"attachment; filename=\"addresslabels.pdf\"");
 		return pdfService.printAddressLabels(input);
