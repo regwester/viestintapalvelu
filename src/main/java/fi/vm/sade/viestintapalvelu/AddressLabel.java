@@ -73,6 +73,10 @@ public class AddressLabel {
 		return country;
 	}
 
+	public String getUpperCaseCountry() {
+		return country == null ? "" : country.toUpperCase();
+	}
+
 	@Override
 	public String toString() {
 		return "AddressLabel [firstName=" + firstName + ", lastName="
