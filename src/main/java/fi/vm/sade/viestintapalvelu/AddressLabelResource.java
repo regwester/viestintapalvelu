@@ -10,19 +10,18 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.codehaus.jettison.json.JSONException;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
+import com.lowagie.text.DocumentException;
 
 @Singleton
 @Path("addresslabel")
 public class AddressLabelResource {
-	private PDFService pdfService;
+	private AddressLabelBuilder labelBuilder;
 
 	@Inject
-	public AddressLabelResource(PDFService pdfService) {
-		this.pdfService = pdfService;
+	public AddressLabelResource(AddressLabelBuilder labelBuilder) {
+		this.labelBuilder = labelBuilder;
 	}
 
 	@POST
@@ -30,10 +29,10 @@ public class AddressLabelResource {
 	@Produces("application/pdf")
 	public byte[] post(AddressLabelBatch input,
 			@Context HttpServletRequest request,
-			@Context HttpServletResponse response) throws JSONException,
-			IOException {
+			@Context HttpServletResponse response) throws
+			IOException, DocumentException {
 		response.setHeader("Content-Disposition",
 				"attachment; filename=\"addresslabels.pdf\"");
-		return pdfService.printAddressLabels(input);
+		return labelBuilder.printAddressLabels(input);
 	}
 }

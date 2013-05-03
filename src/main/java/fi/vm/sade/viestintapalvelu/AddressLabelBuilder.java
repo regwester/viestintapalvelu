@@ -21,18 +21,26 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.lowagie.text.DocumentException;
 
-public class PDFSpikeService {
+public class AddressLabelBuilder {
 	
 	private VelocityEngine templateEngine = new VelocityEngine();
 	
-	public PDFSpikeService() {
+	public AddressLabelBuilder() {
 		templateEngine.init();
 	}
 	
 	public byte[] printAddressLabels(AddressLabelBatch input) throws DocumentException, IOException {
-		return toPDF(toXHtml(input));
+		if (isPDFTemplate(input.getTemplateName())) {
+			return toPDF(toXHtml(input));
+		} else {
+			return evaluateTemplate(input);
+		}
 	}
 	
+	private boolean isPDFTemplate(String templateName) {
+		return templateName != null && templateName.toUpperCase().endsWith(".HTML");
+	}
+
 	private byte[] toPDF(byte[] input) throws UnsupportedEncodingException, DocumentException {
     	ByteArrayOutputStream output = new ByteArrayOutputStream();
     	newITextRenderer(input).createPDF(output);
@@ -40,14 +48,17 @@ public class PDFSpikeService {
 	}
 
 	private byte[] toXHtml(AddressLabelBatch input) throws IOException {
+		return toXhtml(evaluateTemplate(input));
+	}
+	
+	private byte[] evaluateTemplate(AddressLabelBatch input) throws FileNotFoundException, IOException {
 		byte[] template = readTemplate(input.getTemplateName());
-		byte[] html = bindDataToTemplate(template, input.getAddressLabels());
-		return toXhtml(html);
+		return bindDataToTemplate(template, input.getAddressLabels());
 	}
 
 	private byte[] bindDataToTemplate(byte[] template, List<AddressLabel> labels) throws UnsupportedEncodingException {
 		StringWriter writer = new StringWriter();
-		templateEngine.evaluate(newContext(labels), writer, "tarrat", new InputStreamReader(new ByteArrayInputStream(template)));
+		templateEngine.evaluate(newContext(labels), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(template)));
 		return writer.toString().getBytes();
 	}
 
@@ -87,13 +98,9 @@ public class PDFSpikeService {
 	}
 
 	private void writeDocument(String name, byte[] document) {
-		writeDocument(name, "pdf", document);
-	}
-
-	private void writeDocument(String name, String type, byte[] document) {
 		FileOutputStream fos = null;
 		try {
-			File file = new File("target/documents/" + name + "."+ type);
+			File file = new File("target/documents/" + name);
 			file.getParentFile().mkdirs();
 			fos = new FileOutputStream(file, false);
 			fos.write(document, 0, document.length);
@@ -861,9 +868,9 @@ public class PDFSpikeService {
 		labels.add(new AddressLabel("Aarnio", "Lumi", "Tilkankatu 7b 24", "00300", "HELSINKI", "Finland"));
 		labels.add(new AddressLabel("Maria", "Abbas-Hashimi", "Petter wetterin tie 6 c 46", "00810", "Helsinki", "Finland"));
 		labels.add(new AddressLabel("Hodan", "Abdi", "Postirestante", "00840", "Helsinki", "Finland"));
-		AddressLabelBatch batch = new AddressLabelBatch("/osoitetarrat.html", labels);
-		PDFSpikeService service = new PDFSpikeService();
-		service.writeDocument("tarrat", service.printAddressLabels(batch));
+		AddressLabelBatch batch = new AddressLabelBatch("/osoitetarrat.csv", labels);
+		AddressLabelBuilder service = new AddressLabelBuilder();
+		service.writeDocument("tarrat.csv", service.printAddressLabels(batch));
 	}
 
 }
