@@ -1,5 +1,5 @@
 #foreach( $label in $labelList )
-$label.firstName $label.lastName,$label.streetAddress,$label.postalCode,$label.postOffice#if ($label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND"),$label.country
+$label.firstName $label.lastName,$label.streetAddress,$label.postalCode,$label.postOffice#if ($label.upperCaseCountry != "" && $label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND"),$label.country
 #else 
 
 #end

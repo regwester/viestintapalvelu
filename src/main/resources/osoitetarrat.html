@@ -34,7 +34,7 @@
 		<div>$label.firstName $label.lastName</div>
 		<div>$label.streetAddress</div>
 		<div>$label.postalCode $label.postOffice</div>
-		#if ($label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND")
+		#if ($label.upperCaseCountry != "" && $$label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND")
 			<div>$label.country</div>
 		#end
 	</div>

@@ -37,7 +37,7 @@ public class AddressLabelBuilder {
 		}
 	}
 	
-	private boolean isPDFTemplate(String templateName) {
+	public boolean isPDFTemplate(String templateName) {
 		return templateName != null && templateName.toUpperCase().endsWith(".HTML");
 	}
 
