@@ -25,21 +25,16 @@ public abstract class Generator<T> {
 		addDataset("country", "/generator/countries.json");
 	}
 	
-	public List<T> enumerate(int count) {
+	public List<T> generateObjects(int count) {
 		List<T> labels = new ArrayList<T>();
 		for (int i = 0; i < count; i++) {
-			labels.add(create());
+			labels.add(createObject(new TestData()));
 		}
 		return labels;
 	}
 	
-	protected abstract T create();
+	protected abstract T createObject(TestData data);
 	
-	protected String random(String datasetKey) {
-		List<String> dataset = datasets.get(datasetKey);
-		return dataset != null ? dataset.get(random.nextInt(dataset.size())) : "";
-	}
-
 	@SuppressWarnings("unchecked")
 	public void addDataset(String datasetKey, String datasetURL) {
 		ObjectMapper mapper = new ObjectMapper();
@@ -58,7 +53,14 @@ public abstract class Generator<T> {
 	public void addDataset(String datasetKey, List<String> values) {
 		datasets.put(datasetKey, values);
 	}
-	
+
+	protected class TestData {
+		public String random(String datasetKey) {
+			List<String> dataset = datasets.get(datasetKey);
+			return dataset != null ? dataset.get(random.nextInt(dataset.size())) : "";
+		}
+	}
+
 	public static class Range {
 		public static List<String> asList(int from, int to) {
 			List<String> values = new ArrayList<String>();

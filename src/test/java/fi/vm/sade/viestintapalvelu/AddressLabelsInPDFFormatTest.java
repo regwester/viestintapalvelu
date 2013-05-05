@@ -225,17 +225,17 @@ public class AddressLabelsInPDFFormatTest {
 
 	private static List<AddressLabel> createLabels(int count) {
 		return new Generator<AddressLabel>(){
-			protected AddressLabel create() {
-				String postOffice = random("postOffice");
+			protected AddressLabel createObject(TestData testData) {
+				String postOffice = testData.random("postOffice");
 				return new AddressLabel(
-						random("firstname"), 
-						random("lastname"), 
-						random("street") + " " + random("houseNumber"), 
+						testData.random("firstname"), 
+						testData.random("lastname"), 
+						testData.random("street") + " " + testData.random("houseNumber"), 
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1),
-						random("country"));
+						testData.random("country"));
 			}
-		}.enumerate(count);
+		}.generateObjects(count);
 	}
 
 	private static String[] callGenerateLabels(String firstName, String lastName, String streetAddress, String postalCode, String postOffice, String country) throws UnsupportedEncodingException,
