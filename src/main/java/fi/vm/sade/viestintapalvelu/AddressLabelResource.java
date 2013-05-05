@@ -44,8 +44,8 @@ public class AddressLabelResource {
 
 	private String resolveContentType(String templateName) {
 		if (labelBuilder.isPDFTemplate(templateName)) {
-			return "application/pdf";
+			return "application/pdf;charset=utf-8";
 		}
-		return "application/csv";
+		return "application/csv;charset=utf-8";
 	}
 }
