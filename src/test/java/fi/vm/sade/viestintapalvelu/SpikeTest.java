@@ -63,7 +63,7 @@ public class SpikeTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("Content-Type: application/pdf",
+		assertEquals("Content-Type: application/pdf;charset=utf-8",
 				response.getFirstHeader("Content-Type").toString());
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
@@ -84,12 +84,12 @@ public class SpikeTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("Content-Type: application/csv",
+		assertEquals("Content-Type: application/csv;charset=utf-8",
 				response.getFirstHeader("Content-Type").toString());
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.csv\"",
 				response.getFirstHeader("Content-Disposition").toString());
-		assertEquals("Content-Length: 136",
+		assertEquals("Content-Length: 135",
 				response.getFirstHeader("Content-Length").toString());
 	}
 

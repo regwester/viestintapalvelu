@@ -115,6 +115,30 @@
 		<version>${junit.version}</version>
 		<scope>test</scope>
     </dependency>     
+	<dependency>
+		<groupId>org.apache.pdfbox</groupId>
+		<artifactId>pdfbox</artifactId>
+		<version>1.8.1</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>dom4j</groupId>
+		<artifactId>dom4j</artifactId>
+		<version>1.6.1</version>
+		<scope>test</scope>
+	</dependency>
+	<dependency>
+		<groupId>jaxen</groupId>
+		<artifactId>jaxen</artifactId>
+		<version>1.1.1</version>
+		<scope>test</scope>
+		<exclusions>
+			<exclusion>
+				<artifactId>xalan</artifactId>
+				<groupId>xalan</groupId>
+			</exclusion>
+		</exclusions>
+	</dependency>
   </dependencies>
   <build>
     <finalName>viestintapalvelu</finalName>

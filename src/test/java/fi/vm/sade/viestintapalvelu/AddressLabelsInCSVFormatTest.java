@@ -138,12 +138,11 @@ public class AddressLabelsInCSVFormatTest {
 
 		private static AddressLabel domestic = new AddressLabel("Åle", "Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki", "FINLAND");
 		private static AddressLabel foreign = new AddressLabel("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden");
-		private static List<AddressLabel> labels = Arrays.asList(domestic, foreign);
 		private static String responseBody;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			responseBody = callGenerateLabels(labels);
+			responseBody = callGenerateLabels(Arrays.asList(domestic, foreign));
 		}
 
 		@Test
@@ -191,7 +190,7 @@ public class AddressLabelsInCSVFormatTest {
 				return new AddressLabel(
 						random("firstname"), 
 						random("lastname"), 
-						random("streets") + " " + random("houseNumber"), 
+						random("street") + " " + random("houseNumber"), 
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1),
 						random("country"));

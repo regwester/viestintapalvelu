@@ -19,7 +19,7 @@ public abstract class Generator<T> {
 	public Generator() {
 		addDataset("firstname", "/generator/firstnames.json");
 		addDataset("lastname", "/generator/lastnames.json");
-		addDataset("streets", "/generator/streets.json");
+		addDataset("street", "/generator/streets.json");
 		addDataset("houseNumber", Range.asList(1, 200));
 		addDataset("postOffice", "/generator/postoffices.json");
 		addDataset("country", "/generator/countries.json");
