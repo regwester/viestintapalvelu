@@ -28,17 +28,19 @@ public class AddressLabelResource {
 	@Consumes("application/json")
 	public Response post(AddressLabelBatch input,
 			@Context HttpServletRequest request,
-			@Context HttpServletResponse response) throws
-			IOException, DocumentException {
-		response.setHeader("Content-Disposition",
-				"attachment; filename=\""+resolveFilename(input.getTemplateName())+"\"");
-		return Response.ok(labelBuilder.printAddressLabels(input)).type(resolveContentType(input.getTemplateName())).build();
+			@Context HttpServletResponse response) throws IOException,
+			DocumentException {
+		response.setHeader("Content-Disposition", "attachment; filename=\""
+				+ resolveFilename(input.getTemplateName()) + "\"");
+		return Response.ok(labelBuilder.printAddressLabels(input))
+				.type(resolveContentType(input.getTemplateName())).build();
 	}
-	
+
 	private String resolveFilename(String templateName) {
 		if (labelBuilder.isPDFTemplate(templateName)) {
 			return "addresslabels.pdf";
 		}
+		// TODO vpeurala 6.5.2013: Refactor this branching
 		return "addresslabels.csv";
 	}
 

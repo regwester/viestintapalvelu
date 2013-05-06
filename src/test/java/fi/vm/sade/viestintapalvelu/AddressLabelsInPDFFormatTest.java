@@ -18,6 +18,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFText2HTML;
 import org.codehaus.jackson.JsonGenerationException;
+import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
@@ -37,7 +38,7 @@ import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
 public class AddressLabelsInPDFFormatTest {
-		
+
 	@BeforeClass
 	public static void setUp() throws Exception {
 		Launcher.start();
@@ -45,9 +46,10 @@ public class AddressLabelsInPDFFormatTest {
 
 	public static class WhenCreatingLabelForValidForeignAddress {
 
-		private static AddressLabel label = new AddressLabel("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden");
+		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
+				"Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden");
 		private static String[] pdf;
-		
+
 		@BeforeClass
 		public static void setUp() throws Exception {
 			pdf = callGenerateLabels(Arrays.asList(label)).get(0);
@@ -55,7 +57,8 @@ public class AddressLabelsInPDFFormatTest {
 
 		@Test
 		public void firstNameAndLastNameAreMappedToFirstRow() throws Exception {
-			Assert.assertEquals(label.getFirstName() + " " + label.getLastName(), pdf[0]);
+			Assert.assertEquals(
+					label.getFirstName() + " " + label.getLastName(), pdf[0]);
 		}
 
 		@Test
@@ -64,10 +67,12 @@ public class AddressLabelsInPDFFormatTest {
 		}
 
 		@Test
-		public void postalCodeAndPostOfficeAreMappedToThirdRow() throws Exception {
-			Assert.assertEquals(label.getPostalCode() + " " + label.getPostOffice(), pdf[2]);
+		public void postalCodeAndPostOfficeAreMappedToThirdRow()
+				throws Exception {
+			Assert.assertEquals(
+					label.getPostalCode() + " " + label.getPostOffice(), pdf[2]);
 		}
-		
+
 		@Test
 		public void countryIsMappedToFourthRow() throws Exception {
 			Assert.assertEquals(label.getCountry(), pdf[3]);
@@ -82,21 +87,29 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenFirstNameIsEmpty {
 		@Test
 		public void firstRowContainsLastName() throws Exception {
-			Assert.assertEquals("Öistämö", callGenerateLabels("", "Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden")[0]);
+			Assert.assertEquals(
+					"Öistämö",
+					callGenerateLabels("", "Öistämö",
+							"Brännkyrksgatan 177 B 149", "65330", "Stockholm",
+							"Sweden")[0]);
 		}
 	}
 
 	public static class WhenLastNameIsEmpty {
 		@Test
 		public void firstRowContainsFirstName() throws Exception {
-			Assert.assertEquals("Åle", callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden")[0]);
+			Assert.assertEquals(
+					"Åle",
+					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
+							"65330", "Stockholm", "Sweden")[0]);
 		}
 	}
 
 	public static class WhenStreetAddressIsEmpty {
 		@Test
 		public void labelContainsNamePostOfficeAndCountry() throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö", "", "65330", "Stockholm", "Sweden");
+			String[] label = callGenerateLabels("Åle", "Öistämö", "", "65330",
+					"Stockholm", "Sweden");
 			Assert.assertEquals("Åle Öistämö", label[0]);
 			Assert.assertEquals("65330 Stockholm", label[1]);
 			Assert.assertEquals("Sweden", label[2]);
@@ -107,42 +120,65 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenPostalCodeIsEmpty {
 		@Test
 		public void thirdRowContainsPostOffice() throws Exception {
-			Assert.assertEquals("Stockholm", callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "", "Stockholm", "Sweden")[2]);
+			Assert.assertEquals(
+					"Stockholm",
+					callGenerateLabels("Åle", "Öistämö",
+							"Brännkyrksgatan 177 B 149", "", "Stockholm",
+							"Sweden")[2]);
 		}
 	}
 
 	public static class WhenPostOfficeIsEmpty {
 		@Test
 		public void thirdRowContainsPostalCode() throws Exception {
-			Assert.assertEquals("65330", callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "65330", "", "Sweden")[2]);
+			Assert.assertEquals(
+					"65330",
+					callGenerateLabels("Åle", "Öistämö",
+							"Brännkyrksgatan 177 B 149", "65330", "", "Sweden")[2]);
 		}
 	}
 
 	public static class WhenCountryIsEmpty {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			Assert.assertEquals(3, callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm", "").length);
+			Assert.assertEquals(
+					3,
+					callGenerateLabels("Åle", "Öistämö",
+							"Brännkyrksgatan 177 B 149", "65330", "Stockholm",
+							"").length);
 		}
 	}
 
 	public static class WhenAddressIsLocal {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			Assert.assertEquals(3, callGenerateLabels("Åle", "Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki", "Finland").length);
+			Assert.assertEquals(
+					3,
+					callGenerateLabels("Åle", "Öistämö",
+							"Mannerheimintie 177 B 149", "65330", "Helsinki",
+							"Finland").length);
 		}
 	}
 
 	public static class WhenAddressIsLocalAndCountryIsUppercaseFINLAND {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			Assert.assertEquals(3, callGenerateLabels("Åle", "Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki", "FINLAND").length);
+			Assert.assertEquals(
+					3,
+					callGenerateLabels("Åle", "Öistämö",
+							"Mannerheimintie 177 B 149", "65330", "Helsinki",
+							"FINLAND").length);
 		}
 	}
 
 	public static class WhenCreatingLabelsForDomesticAndForeignAddresses {
 
-		private static AddressLabel domestic = new AddressLabel("Åle", "Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki", "FINLAND");
-		private static AddressLabel foreign = new AddressLabel("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden");
+		private static AddressLabel domestic = new AddressLabel("Åle",
+				"Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki",
+				"FINLAND");
+		private static AddressLabel foreign = new AddressLabel("Åle",
+				"Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm",
+				"Sweden");
 		private static List<String[]> response;
 
 		@BeforeClass
@@ -157,22 +193,27 @@ public class AddressLabelsInPDFFormatTest {
 
 		@Test
 		public void domesticAddressHasThreeRows() throws Exception {
-			Assert.assertEquals(3, response.get(1).length); //Order reversed when parsing pdf to html
+			Assert.assertEquals(3, response.get(1).length); // Order reversed
+															// when parsing pdf
+															// to html
 		}
 
 		@Test
 		public void foreignAddressHasFourRows() throws Exception {
-			Assert.assertEquals(4, response.get(0).length); //Order reversed when parsing pdf to html
+			Assert.assertEquals(4, response.get(0).length); // Order reversed
+															// when parsing pdf
+															// to html
 		}
 	}
 
 	public static class WhenCreatingLabelsInABigBatch {
 
-		private static List<AddressLabel> batch = createLabels(1000);
+		private static List<AddressLabel> batch;
 		private static List<String[]> response;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
+			batch = createLabels(1000);
 			response = callGenerateLabels(batch);
 		}
 
@@ -182,8 +223,10 @@ public class AddressLabelsInPDFFormatTest {
 		}
 	}
 
-	private static List<String[]> readResponseBody(HttpResponse response) throws IOException {
-		PDDocument document = PDDocument.load(response.getEntity().getContent());
+	private static List<String[]> readResponseBody(HttpResponse response)
+			throws IOException, DocumentException {
+		PDDocument document = PDDocument
+				.load(response.getEntity().getContent());
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
 		StringWriter writer = new StringWriter();
 		stripper.setLineSeparator("<br/>");
@@ -191,7 +234,7 @@ public class AddressLabelsInPDFFormatTest {
 		document.close();
 		return parseHTML(new String(toXhtml(writer.toString().getBytes())));
 	}
-	
+
 	private static byte[] toXhtml(byte[] document) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		newTidy().parseDOM(new ByteArrayInputStream(document), out);
@@ -207,30 +250,26 @@ public class AddressLabelsInPDFFormatTest {
 		return tidy;
 	}
 
-	
-	private static List<String[]> parseHTML(String xml) {
+	private static List<String[]> parseHTML(String xml)
+			throws DocumentException {
 		SAXReader reader = new SAXReader();
 		List<String[]> labels = new ArrayList<String[]>();
-		try {
-			Document document = reader.read(new StringReader(xml));
-			for (Object object : document.selectNodes("//div/p")) {
-				Node p = (Node) object;
-				labels.add(p.getText().split("\n"));
-			}
-		} catch (DocumentException e) {
-			e.printStackTrace();
+		Document document = reader.read(new StringReader(xml));
+		for (Object object : document.selectNodes("//div/p")) {
+			Node p = (Node) object;
+			labels.add(p.getText().split("\n"));
 		}
 		return labels;
 	}
 
-	private static List<AddressLabel> createLabels(int count) {
-		return new Generator<AddressLabel>(){
+	private static List<AddressLabel> createLabels(int count)
+			throws JsonParseException, JsonMappingException, IOException {
+		return new Generator<AddressLabel>() {
 			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
-				return new AddressLabel(
-						testData.random("firstname"), 
-						testData.random("lastname"), 
-						testData.random("street") + " " + testData.random("houseNumber"), 
+				return new AddressLabel(testData.random("firstname"),
+						testData.random("lastname"), testData.random("street")
+								+ " " + testData.random("houseNumber"),
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1),
 						testData.random("country"));
@@ -238,21 +277,33 @@ public class AddressLabelsInPDFFormatTest {
 		}.generateObjects(count);
 	}
 
-	private static String[] callGenerateLabels(String firstName, String lastName, String streetAddress, String postalCode, String postOffice, String country) throws UnsupportedEncodingException,
-			IOException, JsonGenerationException, JsonMappingException,	ClientProtocolException {
-		return callGenerateLabels(Arrays.asList(new AddressLabel(firstName, lastName, streetAddress, postalCode, postOffice, country))).get(0);
+	private static String[] callGenerateLabels(String firstName,
+			String lastName, String streetAddress, String postalCode,
+			String postOffice, String country)
+			throws UnsupportedEncodingException, IOException,
+			JsonGenerationException, JsonMappingException,
+			ClientProtocolException, DocumentException {
+		return callGenerateLabels(
+				Arrays.asList(new AddressLabel(firstName, lastName,
+						streetAddress, postalCode, postOffice, country)))
+				.get(0);
 	}
-	
+
 	private final static String PDF_TEMPLATE = "/osoitetarrat.html";
-	private static List<String[]> callGenerateLabels(List<AddressLabel> labels) throws UnsupportedEncodingException,
-			IOException, JsonGenerationException, JsonMappingException,
-			ClientProtocolException {
+
+	private static List<String[]> callGenerateLabels(List<AddressLabel> labels)
+			throws UnsupportedEncodingException, IOException,
+			JsonGenerationException, JsonMappingException,
+			ClientProtocolException, DocumentException {
 		AddressLabelBatch batch = new AddressLabelBatch(PDF_TEMPLATE, labels);
 		DefaultHttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
-		HttpPost post = new HttpPost("http://localhost:8080/api/v1/addresslabel");
+		client.getParams().setParameter("http.protocol.content-charset",
+				"UTF-8");
+		HttpPost post = new HttpPost(
+				"http://localhost:8080/api/v1/addresslabel");
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
-		post.setEntity(new StringEntity(new ObjectMapper().writeValueAsString(batch), ContentType.APPLICATION_JSON));
+		post.setEntity(new StringEntity(new ObjectMapper()
+				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
 		return readResponseBody(response);
 	}

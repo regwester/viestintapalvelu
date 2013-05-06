@@ -19,26 +19,20 @@ import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class PDFService {
 
-	public void createDocuments(List<String> hakijat) {
+	public void createDocuments(List<String> hakijat) throws IOException,
+			XDocReportException {
 		for (String hakija : hakijat) {
 			writeDocument(hakija, createDocument(hakija));
 		}
 	}
 
-	public byte[] createDocument(String hakija) {
+	public byte[] createDocument(String hakija) throws IOException,
+			XDocReportException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		try {
-			IXDocReport report = readTemplate("/jalkiohjauskirje.odt");
-			Options options = Options.getTo(ConverterTypeTo.PDF).via(
-					ConverterTypeVia.ODFDOM);
-			report.convert(createDataContext(hakija, report), options, out);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
-		} catch (XDocReportException e) {
-			e.printStackTrace();
-		}
+		IXDocReport report = readTemplate("/jalkiohjauskirje.odt");
+		Options options = Options.getTo(ConverterTypeTo.PDF).via(
+				ConverterTypeVia.ODFDOM);
+		report.convert(createDataContext(hakija, report), options, out);
 		return out.toByteArray();
 	}
 
@@ -56,29 +50,22 @@ public class PDFService {
 				TemplateEngineKind.Velocity);
 	}
 
-	private void writeDocument(String name, byte[] document) {
+	private void writeDocument(String name, byte[] document) throws IOException {
 		FileOutputStream fos = null;
 		try {
 			File file = new File("target/documents/" + name + ".pdf");
 			file.getParentFile().mkdirs();
 			fos = new FileOutputStream(file, false);
 			fos.write(document, 0, document.length);
-		} catch (FileNotFoundException e) {
-			e.printStackTrace();
-		} catch (IOException e) {
-			e.printStackTrace();
 		} finally {
 			if (fos != null) {
-				try {
-					fos.close();
-				} catch (IOException e) {
-				}
+				fos.close();
 			}
 		}
 	}
 
-	 public static void main(String[] args) throws Exception {
-		 PDFService service = new PDFService();
-		 service.writeDocument("tarrat", service.createDocument("Iina"));
-	 }
+	public static void main(String[] args) throws Exception {
+		PDFService service = new PDFService();
+		service.writeDocument("tarrat", service.createDocument("Iina"));
+	}
 }
