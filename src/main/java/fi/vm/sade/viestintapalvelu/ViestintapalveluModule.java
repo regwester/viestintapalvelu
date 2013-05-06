@@ -8,7 +8,6 @@ public class ViestintapalveluModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
 		bind(PDFService.class);
-		bind(SpikeResource.class);
 		bind(PDFDownloadResource.class);
 		bind(AddressLabelResource.class);
 

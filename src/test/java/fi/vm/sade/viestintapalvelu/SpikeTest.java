@@ -1,9 +1,7 @@
 package fi.vm.sade.viestintapalvelu;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Scanner;
@@ -27,23 +25,6 @@ public class SpikeTest {
 	}
 
 	@Test
-	public void restApiWorks() throws Exception {
-		new File("target/documents/Pekka.pdf").delete();
-		new File("target/documents/Jussi.pdf").delete();
-		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpPost httpPost = new HttpPost("http://localhost:8080/api/v1/spike");
-		httpPost.setHeader("Content-Type", "application/json");
-		// TODO vpeurala 30.4.2013: special characters don't work, encoding
-		// problem somewhere
-		httpPost.setEntity(new StringEntity("['Pekka', 'Jussi']"));
-		HttpResponse response = httpClient.execute(httpPost);
-		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("{\"status\":\"ok\"}", readResponseBody(response));
-		assertTrue(new File("target/documents/Pekka.pdf").exists());
-		assertTrue(new File("target/documents/Jussi.pdf").exists());
-	}
-
-	@Test
 	public void staticResourcesWork() throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
 		HttpGet httpGet = new HttpGet("http://localhost:8080/index.html");
@@ -63,8 +44,8 @@ public class SpikeTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("Content-Type: application/pdf;charset=utf-8",
-				response.getFirstHeader("Content-Type").toString());
+		assertEquals("Content-Type: application/pdf;charset=utf-8", response
+				.getFirstHeader("Content-Type").toString());
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
 				response.getFirstHeader("Content-Disposition").toString());
@@ -84,8 +65,8 @@ public class SpikeTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("Content-Type: application/csv;charset=utf-8",
-				response.getFirstHeader("Content-Type").toString());
+		assertEquals("Content-Type: application/csv;charset=utf-8", response
+				.getFirstHeader("Content-Type").toString());
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.csv\"",
 				response.getFirstHeader("Content-Disposition").toString());
@@ -93,6 +74,8 @@ public class SpikeTest {
 				response.getFirstHeader("Content-Length").toString());
 	}
 
+	// TODO vpeurala 6.5.2013: Dead code: check if this is used somewhere else,
+	// remove if not
 	private String readResponseBody(HttpResponse response) throws IOException {
 		InputStream stream = response.getEntity().getContent();
 		StringBuilder stringBuilder = new StringBuilder();
