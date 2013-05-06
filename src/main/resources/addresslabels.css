@@ -1,0 +1,32 @@
+body {
+	margin: 1em;
+}
+
+.newLabel input {
+	margin-bottom: 0;
+}
+
+input.generate {
+	width: 4em;
+}
+
+.run-action {
+	margin: 0 8px 10px 0;
+	float: right;
+}
+
+tr.labels td {
+	padding-left: 15px;
+}
+
+td.inline-operation {
+	text-align: right;
+} 
+
+.name {
+	width: 10em;
+}
+
+.postNumber {
+	width: 6em;
+}
