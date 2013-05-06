@@ -11,6 +11,7 @@ import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -223,7 +224,7 @@ public class AddressLabelsInPDFFormatTest {
 		}
 	}
 
-	private static List<String[]> readResponseBody(HttpResponse response)
+	private static List<String[]> readDownloadResponseBody(HttpResponse response)
 			throws IOException, DocumentException {
 		PDDocument document = PDDocument
 				.load(response.getEntity().getContent());
@@ -233,6 +234,13 @@ public class AddressLabelsInPDFFormatTest {
 		stripper.writeText(document, writer);
 		document.close();
 		return parseHTML(new String(toXhtml(writer.toString().getBytes())));
+	}
+
+	private static String readCreateDocumentResponseBody(HttpResponse response)
+			throws IOException, DocumentException {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		out.write(response.getEntity().getContent());
+		return out.toString();
 	}
 
 	private static byte[] toXhtml(byte[] document) {
@@ -300,12 +308,16 @@ public class AddressLabelsInPDFFormatTest {
 		client.getParams().setParameter("http.protocol.content-charset",
 				"UTF-8");
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel");
+				"http://localhost:8080/api/v1/addresslabel/createDocument");
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
-		return readResponseBody(response);
+		String documentId = readCreateDocumentResponseBody(response);
+		HttpGet get = new HttpGet(
+				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+		response = client.execute(get);
+		return readDownloadResponseBody(response);
 	}
 
 }

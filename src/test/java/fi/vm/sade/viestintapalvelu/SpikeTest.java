@@ -13,6 +13,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.BeforeClass;
 import org.junit.Test;
+import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 
 /*
  * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
@@ -39,10 +40,14 @@ public class SpikeTest {
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel");
+				"http://localhost:8080/api/v1/addresslabel/createDocument");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
+		String documentId = readResponseBody(response);
+		HttpGet get = new HttpGet(
+				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response
 				.getFirstHeader("Content-Type").toString());
@@ -60,10 +65,14 @@ public class SpikeTest {
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel");
+				"http://localhost:8080/api/v1/addresslabel/createDocument");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
+		String documentId = readResponseBody(response);
+		HttpGet get = new HttpGet(
+				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/csv;charset=utf-8", response
 				.getFirstHeader("Content-Type").toString());
@@ -74,15 +83,9 @@ public class SpikeTest {
 				response.getFirstHeader("Content-Length").toString());
 	}
 
-	// TODO vpeurala 6.5.2013: Dead code: check if this is used somewhere else,
-	// remove if not
 	private String readResponseBody(HttpResponse response) throws IOException {
-		InputStream stream = response.getEntity().getContent();
-		StringBuilder stringBuilder = new StringBuilder();
-		int c = -1;
-		while ((c = stream.read()) != -1) {
-			stringBuilder.append((char) c);
-		}
-		return stringBuilder.toString();
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		out.write(response.getEntity().getContent());
+		return out.toString();
 	}
 }

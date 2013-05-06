@@ -99,8 +99,9 @@ angular.module('app').factory('Countries', ['$http', function($http){
 	return $http.get('generator/countries.json')
 }])
 
-angular.module('app').factory('Printer', ['$http', '$location', function($http, $location){
-	var url = '/api/v1/addresslabel';
+angular.module('app').factory('Printer', ['$http', '$window', function($http, $window){
+	var createDocument = '/api/v1/addresslabel/createDocument';
+	var download = '/api/v1/addresslabel/download/';
 
 	return function() {
 		function pdf(labels) {
@@ -112,11 +113,8 @@ angular.module('app').factory('Printer', ['$http', '$location', function($http, 
 		}
 		
 		function print(batch) {
-	        $http.post(url, batch).success(function(data) {
-	        	var iframe = document.createElement("iframe");
-	        	iframe.setAttribute("src", data.url);
-	        	iframe.setAttribute("style", "display: none");
-	        	document.body.appendChild(iframe);
+	        $http.post(createDocument, batch).success(function(data) {
+	            $window.open(download + data);
 	        })
 		}
 		

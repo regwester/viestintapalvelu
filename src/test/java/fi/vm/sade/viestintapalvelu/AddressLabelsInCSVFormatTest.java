@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
@@ -260,11 +261,15 @@ public class AddressLabelsInCSVFormatTest {
 		client.getParams().setParameter("http.protocol.content-charset",
 				"UTF-8");
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel");
+				"http://localhost:8080/api/v1/addresslabel/createDocument");
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
+		String documentId = readResponseBody(response);
+		HttpGet get = new HttpGet(
+				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+		response = client.execute(get);
 		return readResponseBody(response);
 	}
 
