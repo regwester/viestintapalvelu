@@ -1,24 +1,50 @@
 <!DOCTYPE html>
-<html ng-app>
+<html ng-app="app">
 <head>
-  <title>Viestintäpalvelu</title>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+ 	<title>Osoitetarrat</title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js"></script>
+	<script src="https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.min.js"></script>
+	<script src="addresslabels.js"></script>
+	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+	<link rel="stylesheet" href="addresslabels.css">
 </head>
-<body ng-controller='ViestintapalveluController'>
-  <h1>Viestintäpalvelu</h1>
-  <form action="/api/v1/download" method="POST">
-    <p>Hakijan nimi:</p>
-    <input type="text" name="hakija">
-    <input type="submit" value="Luo PDF">
-  </form>
-  <script src="http://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
-  <script>
-    function ViestintapalveluController($scope) {
-      $scope.download = function(hakija) {
-        $http.post('/api/v1/download', '{"hakija": "' + hakija + '"}');
-        $location.path('/api/v1/download');
-      };
-    }
-  </script>
+<body ng-controller='OsoitetarratController'>
+	<h1>Tarrat</h1>
+	<input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi" maxlength="3">
+	<div class="run-action btn-group">
+		<button class="btn" ng-click="generatePDF()">PDF</button>
+		<button class="btn" ng-click="generateCSV()">CSV</button>
+	</div>
+		<table class="table">
+		<tr>
+			<th>Etunimi</th>
+			<th>Sukunimi</th>
+			<th>Postiosoite</th>
+			<th>Postinumero</th>
+			<th>Postitoimipaikka</th>
+			<th>Maa</th>
+			<th></th>
+		</tr>
+		<tr class="newLabel">
+			<td><input class="name" type="text" ng-model="firstName" placeholder="Etunimi"></td>
+			<td><input class="name" type="text" ng-model="lastName" placeholder="Sukunimi"></td>
+			<td><input class="name" type="text" ng-model="streetAddress" placeholder="Postiosoite"></td>
+			<td><input class="postNumber" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
+			<td><input class="name" type="text" ng-model="postOffice" placeholder="Postitoimipaikka"></td>
+			<td><input class="name" type="text" ng-model="country" placeholder="Maa"></td>
+			<td class="inline-operation"><button class="btn btn-small" ng-click="addLabel()">Lisää</button></td>
+		</tr>
+		<tr class="labels" ng-repeat="label in addressLabels">
+			<td>{{label.firstName}}</td>
+			<td>{{label.lastName}}</td>
+			<td>{{label.streetAddress}}</td>
+			<td>{{label.postalCode}}</td>
+			<td>{{label.postOffice}}</td>
+			<td>{{label.country}}</td>
+			<td class="inline-operation"><button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button></td>
+		</tr>
+	</table>
 </body>
 </html>
