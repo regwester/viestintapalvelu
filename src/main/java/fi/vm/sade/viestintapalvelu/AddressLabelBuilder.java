@@ -20,7 +20,6 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 import com.lowagie.text.DocumentException;
 
 public class AddressLabelBuilder {
-
 	private VelocityEngine templateEngine = new VelocityEngine();
 
 	public AddressLabelBuilder() {
@@ -113,5 +112,4 @@ public class AddressLabelBuilder {
 		AddressLabelBuilder service = new AddressLabelBuilder();
 		service.writeDocument("tarrat.pdf", service.printAddressLabels(batch));
 	}
-
 }

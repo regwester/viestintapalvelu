@@ -1,13 +1,10 @@
 package fi.vm.sade.viestintapalvelu;
 
-
-
 public class Download {
-
 	private final String contentType;
 	private final String filename;
 	private final byte[] binaryDocument;
-	
+
 	public Download(String contentType, String filename, byte[] binaryDocument) {
 		this.contentType = contentType;
 		this.filename = filename;
@@ -25,5 +22,4 @@ public class Download {
 	public String getContentType() {
 		return contentType;
 	}
-
 }
