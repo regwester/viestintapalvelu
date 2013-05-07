@@ -28,8 +28,7 @@ import fr.opensagres.xdocreport.core.XDocReportException;
 @Singleton
 @Path("addresslabel")
 public class AddressLabelResource {
-	Cache<String, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
-	
+	private Cache<String, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(10, TimeUnit.SECONDS).build();
 	private AddressLabelBuilder labelBuilder;
 
 	@Inject
