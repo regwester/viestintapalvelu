@@ -18,7 +18,6 @@ import fr.opensagres.xdocreport.template.IContext;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class PDFService {
-
 	public void createDocuments(List<String> hakijat) throws IOException,
 			XDocReportException {
 		for (String hakija : hakijat) {
