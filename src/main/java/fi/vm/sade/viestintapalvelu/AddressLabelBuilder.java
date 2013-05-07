@@ -83,6 +83,9 @@ public class AddressLabelBuilder {
 	private byte[] readTemplate(String templateName)
 			throws FileNotFoundException, IOException {
 		InputStream in = getClass().getResourceAsStream(templateName);
+		if (in == null) {
+			throw new FileNotFoundException("Template " + templateName + " not found");
+		}
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
 		baos.write(in);
 		return baos.toByteArray();

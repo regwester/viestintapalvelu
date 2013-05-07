@@ -14,6 +14,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.codehaus.jettison.json.JSONException;
 
@@ -62,6 +63,9 @@ public class AddressLabelResource {
 			IOException, XDocReportException {
 		Download download = downloads.getIfPresent(request.getSession().getId()
 				+ input);
+		if (download == null) {
+			return Response.status(Status.BAD_REQUEST).build();
+		}
 		downloads.invalidate(download);
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ download.getFilename() + "\"");
