@@ -1,9 +1,8 @@
 package fi.vm.sade.viestintapalvelu;
 
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +17,8 @@ import javax.ws.rs.core.Response;
 
 import org.codehaus.jettison.json.JSONException;
 
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
@@ -27,9 +28,8 @@ import fr.opensagres.xdocreport.core.XDocReportException;
 @Singleton
 @Path("addresslabel")
 public class AddressLabelResource {
-	// TODO isipila 6.5.2012: Refactor this
-	private Map<String, Download> downloads = new HashMap<String, Download>();
-
+	private Cache<String, Download> downloads = CacheBuilder.newBuilder()
+			.expireAfterWrite(10, TimeUnit.SECONDS).build();
 	private AddressLabelBuilder labelBuilder;
 
 	@Inject
@@ -60,8 +60,9 @@ public class AddressLabelResource {
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response) throws JSONException,
 			IOException, XDocReportException {
-		Download download = downloads.remove(request.getSession().getId()
+		Download download = downloads.getIfPresent(request.getSession().getId()
 				+ input);
+		downloads.invalidate(download);
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ download.getFilename() + "\"");
 		return Response
