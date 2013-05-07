@@ -240,7 +240,7 @@ public class AddressLabelsInPDFFormatTest {
 			throws IOException, DocumentException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		out.write(response.getEntity().getContent());
-		return out.toString();
+		return out.toString("UTF-8");
 	}
 
 	private static byte[] toXhtml(byte[] document) {
@@ -315,7 +315,8 @@ public class AddressLabelsInPDFFormatTest {
 		HttpResponse response = client.execute(post);
 		String documentId = readCreateDocumentResponseBody(response);
 		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+				"http://localhost:8080/api/v1/addresslabel/download/"
+						+ documentId);
 		response = client.execute(get);
 		return readDownloadResponseBody(response);
 	}

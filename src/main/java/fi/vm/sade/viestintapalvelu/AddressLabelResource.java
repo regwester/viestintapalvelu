@@ -27,9 +27,9 @@ import fr.opensagres.xdocreport.core.XDocReportException;
 @Singleton
 @Path("addresslabel")
 public class AddressLabelResource {
-	//TODO isipila 6.5.2012: Refactor this
+	// TODO isipila 6.5.2012: Refactor this
 	private Map<String, Download> downloads = new HashMap<String, Download>();
-	
+
 	private AddressLabelBuilder labelBuilder;
 
 	@Inject
@@ -41,13 +41,15 @@ public class AddressLabelResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("createDocument")
-	public String createDocument(AddressLabelBatch input, @Context HttpServletRequest request) throws IOException,
+	public String createDocument(AddressLabelBatch input,
+			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] binaryDocument = labelBuilder.printAddressLabels(input);
 		String contentType = resolveContentType(input.getTemplateName());
 		String filename = resolveFilename(input.getTemplateName());
 		String documentId = UUID.randomUUID().toString();
-		downloads.put(request.getSession().getId() + documentId, new Download(contentType, filename, binaryDocument));
+		downloads.put(request.getSession().getId() + documentId, new Download(
+				contentType, filename, binaryDocument));
 		return documentId;
 	}
 
@@ -55,13 +57,15 @@ public class AddressLabelResource {
 	@Produces("application/pdf")
 	@Path("download/{documentId}")
 	public Response download(@PathParam("documentId") String input,
-			@Context HttpServletRequest request, 
+			@Context HttpServletRequest request,
 			@Context HttpServletResponse response) throws JSONException,
 			IOException, XDocReportException {
-		Download download = downloads.remove(request.getSession().getId() + input);
+		Download download = downloads.remove(request.getSession().getId()
+				+ input);
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ download.getFilename() + "\"");
-		return Response.ok(download.toByteArray())
+		return Response
+				.ok(download.toByteArray(), "application/pdf;charset=utf-8")
 				.type(download.getContentType()).build();
 	}
 
