@@ -3,7 +3,6 @@ package fi.vm.sade.viestintapalvelu;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Scanner;
 
 import org.apache.http.HttpResponse;
@@ -11,7 +10,7 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
-import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 
@@ -20,10 +19,8 @@ import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
  * Sipilä"]' -i http://localhost:8080/spike
  */
 public class SpikeTest {
-	@BeforeClass
-	public static void setUp() throws Exception {
-		Launcher.start();
-	}
+	@ClassRule
+	public static TomcatRule tomcat = new TomcatRule();
 
 	@Test
 	public void staticResourcesWork() throws Exception {
@@ -46,7 +43,8 @@ public class SpikeTest {
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
 		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+				"http://localhost:8080/api/v1/addresslabel/download/"
+						+ documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response
@@ -71,7 +69,8 @@ public class SpikeTest {
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
 		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+				"http://localhost:8080/api/v1/addresslabel/download/"
+						+ documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/csv;charset=utf-8", response

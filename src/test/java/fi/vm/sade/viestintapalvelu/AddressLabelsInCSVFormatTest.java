@@ -18,6 +18,7 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -27,11 +28,8 @@ import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
 public class AddressLabelsInCSVFormatTest {
-
-	@BeforeClass
-	public static void setUp() throws Exception {
-		Launcher.start();
-	}
+	@ClassRule
+	public static TomcatRule tomcat = new TomcatRule();
 
 	public static class WhenCreatingLabelForValidForeignAddress {
 
@@ -268,7 +266,8 @@ public class AddressLabelsInCSVFormatTest {
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
 		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/addresslabel/download/"+documentId);
+				"http://localhost:8080/api/v1/addresslabel/download/"
+						+ documentId);
 		response = client.execute(get);
 		return readResponseBody(response);
 	}

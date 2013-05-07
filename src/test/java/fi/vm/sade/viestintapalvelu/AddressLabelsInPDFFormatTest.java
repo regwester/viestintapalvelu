@@ -28,6 +28,7 @@ import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
@@ -39,11 +40,8 @@ import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
 public class AddressLabelsInPDFFormatTest {
-
-	@BeforeClass
-	public static void setUp() throws Exception {
-		Launcher.start();
-	}
+	@ClassRule
+	public static TomcatRule tomcat = new TomcatRule();
 
 	public static class WhenCreatingLabelForValidForeignAddress {
 
