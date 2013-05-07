@@ -43,6 +43,12 @@
         <artifactId>jersey-servlet</artifactId>
         <version>${jersey.version}</version>
     </dependency>
+    <!-- TODO isipila 7.5.2013: selvitä miksi tämä pitää antaa (komentoriviltä käynnistettynä Jersey antaa stacktracen ensimmäisen kutsun yhteydessä) -->
+    <dependency>
+	    <groupId>com.sun.jersey</groupId>
+	    <artifactId>jersey-client</artifactId>
+	    <version>1.12</version>
+	</dependency>
     <dependency>
         <groupId>com.sun.jersey</groupId>
         <artifactId>jersey-json</artifactId>
