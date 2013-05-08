@@ -24,5 +24,8 @@ Löytyy osoittesta:
 
 http://liitu.hard.ware.fi/confluence/pages/viewpage.action?pageId=9994831
 
+4. Tulostus
+
+Aseta skaalaus: 100%.
 
 

@@ -2,7 +2,7 @@ body {
 	margin: 1em;
 }
 
-.newLabel input {
+.labels input {
 	margin-bottom: 0;
 }
 
@@ -15,18 +15,22 @@ input.generate {
 	float: right;
 }
 
-tr.labels td {
-	padding-left: 15px;
-}
-
 td.inline-operation {
 	text-align: right;
-} 
+}
+
+.inline-operation button {
+	width: 60px;
+}
 
 .name {
 	width: 10em;
 }
 
-.postNumber {
+.postalCode {
 	width: 6em;
+}
+
+.streetAddress {
+	width: 15em;
 }

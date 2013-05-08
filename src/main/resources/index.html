@@ -27,22 +27,22 @@
 			<th>Maa</th>
 			<th></th>
 		</tr>
-		<tr class="newLabel">
+		<tr class="labels">
 			<td><input class="name" type="text" ng-model="firstName" placeholder="Etunimi"></td>
 			<td><input class="name" type="text" ng-model="lastName" placeholder="Sukunimi"></td>
-			<td><input class="name" type="text" ng-model="streetAddress" placeholder="Postiosoite"></td>
-			<td><input class="postNumber" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
+			<td><input class="streetAddress" type="text" ng-model="streetAddress" placeholder="Postiosoite"></td>
+			<td><input class="postalCode" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
 			<td><input class="name" type="text" ng-model="postOffice" placeholder="Postitoimipaikka"></td>
 			<td><input class="name" type="text" ng-model="country" placeholder="Maa"></td>
 			<td class="inline-operation"><button class="btn btn-small" ng-click="addLabel()">Lisää</button></td>
 		</tr>
 		<tr class="labels" ng-repeat="label in addressLabels">
-			<td>{{label.firstName}}</td>
-			<td>{{label.lastName}}</td>
-			<td>{{label.streetAddress}}</td>
-			<td>{{label.postalCode}}</td>
-			<td>{{label.postOffice}}</td>
-			<td>{{label.country}}</td>
+			<td><input class="name" type="text"  ng-model="label.firstName"/></td>
+			<td><input class="name" type="text"  ng-model="label.lastName"/></td>
+			<td><input class="streetAddress" type="text"  ng-model="label.streetAddress"/></td>
+			<td><input class="postalCode" type="text"  ng-model="label.postalCode"/></td>
+			<td><input class="name" type="text" ng-model="label.postOffice"/></td>
+			<td><input class="name" type="text" ng-model="label.country"/></td>
 			<td class="inline-operation"><button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button></td>
 		</tr>
 	</table>
