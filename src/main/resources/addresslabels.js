@@ -1,5 +1,3 @@
-var app = angular.module('app', ['ngResource']);
-
 angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator', 'Printer' ,function($scope, Generator, Printer) {	
 	$scope.addressLabels = [];
 	

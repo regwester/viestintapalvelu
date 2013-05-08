@@ -2,11 +2,16 @@ body {
 	margin: 1em;
 }
 
+.tab-content {
+    margin: 5px;
+}
+
 .labels input {
 	margin-bottom: 0;
 }
 
 input.generate {
+	margin: 5px;
 	width: 4em;
 }
 

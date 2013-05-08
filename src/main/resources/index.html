@@ -1,50 +1,31 @@
 <!DOCTYPE html>
 <html ng-app="app">
-<head>
- 	<title>Osoitetarrat</title>
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
-	<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js"></script>
-	<script src="https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.min.js"></script>
-	<script src="addresslabels.js"></script>
-	<link href="//netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-	<link rel="stylesheet" href="addresslabels.css">
-</head>
-<body ng-controller='OsoitetarratController'>
-	<h1>Tarrat</h1>
-	<input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi" maxlength="3">
-	<div class="run-action btn-group">
-		<button class="btn" ng-click="generatePDF()">PDF</button>
-		<button class="btn" ng-click="generateCSV()">CSV</button>
-	</div>
-		<table class="table">
-		<tr>
-			<th>Etunimi</th>
-			<th>Sukunimi</th>
-			<th>Postiosoite</th>
-			<th>Postinumero</th>
-			<th>Postitoimipaikka</th>
-			<th>Maa</th>
-			<th></th>
-		</tr>
-		<tr class="labels">
-			<td><input class="name" type="text" ng-model="firstName" placeholder="Etunimi"></td>
-			<td><input class="name" type="text" ng-model="lastName" placeholder="Sukunimi"></td>
-			<td><input class="street-address" type="text" ng-model="streetAddress" placeholder="Postiosoite"></td>
-			<td><input class="postal-code" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
-			<td><input class="name" type="text" ng-model="postOffice" placeholder="Postitoimipaikka"></td>
-			<td><input class="name" type="text" ng-model="country" placeholder="Maa"></td>
-			<td class="inline-operation"><button class="btn btn-small" ng-click="addLabel()">Lisää</button></td>
-		</tr>
-		<tr class="labels" ng-repeat="label in addressLabels">
-			<td><input class="name" type="text"  ng-model="label.firstName"/></td>
-			<td><input class="name" type="text"  ng-model="label.lastName"/></td>
-			<td><input class="street-address" type="text"  ng-model="label.streetAddress"/></td>
-			<td><input class="postal-code" type="text"  ng-model="label.postalCode"/></td>
-			<td><input class="name" type="text" ng-model="label.postOffice"/></td>
-			<td><input class="name" type="text" ng-model="label.country"/></td>
-			<td class="inline-operation"><button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button></td>
-		</tr>
-	</table>
-</body>
+	<head>
+	 	<title>OPH</title>
+		<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.0.0/jquery.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js"></script>
+		<script src="https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.min.js"></script>
+		<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
+		<script src="main.js"></script>
+		<script src="addresslabels.js"></script>
+		<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
+		<link rel="stylesheet" href="addresslabels.css">
+	</head>
+	<body ng-controller="TabsController">
+	    <div class="navbar" ng-init="showContent('/addresslabels.html', '#osoitetarrat')">
+		    <div class="navbar-inner">
+				<a class="brand" href="#">OPH</a>
+			    <ul class="nav">
+				    <li class="active" ><a href="#osoitetarrat" ng-click="showContent('/addresslabels.html', this.href)" data-toggle="tab">Osoitetarrat</a></li>
+				    <li><a href="#jalkiohjauskirje" ng-click="showContent('/jalkiohjauskirje.html', this.href)" data-toggle="tab">Jälkiohjauskirje</a></li>
+			    </ul>
+		    </div>
+		    <div class="tab-content">
+			    <div class="tab-pane active" id="osoitetarrat"></div>
+			    <div class="tab-pane" id="jalkiohjauskirje"></div>
+	    	</div>
+	    </div>
+    </body>
 </html>
