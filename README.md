@@ -1,8 +1,8 @@
 Viestintäpalvelu
 ================
 
-Ville Peurala
-Iina Sipilä
+* Ville Peurala
+* Iina Sipilä
 
 1. Build
 
