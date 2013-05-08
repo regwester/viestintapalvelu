@@ -55,7 +55,6 @@ public class AddressLabelResource {
 	}
 
 	@GET
-	@Produces("application/pdf")
 	@Path("download/{documentId}")
 	public Response download(@PathParam("documentId") String input,
 			@Context HttpServletRequest request,
@@ -70,7 +69,7 @@ public class AddressLabelResource {
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ download.getFilename() + "\"");
 		return Response
-				.ok(download.toByteArray(), "application/pdf;charset=utf-8")
+				.ok(download.toByteArray())
 				.type(download.getContentType()).build();
 	}
 
