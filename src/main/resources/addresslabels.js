@@ -2,15 +2,15 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 	$scope.addressLabels = [];
 	
 	function generateLabels(count) {
-		$scope.addressLabels = $scope.addressLabels.concat(Generator.generateObjects(count, function(random) {
-			var postoffice = random('postoffice')
+		$scope.addressLabels = $scope.addressLabels.concat(Generator.generateObjects(count, function(data) {
+			var postoffice = data.any('postoffice')
 			return {
-				"firstName": random('firstname'),
-				"lastName": random('lastname'),
-				"streetAddress": random('street') + ' ' + random('housenumber'),
+				"firstName": data.any('firstname'),
+				"lastName": data.any('lastname'),
+				"streetAddress": data.any('street') + ' ' + data.any('housenumber'),
 				"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 				"postOffice": postoffice.substring(postoffice.indexOf(' ') + 1),
-				"country": random('country')
+				"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
 			}
 		}))
 	}
@@ -60,14 +60,21 @@ angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets'
 	Countries.success(function(data) {generatedData['country'] = data})
 
 	return function() {
-		function random(dataid) {
+		function any(dataid) {
 			var data = generatedData[dataid]
 			return data[Math.round(Math.random()*(data.length-1))].toString()
 		}
 
+		function prioritize(value, p) {
+			function otherwise(otherValue) {
+				return Math.random() <= p ? value : otherValue;
+			}
+			return {otherwise: otherwise}
+		}
+		
 		function generateObjects(count, createObject) {
 			return _.map(_.range(count), function() {
-				return createObject(random)
+				return createObject({any: any, prioritize: prioritize})
 			})
 		}
 		
