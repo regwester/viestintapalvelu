@@ -24,8 +24,10 @@ td.inline-operation {
 	text-align: right;
 }
 
-.inline-operation button {
+.navbar .inline-operation button {
 	width: 60px;
+	height: 30px;
+	margin-top: 0;
 }
 
 .name {
