@@ -73,7 +73,7 @@ public class SpikeTest {
 						+ documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("Content-Type: application/csv;charset=utf-8", response
+		assertEquals("Content-Type: text/csv;charset=utf-8", response
 				.getFirstHeader("Content-Type").toString());
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.csv\"",
