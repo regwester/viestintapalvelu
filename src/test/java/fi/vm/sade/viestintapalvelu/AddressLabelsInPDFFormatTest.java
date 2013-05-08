@@ -253,6 +253,7 @@ public class AddressLabelsInPDFFormatTest {
 		tidy.setDocType("omit");
 		tidy.setXHTML(true);
 		tidy.setCharEncoding(Configuration.UTF8);
+		tidy.setQuiet(true);
 		return tidy;
 	}
 
