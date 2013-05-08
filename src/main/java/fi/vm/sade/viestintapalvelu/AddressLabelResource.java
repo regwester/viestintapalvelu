@@ -85,6 +85,6 @@ public class AddressLabelResource {
 		if (labelBuilder.isPDFTemplate(templateName)) {
 			return "application/pdf;charset=utf-8";
 		}
-		return "application/csv;charset=utf-8";
+		return "text/csv;charset=utf-8";
 	}
 }
