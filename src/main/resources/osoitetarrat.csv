@@ -1,3 +1,3 @@
-#foreach( $label in $labelList )$label.firstName,$label.lastName,$label.streetAddress,$label.postalCode,$label.postOffice#if ($label.upperCaseCountry != "" && $label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND"),$label.country#end#if( $foreach.hasNext )
+#foreach( $label in $labelList )$label.firstName,$label.lastName,$label.addressline,$label.postalCode,$label.postOffice#if ($label.upperCaseCountry != "" && $label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND"),$label.country#end#if( $foreach.hasNext )
 
 #else#end#end

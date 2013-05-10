@@ -7,7 +7,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 			return {
 				"firstName": data.any('firstname'),
 				"lastName": data.any('lastname'),
-				"streetAddress": data.any('street') + ' ' + data.any('housenumber'),
+				"addressline": data.any('street') + ' ' + data.any('housenumber'),
 				"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 				"postOffice": postoffice.substring(postoffice.indexOf(' ') + 1),
 				"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
@@ -29,7 +29,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 		$scope.addressLabels.unshift({
 			"firstName": $scope.firstName,
 			"lastName": $scope.lastName,
-			"streetAddress": $scope.streetAddress,
+			"addressline": $scope.streetAddress,
 			"postalCode": $scope.postalCode,
 			"postOffice": $scope.postOffice,
 			"country": $scope.country
@@ -37,7 +37,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 		$scope.count++;
 		$scope.firstName = '';
 		$scope.lastName = '';
-		$scope.streetAddress = '';
+		$scope.addressline = '';
 		$scope.postalCode = '';
 		$scope.postOffice = '';
 		$scope.country = '';

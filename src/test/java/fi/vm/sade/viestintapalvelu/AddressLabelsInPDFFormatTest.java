@@ -46,7 +46,7 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenCreatingLabelForValidForeignAddress {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden");
+				"Brännkyrksgatan 177 B 149", "", "65330", "Stockholm", "", "Sweden");
 		private static String[] pdf;
 
 		@BeforeClass
@@ -62,7 +62,7 @@ public class AddressLabelsInPDFFormatTest {
 
 		@Test
 		public void streetAddressIsMappedToSecondRow() throws Exception {
-			Assert.assertEquals(label.getStreetAddress(), pdf[1]);
+			Assert.assertEquals(label.getAddressline(), pdf[1]);
 		}
 
 		@Test
@@ -173,11 +173,11 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenCreatingLabelsForDomesticAndForeignAddresses {
 
 		private static AddressLabel domestic = new AddressLabel("Åle",
-				"Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki",
-				"FINLAND");
+				"Öistämö", "Mannerheimintie 177 B 149", "", "65330", "Helsinki",
+				"", "FINLAND");
 		private static AddressLabel foreign = new AddressLabel("Åle",
-				"Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm",
-				"Sweden");
+				"Öistämö", "Brännkyrksgatan 177 B 149", "", "65330", "Stockholm",
+				"", "Sweden");
 		private static List<String[]> response;
 
 		@BeforeClass
@@ -276,9 +276,9 @@ public class AddressLabelsInPDFFormatTest {
 				String postOffice = testData.random("postOffice");
 				return new AddressLabel(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
-								+ " " + testData.random("houseNumber"),
+								+ " " + testData.random("houseNumber"), "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
-						postOffice.substring(postOffice.indexOf(" ") + 1),
+						postOffice.substring(postOffice.indexOf(" ") + 1), "",
 						testData.random("country"));
 			}
 		}.generateObjects(count);
@@ -292,7 +292,7 @@ public class AddressLabelsInPDFFormatTest {
 			ClientProtocolException, DocumentException {
 		return callGenerateLabels(
 				Arrays.asList(new AddressLabel(firstName, lastName,
-						streetAddress, postalCode, postOffice, country)))
+						streetAddress, "", postalCode, postOffice, "", country)))
 				.get(0);
 	}
 

@@ -34,7 +34,7 @@ public class AddressLabelsInCSVFormatTest {
 	public static class WhenCreatingLabelForValidForeignAddress {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "65330", "Stockholm", "Sweden");
+				"Brännkyrksgatan 177 B 149", "", "65330", "Stockholm", "", "Sweden");
 		private static String[] csv;
 
 		@BeforeClass
@@ -55,7 +55,7 @@ public class AddressLabelsInCSVFormatTest {
 
 		@Test
 		public void streetAddressIsMappedToThirdColumn() throws Exception {
-			Assert.assertEquals(label.getStreetAddress(), csv[2]);
+			Assert.assertEquals(label.getAddressline(), csv[2]);
 		}
 
 		@Test
@@ -167,11 +167,11 @@ public class AddressLabelsInCSVFormatTest {
 	public static class WhenCreatingLabelsForDomesticAndForeignAddresses {
 
 		private static AddressLabel domestic = new AddressLabel("Åle",
-				"Öistämö", "Mannerheimintie 177 B 149", "65330", "Helsinki",
-				"FINLAND");
+				"Öistämö", "Mannerheimintie 177 B 149", "", "65330", "Helsinki",
+				"", "FINLAND");
 		private static AddressLabel foreign = new AddressLabel("Åle",
-				"Öistämö", "Brännkyrksgatan 177 B 149", "65330", "Stockholm",
-				"Sweden");
+				"Öistämö", "Brännkyrksgatan 177 B 149", "", "65330", "Stockholm",
+				"", "Sweden");
 		private static String responseBody;
 
 		@BeforeClass
@@ -214,11 +214,15 @@ public class AddressLabelsInCSVFormatTest {
 		}
 	}
 
-	private static String readResponseBody(HttpResponse response)
+	private static String readResponseBody(HttpResponse response, boolean removeBOM)
 			throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		out.write(response.getEntity().getContent());
-		return out.toString();
+		return removeBOM ? new String(removeBOM(out.toByteArray())) : out.toString();
+	}
+
+	private static byte[] removeBOM(byte[] byteArray) {
+		return Arrays.copyOfRange(byteArray, 3, byteArray.length);
 	}
 
 	private static List<AddressLabel> createLabels(int count)
@@ -228,9 +232,9 @@ public class AddressLabelsInCSVFormatTest {
 				String postOffice = testData.random("postOffice");
 				return new AddressLabel(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
-								+ " " + testData.random("houseNumber"),
+								+ " " + testData.random("houseNumber"), "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
-						postOffice.substring(postOffice.indexOf(" ") + 1),
+						postOffice.substring(postOffice.indexOf(" ") + 1), "",
 						testData.random("country"));
 			}
 		}.generateObjects(count);
@@ -246,7 +250,7 @@ public class AddressLabelsInCSVFormatTest {
 			ClientProtocolException {
 		return callGenerateLabels(
 				Arrays.asList(new AddressLabel(firstName, lastName,
-						streetAddress, postalCode, postOffice, country)))
+						streetAddress, "", postalCode, postOffice, "", country)))
 				.split(",");
 	}
 
@@ -264,12 +268,12 @@ public class AddressLabelsInCSVFormatTest {
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
-		String documentId = readResponseBody(response);
+		String documentId = readResponseBody(response, false);
 		HttpGet get = new HttpGet(
 				"http://localhost:8080/api/v1/addresslabel/download/"
 						+ documentId);
 		response = client.execute(get);
-		return readResponseBody(response);
+		return readResponseBody(response, true);
 	}
 
 }

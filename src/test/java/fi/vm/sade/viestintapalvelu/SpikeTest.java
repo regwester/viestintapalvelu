@@ -78,7 +78,7 @@ public class SpikeTest {
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.csv\"",
 				response.getFirstHeader("Content-Disposition").toString());
-		assertEquals("Content-Length: 135",
+		assertEquals("Content-Length: 138",
 				response.getFirstHeader("Content-Length").toString());
 	}
 

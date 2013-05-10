@@ -1,54 +1,57 @@
 package fi.vm.sade.viestintapalvelu;
 
-import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlRootElement;
+import org.codehaus.jackson.annotate.JsonIgnore;
 
-@XmlRootElement
+
 public class AddressLabel {
 	public AddressLabel() {
 	}
 
 	public AddressLabel(String firstName, String lastName,
-			String streetAddress, String postalCode, String postOffice,
-			String country) {
+			String addressline, String addressline2, String postalCode, String postOffice,
+			String county, String country) {
 		this.firstName = firstName;
 		this.lastName = lastName;
-		this.streetAddress = streetAddress;
+		this.addressline = addressline;
+		this.addressline2 = addressline2;
 		this.postalCode = postalCode;
 		this.postOffice = postOffice;
+		this.county = county;
 		this.country = country;
 	}
 
 	/**
 	 * Etunimi. Esim. "Ville".
 	 */
-	@XmlElement
 	private String firstName;
 	/**
 	 * Sukunimi. Esim. "Peurala".
 	 */
-	@XmlElement
 	private String lastName;
 
 	/**
 	 * Katuosoite. Esim. "Pengerkatu 20 B 27".
 	 */
-	@XmlElement
-	private String streetAddress;
+	private String addressline;
+	/**
+	 * Toinen osoiterivi ulkomaalaisille osoitteille.
+	 */
+	private String addressline2;
 	/**
 	 * Postinumero. Esim. "00500".
 	 */
-	@XmlElement
 	private String postalCode;
 	/**
 	 * Postitoimipaikka. Esim. "Helsinki".
 	 */
-	@XmlElement
 	private String postOffice;
+	/**
+	 * Maakunta ulkomaalaisille osoitteille.
+	 */
+	private String county;
 	/**
 	 * Maa, jos muu kuin Suomi. Esim. "Sweden".
 	 */
-	@XmlElement
 	private String country;
 
 	public String getFirstName() {
@@ -59,8 +62,12 @@ public class AddressLabel {
 		return lastName;
 	}
 
-	public String getStreetAddress() {
-		return streetAddress;
+	public String getAddressline() {
+		return addressline;
+	}
+
+	public String getAddressline2() {
+		return addressline2;
 	}
 
 	public String getPostalCode() {
@@ -71,10 +78,15 @@ public class AddressLabel {
 		return postOffice;
 	}
 
+	public String getCounty() {
+		return county;
+	}
+
 	public String getCountry() {
 		return country;
 	}
 
+	@JsonIgnore
 	public String getUpperCaseCountry() {
 		return country == null ? "" : country.toUpperCase();
 	}
@@ -82,9 +94,9 @@ public class AddressLabel {
 	@Override
 	public String toString() {
 		return "AddressLabel [firstName=" + firstName + ", lastName="
-				+ lastName + ", streetAddress=" + streetAddress
+				+ lastName + ", addressline=" + addressline + ", addressline2=" + addressline2
 				+ ", postalCode=" + postalCode + ", postOffice=" + postOffice
-				+ ", country=" + country + "]";
+				+ ", county=" + county + ", country=" + country + "]";
 	}
 
 }

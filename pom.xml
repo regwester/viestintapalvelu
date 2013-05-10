@@ -60,6 +60,17 @@
         <artifactId>jersey-guice</artifactId>
         <version>${jersey.version}</version>
     </dependency>
+	<dependency>
+		<groupId>org.codehaus.jackson</groupId>
+		<artifactId>jackson-mapper-asl</artifactId>
+		<version>1.9.12</version>
+	</dependency>
+	<!-- Incompatible icu4j version as transitive dependency if not included, causes stacktrace when running tests from eclipse -->
+	<dependency> 
+	    <groupId>com.ibm.icu</groupId>
+        <artifactId>icu4j</artifactId>
+        <version>3.4.4</version>
+    </dependency>
     <dependency>
         <groupId>com.google.inject</groupId>
         <artifactId>guice</artifactId>
@@ -111,12 +122,6 @@
 		<version>${http.client.version}</version>
 		<scope>test</scope>
     </dependency>        
-	<dependency>
-		<groupId>org.codehaus.jackson</groupId>
-		<artifactId>jackson-mapper-asl</artifactId>
-		<version>1.9.12</version>
-		<scope>test</scope>
-	</dependency>
 	<dependency>
 		<groupId>junit</groupId>
 		<artifactId>junit</artifactId>

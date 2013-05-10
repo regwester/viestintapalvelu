@@ -115,10 +115,10 @@ public class AddressLabelBuilder {
 
 	public static void main(String[] args) throws Exception {
 		List<AddressLabel> labels = new ArrayList<AddressLabel>();
-		labels.add(new AddressLabel("Meiju", "Aalto-Setälä", "dfvdfv", "00740",
-				"HELSINKI", "Finland"));
-		labels.add(new AddressLabel("Meiju", "Aalto-Setälä", "ds", "00740",
-				"HELSINKI", "Sweden"));
+		labels.add(new AddressLabel("Meiju", "Aalto-Setälä", "dfvdfv", "", "00740",
+				"HELSINKI", "", "Finland"));
+		labels.add(new AddressLabel("Meiju", "Aalto-Setälä", "ds", "", "00740",
+				"HELSINKI", "", "Sweden"));
 		AddressLabelBatch batch = new AddressLabelBatch("/osoitetarrat.html",
 				labels);
 		AddressLabelBuilder service = new AddressLabelBuilder();

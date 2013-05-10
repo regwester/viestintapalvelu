@@ -17,7 +17,7 @@
 		<tr class="labels">
 			<td><input class="name" type="text" ng-model="firstName" placeholder="Etunimi"></td>
 			<td><input class="name" type="text" ng-model="lastName" placeholder="Sukunimi"></td>
-			<td><input class="street-address" type="text" ng-model="streetAddress" placeholder="Postiosoite"></td>
+			<td><input class="street-address" type="text" ng-model="addressline" placeholder="Postiosoite"></td>
 			<td><input class="postal-code" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
 			<td><input class="name" type="text" ng-model="postOffice" placeholder="Postitoimipaikka"></td>
 			<td><input class="name" type="text" ng-model="country" placeholder="Maa"></td>
@@ -26,7 +26,7 @@
 		<tr class="labels" ng-repeat="label in addressLabels">
 			<td><input class="name" type="text"  ng-model="label.firstName"/></td>
 			<td><input class="name" type="text"  ng-model="label.lastName"/></td>
-			<td><input class="street-address" type="text"  ng-model="label.streetAddress"/></td>
+			<td><input class="street-address" type="text"  ng-model="label.addressline"/></td>
 			<td><input class="postal-code" type="text"  ng-model="label.postalCode"/></td>
 			<td><input class="name" type="text" ng-model="label.postOffice"/></td>
 			<td><input class="name" type="text" ng-model="label.country"/></td>

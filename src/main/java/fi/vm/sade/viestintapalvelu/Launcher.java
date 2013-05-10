@@ -6,11 +6,12 @@ import javax.servlet.ServletException;
 
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.servlets.DefaultServlet;
+import org.apache.catalina.Wrapper;
 import org.apache.catalina.startup.Tomcat;
 
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 public class Launcher {
@@ -26,20 +27,15 @@ public class Launcher {
 		tomcat.setBaseDir(tempDir());
 		tomcat.setPort(DEFAULT_PORT);
 
-		File staticResources = new File("src/main/resources");
-
-		Context rootCtx = tomcat.addContext("/",
-				staticResources.getAbsolutePath());
+		File staticResources = new File("src/main/webapp");
+		tomcat.addWebapp("/", staticResources.getAbsolutePath());
 		Context apiCtx = tomcat.addContext("/api/v1", tempDir());
-
+		
 		Injector injector = Guice.createInjector(new ViestintapalveluModule());
-
-		Tomcat.addServlet(apiCtx, "api",
-				injector.getInstance(GuiceContainer.class));
+		GuiceContainer container = injector.getInstance(GuiceContainer.class);
+		Wrapper wrapper = Tomcat.addServlet(apiCtx, "api", container);
+		wrapper.addInitParameter(JSONConfiguration.FEATURE_POJO_MAPPING, "true");
 		apiCtx.addServletMapping("/*", "api");
-
-		Tomcat.addServlet(rootCtx, "default", DefaultServlet.class.getName());
-		rootCtx.addServletMapping("/*", "default");
 
 		tomcat.start();
 		return tomcat;
