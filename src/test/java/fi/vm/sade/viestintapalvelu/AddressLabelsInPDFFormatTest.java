@@ -46,7 +46,7 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenCreatingLabelForValidForeignAddress {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "", "65330", "Stockholm", "", "Sweden");
+				"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm", "", "Sweden");
 		private static String[] pdf;
 
 		@BeforeClass
@@ -61,25 +61,29 @@ public class AddressLabelsInPDFFormatTest {
 		}
 
 		@Test
-		public void streetAddressIsMappedToSecondRow() throws Exception {
+		public void streetAddresslineIsMappedToSecondRow() throws Exception {
 			Assert.assertEquals(label.getAddressline(), pdf[1]);
 		}
 
 		@Test
-		public void postalCodeAndPostOfficeAreMappedToThirdRow()
+		public void streetAddressline2IsMappedToThirdRow() throws Exception {
+			Assert.assertEquals(label.getAddressline2(), pdf[2]);
+		}
+
+		@Test
+		public void postalCodeAndPostOfficeAreMappedToFourthRow()
 				throws Exception {
-			Assert.assertEquals(
-					label.getPostalCode() + " " + label.getCity(), pdf[2]);
+			Assert.assertEquals(label.getPostalCode() + " " + label.getCity(), pdf[3]);
 		}
 
 		@Test
-		public void countryIsMappedToFourthRow() throws Exception {
-			Assert.assertEquals(label.getCountry(), pdf[3]);
+		public void countryIsMappedToFifthRow() throws Exception {
+			Assert.assertEquals(label.getCountry(), pdf[4]);
 		}
 
 		@Test
-		public void labelContainsFourRows() throws Exception {
-			Assert.assertEquals(4, pdf.length);
+		public void labelContainsFifeRows() throws Exception {
+			Assert.assertEquals(5, pdf.length);
 		}
 	}
 
@@ -89,7 +93,7 @@ public class AddressLabelsInPDFFormatTest {
 			Assert.assertEquals(
 					"Öistämö",
 					callGenerateLabels("", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "65330", "Stockholm",
+							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm",
 							"Sweden")[0]);
 		}
 	}
@@ -100,73 +104,93 @@ public class AddressLabelsInPDFFormatTest {
 			Assert.assertEquals(
 					"Åle",
 					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
-							"65330", "Stockholm", "Sweden")[0]);
+							"Södermalm", "65330", "Stockholm", "Sweden")[0]);
 		}
 	}
 
-	public static class WhenStreetAddressIsEmpty {
+	public static class WhenAddresslineIsEmpty {
 		@Test
-		public void labelContainsNamePostOfficeAndCountry() throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö", "", "65330",
+		public void labelContainsNameAddressline2PostOfficeAndCountry() throws Exception {
+			String[] label = callGenerateLabels("Åle", "Öistämö", "", "Södermalm", "65330",
 					"Stockholm", "Sweden");
 			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("65330 Stockholm", label[1]);
-			Assert.assertEquals("Sweden", label[2]);
-			Assert.assertEquals(3, label.length);
+			Assert.assertEquals("Södermalm", label[1]);
+			Assert.assertEquals("65330 Stockholm", label[2]);
+			Assert.assertEquals("Sweden", label[3]);
+			Assert.assertEquals(4, label.length);
+		}
+	}
+
+	public static class WhenAddressline2IsEmpty {
+		@Test
+		public void labelContainsNameAddresslinePostOfficeAndCountry() throws Exception {
+			String[] label = callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "", "65330",
+					"Stockholm", "Sweden");
+			Assert.assertEquals("Åle Öistämö", label[0]);
+			Assert.assertEquals("Brännkyrksgatan 177 B 149", label[1]);
+			Assert.assertEquals("65330 Stockholm", label[2]);
+			Assert.assertEquals("Sweden", label[3]);
+			Assert.assertEquals(4, label.length);
 		}
 	}
 
 	public static class WhenPostalCodeIsEmpty {
 		@Test
-		public void thirdRowContainsPostOffice() throws Exception {
+		public void fourthRowContainsPostOffice() throws Exception {
 			Assert.assertEquals(
 					"Stockholm",
 					callGenerateLabels("Åle", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "", "Stockholm",
-							"Sweden")[2]);
+							"Brännkyrksgatan 177 B 149", "Södermalm", "", "Stockholm",
+							"Sweden")[3]);
 		}
 	}
 
 	public static class WhenPostOfficeIsEmpty {
 		@Test
-		public void thirdRowContainsPostalCode() throws Exception {
+		public void fourthRowContainsPostalCode() throws Exception {
 			Assert.assertEquals(
 					"65330",
 					callGenerateLabels("Åle", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "65330", "", "Sweden")[2]);
+							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "", "Sweden")[3]);
 		}
 	}
 
 	public static class WhenCountryIsEmpty {
 		@Test
-		public void labelHasOnlyThreeRows() throws Exception {
-			Assert.assertEquals(
-					3,
-					callGenerateLabels("Åle", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "65330", "Stockholm",
-							"").length);
+		public void labelContainsNameAddresslineAddressline1AndCity() throws Exception {
+			String[] label = callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "65330",
+					"Stockholm", "");
+			Assert.assertEquals("Åle Öistämö", label[0]);
+			Assert.assertEquals("Brännkyrksgatan 177 B 149", label[1]);
+			Assert.assertEquals("Södermalm", label[2]);
+			Assert.assertEquals("65330 Stockholm", label[3]);
+			Assert.assertEquals(4, label.length);
 		}
 	}
 
 	public static class WhenAddressIsLocal {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			Assert.assertEquals(
-					3,
-					callGenerateLabels("Åle", "Öistämö",
-							"Mannerheimintie 177 B 149", "65330", "Helsinki",
-							"Finland").length);
+			String[] label = callGenerateLabels("Åle", "Öistämö", "Mannerheimintie 177 B 149", "Uusimaa", "65330", "Helsinki",
+					"Finland");
+			Assert.assertEquals("Åle Öistämö", label[0]);
+			Assert.assertEquals("Mannerheimintie 177 B 149", label[1]);
+			Assert.assertEquals("Uusimaa", label[2]);
+			Assert.assertEquals("65330 Helsinki", label[3]);
+			Assert.assertEquals(4, label.length);
 		}
 	}
 
 	public static class WhenAddressIsLocalAndCountryIsUppercaseFINLAND {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			Assert.assertEquals(
-					3,
-					callGenerateLabels("Åle", "Öistämö",
-							"Mannerheimintie 177 B 149", "65330", "Helsinki",
-							"FINLAND").length);
+			String[] label = callGenerateLabels("Åle", "Öistämö", "Mannerheimintie 177 B 149", "Uusimaa", "65330", "Helsinki",
+					"FINLAND");
+			Assert.assertEquals("Åle Öistämö", label[0]);
+			Assert.assertEquals("Mannerheimintie 177 B 149", label[1]);
+			Assert.assertEquals("Uusimaa", label[2]);
+			Assert.assertEquals("65330 Helsinki", label[3]);
+			Assert.assertEquals(4, label.length);
 		}
 	}
 
@@ -176,7 +200,7 @@ public class AddressLabelsInPDFFormatTest {
 				"Öistämö", "Mannerheimintie 177 B 149", "", "65330", "Helsinki",
 				"", "FINLAND");
 		private static AddressLabel foreign = new AddressLabel("Åle",
-				"Öistämö", "Brännkyrksgatan 177 B 149", "", "65330", "Stockholm",
+				"Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm",
 				"", "Sweden");
 		private static List<String[]> response;
 
@@ -198,8 +222,8 @@ public class AddressLabelsInPDFFormatTest {
 		}
 
 		@Test
-		public void foreignAddressHasFourRows() throws Exception {
-			Assert.assertEquals(4, response.get(0).length); // Order reversed
+		public void foreignAddressHasFifeRows() throws Exception {
+			Assert.assertEquals(5, response.get(0).length); // Order reversed
 															// when parsing pdf
 															// to html
 		}
@@ -285,14 +309,14 @@ public class AddressLabelsInPDFFormatTest {
 	}
 
 	private static String[] callGenerateLabels(String firstName,
-			String lastName, String streetAddress, String postalCode,
+			String lastName, String addressline, String addressline2, String postalCode,
 			String postOffice, String country)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
 			ClientProtocolException, DocumentException {
 		return callGenerateLabels(
 				Arrays.asList(new AddressLabel(firstName, lastName,
-						streetAddress, "", postalCode, postOffice, "", country)))
+						addressline, addressline2, postalCode, postOffice, "", country)))
 				.get(0);
 	}
 

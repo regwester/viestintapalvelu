@@ -10,6 +10,10 @@ body {
 	margin-bottom: 0;
 }
 
+.labels .addressline-beforelast {
+	margin-bottom: 10px;
+}
+
 input.generate {
 	margin: 8px;
 	width: 4em;
