@@ -11,6 +11,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 				"addressline2": "",
 				"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 				"city": postoffice.substring(postoffice.indexOf(' ') + 1),
+				"region": "",
 				"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
 			}
 		}))
@@ -33,6 +34,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 			"addressline": $scope.addressline,
 			"addressline2": $scope.addressline2,
 			"postalCode": $scope.postalCode,
+			"region": $scope.region,
 			"city": $scope.city,
 			"country": $scope.country
 		})
@@ -42,6 +44,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 		$scope.addressline = '';
 		$scope.addressline2 = '';
 		$scope.postalCode = '';
+		$scope.region = '';
 		$scope.city = '';
 		$scope.country = '';
 	}

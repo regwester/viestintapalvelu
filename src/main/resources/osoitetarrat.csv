@@ -1,4 +1,4 @@
-Firstname,Lastname,Addressline1,Addressline2,Postal Code,City,Country
-#foreach( $label in $labelList )$label.firstName,$label.lastName,$label.addressline,$label.addressline2,$label.postalCode,$label.city,#if ($label.upperCaseCountry != "" && $label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND")$label.country#end#if( $foreach.hasNext )
+Firstname,Lastname,Addressline1,Addressline2,Postal Code,City,Region,Country
+#foreach( $label in $labelList )$label.firstName,$label.lastName,$label.addressline,$label.addressline2,$label.postalCode,$label.city,$label.region,#if ($label.upperCaseCountry != "" && $label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND")$label.country#end#if( $foreach.hasNext )
 
 #else#end#end

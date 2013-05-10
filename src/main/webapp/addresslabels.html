@@ -11,6 +11,7 @@
 			<th>Osoiterivit</th>
 			<th>Postinumero</th>
 			<th>Postitoimipaikka</th>
+			<th>Maakunta</th>
 			<th>Maa</th>
 			<th></th>
 		</tr>
@@ -23,6 +24,7 @@
 			</td>
 			<td><input class="postal-code" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
 			<td><input class="name" type="text" ng-model="city" placeholder="Postitoimipaikka"></td>
+			<td><input class="name" type="text" ng-model="region" placeholder="Maakunta"></td>
 			<td><input class="name" type="text" ng-model="country" placeholder="Maa"></td>
 			<td class="inline-operation"><button class="btn btn-small" ng-click="addLabel()">Lisää</button></td>
 		</tr>
@@ -35,6 +37,7 @@
 			</td>
 			<td><input class="postal-code" type="text"  ng-model="label.postalCode"/></td>
 			<td><input class="name" type="text" ng-model="label.city"/></td>
+			<td><input class="name" type="text" ng-model="label.region"/></td>
 			<td><input class="name" type="text" ng-model="label.country"/></td>
 			<td class="inline-operation"><button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button></td>
 		</tr>

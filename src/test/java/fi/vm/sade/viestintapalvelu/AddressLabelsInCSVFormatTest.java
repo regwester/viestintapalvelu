@@ -34,7 +34,7 @@ public class AddressLabelsInCSVFormatTest {
 	public static class WhenCreatingLabelForValidForeignAddress {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm", "", "Sweden");
+				"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm", "SL", "Sweden");
 		private static String[] otsikko;
 		private static String[] osoite;
 
@@ -82,14 +82,20 @@ public class AddressLabelsInCSVFormatTest {
 		}
 
 		@Test
-		public void countryIsMappedToSeventhColumn() throws Exception {
-			Assert.assertEquals("Country", otsikko[6]);
-			Assert.assertEquals(label.getCountry(), osoite[6]);
+		public void regionIsMappedToSeventhColumn() throws Exception {
+			Assert.assertEquals("Region", otsikko[6]);
+			Assert.assertEquals(label.getRegion(), osoite[6]);
 		}
 
 		@Test
-		public void rowContainsSevenColumns() throws Exception {
-			Assert.assertEquals(7, osoite.length);
+		public void countryIsMappedToEightColumn() throws Exception {
+			Assert.assertEquals("Country", otsikko[7]);
+			Assert.assertEquals(label.getCountry(), osoite[7]);
+		}
+
+		@Test
+		public void rowContainsEightColumns() throws Exception {
+			Assert.assertEquals(8, osoite.length);
 		}
 	}
 
@@ -100,7 +106,7 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm",
-							"Sweden")[0]);
+							"SL", "Sweden")[0]);
 		}
 	}
 
@@ -110,7 +116,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
-							"Södermalm", "65330", "Stockholm", "Sweden")[1]);
+							"Södermalm", "65330", "Stockholm", "SL", "Sweden")[1]);
 		}
 	}
 
@@ -120,7 +126,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "", "Södermalm", "65330",
-							"Stockholm", "Sweden")[2]);
+							"Stockholm", "SL", "Sweden")[2]);
 		}
 	}
 
@@ -130,7 +136,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "", "65330",
-							"Stockholm", "Sweden")[3]);
+							"Stockholm", "SL", "Sweden")[3]);
 		}
 	}
 
@@ -141,7 +147,7 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "", "Stockholm",
-							"Sweden")[4]);
+							"SL", "Sweden")[4]);
 		}
 	}
 
@@ -151,18 +157,29 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "", "Sweden")[5]);
+							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "", "SL","Sweden")[5]);
 		}
 	}
 
-	public static class WhenCountryIsEmpty {
+	public static class WhenRegionIsEmpty {
 		@Test
 		public void seventhColumnIsEmptyString() throws Exception {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm",
-							"")[6]);
+							"", "Sweden")[6]);
+		}
+	}
+
+	public static class WhenCountryIsEmpty {
+		@Test
+		public void eightColumnIsEmptyString() throws Exception {
+			Assert.assertEquals(
+					"",
+					callGenerateLabels("Åle", "Öistämö",
+							"Brännkyrksgatan 177 B 149", "Södermalm", "65330", "Stockholm",
+							"SL", "")[7]);
 		}
 	}
 
@@ -170,9 +187,9 @@ public class AddressLabelsInCSVFormatTest {
 		@Test
 		public void seventhColumnIsEmptyString() throws Exception {
 			String label[] = callGenerateLabels("Åle", "Öistämö",
-					"Mannerheimintie 177 B 149", "Etu-Töölö", "65330", "Helsinki",
-					"Finland");
-			Assert.assertEquals("", label[6]);
+					"Mannerheimintie 177 B 149", "", "65330", "Helsinki",
+					"", "Finland");
+			Assert.assertEquals("", label[7]);
 		}
 	}
 
@@ -182,8 +199,8 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö",
-							"Mannerheimintie 177 B 149", "Etu-Töölö", "65330", "Helsinki",
-							"FINLAND")[6]);
+							"Mannerheimintie 177 B 149", "", "65330", "Helsinki",
+							"", "FINLAND")[7]);
 		}
 	}
 
@@ -234,13 +251,13 @@ public class AddressLabelsInCSVFormatTest {
 
 	private static String[] callGenerateLabels(String firstName,
 			String lastName, String addressline, String addressline2, String postalCode,
-			String postOffice, String country)
+			String postOffice, String region, String country)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
 			ClientProtocolException {
 		return callGenerateLabels(
 				Arrays.asList(new AddressLabel(firstName, lastName,
-						addressline, addressline2, postalCode, postOffice, "", country))).split("\n")[1]
+						addressline, addressline2, postalCode, postOffice, region, country))).split("\n")[1]
 				.split(",", 20);
 	}
 

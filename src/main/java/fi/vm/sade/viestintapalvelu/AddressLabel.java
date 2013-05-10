@@ -9,14 +9,14 @@ public class AddressLabel {
 
 	public AddressLabel(String firstName, String lastName,
 			String addressline, String addressline2, String postalCode, String city,
-			String county, String country) {
+			String region, String country) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.addressline = addressline;
 		this.addressline2 = addressline2;
 		this.postalCode = postalCode;
 		this.city = city;
-		this.county = county;
+		this.region = region;
 		this.country = country;
 	}
 
@@ -48,7 +48,7 @@ public class AddressLabel {
 	/**
 	 * Maakunta ulkomaalaisille osoitteille.
 	 */
-	private String county;
+	private String region;
 	/**
 	 * Maa, jos muu kuin Suomi. Esim. "Sweden".
 	 */
@@ -78,8 +78,8 @@ public class AddressLabel {
 		return city;
 	}
 
-	public String getCounty() {
-		return county;
+	public String getRegion() {
+		return region;
 	}
 
 	public String getCountry() {
@@ -96,7 +96,7 @@ public class AddressLabel {
 		return "AddressLabel [firstName=" + firstName + ", lastName="
 				+ lastName + ", addressline=" + addressline + ", addressline2=" + addressline2
 				+ ", postalCode=" + postalCode + ", city=" + city
-				+ ", county=" + county + ", country=" + country + "]";
+				+ ", region=" + region + ", country=" + country + "]";
 	}
 
 }
