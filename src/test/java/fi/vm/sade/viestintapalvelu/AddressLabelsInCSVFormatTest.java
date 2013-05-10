@@ -35,47 +35,55 @@ public class AddressLabelsInCSVFormatTest {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
 				"Brännkyrksgatan 177 B 149", "", "65330", "Stockholm", "", "Sweden");
-		private static String[] csv;
+		private static String[] otsikko;
+		private static String[] osoite;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			String responseBody = callGenerateLabels(Arrays.asList(label));
-			csv = responseBody.split(",");
+			String responseBody[] = callGenerateLabels(Arrays.asList(label)).split("\n");
+			otsikko = responseBody[0].split(",");
+			osoite = responseBody[1].split(",");
 		}
 
 		@Test
 		public void firstNameIsMappedToFirstColumn() throws Exception {
-			Assert.assertEquals(label.getFirstName(), csv[0]);
+			Assert.assertEquals("Firstname", otsikko[0]);
+			Assert.assertEquals(label.getFirstName(), osoite[0]);
 		}
 
 		@Test
 		public void lastNameIsMappedToSecondColumn() throws Exception {
-			Assert.assertEquals(label.getLastName(), csv[1]);
+			Assert.assertEquals("Lastname", otsikko[1]);
+			Assert.assertEquals(label.getLastName(), osoite[1]);
 		}
 
 		@Test
-		public void streetAddressIsMappedToThirdColumn() throws Exception {
-			Assert.assertEquals(label.getAddressline(), csv[2]);
+		public void addressline1IsMappedToThirdColumn() throws Exception {
+			Assert.assertEquals("Addressline1", otsikko[2]);
+			Assert.assertEquals(label.getAddressline(), osoite[2]);
 		}
 
 		@Test
 		public void postalCodeIsMappedToFouthColumn() throws Exception {
-			Assert.assertEquals(label.getPostalCode(), csv[3]);
+			Assert.assertEquals("Postal Code", otsikko[3]);
+			Assert.assertEquals(label.getPostalCode(), osoite[3]);
 		}
 
 		@Test
-		public void postOfficeIsMappedToFifthColumn() throws Exception {
-			Assert.assertEquals(label.getPostOffice(), csv[4]);
+		public void cityIsMappedToFifthColumn() throws Exception {
+			Assert.assertEquals("City", otsikko[4]);
+			Assert.assertEquals(label.getCity(), osoite[4]);
 		}
 
 		@Test
 		public void countryIsMappedToSixthColumn() throws Exception {
-			Assert.assertEquals(label.getCountry(), csv[5]);
+			Assert.assertEquals("Country", otsikko[5]);
+			Assert.assertEquals(label.getCountry(), osoite[5]);
 		}
 
 		@Test
 		public void rowContainsSixColumns() throws Exception {
-			Assert.assertEquals(6, csv.length);
+			Assert.assertEquals(6, osoite.length);
 		}
 	}
 
@@ -133,34 +141,33 @@ public class AddressLabelsInCSVFormatTest {
 
 	public static class WhenCountryIsEmpty {
 		@Test
-		public void rowHasOnlyFiveColumns() throws Exception {
+		public void sixthColumnIsEmptyString() throws Exception {
 			Assert.assertEquals(
-					5,
+					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "65330", "Stockholm",
-							"").length);
+							"")[5]);
 		}
 	}
 
 	public static class WhenAddressIsLocal {
 		@Test
-		public void rowHasOnlyFiveColumns() throws Exception {
-			Assert.assertEquals(
-					5,
-					callGenerateLabels("Åle", "Öistämö",
-							"Mannerheimintie 177 B 149", "65330", "Helsinki",
-							"Finland").length);
+		public void sixthColumnIsEmptyString() throws Exception {
+			String label[] = callGenerateLabels("Åle", "Öistämö",
+					"Mannerheimintie 177 B 149", "65330", "Helsinki",
+					"Finland");
+			Assert.assertEquals("", label[5]);
 		}
 	}
 
 	public static class WhenAddressIsLocalAndCountryIsUppercaseFINLAND {
 		@Test
-		public void rowHasOnlyFiveColumns() throws Exception {
+		public void sixthColumnIsEmptyString() throws Exception {
 			Assert.assertEquals(
-					5,
+					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Mannerheimintie 177 B 149", "65330", "Helsinki",
-							"FINLAND").length);
+							"FINLAND")[5]);
 		}
 	}
 
@@ -180,20 +187,20 @@ public class AddressLabelsInCSVFormatTest {
 		}
 
 		@Test
-		public void responseContainsTwoAddressLabels() throws Exception {
-			Assert.assertEquals(2, responseBody.split("\n").length);
+		public void responseContainsHeaderAndTwoAddressLabels() throws Exception {
+			Assert.assertEquals(3, responseBody.split("\n").length);
 		}
 
 		@Test
 		public void domesticAddressHasFiveColumns() throws Exception {
 			Assert.assertEquals(5,
-					responseBody.split("\n")[0].split(",").length);
+					responseBody.split("\n")[1].split(",").length);
 		}
 
 		@Test
 		public void foreignAddressHasSixColumns() throws Exception {
 			Assert.assertEquals(6,
-					responseBody.split("\n")[1].split(",").length);
+					responseBody.split("\n")[2].split(",").length);
 		}
 	}
 
@@ -209,8 +216,8 @@ public class AddressLabelsInCSVFormatTest {
 		}
 
 		@Test
-		public void returnedCSVContainsEqualAmountOfRows() throws Exception {
-			Assert.assertEquals(batch.size(), responseBody.split("\n").length);
+		public void returnedCSVContainsHeaderEqualAmountOfLabels() throws Exception {
+			Assert.assertEquals(batch.size() + 1, responseBody.split("\n").length);
 		}
 	}
 
@@ -250,8 +257,8 @@ public class AddressLabelsInCSVFormatTest {
 			ClientProtocolException {
 		return callGenerateLabels(
 				Arrays.asList(new AddressLabel(firstName, lastName,
-						streetAddress, "", postalCode, postOffice, "", country)))
-				.split(",");
+						streetAddress, "", postalCode, postOffice, "", country))).split("\n")[1]
+				.split(",", 20);
 	}
 
 	private static String callGenerateLabels(List<AddressLabel> labels)

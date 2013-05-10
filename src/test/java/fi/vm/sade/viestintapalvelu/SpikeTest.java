@@ -52,8 +52,6 @@ public class SpikeTest {
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
 				response.getFirstHeader("Content-Disposition").toString());
-		assertEquals("Content-Length: 1124",
-				response.getFirstHeader("Content-Length").toString());
 	}
 
 	@Test
@@ -78,8 +76,6 @@ public class SpikeTest {
 		assertEquals(
 				"Content-Disposition: attachment; filename=\"addresslabels.csv\"",
 				response.getFirstHeader("Content-Disposition").toString());
-		assertEquals("Content-Length: 138",
-				response.getFirstHeader("Content-Length").toString());
 	}
 
 	private String readResponseBody(HttpResponse response) throws IOException {

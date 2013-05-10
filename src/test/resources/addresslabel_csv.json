@@ -6,14 +6,14 @@
       "lastName": "Sibakov",
       "addressline": "Tohtorinkatu 18 A 4",
       "postalCode": "00100",
-      "postOffice": "Helsinki eli Stadi"
+      "city": "Helsinki eli Stadi"
     },
     {
       "firstName": "Mujahid",
       "lastName": "bin Risto",
       "addressline": "Kristiinankaupunginkatu 177 B 149",
       "postalCode": "65330",
-      "postOffice": "Kristiinankaupunki",
+      "city": "Kristiinankaupunki",
       "country": "Finland"
     }
   ]

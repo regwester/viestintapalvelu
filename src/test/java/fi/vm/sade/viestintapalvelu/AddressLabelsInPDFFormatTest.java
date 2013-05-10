@@ -69,7 +69,7 @@ public class AddressLabelsInPDFFormatTest {
 		public void postalCodeAndPostOfficeAreMappedToThirdRow()
 				throws Exception {
 			Assert.assertEquals(
-					label.getPostalCode() + " " + label.getPostOffice(), pdf[2]);
+					label.getPostalCode() + " " + label.getCity(), pdf[2]);
 		}
 
 		@Test
