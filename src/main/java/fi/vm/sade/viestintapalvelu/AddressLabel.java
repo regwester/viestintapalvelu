@@ -8,12 +8,13 @@ public class AddressLabel {
 	}
 
 	public AddressLabel(String firstName, String lastName,
-			String addressline, String addressline2, String postalCode, String city,
-			String region, String country) {
+			String addressline, String addressline2, String addressline3, 
+			String postalCode, String city, String region, String country) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.addressline = addressline;
 		this.addressline2 = addressline2;
+		this.addressline3 = addressline3;
 		this.postalCode = postalCode;
 		this.city = city;
 		this.region = region;
@@ -37,6 +38,10 @@ public class AddressLabel {
 	 * Toinen osoiterivi ulkomaalaisille osoitteille.
 	 */
 	private String addressline2;
+	/**
+	 * Kolmas osoiterivi ulkomaalaisille osoitteille.
+	 */
+	private String addressline3;
 	/**
 	 * Postinumero. Esim. "00500".
 	 */
@@ -70,6 +75,10 @@ public class AddressLabel {
 		return addressline2;
 	}
 
+	public String getAddressline3() {
+		return addressline3;
+	}
+
 	public String getPostalCode() {
 		return postalCode;
 	}
@@ -95,7 +104,7 @@ public class AddressLabel {
 	public String toString() {
 		return "AddressLabel [firstName=" + firstName + ", lastName="
 				+ lastName + ", addressline=" + addressline + ", addressline2=" + addressline2
-				+ ", postalCode=" + postalCode + ", city=" + city
+				+ ", addressline3=" + addressline3 + ", postalCode=" + postalCode + ", city=" + city
 				+ ", region=" + region + ", country=" + country + "]";
 	}
 

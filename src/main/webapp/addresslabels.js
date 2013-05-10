@@ -9,6 +9,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 				"lastName": data.any('lastname'),
 				"addressline": data.any('street') + ' ' + data.any('housenumber'),
 				"addressline2": "",
+				"addressline3": "",
 				"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 				"city": postoffice.substring(postoffice.indexOf(' ') + 1),
 				"region": "",
@@ -33,6 +34,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 			"lastName": $scope.lastName,
 			"addressline": $scope.addressline,
 			"addressline2": $scope.addressline2,
+			"addressline3": $scope.addressline3,
 			"postalCode": $scope.postalCode,
 			"region": $scope.region,
 			"city": $scope.city,
@@ -43,6 +45,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 		$scope.lastName = '';
 		$scope.addressline = '';
 		$scope.addressline2 = '';
+		$scope.addressline3 = '';
 		$scope.postalCode = '';
 		$scope.region = '';
 		$scope.city = '';
