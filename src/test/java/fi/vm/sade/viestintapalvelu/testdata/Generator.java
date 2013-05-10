@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.testdata;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -18,12 +19,12 @@ public abstract class Generator<T> {
 
 	public Generator() throws JsonParseException, JsonMappingException,
 			IOException {
-		addDataset("firstname", "/generator/firstnames.json");
-		addDataset("lastname", "/generator/lastnames.json");
-		addDataset("street", "/generator/streets.json");
+		addDataset("firstname", "src/main/webapp/generator/firstnames.json");
+		addDataset("lastname", "src/main/webapp/generator/lastnames.json");
+		addDataset("street", "src/main/webapp/generator/streets.json");
 		addDataset("houseNumber", Range.asList(1, 200));
-		addDataset("postOffice", "/generator/postoffices.json");
-		addDataset("country", "/generator/countries.json");
+		addDataset("postOffice", "src/main/webapp/generator/postoffices.json");
+		addDataset("country", "src/main/webapp/generator/countries.json");
 	}
 
 	public List<T> generateObjects(int count) {
@@ -41,7 +42,7 @@ public abstract class Generator<T> {
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
 		List<String> values = mapper.readValue(
-				getClass().getResourceAsStream(datasetURL), List.class);
+				new File(datasetURL), List.class);
 		datasets.put(datasetKey, values);
 	}
 

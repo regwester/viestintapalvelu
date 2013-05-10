@@ -9,7 +9,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 				"lastName": data.any('lastname'),
 				"addressline": data.any('street') + ' ' + data.any('housenumber'),
 				"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
-				"postOffice": postoffice.substring(postoffice.indexOf(' ') + 1),
+				"city": postoffice.substring(postoffice.indexOf(' ') + 1),
 				"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
 			}
 		}))
@@ -29,9 +29,9 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 		$scope.addressLabels.unshift({
 			"firstName": $scope.firstName,
 			"lastName": $scope.lastName,
-			"addressline": $scope.streetAddress,
+			"addressline": $scope.addressline,
 			"postalCode": $scope.postalCode,
-			"postOffice": $scope.postOffice,
+			"city": $scope.city,
 			"country": $scope.country
 		})
 		$scope.count++;
@@ -39,7 +39,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 		$scope.lastName = '';
 		$scope.addressline = '';
 		$scope.postalCode = '';
-		$scope.postOffice = '';
+		$scope.city = '';
 		$scope.country = '';
 	}
 	$scope.generatePDF = function() {
