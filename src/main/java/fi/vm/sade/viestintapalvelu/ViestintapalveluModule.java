@@ -11,6 +11,6 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		bind(AddressLabelResource.class);
 		bind(JalkiohjauskirjeResource.class);
 
-		serve("/api/*").with(GuiceContainer.class);
+		serve("/api/v1/*").with(GuiceContainer.class);
 	}
 }
