@@ -7,8 +7,9 @@ public class ViestintapalveluModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
 		bind(PDFService.class);
-		bind(PDFDownloadResource.class);
+		bind(DownloadResource.class);
 		bind(AddressLabelResource.class);
+		bind(JalkiohjauskirjeResource.class);
 
 		serve("/api/*").with(GuiceContainer.class);
 	}

@@ -8,18 +8,20 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular-resource.min.js"></script>
 		<script src="https://raw.github.com/bestiejs/lodash/v1.2.1/dist/lodash.min.js"></script>
 		<script src="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/js/bootstrap.min.js"></script>
-		<script src="main.js"></script>
-		<script src="addresslabels.js"></script>
+		<script src="js/main.js"></script>
+		<script src="js/palvelut.js"></script>
+		<script src="js/addresslabels.js"></script>
+		<script src="js/jalkiohjauskirje.js"></script>
 		<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
-		<link rel="stylesheet" href="addresslabels.css">
+		<link rel="stylesheet" href="css/viestintapalvelu.css">
 	</head>
 	<body ng-controller="TabsController">
-	    <div class="navbar" ng-init="showContent('/addresslabels.html', '#osoitetarrat')">
+	    <div class="navbar" ng-init="showContent('/html/addresslabels.html', '#osoitetarrat')">
 		    <div class="navbar-inner">
 				<a class="brand" href="#">OPH</a>
 			    <ul class="nav">
-				    <li class="active" ><a href="#osoitetarrat" ng-click="showContent('/addresslabels.html', this.href)" data-toggle="tab">Osoitetarrat</a></li>
-				    <li><a href="#jalkiohjauskirje" ng-click="showContent('/jalkiohjauskirje.html', this.href)" data-toggle="tab">Jälkiohjauskirje</a></li>
+				    <li class="active" ><a href="#osoitetarrat" ng-click="showContent('/html/addresslabels.html', $event.target.getAttribute('href'))" data-toggle="tab">Osoitetarrat</a></li>
+				    <li><a href="#jalkiohjauskirje" ng-click="showContent('/html/jalkiohjauskirje.html', $event.target.getAttribute('href'))" data-toggle="tab">Jälkiohjauskirje</a></li>
 			    </ul>
 		    </div>
 		    <div class="tab-content">

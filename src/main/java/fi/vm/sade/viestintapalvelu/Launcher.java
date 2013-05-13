@@ -7,6 +7,7 @@ import javax.servlet.ServletException;
 import org.apache.catalina.Context;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.Wrapper;
+import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 
 import com.google.inject.Guice;
@@ -28,7 +29,8 @@ public class Launcher {
 		tomcat.setPort(DEFAULT_PORT);
 
 		File staticResources = new File("src/main/webapp");
-		tomcat.addWebapp("/", staticResources.getAbsolutePath());
+		StandardContext webapp = (StandardContext)tomcat.addWebapp("/", staticResources.getAbsolutePath());
+		webapp.setCachingAllowed(false);
 		Context apiCtx = tomcat.addContext("/api/v1", tempDir());
 		
 		Injector injector = Guice.createInjector(new ViestintapalveluModule());

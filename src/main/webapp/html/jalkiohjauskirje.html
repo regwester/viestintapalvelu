@@ -1,0 +1,84 @@
+<div ng-controller='JalkiohjauskirjeController'>
+	<input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi" maxlength="3">
+	<div class="run-action btn-group">
+		<button class="btn" ng-click="generatePDF()">PDF</button>
+	</div>
+		<table class="table">
+			<tr>
+				<th>Nimi</th>
+				<th>Osoiterivit</th>
+				<th>Postinumero</th>
+				<th>Postitoimipaikka</th>
+				<th>Maakunta</th>
+				<th>Maa</th>
+				<th></th>
+			</tr>
+			<tr>
+				<td>
+					<input class="input-medium input-pile" type="text" ng-model="firstName" placeholder="Etunimi">
+					<input class="input-medium" type="text" ng-model="lastName" placeholder="Sukunimi">
+				</td>
+				<td>
+					<input class="input-medium input-pile" type="text" ng-model="addressline" placeholder="Osoiterivi">
+					<input class="input-medium input-pile" type="text" ng-model="addressline2" placeholder="Osoiterivi">
+					<input class="input-medium" type="text" ng-model="addressline3" placeholder="Osoiterivi">
+				</td>
+				<td><input class="input-medium" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
+				<td><input class="input-medium" type="text" ng-model="city" placeholder="Postitoimipaikka"></td>
+				<td><input class="input-medium" type="text" ng-model="region" placeholder="Maakunta"></td>
+				<td><input class="input-medium" type="text" ng-model="country" placeholder="Maa"></td>
+				<td class="inline-operation"><button class="btn btn-small" ng-click="addJalkiohjauskirje()">Lisää</button></td>
+			</tr>
+		</table>
+		<table class="table" ng-hide="!jalkiohjauskirjeet.length">
+			<tr>
+				<th>Osoite</th>
+				<th>Hakukohteet</th>
+				<th></th>
+			</tr>
+			<tr ng-repeat="kirje in jalkiohjauskirjeet">
+				<td class="osoite">
+					<div>{{kirje.addressLabel.firstName}} {{kirje.addressLabel.lastName}}</div>
+					<div>{{kirje.addressLabel.addressline}}</div>
+					<div>{{kirje.addressLabel.addressline2}}</div>
+					<div>{{kirje.addressLabel.addressline3}}</div>
+					<div>{{kirje.addressLabel.postalCode}} {{kirje.addressLabel.city}}</div>
+					<div>{{kirje.addressLabel.region}}</div>
+					<div>{{kirje.addressLabel.country}}</div>
+				</td>
+				<td>
+					<table class="tulokset">
+						<tr>
+							<th>Kohde <a href="#" ng-click="addHakukohde($index)"><i class="icon-plus"></i></a></th>
+							<th>Hakijat</th>
+							<th>Paikat</th>
+							<th>Varasija</th>
+							<th>Raja</th>
+							<th>Pisteesi</th>
+							<th>Koe</th>
+							<th>Syy</th>
+							<th></th>
+						</tr>
+						<tr ng-repeat="haku in kirje.tulokset">
+							<td>
+								<input class="input-xlarge input-pile" type="text" ng-model="haku.koulu" placeholder="Koulu">
+								<input class="input-xlarge" type="text" ng-model="haku.hakutoive" placeholder="Hakutoive">
+							</td>
+							<td>
+								<input class="input-small input-pile" type="text" ng-model="haku.ensisijaisetHakijat" placeholder="Ensisijaiset">
+								<input class="input-small" type="text" ng-model="haku.kaikkiHakijat" placeholder="Kaikki">
+							</td>
+							<td><input class="input-small" type="text" ng-model="haku.aloituspaikat" placeholder="Aloituspaikat"></td>
+							<td><input class="input-small" type="text" ng-model="haku.varasija" placeholder="Varasija"></td>
+							<td><input class="input-medium" type="text" ng-model="haku.alinHyvaksytty" placeholder="Alin hyväksytty"></td>
+							<td><input class="input-small" type="text" ng-model="haku.omatPisteesi" placeholder="Omat pisteesi"></td>
+							<td><input class="input-small" type="text" ng-model="haku.paasyJaSoveltuvuusKoe" placeholder="Koe pisteesi"></td>
+							<td><input class="input-medium" type="text" ng-model="haku.hylkayksenSyy" placeholder="Hylkäyksen syy"></td>
+							<td><a href="#" ng-click="removeHakukohde($parent.$index, $index)"><i class="icon-trash"></i></a></td>
+						</tr>
+					</table>
+				</td>
+				<td class="inline-operation"><button ng-click="removeJalkiohjauskirje($index)" class="inline-operation btn btn-small">Poista</button></td>
+		</tr>
+	</table>
+</div>

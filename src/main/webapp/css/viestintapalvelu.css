@@ -6,11 +6,20 @@ body {
     margin: 5px;
 }
 
-.labels input {
+.table input {
 	margin-bottom: 0;
+	display: block;
 }
 
-.labels .addressline-beforelast {
+.table th {
+	vertical-align: middle;
+}
+
+table.tulokset th {
+	border-top: none;
+}
+
+.table .input-pile {
 	margin-bottom: 10px;
 }
 
@@ -32,16 +41,15 @@ td.inline-operation {
 	width: 60px;
 	height: 30px;
 	margin-top: 0;
+	float: right;
 }
 
-.name {
-	width: 8em;
+.navbar .icon-operation button {
+	width: 30px;
+	height: 30px;
+	margin-top: 0;
 }
 
-.postal-code {
-	width: 6em;
-}
-
-.street-address {
-	width: 15em;
+.osoite div {
+	white-space: nowrap;
 }
