@@ -70,7 +70,7 @@ public class JalkiohjauskirjeBuilder {
 		IXDocReport report = readTemplate(templateName);
 		Options options = Options.getTo(ConverterTypeTo.PDF).via(
 				ConverterTypeVia.XWPF);
-		OptionsHelper.setFontEncoding(options, "windows-1250");
+		OptionsHelper.setFontEncoding(options, "UTF-8");
 		report.convert(createDataContext(addressLabel, report), options, out);
 		writeDocument("" + new Date().getTime(), out.toByteArray());
 		return new ByteArrayInputStream(out.toByteArray());

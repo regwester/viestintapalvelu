@@ -15,7 +15,8 @@
     <pdfbox.version>1.8.1</pdfbox.version>
     <junit.version>4.11</junit.version>
     <http.client.version>4.2.5</http.client.version>
-    <xdocreport.version>1.0.0</xdocreport.version>
+    <xdocreport.version>1.0.1</xdocreport.version>
+    <xdocreport100.version>1.0.0</xdocreport100.version>
     <itext.version>2.1.7</itext.version>
   </properties>
   <dependencies>
@@ -84,12 +85,12 @@
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
 		<artifactId>org.odftoolkit.odfdom.converter.pdf</artifactId>
-		<version>${xdocreport.version}</version>
+		<version>${xdocreport100.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
 		<artifactId>fr.opensagres.xdocreport.template.velocity</artifactId>
-		<version>${xdocreport.version}</version>
+		<version>${xdocreport100.version}</version>
 	</dependency>
 	<dependency>
 		<groupId>fr.opensagres.xdocreport</groupId>
