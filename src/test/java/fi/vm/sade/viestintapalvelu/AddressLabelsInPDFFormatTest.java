@@ -369,7 +369,7 @@ public class AddressLabelsInPDFFormatTest {
 		HttpResponse response = client.execute(post);
 		String documentId = readCreateDocumentResponseBody(response);
 		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/addresslabel/download/"
+				"http://localhost:8080/api/v1/download/document/"
 						+ documentId);
 		response = client.execute(get);
 		return readDownloadResponseBody(response);
