@@ -9,8 +9,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
@@ -35,7 +33,7 @@ public class JalkiohjauskirjeResource {
 	@Path("createDocument")
 	public String createDocument(JalkiohjauskirjeBatch input,
 			@Context HttpServletRequest request) throws IOException,
-			DocumentException, XDocReportException, COSVisitorException {
+			DocumentException, XDocReportException {
 		byte[] binaryDocument = jalkiohjauskirjeBuilder.printJalkiohjauskirje(input);
 		String contentType = "application/pdf;charset=utf-8";
 		String filename = "jalkiohjauskirje.pdf";

@@ -86,7 +86,10 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		}
 		
 		function jalkiohjauskirjePDF(letters) {
-			print(jalkiohjauskirje, {"templateName": "/jalkiohjauskirje.docx", "letters": letters});
+			print(jalkiohjauskirje, {
+				"kirjeTemplateName": "/jalkiohjauskirje.docx", 
+				"liiteTemplateName": "/liite.html", 
+				"letters": letters});
 		}
 		
 		function print(url, batch) {

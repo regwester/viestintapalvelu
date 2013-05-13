@@ -12,7 +12,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.velocity.app.VelocityEngine;
 
 import com.lowagie.text.Document;
 import com.lowagie.text.DocumentException;
@@ -29,14 +29,15 @@ import fr.opensagres.xdocreport.core.XDocReportException;
 import fr.opensagres.xdocreport.document.IXDocReport;
 import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
 import fr.opensagres.xdocreport.template.IContext;
+import fr.opensagres.xdocreport.template.ITemplateEngine;
 import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class JalkiohjauskirjeBuilder {
 
-	public byte[] printJalkiohjauskirje(JalkiohjauskirjeBatch batch) throws IOException, XDocReportException, COSVisitorException, DocumentException {
+	public byte[] printJalkiohjauskirje(JalkiohjauskirjeBatch batch) throws IOException, XDocReportException, DocumentException {
 		List<InputStream> source = new ArrayList<InputStream>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
-			source.add(createDocument(batch.getTemplateName(), kirje.getAddressLabel()));
+			source.add(createDocument(batch.getKirjeTemplateName(), kirje.getAddressLabel()));
 		}
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		doMerge(source, output);
@@ -78,7 +79,11 @@ public class JalkiohjauskirjeBuilder {
 	private IContext createDataContext(AddressLabel addressLabel, IXDocReport report)
 			throws XDocReportException {
 		IContext context = report.createContext();
-		context.put("osoite", addressLabel);
+//		ITemplateEngine velocityEngine = report.getTemplateEngine();
+//		velocityEngine.setProperty("input.encoding ", "UTF-8");
+//        velocityEngine.setProperty("output.encoding", "UTF-8");
+//        velocityEngine.setProperty ("response.encoding", "UTF-8");
+        context.put("osoite", addressLabel);
 		return context;
 	}
 	
