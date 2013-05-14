@@ -8,7 +8,6 @@ import org.apache.catalina.LifecycleException;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.deploy.FilterDef;
 import org.apache.catalina.deploy.FilterMap;
-import org.apache.catalina.servlets.DefaultServlet;
 import org.apache.catalina.startup.Tomcat;
 
 import com.google.inject.servlet.GuiceFilter;
@@ -30,8 +29,6 @@ public class Launcher {
 		StandardContext staticCtx = (StandardContext) tomcat.addContext("/",
 				staticResources.getAbsolutePath());
 		staticCtx.setDefaultWebXml(tomcat.noDefaultWebXmlPath());
-		staticCtx.setCachingAllowed(false);
-		Tomcat.addServlet(staticCtx, "defaultServlet", new DefaultServlet());
 
 		staticCtx
 				.addApplicationLifecycleListener(new ViestintapalveluGuiceServletContextListener());
@@ -42,11 +39,12 @@ public class Launcher {
 
 		FilterMap filterMap = new FilterMap();
 		filterMap.setFilterName("guiceFilter");
-		filterMap.addURLPattern("/*");
+		filterMap.addURLPattern("/api/v1/*");
 
 		staticCtx.addFilterDef(filterDef);
 		staticCtx.addFilterMap(filterMap);
 		Tomcat.initWebappDefaults(staticCtx);
+		staticCtx.setCachingAllowed(false);
 
 		tomcat.start();
 		return tomcat;
