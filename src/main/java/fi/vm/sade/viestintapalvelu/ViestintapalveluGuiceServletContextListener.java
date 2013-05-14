@@ -8,6 +8,7 @@ public class ViestintapalveluGuiceServletContextListener extends
 		GuiceServletContextListener {
 	@Override
 	protected Injector getInjector() {
+		System.out.println("GET INJECTOR");
 		return Guice.createInjector(new ViestintapalveluModule());
 	}
 }
