@@ -1,5 +1,9 @@
 package fi.vm.sade.viestintapalvelu;
 
+import java.util.HashMap;
+import java.util.Map;
+
+import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
@@ -11,6 +15,9 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		bind(AddressLabelResource.class);
 		bind(JalkiohjauskirjeResource.class);
 
-		serve("/api/v1/*").with(GuiceContainer.class);
+		Map<String, String> initParameters = new HashMap<String, String>();
+		initParameters.put(JSONConfiguration.FEATURE_POJO_MAPPING, "true");
+
+		serve("/*").with(GuiceContainer.class, initParameters);
 	}
 }

@@ -4,13 +4,15 @@
       version="2.5">
 
     <listener>
-        <listener-class>fi.vm.sade.viestintapalvelu.ViestintapalveluGuiceServletContextListener</listener-class>
+        <listener-class>afi.vm.sade.viestintapalvelu.ViestintapalveluGuiceServletContextListener</listener-class>
     </listener>
     
     <filter>
         <filter-name>guiceFilter</filter-name>
-        <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
+        <filter-class>com.google.inject.servlet.GuiceFilter3</filter-class>
     </filter>
+    
+    arsefiijerw
     
     <filter-mapping>
         <filter-name>guiceFilter</filter-name>
