@@ -362,7 +362,7 @@ public class AddressLabelsInPDFFormatTest {
 		client.getParams().setParameter("http.protocol.content-charset",
 				"UTF-8");
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/createDocument");
+				"http://localhost:8080/api/v1/addresslabel/pdf");
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(batch), ContentType.APPLICATION_JSON));

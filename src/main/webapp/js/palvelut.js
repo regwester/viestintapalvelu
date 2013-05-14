@@ -72,21 +72,21 @@ angular.module('app').factory('Hakutoive', ['$http', function($http){
 }])
 
 angular.module('app').factory('Printer', ['$http', '$window', function($http, $window){
-	var addressLabel = '/api/v1/addresslabel/createDocument';
-	var jalkiohjauskirje = '/api/v1/jalkiohjauskirje/createDocument';
+	var addressLabel = '/api/v1/addresslabel/';
+	var jalkiohjauskirje = '/api/v1/jalkiohjauskirje/';
 	var download = '/api/v1/download/document/';
 
 	return function() {
 		function osoitetarratPDF(labels) {
-			print(addressLabel, {"templateName": "/osoitetarrat.html", "addressLabels": labels})
+			print(addressLabel + 'pdf', {"templateName": "/osoitetarrat.html", "addressLabels": labels})
 		}
 
 		function osoitetarratCSV(labels) {
-			print(addressLabel, {"templateName": "/osoitetarrat.csv", "addressLabels": labels})
+			print(addressLabel + 'csv', {"templateName": "/osoitetarrat.csv", "addressLabels": labels})
 		}
 		
 		function jalkiohjauskirjePDF(letters) {
-			print(jalkiohjauskirje, {
+			print(jalkiohjauskirje + 'pdf', {
 				"kirjeTemplateName": "/jalkiohjauskirje.docx", 
 				"liiteTemplateName": "/liite.html", 
 				"letters": letters});

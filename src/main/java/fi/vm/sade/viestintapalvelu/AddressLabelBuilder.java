@@ -1,98 +1,35 @@
 package fi.vm.sade.viestintapalvelu;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.PrintStream;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
-import org.xhtmlrenderer.pdf.ITextRenderer;
-
+import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
 public class AddressLabelBuilder {
-	private VelocityEngine templateEngine = new VelocityEngine();
+	private DocumentBuilder documentBuilder;
 
-	public AddressLabelBuilder() {
-		templateEngine.init();
+	@Inject
+	public AddressLabelBuilder(DocumentBuilder documentBuilder) {
+		this.documentBuilder = documentBuilder;
 	}
 
-	public byte[] printAddressLabels(AddressLabelBatch input)
-			throws DocumentException, IOException {
-		// TODO vpeurala 6.5.2013: Refactor this pdf/csv branching somehow
-		if (isPDFTemplate(input.getTemplateName())) {
-			return toPDF(toXHtml(input));
-		} else {
-			return writeBOM(evaluateTemplate(input));
-		}
+	public byte[] printPDF(AddressLabelBatch input) throws DocumentException, IOException {
+		byte[] xhtml = documentBuilder.applyTextTemplate(input.getTemplateName(), 
+				createDataContext(input.getAddressLabels()));
+		return documentBuilder.xhtmlToPDF(xhtml);
 	}
 
-	private byte[] writeBOM(byte[] document) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintStream stream = new PrintStream(output);
-		stream.print('\ufeff');
-		stream.write(document);
-		return output.toByteArray();
+	public byte[] printCSV(AddressLabelBatch input) throws DocumentException, IOException {
+		return documentBuilder.applyTextTemplate(input.getTemplateName(), 
+				createDataContext(input.getAddressLabels()));
 	}
-
-	public boolean isPDFTemplate(String templateName) {
-		return templateName != null
-				&& templateName.toUpperCase().endsWith(".HTML");
-	}
-
-	private byte[] toPDF(byte[] input) throws UnsupportedEncodingException,
-			DocumentException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		newITextRenderer(input).createPDF(output);
-		return output.toByteArray();
-	}
-
-	private byte[] toXHtml(AddressLabelBatch input) throws IOException {
-		return evaluateTemplate(input);
-	}
-
-	private byte[] evaluateTemplate(AddressLabelBatch input)
-			throws FileNotFoundException, IOException {
-		byte[] template = readTemplate(input.getTemplateName());
-		return bindDataToTemplate(template, input.getAddressLabels());
-	}
-
-	private byte[] bindDataToTemplate(byte[] template, List<AddressLabel> labels)
-			throws UnsupportedEncodingException {
-		StringWriter writer = new StringWriter();
-		templateEngine.evaluate(newContext(labels), writer, "LOG",
-				new InputStreamReader(new ByteArrayInputStream(template)));
-		return writer.toString().getBytes();
-	}
-
-	private ITextRenderer newITextRenderer(byte[] input) {
-		ITextRenderer renderer = new ITextRenderer();
-		renderer.setDocumentFromString(new String(input), "/");
-		renderer.layout();
-		return renderer;
-	}
-
-	private VelocityContext newContext(List<AddressLabel> addressLabels) {
-		VelocityContext context = new VelocityContext();
-		context.put("labelList", addressLabels);
-		return context;
-	}
-
-	private byte[] readTemplate(String templateName)
-			throws FileNotFoundException, IOException {
-		InputStream in = getClass().getResourceAsStream(templateName);
-		if (in == null) {
-			throw new FileNotFoundException("Template " + templateName + " not found");
-		}
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(in);
-		return baos.toByteArray();
+	
+	private Map<String, Object> createDataContext(List<AddressLabel> addressLabels) {
+		Map<String, Object> data = new HashMap<String, Object>();
+		data.put("labelList", addressLabels);
+		return data;
 	}
 }

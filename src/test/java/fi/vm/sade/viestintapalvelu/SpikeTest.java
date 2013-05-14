@@ -37,7 +37,7 @@ public class SpikeTest {
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/createDocument");
+				"http://localhost:8080/api/v1/addresslabel/pdf");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
@@ -61,7 +61,7 @@ public class SpikeTest {
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/createDocument");
+				"http://localhost:8080/api/v1/addresslabel/csv");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);

@@ -30,14 +30,12 @@ public class JalkiohjauskirjeResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	@Path("createDocument")
-	public String createDocument(JalkiohjauskirjeBatch input,
+	@Path("pdf")
+	public String pdf(JalkiohjauskirjeBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, XDocReportException {
-		byte[] binaryDocument = jalkiohjauskirjeBuilder.printJalkiohjauskirje(input);
-		String contentType = "application/pdf;charset=utf-8";
-		String filename = "jalkiohjauskirje.pdf";
-		return downloadCache.addDocument(request.getSession().getId(), new Download(
-				contentType, filename, binaryDocument));
+		byte[] pdf = jalkiohjauskirjeBuilder.printPDF(input);
+		return downloadCache.addDocument(request.getSession().getId(), 
+				new Download("application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));
 	}
 }

@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu;
 
 import java.io.IOException;
+import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -8,6 +9,8 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+
+import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -28,29 +31,32 @@ public class AddressLabelResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	@Path("createDocument")
-	public String createDocument(AddressLabelBatch input,
+	@Path("pdf")
+	public String pdf(AddressLabelBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
-		byte[] binaryDocument = labelBuilder.printAddressLabels(input);
-		String contentType = resolveContentType(input.getTemplateName());
-		String filename = resolveFilename(input.getTemplateName());
-		return downloadCache.addDocument(request.getSession().getId(), new Download(
-				contentType, filename, binaryDocument));
+		byte[] pdf = labelBuilder.printPDF(input);
+		return downloadCache.addDocument(request.getSession().getId(), 
+				new Download("application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
 	}
-
-	private String resolveFilename(String templateName) {
-		if (labelBuilder.isPDFTemplate(templateName)) {
-			return "addresslabels.pdf";
-		}
-		// TODO vpeurala 6.5.2013: Refactor this branching
-		return "addresslabels.csv";
+	
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	@Path("csv")
+	public String csv(AddressLabelBatch input,
+			@Context HttpServletRequest request) throws IOException,
+			DocumentException {
+		byte[] csv = writeBOM(labelBuilder.printCSV(input));
+		return downloadCache.addDocument(request.getSession().getId(), 
+				new Download("text/csv;charset=utf-8", "addresslabels.csv", csv));
 	}
-
-	private String resolveContentType(String templateName) {
-		if (labelBuilder.isPDFTemplate(templateName)) {
-			return "application/pdf;charset=utf-8";
-		}
-		return "text/csv;charset=utf-8";
+	
+	private byte[] writeBOM(byte[] document) throws IOException {
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
+		PrintStream stream = new PrintStream(output);
+		stream.print('\ufeff');
+		stream.write(document);
+		return output.toByteArray();
 	}
 }
