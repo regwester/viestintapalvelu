@@ -54,16 +54,6 @@ public class Launcher {
 
 		Tomcat.initWebappDefaults(apiCtx);
 
-		// Injector injector = Guice.createInjector(new
-		// ViestintapalveluModule());
-		// GuiceContainer container =
-		// injector.getInstance(GuiceContainer.class);
-		// Wrapper wrapper = Tomcat.addServlet(apiCtx, "api", container);
-		// FIXME vpeurala
-		// wrapper.addInitParameter(JSONConfiguration.FEATURE_POJO_MAPPING,
-		// "true");
-		// apiCtx.addServletMapping("/*", "api");
-
 		tomcat.start();
 		return tomcat;
 	}
