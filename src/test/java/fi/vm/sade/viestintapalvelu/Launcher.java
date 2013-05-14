@@ -33,13 +33,8 @@ public class Launcher {
 		staticCtx.setCachingAllowed(false);
 		Tomcat.addServlet(staticCtx, "defaultServlet", new DefaultServlet());
 
-		Tomcat.initWebappDefaults(staticCtx);
-
-		StandardContext apiCtx = (StandardContext) tomcat.addContext("/api/v1",
-				tempDir());
-
-		apiCtx.addApplicationLifecycleListener(new ViestintapalveluGuiceServletContextListener());
-		apiCtx.setDefaultWebXml(tomcat.noDefaultWebXmlPath());
+		staticCtx
+				.addApplicationLifecycleListener(new ViestintapalveluGuiceServletContextListener());
 
 		FilterDef filterDef = new FilterDef();
 		filterDef.setFilterName("guiceFilter");
@@ -47,12 +42,11 @@ public class Launcher {
 
 		FilterMap filterMap = new FilterMap();
 		filterMap.setFilterName("guiceFilter");
-		filterMap.addURLPattern("*");
+		filterMap.addURLPattern("/*");
 
-		apiCtx.addFilterDef(filterDef);
-		apiCtx.addFilterMap(filterMap);
-
-		Tomcat.initWebappDefaults(apiCtx);
+		staticCtx.addFilterDef(filterDef);
+		staticCtx.addFilterMap(filterMap);
+		Tomcat.initWebappDefaults(staticCtx);
 
 		tomcat.start();
 		return tomcat;
