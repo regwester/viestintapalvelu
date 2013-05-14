@@ -21,19 +21,33 @@
   </properties>
   <dependencies>
     <dependency>
+	    <groupId>org.apache.tomcat</groupId>
+	    <artifactId>tomcat-servlet-api</artifactId>
+	    <version>${tomcat.version}</version>
+    </dependency>
+    <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-core</artifactId>
         <version>${tomcat.version}</version>
+        <scope>test</scope>
     </dependency>
     <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-logging-juli</artifactId>
         <version>${tomcat.version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.apache.tomcat.embed</groupId>
+        <artifactId>tomcat-embed-logging-log4j</artifactId>
+        <version>${tomcat.version}</version>
+        <scope>test</scope>
     </dependency>
     <dependency>
         <groupId>org.apache.tomcat.embed</groupId>
         <artifactId>tomcat-embed-jasper</artifactId>
         <version>${tomcat.version}</version>
+        <scope>test</scope>
     </dependency>
     <dependency>
         <groupId>com.sun.jersey</groupId>
@@ -161,32 +175,20 @@
 		<artifactId>guava</artifactId>
 		<version>14.0.1</version>
 	</dependency>
+	<dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-simple</artifactId>
+	    <version>1.7.5</version>
+    </dependency>
+    <dependency>
+	    <groupId>org.slf4j</groupId>
+	    <artifactId>slf4j-api</artifactId>
+	    <version>1.7.5</version>
+    </dependency>
   </dependencies>
   <build>
     <finalName>viestintapalvelu</finalName>
     <plugins>
-        <plugin>
-            <groupId>org.codehaus.mojo</groupId>
-            <artifactId>appassembler-maven-plugin</artifactId>
-            <version>1.1.1</version>
-            <configuration>
-                <assembleDirectory>target</assembleDirectory>
-                <programs>
-                    <program>
-                        <mainClass>fi.vm.sade.viestintapalvelu.Launcher</mainClass>
-                        <name>webapp</name>
-                    </program>
-                </programs>
-            </configuration>
-            <executions>
-                <execution>
-                    <phase>package</phase>
-                    <goals>
-                        <goal>assemble</goal>
-                    </goals>
-                </execution>
-            </executions>
-        </plugin>
         <plugin>
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-compiler-plugin</artifactId>
