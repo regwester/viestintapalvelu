@@ -16,13 +16,9 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		bind(DownloadResource.class);
 		bind(AddressLabelResource.class);
 		bind(JalkiohjauskirjeResource.class);
-		// bind(GuiceFilter.class).in(Scopes.SINGLETON);
 		bind(GuiceContainer.class);
 
-		// filter("*").through(GuiceFilter.class);
-
-		// FIXME vpeurala
-		serve("*").with(GuiceContainer.class);
+		serve("/*").with(GuiceContainer.class);
 
 		System.out.println("CONFIGURE SERVLETS END");
 		System.out.println("RC: " + rc);
