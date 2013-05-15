@@ -15,44 +15,43 @@
 		}
 	}
 	body {
-		font-size: 11px;
+		font-size: 12px;
 		font-family: Arial;
 		margin: 0;
-	}
-	table {
-		border-collapse: collapse;
-	}
-	td, th {
-		border: 1px solid gray;
-		padding: 5px;
-	}
-	td {
-		text-align: center;
-	}
-	th {
-		vertical-align: top;
 	}
 	p {
 		padding-bottom: 0;
 		margin-bottom: 0;
 	}
-	ol, ul {
-		padding-top: 0;
-		margin-top: 0;
-		font-weight: 100;
-		padding-left: 4mm;
-	}
-	ul.dash {
-	    list-style:none;
-	    margin-left:0;
-	    padding-left:1em;
-    }
-	ul.dash li:before {
-	    display:inline-block;
-	    content:"-";
-	    width:1em;
-	    margin-left:-1em;
-	}
+  	.header {
+  		height: 40mm;
+  		width: 100%;
+  	}
+  	.organisaatio {
+  		width: 80mm;
+  		float: left;
+  	}
+  	.asiakirjanTyyppi {
+  		float: right;
+  		text-align: center;
+  		width: 60mm;
+  	}
+  	.osoitetarra {
+  		width: 70mm;
+  		height: 37mm;
+  		float: left;
+  		margin-left: 5mm;
+  	}
+  	.lahetysMerkinta {
+		font-size: 90%;
+  	}
+  	.asiaotsikko {
+		clear: both;
+  	}
+  	.sisalto {
+		clear: both;
+		margin-left: 3mm;
+  	}
 	.footer {
 		font-size: 90%;
 		position: running(footer);
@@ -68,103 +67,64 @@
 </head>
 <body>
 
-<p>
-	<b>Liite 1</b>
-</p>
-<p>
-	<b>TILANTEESI KEVÄÄN 2012 YHTEISHAUSSA</b>
-</p>
+<div class='header'>
+	<div class="organisaatio"><div class="media" data-src="/oph.png" style="width: 80mm; height: 20mm"/></div>
+	
+	<div class="asiakirjanTyyppi">
+	TIEDOTE ammatillisen koulutuksen ja
+	Lukiokoulutuksen yhteishaun tuloksista ja ote
+	KOULUTA -rekisteristä
+	</div>
+</div>
 
-<table>
-	<tr>
-		<th>Hakutoiveesi</th>
-		<th>Hakeneet Ensisijaiset / Kaikki</th>
-		<th>Aloitus- paikat</th>
-		<th>Vara- sija</th>
-		<th>Alin hyväksytty</th>
-		<th>Omat pisteesi Kokonais- pistemäärä</th>
-		<th>Pääsy- ja soveltuvuus- koetulos</th>
-		<th>Hylkäyksen syy</th>
-	</tr>
-	#foreach( $haku in $tulokset )
-	<tr>
-		<td>$haku.koulu<br/>$haku.hakutoive</td>
-		<td>$haku.ensisijaisetHakijat / $haku.kaikkiHakijat</td>
-		<td>$haku.aloituspaikat</td>
-		<td>$haku.varasija</td>
-		<td>$haku.alinHyvaksytty</td>
-		<td>$haku.omatPisteesi</td>
-		<td>$haku.paasyJaSoveltuvuusKoe</td>
-		<td>$haku.hylkayksenSyy</td>
-	</tr>
-	#end
-</table>
+<div class='osoitetarra'>
+	<div class="lahetysMerkinta">Priority PP Finlande 128308 Itella Oyj</div>
+	<div>$osoite</div>
+</div>
 
+<div class="asiaotsikko"><b>HYVÄ HAKIJA</b></div>
+
+<div class="sisalto">
 <p>
-HYLKÄYKSEN SYY: A = hakemus saapunut myöhässä, B = ei täytä pohjakoulutusvaatimusta, C = lukion pääsy- ja soveltucuuskokeesta sekä
-lisänäytöstä saatava yhteispistemäärä ei riitä tai puuttuu, E = hylätty pääsy- ja soveltuvuuskokeessa tai lukion kokeen tulos puuttuu, H =
-nelosarvosanoja, K = ei kutsuttu pääsy- ja soveltuvuuskokeeseen, L = hylätty kielikokeessa, M = ei ole osallistunut kielikokeeseen, R = koulutus ei
-ole ollut mukana yhteishaussa, S = keskiarvo ei riitä lukioon (lukion asettama keskiarvokynnys), T = ei ole osallistunut pääsy- ja
-soveltuvuuskokeeseen, Y = lukion lisänäytöistä saatavat pisteet eivät riitä tai puuttuvat
+Osallistuit kevään 2012 ammatillisen koulutuksen ja lukiokoulutuksen yhteishakuun. Toistaiseksi sinua 
+ei kuitenkaan ole valittu niihin koulutuksiin, joihin hait. Jos olet varasijalla, voit tulla hyväksytyksi 
+vapautuvalle opiskelupaikalle. Tämän kirjeen kääntöpuolella on tietoa hakutoiveidesi tilanteesta opiskelijavalinnassa.
 </p>
 
 <p>
-	<b>Näin luet taulukkoa:</b>
+Jos opiskelijavalintaa ei mielestäsi ole tehty opiskelijaksi ottamisen perusteiden mukaisesti, ota ensin
+yhteys oppilaitokseen, johon hait tai Opetushallituksen Ohjaus- ja neuvontapalveluun. Ellei asia tällöin 
+selviä, voit valittaa opiskelijavalintaa koskevasta päätöksestä siihen aluehallintovirastoon, jonka alueella 
+oppilaitos sijaitsee. Pyydä valituskelpoinen päätös oppilaitoksen rehtorilta ja liitä se valitukseesi. Valitus
+on tehtävä viimeistään 14 päivän kuluessa siitä, kun olet saanut kirjallisen päätöksen oppilaitoksesta. 
+Aluehallintovirastojen osoitteet löydät tämän kirjeen lopusta.
+</p>
+
+<p>OTTAMISEN PERUSTEET JA PISTEITYS</p>
+
+<p>
+Opiskelijaksi ottamisessa noudatetaan opetus- ja kulttuuriministeriön antamia asetuksia opiskelijaksi ottamisen perusteista. 
+Tietoa perusteista ja pisteytettävistä tekijöistä löytyy mm. Koulutusoppaasta ja osoitteesta www.koulutusnetti.fi 
+(>> Miten opiskelijat valitaan >> Valintaperusteet).
+</p>
+
+<p>APUA KOULUTUKSEN, AMMATIN JA TYÖN VALINNASSA</p>
+
+<p>
+Joissakin oppilaitoksissa voit korottaa arvosanoja tai tutustua ja valmistautua jatko-opintoihin. Vaihtoehtoja ovat 
+mm. kymppiluokka, ammatilliseen koulutukseen ohjaava ja valmentava koulutus (ammattistartti), kotitalousopetus, ja 
+maahanmuuttajien valmentava koulutus. Kansanopistot järjestävät opintolinjoillaan yleis- ja ammatillissivistävää 
+koulutusta. Koulutusnetistä (www.koulutusnetti.fi) löydät tietoa kaikista vaihtoehdoista. 
 </p>
 
 <p>
-	<b>Hakutoiveesi</b> Hakutoiveesi hakemukseen merkitsemässäsi järjestyksessä.
+Työ- ja elinkeinotoimiston koulutus- ja ammattitietopalvelusta saat koulutusneuvontaa, ja apua ammatinvalintaan 
+tarjoavat ammatinvalinta- ja urasuunnittelupalvelut. Osoitteesta www.mol.fi löydät tietoa kaikista työ- ja 
+elinkeinotoimiston tarjoamista palveluista.
 </p>
 
-<p>
-	<b>Hakeneet</b> Kyseiseen koulutukseen ensisijaisesti hakeneiden ja kaikkien hakeneiden määrä.
-</p>
+</div>
 
-<p>
-	<b>Aloituspaikat</b> Koulutuksen aloituspaikkojen määrä.
-</p>
-
-<p>
-	<b>Varasija</b> Varasijanumerosi, mikäli olet varasijalla johonkin hakemaasi koulutukseen. 
-</p>
-
-<p>
-	<b>Alin hyväksytty pistemäärä</b> Alin pistemäärä, jolla koulutukseen on hyväksytty. Jos pistemäärän kohdalla on -, koulutukseen ei ole valittu ketään. Jos merkkinä on +, kaikki hakukelpoiset on valittu.
-</p>
-
-<p>
-	<b>Omat pisteesi</b> Kokonaispistemäärä voi vaihdella hakutoiveittain. Pisteitettävät tekijät löytyvät opiskelijaksi ottamisen perusteista.
-</p>
-
-<p>
-	<b>Pääsy- ja soveltuvuuskoetulos</b> Jos hakemaasi koulutukseen on järjestetty pääsy- ja soveltuvuuskoe, johon olet osallistunut, tässä on ilmoitettu kokeesta saamasi pistemäärä. Jos et ole suorittanut koetta tai koetuloksesi on hylätty, et voi tulla valituksi ko. koulutukseen.
-	Jos olet osallistunut kokeeseen joustavan valinnan koekutsun perusteella, koetuloksesi ei näy tässä. Joustavan valinnan perusteella saatua koetulosta käyttää vain kyseinen oppilaitos joustavan valinnan päätöstä tehdessään (ks. kohta "Joustavan valinnan perusteet" alla). 
-	Lisätietoja tuloksista voit kysyä suoraan siitä oppilaitoksesta, jonka järjestämään kokeeseen osallistuit.
-</p>
-
-<p>
-	<b>Ammatilliseen koulutukseen hakeneet asetetaan tasapistetilanteessa paremmuusjärjestykseen</b> seuraavin perustein:<br/>
-	1. Hakutoivejärjestys<br/>
-	2. Pääsy- tai soveltuvuuskokeen pistemäärä<br/>
-	3. Sukupuolen perusteella annettujen pisteiden määrä<br/>
-	4. Yleinen koulumenestys<br/>
-	5. Seuraavien oppiaineiden aritmeettinen keskiarvo: äidinkieli ja kirjallisuus, toinen kotimainen kieli, vieraat kielet, uskonto tai
-	elämänkatsomustieto, historia, yhteiskuntaoppi, matematiikka, fysiikka, kemia, biologia, maantieto ja terveystieto
-	Tämän jälkeen tasapisteisiin päätyneet hakijat otetaan sattumanvaraisessa järjestyksessä.
-</p>
-
-<p>
-	<b>Joustavan valinnan perusteet</b> Koulutuksen järjestäjä voi erityisen syyn perusteella valita hakijan opiskelijaksi valintapistemääristä riippumatta. Koulutuksen järjestäjä käsittelee joustavan valinnan hakemukset ja tekee asiasta päätöksen. Joustavassa valinnassa hakeva on aina mukana myös normaalissa pistelaskentaan perustuvassa valinnassa.
-</p>
-
-<p>
-Lisätietoja saat
-</p>
-<ul class="dash">
-	<li>oppilaitoksista ja niiden nettisivuilta</li>
-	<li>osoitteesta www.koulutusnetti.fi</li>
-	<li>Opetushallituksen ohjaus- ja neuvontapalvelut <br/> kouluta@oph.fi <br/> Puh. 029 533 1010</li>
-</ul>
 <div class="footer">
 	<div class="heading"><b>ALUEHALLINTOVIRASTOJEN OSOITTEET:</b></div>
 	<div>

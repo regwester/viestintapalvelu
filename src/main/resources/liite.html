@@ -29,6 +29,9 @@
 	td {
 		text-align: center;
 	}
+	td.hakutoive {
+		text-align: left;
+	}
 	th {
 		vertical-align: top;
 	}
@@ -78,17 +81,17 @@
 <table>
 	<tr>
 		<th>Hakutoiveesi</th>
-		<th>Hakeneet Ensisijaiset / Kaikki</th>
-		<th>Aloitus- paikat</th>
-		<th>Vara- sija</th>
-		<th>Alin hyväksytty</th>
-		<th>Omat pisteesi Kokonais- pistemäärä</th>
-		<th>Pääsy- ja soveltuvuus- koetulos</th>
-		<th>Hylkäyksen syy</th>
+		<th>Hakeneet<br/>Ensisijaiset&nbsp;/<br/>Kaikki</th>
+		<th>Aloitus-<br/>paikat</th>
+		<th>Vara-<br/>sija</th>
+		<th>Alin<br/>hyväksytty</th>
+		<th>Omat&nbsp;pisteesi<br/>Kokonais-<br/>pistemäärä</th>
+		<th>Pääsy-&nbsp;ja<br/>soveltuvuus-<br/>koetulos</th>
+		<th>Hylkäyksen<br/>syy</th>
 	</tr>
 	#foreach( $haku in $tulokset )
 	<tr>
-		<td>$haku.koulu<br/>$haku.hakutoive</td>
+		<td class="hakutoive">$haku.koulu<br/><br/>$haku.hakutoive</td>
 		<td>$haku.ensisijaisetHakijat / $haku.kaikkiHakijat</td>
 		<td>$haku.aloituspaikat</td>
 		<td>$haku.varasija</td>

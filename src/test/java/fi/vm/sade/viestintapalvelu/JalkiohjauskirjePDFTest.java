@@ -47,7 +47,7 @@ import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
-public class JalkiohjauskirjeInPDFFormatTest {
+public class JalkiohjauskirjePDFTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 

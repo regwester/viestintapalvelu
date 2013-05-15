@@ -105,7 +105,8 @@ public class DocumentBuilder {
 
 	private ITextRenderer newITextRenderer(byte[] input) {
 		ITextRenderer renderer = new ITextRenderer();
-		renderer.setDocumentFromString(new String(input), "/");
+		renderer.getSharedContext().setReplacedElementFactory(new MediaReplacedElementFactory(renderer.getSharedContext().getReplacedElementFactory()));
+		renderer.setDocumentFromString(new String(input));
 		renderer.layout();
 		return renderer;
 	}

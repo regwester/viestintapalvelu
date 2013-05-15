@@ -87,8 +87,15 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		
 		function jalkiohjauskirjePDF(letters) {
 			print(jalkiohjauskirje + 'pdf', {
-				"kirjeTemplateName": "/jalkiohjauskirje.docx", 
+				"kirjeTemplateName": "/jalkiohjauskirje.html", 
 				"liiteTemplateName": "/liite.html", 
+				"letters": letters});
+		}
+		
+		function jalkiohjauskirjePDFDOCX(letters) {
+			print(jalkiohjauskirje + 'pdf', {
+				"kirjeTemplateName": "/jalkiohjauskirje.docx", 
+				"liiteTemplateName": "/liite.docx", 
 				"letters": letters});
 		}
 		
@@ -100,6 +107,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		
 		return {
 			jalkiohjauskirjePDF: jalkiohjauskirjePDF,
+			jalkiohjauskirjePDFDOCX: jalkiohjauskirjePDFDOCX,
 			osoitetarratPDF: osoitetarratPDF,
 			osoitetarratXLS: osoitetarratXLS
 		}

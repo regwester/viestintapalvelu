@@ -33,11 +33,12 @@ public class JalkiohjauskirjeBuilder {
 		List<byte[]> source = new ArrayList<byte[]>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
 			if (isDocxTemplate(batch.getKirjeTemplateName())) {
-				source.add(createFirstPagePDF(batch.getKirjeTemplateName(), kirje.getAddressLabel()));
+				source.add(createFirstPageDocxPDF(batch.getKirjeTemplateName(), kirje.getAddressLabel()));
+				source.add(liiteBuilder.printDocxPDF(batch.getLiiteTemplateName(), kirje.getTulokset()));
 			} else {
-				source.add(createFirstPage(batch.getKirjeTemplateName(), kirje.getAddressLabel()));
+				source.add(createFirstPagePDF(batch.getKirjeTemplateName(), kirje.getAddressLabel()));
+				source.add(liiteBuilder.printPDF(batch.getLiiteTemplateName(), kirje.getTulokset()));
 			}
-			source.add(liiteBuilder.printPDF(batch.getLiiteTemplateName(), kirje.getTulokset()));
 		}
 		return documentBuilder.mergePDFs(source);
 	}
@@ -46,13 +47,13 @@ public class JalkiohjauskirjeBuilder {
 		return templateName.toLowerCase().endsWith("docx");
 	}
 
-	private byte[] createFirstPage(String templateName, AddressLabel addressLabel) throws FileNotFoundException, IOException, DocumentException {
+	private byte[] createFirstPagePDF(String templateName, AddressLabel addressLabel) throws FileNotFoundException, IOException, DocumentException {
 		Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(addressLabel));
 		byte[] xhtml = documentBuilder.applyTextTemplate(templateName, dataContext);
 		return documentBuilder.xhtmlToPDF(xhtml);
 	}
 
-	private byte[] createFirstPagePDF(String templateName, AddressLabel addressLabel)
+	private byte[] createFirstPageDocxPDF(String templateName, AddressLabel addressLabel)
 			throws FileNotFoundException, IOException, XDocReportException, DocumentException {
 		Map<String, Object> dataContext = createDataContext(new DocxAddressLabelDecorator(addressLabel));
 		byte[] docx = documentBuilder.applyDocxTemplate(templateName, dataContext);

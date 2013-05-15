@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project name="deploy-to-remote-tomcat" basedir="." default="deploy-to-remote-tomcat" >
+
+    <target name="deploy-to-remote-tomcat">
+		
+<!--
+	shell command:
+	#ant -Dtomcat-host=luokka -Dtomcat-port=8311 
+-->
+		<property name="oph.name" value="viestintapalvelu"/>
+		<property name="pom.version" value="1.0-SNAPSHOT"/>
+		
+		<property name="maven.repo" value="${user.home}/.m2/repository"/>
+		<property name="tomcat.name" value="tomcat_${oph.name}"/>
+		<property name="tomcat.home" value="/data00/oph/${oph.name}/apache-tomcat-7.0.29"/>
+		<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
+		<property name="ssh.keypass" value=""/>
+		
+        <echo>Stop Tomcat</echo>
+        <sshexec command="/etc/init.d/${tomcat.name} stop"
+                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
+                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
+
+		<echo>Wait Tomcat to stop...</echo>
+        <waitfor maxwait="3000" checkevery="500">
+            <not>
+                <socket server="${tomcat-host}" port="${tomcat-port}" />
+            </not>
+        </waitfor>
+        <echo>Tomcat stopped.</echo>
+
+        <echo>Clean Tomcat</echo>
+        <sshexec command="rm -rf ${tomcat.home}/webapps/* ${tomcat.home}/work/* ${tomcat.home}/temp/*"
+                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
+                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
+
+        <echo>Copy new viestintapalvelu.war</echo>
+		  <scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
+               keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}" >
+			 <!-- jos erillinen deploy scripti, talle ei nyt tarvetta.<fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/${pom.version}">-->
+			 <!-- tee deploy jokaisen buildin jalkeen -->
+			 <fileset dir="target">
+				<include name="*.war"/>
+			</fileset>
+		</scp>
+
+		<echo>unzip war-files to tom webapp dir...</echo>
+        <sshexec command="
+				
+				mkdir ${tomcat.home}/webapps/viestintapalvelu;
+				unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
+				
+				rm -rf ${tomcat.home}/webapps/*.war;
+				"
+                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
+                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
+
+        <echo>Start Tomcat</echo>
+        <sshexec command="/etc/init.d/${tomcat.name} start"
+                 host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
+                 passphrase="${ssh.keypass}" trust="true" failonerror="false" />
+
+		<echo>Wait for service http-url</echo>
+		<waitfor maxwait="3000" checkevery="500" >
+			<http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu"/>
+		</waitfor>
+		<fail message="App did not come up.  Check your log files, fix and try again.  Good Luck :-).">     
+			<condition>
+				<not>
+					<http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu" />
+				</not>
+			</condition>
+		</fail>
+ 
+		<echo>Successfully deployed viestintapalvelu.war to ${tomcat-host}</echo>
+    </target>
+
+</project>
