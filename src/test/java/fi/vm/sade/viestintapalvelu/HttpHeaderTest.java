@@ -78,6 +78,30 @@ public class HttpHeaderTest {
 				response.getFirstHeader("Content-Disposition").toString());
 	}
 
+	@Test
+	public void jalkiohjauskirjePDFPrinting() throws Exception {
+		String json = new Scanner(getClass().getResourceAsStream(
+				"/jalkiohjauskirje_pdf.json"), "UTF-8").useDelimiter("\u001a")
+				.next();
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(
+				"http://localhost:8080/api/v1/jalkiohjauskirje/pdf");
+		post.setHeader("Content-Type", "application/json");
+		post.setEntity(new StringEntity(json));
+		HttpResponse response = client.execute(post);
+		String documentId = readResponseBody(response);
+		HttpGet get = new HttpGet(
+				"http://localhost:8080/api/v1/download/document/"
+						+ documentId);
+		response = client.execute(get);
+		assertEquals(200, response.getStatusLine().getStatusCode());
+		assertEquals("Content-Type: application/pdf;charset=utf-8", response
+				.getFirstHeader("Content-Type").toString());
+		assertEquals(
+				"Content-Disposition: attachment; filename=\"jalkiohjauskirje.pdf\"",
+				response.getFirstHeader("Content-Disposition").toString());
+	}
+
 	private String readResponseBody(HttpResponse response) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		out.write(response.getEntity().getContent());
