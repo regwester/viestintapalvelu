@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.address;
 
 import org.codehaus.jackson.annotate.JsonIgnore;
 

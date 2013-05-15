@@ -18,7 +18,7 @@ import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
  * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
  * Sipilä"]' -i http://localhost:8080/spike
  */
-public class SpikeTest {
+public class HttpHeaderTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
@@ -33,7 +33,7 @@ public class SpikeTest {
 	@Test
 	public void addressLabelPrinting() throws Exception {
 		String json = new Scanner(getClass().getResourceAsStream(
-				"/addresslabelbatch1.json"), "UTF-8").useDelimiter("\u001a")
+				"/addresslabel_pdf.json"), "UTF-8").useDelimiter("\u001a")
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(
@@ -55,13 +55,13 @@ public class SpikeTest {
 	}
 
 	@Test
-	public void addressLabelCSVPrinting() throws Exception {
+	public void addressLabelXLSPrinting() throws Exception {
 		String json = new Scanner(getClass().getResourceAsStream(
-				"/addresslabel_csv.json"), "UTF-8").useDelimiter("\u001a")
+				"/addresslabel_xls.json"), "UTF-8").useDelimiter("\u001a")
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/csv");
+				"http://localhost:8080/api/v1/addresslabel/xls");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
@@ -71,10 +71,10 @@ public class SpikeTest {
 						+ documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
-		assertEquals("Content-Type: text/csv;charset=utf-8", response
+		assertEquals("Content-Type: application/vnd.ms-excel", response
 				.getFirstHeader("Content-Type").toString());
 		assertEquals(
-				"Content-Disposition: attachment; filename=\"addresslabels.csv\"",
+				"Content-Disposition: attachment; filename=\"addresslabels.xls\"",
 				response.getFirstHeader("Content-Disposition").toString());
 	}
 

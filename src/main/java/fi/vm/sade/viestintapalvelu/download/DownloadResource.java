@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.download;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;

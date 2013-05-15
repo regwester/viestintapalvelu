@@ -2,6 +2,7 @@ package fi.vm.sade.viestintapalvelu;
 
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -16,6 +17,10 @@ import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.dom4j.Document;
+import org.dom4j.DocumentException;
+import org.dom4j.Node;
+import org.dom4j.io.SAXReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -24,10 +29,12 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.address.AddressLabelBatch;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
-public class AddressLabelsInCSVFormatTest {
+public class AddressLabelsInXLSFormatTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
@@ -35,73 +42,73 @@ public class AddressLabelsInCSVFormatTest {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
 				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
-		private static String[] otsikko;
-		private static String[] osoite;
+		private static List<String> otsikko;
+		private static List<String> osoite;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			String responseBody[] = callGenerateLabels(Arrays.asList(label)).split("\n");
-			otsikko = responseBody[0].split(",");
-			osoite = responseBody[1].split(",");
+			List<List<String>> responseBody = callGenerateLabels(Arrays.asList(label));
+			otsikko = responseBody.get(0);
+			osoite = responseBody.get(1);
 		}
 
 		@Test
 		public void firstNameIsMappedToFirstColumn() throws Exception {
-			Assert.assertEquals("Firstname", otsikko[0]);
-			Assert.assertEquals(label.getFirstName(), osoite[0]);
+			Assert.assertEquals("Firstname", otsikko.get(0));
+			Assert.assertEquals(label.getFirstName(), osoite.get(0));
 		}
 
 		@Test
 		public void lastNameIsMappedToSecondColumn() throws Exception {
-			Assert.assertEquals("Lastname", otsikko[1]);
-			Assert.assertEquals(label.getLastName(), osoite[1]);
+			Assert.assertEquals("Lastname", otsikko.get(1));
+			Assert.assertEquals(label.getLastName(), osoite.get(1));
 		}
 
 		@Test
-		public void addressline1IsMappedToThirdColumn() throws Exception {
-			Assert.assertEquals("Addressline1", otsikko[2]);
-			Assert.assertEquals(label.getAddressline(), osoite[2]);
+		public void addresslineIsMappedToThirdColumn() throws Exception {
+			Assert.assertEquals("Addressline", otsikko.get(2));
+			Assert.assertEquals(label.getAddressline(), osoite.get(2));
 		}
 
 		@Test
 		public void addressline2IsMappedToFouthColumn() throws Exception {
-			Assert.assertEquals("Addressline2", otsikko[3]);
-			Assert.assertEquals(label.getAddressline2(), osoite[3]);
+			Assert.assertEquals("Addressline2", otsikko.get(3));
+			Assert.assertEquals(label.getAddressline2(), osoite.get(3));
 		}
 
 		@Test
 		public void addressline3IsMappedToFifthColumn() throws Exception {
-			Assert.assertEquals("Addressline3", otsikko[4]);
-			Assert.assertEquals(label.getAddressline3(), osoite[4]);
+			Assert.assertEquals("Addressline3", otsikko.get(4));
+			Assert.assertEquals(label.getAddressline3(), osoite.get(4));
 		}
 
 		@Test
 		public void postalCodeIsMappedToSixthColumn() throws Exception {
-			Assert.assertEquals("Postal Code", otsikko[5]);
-			Assert.assertEquals(label.getPostalCode(), osoite[5]);
+			Assert.assertEquals("Postal Code", otsikko.get(5));
+			Assert.assertEquals(label.getPostalCode(), osoite.get(5));
 		}
 
 		@Test
 		public void cityIsMappedToSeventhColumn() throws Exception {
-			Assert.assertEquals("City", otsikko[6]);
-			Assert.assertEquals(label.getCity(), osoite[6]);
+			Assert.assertEquals("City", otsikko.get(6));
+			Assert.assertEquals(label.getCity(), osoite.get(6));
 		}
 
 		@Test
 		public void regionIsMappedToEightColumn() throws Exception {
-			Assert.assertEquals("Region", otsikko[7]);
-			Assert.assertEquals(label.getRegion(), osoite[7]);
+			Assert.assertEquals("Region", otsikko.get(7));
+			Assert.assertEquals(label.getRegion(), osoite.get(7));
 		}
 
 		@Test
 		public void countryIsMappedToNinethColumn() throws Exception {
-			Assert.assertEquals("Country", otsikko[8]);
-			Assert.assertEquals(label.getCountry(), osoite[8]);
+			Assert.assertEquals("Country", otsikko.get(8));
+			Assert.assertEquals(label.getCountry(), osoite.get(8));
 		}
 
 		@Test
 		public void rowContainsNineColumns() throws Exception {
-			Assert.assertEquals(9, osoite.length);
+			Assert.assertEquals(9, osoite.size());
 		}
 	}
 
@@ -112,7 +119,7 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm",
-							"SL", "Sweden")[0]);
+							"SL", "Sweden").get(0));
 		}
 	}
 
@@ -122,7 +129,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
-							"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden")[1]);
+							"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden").get(1));
 		}
 	}
 
@@ -132,7 +139,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "", "Södermalm", "13", "65330",
-							"Stockholm", "SL", "Sweden")[2]);
+							"Stockholm", "SL", "Sweden").get(2));
 		}
 	}
 
@@ -142,7 +149,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "", 
-							"13", "65330", "Stockholm", "SL", "Sweden")[3]);
+							"13", "65330", "Stockholm", "SL", "Sweden").get(3));
 		}
 	}
 
@@ -152,7 +159,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", 
-							"", "65330", "Stockholm", "SL", "Sweden")[4]);
+							"", "65330", "Stockholm", "SL", "Sweden").get(4));
 		}
 	}
 
@@ -163,7 +170,7 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "", "Stockholm",
-							"SL", "Sweden")[5]);
+							"SL", "Sweden").get(5));
 		}
 	}
 
@@ -173,7 +180,7 @@ public class AddressLabelsInCSVFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "", "SL","Sweden")[6]);
+							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "", "SL","Sweden").get(6));
 		}
 	}
 
@@ -184,7 +191,7 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm",
-							"", "Sweden")[7]);
+							"", "Sweden").get(7));
 		}
 	}
 
@@ -195,17 +202,17 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm",
-							"SL", "")[8]);
+							"SL", "").get(8));
 		}
 	}
 
 	public static class WhenAddressIsLocal {
 		@Test
 		public void seventhColumnIsEmptyString() throws Exception {
-			String label[] = callGenerateLabels("Åle", "Öistämö",
+			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
 					"", "Finland");
-			Assert.assertEquals("", label[8]);
+			Assert.assertEquals("", label.get(8));
 		}
 	}
 
@@ -216,14 +223,14 @@ public class AddressLabelsInCSVFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
-							"", "FINLAND")[8]);
+							"", "FINLAND").get(8));
 		}
 	}
 
 	public static class WhenCreatingLabelsInABigBatch {
 
 		private static List<AddressLabel> batch;
-		private static String responseBody;
+		private static List<List<String>> responseBody;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
@@ -232,20 +239,34 @@ public class AddressLabelsInCSVFormatTest {
 		}
 
 		@Test
-		public void returnedCSVContainsHeaderEqualAmountOfLabels() throws Exception {
-			Assert.assertEquals(batch.size() + 1, responseBody.split("\n").length);
+		public void returnedXLSContainsHeaderAndEqualAmountOfLabels() throws Exception {
+			Assert.assertEquals(batch.size() + 1, responseBody.size());
 		}
 	}
 
-	private static String readResponseBody(HttpResponse response, boolean removeBOM)
-			throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		out.write(response.getEntity().getContent());
-		return removeBOM ? new String(removeBOM(out.toByteArray())) : out.toString();
+	@SuppressWarnings("unchecked")
+	private static List<List<String>> readResponseBody(HttpResponse response)
+			throws IOException, IllegalStateException, DocumentException {
+		SAXReader reader = new SAXReader();
+		Document doc = reader.read(response.getEntity().getContent());
+		List<List<String>> labels = new ArrayList<List<String>>();
+		List<Node> rows = doc.selectNodes("//tr");
+		for (Node row : rows) {
+			List<String> rowContent = new ArrayList<String>();
+			labels.add(rowContent);
+			List<Node> columns = row.selectNodes("./*");
+			for (Node column : columns) {
+				rowContent.add(column.getText());
+			}
+		}
+		return labels;
 	}
 
-	private static byte[] removeBOM(byte[] byteArray) {
-		return Arrays.copyOfRange(byteArray, 3, byteArray.length);
+	private static String readDocumentId(HttpResponse response)
+			throws IOException {
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		baos.write(response.getEntity().getContent());
+		return new String(baos.toByteArray());
 	}
 
 	private static List<AddressLabel> createLabels(int count)
@@ -263,41 +284,39 @@ public class AddressLabelsInCSVFormatTest {
 		}.generateObjects(count);
 	}
 
-	private final static String CSV_TEMPLATE = "/osoitetarrat.csv";
+	private final static String XLS_TEMPLATE = "/osoitetarrat.xls";
 
-	private static String[] callGenerateLabels(String firstName,
+	private static List<String> callGenerateLabels(String firstName,
 			String lastName, String addressline, String addressline2, 
 			String addressline3, String postalCode,
-			String postOffice, String region, String country)
+			String city, String region, String country)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
-			ClientProtocolException {
-		return callGenerateLabels(
-				Arrays.asList(new AddressLabel(firstName, lastName,
-						addressline, addressline2, addressline3, postalCode, postOffice, region, country))).split("\n")[1]
-				.split(",", 20);
+			ClientProtocolException, IllegalStateException, DocumentException {
+		AddressLabel label = new AddressLabel(firstName, lastName, addressline, addressline2, addressline3, postalCode, city, region, country);
+		return callGenerateLabels(Arrays.asList(label)).get(1);
 	}
 
-	private static String callGenerateLabels(List<AddressLabel> labels)
+	private static List<List<String>> callGenerateLabels(List<AddressLabel> labels)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
-			ClientProtocolException {
-		AddressLabelBatch batch = new AddressLabelBatch(CSV_TEMPLATE, labels);
+			ClientProtocolException, IllegalStateException, DocumentException {
+		AddressLabelBatch batch = new AddressLabelBatch(XLS_TEMPLATE, labels);
 		DefaultHttpClient client = new DefaultHttpClient();
 		client.getParams().setParameter("http.protocol.content-charset",
 				"UTF-8");
 		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/csv");
+				"http://localhost:8080/api/v1/addresslabel/xls");
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
-		String documentId = readResponseBody(response, false);
+		String documentId = readDocumentId(response);
 		HttpGet get = new HttpGet(
 				"http://localhost:8080/api/v1/download/document/"
 						+ documentId);
 		response = client.execute(get);
-		return readResponseBody(response, true);
+		return readResponseBody(response);
 	}
 
 }

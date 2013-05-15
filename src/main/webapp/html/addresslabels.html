@@ -2,7 +2,7 @@
 	<input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi" maxlength="3">
 	<div class="run-action btn-group">
 		<button class="btn" ng-click="generatePDF()">PDF</button>
-		<button class="btn" ng-click="generateCSV()">CSV</button>
+		<button class="btn" ng-click="generateXLS()">XLS</button>
 	</div>
 	<table class="table">
 		<tr>
@@ -20,7 +20,7 @@
 				<input class="input-medium" type="text" ng-model="lastName" placeholder="Sukunimi">
 			</td>
 			<td>
-				<input class="input-medium input-pile" type="text" ng-model="addressline" placeholder="Osoiterivi">
+				<textarea class="input-medium input-pile" ng-model="addressline" placeholder="Osoiterivi"></textarea>
 				<input class="input-medium input-pile" type="text" ng-model="addressline2" placeholder="Osoiterivi">
 				<input class="input-medium" type="text" ng-model="addressline3" placeholder="Osoiterivi">
 			</td>
@@ -36,7 +36,7 @@
 				<input class="input-medium" type="text"  ng-model="label.lastName"/>
 			</td>
 			<td>
-				<input class="input-medium input-pile" type="text"  ng-model="label.addressline"/>
+				<textarea class="input-medium input-pile" ng-model="label.addressline"></textarea>
 				<input class="input-medium input-pile" type="text"  ng-model="label.addressline2"/>
 				<input class="input-medium" type="text"  ng-model="label.addressline3"/>
 			</td>

@@ -54,7 +54,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 	$scope.generatePDF = function() {
 		Printer.osoitetarratPDF($scope.addressLabels)
 	}
-	$scope.generateCSV = function() {
-		Printer.osoitetarratCSV($scope.addressLabels)
+	$scope.generateXLS = function() {
+		Printer.osoitetarratXLS($scope.addressLabels)
 	}
 }]);

@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import java.io.IOException;
 
@@ -13,6 +13,8 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fr.opensagres.xdocreport.core.XDocReportException;
 
 @Singleton

@@ -16,32 +16,16 @@
 		margin: 0;
 	}
   	.osoitetarra {
-  		width: 70mm;
-  		height: 37mm;
+  		width: 60mm;
+  		height: 32mm;
   		float: left;
-  		padding: 0;
-  	}
-  	.osoitetarra>div:first-child {
-  		margin-top: 5mm;
-  	}
-  	.osoitetarra>div {
-  		margin-left: 10mm;
+  		padding: 5mm 0 0 10mm;
   	}
   </style>
 </head>
 <body>
 #foreach( $label in $labelList )
-	<div class='osoitetarra'>
-		<div>$label.firstName $label.lastName</div>
-		<div>$label.addressline</div>
-		<div>$label.addressline2</div>
-		<div>$label.addressline3</div>
-		<div>$label.postalCode $label.city</div>
-		<div>$label.region</div>
-		#if ($label.upperCaseCountry != "" && $$label.upperCaseCountry != "SUOMI" && $label.upperCaseCountry != "FINLAND")
-			<div>$label.country</div>
-		#end
-	</div>
+	<div class='osoitetarra'><div>$label</div></div>
 #end
 </body>
 </html>

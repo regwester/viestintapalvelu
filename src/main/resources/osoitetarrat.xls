@@ -1,0 +1,31 @@
+<table>
+	<style type="text/css">
+		br {
+			mso-data-placement:same-cell;
+		}
+	</style>
+	<tr>
+		<th>Firstname</th>
+		<th>Lastname</th>
+		<th>Addressline</th>
+		<th>Addressline2</th>
+		<th>Addressline3</th>
+		<th>Postal Code</th>
+		<th>City</th>
+		<th>Region</th>
+		<th>Country</th>
+	</tr>
+	#foreach( $label in $labelList )
+	<tr>
+		<td>$label.firstName</td>
+		<td>$label.lastName</td>
+		<td>$label.addressline</td>
+		<td>$label.addressline2</td>
+		<td>$label.addressline3</td>
+		<td>$label.postalCode</td>
+		<td>$label.city</td>
+		<td>$label.region</td>
+		<td>$label.country</td>
+	</tr>
+	#end
+</table>

@@ -8,6 +8,10 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
+import fi.vm.sade.viestintapalvelu.address.AddressLabelResource;
+import fi.vm.sade.viestintapalvelu.download.DownloadResource;
+import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource;
+
 public class ViestintapalveluModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {

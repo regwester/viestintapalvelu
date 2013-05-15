@@ -81,8 +81,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 			print(addressLabel + 'pdf', {"templateName": "/osoitetarrat.html", "addressLabels": labels})
 		}
 
-		function osoitetarratCSV(labels) {
-			print(addressLabel + 'csv', {"templateName": "/osoitetarrat.csv", "addressLabels": labels})
+		function osoitetarratXLS(labels) {
+			print(addressLabel + 'xls', {"templateName": "/osoitetarrat.xls", "addressLabels": labels})
 		}
 		
 		function jalkiohjauskirjePDF(letters) {
@@ -101,7 +101,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		return {
 			jalkiohjauskirjePDF: jalkiohjauskirjePDF,
 			osoitetarratPDF: osoitetarratPDF,
-			osoitetarratCSV: osoitetarratCSV
+			osoitetarratXLS: osoitetarratXLS
 		}
 	}()
 }])

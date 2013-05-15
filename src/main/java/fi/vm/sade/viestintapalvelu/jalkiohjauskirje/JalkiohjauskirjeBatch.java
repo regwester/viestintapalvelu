@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import java.util.List;
 

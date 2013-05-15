@@ -1,7 +1,9 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import java.util.List;
 import java.util.Map;
+
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
 
 public class Jalkiohjauskirje {

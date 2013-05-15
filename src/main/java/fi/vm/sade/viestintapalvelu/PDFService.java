@@ -52,7 +52,7 @@ public class PDFService {
 	private void writeDocument(String name, byte[] document) throws IOException {
 		FileOutputStream fos = null;
 		try {
-			File file = new File("target/documents/" + name + ".pdf");
+			File file = new File("target/documents/" + name);
 			file.getParentFile().mkdirs();
 			fos = new FileOutputStream(file, false);
 			fos.write(document, 0, document.length);

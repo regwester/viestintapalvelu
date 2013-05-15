@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.download;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;

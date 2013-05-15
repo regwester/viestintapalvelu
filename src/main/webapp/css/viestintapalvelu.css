@@ -6,6 +6,10 @@ body {
     margin: 5px;
 }
 
+textarea {
+    height: 20px;
+}
+
 .table input {
 	margin-bottom: 0;
 	display: block;

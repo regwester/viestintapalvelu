@@ -1,7 +1,6 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.address;
 
 import java.io.IOException;
-import java.io.PrintStream;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -10,11 +9,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 
-import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
-
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
+
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Singleton
 @Path("addresslabel")
@@ -43,20 +43,12 @@ public class AddressLabelResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
-	@Path("csv")
+	@Path("xls")
 	public String csv(AddressLabelBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
-		byte[] csv = writeBOM(labelBuilder.printCSV(input));
+		byte[] csv = labelBuilder.printCSV(input);
 		return downloadCache.addDocument(request.getSession().getId(), 
-				new Download("text/csv;charset=utf-8", "addresslabels.csv", csv));
-	}
-	
-	private byte[] writeBOM(byte[] document) throws IOException {
-		ByteArrayOutputStream output = new ByteArrayOutputStream();
-		PrintStream stream = new PrintStream(output);
-		stream.print('\ufeff');
-		stream.write(document);
-		return output.toByteArray();
+				new Download("application/vnd.ms-excel", "addresslabels.xls", csv));
 	}
 }
