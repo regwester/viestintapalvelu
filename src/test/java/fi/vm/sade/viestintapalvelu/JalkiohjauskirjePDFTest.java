@@ -328,7 +328,7 @@ public class JalkiohjauskirjePDFTest {
 				Arrays.asList(new Jalkiohjauskirje(label, new ArrayList<Map<String,String>>()))));
 	}
 
-	private final static String KIRJE_TEMPLATE = "/jalkiohjauskirje.docx";
+	private final static String KIRJE_TEMPLATE = "/jalkiohjauskirje.html";
 	private final static String LIITE_TEMPLATE = "/liite.html";
 
 	private static List<String[]> callGenerateJalkiohjauskirje(List<Jalkiohjauskirje> letters)
