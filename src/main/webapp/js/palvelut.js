@@ -72,9 +72,9 @@ angular.module('app').factory('Hakutoive', ['$http', function($http){
 }])
 
 angular.module('app').factory('Printer', ['$http', '$window', function($http, $window){
-	var addressLabel = '/api/v1/addresslabel/';
-	var jalkiohjauskirje = '/api/v1/jalkiohjauskirje/';
-	var download = '/api/v1/download/document/';
+	var addressLabel = 'api/v1/addresslabel/';
+	var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
+	var download = 'api/v1/download/document/';
 
 	return function() {
 		function osoitetarratPDF(labels) {
