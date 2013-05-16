@@ -16,12 +16,12 @@
 		<link rel="stylesheet" href="css/viestintapalvelu.css">
 	</head>
 	<body ng-controller="TabsController">
-	    <div class="navbar" ng-init="showContent('/html/addresslabels.html', '#osoitetarrat')">
+	    <div class="navbar" ng-init="showContent('html/addresslabels.html', '#osoitetarrat')">
 		    <div class="navbar-inner">
 				<a class="brand" href="#">OPH</a>
 			    <ul class="nav">
-				    <li class="active" ><a href="#osoitetarrat" ng-click="showContent('/html/addresslabels.html', $event.target.getAttribute('href'))" data-toggle="tab">Osoitetarrat</a></li>
-				    <li><a href="#jalkiohjauskirje" ng-click="showContent('/html/jalkiohjauskirje.html', $event.target.getAttribute('href'))" data-toggle="tab">Jälkiohjauskirje</a></li>
+				    <li class="active" ><a href="#osoitetarrat" ng-click="showContent('html/addresslabels.html', $event.target.getAttribute('href'))" data-toggle="tab">Osoitetarrat</a></li>
+				    <li><a href="#jalkiohjauskirje" ng-click="showContent('html/jalkiohjauskirje.html', $event.target.getAttribute('href'))" data-toggle="tab">Jälkiohjauskirje</a></li>
 			    </ul>
 		    </div>
 		    <div class="tab-content">
