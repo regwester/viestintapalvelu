@@ -8,11 +8,11 @@
 	#ant -Dtomcat-host=luokka -Dtomcat-port=8311 
 -->
 		<property name="oph.name" value="viestintapalvelu"/>
-		<property name="pom.version" value="1.0-SNAPSHOT"/>
+		<property name="pom.version" value="5.0-SNAPSHOT"/>
 		
 		<property name="maven.repo" value="${user.home}/.m2/repository"/>
 		<property name="tomcat.name" value="tomcat_${oph.name}"/>
-		<property name="tomcat.home" value="/data00/oph/${oph.name}/apache-tomcat-7.0.29"/>
+		<property name="tomcat.home" value="/data00/oph/${oph.name}/tomcat"/>
 		<property name="ssh.keyfile" location="${user.home}/.ssh/id_rsa"/>
 		<property name="ssh.keypass" value=""/>
 		
