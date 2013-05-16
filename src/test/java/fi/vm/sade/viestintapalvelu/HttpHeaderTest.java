@@ -5,6 +5,7 @@ import static org.junit.Assert.assertEquals;
 import java.io.IOException;
 import java.util.Scanner;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
@@ -12,7 +13,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 
 /*
  * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
@@ -103,8 +103,6 @@ public class HttpHeaderTest {
 	}
 
 	private String readResponseBody(HttpResponse response) throws IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		out.write(response.getEntity().getContent());
-		return out.toString();
+		return IOUtils.toString(response.getEntity().getContent());
 	}
 }

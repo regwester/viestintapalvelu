@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -27,7 +28,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelBatch;
@@ -264,9 +264,7 @@ public class AddressLabelsInXLSFormatTest {
 
 	private static String readDocumentId(HttpResponse response)
 			throws IOException {
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(response.getEntity().getContent());
-		return new String(baos.toByteArray());
+		return IOUtils.toString(response.getEntity().getContent());
 	}
 
 	private static List<AddressLabel> createLabels(int count)

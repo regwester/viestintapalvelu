@@ -15,7 +15,6 @@ import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fr.opensagres.xdocreport.core.XDocReportException;
 
 @Singleton
 @Path("jalkiohjauskirje")
@@ -35,7 +34,7 @@ public class JalkiohjauskirjeResource {
 	@Path("pdf")
 	public String pdf(JalkiohjauskirjeBatch input,
 			@Context HttpServletRequest request) throws IOException,
-			DocumentException, XDocReportException {
+			DocumentException {
 		byte[] pdf = jalkiohjauskirjeBuilder.printPDF(input);
 		return downloadCache.addDocument(request.getSession().getId(), 
 				new Download("application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));

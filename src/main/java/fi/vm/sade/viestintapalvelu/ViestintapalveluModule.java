@@ -15,7 +15,6 @@ import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource;
 public class ViestintapalveluModule extends JerseyServletModule {
 	@Override
 	protected void configureServlets() {
-		bind(PDFService.class);
 		bind(DownloadResource.class);
 		bind(AddressLabelResource.class);
 		bind(JalkiohjauskirjeResource.class);

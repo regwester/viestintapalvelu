@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.StringReader;
 import java.io.StringWriter;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
@@ -32,7 +34,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
-import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
@@ -291,9 +292,7 @@ public class AddressLabelsInPDFFormatTest {
 
 	private static String readCreateDocumentResponseBody(HttpResponse response)
 			throws IOException, DocumentException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		out.write(response.getEntity().getContent());
-		return out.toString("UTF-8");
+		return IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 	}
 
 	private static byte[] toXhtml(byte[] document) {

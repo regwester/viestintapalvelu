@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -9,12 +10,9 @@ import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.poi.xwpf.converter.pdf.PdfConverter;
-import org.apache.poi.xwpf.converter.pdf.PdfOptions;
-import org.apache.poi.xwpf.usermodel.XWPFDocument;
+import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.odftoolkit.odfdom.converter.core.utils.ByteArrayOutputStream;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.google.common.base.Function;
@@ -25,11 +23,6 @@ import com.lowagie.text.pdf.PdfContentByte;
 import com.lowagie.text.pdf.PdfImportedPage;
 import com.lowagie.text.pdf.PdfReader;
 import com.lowagie.text.pdf.PdfWriter;
-
-import fr.opensagres.xdocreport.core.XDocReportException;
-import fr.opensagres.xdocreport.document.IXDocReport;
-import fr.opensagres.xdocreport.document.registry.XDocReportRegistry;
-import fr.opensagres.xdocreport.template.TemplateEngineKind;
 
 public class DocumentBuilder {
 	private VelocityEngine templateEngine = new VelocityEngine();
@@ -44,27 +37,12 @@ public class DocumentBuilder {
 		return output.toByteArray();
 	}
 
-	public byte[] docxToPDF(byte[] docx) throws DocumentException, IOException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		XWPFDocument document = new XWPFDocument(new ByteArrayInputStream(docx));
-		PdfOptions pdfOptions = createPDFOptions();
-        PdfConverter.getInstance().convert(document, out, pdfOptions);
-        return out.toByteArray();
-	}
-
 	public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws FileNotFoundException, IOException {
 		byte[] template = readTemplate(templateName);
 		StringWriter writer = new StringWriter();
 		templateEngine.evaluate(new VelocityContext(data), writer, "LOG",
 				new InputStreamReader(new ByteArrayInputStream(template)));
 		return writer.toString().getBytes();
-	}
-
-	public byte[] applyDocxTemplate(String templateName, Map<String, Object> data) throws FileNotFoundException, IOException, XDocReportException {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		IXDocReport report = newIXDocReport(readTemplate(templateName));
-		report.process(data, out);
-		return out.toByteArray();
 	}
 
 	public byte[] mergePDFs(List<byte[]> input) throws DocumentException, IOException {
@@ -97,12 +75,6 @@ public class DocumentBuilder {
 		return inputStreams;
 	}
 
-	private PdfOptions createPDFOptions() {
-		PdfOptions pdfOptions = PdfOptions.create();
-		pdfOptions.fontEncoding("Cp1252");
- 		return pdfOptions;
-	}
-
 	private ITextRenderer newITextRenderer(byte[] input) {
 		ITextRenderer renderer = new ITextRenderer();
 		renderer.getSharedContext().setReplacedElementFactory(new MediaReplacedElementFactory(renderer.getSharedContext().getReplacedElementFactory()));
@@ -111,18 +83,12 @@ public class DocumentBuilder {
 		return renderer;
 	}
 
-	private IXDocReport newIXDocReport(byte[] template) throws FileNotFoundException, IOException, XDocReportException {
-		return XDocReportRegistry.getRegistry().loadReport(new ByteArrayInputStream(template), TemplateEngineKind.Velocity);
-	}
-	
 	private byte[] readTemplate(String templateName)
 			throws FileNotFoundException, IOException {
 		InputStream in = getClass().getResourceAsStream(templateName);
 		if (in == null) {
 			throw new FileNotFoundException("Template " + templateName + " not found");
 		}
-		ByteArrayOutputStream baos = new ByteArrayOutputStream();
-		baos.write(in);
-		return baos.toByteArray();
+		return IOUtils.toByteArray(in);
 	}
 }
