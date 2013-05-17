@@ -128,4 +128,7 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 	$scope.generatePDF = function() {
 		Printer.jalkiohjauskirjePDF($scope.jalkiohjauskirjeet)
 	}
+	$scope.generateZIP = function() {
+		Printer.ipostZIP($scope.jalkiohjauskirjeet)
+	}
 }]);

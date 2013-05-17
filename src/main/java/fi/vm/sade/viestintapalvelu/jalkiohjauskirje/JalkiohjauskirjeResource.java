@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -39,4 +40,17 @@ public class JalkiohjauskirjeResource {
 		return downloadCache.addDocument(request.getSession().getId(), 
 				new Download("application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));
 	}
+	
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	@Path("zip")
+	public String zip(JalkiohjauskirjeIpostBatch input,
+			@Context HttpServletRequest request) throws IOException,
+			DocumentException, NoSuchAlgorithmException {
+		byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
+		return downloadCache.addDocument(request.getSession().getId(), 
+				new Download("application/zip", "jalkiohjauskirje.zip", zip));
+	}
+
 }

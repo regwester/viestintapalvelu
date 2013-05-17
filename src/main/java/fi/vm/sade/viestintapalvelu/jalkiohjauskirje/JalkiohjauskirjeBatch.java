@@ -20,17 +20,17 @@ public class JalkiohjauskirjeBatch {
 		return kirjeTemplateName;
 	}
 
+	public String getLiiteTemplateName() {
+		return liiteTemplateName;
+	}
+	
 	public List<Jalkiohjauskirje> getLetters() {
 		return letters;
 	}
 
-	public String getLiiteTemplateName() {
-		return liiteTemplateName;
-	}
-
 	@Override
 	public String toString() {
-		return "JalkiohjauskirjeBatch [templateName=" + kirjeTemplateName
+		return "JalkiohjauskirjeBatch [kirjeTemplateName=" + kirjeTemplateName + "liiteTemplateName=" + liiteTemplateName
 				+ ", letters=" + letters + "]";
 	}
 }

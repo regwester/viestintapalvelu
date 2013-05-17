@@ -9,7 +9,7 @@ import java.util.Map;
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.DocumentBuilder;
+import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 
 public class LiiteBuilder {
 

@@ -92,6 +92,14 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 				"letters": letters});
 		}
 		
+		function ipostZIP(letters) {
+			print(jalkiohjauskirje + 'zip', {
+				"kirjeTemplateName": "/jalkiohjauskirje.html", 
+				"liiteTemplateName": "/liite.html",
+				"ipostTemplateName": "/ipost.xml",
+				"letters": letters});
+		}
+		
 		function print(url, batch) {
 	        $http.post(url, batch).success(function(data) {
 	        	$window.location.href = download + data;
@@ -99,6 +107,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		}
 		
 		return {
+			ipostZIP: ipostZIP,
 			jalkiohjauskirjePDF: jalkiohjauskirjePDF,
 			osoitetarratPDF: osoitetarratPDF,
 			osoitetarratXLS: osoitetarratXLS
