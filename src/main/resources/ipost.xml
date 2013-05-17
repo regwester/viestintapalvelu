@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<lb:LetterBundle 
+	schemaVersion="v1x0" 
+	xsi:schemaLocation="urn:itella.com:/schema/ipost/letterbundle/v1x0 LetterBundle_V1x0.xsd" 
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	xmlns:lb="urn:itella.com:/schema/ipost/letterbundle/v1x0">
+	
+	<lb:Bundle>
+		<lb:BundleCommon isTest="false">
+			<lb:Sender contact="Free text - example: Contact person name, Sender email address, Sender phone">
+				<lb:SenderAddress>
+					<lb:Eu1 
+						name="Oy Yritys AB" 
+						address="Yritystie 1" 
+						postalCode="00000" 
+						city="Yrityskaupunki" 
+						countryCode="FI"/>
+				</lb:SenderAddress>
+			</lb:Sender>
+			<lb:StdBundleProcessing 
+				customerId="Pnnnnn" 
+				password="mmmm" 
+				serviceFunction="0" 
+				electronicArchiving="T" 
+				letterClass="2" 
+				envelope="S" 
+				paper="0" 
+				fileFormat="0" 
+				departmentClassification="false" 
+				isDuplex="false"/>
+			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false"/>
+			<lb:ExternalFile senderFileId="FileID"  fileName="jalkiohjauskirje.pdf">
+				<lb:CheckSum type="MD5" value="$checksum"/>
+			</lb:ExternalFile>
+		</lb:BundleCommon>
+		#foreach( $metadata in $metadataList )
+		<lb:Letter>
+			<lb:LetterMeta>
+				<lb:Location startPage="$metadata.startPage" pages="$metadata.endPage"/>
+				<lb:Recipient>
+					<lb:Address>
+						<lb:Eu1 name="$metadata.addressLabel.firstName $metadata.addressLabel.lastName" 
+							address="$metadata.addressLabel.addressline"
+							postalCode="$metadata.addressLabel.postalCode"
+							city="$metadata.addressLabel.city" 
+							countryCode="FI"/>
+					</lb:Address>
+				</lb:Recipient>
+			</lb:LetterMeta>
+		</lb:Letter>
+		#end
+	</lb:Bundle>
+</lb:LetterBundle>
