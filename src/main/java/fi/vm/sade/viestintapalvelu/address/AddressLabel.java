@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.address;
 
-import org.codehaus.jackson.annotate.JsonIgnore;
 
 
 public class AddressLabel {
@@ -93,11 +92,6 @@ public class AddressLabel {
 
 	public String getCountry() {
 		return country;
-	}
-
-	@JsonIgnore
-	public String getUpperCaseCountry() {
-		return country == null ? "" : country.toUpperCase();
 	}
 
 	@Override

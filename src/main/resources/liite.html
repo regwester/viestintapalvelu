@@ -82,23 +82,23 @@
 	<tr>
 		<th>Hakutoiveesi</th>
 		<th>Hakeneet<br/>Ensisijaiset&nbsp;/<br/>Kaikki</th>
-		<th>Aloitus-<br/>paikat</th>
-		<th>Vara-<br/>sija</th>
-		<th>Alin<br/>hyväksytty</th>
-		<th>Omat&nbsp;pisteesi<br/>Kokonais-<br/>pistemäärä</th>
-		<th>Pääsy-&nbsp;ja<br/>soveltuvuus-<br/>koetulos</th>
-		<th>Hylkäyksen<br/>syy</th>
+		#if($columns.aloituspaikat)<th>Aloitus-<br/>paikat</th>#end
+		#if($columns.varasija)<th>Vara-<br/>sija</th>#end
+		#if($columns.alinHyvaksytty)<th>Alin<br/>hyväksytty</th>#end
+		#if($columns.omatPisteesi)<th>Omat&nbsp;pisteesi<br/>Kokonais-<br/>pistemäärä</th>#end
+		#if($columns.paasyJaSoveltuvuusKoe)<th>Pääsy-&nbsp;ja<br/>soveltuvuus-<br/>koetulos</th>#end
+		#if($columns.hylkayksenSyy)<th>Hylkäyksen<br/>syy</th>#end
 	</tr>
 	#foreach( $haku in $tulokset )
 	<tr>
 		<td class="hakutoive">$haku.koulu<br/><br/>$haku.hakutoive</td>
 		<td>$haku.ensisijaisetHakijat / $haku.kaikkiHakijat</td>
-		<td>$haku.aloituspaikat</td>
-		<td>$haku.varasija</td>
-		<td>$haku.alinHyvaksytty</td>
-		<td>$haku.omatPisteesi</td>
-		<td>$haku.paasyJaSoveltuvuusKoe</td>
-		<td>$haku.hylkayksenSyy</td>
+		#if($columns.aloituspaikat)<td>$haku.aloituspaikat</td>#end
+		#if($columns.varasija)<td>$haku.varasija</td>#end
+		#if($columns.alinHyvaksytty)<td>$haku.alinHyvaksytty</td>#end
+		#if($columns.omatPisteesi)<td>$haku.omatPisteesi</td>#end
+		#if($columns.paasyJaSoveltuvuusKoe)<td>$haku.paasyJaSoveltuvuusKoe</td>#end
+		#if($columns.hylkayksenSyy)<td>$haku.hylkayksenSyy</td>#end
 	</tr>
 	#end
 </table>

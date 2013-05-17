@@ -1,5 +1,6 @@
 angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Generator', 'Printer' ,function($scope, Generator, Printer) {	
 	$scope.jalkiohjauskirjeet = [];
+	$scope.removedColumns = {};
 	
 	function generateJalkiohjauskirje(count) {
 		$scope.jalkiohjauskirjeet = $scope.jalkiohjauskirjeet.concat(Generator.generateObjects(count, function(data) {
@@ -50,8 +51,30 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 		$scope.count--;
 	}
 	
+	$scope.isRemoved = function(index, columnName) {
+		var removed = $scope.removedColumns[index];
+		return removed && removed[columnName];
+	}
+	
+	$scope.toggleColumn = function(index, columnName) {
+		if (!$scope.isRemoved(index, columnName)) {
+			_.forEach($scope.jalkiohjauskirjeet[index].tulokset, function(haku) {
+				delete haku[columnName];
+			})
+			var removed = {}
+			removed[index] = {};
+			removed[index][columnName] = true;
+			_.merge($scope.removedColumns, removed);
+		} else {
+			_.forEach($scope.jalkiohjauskirjeet[index].tulokset, function(haku) {
+				haku[columnName] = "";
+			})
+			$scope.removedColumns[index][columnName] = false;
+		}
+	}
+	
 	$scope.addHakukohde = function(index) {
-		$scope.jalkiohjauskirjeet[index].tulokset.unshift({
+		var newHakukohde = {
 	    	"koulu": "",
 	    	"hakutoive": "",
 	    	"ensisijaisetHakijat": "",
@@ -62,7 +85,13 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 	    	"omatPisteesi": "",
 	    	"paasyJaSoveltuvuusKoe": "",
 	    	"hylkayksenSyy": ""
+		};
+		_.forOwn($scope.removedColumns[index], function(num, key) {
+			if ($scope.removedColumns[index][key]) {
+				delete newHakukohde[key];
+			}
 		});
+		$scope.jalkiohjauskirjeet[index].tulokset.unshift(newHakukohde);
 	}
 	
 	$scope.removeHakukohde = function(kirjeIndex, hakukohdeIndex) {

@@ -27,7 +27,6 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
-import org.dom4j.Node;
 import org.dom4j.io.SAXReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -38,15 +37,12 @@ import org.junit.runner.RunWith;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
-import com.google.common.base.Predicate;
-import com.google.common.collect.Iterables;
-
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 @RunWith(Enclosed.class)
-public class LiitePDFTest {
+public class HakutulostaulukkoPDFTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
@@ -55,108 +51,108 @@ public class LiitePDFTest {
 
 	public static class WhenCreatingLiiteWithOneHakutoive {
 
-		private static Map<String,String> tulos = createHaku("Diakonissaopisto", "Hoitaja", "20", "30", "10", "1", "28", "25", "1", "E");
-		private static List<String[]> pdf;
-		private static List<String> hakutoive;
+		private static Map<String,String> tulos = createHaku("20", "30");
+		private static List<List<String>> hakutoivetaulukko;
 
 		@SuppressWarnings("unchecked")
 		@BeforeClass
 		public static void setUp() throws Exception {
 			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, Arrays.asList(tulos));
-			pdf = callGenerateJalkiohjauskirje(Arrays.asList(kirje));
-			hakutoive = findHakutoiveTaulukko(pdf).get(0);
+			hakutoivetaulukko = callGenerateJalkiohjauskirje(Arrays.asList(kirje));
 		}
 
 		@Test
-		public void kouluIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("koulu"), hakutoive.get(0));
+		public void aloituspaikatHeaderIsPrinted() throws Exception {
+			Assert.assertEquals("Aloituspaikat", hakutoivetaulukko.get(0).get(0));
 		}
 
 		@Test
-		public void hakutoiveIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("hakutoive"), hakutoive.get(1));
-		}
-
-		@Test
-		public void ensisijaisetHakijatIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("ensisijaisetHakijat"), hakutoive.get(2));
-		}
-
-		@Test
-		public void kaikkiHakijatIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("kaikkiHakijat"), hakutoive.get(4));
+		public void varasijaHeaderIsPrinted() throws Exception {
+			Assert.assertEquals("Varasija", hakutoivetaulukko.get(0).get(1));
 		}
 
 		@Test
 		public void aloituspaikatIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoive.get(5));
+			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoivetaulukko.get(1).get(0));
 		}
 
 		@Test
 		public void varasijaIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("varasija"), hakutoive.get(6));
-		}
-
-		@Test
-		public void alinHyvaksyttyIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("alinHyvaksytty"), hakutoive.get(7));
-		}
-
-		@Test
-		public void omatPisteesiIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("omatPisteesi"), hakutoive.get(8));
-		}
-
-		@Test
-		public void paasyJaSoveltuvuusKoeIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("paasyJaSoveltuvuusKoe"), hakutoive.get(9));
-		}
-
-		@Test
-		public void hylkayksenSyyIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("hylkayksenSyy"), hakutoive.get(10));
+			Assert.assertEquals(tulos.get("varasija"), hakutoivetaulukko.get(1).get(1));
 		}
 	}
 
-	public static class WhenCreatingLiiteWithTwoHakutoive {
+	@SuppressWarnings("unchecked")
+	public static class WhenCreatingLiiteWithNullInput {
 
-		private static Map<String,String> toive1 = createHaku("Diakonissaopisto", "Hoitaja", "20", "30", "10", "1", "28", "25", "1", "E");
-		private static Map<String,String> toive2 = createHaku("SLK", "Merkonomi", "21", "31", "11", "2", "29", "26", "2", "W");
-		private static List<String[]> pdf;
-		private static List<List<String>> hakutoive;
+		private static List<List<String>> hakutoivetaulukko;
+		private static Map<String,String> tulos = createHaku(null, "30");
+		private static List<Jalkiohjauskirje> request = Arrays.asList(new Jalkiohjauskirje(label, Arrays.asList(tulos)));
 
-		@SuppressWarnings("unchecked")
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, Arrays.asList(toive1, toive2));
-			pdf = callGenerateJalkiohjauskirje(Arrays.asList(kirje));
-			hakutoive = findHakutoiveTaulukko(pdf);
+			hakutoivetaulukko = callGenerateJalkiohjauskirje(request);
 		}
 
 		@Test
-		public void twoHakutoivettaIsPrinted() throws Exception {
-			Assert.assertEquals(2, hakutoive.size());
+		public void aloituspaikatHeaderIsPrinted() throws Exception {
+			Assert.assertEquals("Aloituspaikat", hakutoivetaulukko.get(0).get(0));
 		}
 
 		@Test
-		public void hakutoiveetArePrintedInSameOrderAsTheyAreSent() throws Exception {
-			Assert.assertEquals(toive1.get("koulu"), hakutoive.get(0).get(0));
-			Assert.assertEquals(toive2.get("koulu"), hakutoive.get(1).get(0));
+		public void varasijaHeaderIsPrinted() throws Exception {
+			Assert.assertEquals("Varasija", hakutoivetaulukko.get(0).get(1));
+		}
+
+		@Test
+		public void aloituspaikatIsEmptyStringAndVarasijaIsPrinted() throws Exception {
+			Assert.assertEquals(1, hakutoivetaulukko.get(1).size());
+			Assert.assertEquals(tulos.get("varasija"), hakutoivetaulukko.get(1).get(0));
 		}
 	}
 
-	private static List<String[]> readDownloadResponseBody(HttpResponse response)
+	@SuppressWarnings("unchecked")
+	public static class WhenCreatingLiiteWithWithoutOnePredefinedColumn {
+
+		private static List<List<String>> hakutoivetaulukko;
+		private static Map<String,String> tulos = createHaku("20");
+		private static List<Jalkiohjauskirje> request = Arrays.asList(new Jalkiohjauskirje(label, Arrays.asList(tulos)));
+
+		@BeforeClass
+		public static void setUp() throws Exception {
+			hakutoivetaulukko = callGenerateJalkiohjauskirje(request);
+		}
+
+		@Test
+		public void sentHeadersArePrinted() throws Exception {
+			Assert.assertEquals("Aloituspaikat", hakutoivetaulukko.get(0).get(0));
+			Assert.assertEquals(1, hakutoivetaulukko.get(0).size());
+		}
+
+		@Test
+		public void sentColumnsArePrinted() throws Exception {
+			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoivetaulukko.get(1).get(0));
+			Assert.assertEquals(1, hakutoivetaulukko.get(1).size());
+		}
+	}
+
+	private static List<List<String>> readDownloadResponseBody(HttpResponse response)
 			throws IOException, DocumentException {
 		PDDocument document = PDDocument
 				.load(response.getEntity().getContent());
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
 		StringWriter writer = new StringWriter();
 		stripper.setLineSeparator("<br/>");
+		stripper.setAddMoreFormatting(true);
 		stripper.setStartPage(2);
 		stripper.setEndPage(2);
 		stripper.writeText(document, writer);
 		document.close();
 		return parseHTML(new String(toXhtml(writer.toString().getBytes())));
+	}
+
+	public static List<String> stripHeaders(List<String> hakutoivetaulukko, String firstHeader) {
+		return hakutoivetaulukko.subList(0, hakutoivetaulukko.indexOf(firstHeader));
 	}
 
 	private static String readCreateDocumentResponseBody(HttpResponse response)
@@ -180,22 +176,21 @@ public class LiitePDFTest {
 		return tidy;
 	}
 
-	private static List<String[]> parseHTML(String xml)
+	private static List<List<String>> parseHTML(String xml)
 			throws DocumentException {
 		SAXReader reader = new SAXReader();
-		List<String[]> labels = new ArrayList<String[]>();
+		List<List<String>> labels = new ArrayList<List<String>>();
 		Document document = reader.read(new StringReader(xml));
-		for (Object object : document.selectNodes("//div/p")) {
-			Node p = (Node) object;
-			labels.add(p.getText().split("\n"));
+		for (String row : document.selectSingleNode("//div/p").getText().split("\n")) {
+			labels.add(Arrays.asList(row.split(" ")));
 		}
 		return labels;
 	}
 
 	private final static String KIRJE_TEMPLATE = "/jalkiohjauskirje.html";
-	private final static String LIITE_TEMPLATE = "/liite.html";
+	private final static String LIITE_TEMPLATE = "/hakutulostaulukko_test.html";
 
-	private static List<String[]> callGenerateJalkiohjauskirje(List<Jalkiohjauskirje> letters)
+	private static List<List<String>> callGenerateJalkiohjauskirje(List<Jalkiohjauskirje> letters)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
 			ClientProtocolException, DocumentException {
@@ -217,44 +212,16 @@ public class LiitePDFTest {
 		return readDownloadResponseBody(response);
 	}
 
-	private static List<List<String>> findHakutoiveTaulukko(List<String[]> pdf) {
-		int firstFieldIndex = Iterables.indexOf(pdf, new Predicate<String[]>() {
-			public boolean apply(String[] element) {
-				return element.length == 2 && element[0].equals("Hylkäyksen") && element[1].equals("syy");
-			}
-		}) + 1;
-		int lastFieldIndex = Iterables.indexOf(pdf, new Predicate<String[]>() {
-			public boolean apply(String[] element) {
-				return element[0].startsWith("HYLKÄYKSEN SYY:");
-			}
-		}) - 1;
-		List<List<String>> toiveet = new ArrayList<List<String>>();
-		int i = firstFieldIndex;
-		while (i < lastFieldIndex) {
-			List<String> haku = new ArrayList<String>();
-			toiveet.add(haku);
-			haku.add(pdf.get(i++)[0]);
-			haku.add(pdf.get(i)[0]);
-			haku.addAll(Arrays.asList(pdf.get(i)[1].split(" ")));
-			i++;
-		}
-		return toiveet;
-	}
-	
-	private static Map<String, String> createHaku(String koulu,
-			String hakutoive, String ensisijaiset, String kaikki, String aloituspaikat,
-			String varasija, String alinHyvaksytty, String omatPisteet, String koeTulos, String syy) {
+	private static Map<String, String> createHaku(String aloituspaikat, String varasija) {
 		Map<String, String> toive = new HashMap<String, String>();
-		toive.put("koulu", koulu);
-		toive.put("hakutoive", hakutoive);
-		toive.put("ensisijaisetHakijat", ensisijaiset);
-		toive.put("kaikkiHakijat", kaikki);
 		toive.put("aloituspaikat", aloituspaikat);
 		toive.put("varasija", varasija);
-		toive.put("alinHyvaksytty", alinHyvaksytty);
-		toive.put("omatPisteesi", omatPisteet);
-		toive.put("paasyJaSoveltuvuusKoe", koeTulos);
-		toive.put("hylkayksenSyy", syy);
+		return toive;
+	}
+
+	private static Map<String, String> createHaku(String aloituspaikat) {
+		Map<String, String> toive = new HashMap<String, String>();
+		toive.put("aloituspaikat", aloituspaikat);
 		return toive;
 	}
 }

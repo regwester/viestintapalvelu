@@ -18,7 +18,7 @@ import org.junit.Test;
  * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
  * Sipilä"]' -i http://localhost:8080/spike
  */
-public class HttpHeaderTest {
+public class IntegrationTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 

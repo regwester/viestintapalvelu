@@ -151,7 +151,7 @@ public class AddressLabelsInPDFFormatTest {
 		}
 	}
 
-	public static class WhenAddressline6IsEmpty {
+	public static class WhenAddressline3IsEmpty {
 		@Test
 		public void labelContainsNameAddresslineAddressline3PostOfficeAndCountry() throws Exception {
 			String[] label = callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "", "65330",
