@@ -113,6 +113,7 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 			},
 			"tulokset": []
 		})
+		$scope.addHakukohde(0);
 		$scope.count++;
 		$scope.firstName = '';
 		$scope.lastName = '';
