@@ -40,12 +40,12 @@ public class MergedPdfDocument {
 	
 	public void write(PdfDocument pdfDocument) throws IOException {
 		int startPage = currentPageNumber + 1;
-		write(pdfDocument.getFrontPage());
-		write(pdfDocument.getAttachment());
-        documentMetadata.add(new DocumentMetadata(pdfDocument.getAddressLabel(), startPage, currentPageNumber));
+		int pages = write(pdfDocument.getFrontPage());
+		pages += write(pdfDocument.getAttachment());
+        documentMetadata.add(new DocumentMetadata(pdfDocument.getAddressLabel(), startPage, pages));
 	}
 
-	private void write(InputStream in) throws IOException {
+	private int write(InputStream in) throws IOException {
         PdfReader reader = new PdfReader(in);
         for (int i = 1; i <= reader.getNumberOfPages(); i++) {
             document.newPage();
@@ -53,6 +53,7 @@ public class MergedPdfDocument {
             PdfImportedPage page = writer.getImportedPage(reader, i);
             pdfContentByte.addTemplate(page, 0, 0);
         }
+        return reader.getNumberOfPages();
 	}
 
 	public List<DocumentMetadata> getDocumentMetadata() {

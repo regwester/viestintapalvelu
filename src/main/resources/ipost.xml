@@ -29,14 +29,14 @@
 				departmentClassification="false" 
 				isDuplex="false"/>
 			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false"/>
-			<lb:ExternalFile senderFileId="FileID"  fileName="jalkiohjauskirje.pdf">
+			<lb:ExternalFile fileName="jalkiohjauskirje.pdf">
 				<lb:CheckSum type="MD5" value="$checksum"/>
 			</lb:ExternalFile>
 		</lb:BundleCommon>
 		#foreach( $metadata in $metadataList )
 		<lb:Letter>
 			<lb:LetterMeta>
-				<lb:Location startPage="$metadata.startPage" pages="$metadata.endPage"/>
+				<lb:Location startPage="$metadata.startPage" pages="$metadata.pages"/>
 				<lb:Recipient>
 					<lb:Address>
 						<lb:Eu1 name="$metadata.addressLabel.firstName $metadata.addressLabel.lastName" 

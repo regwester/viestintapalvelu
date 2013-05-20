@@ -6,12 +6,12 @@ import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 public class DocumentMetadata {
 	private AddressLabel addressLabel;
 	private int startPage;
-	private int endPage;
+	private int pages;
 
-	public DocumentMetadata(AddressLabel addressLabel, int startPage, int endPage) {
+	public DocumentMetadata(AddressLabel addressLabel, int startPage, int pages) {
 		this.addressLabel = addressLabel;
 		this.startPage = startPage;
-		this.endPage = endPage;
+		this.pages = pages;
 	}
 
 	public AddressLabel getAddressLabel() {
@@ -22,7 +22,7 @@ public class DocumentMetadata {
 		return startPage;
 	}
 
-	public int getEndPage() {
-		return endPage;
+	public int getPages() {
+		return pages;
 	}
 }
