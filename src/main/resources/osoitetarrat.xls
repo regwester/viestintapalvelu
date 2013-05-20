@@ -1,3 +1,8 @@
+<html>
+<header>
+	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
+</header>
+<body>
 <table>
 	<style type="text/css">
 		br {
@@ -29,3 +34,5 @@
 	</tr>
 	#end
 </table>
+</body>
+</html>
