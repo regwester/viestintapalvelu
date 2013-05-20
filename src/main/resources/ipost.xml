@@ -7,19 +7,10 @@
 	
 	<lb:Bundle>
 		<lb:BundleCommon isTest="false">
-			<lb:Sender contact="Free text - example: Contact person name, Sender email address, Sender phone">
-				<lb:SenderAddress>
-					<lb:Eu1 
-						name="Oy Yritys AB" 
-						address="Yritystie 1" 
-						postalCode="00000" 
-						city="Yrityskaupunki" 
-						countryCode="FI"/>
-				</lb:SenderAddress>
-			</lb:Sender>
+			<lb:Sender contact="Free text - example: Contact person name, Sender email address, Sender phone"/>
 			<lb:StdBundleProcessing 
-				customerId="Pnnnnn" 
-				password="mmmm" 
+				customerId="Pxxxxx" 
+				password="nnnn" 
 				serviceFunction="0" 
 				electronicArchiving="T" 
 				letterClass="2" 
