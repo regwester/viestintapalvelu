@@ -7,8 +7,8 @@
   <title>Liite 1</title>
   <style type="text/css">
 	@page {
-		size: A4;
-		margin-bottom: 30mm;
+		size: 210mm 297mm;
+		margin: 16mm 10mm 30mm 12mm;
 		@bottom-center {
 			vertical-align: top;
 			content: element(footer); 
@@ -19,38 +19,42 @@
 		font-family: Arial;
 		margin: 0;
 	}
-	p {
-		padding-bottom: 0;
-		margin-bottom: 0;
-	}
   	.header {
-  		height: 40mm;
-  		width: 100%;
+  		margin: 4mm 0 0 11mm;
+  		height: 80mm;
+  		width: 100mm;
+  		float: left;
   	}
   	.organisaatio {
   		width: 80mm;
-  		float: left;
+  		height: 26mm;
+  		margin: 0;
+  		padding: 0;
+  	}
+  	.osoitetarra {
+  		width: 70mm;
+  		height: 37mm;
+  		margin: 0;
+  		padding: 0;
+  	}
+  	.lahetysMerkinta {
+		font-size: 90%;
   	}
   	.asiakirjanTyyppi {
   		float: right;
   		text-align: center;
   		width: 60mm;
+  		margin: 4mm 0 0 0;
   	}
-  	.osoitetarra {
-  		width: 70mm;
-  		height: 37mm;
-  		float: left;
-  		margin-left: 5mm;
-  	}
-  	.lahetysMerkinta {
-		font-size: 90%;
-  	}
+	p {
+		padding-bottom: 0;
+		margin-bottom: 0;
+	}
   	.asiaotsikko {
 		clear: both;
   	}
   	.sisalto {
 		clear: both;
-		margin-left: 3mm;
   	}
 	.footer {
 		font-size: 90%;
@@ -68,18 +72,18 @@
 <body>
 
 <div class='header'>
-	<div class="organisaatio"><div class="media" data-src="/oph.png" style="width: 80mm; height: 20mm"/></div>
+	<div class="organisaatio"><div class="media" data-src="/logo-oph_fin_vaaka.png" style="width: 200px; height: 65px"/></div>
 	
-	<div class="asiakirjanTyyppi">
-	TIEDOTE ammatillisen koulutuksen ja
-	Lukiokoulutuksen yhteishaun tuloksista ja ote
-	KOULUTA -rekisteristä
+	<div class='osoitetarra'>
+		<div class="lahetysMerkinta">Priority PP Finlande 128308 Itella Oyj</div>
+		<div>$osoite</div>
 	</div>
 </div>
 
-<div class='osoitetarra'>
-	<div class="lahetysMerkinta">Priority PP Finlande 128308 Itella Oyj</div>
-	<div>$osoite</div>
+<div class="asiakirjanTyyppi">
+	TIEDOTE ammatillisen koulutuksen ja
+	Lukiokoulutuksen yhteishaun tuloksista ja ote
+	KOULUTA -rekisteristä
 </div>
 
 <div class="asiaotsikko"><b>HYVÄ HAKIJA</b></div>
