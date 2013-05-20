@@ -1,38 +1,82 @@
-<html>
-<header>
-	<meta http-equiv="content-type" content="application/xhtml+xml; charset=UTF-8" />
-</header>
+<html xmlns:o="urn:schemas-microsoft-com:office:office"
+	xmlns:x="urn:schemas-microsoft-com:office:excel"
+	xmlns="http://www.w3.org/TR/REC-html40">
+ 
+<head>
+	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+	<meta name="ProgId" content="Excel.Sheet"></meta>
+	<meta name="Generator" content="Microsoft Excel 11">
+		<!--[if gte mso 9]><xml>
+		 <x:excelworkbook>
+		  <x:excelworksheets>
+		   <x:excelworksheet>
+		    <x:name>** WORKSHEET NAME **</x:name>
+		    <x:worksheetoptions>
+		     <x:selected />
+		     <x:freezepanes />
+		     <x:frozennosplit />
+		     <x:splithorizontal>** FROZEN ROWS + 1 **</x:splithorizontal>
+		     <x:toprowbottompane>** FROZEN ROWS + 1 **</x:toprowbottompane>
+		     <x:splitvertical>** FROZEN COLUMNS + 1 **</x:splitvertical>
+		     <x:leftcolumnrightpane>** FROZEN COLUMNS + 1**</x:leftcolumnrightpane>
+		     <x:activepane>0</x:activepane>
+		     <x:panes>
+		      <x:pane>
+		       <x:number>3</x:number>
+		      </x:pane>
+		      <x:pane>
+		       <x:number>1</x:number>
+		      </x:pane>
+		      <x:pane>
+		       <x:number>2</x:number>
+		      </x:pane>
+		      <x:pane>
+		       <x:number>0</x:number>
+		      </x:pane>
+		     </x:panes>
+		     <x:protectcontents>False</x:protectcontents>
+		     <x:protectobjects>False</x:protectobjects>
+		     <x:protectscenarios>False</x:protectscenarios>
+		    </x:worksheetoptions>
+		   </x:excelworksheet>
+		  </x:excelworksheets>
+		  <x:protectstructure>False</x:protectstructure>
+		  <x:protectwindows>False</x:protectwindows>
+		 </x:excelworkbook>
+		</xml><![endif]-->
+	</meta>
+</head>
 <body>
-<table>
-	<style type="text/css">
-		br {
-			mso-data-placement:same-cell;
-		}
-	</style>
-	<tr>
-		<th>Firstname</th>
-		<th>Lastname</th>
-		<th>Addressline</th>
-		<th>Addressline2</th>
-		<th>Addressline3</th>
-		<th>Postal Code</th>
-		<th>City</th>
-		<th>Region</th>
-		<th>Country</th>
-	</tr>
-	#foreach( $label in $labelList )
-	<tr>
-		<td>$label.firstName</td>
-		<td>$label.lastName</td>
-		<td>$label.addressline</td>
-		<td>$label.addressline2</td>
-		<td>$label.addressline3</td>
-		<td>$label.postalCode</td>
-		<td>$label.city</td>
-		<td>$label.region</td>
-		<td>$label.country</td>
-	</tr>
-	#end
-</table>
+	<table>
+		<style type="text/css">
+			br {
+				mso-data-placement:same-cell;
+			}
+		</style>
+		<tr>
+			<th>Firstname</th>
+			<th>Lastname</th>
+			<th>Addressline</th>
+			<th>Addressline2</th>
+			<th>Addressline3</th>
+			<th>Postal Code</th>
+			<th>City</th>
+			<th>Region</th>
+			<th>Country</th>
+		</tr>
+		#foreach( $label in $labelList )
+		<tr>
+			<td>$label.firstName</td>
+			<td>$label.lastName</td>
+			<td>$label.addressline</td>
+			<td>$label.addressline2</td>
+			<td>$label.addressline3</td>
+			<td>$label.postalCode</td>
+			<td>$label.city</td>
+			<td>$label.region</td>
+			<td>$label.country</td>
+		</tr>
+		#end
+	</table>
 </body>
 </html>

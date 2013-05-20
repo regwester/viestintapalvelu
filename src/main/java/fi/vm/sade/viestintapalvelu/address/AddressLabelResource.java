@@ -49,6 +49,6 @@ public class AddressLabelResource {
 			DocumentException {
 		byte[] csv = labelBuilder.printCSV(input);
 		return downloadCache.addDocument(request.getSession().getId(), 
-				new Download("application/vnd.ms-excel", "addresslabels.html", csv));
+				new Download("application/vnd.ms-excel", "addresslabels.xls", csv));
 	}
 }

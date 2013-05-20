@@ -4,7 +4,9 @@ import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -20,7 +22,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
+import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
@@ -250,16 +254,24 @@ public class AddressLabelsInXLSFormatTest {
 		SAXReader reader = new SAXReader();
 		Document doc = reader.read(response.getEntity().getContent());
 		List<List<String>> labels = new ArrayList<List<String>>();
-		List<Node> rows = doc.selectNodes("//tr");
+		List<Node> rows = xpath("//html40:tr").selectNodes(doc);
 		for (Node row : rows) {
 			List<String> rowContent = new ArrayList<String>();
 			labels.add(rowContent);
-			List<Node> columns = row.selectNodes("./*");
+			List<Node> columns = xpath("./html40:*").selectNodes(row);
 			for (Node column : columns) {
 				rowContent.add(column.getText());
 			}
 		}
 		return labels;
+	}
+
+	private static XPath xpath(String selector) {
+		Map<String, String> namespaceUris = new HashMap<String, String>();  
+		namespaceUris.put("html40", "http://www.w3.org/TR/REC-html40");  
+		XPath xPath = DocumentHelper.createXPath(selector);  
+		xPath.setNamespaceURIs(namespaceUris);
+		return xPath;
 	}
 
 	private static String readDocumentId(HttpResponse response)

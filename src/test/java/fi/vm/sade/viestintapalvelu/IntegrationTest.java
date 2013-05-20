@@ -74,7 +74,7 @@ public class IntegrationTest {
 		assertEquals("Content-Type: application/vnd.ms-excel", response
 				.getFirstHeader("Content-Type").toString());
 		assertEquals(
-				"Content-Disposition: attachment; filename=\"addresslabels.html\"",
+				"Content-Disposition: attachment; filename=\"addresslabels.xls\"",
 				response.getFirstHeader("Content-Disposition").toString());
 	}
 
