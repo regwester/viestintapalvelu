@@ -10,6 +10,7 @@ import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabelResource;
 import fi.vm.sade.viestintapalvelu.download.DownloadResource;
+import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeResource;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource;
 
 public class ViestintapalveluModule extends JerseyServletModule {
@@ -18,6 +19,7 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		bind(DownloadResource.class);
 		bind(AddressLabelResource.class);
 		bind(JalkiohjauskirjeResource.class);
+		bind(HyvaksymiskirjeResource.class);
 
 		Map<String, String> initParameters = new HashMap<String, String>();
 		initParameters.put(JSONConfiguration.FEATURE_POJO_MAPPING, "true");

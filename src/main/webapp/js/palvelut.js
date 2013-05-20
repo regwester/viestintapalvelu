@@ -74,6 +74,7 @@ angular.module('app').factory('Hakutoive', ['$http', function($http){
 angular.module('app').factory('Printer', ['$http', '$window', function($http, $window){
 	var addressLabel = 'api/v1/addresslabel/';
 	var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
+	var hyvaksymiskirje = 'api/v1/hyvaksymiskirje/';
 	var download = 'api/v1/download/document/';
 
 	return function() {
@@ -88,6 +89,13 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		function jalkiohjauskirjePDF(letters) {
 			print(jalkiohjauskirje + 'pdf', {
 				"kirjeTemplateName": "/jalkiohjauskirje.html", 
+				"liiteTemplateName": "/liite.html", 
+				"letters": letters});
+		}
+		
+		function hyvaksymiskirjePDF(letters) {
+			print(hyvaksymiskirje + 'pdf', {
+				"kirjeTemplateName": "/hyvaksymiskirje.html", 
 				"liiteTemplateName": "/liite.html", 
 				"letters": letters});
 		}
@@ -109,6 +117,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		return {
 			ipostZIP: ipostZIP,
 			jalkiohjauskirjePDF: jalkiohjauskirjePDF,
+			hyvaksymiskirjePDF: hyvaksymiskirjePDF,
 			osoitetarratPDF: osoitetarratPDF,
 			osoitetarratXLS: osoitetarratXLS
 		}

@@ -12,6 +12,7 @@
 		<script src="js/palvelut.js"></script>
 		<script src="js/addresslabels.js"></script>
 		<script src="js/jalkiohjauskirje.js"></script>
+		<script src="js/hyvaksymiskirje.js"></script>
 		<link href="https://netdna.bootstrapcdn.com/twitter-bootstrap/2.3.1/css/bootstrap-combined.min.css" rel="stylesheet">
 		<link rel="stylesheet" href="css/viestintapalvelu.css">
 	</head>
@@ -22,11 +23,13 @@
 			    <ul class="nav">
 				    <li class="active" ><a href="#osoitetarrat" ng-click="showContent('html/addresslabels.html', $event.target.getAttribute('href'))" data-toggle="tab">Osoitetarrat</a></li>
 				    <li><a href="#jalkiohjauskirje" ng-click="showContent('html/jalkiohjauskirje.html', $event.target.getAttribute('href'))" data-toggle="tab">Jälkiohjauskirje</a></li>
+				    <li><a href="#hyvaksymiskirje" ng-click="showContent('html/hyvaksymiskirje.html', $event.target.getAttribute('href'))" data-toggle="tab">Hyväksymiskirje</a></li>
 			    </ul>
 		    </div>
 		    <div class="tab-content">
 			    <div class="tab-pane active" id="osoitetarrat"></div>
 			    <div class="tab-pane" id="jalkiohjauskirje"></div>
+			    <div class="tab-pane" id="hyvaksymiskirje"></div>
 	    	</div>
 	    </div>
     </body>
