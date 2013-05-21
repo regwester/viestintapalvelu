@@ -25,7 +25,7 @@ public class IntegrationTest {
 	@Test
 	public void staticResourcesWork() throws Exception {
 		DefaultHttpClient httpClient = new DefaultHttpClient();
-		HttpGet httpGet = new HttpGet("http://localhost:8080/index.html");
+		HttpGet httpGet = new HttpGet(Urls.localhost().index());
 		HttpResponse response = httpClient.execute(httpGet);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 	}
@@ -36,15 +36,13 @@ public class IntegrationTest {
 				"/addresslabel_pdf.json"), "UTF-8").useDelimiter("\u001a")
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/pdf");
+		HttpPost post = new HttpPost(Urls.localhost().addresslabel() + "/pdf");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/download/document/"
-						+ documentId);
+		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+				+ "/download/document/" + documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response
@@ -60,15 +58,13 @@ public class IntegrationTest {
 				"/addresslabel_xls.json"), "UTF-8").useDelimiter("\u001a")
 				.next();
 		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/xls");
+		HttpPost post = new HttpPost(Urls.localhost().addresslabel() + "/xls");
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/download/document/"
-						+ documentId);
+		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+				+ "/download/document/" + documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/vnd.ms-excel", response
@@ -91,8 +87,7 @@ public class IntegrationTest {
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
 		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/download/document/"
-						+ documentId);
+				"http://localhost:8080/api/v1/download/document/" + documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response

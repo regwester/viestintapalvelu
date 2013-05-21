@@ -18,12 +18,21 @@ public class Urls {
 		String addresslabelDownload();
 
 		String addresslabel();
+
+		String index();
+
+		String apiRootUrl();
 	}
 
 	public static class Localhost implements RestServer {
 		private static final String SCHEME = "http";
 		private static final String DOMAIN = "localhost";
 		private static final int PORT = 8080;
+
+		@Override
+		public String index() {
+			return SCHEME + "://" + DOMAIN + ":" + PORT + "/" + "index.html";
+		}
 
 		@Override
 		public String addresslabel() {
@@ -36,6 +45,7 @@ public class Urls {
 					DOWNLOAD_RESOURCE_PATH);
 		}
 
+		@Override
 		public String apiRootUrl() {
 			return SCHEME + "://" + DOMAIN + ":" + PORT + Urls.API_PATH;
 		}
