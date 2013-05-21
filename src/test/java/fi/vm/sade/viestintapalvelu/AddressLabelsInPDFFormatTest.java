@@ -49,7 +49,8 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenCreatingLabelForValidForeignAddress {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
+				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
+				"Stockholm", "SL", "Sweden");
 		private static List<String> pdf;
 
 		@BeforeClass
@@ -60,7 +61,8 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void firstNameAndLastNameAreMappedToFirstRow() throws Exception {
 			Assert.assertEquals(
-					label.getFirstName() + " " + label.getLastName(), pdf.get(0));
+					label.getFirstName() + " " + label.getLastName(),
+					pdf.get(0));
 		}
 
 		@Test
@@ -81,7 +83,8 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void postalCodeAndPostOfficeAreMappedToFifthRow()
 				throws Exception {
-			Assert.assertEquals(label.getPostalCode() + " " + label.getCity(), pdf.get(4));
+			Assert.assertEquals(label.getPostalCode() + " " + label.getCity(),
+					pdf.get(4));
 		}
 
 		@Test
@@ -371,9 +374,7 @@ public class AddressLabelsInPDFFormatTest {
 		DefaultHttpClient client = new DefaultHttpClient();
 		client.getParams().setParameter("http.protocol.content-charset",
 				"UTF-8");
-		HttpPost post = new HttpPost("http://localhost:"
-				+ Launcher.DEFAULT_PORT + "/" + Urls.API_PATH + "/"
-				+ Urls.ADDRESS_LABEL_RESOURCE_PATH + "/pdf");
+		HttpPost post = new HttpPost(Urls.localhost().addresslabel() + "/pdf");
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
