@@ -52,6 +52,9 @@
 			br {
 				mso-data-placement:same-cell;
 			}
+			.text{
+				mso-number-format:"\@";/*force text*/
+			}
 		</style>
 		<tr>
 			<th>Firstname</th>
@@ -71,7 +74,7 @@
 			<td>$label.addressline</td>
 			<td>$label.addressline2</td>
 			<td>$label.addressline3</td>
-			<td>$label.postalCode</td>
+			<td class="text">$label.postalCode</td>
 			<td>$label.city</td>
 			<td>$label.region</td>
 			<td>$label.country</td>
