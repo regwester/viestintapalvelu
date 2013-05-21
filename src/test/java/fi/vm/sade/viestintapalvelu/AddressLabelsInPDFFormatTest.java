@@ -50,53 +50,53 @@ public class AddressLabelsInPDFFormatTest {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
 				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
-		private static String[] pdf;
+		private static List<String> pdf;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			pdf = callGenerateLabels(Arrays.asList(label)).get(0);
+			pdf = TestUtil.generateAddressLabels(Arrays.asList(label)).get(0);
 		}
 
 		@Test
 		public void firstNameAndLastNameAreMappedToFirstRow() throws Exception {
 			Assert.assertEquals(
-					label.getFirstName() + " " + label.getLastName(), pdf[0]);
+					label.getFirstName() + " " + label.getLastName(), pdf.get(0));
 		}
 
 		@Test
 		public void streetAddresslineIsMappedToSecondRow() throws Exception {
-			Assert.assertEquals(label.getAddressline(), pdf[1]);
+			Assert.assertEquals(label.getAddressline(), pdf.get(1));
 		}
 
 		@Test
 		public void streetAddressline2IsMappedToThirdRow() throws Exception {
-			Assert.assertEquals(label.getAddressline2(), pdf[2]);
+			Assert.assertEquals(label.getAddressline2(), pdf.get(2));
 		}
 
 		@Test
 		public void streetAddressline3IsMappedToFourthRow() throws Exception {
-			Assert.assertEquals(label.getAddressline3(), pdf[3]);
+			Assert.assertEquals(label.getAddressline3(), pdf.get(3));
 		}
 
 		@Test
 		public void postalCodeAndPostOfficeAreMappedToFifthRow()
 				throws Exception {
-			Assert.assertEquals(label.getPostalCode() + " " + label.getCity(), pdf[4]);
+			Assert.assertEquals(label.getPostalCode() + " " + label.getCity(), pdf.get(4));
 		}
 
 		@Test
 		public void regionIsMappedToSixthRow() throws Exception {
-			Assert.assertEquals(label.getRegion(), pdf[5]);
+			Assert.assertEquals(label.getRegion(), pdf.get(5));
 		}
 
 		@Test
 		public void countryIsMappedToSeventhRow() throws Exception {
-			Assert.assertEquals(label.getCountry(), pdf[6]);
+			Assert.assertEquals(label.getCountry(), pdf.get(6));
 		}
 
 		@Test
 		public void labelContainsSevenRows() throws Exception {
-			Assert.assertEquals(7, pdf.length);
+			Assert.assertEquals(7, pdf.size());
 		}
 	}
 
