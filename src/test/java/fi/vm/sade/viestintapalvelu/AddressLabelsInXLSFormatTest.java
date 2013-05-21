@@ -1,31 +1,11 @@
 package fi.vm.sade.viestintapalvelu;
 
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import org.apache.commons.io.IOUtils;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.ClientProtocolException;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.codehaus.jackson.JsonGenerationException;
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.Node;
-import org.dom4j.XPath;
-import org.dom4j.io.SAXReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
@@ -34,7 +14,6 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.address.AddressLabelBatch;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
@@ -239,44 +218,13 @@ public class AddressLabelsInXLSFormatTest {
 		@BeforeClass
 		public static void setUp() throws Exception {
 			batch = createLabels(1000);
-			responseBody = callGenerateLabels(batch);
+			responseBody = TestUtil.generateAddressLabelsXLS(batch);
 		}
 
 		@Test
 		public void returnedXLSContainsHeaderAndEqualAmountOfLabels() throws Exception {
 			Assert.assertEquals(batch.size() + 1, responseBody.size());
 		}
-	}
-
-	@SuppressWarnings("unchecked")
-	private static List<List<String>> readResponseBody(HttpResponse response)
-			throws IOException, IllegalStateException, DocumentException {
-		SAXReader reader = new SAXReader();
-		Document doc = reader.read(response.getEntity().getContent());
-		List<List<String>> labels = new ArrayList<List<String>>();
-		List<Node> rows = xpath("//html40:tr").selectNodes(doc);
-		for (Node row : rows) {
-			List<String> rowContent = new ArrayList<String>();
-			labels.add(rowContent);
-			List<Node> columns = xpath("./html40:*").selectNodes(row);
-			for (Node column : columns) {
-				rowContent.add(column.getText());
-			}
-		}
-		return labels;
-	}
-
-	private static XPath xpath(String selector) {
-		Map<String, String> namespaceUris = new HashMap<String, String>();  
-		namespaceUris.put("html40", "http://www.w3.org/TR/REC-html40");  
-		XPath xPath = DocumentHelper.createXPath(selector);  
-		xPath.setNamespaceURIs(namespaceUris);
-		return xPath;
-	}
-
-	private static String readDocumentId(HttpResponse response)
-			throws IOException {
-		return IOUtils.toString(response.getEntity().getContent());
 	}
 
 	private static List<AddressLabel> createLabels(int count)
@@ -294,39 +242,12 @@ public class AddressLabelsInXLSFormatTest {
 		}.generateObjects(count);
 	}
 
-	private final static String XLS_TEMPLATE = "/osoitetarrat.xls";
-
 	private static List<String> callGenerateLabels(String firstName,
 			String lastName, String addressline, String addressline2, 
 			String addressline3, String postalCode,
 			String city, String region, String country)
-			throws UnsupportedEncodingException, IOException,
-			JsonGenerationException, JsonMappingException,
-			ClientProtocolException, IllegalStateException, DocumentException {
+			throws Exception {
 		AddressLabel label = new AddressLabel(firstName, lastName, addressline, addressline2, addressline3, postalCode, city, region, country);
-		return callGenerateLabels(Arrays.asList(label)).get(1);
+		return TestUtil.generateAddressLabelsXLS(Arrays.asList(label)).get(1);
 	}
-
-	private static List<List<String>> callGenerateLabels(List<AddressLabel> labels)
-			throws UnsupportedEncodingException, IOException,
-			JsonGenerationException, JsonMappingException,
-			ClientProtocolException, IllegalStateException, DocumentException {
-		AddressLabelBatch batch = new AddressLabelBatch(XLS_TEMPLATE, labels);
-		DefaultHttpClient client = new DefaultHttpClient();
-		client.getParams().setParameter("http.protocol.content-charset",
-				"UTF-8");
-		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/addresslabel/xls");
-		post.setHeader("Content-Type", "application/json;charset=utf-8");
-		post.setEntity(new StringEntity(new ObjectMapper()
-				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
-		HttpResponse response = client.execute(post);
-		String documentId = readDocumentId(response);
-		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/download/document/"
-						+ documentId);
-		response = client.execute(get);
-		return readResponseBody(response);
-	}
-
 }
