@@ -13,12 +13,19 @@ public class Urls {
 
 	public static interface RestServer {
 		String addresslabelDownload();
+
+		String addresslabel();
 	}
 
 	public static class Localhost implements RestServer {
 		private static final String SCHEME = "http";
 		private static final String DOMAIN = "localhost";
 		private static final int PORT = Launcher.DEFAULT_PORT;
+
+		@Override
+		public String addresslabel() {
+			return apiRootUrl() + "/" + ADDRESS_LABEL_RESOURCE_PATH;
+		}
 
 		@Override
 		public String addresslabelDownload() {
