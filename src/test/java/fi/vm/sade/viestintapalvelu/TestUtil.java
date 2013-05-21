@@ -36,6 +36,8 @@ import org.w3c.tidy.Tidy;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelBatch;
+import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.Hyvaksymiskirje;
+import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
@@ -44,9 +46,11 @@ public class TestUtil {
 	private final static String ADDRESS_LABEL_PDF_URL = "http://localhost:8080/api/v1/addresslabel/pdf";
 	private final static String ADDRESS_LABEL_XLS_URL = "http://localhost:8080/api/v1/addresslabel/xls";
 	private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/pdf";
+	private final static String HYVAKSYMISKIRJE_URL = "http://localhost:8080/api/v1/hyvaksymiskirje/pdf";
 	private final static String ADDRESS_LABEL_PDF_TEMPLATE = "/osoitetarrat.html";
 	private final static String ADDRESS_LABEL_XLS_TEMPLATE = "/osoitetarrat.xls";
 	private final static String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje.html";
+	private final static String HYVAKSYMISKIRJE_TEMPLATE = "/hyvaksymiskirje.html";
 	private final static String LIITE_TEMPLATE = "/liite.html";
 	private final static String HAKUTULOSTAULUKKO_TEMPLATE = "/hakutulostaulukko_test.html";
 	
@@ -63,6 +67,11 @@ public class TestUtil {
 	public static List<List<String>> generateJalkiohjauskirje(Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
+	}
+	
+	public static List<List<String>> generateHyvaksymiskirje(Hyvaksymiskirje kirje) throws Exception {
+		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(HYVAKSYMISKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
+		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 	
 	public static List<List<String>> generateHakutulostaulukko(Jalkiohjauskirje kirje) throws Exception {
