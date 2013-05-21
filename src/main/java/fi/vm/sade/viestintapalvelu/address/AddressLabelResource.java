@@ -1,13 +1,14 @@
 package fi.vm.sade.viestintapalvelu.address;
 
 import java.io.IOException;
+import java.net.URI;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
@@ -34,25 +35,24 @@ public class AddressLabelResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("pdf")
-	public String pdf(AddressLabelBatch input,
-			@Context HttpServletRequest request) throws IOException,
+	public Response pdf(AddressLabelBatch input) throws IOException,
 			DocumentException {
 		byte[] pdf = labelBuilder.printPDF(input);
-		return downloadCache.addDocument(request.getSession().getId(),
-				new Download("application/pdf;charset=utf-8",
-						"addresslabels.pdf", pdf));
+		String documentId = downloadCache.addDocument(new Download(
+				"application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
+		return Response.status(Status.ACCEPTED)
+				.contentLocation(URI.create(documentId)).entity(documentId)
+				.build();
 	}
 
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("xls")
-	public String csv(AddressLabelBatch input,
-			@Context HttpServletRequest request) throws IOException,
+	public String csv(AddressLabelBatch input) throws IOException,
 			DocumentException {
 		byte[] csv = labelBuilder.printCSV(input);
-		return downloadCache.addDocument(request.getSession().getId(),
-				new Download("application/vnd.ms-excel", "addresslabels.xls",
-						csv));
+		return downloadCache.addDocument(new Download(
+				"application/vnd.ms-excel", "addresslabels.xls", csv));
 	}
 }

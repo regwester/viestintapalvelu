@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.download;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
@@ -27,10 +26,8 @@ public class DownloadResource {
 	@GET
 	@Path("document/{documentId}")
 	public Response download(@PathParam("documentId") String input,
-			@Context HttpServletRequest request,
 			@Context HttpServletResponse response) {
-		Download download = downloadCache.get(request.getSession().getId(),
-				input);
+		Download download = downloadCache.get(input);
 		if (download == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}

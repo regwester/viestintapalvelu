@@ -40,9 +40,8 @@ public class JalkiohjauskirjeResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] pdf = jalkiohjauskirjeBuilder.printPDF(input);
-		return downloadCache.addDocument(request.getSession().getId(),
-				new Download("application/pdf;charset=utf-8",
-						"jalkiohjauskirje.pdf", pdf));
+		return downloadCache.addDocument(new Download(
+				"application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));
 	}
 
 	@POST
@@ -53,8 +52,8 @@ public class JalkiohjauskirjeResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
-		return downloadCache.addDocument(request.getSession().getId(),
-				new Download("application/zip", "jalkiohjauskirje.zip", zip));
+		return downloadCache.addDocument(new Download("application/zip",
+				"jalkiohjauskirje.zip", zip));
 	}
 
 }

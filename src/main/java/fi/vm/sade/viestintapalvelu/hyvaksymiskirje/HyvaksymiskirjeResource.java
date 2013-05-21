@@ -39,8 +39,7 @@ public class HyvaksymiskirjeResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
-		return downloadCache.addDocument(request.getSession().getId(),
-				new Download("application/pdf;charset=utf-8",
-						"hyvaksymiskirje.pdf", pdf));
+		return downloadCache.addDocument(new Download(
+				"application/pdf;charset=utf-8", "hyvaksymiskirje.pdf", pdf));
 	}
 }
