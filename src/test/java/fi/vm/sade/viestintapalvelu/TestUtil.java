@@ -56,37 +56,51 @@ public class TestUtil {
 	private final static String LIITE_TEMPLATE = "/liite.html";
 	private final static String IPOST_TEMPLATE = "/ipost.xml";
 	private final static String HAKUTULOSTAULUKKO_TEMPLATE = "/hakutulostaulukko_test.html";
-	
-	public static List<List<String>> generateAddressLabelsPDF(List<AddressLabel> labels) throws Exception {
-		AddressLabelBatch batch = new AddressLabelBatch(ADDRESS_LABEL_PDF_TEMPLATE, labels);
+
+	public static List<List<String>> generateAddressLabelsPDF(
+			List<AddressLabel> labels) throws Exception {
+		AddressLabelBatch batch = new AddressLabelBatch(
+				ADDRESS_LABEL_PDF_TEMPLATE, labels);
 		return readPDF(get(batch, ADDRESS_LABEL_PDF_URL), -1, -1);
 	}
-	
-	public static List<List<String>> generateAddressLabelsXLS(List<AddressLabel> labels) throws Exception {
-		AddressLabelBatch batch = new AddressLabelBatch(ADDRESS_LABEL_XLS_TEMPLATE, labels);
+
+	public static List<List<String>> generateAddressLabelsXLS(
+			List<AddressLabel> labels) throws Exception {
+		AddressLabelBatch batch = new AddressLabelBatch(
+				ADDRESS_LABEL_XLS_TEMPLATE, labels);
 		return readXLS(get(batch, ADDRESS_LABEL_XLS_URL));
 	}
-	
-	public static List<List<String>> generateJalkiohjauskirje(Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
+
+	public static List<List<String>> generateJalkiohjauskirje(
+			Jalkiohjauskirje kirje) throws Exception {
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
+				JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
 	}
-	
-	public static byte[] generateIPostZIP(List<Jalkiohjauskirje> kirjeet) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeIpostBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, IPOST_TEMPLATE, kirjeet);
+
+	public static byte[] generateIPostZIP(List<Jalkiohjauskirje> kirjeet)
+			throws Exception {
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeIpostBatch(
+				JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, IPOST_TEMPLATE,
+				kirjeet);
 		return get(batch, IPOST_URL);
 	}
-	
-	public static List<List<String>> generateHyvaksymiskirje(Hyvaksymiskirje kirje) throws Exception {
-		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(HYVAKSYMISKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
+
+	public static List<List<String>> generateHyvaksymiskirje(
+			Hyvaksymiskirje kirje) throws Exception {
+		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(
+				HYVAKSYMISKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
-	
-	public static List<List<String>> generateHakutulostaulukko(Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, HAKUTULOSTAULUKKO_TEMPLATE, Arrays.asList(kirje));
+
+	public static List<List<String>> generateHakutulostaulukko(
+			Jalkiohjauskirje kirje) throws Exception {
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
+				JALKIOHJAUSKIRJE_TEMPLATE, HAKUTULOSTAULUKKO_TEMPLATE,
+				Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
 	}
-	
+
 	private static byte[] get(Object json, String url)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
@@ -99,18 +113,17 @@ public class TestUtil {
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(json), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
-		String documentId = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
-		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/download/document/"
-						+ documentId);
+		String resultUrl = IOUtils.toString(response.getEntity().getContent(),
+				"UTF-8");
+		HttpGet get = new HttpGet(resultUrl);
 		response = client.execute(get);
 		return IOUtils.toByteArray(response.getEntity().getContent());
 	}
 
-	private static List<List<String>> readPDF(byte[] byteDocument, int startPage, int endPage)
-			throws IOException, DocumentException {
-		PDDocument document = PDDocument
-				.load(new ByteArrayInputStream(byteDocument));
+	private static List<List<String>> readPDF(byte[] byteDocument,
+			int startPage, int endPage) throws IOException, DocumentException {
+		PDDocument document = PDDocument.load(new ByteArrayInputStream(
+				byteDocument));
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
 		StringWriter writer = new StringWriter();
 		if (startPage > 0) {
@@ -126,7 +139,8 @@ public class TestUtil {
 	}
 
 	@SuppressWarnings("unchecked")
-	private static List<List<String>> readXLS(byte[] byteDocument) throws Exception {
+	private static List<List<String>> readXLS(byte[] byteDocument)
+			throws Exception {
 		SAXReader reader = new SAXReader();
 		Document doc = reader.read(new ByteArrayInputStream(byteDocument));
 		List<List<String>> labels = new ArrayList<List<String>>();
@@ -143,9 +157,9 @@ public class TestUtil {
 	}
 
 	private static XPath xpath(String selector) {
-		Map<String, String> namespaceUris = new HashMap<String, String>();  
-		namespaceUris.put("html40", "http://www.w3.org/TR/REC-html40");  
-		XPath xPath = DocumentHelper.createXPath(selector);  
+		Map<String, String> namespaceUris = new HashMap<String, String>();
+		namespaceUris.put("html40", "http://www.w3.org/TR/REC-html40");
+		XPath xPath = DocumentHelper.createXPath(selector);
 		xPath.setNamespaceURIs(namespaceUris);
 		return xPath;
 	}

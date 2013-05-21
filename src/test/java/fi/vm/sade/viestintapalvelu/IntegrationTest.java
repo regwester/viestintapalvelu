@@ -78,11 +78,8 @@ public class IntegrationTest {
 		post.setHeader("Content-Type", "application/json");
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
-		System.out.println(response);
-		assertEquals(202, response.getStatusLine().getStatusCode());
-		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRoot()
-				+ "/download/document/" + documentId);
+		String downloadLink = readResponseBody(response);
+		HttpGet get = new HttpGet(downloadLink);
 		response = client.execute(get);
 		return response;
 	}

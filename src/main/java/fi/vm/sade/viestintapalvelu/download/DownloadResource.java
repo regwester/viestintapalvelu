@@ -24,15 +24,18 @@ public class DownloadResource {
 	}
 
 	@GET
-	@Path("document/{documentId}")
+	@Path("{documentId}")
 	public Response download(@PathParam("documentId") String input,
 			@Context HttpServletResponse response) {
 		Download download = downloadCache.get(input);
 		if (download == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
+		response.setHeader("Content-Type", download.getContentType());
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ download.getFilename() + "\"");
+		response.setHeader("Content-Length",
+				String.valueOf(download.toByteArray().length));
 		return Response.ok(download.toByteArray())
 				.type(download.getContentType()).build();
 	}
