@@ -34,18 +34,7 @@ public class IntegrationTest {
 
 	@Test
 	public void addressLabelPrinting() throws Exception {
-		String json = new Scanner(getClass().getResourceAsStream(
-				"/addresslabel_pdf.json"), "UTF-8").useDelimiter("\u001a")
-				.next();
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(Urls.localhost().addresslabel() + "/pdf");
-		post.setHeader("Content-Type", "application/json");
-		post.setEntity(new StringEntity(json));
-		HttpResponse response = client.execute(post);
-		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRoot()
-				+ "/download/document/" + documentId);
-		response = client.execute(get);
+		HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost().addresslabel() + "/pdf");
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response
 				.getFirstHeader("Content-Type").toString());
