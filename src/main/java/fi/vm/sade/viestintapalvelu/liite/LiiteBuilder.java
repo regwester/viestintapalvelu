@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
@@ -41,6 +43,7 @@ public class LiiteBuilder {
 				if (!row.containsKey(column) || row.get(column) == null) {
 					row.put(column, "");
 				}
+				row.put(column, StringEscapeUtils.escapeHtml(row.get(column)));
 			}
 		}
 		return tulokset;

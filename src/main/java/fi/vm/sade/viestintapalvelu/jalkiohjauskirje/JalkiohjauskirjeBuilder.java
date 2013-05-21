@@ -14,6 +14,7 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
@@ -67,9 +68,17 @@ public class JalkiohjauskirjeBuilder {
 		return data;
 	}
 
-	private Map<String, Object> createDataContext(List<DocumentMetadata> documentMetadata) {
+	private Map<String, Object> createDataContext(List<DocumentMetadata> documentMetadataList) {
 		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("metadataList", documentMetadata);
+		List<Map<String, Object>> metadataList = new ArrayList<Map<String,Object>>();
+		for (DocumentMetadata documentMetadata : documentMetadataList) {
+			 Map<String, Object> metadata = new HashMap<String, Object>();
+			 metadata.put("startPage", documentMetadata.getStartPage());
+			 metadata.put("pages", documentMetadata.getPages());
+			 metadata.put("addressLabel", new XmlAddressLabelDecorator(documentMetadata.getAddressLabel()));
+			 metadataList.add(metadata);
+		}
+		data.put("metadataList", metadataList);
 		return data;
 	}
 }

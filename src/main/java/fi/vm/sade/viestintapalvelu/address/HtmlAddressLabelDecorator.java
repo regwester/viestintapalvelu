@@ -1,5 +1,8 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
+
 
 public class HtmlAddressLabelDecorator extends AddressLabelDecorator {
 	
@@ -23,5 +26,10 @@ public class HtmlAddressLabelDecorator extends AddressLabelDecorator {
 	
 	public String toString() {
 		return getAddress();
+	}
+	
+	@Override
+	protected String escape(String text) {
+		return StringEscapeUtils.escapeHtml(text);
 	}
 }

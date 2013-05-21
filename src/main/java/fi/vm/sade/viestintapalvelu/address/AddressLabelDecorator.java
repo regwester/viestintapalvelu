@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+
 public abstract class AddressLabelDecorator {
 	
 	protected AddressLabel decoratedLabel;
@@ -7,13 +8,15 @@ public abstract class AddressLabelDecorator {
 	public AddressLabelDecorator(AddressLabel addressLabel) {
 		this.decoratedLabel = addressLabel;
 	}
+	
+	protected abstract String escape(String text);
 
 	protected String decorateAddressField(String textString) {
-		return textString != null && !"".equals(textString.trim()) ? textString.replace("\n", "<br/>") : "";
+		return textString != null && !"".equals(textString.trim()) ? escape(textString).replace("\n", "<br/>") : "";
 	}
 	
 	protected String decorateCountry(String country) {
-		return isDomestic(country) ? "" : country;
+		return isDomestic(country) ? "" : escape(country);
 	}
 
 	private boolean isDomestic(String country) {

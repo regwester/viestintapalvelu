@@ -7,6 +7,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
@@ -47,8 +49,8 @@ public class HyvaksymiskirjeBuilder {
 	private Map<String, Object> createDataContext(AddressLabelDecorator decorator, String koulu, String koulutus) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("osoite", decorator);
-		data.put("koulu", koulu);
-		data.put("koulutus", koulutus);
+		data.put("koulu", StringEscapeUtils.escapeHtml(koulu));
+		data.put("koulutus", StringEscapeUtils.escapeHtml(koulutus));
 		return data;
 	}
 }

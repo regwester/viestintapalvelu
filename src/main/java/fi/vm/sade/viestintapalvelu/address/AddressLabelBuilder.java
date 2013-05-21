@@ -33,7 +33,7 @@ public class AddressLabelBuilder {
 	public byte[] printCSV(AddressLabelBatch input) throws DocumentException, IOException {
 		Map<String, Object> context = createDataContext(input.getAddressLabels(), new DecoratorBuilder() {
 			protected AddressLabelDecorator newDecorator(AddressLabel addressLabel) {
-				return new XlsAddressLabelDecorator(addressLabel);
+				return new XmlAddressLabelDecorator(addressLabel);
 			}
 		});
 		return documentBuilder.applyTextTemplate(input.getTemplateName(), context);

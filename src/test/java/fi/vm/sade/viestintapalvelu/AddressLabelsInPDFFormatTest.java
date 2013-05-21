@@ -78,6 +78,21 @@ public class AddressLabelsInPDFFormatTest {
 		}
 	}
 
+	public static class WhenCreatingLabelWithSpecialCharacters {
+		@Test
+		public void specialCharactersAreDisplayed() throws Exception {
+			List<String> label = callGenerateLabels("Åle &", "Öistämö #", "Brännkyrksgatan 177 B 149&",
+					"Södermalm $€", "13@", "65330&", "Stockholm&", "SL&", "Sweden&");
+			Assert.assertEquals("Åle & Öistämö #", label.get(0));
+			Assert.assertEquals("Brännkyrksgatan 177 B 149&", label.get(1));
+			Assert.assertEquals("Södermalm $€", label.get(2));
+			Assert.assertEquals("13@", label.get(3));
+			Assert.assertEquals("65330& Stockholm&", label.get(4));
+			Assert.assertEquals("SL&", label.get(5));
+			Assert.assertEquals("Sweden&", label.get(6));
+		}
+	}
+
 	public static class WhenFirstNameIsEmpty {
 		@Test
 		public void firstRowContainsLastName() throws Exception {

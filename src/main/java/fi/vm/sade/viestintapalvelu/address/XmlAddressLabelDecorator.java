@@ -1,18 +1,20 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+import org.apache.commons.lang.StringEscapeUtils;
 
-public class XlsAddressLabelDecorator extends AddressLabelDecorator {
+
+public class XmlAddressLabelDecorator extends AddressLabelDecorator {
 	
-	public XlsAddressLabelDecorator(AddressLabel addressLabel) {
+	public XmlAddressLabelDecorator(AddressLabel addressLabel) {
 		super(addressLabel);
 	}
 	
 	public String getFirstName() {
-		return decoratedLabel.getFirstName();
+		return escape(decoratedLabel.getFirstName());
 	}
 
 	public String getLastName() {
-		return decoratedLabel.getLastName();
+		return escape(decoratedLabel.getLastName());
 	}
 
 	public String getAddressline() {
@@ -28,18 +30,23 @@ public class XlsAddressLabelDecorator extends AddressLabelDecorator {
 	}
 
 	public String getPostalCode() {
-		return decoratedLabel.getPostalCode();
+		return escape(decoratedLabel.getPostalCode());
 	}
 
 	public String getCity() {
-		return decoratedLabel.getCity();
+		return escape(decoratedLabel.getCity());
 	}
 
 	public String getRegion() {
-		return decoratedLabel.getRegion();
+		return escape(decoratedLabel.getRegion());
 	}
 
 	public String getCountry() {
 		return decorateCountry(decoratedLabel.getCountry());
+	}
+
+	@Override
+	protected String escape(String text) {
+		return StringEscapeUtils.escapeXml(text);
 	}
 }

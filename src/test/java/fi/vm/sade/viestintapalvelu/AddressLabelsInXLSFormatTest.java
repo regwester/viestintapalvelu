@@ -95,6 +95,23 @@ public class AddressLabelsInXLSFormatTest {
 		}
 	}
 
+	public static class WhenCreatingLabelWithSpecialCharacters {
+		@Test
+		public void specialCharactersAreDisplayed() throws Exception {
+			List<String> label = callGenerateLabels("Åle &", "Öistämö #", "Brännkyrksgatan 177 B 149&",
+					"Södermalm $€", "13@", "65330&", "Stockholm&", "SL&", "Sweden&");
+			Assert.assertEquals("Åle &", label.get(0));
+			Assert.assertEquals("Öistämö #", label.get(1));
+			Assert.assertEquals("Brännkyrksgatan 177 B 149&", label.get(2));
+			Assert.assertEquals("Södermalm $€", label.get(3));
+			Assert.assertEquals("13@", label.get(4));
+			Assert.assertEquals("65330&", label.get(5));
+			Assert.assertEquals("Stockholm&", label.get(6));
+			Assert.assertEquals("SL&", label.get(7));
+			Assert.assertEquals("Sweden&", label.get(8));
+		}
+	}
+
 	public static class WhenFirstNameIsEmpty {
 		@Test
 		public void firstColumnIsEmpty() throws Exception {
