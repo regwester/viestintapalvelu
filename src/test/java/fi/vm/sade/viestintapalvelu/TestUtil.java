@@ -30,36 +30,46 @@ import org.dom4j.io.SAXReader;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.address.AddressLabelBatch;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 public class TestUtil {
 
+	private final static String ADDRESS_LABEL_PDF_URL = "http://localhost:8080/api/v1/addresslabel/pdf";
 	private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/pdf";
+	private final static String ADDRESS_LABEL_PDF_TEMPLATE = "/osoitetarrat.html";
 	private final static String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje.html";
 	private final static String LIITE_TEMPLATE = "/liite.html";
 	private final static String HAKUTULOSTAULUKKO_TEMPLATE = "/hakutulostaulukko_test.html";
 	
+	public static List<List<String>> generateAddressLabels(List<AddressLabel> labels) throws Exception {
+		AddressLabelBatch batch = new AddressLabelBatch(ADDRESS_LABEL_PDF_TEMPLATE, labels);
+		return generatePDF(batch, ADDRESS_LABEL_PDF_URL, -1, -1);
+	}
+	
 	public static List<List<String>> generateJalkiohjauskirje(Jalkiohjauskirje kirje) throws Exception {
-		return generatePDF(Arrays.asList(kirje), JALKIOHJAUSKIRJE_URL, JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, 1, 2);
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
+		return generatePDF(batch, JALKIOHJAUSKIRJE_URL, 1, 2);
 	}
 	
 	public static List<List<String>> generateHakutulostaulukko(Jalkiohjauskirje kirje) throws Exception {
-		return generatePDF(Arrays.asList(kirje), JALKIOHJAUSKIRJE_URL, JALKIOHJAUSKIRJE_TEMPLATE, HAKUTULOSTAULUKKO_TEMPLATE, 2, 2);
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, HAKUTULOSTAULUKKO_TEMPLATE, Arrays.asList(kirje));
+		return generatePDF(batch, JALKIOHJAUSKIRJE_URL, 2, 2);
 	}
 	
-	private static List<List<String>> generatePDF(List<Jalkiohjauskirje> letters, String url, String kirje, String liite, int startPage, int endPage)
+	private static List<List<String>> generatePDF(Object json, String url, int startPage, int endPage)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
 			ClientProtocolException, DocumentException {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(kirje, liite, letters);
 		DefaultHttpClient client = new DefaultHttpClient();
 		client.getParams().setParameter("http.protocol.content-charset",
 				"UTF-8");
 		HttpPost post = new HttpPost(url);
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
 		post.setEntity(new StringEntity(new ObjectMapper()
-				.writeValueAsString(batch), ContentType.APPLICATION_JSON));
+				.writeValueAsString(json), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
 		String documentId = readDocumentId(response);
 		HttpGet get = new HttpGet(
@@ -75,8 +85,12 @@ public class TestUtil {
 				.load(response.getEntity().getContent());
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
 		StringWriter writer = new StringWriter();
-		stripper.setStartPage(startPage);
-		stripper.setEndPage(endPage);
+		if (startPage > 0) {
+			stripper.setStartPage(startPage);
+		}
+		if (endPage > 0) {
+			stripper.setEndPage(endPage);
+		}
 		stripper.setLineSeparator("<br/>");
 		stripper.writeText(document, writer);
 		document.close();
