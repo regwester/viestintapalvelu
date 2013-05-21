@@ -51,7 +51,7 @@ public class AddressLabelsInXLSFormatTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			List<List<String>> responseBody = callGenerateLabels(Arrays.asList(label));
+			List<List<String>> responseBody = TestUtil.generateAddressLabelsXLS(Arrays.asList(label));
 			otsikko = responseBody.get(0);
 			osoite = responseBody.get(1);
 		}

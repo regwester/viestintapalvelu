@@ -30,7 +30,7 @@ public class AddressLabelsInPDFFormatTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			pdf = TestUtil.generateAddressLabels(Arrays.asList(label)).get(0);
+			pdf = TestUtil.generateAddressLabelsPDF(Arrays.asList(label)).get(0);
 		}
 
 		@Test
@@ -227,7 +227,7 @@ public class AddressLabelsInPDFFormatTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			response = TestUtil.generateAddressLabels(Arrays.asList(domestic, foreign));
+			response = TestUtil.generateAddressLabelsPDF(Arrays.asList(domestic, foreign));
 		}
 
 		@Test
@@ -258,7 +258,7 @@ public class AddressLabelsInPDFFormatTest {
 		@BeforeClass
 		public static void setUp() throws Exception {
 			batch = createLabels(1000);
-			response = TestUtil.generateAddressLabels(batch);
+			response = TestUtil.generateAddressLabelsPDF(batch);
 		}
 
 		@Test
@@ -286,7 +286,7 @@ public class AddressLabelsInPDFFormatTest {
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String postOffice,
 			String region, String country) throws Exception {
-		return TestUtil.generateAddressLabels(
+		return TestUtil.generateAddressLabelsPDF(
 				Arrays.asList(new AddressLabel(firstName, lastName,
 						addressline, addressline2, addressline3, postalCode,
 						postOffice, region, country))).get(0);

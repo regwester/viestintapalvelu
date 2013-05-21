@@ -8,7 +8,9 @@ import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
@@ -25,7 +27,9 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
+import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
+import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
@@ -38,28 +42,35 @@ import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 public class TestUtil {
 
 	private final static String ADDRESS_LABEL_PDF_URL = "http://localhost:8080/api/v1/addresslabel/pdf";
+	private final static String ADDRESS_LABEL_XLS_URL = "http://localhost:8080/api/v1/addresslabel/xls";
 	private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/pdf";
 	private final static String ADDRESS_LABEL_PDF_TEMPLATE = "/osoitetarrat.html";
+	private final static String ADDRESS_LABEL_XLS_TEMPLATE = "/osoitetarrat.xls";
 	private final static String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje.html";
 	private final static String LIITE_TEMPLATE = "/liite.html";
 	private final static String HAKUTULOSTAULUKKO_TEMPLATE = "/hakutulostaulukko_test.html";
 	
-	public static List<List<String>> generateAddressLabels(List<AddressLabel> labels) throws Exception {
+	public static List<List<String>> generateAddressLabelsPDF(List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatch(ADDRESS_LABEL_PDF_TEMPLATE, labels);
-		return generatePDF(batch, ADDRESS_LABEL_PDF_URL, -1, -1);
+		return readPDF(get(batch, ADDRESS_LABEL_PDF_URL), -1, -1);
+	}
+	
+	public static List<List<String>> generateAddressLabelsXLS(List<AddressLabel> labels) throws Exception {
+		AddressLabelBatch batch = new AddressLabelBatch(ADDRESS_LABEL_XLS_TEMPLATE, labels);
+		return readXLS(get(batch, ADDRESS_LABEL_XLS_URL));
 	}
 	
 	public static List<List<String>> generateJalkiohjauskirje(Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, Arrays.asList(kirje));
-		return generatePDF(batch, JALKIOHJAUSKIRJE_URL, 1, 2);
+		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
 	}
 	
 	public static List<List<String>> generateHakutulostaulukko(Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(JALKIOHJAUSKIRJE_TEMPLATE, HAKUTULOSTAULUKKO_TEMPLATE, Arrays.asList(kirje));
-		return generatePDF(batch, JALKIOHJAUSKIRJE_URL, 2, 2);
+		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
 	}
 	
-	private static List<List<String>> generatePDF(Object json, String url, int startPage, int endPage)
+	private static byte[] get(Object json, String url)
 			throws UnsupportedEncodingException, IOException,
 			JsonGenerationException, JsonMappingException,
 			ClientProtocolException, DocumentException {
@@ -71,18 +82,18 @@ public class TestUtil {
 		post.setEntity(new StringEntity(new ObjectMapper()
 				.writeValueAsString(json), ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
-		String documentId = readDocumentId(response);
+		String documentId = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
 		HttpGet get = new HttpGet(
 				"http://localhost:8080/api/v1/download/document/"
 						+ documentId);
 		response = client.execute(get);
-		return readPDF(response, startPage, endPage);
+		return IOUtils.toByteArray(response.getEntity().getContent());
 	}
 
-	private static List<List<String>> readPDF(HttpResponse response, int startPage, int endPage)
+	private static List<List<String>> readPDF(byte[] byteDocument, int startPage, int endPage)
 			throws IOException, DocumentException {
 		PDDocument document = PDDocument
-				.load(response.getEntity().getContent());
+				.load(new ByteArrayInputStream(byteDocument));
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
 		StringWriter writer = new StringWriter();
 		if (startPage > 0) {
@@ -97,9 +108,29 @@ public class TestUtil {
 		return parseHTML(new String(toXhtml(writer.toString().getBytes())));
 	}
 
-	private static String readDocumentId(HttpResponse response)
-			throws IOException, DocumentException {
-		return IOUtils.toString(response.getEntity().getContent(), "UTF-8");
+	@SuppressWarnings("unchecked")
+	private static List<List<String>> readXLS(byte[] byteDocument) throws Exception {
+		SAXReader reader = new SAXReader();
+		Document doc = reader.read(new ByteArrayInputStream(byteDocument));
+		List<List<String>> labels = new ArrayList<List<String>>();
+		List<Node> rows = xpath("//html40:tr").selectNodes(doc);
+		for (Node row : rows) {
+			List<String> rowContent = new ArrayList<String>();
+			labels.add(rowContent);
+			List<Node> columns = xpath("./html40:*").selectNodes(row);
+			for (Node column : columns) {
+				rowContent.add(column.getText());
+			}
+		}
+		return labels;
+	}
+
+	private static XPath xpath(String selector) {
+		Map<String, String> namespaceUris = new HashMap<String, String>();  
+		namespaceUris.put("html40", "http://www.w3.org/TR/REC-html40");  
+		XPath xPath = DocumentHelper.createXPath(selector);  
+		xPath.setNamespaceURIs(namespaceUris);
+		return xPath;
 	}
 
 	private static byte[] toXhtml(byte[] document) {
