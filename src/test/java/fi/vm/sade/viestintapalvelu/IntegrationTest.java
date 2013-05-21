@@ -41,7 +41,7 @@ public class IntegrationTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+		HttpGet get = new HttpGet(Urls.localhost().apiRoot()
 				+ "/download/document/" + documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
@@ -63,7 +63,7 @@ public class IntegrationTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+		HttpGet get = new HttpGet(Urls.localhost().apiRoot()
 				+ "/download/document/" + documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
