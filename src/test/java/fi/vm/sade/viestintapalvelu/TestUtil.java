@@ -72,8 +72,8 @@ public class TestUtil {
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
 	}
 	
-	public static byte[] generateIPostZIP(Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeIpostBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, IPOST_TEMPLATE, Arrays.asList(kirje));
+	public static byte[] generateIPostZIP(List<Jalkiohjauskirje> kirjeet) throws Exception {
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeIpostBatch(JALKIOHJAUSKIRJE_TEMPLATE, LIITE_TEMPLATE, IPOST_TEMPLATE, kirjeet);
 		return get(batch, IPOST_URL);
 	}
 	

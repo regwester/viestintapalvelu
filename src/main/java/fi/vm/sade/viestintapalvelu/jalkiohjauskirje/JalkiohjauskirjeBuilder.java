@@ -37,7 +37,7 @@ public class JalkiohjauskirjeBuilder {
 
 	public byte[] printZIP(JalkiohjauskirjeIpostBatch batch) throws IOException, DocumentException, NoSuchAlgorithmException {
 		MergedPdfDocument pdf = createJalkiohjauskirjeBatch(batch);
-		Map<String, Object> context = createDataContext(pdf.getDocumentMetadata(), pdf.md5());
+		Map<String, Object> context = createDataContext(pdf.getDocumentMetadata());
 		byte[] ipostXml = documentBuilder.applyTextTemplate(batch.getIpostTemplateName(), context);
 		Map<String, byte[]> documents = new HashMap<String, byte[]>();
 		documents.put("jalkiohjauskirje.pdf", pdf.toByteArray());
@@ -67,10 +67,9 @@ public class JalkiohjauskirjeBuilder {
 		return data;
 	}
 
-	private Map<String, Object> createDataContext(List<DocumentMetadata> documentMetadata, byte[] checksum) {
+	private Map<String, Object> createDataContext(List<DocumentMetadata> documentMetadata) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("metadataList", documentMetadata);
-		data.put("checksum", new String(checksum));
 		return data;
 	}
 }

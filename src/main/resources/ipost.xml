@@ -20,9 +20,7 @@
 				departmentClassification="false" 
 				isDuplex="false"/>
 			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false"/>
-			<lb:ExternalFile fileName="jalkiohjauskirje.pdf">
-				<lb:CheckSum type="MD5" value="$checksum"/>
-			</lb:ExternalFile>
+			<lb:ExternalFile fileName="jalkiohjauskirje.pdf"></lb:ExternalFile>
 		</lb:BundleCommon>
 		#foreach( $metadata in $metadataList )
 		<lb:Letter>
