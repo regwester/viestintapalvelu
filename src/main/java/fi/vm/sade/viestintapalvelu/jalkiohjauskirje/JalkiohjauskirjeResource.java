@@ -14,17 +14,20 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Singleton
-@Path("jalkiohjauskirje")
+@Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
 public class JalkiohjauskirjeResource {
 	private DownloadCache downloadCache;
 	private JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder;
 
 	@Inject
-	public JalkiohjauskirjeResource(JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder, DownloadCache downloadCache) {
+	public JalkiohjauskirjeResource(
+			JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder,
+			DownloadCache downloadCache) {
 		this.jalkiohjauskirjeBuilder = jalkiohjauskirjeBuilder;
 		this.downloadCache = downloadCache;
 	}
@@ -37,10 +40,11 @@ public class JalkiohjauskirjeResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] pdf = jalkiohjauskirjeBuilder.printPDF(input);
-		return downloadCache.addDocument(request.getSession().getId(), 
-				new Download("application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));
+		return downloadCache.addDocument(request.getSession().getId(),
+				new Download("application/pdf;charset=utf-8",
+						"jalkiohjauskirje.pdf", pdf));
 	}
-	
+
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
@@ -49,7 +53,7 @@ public class JalkiohjauskirjeResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
-		return downloadCache.addDocument(request.getSession().getId(), 
+		return downloadCache.addDocument(request.getSession().getId(),
 				new Download("application/zip", "jalkiohjauskirje.zip", zip));
 	}
 

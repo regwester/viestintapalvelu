@@ -13,17 +13,20 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Singleton
-@Path("hyvaksymiskirje")
+@Path(Urls.HYVAKSYMISKIRJE_RESOURCE_PATH)
 public class HyvaksymiskirjeResource {
 	private DownloadCache downloadCache;
 	private HyvaksymiskirjeBuilder hyvaksymiskirjeBuilder;
 
 	@Inject
-	public HyvaksymiskirjeResource(HyvaksymiskirjeBuilder jalkiohjauskirjeBuilder, DownloadCache downloadCache) {
+	public HyvaksymiskirjeResource(
+			HyvaksymiskirjeBuilder jalkiohjauskirjeBuilder,
+			DownloadCache downloadCache) {
 		this.hyvaksymiskirjeBuilder = jalkiohjauskirjeBuilder;
 		this.downloadCache = downloadCache;
 	}
@@ -36,7 +39,8 @@ public class HyvaksymiskirjeResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
-		return downloadCache.addDocument(request.getSession().getId(), 
-				new Download("application/pdf;charset=utf-8", "hyvaksymiskirje.pdf", pdf));
+		return downloadCache.addDocument(request.getSession().getId(),
+				new Download("application/pdf;charset=utf-8",
+						"hyvaksymiskirje.pdf", pdf));
 	}
 }

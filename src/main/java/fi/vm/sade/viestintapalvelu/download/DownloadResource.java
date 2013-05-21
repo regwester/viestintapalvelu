@@ -12,8 +12,10 @@ import javax.ws.rs.core.Response.Status;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import fi.vm.sade.viestintapalvelu.Urls;
+
 @Singleton
-@Path("download")
+@Path(Urls.DOWNLOAD_RESOURCE_PATH)
 public class DownloadResource {
 	private DownloadCache downloadCache;
 
@@ -27,14 +29,14 @@ public class DownloadResource {
 	public Response download(@PathParam("documentId") String input,
 			@Context HttpServletRequest request,
 			@Context HttpServletResponse response) {
-		Download download = downloadCache.get(request.getSession().getId(), input);
+		Download download = downloadCache.get(request.getSession().getId(),
+				input);
 		if (download == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		response.setHeader("Content-Disposition", "attachment; filename=\""
 				+ download.getFilename() + "\"");
-		return Response
-				.ok(download.toByteArray())
+		return Response.ok(download.toByteArray())
 				.type(download.getContentType()).build();
 	}
 }

@@ -13,7 +13,7 @@ import org.apache.catalina.startup.Tomcat;
 import com.google.inject.servlet.GuiceFilter;
 
 public class Launcher {
-	private static final int DEFAULT_PORT = 8080;
+	public static final int DEFAULT_PORT = 8080;
 
 	public static void main(String[] args) throws Exception {
 		Tomcat tomcat = start();
@@ -39,7 +39,7 @@ public class Launcher {
 
 		FilterMap filterMap = new FilterMap();
 		filterMap.setFilterName("guiceFilter");
-		filterMap.addURLPattern("/api/v1/*");
+		filterMap.addURLPattern(Urls.API_PATH + "/*");
 
 		staticCtx.addFilterDef(filterDef);
 		staticCtx.addFilterMap(filterMap);
