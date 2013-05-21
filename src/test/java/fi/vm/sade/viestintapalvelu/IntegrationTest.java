@@ -3,10 +3,12 @@ package fi.vm.sade.viestintapalvelu;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.util.Scanner;
 
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -54,18 +56,7 @@ public class IntegrationTest {
 
 	@Test
 	public void addressLabelXLSPrinting() throws Exception {
-		String json = new Scanner(getClass().getResourceAsStream(
-				"/addresslabel_xls.json"), "UTF-8").useDelimiter("\u001a")
-				.next();
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(Urls.localhost().addresslabel() + "/xls");
-		post.setHeader("Content-Type", "application/json");
-		post.setEntity(new StringEntity(json));
-		HttpResponse response = client.execute(post);
-		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
-				+ "/download/document/" + documentId);
-		response = client.execute(get);
+		HttpResponse response = get("/addresslabel_xls.json", Urls.localhost().addresslabel() + "/xls");
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/vnd.ms-excel", response
 				.getFirstHeader("Content-Type").toString());
@@ -76,19 +67,7 @@ public class IntegrationTest {
 
 	@Test
 	public void jalkiohjauskirjePDFPrinting() throws Exception {
-		String json = new Scanner(getClass().getResourceAsStream(
-				"/jalkiohjauskirje_pdf.json"), "UTF-8").useDelimiter("\u001a")
-				.next();
-		DefaultHttpClient client = new DefaultHttpClient();
-		HttpPost post = new HttpPost(
-				"http://localhost:8080/api/v1/jalkiohjauskirje/pdf");
-		post.setHeader("Content-Type", "application/json");
-		post.setEntity(new StringEntity(json));
-		HttpResponse response = client.execute(post);
-		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(
-				"http://localhost:8080/api/v1/download/document/" + documentId);
-		response = client.execute(get);
+		HttpResponse response = get("/addresslabel_pdf.json", "http://localhost:8080/api/v1/jalkiohjauskirje/pdf");
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response
 				.getFirstHeader("Content-Type").toString());
@@ -96,6 +75,23 @@ public class IntegrationTest {
 				"Content-Disposition: attachment; filename=\"jalkiohjauskirje.pdf\"",
 				response.getFirstHeader("Content-Disposition").toString());
 	}
+
+	private HttpResponse get(String jsonFile, String url) throws UnsupportedEncodingException,
+		IOException, ClientProtocolException {
+		String json = new Scanner(getClass().getResourceAsStream(
+				jsonFile), "UTF-8").useDelimiter("\u001a").next();
+		DefaultHttpClient client = new DefaultHttpClient();
+		HttpPost post = new HttpPost(url);
+		post.setHeader("Content-Type", "application/json");
+		post.setEntity(new StringEntity(json));
+		HttpResponse response = client.execute(post);
+		String documentId = readResponseBody(response);
+		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+				+ "/download/document/" + documentId);
+		response = client.execute(get);
+		return response;
+	}
+
 
 	private String readResponseBody(HttpResponse response) throws IOException {
 		return IOUtils.toString(response.getEntity().getContent());
