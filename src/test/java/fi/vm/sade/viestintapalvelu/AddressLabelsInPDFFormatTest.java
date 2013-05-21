@@ -107,7 +107,7 @@ public class AddressLabelsInPDFFormatTest {
 					"Öistämö",
 					callGenerateLabels("", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13",
-							"65330", "Stockholm", "SL", "Sweden")[0]);
+							"65330", "Stockholm", "SL", "Sweden").get(0));
 		}
 	}
 
@@ -118,7 +118,7 @@ public class AddressLabelsInPDFFormatTest {
 					"Åle",
 					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
 							"Södermalm", "13", "65330", "Stockholm", "SL",
-							"Sweden")[0]);
+							"Sweden").get(0));
 		}
 	}
 
@@ -126,15 +126,15 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void labelContainsNameAddressline2Addressline3PostOfficeRegionAndCountry()
 				throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö", "",
+			List<String> label = callGenerateLabels("Åle", "Öistämö", "",
 					"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
-			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("Södermalm", label[1]);
-			Assert.assertEquals("13", label[2]);
-			Assert.assertEquals("65330 Stockholm", label[3]);
-			Assert.assertEquals("SL", label[4]);
-			Assert.assertEquals("Sweden", label[5]);
-			Assert.assertEquals(6, label.length);
+			Assert.assertEquals("Åle Öistämö", label.get(0));
+			Assert.assertEquals("Södermalm", label.get(1));
+			Assert.assertEquals("13", label.get(2));
+			Assert.assertEquals("65330 Stockholm", label.get(3));
+			Assert.assertEquals("SL", label.get(4));
+			Assert.assertEquals("Sweden", label.get(5));
+			Assert.assertEquals(6, label.size());
 		}
 	}
 
@@ -142,16 +142,16 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void labelContainsNameAddresslineAddressline3PostOfficeAndCountry()
 				throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö",
+			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Brännkyrksgatan 177 B 149", "", "13", "65330",
 					"Stockholm", "SL", "Sweden");
-			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("Brännkyrksgatan 177 B 149", label[1]);
-			Assert.assertEquals("13", label[2]);
-			Assert.assertEquals("65330 Stockholm", label[3]);
-			Assert.assertEquals("SL", label[4]);
-			Assert.assertEquals("Sweden", label[5]);
-			Assert.assertEquals(6, label.length);
+			Assert.assertEquals("Åle Öistämö", label.get(0));
+			Assert.assertEquals("Brännkyrksgatan 177 B 149", label.get(1));
+			Assert.assertEquals("13", label.get(2));
+			Assert.assertEquals("65330 Stockholm", label.get(3));
+			Assert.assertEquals("SL", label.get(4));
+			Assert.assertEquals("Sweden", label.get(5));
+			Assert.assertEquals(6, label.size());
 		}
 	}
 
@@ -159,16 +159,16 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void labelContainsNameAddresslineAddressline3PostOfficeAndCountry()
 				throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö",
+			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Brännkyrksgatan 177 B 149", "Södermalm", "", "65330",
 					"Stockholm", "SL", "Sweden");
-			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("Brännkyrksgatan 177 B 149", label[1]);
-			Assert.assertEquals("Södermalm", label[2]);
-			Assert.assertEquals("65330 Stockholm", label[3]);
-			Assert.assertEquals("SL", label[4]);
-			Assert.assertEquals("Sweden", label[5]);
-			Assert.assertEquals(6, label.length);
+			Assert.assertEquals("Åle Öistämö", label.get(0));
+			Assert.assertEquals("Brännkyrksgatan 177 B 149", label.get(1));
+			Assert.assertEquals("Södermalm", label.get(2));
+			Assert.assertEquals("65330 Stockholm", label.get(3));
+			Assert.assertEquals("SL", label.get(4));
+			Assert.assertEquals("Sweden", label.get(5));
+			Assert.assertEquals(6, label.size());
 		}
 	}
 
@@ -179,7 +179,7 @@ public class AddressLabelsInPDFFormatTest {
 					"Stockholm",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "",
-							"Stockholm", "SL", "Sweden")[4]);
+							"Stockholm", "SL", "Sweden").get(4));
 		}
 	}
 
@@ -190,7 +190,7 @@ public class AddressLabelsInPDFFormatTest {
 					"65330",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13",
-							"65330", "", "SL", "Sweden")[4]);
+							"65330", "", "SL", "Sweden").get(4));
 		}
 	}
 
@@ -198,42 +198,42 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void labelContainsNameAddresslineAddressline2Addressline3CityAndRegion()
 				throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö",
+			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
 					"Stockholm", "SL", "");
-			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("Brännkyrksgatan 177 B 149", label[1]);
-			Assert.assertEquals("Södermalm", label[2]);
-			Assert.assertEquals("13", label[3]);
-			Assert.assertEquals("65330 Stockholm", label[4]);
-			Assert.assertEquals("SL", label[5]);
-			Assert.assertEquals(6, label.length);
+			Assert.assertEquals("Åle Öistämö", label.get(0));
+			Assert.assertEquals("Brännkyrksgatan 177 B 149", label.get(1));
+			Assert.assertEquals("Södermalm", label.get(2));
+			Assert.assertEquals("13", label.get(3));
+			Assert.assertEquals("65330 Stockholm", label.get(4));
+			Assert.assertEquals("SL", label.get(5));
+			Assert.assertEquals(6, label.size());
 		}
 	}
 
 	public static class WhenAddressIsLocal {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö",
+			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
 					"", "Finland");
-			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("Mannerheimintie 177 B 149", label[1]);
-			Assert.assertEquals("65330 Helsinki", label[2]);
-			Assert.assertEquals(3, label.length);
+			Assert.assertEquals("Åle Öistämö", label.get(0));
+			Assert.assertEquals("Mannerheimintie 177 B 149", label.get(1));
+			Assert.assertEquals("65330 Helsinki", label.get(2));
+			Assert.assertEquals(3, label.size());
 		}
 	}
 
 	public static class WhenAddressIsLocalAndCountryIsUppercaseFINLAND {
 		@Test
 		public void labelHasOnlyThreeRows() throws Exception {
-			String[] label = callGenerateLabels("Åle", "Öistämö",
+			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
 					"", "FINLAND");
-			Assert.assertEquals("Åle Öistämö", label[0]);
-			Assert.assertEquals("Mannerheimintie 177 B 149", label[1]);
-			Assert.assertEquals("65330 Helsinki", label[2]);
-			Assert.assertEquals(3, label.length);
+			Assert.assertEquals("Åle Öistämö", label.get(0));
+			Assert.assertEquals("Mannerheimintie 177 B 149", label.get(1));
+			Assert.assertEquals("65330 Helsinki", label.get(2));
+			Assert.assertEquals(3, label.size());
 		}
 	}
 
@@ -245,11 +245,11 @@ public class AddressLabelsInPDFFormatTest {
 		private static AddressLabel foreign = new AddressLabel("Åle",
 				"Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "13",
 				"65330", "Stockholm", "SL", "Sweden");
-		private static List<String[]> response;
+		private static List<List<String>> response;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			response = callGenerateLabels(Arrays.asList(domestic, foreign));
+			response = TestUtil.generateAddressLabels(Arrays.asList(domestic, foreign));
 		}
 
 		@Test
@@ -259,14 +259,14 @@ public class AddressLabelsInPDFFormatTest {
 
 		@Test
 		public void domesticAddressHasThreeRows() throws Exception {
-			Assert.assertEquals(3, response.get(1).length); // Order reversed
+			Assert.assertEquals(3, response.get(1).size()); // Order reversed
 															// when parsing pdf
 															// to html
 		}
 
 		@Test
 		public void foreignAddressHasSevenRows() throws Exception {
-			Assert.assertEquals(7, response.get(0).length); // Order reversed
+			Assert.assertEquals(7, response.get(0).size()); // Order reversed
 															// when parsing pdf
 															// to html
 		}
@@ -275,12 +275,12 @@ public class AddressLabelsInPDFFormatTest {
 	public static class WhenCreatingLabelsInABigBatch {
 
 		private static List<AddressLabel> batch;
-		private static List<String[]> response;
+		private static List<List<String>> response;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
 			batch = createLabels(1000);
-			response = callGenerateLabels(batch);
+			response = TestUtil.generateAddressLabels(batch);
 		}
 
 		@Test
@@ -349,13 +349,11 @@ public class AddressLabelsInPDFFormatTest {
 		}.generateObjects(count);
 	}
 
-	private static String[] callGenerateLabels(String firstName,
+	private static List<String> callGenerateLabels(String firstName,
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String postOffice,
-			String region, String country) throws UnsupportedEncodingException,
-			IOException, JsonGenerationException, JsonMappingException,
-			ClientProtocolException, DocumentException {
-		return callGenerateLabels(
+			String region, String country) throws Exception {
+		return TestUtil.generateAddressLabels(
 				Arrays.asList(new AddressLabel(firstName, lastName,
 						addressline, addressline2, addressline3, postalCode,
 						postOffice, region, country))).get(0);
