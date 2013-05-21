@@ -39,7 +39,7 @@ public class Launcher {
 
 		FilterMap filterMap = new FilterMap();
 		filterMap.setFilterName("guiceFilter");
-		filterMap.addURLPattern(Urls.API_PATH + "/*");
+		filterMap.addURLPattern("/" + Urls.API_PATH + "/*");
 
 		staticCtx.addFilterDef(filterDef);
 		staticCtx.addFilterMap(filterMap);

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Urls {
-	public static final String API_PATH = "/api/v1";
+	public static final String API_PATH = "api/v1";
 	public static final String ADDRESS_LABEL_RESOURCE_PATH = "addresslabel";
 	public static final String DOWNLOAD_RESOURCE_PATH = "download";
 	public static final String HYVAKSYMISKIRJE_RESOURCE_PATH = "hyvaksymiskirje";

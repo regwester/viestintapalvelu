@@ -23,6 +23,7 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		Map<String, String> initParameters = new HashMap<String, String>();
 		initParameters.put(JSONConfiguration.FEATURE_POJO_MAPPING, "true");
 
-		serve(Urls.API_PATH + "/*").with(GuiceContainer.class, initParameters);
+		serve("/" + Urls.API_PATH + "/*").with(GuiceContainer.class,
+				initParameters);
 	}
 }
