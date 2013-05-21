@@ -13,17 +13,19 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Singleton
-@Path("addresslabel")
+@Path(Urls.ADDRESS_LABEL_RESOURCE_PATH)
 public class AddressLabelResource {
 	private DownloadCache downloadCache;
 	private AddressLabelBuilder labelBuilder;
 
 	@Inject
-	public AddressLabelResource(AddressLabelBuilder labelBuilder, DownloadCache downloadCache) {
+	public AddressLabelResource(AddressLabelBuilder labelBuilder,
+			DownloadCache downloadCache) {
 		this.labelBuilder = labelBuilder;
 		this.downloadCache = downloadCache;
 	}
@@ -36,10 +38,11 @@ public class AddressLabelResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] pdf = labelBuilder.printPDF(input);
-		return downloadCache.addDocument(request.getSession().getId(), 
-				new Download("application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
+		return downloadCache.addDocument(request.getSession().getId(),
+				new Download("application/pdf;charset=utf-8",
+						"addresslabels.pdf", pdf));
 	}
-	
+
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
@@ -48,7 +51,8 @@ public class AddressLabelResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] csv = labelBuilder.printCSV(input);
-		return downloadCache.addDocument(request.getSession().getId(), 
-				new Download("application/vnd.ms-excel", "addresslabels.xls", csv));
+		return downloadCache.addDocument(request.getSession().getId(),
+				new Download("application/vnd.ms-excel", "addresslabels.xls",
+						csv));
 	}
 }
