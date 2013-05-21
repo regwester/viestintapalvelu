@@ -43,7 +43,7 @@ public class IntegrationTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+		HttpGet get = new HttpGet(Urls.localhost().apiRoot()
 				+ "/download/document/" + documentId);
 		response = client.execute(get);
 		assertEquals(200, response.getStatusLine().getStatusCode());
@@ -67,7 +67,7 @@ public class IntegrationTest {
 
 	@Test
 	public void jalkiohjauskirjePDFPrinting() throws Exception {
-		HttpResponse response = get("/addresslabel_pdf.json", "http://localhost:8080/api/v1/jalkiohjauskirje/pdf");
+		HttpResponse response = get("/jalkiohjauskirje_pdf.json", "http://localhost:8080/api/v1/jalkiohjauskirje/pdf");
 		assertEquals(200, response.getStatusLine().getStatusCode());
 		assertEquals("Content-Type: application/pdf;charset=utf-8", response
 				.getFirstHeader("Content-Type").toString());
@@ -86,12 +86,11 @@ public class IntegrationTest {
 		post.setEntity(new StringEntity(json));
 		HttpResponse response = client.execute(post);
 		String documentId = readResponseBody(response);
-		HttpGet get = new HttpGet(Urls.localhost().apiRootUrl()
+		HttpGet get = new HttpGet(Urls.localhost().apiRoot()
 				+ "/download/document/" + documentId);
 		response = client.execute(get);
 		return response;
 	}
-
 
 	private String readResponseBody(HttpResponse response) throws IOException {
 		return IOUtils.toString(response.getEntity().getContent());

@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Urls {
-	public static final String API_PATH = "/api/v1";
+	public static final String API_PATH = "api/v1";
 	public static final String ADDRESS_LABEL_RESOURCE_PATH = "addresslabel";
 	public static final String DOWNLOAD_RESOURCE_PATH = "download";
 	public static final String HYVAKSYMISKIRJE_RESOURCE_PATH = "hyvaksymiskirje";
@@ -15,13 +15,15 @@ public class Urls {
 	}
 
 	public static interface RestServer {
-		String addresslabelDownload();
-
-		String addresslabel();
+		String root();
 
 		String index();
 
-		String apiRootUrl();
+		String apiRoot();
+
+		String addresslabelDownload();
+
+		String addresslabel();
 	}
 
 	public static class Localhost implements RestServer {
@@ -30,24 +32,29 @@ public class Urls {
 		private static final int PORT = 8080;
 
 		@Override
+		public String root() {
+			return SCHEME + "://" + DOMAIN + ":" + PORT;
+		}
+
+		@Override
 		public String index() {
-			return SCHEME + "://" + DOMAIN + ":" + PORT + "/" + "index.html";
+			return build(root(), "index.html");
+		}
+
+		@Override
+		public String apiRoot() {
+			return build(root(), Urls.API_PATH);
 		}
 
 		@Override
 		public String addresslabel() {
-			return build(apiRootUrl(), ADDRESS_LABEL_RESOURCE_PATH);
+			return build(apiRoot(), ADDRESS_LABEL_RESOURCE_PATH);
 		}
 
 		@Override
 		public String addresslabelDownload() {
-			return build(apiRootUrl(), ADDRESS_LABEL_RESOURCE_PATH,
+			return build(apiRoot(), ADDRESS_LABEL_RESOURCE_PATH,
 					DOWNLOAD_RESOURCE_PATH);
-		}
-
-		@Override
-		public String apiRootUrl() {
-			return SCHEME + "://" + DOMAIN + ":" + PORT + Urls.API_PATH;
 		}
 	}
 
