@@ -23,6 +23,10 @@ import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 
 public class JalkiohjauskirjeBuilder {
 
+	private final static String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje.html";
+	private final static String LIITE_TEMPLATE = "/liite.html";
+	private final static String IPOST_TEMPLATE = "/ipost.xml";
+	
 	private DocumentBuilder documentBuilder;
 	private LiiteBuilder liiteBuilder;
 	
@@ -36,10 +40,10 @@ public class JalkiohjauskirjeBuilder {
 		return createJalkiohjauskirjeBatch(batch).toByteArray();
 	}
 
-	public byte[] printZIP(JalkiohjauskirjeIpostBatch batch) throws IOException, DocumentException, NoSuchAlgorithmException {
+	public byte[] printZIP(JalkiohjauskirjeBatch batch) throws IOException, DocumentException, NoSuchAlgorithmException {
 		MergedPdfDocument pdf = createJalkiohjauskirjeBatch(batch);
 		Map<String, Object> context = createDataContext(pdf.getDocumentMetadata());
-		byte[] ipostXml = documentBuilder.applyTextTemplate(batch.getIpostTemplateName(), context);
+		byte[] ipostXml = documentBuilder.applyTextTemplate(IPOST_TEMPLATE, context);
 		Map<String, byte[]> documents = new HashMap<String, byte[]>();
 		documents.put("jalkiohjauskirje.pdf", pdf.toByteArray());
 		documents.put("jalkiohjauskirje.xml", ipostXml);
@@ -49,8 +53,8 @@ public class JalkiohjauskirjeBuilder {
 	public MergedPdfDocument createJalkiohjauskirjeBatch(JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
-			byte[] frontPage = createFirstPagePDF(batch.getKirjeTemplateName(), kirje.getAddressLabel());
-			byte[] attachment = liiteBuilder.printPDF(batch.getLiiteTemplateName(), kirje.getTulokset());
+			byte[] frontPage = createFirstPagePDF(JALKIOHJAUSKIRJE_TEMPLATE, kirje.getAddressLabel());
+			byte[] attachment = liiteBuilder.printPDF(LIITE_TEMPLATE, kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, attachment));
 		}
 		return documentBuilder.merge(source);

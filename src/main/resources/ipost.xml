@@ -6,19 +6,19 @@
 	xmlns:lb="urn:itella.com:/schema/ipost/letterbundle/v1x0">
 	
 	<lb:Bundle>
-		<lb:BundleCommon isTest="false">
-			<lb:Sender contact="Free text - example: Contact person name, Sender email address, Sender phone"/>
+		<lb:BundleCommon isTest="true">
+			<lb:Sender contact="laura.alalaakkola@oph.fi"/>
 			<lb:StdBundleProcessing 
-				customerId="Pxxxxx" 
-				password="nnnn" 
-				serviceFunction="0" 
-				electronicArchiving="T" 
-				letterClass="2" 
-				envelope="S" 
-				paper="0" 
-				fileFormat="0" 
-				departmentClassification="false" 
-				isDuplex="false"/>
+				customerId="P10165"
+				password="5738"
+				serviceFunction="0"
+				electronicArchiving="T"
+				letterClass="1"
+				envelope="S"
+				paper="0"
+				fileFormat="0"
+				departmentClassification="false"
+				isDuplex="true"/>
 			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false"/>
 			<lb:ExternalFile fileName="jalkiohjauskirje.pdf"></lb:ExternalFile>
 		</lb:BundleCommon>

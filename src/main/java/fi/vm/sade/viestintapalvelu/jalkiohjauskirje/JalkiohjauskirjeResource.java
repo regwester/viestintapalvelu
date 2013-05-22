@@ -51,7 +51,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 	@Consumes("application/json")
 	@Produces("text/plain")
 	@Path("zip")
-	public Response zip(JalkiohjauskirjeIpostBatch input,
+	public Response zip(JalkiohjauskirjeBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
