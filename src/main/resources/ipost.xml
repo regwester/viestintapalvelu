@@ -32,7 +32,7 @@
 							address="$metadata.addressLabel.addressline"
 							postalCode="$metadata.addressLabel.postalCode"
 							city="$metadata.addressLabel.city" 
-							countryCode="FI"/>
+							countryCode="$metadata.addressLabel.countryCode"/>
 					</lb:Address>
 				</lb:Recipient>
 			</lb:LetterMeta>

@@ -19,6 +19,7 @@ public class AddressLabel {
 		this.city = city;
 		this.region = region;
 		this.country = country;
+		this.countryCode = countryCode;
 	}
 
 	/**

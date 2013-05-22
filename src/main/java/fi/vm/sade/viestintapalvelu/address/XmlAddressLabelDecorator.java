@@ -45,6 +45,10 @@ public class XmlAddressLabelDecorator extends AddressLabelDecorator {
 		return decorateCountry(decoratedLabel.getCountry());
 	}
 
+	public String getCountryCode() {
+		return escape(decoratedLabel.getCountryCode());
+	}
+
 	@Override
 	protected String escape(String text) {
 		return StringEscapeUtils.escapeXml(text);

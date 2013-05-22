@@ -93,8 +93,8 @@ public class IPostZIPTest {
 
 	@Test
 	public void xmlContainsReceiverCountryCode() throws Exception {
-		Assert.assertEquals("FI", xpath("(//lb:Eu1)[1]/@countryCode"));
-		Assert.assertEquals("FI", xpath("(//lb:Eu1)[2]/@countryCode"));
+		Assert.assertEquals(label.getCountryCode(), xpath("(//lb:Eu1)[1]/@countryCode"));
+		Assert.assertEquals(labelWithSpecialCharacters.getCountryCode(), xpath("(//lb:Eu1)[2]/@countryCode"));
 	}
 
 	private static Set<String> extractFilenames(byte[] zip) throws IOException {
