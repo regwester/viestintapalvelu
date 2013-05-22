@@ -59,6 +59,29 @@ public class HakutulostaulukkoPDFTest {
 		}
 	}
 
+	public static class WhenCreatingLiiteWithSpecialCharacters {
+
+		private static Map<String,String> tulos = createHaku("20&", "30&");
+		private static List<List<String>> hakutoivetaulukko;
+
+		@SuppressWarnings("unchecked")
+		@BeforeClass
+		public static void setUp() throws Exception {
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, Arrays.asList(tulos));
+			hakutoivetaulukko = generateHakutoivetaulukko(kirje);
+		}
+
+		@Test
+		public void aloituspaikatWithSpecialCharactersIsPrinted() throws Exception {
+			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoivetaulukko.get(1).get(0));
+		}
+
+		@Test
+		public void varasijaWithSpecialCharactersIsPrinted() throws Exception {
+			Assert.assertEquals(tulos.get("varasija"), hakutoivetaulukko.get(1).get(1));
+		}
+	}
+
 	@SuppressWarnings("unchecked")
 	public static class WhenCreatingLiiteWithNullInput {
 

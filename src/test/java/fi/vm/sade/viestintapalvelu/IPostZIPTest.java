@@ -28,18 +28,18 @@ public class IPostZIPTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
-	private static AddressLabel label1 = new AddressLabel("Åle", "Öistämö",
+	private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
 			"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
-	private static AddressLabel label2 = new AddressLabel("Åle", "Öistämö",
-			"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
+	private static AddressLabel labelWithSpecialCharacters = new AddressLabel("Åle &", "Öistämö &",
+			"Brännkyrksgatan & 177 B 149", "Södermalm &", "13&", "65330 &", "Stockholm &", "SL&", "Sweden&");
 	private static byte[] zip;
 	private static Set<String> filenames;
 	private static Document ipostXML;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label1, new ArrayList<Map<String,String>>());
-		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(label1, new ArrayList<Map<String,String>>());
+		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, new ArrayList<Map<String,String>>());
+		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(labelWithSpecialCharacters, new ArrayList<Map<String,String>>());
 		zip = TestUtil.generateIPostZIP(Arrays.asList(kirje1, kirje2));
 		filenames = extractFilenames(zip);
 		ipostXML = exctractIPostXML(zip);
@@ -69,26 +69,26 @@ public class IPostZIPTest {
 
 	@Test
 	public void xmlContainsReceiverName() throws Exception {
-		Assert.assertEquals(label1.getFirstName() + " " + label1.getLastName(), xpath("(//lb:Eu1)[1]/@name"));
-		Assert.assertEquals(label2.getFirstName() + " " + label2.getLastName(), xpath("(//lb:Eu1)[2]/@name"));
+		Assert.assertEquals(label.getFirstName() + " " + label.getLastName(), xpath("(//lb:Eu1)[1]/@name"));
+		Assert.assertEquals(labelWithSpecialCharacters.getFirstName() + " " + labelWithSpecialCharacters.getLastName(), xpath("(//lb:Eu1)[2]/@name"));
 	}
 
 	@Test
 	public void xmlContainsReceiverAddress() throws Exception {
-		Assert.assertEquals(label1.getAddressline(), xpath("(//lb:Eu1)[1]/@address"));
-		Assert.assertEquals(label2.getAddressline(), xpath("(//lb:Eu1)[2]/@address"));
+		Assert.assertEquals(label.getAddressline(), xpath("(//lb:Eu1)[1]/@address"));
+		Assert.assertEquals(labelWithSpecialCharacters.getAddressline(), xpath("(//lb:Eu1)[2]/@address"));
 	}
 
 	@Test
 	public void xmlContainsReceiverPostalCode() throws Exception {
-		Assert.assertEquals(label1.getPostalCode(), xpath("(//lb:Eu1)[1]/@postalCode"));
-		Assert.assertEquals(label2.getPostalCode(), xpath("(//lb:Eu1)[2]/@postalCode"));
+		Assert.assertEquals(label.getPostalCode(), xpath("(//lb:Eu1)[1]/@postalCode"));
+		Assert.assertEquals(labelWithSpecialCharacters.getPostalCode(), xpath("(//lb:Eu1)[2]/@postalCode"));
 	}
 
 	@Test
 	public void xmlContainsReceiverCity() throws Exception {
-		Assert.assertEquals(label1.getCity(), xpath("(//lb:Eu1)[1]/@city"));
-		Assert.assertEquals(label2.getCity(), xpath("(//lb:Eu1)[2]/@city"));
+		Assert.assertEquals(label.getCity(), xpath("(//lb:Eu1)[1]/@city"));
+		Assert.assertEquals(labelWithSpecialCharacters.getCity(), xpath("(//lb:Eu1)[2]/@city"));
 	}
 
 	@Test

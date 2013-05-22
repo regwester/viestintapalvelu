@@ -15,8 +15,8 @@ public class JalkiohjauskirjePDFTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
-	private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-			"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
+	private static AddressLabel label = new AddressLabel("Åle &", "Öistämö",
+			"Brännkyrksgatan @ 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
 	private static String pdf;
 
 	@BeforeClass
