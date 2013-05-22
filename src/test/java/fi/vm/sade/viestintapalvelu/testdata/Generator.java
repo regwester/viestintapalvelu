@@ -14,7 +14,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 
 public abstract class Generator<T> {
 
-	private Map<String, List<String>> datasets = new HashMap<String, List<String>>();
+	private Map<String, List<Object>> datasets = new HashMap<String, List<Object>>();
 	private Random random = new Random();
 
 	public Generator() throws JsonParseException, JsonMappingException,
@@ -41,26 +41,60 @@ public abstract class Generator<T> {
 	public void addDataset(String datasetKey, String datasetURL)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		List<String> values = mapper.readValue(
+		List<Object> values = mapper.readValue(
 				new File(datasetURL), List.class);
 		datasets.put(datasetKey, values);
 	}
 
-	public void addDataset(String datasetKey, List<String> values) {
+	public void addDataset(String datasetKey, List<Object> values) {
 		datasets.put(datasetKey, values);
+	}
+
+	private String toString(Object randomItem) {
+		if (randomItem instanceof String) {
+			return (String) randomItem;
+		}
+		if (randomItem instanceof String[]) {
+			return ((String[]) randomItem)[0];
+		}
+		return "";
+	}
+
+	@SuppressWarnings("unchecked")
+	private String[] toStringArray(Object randomItem) {
+		if (randomItem instanceof String) {
+			return new String[] {(String) randomItem};
+		}
+		if (randomItem instanceof String[]) {
+			return (String[]) randomItem;
+		}
+		if (randomItem instanceof List) {
+			return ((List<String>) randomItem).toArray(new String[1]);
+		}
+		return new String[] {""};
 	}
 
 	protected class TestData {
 		public String random(String datasetKey) {
-			List<String> dataset = datasets.get(datasetKey);
-			return dataset != null ? dataset
-					.get(random.nextInt(dataset.size())) : "";
+			List<Object> dataset = datasets.get(datasetKey);
+			if (dataset == null) {
+				return "";
+			}
+			return Generator.this.toString(dataset.get(random.nextInt(dataset.size())));
+		}
+
+		public String[] randomArray(String datasetKey) {
+			List<Object> dataset = datasets.get(datasetKey);
+			if (dataset == null) {
+				return new String[] {""};
+			}
+			return Generator.this.toStringArray(dataset.get(random.nextInt(dataset.size())));
 		}
 	}
 
 	public static class Range {
-		public static List<String> asList(int from, int to) {
-			List<String> values = new ArrayList<String>();
+		public static List<Object> asList(int from, int to) {
+			List<Object> values = new ArrayList<Object>();
 			for (int i = from; i <= to; i++) {
 				values.add("" + i);
 			}

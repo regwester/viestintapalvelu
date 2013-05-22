@@ -8,7 +8,8 @@ public class AddressLabel {
 
 	public AddressLabel(String firstName, String lastName,
 			String addressline, String addressline2, String addressline3, 
-			String postalCode, String city, String region, String country) {
+			String postalCode, String city, String region, String country,
+			String countryCode) {
 		this.firstName = firstName;
 		this.lastName = lastName;
 		this.addressline = addressline;
@@ -57,6 +58,10 @@ public class AddressLabel {
 	 * Maa, jos muu kuin Suomi. Esim. "Sweden".
 	 */
 	private String country;
+	/**
+	 * Maakoodi ISO3166.
+	 */
+	private String countryCode;
 
 	public String getFirstName() {
 		return firstName;
@@ -94,12 +99,16 @@ public class AddressLabel {
 		return country;
 	}
 
+	public String getCountryCode() {
+		return countryCode;
+	}
+
 	@Override
 	public String toString() {
 		return "AddressLabel [firstName=" + firstName + ", lastName="
 				+ lastName + ", addressline=" + addressline + ", addressline2=" + addressline2
 				+ ", addressline3=" + addressline3 + ", postalCode=" + postalCode + ", city=" + city
-				+ ", region=" + region + ", country=" + country + "]";
+				+ ", region=" + region + ", country=" + country + ", countryCode=" + countryCode + "]";
 	}
 
 }

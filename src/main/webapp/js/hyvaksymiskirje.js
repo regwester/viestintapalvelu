@@ -5,6 +5,7 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
 	function generateHyvaksymiskirje(count) {
 		$scope.hyvaksymiskirjeet = $scope.hyvaksymiskirjeet.concat(Generator.generateObjects(count, function(data) {
 			var postoffice = data.any('postoffice');
+			var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'))
 			var tulokset = generateTulokset(data.any('hakutoive-lukumaara'));
 			tulokset[0]['hylkayksenSyy'] = '';
 			return {
@@ -17,7 +18,8 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
 					"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 					"city": postoffice.substring(postoffice.indexOf(' ') + 1),
 					"region": "",
-					"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
+					"country": country[0],
+					"countryCode": country[1]
 				},
 				"tulokset": tulokset,
 				"koulu": tulokset[0]['koulu'],

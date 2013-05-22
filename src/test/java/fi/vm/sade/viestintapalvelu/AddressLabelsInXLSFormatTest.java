@@ -24,7 +24,7 @@ public class AddressLabelsInXLSFormatTest {
 	public static class WhenCreatingLabelForValidForeignAddress {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
+				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden", "SE");
 		private static List<String> otsikko;
 		private static List<String> osoite;
 
@@ -99,7 +99,7 @@ public class AddressLabelsInXLSFormatTest {
 		@Test
 		public void specialCharactersAreDisplayed() throws Exception {
 			List<String> label = callGenerateLabels("Åle &", "Öistämö #", "Brännkyrksgatan 177 B 149&",
-					"Södermalm $€", "13@", "65330&", "Stockholm&", "SL&", "Sweden&");
+					"Södermalm $€", "13@", "65330&", "Stockholm&", "SL&", "Sweden&", "SE");
 			Assert.assertEquals("Åle &", label.get(0));
 			Assert.assertEquals("Öistämö #", label.get(1));
 			Assert.assertEquals("Brännkyrksgatan 177 B 149&", label.get(2));
@@ -119,7 +119,7 @@ public class AddressLabelsInXLSFormatTest {
 					"",
 					callGenerateLabels("", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm",
-							"SL", "Sweden").get(0));
+							"SL", "Sweden", "SE").get(0));
 		}
 	}
 
@@ -129,7 +129,7 @@ public class AddressLabelsInXLSFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
-							"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden").get(1));
+							"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden", "SE").get(1));
 		}
 	}
 
@@ -139,7 +139,7 @@ public class AddressLabelsInXLSFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "", "Södermalm", "13", "65330",
-							"Stockholm", "SL", "Sweden").get(2));
+							"Stockholm", "SL", "Sweden", "SE").get(2));
 		}
 	}
 
@@ -149,7 +149,7 @@ public class AddressLabelsInXLSFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "", 
-							"13", "65330", "Stockholm", "SL", "Sweden").get(3));
+							"13", "65330", "Stockholm", "SL", "Sweden", "SE").get(3));
 		}
 	}
 
@@ -159,7 +159,7 @@ public class AddressLabelsInXLSFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", 
-							"", "65330", "Stockholm", "SL", "Sweden").get(4));
+							"", "65330", "Stockholm", "SL", "Sweden", "SE").get(4));
 		}
 	}
 
@@ -170,7 +170,7 @@ public class AddressLabelsInXLSFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "", "Stockholm",
-							"SL", "Sweden").get(5));
+							"SL", "Sweden", "SE").get(5));
 		}
 	}
 
@@ -180,7 +180,8 @@ public class AddressLabelsInXLSFormatTest {
 			Assert.assertEquals(
 					"",
 					callGenerateLabels("Åle", "Öistämö",
-							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "", "SL","Sweden").get(6));
+							"Brännkyrksgatan 177 B 149", "Södermalm", "13", 
+							"65330", "", "SL","Sweden", "SE").get(6));
 		}
 	}
 
@@ -191,7 +192,7 @@ public class AddressLabelsInXLSFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm",
-							"", "Sweden").get(7));
+							"", "Sweden", "SE").get(7));
 		}
 	}
 
@@ -202,7 +203,7 @@ public class AddressLabelsInXLSFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm",
-							"SL", "").get(8));
+							"SL", "", "FI").get(8));
 		}
 	}
 
@@ -211,7 +212,7 @@ public class AddressLabelsInXLSFormatTest {
 		public void seventhColumnIsEmptyString() throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
-					"", "Finland");
+					"", "Finland", "FI");
 			Assert.assertEquals("", label.get(8));
 		}
 	}
@@ -223,7 +224,7 @@ public class AddressLabelsInXLSFormatTest {
 					"",
 					callGenerateLabels("Åle", "Öistämö",
 							"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
-							"", "FINLAND").get(8));
+							"", "FINLAND", "FI").get(8));
 		}
 	}
 
@@ -249,12 +250,13 @@ public class AddressLabelsInXLSFormatTest {
 		return new Generator<AddressLabel>() {
 			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
+				String[] country = testData.randomArray("country");
 				return new AddressLabel(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1), "",
-						testData.random("country"));
+						country[0], country[1]);
 			}
 		}.generateObjects(count);
 	}
@@ -262,9 +264,9 @@ public class AddressLabelsInXLSFormatTest {
 	private static List<String> callGenerateLabels(String firstName,
 			String lastName, String addressline, String addressline2, 
 			String addressline3, String postalCode,
-			String city, String region, String country)
+			String city, String region, String country, String countryCode)
 			throws Exception {
-		AddressLabel label = new AddressLabel(firstName, lastName, addressline, addressline2, addressline3, postalCode, city, region, country);
+		AddressLabel label = new AddressLabel(firstName, lastName, addressline, addressline2, addressline3, postalCode, city, region, country, countryCode);
 		return TestUtil.generateAddressLabelsXLS(Arrays.asList(label)).get(1);
 	}
 }

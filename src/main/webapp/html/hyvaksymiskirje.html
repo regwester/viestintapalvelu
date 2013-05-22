@@ -11,6 +11,7 @@
 				<th>Postitoimipaikka</th>
 				<th>Maakunta</th>
 				<th>Maa</th>
+				<th>Maakoodi</th>
 				<th></th>
 			</tr>
 			<tr>
@@ -27,6 +28,7 @@
 				<td><input class="input-medium" type="text" ng-model="city" placeholder="Postitoimipaikka"></td>
 				<td><input class="input-medium" type="text" ng-model="region" placeholder="Maakunta"></td>
 				<td><input class="input-medium" type="text" ng-model="country" placeholder="Maa"></td>
+				<td><input class="input-small" type="text" ng-model="countryCode" placeholder="Maakoodi"></td>
 				<td class="inline-operation"><button class="btn btn-small" ng-click="addHyvaksymiskirje()">Lisää</button></td>
 			</tr>
 		</table>
@@ -45,7 +47,7 @@
 					<div>{{kirje.addressLabel.addressline3}}</div>
 					<div>{{kirje.addressLabel.postalCode}} {{kirje.addressLabel.city}}</div>
 					<div>{{kirje.addressLabel.region}}</div>
-					<div>{{kirje.addressLabel.country}}</div>
+					<div>{{kirje.addressLabel.country}} {{kirje.addressLabel.countryCode}}</div>
 				</td>
 				<td class="hyvaksytty">
 					<div>{{kirje.koulu}}</div>

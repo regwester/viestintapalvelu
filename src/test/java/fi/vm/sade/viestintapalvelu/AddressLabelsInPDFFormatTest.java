@@ -25,7 +25,7 @@ public class AddressLabelsInPDFFormatTest {
 
 		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
 				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
-				"Stockholm", "SL", "Sweden");
+				"Stockholm", "SL", "Sweden", "SE");
 		private static List<String> pdf;
 
 		@BeforeClass
@@ -82,7 +82,7 @@ public class AddressLabelsInPDFFormatTest {
 		@Test
 		public void specialCharactersAreDisplayed() throws Exception {
 			List<String> label = callGenerateLabels("Åle &", "Öistämö #", "Brännkyrksgatan 177 B 149&",
-					"Södermalm $€", "13@", "65330&", "Stockholm&", "SL&", "Sweden&");
+					"Södermalm $€", "13@", "65330&", "Stockholm&", "SL&", "Sweden&", "SE");
 			Assert.assertEquals("Åle & Öistämö #", label.get(0));
 			Assert.assertEquals("Brännkyrksgatan 177 B 149&", label.get(1));
 			Assert.assertEquals("Södermalm $€", label.get(2));
@@ -100,7 +100,7 @@ public class AddressLabelsInPDFFormatTest {
 					"Öistämö",
 					callGenerateLabels("", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13",
-							"65330", "Stockholm", "SL", "Sweden").get(0));
+							"65330", "Stockholm", "SL", "Sweden", "SE").get(0));
 		}
 	}
 
@@ -111,7 +111,7 @@ public class AddressLabelsInPDFFormatTest {
 					"Åle",
 					callGenerateLabels("Åle", "", "Brännkyrksgatan 177 B 149",
 							"Södermalm", "13", "65330", "Stockholm", "SL",
-							"Sweden").get(0));
+							"Sweden", "SE").get(0));
 		}
 	}
 
@@ -120,7 +120,7 @@ public class AddressLabelsInPDFFormatTest {
 		public void labelContainsNameAddressline2Addressline3PostOfficeRegionAndCountry()
 				throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö", "",
-					"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
+					"Södermalm", "13", "65330", "Stockholm", "SL", "Sweden", "SE");
 			Assert.assertEquals("Åle Öistämö", label.get(0));
 			Assert.assertEquals("Södermalm", label.get(1));
 			Assert.assertEquals("13", label.get(2));
@@ -137,7 +137,7 @@ public class AddressLabelsInPDFFormatTest {
 				throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Brännkyrksgatan 177 B 149", "", "13", "65330",
-					"Stockholm", "SL", "Sweden");
+					"Stockholm", "SL", "Sweden", "SE");
 			Assert.assertEquals("Åle Öistämö", label.get(0));
 			Assert.assertEquals("Brännkyrksgatan 177 B 149", label.get(1));
 			Assert.assertEquals("13", label.get(2));
@@ -154,7 +154,7 @@ public class AddressLabelsInPDFFormatTest {
 				throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Brännkyrksgatan 177 B 149", "Södermalm", "", "65330",
-					"Stockholm", "SL", "Sweden");
+					"Stockholm", "SL", "Sweden", "SE");
 			Assert.assertEquals("Åle Öistämö", label.get(0));
 			Assert.assertEquals("Brännkyrksgatan 177 B 149", label.get(1));
 			Assert.assertEquals("Södermalm", label.get(2));
@@ -172,7 +172,7 @@ public class AddressLabelsInPDFFormatTest {
 					"Stockholm",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13", "",
-							"Stockholm", "SL", "Sweden").get(4));
+							"Stockholm", "SL", "Sweden", "SE").get(4));
 		}
 	}
 
@@ -183,7 +183,7 @@ public class AddressLabelsInPDFFormatTest {
 					"65330",
 					callGenerateLabels("Åle", "Öistämö",
 							"Brännkyrksgatan 177 B 149", "Södermalm", "13",
-							"65330", "", "SL", "Sweden").get(4));
+							"65330", "", "SL", "Sweden", "SE").get(4));
 		}
 	}
 
@@ -193,7 +193,7 @@ public class AddressLabelsInPDFFormatTest {
 				throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
-					"Stockholm", "SL", "");
+					"Stockholm", "SL", "", "FI");
 			Assert.assertEquals("Åle Öistämö", label.get(0));
 			Assert.assertEquals("Brännkyrksgatan 177 B 149", label.get(1));
 			Assert.assertEquals("Södermalm", label.get(2));
@@ -209,7 +209,7 @@ public class AddressLabelsInPDFFormatTest {
 		public void labelHasOnlyThreeRows() throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
-					"", "Finland");
+					"", "Finland", "FI");
 			Assert.assertEquals("Åle Öistämö", label.get(0));
 			Assert.assertEquals("Mannerheimintie 177 B 149", label.get(1));
 			Assert.assertEquals("65330 Helsinki", label.get(2));
@@ -222,7 +222,7 @@ public class AddressLabelsInPDFFormatTest {
 		public void labelHasOnlyThreeRows() throws Exception {
 			List<String> label = callGenerateLabels("Åle", "Öistämö",
 					"Mannerheimintie 177 B 149", "", "", "65330", "Helsinki",
-					"", "FINLAND");
+					"", "FINLAND", "FI");
 			Assert.assertEquals("Åle Öistämö", label.get(0));
 			Assert.assertEquals("Mannerheimintie 177 B 149", label.get(1));
 			Assert.assertEquals("65330 Helsinki", label.get(2));
@@ -234,10 +234,10 @@ public class AddressLabelsInPDFFormatTest {
 
 		private static AddressLabel domestic = new AddressLabel("Åle",
 				"Öistämö", "Mannerheimintie 177 B 149", "", "", "65330",
-				"Helsinki", "", "FINLAND");
+				"Helsinki", "", "FINLAND", "FI");
 		private static AddressLabel foreign = new AddressLabel("Åle",
 				"Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "13",
-				"65330", "Stockholm", "SL", "Sweden");
+				"65330", "Stockholm", "SL", "Sweden", "SE");
 		private static List<List<String>> response;
 
 		@BeforeClass
@@ -287,12 +287,13 @@ public class AddressLabelsInPDFFormatTest {
 		return new Generator<AddressLabel>() {
 			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
+				String[] country = testData.randomArray("country");
 				return new AddressLabel(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1), "",
-						testData.random("country"));
+						country[0], country[1]);
 			}
 		}.generateObjects(count);
 	}
@@ -300,10 +301,10 @@ public class AddressLabelsInPDFFormatTest {
 	private static List<String> callGenerateLabels(String firstName,
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String postOffice,
-			String region, String country) throws Exception {
+			String region, String country, String countryCode) throws Exception {
 		return TestUtil.generateAddressLabelsPDF(
 				Arrays.asList(new AddressLabel(firstName, lastName,
 						addressline, addressline2, addressline3, postalCode,
-						postOffice, region, country))).get(0);
+						postOffice, region, country, countryCode))).get(0);
 	}
 }

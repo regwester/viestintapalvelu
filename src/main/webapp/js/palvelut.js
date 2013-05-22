@@ -19,9 +19,13 @@ angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets'
 	generatedData['syy'] = ['B', 'C', 'E', 'H', 'K', 'L', 'M', 'S', 'T', 'Y', 'Z']
 
 	return function() {
-		function any(dataid) {
-			var data = generatedData[dataid]
-			return data[Math.round(Math.random()*(data.length-1))].toString()
+		function any(dataid, index) {
+			var data = generatedData[dataid];
+			var item = data[Math.round(Math.random()*(data.length-1))];
+			if (item instanceof Array) {
+				return item;
+			}
+			return item.toString()
 		}
 
 		function prioritize(value, p) {

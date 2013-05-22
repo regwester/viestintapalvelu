@@ -16,7 +16,7 @@ public class HyvaksymiskirjePDFTest {
 	public static TomcatRule tomcat = new TomcatRule();
 
 	private static AddressLabel label = new AddressLabel("Åle &", "Öistämö",
-			"Brännkyrksgatan @ 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden");
+			"Brännkyrksgatan @ 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden", "SE");
 	private static String koulu = "Haaga & Helia";
 	private static String koulutus = "Asentaja & Kokki";
 	private static String pdf;

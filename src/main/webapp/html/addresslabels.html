@@ -12,6 +12,7 @@
 			<th>Postitoimipaikka</th>
 			<th>Maakunta</th>
 			<th>Maa</th>
+			<th>Maakoodi</th>
 			<th></th>
 		</tr>
 		<tr>
@@ -28,6 +29,7 @@
 			<td><input class="input-medium" type="text" ng-model="city" placeholder="Postitoimipaikka"></td>
 			<td><input class="input-medium" type="text" ng-model="region" placeholder="Maakunta"></td>
 			<td><input class="input-medium" type="text" ng-model="country" placeholder="Maa"></td>
+			<td><input class="input-small" type="text" ng-model="countryCode" placeholder="Maakoodi"></td>
 			<td class="inline-operation"><button class="btn btn-small" ng-click="addLabel()">Lisää</button></td>
 		</tr>
 		<tr ng-repeat="label in addressLabels">
@@ -44,6 +46,7 @@
 			<td><input class="input-medium" type="text" ng-model="label.city"/></td>
 			<td><input class="input-medium" type="text" ng-model="label.region"/></td>
 			<td><input class="input-medium" type="text" ng-model="label.country"/></td>
+			<td><input class="input-small" type="text" ng-model="label.countryCode"></td>
 			<td class="inline-operation"><button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button></td>
 		</tr>
 	</table>

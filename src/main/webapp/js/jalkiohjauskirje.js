@@ -5,6 +5,7 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 	function generateJalkiohjauskirje(count) {
 		$scope.jalkiohjauskirjeet = $scope.jalkiohjauskirjeet.concat(Generator.generateObjects(count, function(data) {
 			var postoffice = data.any('postoffice')
+			var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'))
 			return {
 				"addressLabel": {
 					"firstName": data.any('firstname'),
@@ -15,7 +16,8 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 					"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 					"city": postoffice.substring(postoffice.indexOf(' ') + 1),
 					"region": "",
-					"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
+					"country": country[0],
+					"countryCode": country[1]
 				},
 				"tulokset": generateTulokset(data.any('hakutoive-lukumaara'))
 			}

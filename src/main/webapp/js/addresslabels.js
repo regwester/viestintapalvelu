@@ -4,6 +4,7 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 	function generateLabels(count) {
 		$scope.addressLabels = $scope.addressLabels.concat(Generator.generateObjects(count, function(data) {
 			var postoffice = data.any('postoffice')
+			var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'))
 			return {
 				"firstName": data.any('firstname'),
 				"lastName": data.any('lastname'),
@@ -13,7 +14,8 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
 				"postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
 				"city": postoffice.substring(postoffice.indexOf(' ') + 1),
 				"region": "",
-				"country": data.prioritize('Finland', 0.95).otherwise(data.any('country'))
+				"country": country[0],
+				"countryCode": country[1]
 			}
 		}))
 	}
