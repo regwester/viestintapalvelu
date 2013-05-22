@@ -75,7 +75,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 	var addressLabel = 'api/v1/addresslabel/';
 	var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
 	var hyvaksymiskirje = 'api/v1/hyvaksymiskirje/';
-	var download = 'api/v1/download/document/';
+	var download = 'api/v1/download/';
 
 	return function() {
 		function osoitetarratPDF(labels) {
@@ -110,7 +110,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		
 		function print(url, batch) {
 	        $http.post(url, batch).success(function(data) {
-	        	$window.location.href = download + data;
+	        	$window.location.href = data;
 	        })
 		}
 		
