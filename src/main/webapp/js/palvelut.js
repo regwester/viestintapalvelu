@@ -83,11 +83,11 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 
 	return function() {
 		function osoitetarratPDF(labels) {
-			print(addressLabel + 'pdf', {"templateName": "/osoitetarrat.html", "addressLabels": labels})
+			print(addressLabel + 'pdf', {"addressLabels": labels})
 		}
 
 		function osoitetarratXLS(labels) {
-			print(addressLabel + 'xls', {"templateName": "/osoitetarrat.xls", "addressLabels": labels})
+			print(addressLabel + 'xls', {"addressLabels": labels})
 		}
 		
 		function jalkiohjauskirjePDF(letters) {
