@@ -92,23 +92,16 @@ angular.module('app').factory('Printer', ['$http', '$window', function($http, $w
 		
 		function jalkiohjauskirjePDF(letters) {
 			print(jalkiohjauskirje + 'pdf', {
-				"kirjeTemplateName": "/jalkiohjauskirje.html", 
-				"liiteTemplateName": "/liite.html", 
 				"letters": letters});
 		}
 		
 		function hyvaksymiskirjePDF(letters) {
 			print(hyvaksymiskirje + 'pdf', {
-				"kirjeTemplateName": "/hyvaksymiskirje.html", 
-				"liiteTemplateName": "/liite.html", 
 				"letters": letters});
 		}
 		
 		function ipostZIP(letters) {
 			print(jalkiohjauskirje + 'zip', {
-				"kirjeTemplateName": "/jalkiohjauskirje.html", 
-				"liiteTemplateName": "/liite.html",
-				"ipostTemplateName": "/ipost.xml",
 				"letters": letters});
 		}
 		

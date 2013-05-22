@@ -21,6 +21,9 @@ import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 
 public class HyvaksymiskirjeBuilder {
 
+	private final static String HYVAKSYMISKIRJE_TEMPLATE = "/hyvaksymiskirje.html";
+	private final static String LIITE_TEMPLATE = "/liite.html";
+
 	private DocumentBuilder documentBuilder;
 	private LiiteBuilder liiteBuilder;
 	
@@ -33,8 +36,8 @@ public class HyvaksymiskirjeBuilder {
 	public byte[] printPDF(HyvaksymiskirjeBatch batch) throws IOException, DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Hyvaksymiskirje kirje : batch.getLetters()) {
-			byte[] frontPage = createFirstPagePDF(batch.getKirjeTemplateName(), kirje.getAddressLabel(), kirje.getKoulu(), kirje.getKoulutus());
-			byte[] attachment = liiteBuilder.printPDF(batch.getLiiteTemplateName(), kirje.getTulokset());
+			byte[] frontPage = createFirstPagePDF(HYVAKSYMISKIRJE_TEMPLATE, kirje.getAddressLabel(), kirje.getKoulu(), kirje.getKoulutus());
+			byte[] attachment = liiteBuilder.printPDF(LIITE_TEMPLATE, kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, attachment));
 		}
 		return documentBuilder.merge(source).toByteArray();
