@@ -12,14 +12,14 @@ public class DownloadCache {
 	private Cache<String, Download> downloads = CacheBuilder.newBuilder()
 			.expireAfterWrite(10, TimeUnit.SECONDS).build();
 
-	public String addDocument(String sessionId, Download download) {
+	public String addDocument(Download download) {
 		String documentId = UUID.randomUUID().toString();
-		downloads.put(sessionId + documentId, download);
+		downloads.put(documentId, download);
 		return documentId;
 	}
 
-	public Download get(String sessionId, String documentId) {
-		Download download = downloads.getIfPresent(sessionId + documentId);
+	public Download get(String documentId) {
+		Download download = downloads.getIfPresent(documentId);
 		downloads.invalidate(download);
 		return download;
 	}
