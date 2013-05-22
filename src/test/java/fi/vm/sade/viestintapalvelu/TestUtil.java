@@ -48,7 +48,6 @@ public class TestUtil {
 	private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/pdf";
 	private final static String IPOST_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/zip";
 	private final static String HYVAKSYMISKIRJE_URL = "http://localhost:8080/api/v1/hyvaksymiskirje/pdf";
-	private final static String HAKUTULOSTAULUKKO_TEMPLATE = "/hakutulostaulukko_test.html";
 
 	public static List<List<String>> generateAddressLabelsPDF(
 			List<AddressLabel> labels) throws Exception {
@@ -80,7 +79,7 @@ public class TestUtil {
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 
-	public static List<List<String>> generateHakutulostaulukko(
+	public static List<List<String>> generateLiite(
 			Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
