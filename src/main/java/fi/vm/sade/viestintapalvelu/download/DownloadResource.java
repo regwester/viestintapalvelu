@@ -30,7 +30,6 @@ public class DownloadResource {
 		// FIXME vpeurala 22.5.2013: Just for testing
 		Download download = downloadCache.getAndWait(input);
 		if (download == null) {
-			System.out.println("NO DOWNLOAD FOUND");
 			return Response.status(Status.BAD_REQUEST).build();
 		}
 		response.setHeader("Content-Type", download.getContentType());

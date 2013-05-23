@@ -81,7 +81,6 @@ public class IntegrationTest {
 		HttpResponse response = client.execute(post);
 		assertStatusCodeEquals(202, response);
 		String downloadLink = readResponseBody(response);
-		System.out.println(downloadLink);
 		HttpGet get = new HttpGet(downloadLink);
 		response = client.execute(get);
 		return response;
