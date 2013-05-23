@@ -24,7 +24,7 @@ import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 public class JalkiohjauskirjeBuilder {
 
 	private final static String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje.html";
-	private final static String LIITE_TEMPLATE = "/liite.html";
+	private final static String LIITE_TEMPLATE = "/liite_FI.html";
 	private final static String IPOST_TEMPLATE = "/ipost.xml";
 	
 	private DocumentBuilder documentBuilder;

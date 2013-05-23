@@ -23,7 +23,7 @@ public class HyvaksymiskirjePDFTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, koulu, koulutus, new ArrayList<Map<String,String>>());
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "FI", koulu, koulutus, new ArrayList<Map<String,String>>());
 		pdf = TestUtil.generateHyvaksymiskirje(kirje).toString();
 	}
 
@@ -44,7 +44,31 @@ public class HyvaksymiskirjePDFTest {
 	}
 
 	@Test
-	public void contains() throws Exception {
+	public void containsKoulutus() throws Exception {
 		Assert.assertTrue("Hyväksytty koulutus puuttuu", pdf.contains(koulutus));
+	}
+	
+	@Test
+	public void canBePrintedInEN() throws Exception {
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "EN", koulu, koulutus, new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
+	}
+
+	@Test
+	public void canBePrintedInSE() throws Exception {
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "SE", koulu, koulutus, new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
+	}
+
+	@Test
+	public void canBePrintedWithoutLanguageCode() throws Exception {
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, null, koulu, koulutus, new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
+	}
+
+	@Test
+	public void canBePrintedInSQ() throws Exception {
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "SQ", koulu, koulutus, new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 }

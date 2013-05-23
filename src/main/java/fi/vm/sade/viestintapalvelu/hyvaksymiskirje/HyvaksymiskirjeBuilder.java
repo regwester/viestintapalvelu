@@ -21,8 +21,8 @@ import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 
 public class HyvaksymiskirjeBuilder {
 
-	private final static String HYVAKSYMISKIRJE_TEMPLATE = "/hyvaksymiskirje.html";
-	private final static String LIITE_TEMPLATE = "/liite.html";
+	private final static String HYVAKSYMISKIRJE_TEMPLATE = "/hyvaksymiskirje_{LANG}.html";
+	private final static String LIITE_TEMPLATE = "/liite_{LANG}.html";
 
 	private DocumentBuilder documentBuilder;
 	private LiiteBuilder liiteBuilder;
@@ -36,8 +36,10 @@ public class HyvaksymiskirjeBuilder {
 	public byte[] printPDF(HyvaksymiskirjeBatch batch) throws IOException, DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Hyvaksymiskirje kirje : batch.getLetters()) {
-			byte[] frontPage = createFirstPagePDF(HYVAKSYMISKIRJE_TEMPLATE, kirje.getAddressLabel(), kirje.getKoulu(), kirje.getKoulutus());
-			byte[] attachment = liiteBuilder.printPDF(LIITE_TEMPLATE, kirje.getTulokset());
+			String kirjeTemplateName = resolveTemplateName(HYVAKSYMISKIRJE_TEMPLATE, kirje.getLanguageCode());
+			byte[] frontPage = createFirstPagePDF(kirjeTemplateName, kirje.getAddressLabel(), kirje.getKoulu(), kirje.getKoulutus());
+			String liiteTemplateName = resolveTemplateName(LIITE_TEMPLATE, kirje.getLanguageCode());
+			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName, kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, attachment));
 		}
 		return documentBuilder.merge(source).toByteArray();
@@ -55,5 +57,11 @@ public class HyvaksymiskirjeBuilder {
 		data.put("koulu", StringEscapeUtils.escapeHtml(koulu));
 		data.put("koulutus", StringEscapeUtils.escapeHtml(koulutus));
 		return data;
+	}
+	
+	private String resolveTemplateName(String template, String languageCode) {
+		languageCode = languageCode == null || "".equals(languageCode) ? "FI" : languageCode;
+		languageCode = "SE".equalsIgnoreCase(languageCode) || "FI".equalsIgnoreCase(languageCode) ? languageCode : "EN";
+		return template.replace("{LANG}", languageCode.toUpperCase());
 	}
 }

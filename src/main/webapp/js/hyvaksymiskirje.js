@@ -22,6 +22,7 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
 					"countryCode": country[1]
 				},
 				"tulokset": tulokset,
+				"languageCode": data.prioritize('FI', 0.80).prioritize('SE', 0.60).otherwise(data.any('language')),
 				"koulu": tulokset[0]['koulu'],
 				"koulutus": tulokset[0]['hakutoive']
 			}

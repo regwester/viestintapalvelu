@@ -1,4 +1,4 @@
-angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets', 'Postoffices', 'Countries', 'Koulu', 'Hakutoive', function(Firstnames, Lastnames, Streets, Postoffices, Countries, Koulu, Hakutoive) {
+angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets', 'Postoffices', 'Countries', 'Language', 'Koulu', 'Hakutoive', function(Firstnames, Lastnames, Streets, Postoffices, Countries, Language, Koulu, Hakutoive) {
 	var generatedData = {}
 	generatedData['housenumber'] = _.range(1, 200)
 	Firstnames.success(function(data) {generatedData['firstname'] = data})
@@ -6,6 +6,7 @@ angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets'
 	Streets.success(function(data) {generatedData['street'] = data})
 	Postoffices.success(function(data) {generatedData['postoffice'] = data})
 	Countries.success(function(data) {generatedData['country'] = data})
+	Language.success(function(data) {generatedData['language'] = data})
 	Koulu.success(function(data) {generatedData['koulu'] = data})
 	Hakutoive.success(function(data) {generatedData['hakutoive'] = data})
 	generatedData['hakutoive-lukumaara'] = _.range(1, 5)
@@ -29,10 +30,24 @@ angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets'
 		}
 
 		function prioritize(value, p) {
+			var randomValue = null;
+			
 			function otherwise(otherValue) {
-				return Math.random() <= p ? value : otherValue;
+				return randomValue != null ? randomValue : otherValue;
 			}
-			return {otherwise: otherwise}
+
+			function constant() {
+				return {
+					otherwise: otherwise,
+					prioritize: constant
+				}
+			}
+			
+			randomValue = Math.random() <= p ? value : null;
+			return {
+						otherwise: otherwise,
+						prioritize: randomValue != null ? constant : prioritize
+					}
 		}
 		
 		function generateObjects(count, createObject) {
@@ -65,6 +80,10 @@ angular.module('app').factory('Postoffices', ['$http', function($http){
 
 angular.module('app').factory('Countries', ['$http', function($http){
 	return $http.get('generator/countries.json')
+}])
+
+angular.module('app').factory('Language', ['$http', function($http){
+	return $http.get('generator/language.json')
 }])
 
 angular.module('app').factory('Koulu', ['$http', function($http){
