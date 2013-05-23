@@ -22,9 +22,7 @@ public class AsynchronousResource {
 	protected Response createResponse(HttpServletRequest request,
 			String documentId) {
 		String resultUrl = urlTo(request, DownloadResource.class);
-		System.out.println("resultUrl: '" + resultUrl + "'");
 		URI contentLocation = URI.create(resultUrl + "/" + documentId);
-		System.out.println("contentLocation: '" + contentLocation + "'");
 		return Response.status(Status.ACCEPTED)
 				.contentLocation(contentLocation)
 				.entity(contentLocation.toString()).build();

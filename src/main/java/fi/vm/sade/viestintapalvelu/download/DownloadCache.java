@@ -19,13 +19,11 @@ public class DownloadCache {
 	}
 
 	public String addDocument(Download download, String documentId) {
-		System.out.println("DownloadCache.addDocument: '" + documentId + "'");
 		downloads.put(documentId, download);
 		return documentId;
 	}
 
 	public Download get(String documentId) {
-		System.out.println("DownloadCache.get: '" + documentId + "'");
 		Download download = downloads.getIfPresent(documentId);
 		if (download != null) {
 			downloads.invalidate(download);
@@ -34,7 +32,6 @@ public class DownloadCache {
 	}
 
 	public Download getAndWait(String documentId) {
-		System.out.println("getAndWait: '" + documentId + "'");
 		int ticks = 0;
 		Download download = get(documentId);
 		while (download == null && ticks < 20) {
