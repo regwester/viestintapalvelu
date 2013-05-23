@@ -10,8 +10,9 @@ public class Hyvaksymiskirje {
 	public Hyvaksymiskirje() {
 	}
 
-	public Hyvaksymiskirje(AddressLabel addressLabel, String koulu, String koulutus, List<Map<String, String>> tulokset) {
+	public Hyvaksymiskirje(AddressLabel addressLabel, String languageCode, String koulu, String koulutus, List<Map<String, String>> tulokset) {
 		this.addressLabel = addressLabel;
+		this.languageCode = languageCode;
 		this.tulokset = tulokset;
 		this.koulu = koulu;
 		this.koulutus = koulutus;
@@ -21,6 +22,10 @@ public class Hyvaksymiskirje {
 	 * Osoitetiedot.
 	 */
 	private AddressLabel addressLabel;
+	/**
+	 * Kielikoodi ISO 639-1.
+	 */
+	private String languageCode;
 	/**
 	 * Koulu johon hyväksytty.
 	 */
@@ -50,9 +55,13 @@ public class Hyvaksymiskirje {
 		return koulutus;
 	}
 
+	public String getLanguageCode() {
+		return languageCode;
+	}
+
 	@Override
 	public String toString() {
-		return "Hyvaksymiskirje [addressLabel=" + addressLabel + ", koulu=" + koulu
-				+ ", koulutus=" + koulutus + ", results=" + tulokset + "]";
+		return "Hyvaksymiskirje [addressLabel=" + addressLabel + ", languageCode=" + languageCode
+				+ ", koulu=" + koulu + ", koulutus=" + koulutus + ", results=" + tulokset + "]";
 	}
 }
