@@ -24,7 +24,7 @@ public class JalkiohjauskirjeBatchTest {
 			letters.add(new Jalkiohjauskirje(new AddressLabel("firstName",
 					"lastName", "addressline", "addressline2", "addressline3",
 					"postalCode", "city", "region", "country", "countryCode"),
-					new ArrayList<Map<String, String>>()));
+					"FI", new ArrayList<Map<String, String>>()));
 
 		}
 		original = new JalkiohjauskirjeBatch(letters);

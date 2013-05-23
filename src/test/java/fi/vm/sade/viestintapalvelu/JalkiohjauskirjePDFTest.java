@@ -21,7 +21,7 @@ public class JalkiohjauskirjePDFTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, new ArrayList<Map<String,String>>());
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI", new ArrayList<Map<String,String>>());
 		pdf = TestUtil.generateJalkiohjauskirje(kirje).toString();
 	}
 

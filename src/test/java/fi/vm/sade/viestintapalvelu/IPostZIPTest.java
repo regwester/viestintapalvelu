@@ -38,8 +38,8 @@ public class IPostZIPTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, new ArrayList<Map<String,String>>());
-		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(labelWithSpecialCharacters, new ArrayList<Map<String,String>>());
+		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, "FI", new ArrayList<Map<String,String>>());
+		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(labelWithSpecialCharacters, "FI", new ArrayList<Map<String,String>>());
 		zip = TestUtil.generateIPostZIP(Arrays.asList(kirje1, kirje2));
 		filenames = extractFilenames(zip);
 		ipostXML = exctractIPostXML(zip);

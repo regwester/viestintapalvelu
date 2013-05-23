@@ -10,8 +10,9 @@ public class Jalkiohjauskirje {
 	public Jalkiohjauskirje() {
 	}
 
-	public Jalkiohjauskirje(AddressLabel addressLabel, List<Map<String, String>> tulokset) {
+	public Jalkiohjauskirje(AddressLabel addressLabel, String languageCode, List<Map<String, String>> tulokset) {
 		this.addressLabel = addressLabel;
+		this.languageCode = languageCode;
 		this.tulokset = tulokset;
 	}
 
@@ -20,12 +21,20 @@ public class Jalkiohjauskirje {
 	 */
 	private AddressLabel addressLabel;
 	/**
+	 * Kielikoodi ISO 639-1.
+	 */
+	private String languageCode;
+	/**
 	 * Hakutulokset.
 	 */
 	private List<Map<String, String>> tulokset;
 
 	public AddressLabel getAddressLabel() {
 		return addressLabel;
+	}
+	
+	public String getLanguageCode() {
+		return languageCode;
 	}
 
 	public List<Map<String, String>> getTulokset() {
