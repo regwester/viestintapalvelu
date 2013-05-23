@@ -12,6 +12,7 @@ import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
@@ -23,10 +24,6 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 
 public class JalkiohjauskirjeBuilder {
-
-	private final static String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje.html";
-	private final static String LIITE_TEMPLATE = "/liite_FI.html";
-	private final static String IPOST_TEMPLATE = "/ipost.xml";
 
 	private DocumentBuilder documentBuilder;
 	private LiiteBuilder liiteBuilder;
@@ -53,7 +50,7 @@ public class JalkiohjauskirjeBuilder {
 			MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
 			Map<String, Object> context = createDataContext(pdf
 					.getDocumentMetadata());
-			byte[] ipostXml = documentBuilder.applyTextTemplate(IPOST_TEMPLATE,
+			byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.IPOST_TEMPLATE,
 					context);
 			Map<String, byte[]> documents = new HashMap<String, byte[]>();
 			documents.put("jalkiohjauskirje.pdf", pdf.toByteArray());
@@ -68,9 +65,11 @@ public class JalkiohjauskirjeBuilder {
 			JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
-			byte[] frontPage = createFirstPagePDF(JALKIOHJAUSKIRJE_TEMPLATE,
+			String kirjeTemplateName = Utils.resolveTemplateName(Constants.JALKIOHJAUSKIRJE_TEMPLATE, kirje.getLanguageCode());
+			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
 					kirje.getAddressLabel());
-			byte[] attachment = liiteBuilder.printPDF(LIITE_TEMPLATE,
+			String liiteTemplateName = Utils.resolveTemplateName(Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
+			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage,
 					attachment));

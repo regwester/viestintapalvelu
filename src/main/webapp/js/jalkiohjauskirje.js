@@ -19,7 +19,8 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 					"country": country[0],
 					"countryCode": country[1]
 				},
-				"tulokset": generateTulokset(data.any('hakutoive-lukumaara'))
+				"tulokset": generateTulokset(data.any('hakutoive-lukumaara')),
+				"languageCode": data.prioritize('FI', 0.80).prioritize('SE', 0.60).otherwise(data.any('language'))
 			}
 		}))
 	}

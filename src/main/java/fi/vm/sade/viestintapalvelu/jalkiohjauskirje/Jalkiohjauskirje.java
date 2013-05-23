@@ -43,8 +43,8 @@ public class Jalkiohjauskirje {
 
 	@Override
 	public String toString() {
-		return "Jalkiohjauskirje [addressLabel=" + addressLabel + ", results="
-				+ tulokset + "]";
+		return "Jalkiohjauskirje [addressLabel=" + addressLabel + 
+				", languageCode=" + languageCode + ", results=" + tulokset + "]";
 	}
 
 }

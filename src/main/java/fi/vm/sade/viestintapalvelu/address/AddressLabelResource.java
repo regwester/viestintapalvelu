@@ -64,7 +64,7 @@ public class AddressLabelResource extends AsynchronousResource {
 	@Consumes("application/json")
 	@Produces("text/plain")
 	@Path("xls")
-	public Response csv(AddressLabelBatch input,
+	public Response xls(AddressLabelBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
 		byte[] csv = labelBuilder.printCSV(input);
