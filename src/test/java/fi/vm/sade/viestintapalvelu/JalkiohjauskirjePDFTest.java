@@ -9,6 +9,7 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 
 public class JalkiohjauskirjePDFTest {
@@ -35,4 +36,29 @@ public class JalkiohjauskirjePDFTest {
 		Assert.assertTrue("Region missing", pdf.contains(label.getRegion()));
 		Assert.assertTrue("Country missing", pdf.contains(label.getCountry()));
 	}
+	
+	@Test
+	public void canBePrintedInEN() throws Exception {
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "EN", new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+	}
+
+	@Test
+	public void canBePrintedInSE() throws Exception {
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "SE", new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+	}
+
+	@Test
+	public void canBePrintedWithoutLanguageCode() throws Exception {
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, null, new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+	}
+
+	@Test
+	public void canBePrintedInSQ() throws Exception {
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "SQ", new ArrayList<Map<String,String>>());
+		Assert.assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+	}
+
 }
