@@ -28,14 +28,16 @@ public class AsynchronousResource {
 				.entity(contentLocation.toString()).build();
 	}
 
-	private String urlTo(HttpServletRequest request,
+	// FIXME vpeurala 23.5.2013: Hack
+	String urlTo(HttpServletRequest request,
 			Class<DownloadResource> resourceClass) {
 		return UriBuilder
 				.fromUri(request.getRequestURL().toString())
 				.replacePath(
-						request.getServletPath()
-								+ (request.getContextPath().trim().equals("") ? ""
-										: "/" + request.getContextPath())
+						(request.getContextPath().trim().equals("") ? "" : "/"
+								+ request.getContextPath())
+								+ ((request.getServletPath().trim().equals("") ? ""
+										: "/" + request.getServletPath()))
 								+ "/"
 								+ UriBuilder.fromResource(resourceClass)
 										.build()).build().toString();
