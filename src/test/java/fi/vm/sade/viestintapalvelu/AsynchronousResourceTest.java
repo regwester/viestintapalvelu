@@ -270,7 +270,7 @@ public class AsynchronousResourceTest {
 
 			@Override
 			public String getContextPath() {
-				return "viestintapalvelu";
+				return "/viestintapalvelu/";
 			}
 
 			@Override
@@ -374,7 +374,7 @@ public class AsynchronousResourceTest {
 
 			@Override
 			public String getServletPath() {
-				return "api/v1";
+				return "/api/v1/";
 			}
 
 			@Override
