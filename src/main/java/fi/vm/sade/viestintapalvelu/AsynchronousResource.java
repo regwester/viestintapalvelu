@@ -34,6 +34,8 @@ public class AsynchronousResource {
 				.fromUri(request.getRequestURL().toString())
 				.replacePath(
 						request.getServletPath()
+								+ (request.getContextPath().trim().equals("") ? ""
+										: "/" + request.getContextPath())
 								+ "/"
 								+ UriBuilder.fromResource(resourceClass)
 										.build()).build().toString();
