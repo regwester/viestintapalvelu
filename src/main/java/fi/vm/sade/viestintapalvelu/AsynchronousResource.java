@@ -28,14 +28,32 @@ public class AsynchronousResource {
 				.entity(contentLocation.toString()).build();
 	}
 
-	private String urlTo(HttpServletRequest request,
+	// FIXME vpeurala 23.5.2013: Hack
+	String urlTo(HttpServletRequest request,
 			Class<DownloadResource> resourceClass) {
 		return UriBuilder
 				.fromUri(request.getRequestURL().toString())
 				.replacePath(
-						request.getServletPath()
+						chompSlashes(request.getContextPath().trim().equals("") ? ""
+								: "/" + request.getContextPath())
 								+ "/"
-								+ UriBuilder.fromResource(resourceClass)
-										.build()).build().toString();
+								+ chompSlashes((request.getServletPath().trim()
+										.equals("") ? "" : "/"
+										+ request.getServletPath()))
+								+ "/"
+								+ chompSlashes((UriBuilder.fromResource(
+										resourceClass).build().toString())))
+				.build().toString();
+	}
+
+	private static String chompSlashes(final String input) {
+		String processed = input.trim();
+		while (processed.startsWith("/")) {
+			processed = processed.substring(1);
+		}
+		while (processed.endsWith("/")) {
+			processed = processed.substring(0, processed.length() - 1);
+		}
+		return processed;
 	}
 }
