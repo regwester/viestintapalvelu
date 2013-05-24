@@ -9,7 +9,6 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 
 public class JalkiohjauskirjePDFTest {

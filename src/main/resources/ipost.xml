@@ -19,7 +19,7 @@
 				fileFormat="0"
 				departmentClassification="false"
 				isDuplex="true"/>
-			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false"/>
+			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false" denyElectronicOnlyDelivery="true"/>
 			<lb:ExternalFile fileName="jalkiohjauskirje.pdf"></lb:ExternalFile>
 		</lb:BundleCommon>
 		#foreach( $metadata in $metadataList )

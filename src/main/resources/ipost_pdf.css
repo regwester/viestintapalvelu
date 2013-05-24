@@ -1,0 +1,94 @@
+@page {
+	size: 210mm 297mm;
+	margin: 16mm 10mm 30mm 12mm;
+	@bottom-center {
+		vertical-align: top;
+		content: element(footer); 
+	}
+}
+body {
+	font-size: 12px;
+	font-family: Arial;
+	margin: 0;
+}
+.header {
+	margin: 4mm 0 0 11mm;
+ 	height: 80mm;
+ 	width: 100mm;
+ 	float: left;
+ }
+ .organisaatio {
+	width: 80mm;
+ 	height: 26mm;
+ 	margin: 0;
+ 	padding: 0;
+}
+.osoitetarra {
+ 	width: 70mm;
+ 	height: 37mm;
+ 	margin: 0;
+ 	padding: 0;
+}
+.lahetysMerkinta {
+	font-size: 90%;
+}
+.asiakirjanTyyppi {
+ 	float: left;
+ 	text-align: left;
+ 	width: 60mm;
+ 	margin: 4mm 0 0 0mm;
+}
+p {
+	padding-bottom: 0;
+	margin-bottom: 0;
+}
+.asiaotsikko {
+	clear: both;
+}
+.sisalto {
+	clear: both;
+}
+table {
+	border-collapse: collapse;
+}
+td, th {
+	border: 1px solid gray;
+	padding: 5px;
+}
+td {
+	text-align: center;
+}
+td.hakutoive {
+	text-align: left;
+}
+th {
+	vertical-align: top;
+}
+ol, ul {
+	padding-top: 0;
+	margin-top: 0;
+	font-weight: 100;
+	padding-left: 4mm;
+}
+ul.dash {
+    list-style:none;
+    margin-left:0;
+    padding-left:1em;
+   }
+ul.dash li:before {
+    display:inline-block;
+    content:"-";
+    width:1em;
+    margin-left:-1em;
+}
+.footer {
+	font-size: 90%;
+	position: running(footer);
+}
+.footer .heading {
+	width: 100%;
+}
+.footer div {
+	float: left;
+	width: 30mm;
+}

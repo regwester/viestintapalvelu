@@ -19,7 +19,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.MediaReplacedElementFactory;
+import fi.vm.sade.viestintapalvelu.OPHUserAgent;
+import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
 
 public class DocumentBuilder {
 	private VelocityEngine templateEngine = new VelocityEngine();
@@ -65,7 +66,11 @@ public class DocumentBuilder {
 
 	private ITextRenderer newITextRenderer(byte[] input) {
 		ITextRenderer renderer = new ITextRenderer();
-		renderer.getSharedContext().setReplacedElementFactory(new MediaReplacedElementFactory(renderer.getSharedContext().getReplacedElementFactory()));
+		OPHUserAgent uac = new OPHUserAgent(renderer.getOutputDevice());
+		FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(renderer.getSharedContext().getReplacedElementFactory());
+		uac.setSharedContext(renderer.getSharedContext());
+		renderer.getSharedContext().setUserAgentCallback(uac);
+		renderer.getSharedContext().setReplacedElementFactory(mref);
 		renderer.setDocumentFromString(new String(input));
 		renderer.layout();
 		return renderer;

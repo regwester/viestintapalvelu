@@ -1,8 +1,5 @@
 package fi.vm.sade.viestintapalvelu;
 
-import java.io.InputStream;
-
-import org.apache.commons.io.IOUtils;
 import org.w3c.dom.Element;
 import org.xhtmlrenderer.extend.FSImage;
 import org.xhtmlrenderer.extend.ReplacedElement;
@@ -21,10 +18,10 @@ import com.lowagie.text.Image;
  * <tt>&lt;div class="media" data-src="image.png" /></tt> with the real
  * media content.
  */
-public class MediaReplacedElementFactory implements ReplacedElementFactory {
+public class FlyingSaucerReplaceElementFactory implements ReplacedElementFactory {
     private final ReplacedElementFactory superFactory;
 
-    public MediaReplacedElementFactory(ReplacedElementFactory superFactory) {
+    public FlyingSaucerReplaceElementFactory(ReplacedElementFactory superFactory) {
         this.superFactory = superFactory;
     }
 
@@ -41,10 +38,8 @@ public class MediaReplacedElementFactory implements ReplacedElementFactory {
             if (!element.hasAttribute("data-src")) {
                 throw new RuntimeException("An element with class `media` is missing a `data-src` attribute indicating the media file.");
             }
-            InputStream input = null;
             try {
-        		input = getClass().getResourceAsStream(element.getAttribute("data-src"));
-                final byte[] bytes = IOUtils.toByteArray(input);
+                final byte[] bytes = userAgentCallback.getBinaryResource(element.getAttribute("data-src"));
                 final Image image = Image.getInstance(bytes);
                 final FSImage fsImage = new ITextFSImage(image);
                 if (fsImage != null) {
@@ -55,8 +50,6 @@ public class MediaReplacedElementFactory implements ReplacedElementFactory {
                 }
             } catch (Exception e) {
                 throw new RuntimeException("There was a problem trying to read a template embedded graphic.", e);
-            } finally {
-                IOUtils.closeQuietly(input);
             }
         }
         return this.superFactory.createReplacedElement(layoutContext, blockBox, userAgentCallback, cssWidth, cssHeight);
