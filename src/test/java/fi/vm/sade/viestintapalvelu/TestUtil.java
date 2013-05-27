@@ -63,7 +63,8 @@ public class TestUtil {
 
 	public static List<List<String>> generateJalkiohjauskirje(
 			Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(Arrays.asList(kirje));
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
+				Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
 	}
 
@@ -75,13 +76,15 @@ public class TestUtil {
 
 	public static List<List<String>> generateHyvaksymiskirje(
 			Hyvaksymiskirje kirje) throws Exception {
-		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(Arrays.asList(kirje));
+		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(
+				Arrays.asList(kirje));
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 
-	public static List<List<String>> generateLiite(
-			Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(Arrays.asList(kirje));
+	public static List<List<String>> generateLiite(Jalkiohjauskirje kirje)
+			throws Exception {
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
+				Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
 	}
 

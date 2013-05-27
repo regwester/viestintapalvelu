@@ -16,10 +16,6 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-/*
- * curl -H "Content-Type: application/json" -X POST -d '["Ville Peurala", "Iina
- * Sipilä"]' -i http://localhost:8080/spike
- */
 public class IntegrationTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();

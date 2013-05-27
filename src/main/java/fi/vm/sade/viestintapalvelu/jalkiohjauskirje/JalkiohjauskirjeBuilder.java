@@ -50,8 +50,8 @@ public class JalkiohjauskirjeBuilder {
 			MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
 			Map<String, Object> context = createDataContext(pdf
 					.getDocumentMetadata());
-			byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.IPOST_TEMPLATE,
-					context);
+			byte[] ipostXml = documentBuilder.applyTextTemplate(
+					Constants.IPOST_TEMPLATE, context);
 			Map<String, byte[]> documents = new HashMap<String, byte[]>();
 			documents.put("jalkiohjauskirje.pdf", pdf.toByteArray());
 			documents.put("jalkiohjauskirje.xml", ipostXml);
@@ -65,10 +65,13 @@ public class JalkiohjauskirjeBuilder {
 			JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
-			String kirjeTemplateName = Utils.resolveTemplateName(Constants.JALKIOHJAUSKIRJE_TEMPLATE, kirje.getLanguageCode());
+			String kirjeTemplateName = Utils.resolveTemplateName(
+					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
+					kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
 					kirje.getAddressLabel());
-			String liiteTemplateName = Utils.resolveTemplateName(Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
+			String liiteTemplateName = Utils.resolveTemplateName(
+					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage,

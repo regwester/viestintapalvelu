@@ -30,7 +30,8 @@ public class JalkiohjauskirjeBatch {
 
 	protected JalkiohjauskirjeBatch createSubBatch(
 			List<Jalkiohjauskirje> lettersOfSubBatch) {
-		return new JalkiohjauskirjeBatch(new ArrayList<Jalkiohjauskirje>(lettersOfSubBatch));
+		return new JalkiohjauskirjeBatch(new ArrayList<Jalkiohjauskirje>(
+				lettersOfSubBatch));
 	}
 
 	private void split(List<Jalkiohjauskirje> remaining,

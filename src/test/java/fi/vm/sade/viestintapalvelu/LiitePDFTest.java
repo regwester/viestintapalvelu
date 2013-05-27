@@ -1,11 +1,14 @@
 package fi.vm.sade.viestintapalvelu;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -24,126 +27,137 @@ public class LiitePDFTest {
 	public static TomcatRule tomcat = new TomcatRule();
 
 	private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-			"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden", "FI");
+			"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
+			"Stockholm", "SL", "Sweden", "FI");
 
 	public static class WhenCreatingLiiteWithOneHakutoive {
 
-		private static Map<String,String> tulos = createHaku("Asentaja", "20", "30");
+		private static Map<String, String> tulos = createHaku("Asentaja", "20",
+				"30");
 		private static List<List<String>> liite;
 		private static String[] hakutoiverivi;
 
 		@SuppressWarnings("unchecked")
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI", Arrays.asList(tulos));
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
 		}
 
 		@Test
 		public void aloituspaikatHeaderIsPrinted() throws Exception {
-			Assert.assertTrue(findFromLiite(Arrays.asList("Aloitus-", "paikat"), liite));
+			assertTrue(findFromLiite(Arrays.asList("Aloitus-", "paikat"), liite));
 		}
 
 		@Test
 		public void varasijaHeaderIsPrinted() throws Exception {
-			Assert.assertTrue(findFromLiite(Arrays.asList("Vara-", "sija"), liite));
+			assertTrue(findFromLiite(Arrays.asList("Vara-", "sija"), liite));
 		}
 
 		@Test
 		public void aloituspaikatIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoiverivi[3]);
+			assertEquals(tulos.get("aloituspaikat"), hakutoiverivi[3]);
 		}
 
 		@Test
 		public void varasijaIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("varasija"), hakutoiverivi[4]);
+			assertEquals(tulos.get("varasija"), hakutoiverivi[4]);
 		}
 	}
 
 	public static class WhenCreatingLiiteWithSpecialCharacters {
 
-		private static Map<String,String> tulos = createHaku("Asentaja", "20&", "30&");
+		private static Map<String, String> tulos = createHaku("Asentaja",
+				"20&", "30&");
 		private static String[] hakutoiverivi;
 
 		@SuppressWarnings("unchecked")
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI", Arrays.asList(tulos));
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+					Arrays.asList(tulos));
 			List<List<String>> liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
 		}
 
 		@Test
-		public void aloituspaikatWithSpecialCharactersIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoiverivi[3]);
+		public void aloituspaikatWithSpecialCharactersIsPrinted()
+				throws Exception {
+			assertEquals(tulos.get("aloituspaikat"), hakutoiverivi[3]);
 		}
 
 		@Test
 		public void varasijaWithSpecialCharactersIsPrinted() throws Exception {
-			Assert.assertEquals(tulos.get("varasija"), hakutoiverivi[4]);
+			assertEquals(tulos.get("varasija"), hakutoiverivi[4]);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public static class WhenCreatingLiiteWithNullInput {
 
-		private static Map<String,String> tulos = createHaku("Asentaja", null, "30");
+		private static Map<String, String> tulos = createHaku("Asentaja", null,
+				"30");
 		private static List<List<String>> liite;
 		private static String[] hakutoiverivi;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI", Arrays.asList(tulos));
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
 		}
 
 		@Test
 		public void aloituspaikatHeaderIsPrinted() throws Exception {
-			Assert.assertTrue(findFromLiite(Arrays.asList("Aloitus-", "paikat"), liite));
+			assertTrue(findFromLiite(Arrays.asList("Aloitus-", "paikat"), liite));
 		}
 
 		@Test
 		public void varasijaHeaderIsPrinted() throws Exception {
-			Assert.assertTrue(findFromLiite(Arrays.asList("Vara-", "sija"), liite));
+			assertTrue(findFromLiite(Arrays.asList("Vara-", "sija"), liite));
 		}
 
 		@Test
-		public void aloituspaikatIsEmptyStringAndVarasijaIsPrinted() throws Exception {
-			Assert.assertEquals("30", hakutoiverivi[3]);
-			Assert.assertEquals(4, hakutoiverivi.length);
+		public void aloituspaikatIsEmptyStringAndVarasijaIsPrinted()
+				throws Exception {
+			assertEquals("30", hakutoiverivi[3]);
+			assertEquals(4, hakutoiverivi.length);
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public static class WhenCreatingLiiteWithWithoutOnePredefinedColumn {
 
-		private static Map<String,String> tulos = createHaku("Asentaja", "20");
+		private static Map<String, String> tulos = createHaku("Asentaja", "20");
 		private static List<List<String>> liite;
 		private static String[] hakutoiverivi;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI", Arrays.asList(tulos));
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
 		}
 
 		@Test
 		public void sentHeadersArePrinted() throws Exception {
-			Assert.assertTrue(findFromLiite(Arrays.asList("Aloitus-", "paikat"), liite));
-			Assert.assertFalse(findFromLiite(Arrays.asList("Vara-", "sija"), liite));
+			assertTrue(findFromLiite(Arrays.asList("Aloitus-", "paikat"), liite));
+			assertFalse(findFromLiite(Arrays.asList("Vara-", "sija"), liite));
 		}
 
 		@Test
 		public void sentColumnsArePrinted() throws Exception {
-			Assert.assertEquals(tulos.get("aloituspaikat"), hakutoiverivi[3]);
-			Assert.assertEquals(4, hakutoiverivi.length);
+			assertEquals(tulos.get("aloituspaikat"), hakutoiverivi[3]);
+			assertEquals(4, hakutoiverivi.length);
 		}
 	}
-	
-	private static String findHakutoiveRivi(final String hakutoive, List<List<String>> liite) {
+
+	private static String findHakutoiveRivi(final String hakutoive,
+			List<List<String>> liite) {
 		return Iterables.find(liite, new Predicate<List<String>>() {
 			public boolean apply(List<String> paragraph) {
 				return hakutoive.equals(Iterables.getFirst(paragraph, ""));
@@ -151,7 +165,8 @@ public class LiitePDFTest {
 		}).get(1);
 	}
 
-	public static boolean findFromLiite(List<String> searchParagraph, List<List<String>> liite) {
+	public static boolean findFromLiite(List<String> searchParagraph,
+			List<List<String>> liite) {
 		for (List<String> paragraph : liite) {
 			boolean found = true;
 			for (String row : paragraph) {
@@ -166,7 +181,8 @@ public class LiitePDFTest {
 		return false;
 	}
 
-	private static Map<String, String> createHaku(String hakutoive, String aloituspaikat, String varasija) {
+	private static Map<String, String> createHaku(String hakutoive,
+			String aloituspaikat, String varasija) {
 		Map<String, String> toive = new HashMap<String, String>();
 		toive.put("koulu", "Haaga-Helia");
 		toive.put("hakutoive", hakutoive);
@@ -177,7 +193,8 @@ public class LiitePDFTest {
 		return toive;
 	}
 
-	private static Map<String, String> createHaku(String hakutoive, String aloituspaikat) {
+	private static Map<String, String> createHaku(String hakutoive,
+			String aloituspaikat) {
 		Map<String, String> toive = new HashMap<String, String>();
 		toive.put("koulu", "Haaga-Helia");
 		toive.put("hakutoive", hakutoive);

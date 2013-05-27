@@ -41,8 +41,8 @@ public abstract class Generator<T> {
 	public void addDataset(String datasetKey, String datasetURL)
 			throws JsonParseException, JsonMappingException, IOException {
 		ObjectMapper mapper = new ObjectMapper();
-		List<Object> values = mapper.readValue(
-				new File(datasetURL), List.class);
+		List<Object> values = mapper
+				.readValue(new File(datasetURL), List.class);
 		datasets.put(datasetKey, values);
 	}
 
@@ -63,7 +63,7 @@ public abstract class Generator<T> {
 	@SuppressWarnings("unchecked")
 	private String[] toStringArray(Object randomItem) {
 		if (randomItem instanceof String) {
-			return new String[] {(String) randomItem};
+			return new String[] { (String) randomItem };
 		}
 		if (randomItem instanceof String[]) {
 			return (String[]) randomItem;
@@ -71,7 +71,7 @@ public abstract class Generator<T> {
 		if (randomItem instanceof List) {
 			return ((List<String>) randomItem).toArray(new String[1]);
 		}
-		return new String[] {""};
+		return new String[] { "" };
 	}
 
 	protected class TestData {
@@ -80,15 +80,17 @@ public abstract class Generator<T> {
 			if (dataset == null) {
 				return "";
 			}
-			return Generator.this.toString(dataset.get(random.nextInt(dataset.size())));
+			return Generator.this.toString(dataset.get(random.nextInt(dataset
+					.size())));
 		}
 
 		public String[] randomArray(String datasetKey) {
 			List<Object> dataset = datasets.get(datasetKey);
 			if (dataset == null) {
-				return new String[] {""};
+				return new String[] { "" };
 			}
-			return Generator.this.toStringArray(dataset.get(random.nextInt(dataset.size())));
+			return Generator.this.toStringArray(dataset.get(random
+					.nextInt(dataset.size())));
 		}
 	}
 

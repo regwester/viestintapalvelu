@@ -16,19 +16,23 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 public class LiiteBuilder {
 
 	private DocumentBuilder documentBuilder;
-	
+
 	@Inject
 	public LiiteBuilder(DocumentBuilder documentBuilder) {
 		this.documentBuilder = documentBuilder;
 	}
 
-	public byte[] printPDF(String templateName, List<Map<String, String>> tulokset) throws FileNotFoundException, IOException, DocumentException {
+	public byte[] printPDF(String templateName,
+			List<Map<String, String>> tulokset) throws FileNotFoundException,
+			IOException, DocumentException {
 		Map<String, Object> dataContext = createDataContext(tulokset);
-		byte[] xhtml = documentBuilder.applyTextTemplate(templateName, dataContext);
+		byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
+				dataContext);
 		return documentBuilder.xhtmlToPDF(xhtml);
 	}
 
-	private Map<String, Object> createDataContext(List<Map<String, String>> tulokset) {
+	private Map<String, Object> createDataContext(
+			List<Map<String, String>> tulokset) {
 		Map<String, Boolean> columns = distinctColumns(tulokset);
 		tulokset = normalizeColumns(columns, tulokset);
 		Map<String, Object> data = new HashMap<String, Object>();
@@ -37,7 +41,8 @@ public class LiiteBuilder {
 		return data;
 	}
 
-	private List<Map<String, String>> normalizeColumns(Map<String, Boolean> columns, List<Map<String, String>> tulokset) {
+	private List<Map<String, String>> normalizeColumns(
+			Map<String, Boolean> columns, List<Map<String, String>> tulokset) {
 		for (Map<String, String> row : tulokset) {
 			for (String column : columns.keySet()) {
 				if (!row.containsKey(column) || row.get(column) == null) {
@@ -49,7 +54,8 @@ public class LiiteBuilder {
 		return tulokset;
 	}
 
-	private Map<String, Boolean> distinctColumns(List<Map<String, String>> tulokset) {
+	private Map<String, Boolean> distinctColumns(
+			List<Map<String, String>> tulokset) {
 		Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
 		for (Map<String, String> haku : tulokset) {
 			for (String column : haku.keySet()) {

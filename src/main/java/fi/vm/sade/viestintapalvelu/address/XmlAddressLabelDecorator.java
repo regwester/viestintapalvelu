@@ -2,13 +2,12 @@ package fi.vm.sade.viestintapalvelu.address;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-
 public class XmlAddressLabelDecorator extends AddressLabelDecorator {
-	
+
 	public XmlAddressLabelDecorator(AddressLabel addressLabel) {
 		super(addressLabel);
 	}
-	
+
 	public String getFirstName() {
 		return escape(decoratedLabel.getFirstName());
 	}

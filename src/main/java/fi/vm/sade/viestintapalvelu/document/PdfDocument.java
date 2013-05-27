@@ -5,13 +5,13 @@ import java.io.InputStream;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
-
 public class PdfDocument {
 	private AddressLabel addressLabel;
 	private byte[] frontPage;
 	private byte[] attachment;
 
-	public PdfDocument(AddressLabel addressLabel, byte[] frontPage, byte[] attachment) {
+	public PdfDocument(AddressLabel addressLabel, byte[] frontPage,
+			byte[] attachment) {
 		this.addressLabel = addressLabel;
 		this.frontPage = frontPage;
 		this.attachment = attachment;

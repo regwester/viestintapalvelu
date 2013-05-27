@@ -11,7 +11,7 @@ public class HyvaksymiskirjeBatch {
 	public HyvaksymiskirjeBatch(List<Hyvaksymiskirje> letters) {
 		this.letters = letters;
 	}
-	
+
 	public List<Hyvaksymiskirje> getLetters() {
 		return letters;
 	}

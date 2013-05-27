@@ -5,12 +5,12 @@ import java.util.Map;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
-
 public class Hyvaksymiskirje {
 	public Hyvaksymiskirje() {
 	}
 
-	public Hyvaksymiskirje(AddressLabel addressLabel, String languageCode, String koulu, String koulutus, List<Map<String, String>> tulokset) {
+	public Hyvaksymiskirje(AddressLabel addressLabel, String languageCode,
+			String koulu, String koulutus, List<Map<String, String>> tulokset) {
 		this.addressLabel = addressLabel;
 		this.languageCode = languageCode;
 		this.tulokset = tulokset;
@@ -46,11 +46,11 @@ public class Hyvaksymiskirje {
 	public List<Map<String, String>> getTulokset() {
 		return tulokset;
 	}
-	
+
 	public String getKoulu() {
 		return koulu;
 	}
-	
+
 	public String getKoulutus() {
 		return koulutus;
 	}
@@ -61,7 +61,8 @@ public class Hyvaksymiskirje {
 
 	@Override
 	public String toString() {
-		return "Hyvaksymiskirje [addressLabel=" + addressLabel + ", languageCode=" + languageCode
-				+ ", koulu=" + koulu + ", koulutus=" + koulutus + ", results=" + tulokset + "]";
+		return "Hyvaksymiskirje [addressLabel=" + addressLabel
+				+ ", languageCode=" + languageCode + ", koulu=" + koulu
+				+ ", koulutus=" + koulutus + ", results=" + tulokset + "]";
 	}
 }

@@ -25,32 +25,46 @@ public class HyvaksymiskirjeBuilder {
 
 	private DocumentBuilder documentBuilder;
 	private LiiteBuilder liiteBuilder;
-	
+
 	@Inject
-	public HyvaksymiskirjeBuilder(DocumentBuilder documentBuilder, LiiteBuilder liiteBuilder) {
+	public HyvaksymiskirjeBuilder(DocumentBuilder documentBuilder,
+			LiiteBuilder liiteBuilder) {
 		this.documentBuilder = documentBuilder;
 		this.liiteBuilder = liiteBuilder;
 	}
-	
-	public byte[] printPDF(HyvaksymiskirjeBatch batch) throws IOException, DocumentException {
+
+	public byte[] printPDF(HyvaksymiskirjeBatch batch) throws IOException,
+			DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Hyvaksymiskirje kirje : batch.getLetters()) {
-			String kirjeTemplateName = Utils.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE, kirje.getLanguageCode());
-			byte[] frontPage = createFirstPagePDF(kirjeTemplateName, kirje.getAddressLabel(), kirje.getKoulu(), kirje.getKoulutus());
-			String liiteTemplateName = Utils.resolveTemplateName(Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
-			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName, kirje.getTulokset());
-			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, attachment));
+			String kirjeTemplateName = Utils
+					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,
+							kirje.getLanguageCode());
+			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
+					kirje.getAddressLabel(), kirje.getKoulu(),
+					kirje.getKoulutus());
+			String liiteTemplateName = Utils.resolveTemplateName(
+					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
+			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
+					kirje.getTulokset());
+			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage,
+					attachment));
 		}
 		return documentBuilder.merge(source).toByteArray();
 	}
 
-	private byte[] createFirstPagePDF(String templateName, AddressLabel addressLabel, String koulu, String koulutus) throws FileNotFoundException, IOException, DocumentException {
-		Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(addressLabel), koulu, koulutus);
-		byte[] xhtml = documentBuilder.applyTextTemplate(templateName, dataContext);
+	private byte[] createFirstPagePDF(String templateName,
+			AddressLabel addressLabel, String koulu, String koulutus)
+			throws FileNotFoundException, IOException, DocumentException {
+		Map<String, Object> dataContext = createDataContext(
+				new HtmlAddressLabelDecorator(addressLabel), koulu, koulutus);
+		byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
+				dataContext);
 		return documentBuilder.xhtmlToPDF(xhtml);
 	}
 
-	private Map<String, Object> createDataContext(AddressLabelDecorator decorator, String koulu, String koulutus) {
+	private Map<String, Object> createDataContext(
+			AddressLabelDecorator decorator, String koulu, String koulutus) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("osoite", decorator);
 		data.put("koulu", StringEscapeUtils.escapeHtml(koulu));

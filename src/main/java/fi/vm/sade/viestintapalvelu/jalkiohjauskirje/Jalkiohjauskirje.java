@@ -5,12 +5,12 @@ import java.util.Map;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
-
 public class Jalkiohjauskirje {
 	public Jalkiohjauskirje() {
 	}
 
-	public Jalkiohjauskirje(AddressLabel addressLabel, String languageCode, List<Map<String, String>> tulokset) {
+	public Jalkiohjauskirje(AddressLabel addressLabel, String languageCode,
+			List<Map<String, String>> tulokset) {
 		this.addressLabel = addressLabel;
 		this.languageCode = languageCode;
 		this.tulokset = tulokset;
@@ -32,7 +32,7 @@ public class Jalkiohjauskirje {
 	public AddressLabel getAddressLabel() {
 		return addressLabel;
 	}
-	
+
 	public String getLanguageCode() {
 		return languageCode;
 	}
@@ -43,8 +43,9 @@ public class Jalkiohjauskirje {
 
 	@Override
 	public String toString() {
-		return "Jalkiohjauskirje [addressLabel=" + addressLabel + 
-				", languageCode=" + languageCode + ", results=" + tulokset + "]";
+		return "Jalkiohjauskirje [addressLabel=" + addressLabel
+				+ ", languageCode=" + languageCode + ", results=" + tulokset
+				+ "]";
 	}
 
 }

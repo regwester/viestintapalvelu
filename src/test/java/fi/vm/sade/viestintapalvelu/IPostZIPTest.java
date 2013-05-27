@@ -1,5 +1,8 @@
 package fi.vm.sade.viestintapalvelu;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -15,7 +18,6 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
-import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -56,65 +58,63 @@ public class IPostZIPTest {
 
 	@Test
 	public void zipContainsJalkiohjauskirjePDF() throws Exception {
-		Assert.assertTrue("contains jalkiohjauskirje.pdf",
+		assertTrue("contains jalkiohjauskirje.pdf",
 				filenames.contains("jalkiohjauskirje.pdf"));
 	}
 
 	@Test
 	public void zipContainsJalkiohjauskirjeXML() throws Exception {
-		Assert.assertTrue("contains jalkiohjauskirje.xml",
+		assertTrue("contains jalkiohjauskirje.xml",
 				filenames.contains("jalkiohjauskirje.xml"));
 	}
 
 	@Test
 	public void xmlContainsStartPageAttribute() throws Exception {
-		Assert.assertEquals("1", xpath("(//lb:Location)[1]/@startPage"));
-		Assert.assertEquals("3", xpath("(//lb:Location)[2]/@startPage"));
+		assertEquals("1", xpath("(//lb:Location)[1]/@startPage"));
+		assertEquals("3", xpath("(//lb:Location)[2]/@startPage"));
 	}
 
 	@Test
 	public void xmlContainsPagesAttribute() throws Exception {
-		Assert.assertEquals("2", xpath("(//lb:Location)[1]/@pages"));
-		Assert.assertEquals("2", xpath("(//lb:Location)[2]/@pages"));
+		assertEquals("2", xpath("(//lb:Location)[1]/@pages"));
+		assertEquals("2", xpath("(//lb:Location)[2]/@pages"));
 	}
 
 	@Test
 	public void xmlContainsReceiverName() throws Exception {
-		Assert.assertEquals(label.getFirstName() + " " + label.getLastName(),
+		assertEquals(label.getFirstName() + " " + label.getLastName(),
 				xpath("(//lb:Eu1)[1]/@name"));
-		Assert.assertEquals(labelWithSpecialCharacters.getFirstName() + " "
+		assertEquals(labelWithSpecialCharacters.getFirstName() + " "
 				+ labelWithSpecialCharacters.getLastName(),
 				xpath("(//lb:Eu1)[2]/@name"));
 	}
 
 	@Test
 	public void xmlContainsReceiverAddress() throws Exception {
-		Assert.assertEquals(label.getAddressline(),
-				xpath("(//lb:Eu1)[1]/@address"));
-		Assert.assertEquals(labelWithSpecialCharacters.getAddressline(),
+		assertEquals(label.getAddressline(), xpath("(//lb:Eu1)[1]/@address"));
+		assertEquals(labelWithSpecialCharacters.getAddressline(),
 				xpath("(//lb:Eu1)[2]/@address"));
 	}
 
 	@Test
 	public void xmlContainsReceiverPostalCode() throws Exception {
-		Assert.assertEquals(label.getPostalCode(),
-				xpath("(//lb:Eu1)[1]/@postalCode"));
-		Assert.assertEquals(labelWithSpecialCharacters.getPostalCode(),
+		assertEquals(label.getPostalCode(), xpath("(//lb:Eu1)[1]/@postalCode"));
+		assertEquals(labelWithSpecialCharacters.getPostalCode(),
 				xpath("(//lb:Eu1)[2]/@postalCode"));
 	}
 
 	@Test
 	public void xmlContainsReceiverCity() throws Exception {
-		Assert.assertEquals(label.getCity(), xpath("(//lb:Eu1)[1]/@city"));
-		Assert.assertEquals(labelWithSpecialCharacters.getCity(),
+		assertEquals(label.getCity(), xpath("(//lb:Eu1)[1]/@city"));
+		assertEquals(labelWithSpecialCharacters.getCity(),
 				xpath("(//lb:Eu1)[2]/@city"));
 	}
 
 	@Test
 	public void xmlContainsReceiverCountryCode() throws Exception {
-		Assert.assertEquals(label.getCountryCode(),
+		assertEquals(label.getCountryCode(),
 				xpath("(//lb:Eu1)[1]/@countryCode"));
-		Assert.assertEquals(labelWithSpecialCharacters.getCountryCode(),
+		assertEquals(labelWithSpecialCharacters.getCountryCode(),
 				xpath("(//lb:Eu1)[2]/@countryCode"));
 	}
 

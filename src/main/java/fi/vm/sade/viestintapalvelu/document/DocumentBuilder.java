@@ -29,13 +29,15 @@ public class DocumentBuilder {
 		templateEngine.init();
 	}
 
-	public byte[] xhtmlToPDF(byte[] xhtml) throws DocumentException, IOException {
+	public byte[] xhtmlToPDF(byte[] xhtml) throws DocumentException,
+			IOException {
 		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		newITextRenderer(xhtml).createPDF(output);
 		return output.toByteArray();
 	}
 
-	public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws FileNotFoundException, IOException {
+	public byte[] applyTextTemplate(String templateName,
+			Map<String, Object> data) throws FileNotFoundException, IOException {
 		byte[] template = readTemplate(templateName);
 		StringWriter writer = new StringWriter();
 		templateEngine.evaluate(new VelocityContext(data), writer, "LOG",
@@ -43,14 +45,15 @@ public class DocumentBuilder {
 		return writer.toString().getBytes();
 	}
 
-	public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {
-        MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
-        for (PdfDocument pdfDocument : input) {
-        	mergedPDFDocument.write(pdfDocument);
-        }
-        mergedPDFDocument.flush();
-        return mergedPDFDocument;
-    }
+	public MergedPdfDocument merge(List<PdfDocument> input)
+			throws DocumentException, IOException {
+		MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
+		for (PdfDocument pdfDocument : input) {
+			mergedPDFDocument.write(pdfDocument);
+		}
+		mergedPDFDocument.flush();
+		return mergedPDFDocument;
+	}
 
 	public byte[] zip(Map<String, byte[]> documents) throws IOException {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
@@ -67,7 +70,8 @@ public class DocumentBuilder {
 	private ITextRenderer newITextRenderer(byte[] input) {
 		ITextRenderer renderer = new ITextRenderer();
 		OPHUserAgent uac = new OPHUserAgent(renderer.getOutputDevice());
-		FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(renderer.getSharedContext().getReplacedElementFactory());
+		FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(
+				renderer.getSharedContext().getReplacedElementFactory());
 		uac.setSharedContext(renderer.getSharedContext());
 		renderer.getSharedContext().setUserAgentCallback(uac);
 		renderer.getSharedContext().setReplacedElementFactory(mref);
@@ -80,7 +84,8 @@ public class DocumentBuilder {
 			throws FileNotFoundException, IOException {
 		InputStream in = getClass().getResourceAsStream(templateName);
 		if (in == null) {
-			throw new FileNotFoundException("Template " + templateName + " not found");
+			throw new FileNotFoundException("Template " + templateName
+					+ " not found");
 		}
 		return IOUtils.toByteArray(in);
 	}
