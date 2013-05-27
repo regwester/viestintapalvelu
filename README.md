@@ -5,6 +5,7 @@ Kehitysympäristön pystytys
 --------------------------
 
     git clone git@github.com:Opetushallitus/viestintapalvelu.git
+    cd viestintapalvelu
     mvn clean install eclipse:eclipse
 
 Ajaminen paikallisesti
