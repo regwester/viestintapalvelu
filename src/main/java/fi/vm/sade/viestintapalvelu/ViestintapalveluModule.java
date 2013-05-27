@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.guice.JerseyServletModule;
@@ -19,6 +21,7 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		bind(AddressLabelResource.class);
 		bind(JalkiohjauskirjeResource.class);
 		bind(HyvaksymiskirjeResource.class);
+		bind(ExecutorService.class).toInstance(Executors.newCachedThreadPool());
 
 		Map<String, String> initParameters = new HashMap<String, String>();
 		initParameters.put(JSONConfiguration.FEATURE_POJO_MAPPING, "true");

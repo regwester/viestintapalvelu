@@ -2,18 +2,19 @@ package fi.vm.sade.viestintapalvelu;
 
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
+import com.google.inject.Inject;
+
 import fi.vm.sade.viestintapalvelu.download.DownloadResource;
 
 public class AsynchronousResource {
-	// TODO vpeurala 21.5.2013: Move to singleton
-	private ExecutorService executorService = Executors.newCachedThreadPool();
+	@Inject
+	private ExecutorService executorService;
 
 	public void executeAsynchronously(Runnable task) {
 		executorService.execute(task);
@@ -28,22 +29,18 @@ public class AsynchronousResource {
 				.entity(contentLocation.toString()).build();
 	}
 
-	// FIXME vpeurala 23.5.2013: Hack
 	String urlTo(HttpServletRequest request,
 			Class<DownloadResource> resourceClass) {
-		return UriBuilder
-				.fromUri(request.getRequestURL().toString())
-				.replacePath(
-						chompSlashes(request.getContextPath().trim().equals("") ? ""
-								: "/" + request.getContextPath())
-								+ "/"
-								+ chompSlashes((request.getServletPath().trim()
-										.equals("") ? "" : "/"
-										+ request.getServletPath()))
-								+ "/"
-								+ chompSlashes((UriBuilder.fromResource(
-										resourceClass).build().toString())))
-				.build().toString();
+		String path = chompSlashes(request.getContextPath().trim().equals("") ? ""
+				: "/" + request.getContextPath())
+				+ "/"
+				+ chompSlashes((request.getServletPath().trim().equals("") ? ""
+						: "/" + request.getServletPath()))
+				+ "/"
+				+ chompSlashes((UriBuilder.fromResource(resourceClass).build()
+						.toString()));
+		return UriBuilder.fromUri(request.getRequestURL().toString())
+				.replacePath(path).build().toString();
 	}
 
 	private static String chompSlashes(final String input) {
