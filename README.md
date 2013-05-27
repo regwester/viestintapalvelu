@@ -21,6 +21,10 @@ Löytyy osoitteesta:
 
 <http://liitu.hard.ware.fi/confluence/pages/viewpage.action?pageId=9994831>
 
+Bamboo
+------
+http://pulpetti.hard.ware.fi:8085/bamboo/browse/VIESTINTAPALVELU-OPHVIESTINTAPALVELU10
+
 Osoitetarrojen tulostus
 -----------------------
 
