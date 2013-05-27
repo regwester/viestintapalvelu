@@ -27,8 +27,7 @@ public class DownloadResource {
 	@Path("{documentId}")
 	public Response download(@PathParam("documentId") String input,
 			@Context HttpServletResponse response) {
-		// FIXME vpeurala 22.5.2013: Just for testing
-		Download download = downloadCache.getAndWait(input);
+		Download download = downloadCache.get(input);
 		if (download == null) {
 			return Response.status(Status.BAD_REQUEST).build();
 		}

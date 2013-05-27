@@ -43,20 +43,9 @@ public class AddressLabelResource extends AsynchronousResource {
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, JSONException {
 		final String documentId = UUID.randomUUID().toString();
-		executeAsynchronously(new Runnable() {
-			@Override
-			public void run() {
-				try {
-					byte[] pdf = labelBuilder.printPDF(input);
-					downloadCache.addDocument(new Download(
-							"application/pdf;charset=utf-8",
-							"addresslabels.pdf", pdf), documentId);
-				} catch (Throwable t) {
-					System.err.println(t);
-					throw new RuntimeException(t);
-				}
-			}
-		});
+		byte[] pdf = labelBuilder.printPDF(input);
+		downloadCache.addDocument(new Download("application/pdf;charset=utf-8",
+				"addresslabels.pdf", pdf), documentId);
 		return createResponse(request, documentId);
 	}
 
