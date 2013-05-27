@@ -142,5 +142,4 @@ public class IPostZIPTest {
 		in.close();
 		return null;
 	}
-
 }
