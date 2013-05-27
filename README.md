@@ -1,31 +1,33 @@
 Viestintäpalvelu
 ================
 
-* Ville Peurala
-* Iina Sipilä
+Kehitysympäristön pystytys
+--------------------------
 
-1. Build
+    git clone git@github.com:Opetushallitus/viestintapalvelu.git
+    mvn clean install eclipse:eclipse
 
-mvn package
+Ajaminen paikallisesti
+----------------------
 
-2. Ajaminen paikallisesti
+    mvn tomcat7:run-war
+    
+Mene selaimella osoitteeseen <http://localhost:9090/index.html>
 
-Sovellus voidaan käynnistää ajamalla seuraava komento projektin juuressa:
+Dokumentaatio
+-------------
 
-mvn exec:java -Dexec.mainClass="fi.vm.sade.viestintapalvelu.Launcher"
+Löytyy osoitteesta:
 
-Komento käynnistää paikallisen tomcatin porttiin 8080. Sovelluksen testi-käyttöliittymä aukeaa selaimella osoitteesta:
+<http://liitu.hard.ware.fi/confluence/pages/viewpage.action?pageId=9994831>
 
-http://localhost:8080/index.html
-
-3. Dokumentaatio
-
-Löytyy osoittesta:
-
-http://liitu.hard.ware.fi/confluence/pages/viewpage.action?pageId=9994831
-
-4. Tulostus
+Osoitetarrojen tulostus
+-----------------------
 
 Aseta skaalaus: 100%.
 
+Tekijät
+-------
 
+* Iina Sipilä <iina.sipila@reaktor.fi>
+* Ville Peurala <ville.peurala@reaktor.fi>
