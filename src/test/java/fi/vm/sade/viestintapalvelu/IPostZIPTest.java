@@ -5,8 +5,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.zip.ZipEntry;
@@ -20,13 +18,11 @@ import org.dom4j.io.SAXReader;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
-import org.junit.Ignore;
 import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 
-@Ignore
 public class IPostZIPTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
@@ -37,24 +33,25 @@ public class IPostZIPTest {
 	private static AddressLabel labelWithSpecialCharacters = new AddressLabel(
 			"Åle &", "Öistämö &", "Brännkyrksgatan & 177 B 149", "Södermalm &",
 			"13&", "65330 &", "Stockholm &", "SL&", "Sweden&", "SE");
-	private static byte[] zip;
-	private static List<byte[]> subZips;
 	private static Set<String> filenames;
 	private static Document ipostXML;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, "FI", new ArrayList<Map<String,String>>());
-		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(labelWithSpecialCharacters, "FI", new ArrayList<Map<String,String>>());
-		zip = TestUtil.generateIPostZIP(Arrays.asList(kirje1, kirje2));
-		subZips = extractSubZips(zip);
-		System.out.println(zip.length);
-		System.out.println(subZips);
-		System.out.println(subZips.size());
-		System.out.println(subZips.get(0).length);
-		// TODO vpeurala 23.5.2013: Fix this hack
-		filenames = extractFilenames(subZips.get(0));
-		ipostXML = exctractIPostXML(subZips.get(0));
+		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, "FI",
+				new ArrayList<Map<String, String>>());
+		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(
+				labelWithSpecialCharacters, "FI",
+				new ArrayList<Map<String, String>>());
+		byte[] mainZip = TestUtil.generateIPostZIP(Arrays
+				.asList(kirje1, kirje2));
+		Map<String, byte[]> zipEntryNamesAndContents = ZipUtil
+				.zipEntryNamesAndContents(mainZip);
+		byte[] zip = zipEntryNamesAndContents.get("jalkiohjauskirje_1.zip");
+		Map<String, byte[]> subZipEntryNamesAndContents = ZipUtil
+				.zipEntryNamesAndContents(zip);
+		filenames = subZipEntryNamesAndContents.keySet();
+		ipostXML = exctractIPostXML(zip);
 	}
 
 	@Test
@@ -121,46 +118,6 @@ public class IPostZIPTest {
 				xpath("(//lb:Eu1)[2]/@countryCode"));
 	}
 
-	private static List<byte[]> extractSubZips(byte[] mainZip)
-			throws IOException {
-		ZipInputStream in = new ZipInputStream(
-				new ByteArrayInputStream(mainZip));
-		ZipEntry entry;
-		byte b;
-		List<Byte> bytesOfCurrentEntry = new ArrayList<Byte>();
-		List<byte[]> results = new ArrayList<byte[]>();
-		while ((entry = in.getNextEntry()) != null) {
-			System.out.println("Entry size: " + entry.getSize());
-			while ((b = (byte) in.read()) != -1) {
-				bytesOfCurrentEntry.add(b);
-			}
-			System.out.println("BytesofCurrentEntry: "
-					+ bytesOfCurrentEntry.size());
-			byte[] resultArray = new byte[bytesOfCurrentEntry.size()];
-			for (int i = 0; i < bytesOfCurrentEntry.size(); i++) {
-				resultArray[i] = bytesOfCurrentEntry.get(i);
-			}
-			results.add(resultArray);
-			in.closeEntry();
-		}
-		in.close();
-		return results;
-
-	}
-
-	private static Set<String> extractFilenames(byte[] zip) throws IOException {
-		System.out.println("extractFilenames: " + zip.length);
-		ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(zip));
-		Set<String> fileNames = new HashSet<String>();
-		ZipEntry entry;
-		while ((entry = in.getNextEntry()) != null) {
-			fileNames.add(entry.getName());
-			in.closeEntry();
-		}
-		in.close();
-		return fileNames;
-	}
-
 	private static String xpath(String selector) {
 		Map<String, String> namespaceUris = new HashMap<String, String>();
 		namespaceUris.put("lb",
@@ -170,7 +127,7 @@ public class IPostZIPTest {
 		return xPath.selectSingleNode(ipostXML).getText();
 	}
 
-	private static Document exctractIPostXML(byte[] zip2) throws IOException,
+	private static Document exctractIPostXML(byte[] zip) throws IOException,
 			DocumentException {
 		ZipInputStream in = new ZipInputStream(new ByteArrayInputStream(zip));
 		ZipEntry entry;
