@@ -9,10 +9,9 @@ public class Jalkiohjauskirje {
 	public Jalkiohjauskirje() {
 	}
 
-	public Jalkiohjauskirje(AddressLabel addressLabel, String ssn,
-			String languageCode, List<Map<String, String>> tulokset) {
+	public Jalkiohjauskirje(AddressLabel addressLabel, String languageCode,
+			List<Map<String, String>> tulokset) {
 		this.addressLabel = addressLabel;
-		this.ssn = ssn;
 		this.languageCode = languageCode;
 		this.tulokset = tulokset;
 	}
@@ -21,10 +20,6 @@ public class Jalkiohjauskirje {
 	 * Osoitetiedot.
 	 */
 	private AddressLabel addressLabel;
-	/**
-	 * Sosiaaliturvatunnus.
-	 */
-	private String ssn;
 	/**
 	 * Kielikoodi ISO 639-1.
 	 */
@@ -49,8 +44,8 @@ public class Jalkiohjauskirje {
 	@Override
 	public String toString() {
 		return "Jalkiohjauskirje [addressLabel=" + addressLabel
-				+ ", ssn=" + ssn + ", languageCode=" + languageCode +
-				", results=" + tulokset + "]";
+				+ ", languageCode=" + languageCode + ", results=" + tulokset
+				+ "]";
 	}
 
 }

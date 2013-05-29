@@ -24,7 +24,7 @@ public class JalkiohjauskirjePDFTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "FI",
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
 				new ArrayList<Map<String, String>>());
 		pdf = TestUtil.generateJalkiohjauskirje(kirje).toString();
 	}
@@ -46,28 +46,28 @@ public class JalkiohjauskirjePDFTest {
 
 	@Test
 	public void canBePrintedInEN() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "EN",
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "EN",
 				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSE() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "SE",
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "SE",
 				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedWithoutLanguageCode() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", null,
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, null,
 				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSQ() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "SQ",
+		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "SQ",
 				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
