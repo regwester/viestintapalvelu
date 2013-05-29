@@ -40,7 +40,7 @@ public class LiitePDFTest {
 		@SuppressWarnings("unchecked")
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "FI",
 					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
@@ -76,7 +76,7 @@ public class LiitePDFTest {
 		@SuppressWarnings("unchecked")
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "FI",
 					Arrays.asList(tulos));
 			List<List<String>> liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
@@ -104,7 +104,7 @@ public class LiitePDFTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "FI",
 					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");
@@ -137,7 +137,7 @@ public class LiitePDFTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
+			Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "091294-222A", "FI",
 					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);
 			hakutoiverivi = findHakutoiveRivi("Asentaja", liite).split(" ");

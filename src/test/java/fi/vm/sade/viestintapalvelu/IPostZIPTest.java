@@ -40,10 +40,10 @@ public class IPostZIPTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, "FI",
+		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, "091294-222A", "FI",
 				new ArrayList<Map<String, String>>());
 		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(
-				labelWithSpecialCharacters, "FI",
+				labelWithSpecialCharacters, "091294-222A", "FI",
 				new ArrayList<Map<String, String>>());
 		byte[] mainZip = TestUtil.generateIPostZIP(Arrays
 				.asList(kirje1, kirje2));
