@@ -5,6 +5,15 @@ import java.io.InputStream;
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
 
+/**
+ * If on a template external file is referenced, flying saucer uses user agent to load the referenced
+ * resource. For example:
+ * 
+ *  <link rel="stylesheet" type="text/css" href="classpath:/ipost_pdf.css"/> 
+ *
+ *	See also: https://svn.atlassian.com/svn/public/atlassian/vendor/xhtmlrenderer-8.0/tags/8.3-atlassian/www/r7/users-guide-r7.html#xil_17
+ *
+ */
 public class OPHUserAgent extends ITextUserAgent {
 
 	private static final String classpathScheme = "classpath";
