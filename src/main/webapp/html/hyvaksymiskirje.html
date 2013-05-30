@@ -59,29 +59,29 @@
 						<tr>
 							<th>Kohde <a href="#" ng-click="addHakukohde($index)"><i class="icon-plus"></i></a></th>
 							<th>Hakijat</th>
-							<th>Paikat <a href="#" ng-click="toggleColumn($index, 'aloituspaikat')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'aloituspaikat'), 'icon-plus': isRemoved($index, 'aloituspaikat') }"></i></a></th>
-							<th>Varasija <a href="#" ng-click="toggleColumn($index, 'varasija')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'varasija'), 'icon-plus': isRemoved($index, 'varasija') }"></i></a></th>
-							<th>Raja <a href="#" ng-click="toggleColumn($index, 'alinHyvaksytty')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'alinHyvaksytty'), 'icon-plus': isRemoved($index, 'alinHyvaksytty') }"></i></a></th>
-							<th>Pisteesi <a href="#" ng-click="toggleColumn($index, 'omatPisteesi')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'omatPisteesi'), 'icon-plus': isRemoved($index, 'omatPisteesi') }"></i></a></th>
-							<th>Koe <a href="#" ng-click="toggleColumn($index, 'paasyJaSoveltuvuusKoe')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'paasyJaSoveltuvuusKoe'), 'icon-plus': isRemoved($index, 'paasyJaSoveltuvuusKoe') }"></i></a></th>
-							<th>Syy <a href="#" ng-click="toggleColumn($index, 'hylkayksenSyy')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'hylkayksenSyy'), 'icon-plus': isRemoved($index, 'hylkayksenSyy') }"></i></a></th>
+							<th>Pisteet</th>
+							<th>Koe <a href="#" ng-click="toggleColumn($index, 'paasyJaSoveltuvuuskoe')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'paasyJaSoveltuvuuskoe'), 'icon-plus': isRemoved($index, 'paasyJaSoveltuvuuskoe') }"></i></a></th>
+							<th>Valinnantulos <a href="#" ng-click="toggleColumn($index, 'valinnanTulos')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'valinnanTulos'), 'icon-plus': isRemoved($index, 'valinnanTulos') }"></i></a></th>
+							<th>Selite <a href="#" ng-click="toggleColumn($index, 'selite')"><i ng:class="{ 'icon-minus': ! isRemoved($index, 'selite'), 'icon-plus': isRemoved($index, 'selite') }"></i></a></th>
 							<th></th>
 						</tr>
 						<tr ng-repeat="haku in kirje.tulokset">
 							<td>
-								<input class="input-xlarge input-pile" type="text" ng-model="haku.koulu" placeholder="Koulu">
-								<input class="input-xlarge" type="text" ng-model="haku.hakutoive" placeholder="Hakutoive">
+								<input class="input-xlarge input-pile" type="text" ng-model="haku.organisaationNimi" placeholder="Organisaatio">
+								<input class="input-xlarge input-pile" type="text" ng-model="haku.oppilaitoksenNimi" placeholder="Oppilaitos">
+								<input class="input-xlarge" type="text" ng-model="haku.hakukohteenNimi" placeholder="Hakukohde">
 							</td>
 							<td>
-								<input class="input-small input-pile" type="text" ng-model="haku.ensisijaisetHakijat" placeholder="Ensisijaiset">
-								<input class="input-small" type="text" ng-model="haku.kaikkiHakijat" placeholder="Kaikki">
+								<input class="input-small input-pile" type="text" ng-model="haku.hyvaksytyt" placeholder="Hyväksytyt">
+								<input class="input-small" type="text" ng-model="haku.kaikkiHakeneet" placeholder="Hakeneet">
 							</td>
-							<td><input ng-disabled="isRemoved($parent.$index, 'aloituspaikat')" class="input-small" type="text" ng-model="haku.aloituspaikat" placeholder="Aloituspaikat"></td>
-							<td><input ng-disabled="isRemoved($parent.$index, 'varasija')" class="input-small" type="text" ng-model="haku.varasija" placeholder="Varasija"></td>
-							<td><input ng-disabled="isRemoved($parent.$index, 'alinHyvaksytty')" class="input-small" type="text" ng-model="haku.alinHyvaksytty" placeholder="Alin hyväksytty"></td>
-							<td><input ng-disabled="isRemoved($parent.$index, 'omatPisteesi')" class="input-small" type="text" ng-model="haku.omatPisteesi" placeholder="Omat pisteesi"></td>
-							<td><input ng-disabled="isRemoved($parent.$index, 'paasyJaSoveltuvuusKoe')" class="input-small" type="text" ng-model="haku.paasyJaSoveltuvuusKoe" placeholder="Koe pisteesi"></td>
-							<td><input ng-disabled="isRemoved($parent.$index, 'hylkayksenSyy')" class="input-small" type="text" ng-model="haku.hylkayksenSyy" placeholder="Syy"></td>
+							<td>
+								<input class="input-small input-pile" type="text" ng-model="haku.omatPisteet" placeholder="Pisteesi">
+								<input class="input-small" type="text" ng-model="haku.alinHyvaksyttyPistemaara" placeholder="Raja">
+							</td>
+							<td><input ng-disabled="isRemoved($parent.$index, 'paasyJaSoveltuvuuskoe')" class="input-small" type="text" ng-model="haku.paasyJaSoveltuvuuskoe" placeholder="Koe pisteesi"></td>
+							<td><input ng-disabled="isRemoved($parent.$index, 'valinnanTulos')" class="input-small" type="text" ng-model="haku.valinnanTulos" placeholder="Tulos"></td>
+							<td><input ng-disabled="isRemoved($parent.$index, 'selite')" class="input-small" type="text" ng-model="haku.selite" placeholder="Selite"></td>							
 							<td><a href="#" ng-click="removeHakukohde($parent.$index, $index)"><i class="icon-trash"></i></a></td>
 						</tr>
 					</table>

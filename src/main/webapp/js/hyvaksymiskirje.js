@@ -23,8 +23,8 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
 				},
 				"tulokset": tulokset,
 				"languageCode": data.prioritize('FI', 0.80).prioritize('SE', 0.60).otherwise(data.any('language')),
-				"koulu": tulokset[0]['koulu'],
-				"koulutus": tulokset[0]['hakutoive']
+				"koulu": tulokset[0]['organisaationNimi'],
+				"koulutus": tulokset[0]['hakukohteenNimi']
 			}
 		}))
 	}
@@ -32,16 +32,16 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
 	function generateTulokset(count) {
 		return Generator.generateObjects(count, function(data) {
 			return {
-		    	"koulu": data.any('koulu'),
-		    	"hakutoive": data.any('hakutoive'),
-		    	"ensisijaisetHakijat": data.any('ensisijaiset'),
-		    	"kaikkiHakijat": data.any('hakijat'),
-		    	"aloituspaikat": data.any('paikat'),
-		    	"varasija": data.prioritize('', 0.9).otherwise(data.any('varasija')),
-		    	"alinHyvaksytty": data.any('raja'),
-		    	"omatPisteesi": data.any('pisteetvajaa'),
-		    	"paasyJaSoveltuvuusKoe": data.any('koe'),
-		    	"hylkayksenSyy": data.any('syy')
+		    	"organisaationNimi": data.any('organisaationNimi'),
+		    	"oppilaitoksenNimi": data.any('oppilaitoksenNimi'),
+		    	"hakukohteenNimi": data.any('hakukohteenNimi'),
+		    	"hyvaksytyt": data.any('hyvaksytyt'),
+		    	"kaikkiHakeneet": data.any('kaikkiHakeneet'),
+		    	"alinHyvaksyttyPistemaara": data.any('alinHyvaksyttyPistemaara'),
+		    	"omatPisteet": data.any('pisteetvajaa'),
+		    	"paasyJaSoveltuvuuskoe": data.any('koe'),
+		    	"valinnanTulos": data.any('valinnanTulos'),
+		    	"selite": data.any('valinnanTulos')
 			}
 		})
 	}

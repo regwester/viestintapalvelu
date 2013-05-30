@@ -7,17 +7,18 @@ angular.module('app').factory('Generator', ['Firstnames', 'Lastnames', 'Streets'
 	Postoffices.success(function(data) {generatedData['postoffice'] = data})
 	Countries.success(function(data) {generatedData['country'] = data})
 	Language.success(function(data) {generatedData['language'] = data})
-	Koulu.success(function(data) {generatedData['koulu'] = data})
-	Hakutoive.success(function(data) {generatedData['hakutoive'] = data})
+	Koulu.success(function(data) {generatedData['organisaationNimi'] = data})
+	Hakutoive.success(function(data) {generatedData['hakukohteenNimi'] = data})
+	generatedData['oppilaitoksenNimi'] = ['lukio','ammattikoulu','ammattioppilaitos','avoin yliopisto','korkeakoulu']
 	generatedData['hakutoive-lukumaara'] = _.range(1, 5)
-	generatedData['ensisijaiset'] = _.range(20, 100)
-	generatedData['hakijat'] = _.range(100, 200)
+	generatedData['hyvaksytyt'] = _.range(20, 100)
+	generatedData['kaikkiHakeneet'] = _.range(100, 200)
 	generatedData['paikat'] = _.range(20, 50)
 	generatedData['varasija'] = _.range(1, 10)
-	generatedData['raja'] = _.range(40, 50)
+	generatedData['alinHyvaksyttyPistemaara'] = _.range(40, 50)
 	generatedData['pisteetvajaa'] = _.range(10, 39)
 	generatedData['koe'] = _.range(0, 20)
-	generatedData['syy'] = ['B', 'C', 'E', 'H', 'K', 'L', 'M', 'S', 'T', 'Y', 'Z']
+	generatedData['valinnanTulos'] = ['Hylätty', 'Varasijalla', 'Hyväksytty']
 
 	return function() {
 		function any(dataid, index) {

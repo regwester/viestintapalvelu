@@ -81,12 +81,13 @@ public class TestUtil {
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 
-	public static List<List<String>> generateLiite(Jalkiohjauskirje kirje)
+	public static String generateLiite(Jalkiohjauskirje kirje)
 			throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
 				Arrays.asList(kirje));
-		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
+		return readAsHtml(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
 	}
+
 
 	private static byte[] get(Object json, String url)
 			throws UnsupportedEncodingException, IOException,
@@ -109,6 +110,11 @@ public class TestUtil {
 
 	private static List<List<String>> readPDF(byte[] byteDocument,
 			int startPage, int endPage) throws IOException, DocumentException {
+		return parseHTML(readAsHtml(byteDocument, startPage, endPage).getBytes());
+	}
+	
+	private static String readAsHtml(byte[] byteDocument,
+			int startPage, int endPage) throws IOException {
 		PDDocument document = PDDocument.load(new ByteArrayInputStream(
 				byteDocument));
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
@@ -122,7 +128,7 @@ public class TestUtil {
 		stripper.setLineSeparator("<br/>");
 		stripper.writeText(document, writer);
 		document.close();
-		return parseHTML(writer.toString().getBytes());
+		return writer.toString();
 	}
 
 	@SuppressWarnings("unchecked")
