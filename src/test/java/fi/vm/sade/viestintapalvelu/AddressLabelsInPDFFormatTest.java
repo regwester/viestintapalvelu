@@ -14,7 +14,7 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)

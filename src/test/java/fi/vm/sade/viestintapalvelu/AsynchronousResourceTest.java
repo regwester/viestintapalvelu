@@ -7,7 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.jretrofit.Retrofit;
 import org.junit.Test;
 
-import fi.vm.sade.viestintapalvelu.download.DownloadResource;
+import fi.vm.sade.viestintapalvelu.ui.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.ui.DownloadResource;
 
 public class AsynchronousResourceTest {
 	private AsynchronousResource resource = new AsynchronousResource();
