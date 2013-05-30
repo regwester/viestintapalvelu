@@ -19,7 +19,7 @@ public class PdfDocument implements HasPostalAddress {
 	}
 
 	@Override
-	public PostalAddress postalAddress() {
+	public PostalAddress getPostalAddress() {
 		return postalAddress;
 	}
 

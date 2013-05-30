@@ -69,13 +69,13 @@ public class PdfBuilder {
 					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,
 							kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
-					kirje.postalAddress(), kirje.getKoulu(),
+					kirje.getPostalAddress(), kirje.getKoulu(),
 					kirje.getKoulutus());
 			String liiteTemplateName = Utils.resolveTemplateName(
 					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
-			source.add(new PdfDocument(kirje.postalAddress(), frontPage,
+			source.add(new PdfDocument(kirje.getPostalAddress(), frontPage,
 					attachment));
 		}
 		return documentBuilder.merge(source).toByteArray();
@@ -89,12 +89,12 @@ public class PdfBuilder {
 					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
 					kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
-					kirje.postalAddress());
+					kirje.getPostalAddress());
 			String liiteTemplateName = Utils.resolveTemplateName(
 					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
-			source.add(new PdfDocument(kirje.postalAddress(), frontPage,
+			source.add(new PdfDocument(kirje.getPostalAddress(), frontPage,
 					attachment));
 		}
 		return documentBuilder.merge(source);
@@ -146,7 +146,7 @@ public class PdfBuilder {
 			metadata.put("startPage", documentMetadata.getStartPage());
 			metadata.put("pages", documentMetadata.getPages());
 			metadata.put("addressLabel", new XmlAddressLabelDecorator(
-					documentMetadata.postalAddress()));
+					documentMetadata.getPostalAddress()));
 			metadataList.add(metadata);
 		}
 		data.put("metadataList", metadataList);

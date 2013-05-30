@@ -26,7 +26,7 @@ public class JalkiohjauskirjeStub implements Jalkiohjauskirje {
 		return hakutulokset;
 	}
 
-	public PostalAddress postalAddress() {
+	public PostalAddress getPostalAddress() {
 		return address;
 	}
 }
