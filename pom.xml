@@ -85,11 +85,37 @@
       <artifactId>jersey-guice</artifactId>
       <version>${jersey.version}</version>
     </dependency>
+    
     <dependency>
-      <groupId>org.codehaus.jackson</groupId>
-      <artifactId>jackson-mapper-asl</artifactId>
-      <version>1.9.12</version>
+	  <groupId>javax.ws.rs</groupId>
+	  <artifactId>jsr311-api</artifactId>
+	  <version>1.1.1</version>
+    </dependency>      
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-core</artifactId>
+      <version>2.2.1</version>
     </dependency>
+    
+    <dependency>
+	  <groupId>com.fasterxml.jackson.module</groupId>
+	  <artifactId>jackson-module-jsonSchema</artifactId>
+	  <version>2.2.1</version>
+    </dependency>      
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.jaxrs</groupId>
+      <artifactId>jackson-jaxrs-json-provider</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.fasterxml.jackson.module</groupId>
+      <artifactId>jackson-module-mrbean</artifactId>
+      <version>2.2.1</version>
+    </dependency>
+    
     <!-- Incompatible icu4j version as transitive dependency if not included, causes stacktrace when running tests from eclipse -->
     <dependency> 
       <groupId>com.ibm.icu</groupId>
@@ -240,6 +266,7 @@
     <pluginManagement>
       <plugins>
         <!--This plugin's configuration is used to store Eclipse m2e settings only. It has no influence on the Maven build itself.-->
+        <!-- COMMENTED OUT START
         <plugin>
           <groupId>org.eclipse.m2e</groupId>
           <artifactId>lifecycle-mapping</artifactId>
@@ -268,6 +295,7 @@
             </lifecycleMappingMetadata>
           </configuration>
         </plugin>
+        COMMENTED OUT END -->
       </plugins>
     </pluginManagement>
   </build>

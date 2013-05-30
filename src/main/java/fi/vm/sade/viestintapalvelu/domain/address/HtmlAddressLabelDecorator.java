@@ -6,6 +6,11 @@ public class HtmlAddressLabelDecorator extends PostalAddressDecorator {
 
 	public HtmlAddressLabelDecorator(PostalAddress postalAddress) {
 		super(postalAddress);
+		System.out.println("HtmlAddressLabelDecorator ctor: " + postalAddress);
+		if (postalAddress == null) {
+			throw new RuntimeException(
+					"Null postal address in HtmlAddressLabelDecorator!");
+		}
 	}
 
 	private String decorateAddressline(String textString) {
