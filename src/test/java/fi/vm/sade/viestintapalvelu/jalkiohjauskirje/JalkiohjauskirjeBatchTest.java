@@ -12,13 +12,13 @@ import org.junit.Test;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
-import fi.vm.sade.viestintapalvelu.infrastructure.Batch;
+import fi.vm.sade.viestintapalvelu.infrastructure.AbstractBatch;
 
 // TODO vpeurala 22.5.2013: Refactor these tests
 public class JalkiohjauskirjeBatchTest {
 	private List<Jalkiohjauskirje> letters;
 	private JalkiohjauskirjeBatch original;
-	private List<Batch<Jalkiohjauskirje>> afterSplit;
+	private List<AbstractBatch<Jalkiohjauskirje>> afterSplit;
 
 	@Before
 	public void setUp() throws Exception {
@@ -52,7 +52,7 @@ public class JalkiohjauskirjeBatchTest {
 		afterSplit = original.split(1000);
 		assertEquals(10, afterSplit.size());
 		for (int i = 0; i < 10; i++) {
-			Batch<Jalkiohjauskirje> current = afterSplit.get(i);
+			AbstractBatch<Jalkiohjauskirje> current = afterSplit.get(i);
 			if (i < 9) {
 				// The first 9 batches contain 1000 letters each
 				assertEquals(1000, current.getContents().size());

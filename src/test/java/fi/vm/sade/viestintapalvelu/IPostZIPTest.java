@@ -22,7 +22,7 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 
 public class IPostZIPTest {
@@ -31,9 +31,8 @@ public class IPostZIPTest {
 
 	private static Set<String> filenames;
 	private static Document ipostXML;
-	private static AddressLabel label = new AddressLabel(Fixture.address);
-	private static AddressLabel labelWithSpecialCharacters = new AddressLabel(
-			Fixture.addressWithSpecialCharacters);
+	private static PostalAddress label = Fixture.address;
+	private static PostalAddress labelWithSpecialCharacters = Fixture.addressWithSpecialCharacters;
 
 	@BeforeClass
 	public static void setUp() throws Exception {

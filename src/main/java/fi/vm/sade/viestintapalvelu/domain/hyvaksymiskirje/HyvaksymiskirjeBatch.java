@@ -2,9 +2,9 @@ package fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje;
 
 import java.util.List;
 
-import fi.vm.sade.viestintapalvelu.infrastructure.Batch;
+import fi.vm.sade.viestintapalvelu.infrastructure.AbstractBatch;
 
-public class HyvaksymiskirjeBatch extends Batch<Hyvaksymiskirje> {
+public class HyvaksymiskirjeBatch extends AbstractBatch<Hyvaksymiskirje> {
 	public HyvaksymiskirjeBatch(List<Hyvaksymiskirje> letters) {
 		super(letters);
 	}
@@ -14,7 +14,7 @@ public class HyvaksymiskirjeBatch extends Batch<Hyvaksymiskirje> {
 	}
 
 	@Override
-	protected Batch<Hyvaksymiskirje> createSubBatch(
+	protected AbstractBatch<Hyvaksymiskirje> createSubBatch(
 			List<Hyvaksymiskirje> contentsOfSubBatch) {
 		return new HyvaksymiskirjeBatch(contentsOfSubBatch);
 	}
