@@ -3,7 +3,6 @@ package fi.vm.sade.viestintapalvelu;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.StringReader;
 import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
@@ -31,6 +30,7 @@ import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
+import org.w3c.dom.NodeList;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
@@ -122,7 +122,7 @@ public class TestUtil {
 		stripper.setLineSeparator("<br/>");
 		stripper.writeText(document, writer);
 		document.close();
-		return parseHTML(new String(toXhtml(writer.toString().getBytes())));
+		return parseHTML(writer.toString().getBytes());
 	}
 
 	@SuppressWarnings("unchecked")
@@ -151,12 +151,6 @@ public class TestUtil {
 		return xPath;
 	}
 
-	private static byte[] toXhtml(byte[] document) {
-		ByteArrayOutputStream out = new ByteArrayOutputStream();
-		newTidy().parseDOM(new ByteArrayInputStream(document), out);
-		return out.toByteArray();
-	}
-
 	private static Tidy newTidy() {
 		Tidy tidy = new Tidy();
 		tidy.setTidyMark(false);
@@ -167,14 +161,24 @@ public class TestUtil {
 		return tidy;
 	}
 
-	private static List<List<String>> parseHTML(String xml)
+	private static List<List<String>> parseHTML(byte[] document)
 			throws DocumentException {
-		SAXReader reader = new SAXReader();
+		org.w3c.dom.Document doc = newTidy().parseDOM(new ByteArrayInputStream(document), new ByteArrayOutputStream());
 		List<List<String>> nodes = new ArrayList<List<String>>();
-		Document document = reader.read(new StringReader(xml));
-		for (Object object : document.selectNodes("//div/p")) {
-			Node node = (Node) object;
-			nodes.add(Arrays.asList(node.getText().split("\n")));
+		NodeList p = doc.getElementsByTagName("p");
+		int i = 0;
+		while (i < p.getLength()) {
+			NodeList textNodes = p.item(i).getChildNodes();
+			int j = 0;
+			List<String> texts = new ArrayList<String>();
+			while (j < textNodes.getLength()) {
+				if (textNodes.item(j).getNodeType() == Node.TEXT_NODE) {
+					texts.add(textNodes.item(j).getNodeValue());
+				}
+				j++;
+			}
+			nodes.add(texts);
+			i++;
 		}
 		return nodes;
 	}
