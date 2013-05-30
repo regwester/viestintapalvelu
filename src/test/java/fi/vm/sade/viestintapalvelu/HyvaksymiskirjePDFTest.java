@@ -10,8 +10,8 @@ import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.Hyvaksymiskirje;
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 
 public class HyvaksymiskirjePDFTest {
 	@ClassRule

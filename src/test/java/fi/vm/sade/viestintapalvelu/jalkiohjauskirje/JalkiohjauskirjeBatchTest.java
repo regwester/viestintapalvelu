@@ -9,7 +9,9 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
+import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 // TODO vpeurala 22.5.2013: Refactor these tests
 public class JalkiohjauskirjeBatchTest {

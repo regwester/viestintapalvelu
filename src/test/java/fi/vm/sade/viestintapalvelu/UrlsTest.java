@@ -4,6 +4,8 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
+import fi.vm.sade.viestintapalvelu.ui.Urls;
+
 public class UrlsTest {
 	@Test
 	public void addresslabelDownload() {

@@ -34,12 +34,12 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.address.AddressLabelBatch;
-import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.Hyvaksymiskirje;
-import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeBatch;
-import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
-import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelBatch;
+import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
+import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
+import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
+import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 public class TestUtil {
 

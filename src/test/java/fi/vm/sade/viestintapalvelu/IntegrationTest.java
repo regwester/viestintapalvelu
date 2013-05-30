@@ -16,6 +16,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
 
+import fi.vm.sade.viestintapalvelu.ui.Urls;
+
 public class IntegrationTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
