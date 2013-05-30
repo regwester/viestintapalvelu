@@ -3,15 +3,16 @@ package fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje;
 import java.util.List;
 import java.util.Map;
 
-import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.HasPostalAddress;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 
-public class Jalkiohjauskirje {
+public class Jalkiohjauskirje implements HasPostalAddress {
 	public Jalkiohjauskirje() {
 	}
 
-	public Jalkiohjauskirje(AddressLabel addressLabel, String languageCode,
+	public Jalkiohjauskirje(PostalAddress postalAddress, String languageCode,
 			List<Map<String, String>> tulokset) {
-		this.addressLabel = addressLabel;
+		this.postalAddress = postalAddress;
 		this.languageCode = languageCode;
 		this.tulokset = tulokset;
 	}
@@ -19,7 +20,7 @@ public class Jalkiohjauskirje {
 	/**
 	 * Osoitetiedot.
 	 */
-	private AddressLabel addressLabel;
+	private PostalAddress postalAddress;
 	/**
 	 * Kielikoodi ISO 639-1.
 	 */
@@ -29,8 +30,9 @@ public class Jalkiohjauskirje {
 	 */
 	private List<Map<String, String>> tulokset;
 
-	public AddressLabel getAddressLabel() {
-		return addressLabel;
+	@Override
+	public PostalAddress postalAddress() {
+		return postalAddress;
 	}
 
 	public String getLanguageCode() {
@@ -43,7 +45,7 @@ public class Jalkiohjauskirje {
 
 	@Override
 	public String toString() {
-		return "Jalkiohjauskirje [addressLabel=" + addressLabel
+		return "Jalkiohjauskirje [postalAddress=" + postalAddress
 				+ ", languageCode=" + languageCode + ", results=" + tulokset
 				+ "]";
 	}

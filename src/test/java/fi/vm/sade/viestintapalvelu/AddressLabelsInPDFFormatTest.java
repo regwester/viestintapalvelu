@@ -15,6 +15,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
@@ -24,9 +25,7 @@ public class AddressLabelsInPDFFormatTest {
 
 	public static class WhenCreatingLabelForValidForeignAddress {
 
-		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
-				"Stockholm", "SL", "Sweden", "SE");
+		private static AddressLabel label = new AddressLabel(Fixture.address);
 		private static List<String> pdf;
 
 		@BeforeClass
@@ -235,12 +234,14 @@ public class AddressLabelsInPDFFormatTest {
 
 	public static class WhenCreatingLabelsForDomesticAndForeignAddresses {
 
-		private static AddressLabel domestic = new AddressLabel("Åle",
-				"Öistämö", "Mannerheimintie 177 B 149", "", "", "65330",
-				"Helsinki", "", "FINLAND", "FI");
-		private static AddressLabel foreign = new AddressLabel("Åle",
-				"Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "13",
-				"65330", "Stockholm", "SL", "Sweden", "SE");
+		private static AddressLabel domestic = new AddressLabel(
+				new PostalAddress("Åle", "Öistämö",
+						"Mannerheimintie 177 B 149", "", "", "65330",
+						"Helsinki", "", "FINLAND", "FI"));
+		private static AddressLabel foreign = new AddressLabel(
+				new PostalAddress("Åle", "Öistämö",
+						"Brännkyrksgatan 177 B 149", "Södermalm", "13",
+						"65330", "Stockholm", "SL", "Sweden", "SE"));
 		private static List<List<String>> response;
 
 		@BeforeClass
@@ -292,12 +293,13 @@ public class AddressLabelsInPDFFormatTest {
 			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
 				String[] country = testData.randomArray("country");
-				return new AddressLabel(testData.random("firstname"),
+				return new AddressLabel(new PostalAddress(
+						testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1), "",
-						country[0], country[1]);
+						country[0], country[1]));
 			}
 		}.generateObjects(count);
 	}
@@ -306,9 +308,11 @@ public class AddressLabelsInPDFFormatTest {
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String postOffice,
 			String region, String country, String countryCode) throws Exception {
-		return TestUtil.generateAddressLabelsPDF(
-				Arrays.asList(new AddressLabel(firstName, lastName,
-						addressline, addressline2, addressline3, postalCode,
-						postOffice, region, country, countryCode))).get(0);
+		return TestUtil
+				.generateAddressLabelsPDF(
+						Arrays.asList(new AddressLabel(new PostalAddress(
+								firstName, lastName, addressline, addressline2,
+								addressline3, postalCode, postOffice, region,
+								country, countryCode)))).get(0);
 	}
 }

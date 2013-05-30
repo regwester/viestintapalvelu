@@ -29,21 +29,18 @@ public class IPostZIPTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
-	private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-			"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
-			"Stockholm", "SL", "Sweden", "SE");
-	private static AddressLabel labelWithSpecialCharacters = new AddressLabel(
-			"Åle &", "Öistämö &", "Brännkyrksgatan & 177 B 149", "Södermalm &",
-			"13&", "65330 &", "Stockholm &", "SL&", "Sweden&", "SE");
 	private static Set<String> filenames;
 	private static Document ipostXML;
+	private static AddressLabel label = new AddressLabel(Fixture.address);
+	private static AddressLabel labelWithSpecialCharacters = new AddressLabel(
+			Fixture.addressWithSpecialCharacters);
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(label, "FI",
+		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(Fixture.address, "FI",
 				new ArrayList<Map<String, String>>());
 		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(
-				labelWithSpecialCharacters, "FI",
+				Fixture.addressWithSpecialCharacters, "FI",
 				new ArrayList<Map<String, String>>());
 		byte[] mainZip = TestUtil.generateIPostZIP(Arrays
 				.asList(kirje1, kirje2));

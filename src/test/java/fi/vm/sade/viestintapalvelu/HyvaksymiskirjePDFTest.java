@@ -17,17 +17,15 @@ public class HyvaksymiskirjePDFTest {
 	@ClassRule
 	public static TomcatRule tomcat = new TomcatRule();
 
-	private static AddressLabel label = new AddressLabel("Åle &", "Öistämö",
-			"Brännkyrksgatan @ 177 B 149", "Södermalm", "13", "65330",
-			"Stockholm", "SL", "Sweden", "SE");
+	private static AddressLabel label = new AddressLabel(Fixture.address);
 	private static String koulu = "Haaga & Helia";
 	private static String koulutus = "Asentaja & Kokki";
 	private static String pdf;
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "FI", koulu,
-				koulutus, new ArrayList<Map<String, String>>());
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label.postalAddress(),
+				"FI", koulu, koulutus, new ArrayList<Map<String, String>>());
 		pdf = TestUtil.generateHyvaksymiskirje(kirje).toString();
 	}
 
@@ -58,29 +56,29 @@ public class HyvaksymiskirjePDFTest {
 
 	@Test
 	public void canBePrintedInEN() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "EN", koulu,
-				koulutus, new ArrayList<Map<String, String>>());
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label.postalAddress(),
+				"EN", koulu, koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSE() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "SE", koulu,
-				koulutus, new ArrayList<Map<String, String>>());
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label.postalAddress(),
+				"SE", koulu, koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedWithoutLanguageCode() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, null, koulu,
-				koulutus, new ArrayList<Map<String, String>>());
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label.postalAddress(),
+				null, koulu, koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSQ() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "SQ", koulu,
-				koulutus, new ArrayList<Map<String, String>>());
+		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label.postalAddress(),
+				"SQ", koulu, koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 }

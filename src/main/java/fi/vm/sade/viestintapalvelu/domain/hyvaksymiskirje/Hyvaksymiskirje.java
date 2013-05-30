@@ -3,15 +3,16 @@ package fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje;
 import java.util.List;
 import java.util.Map;
 
-import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.HasPostalAddress;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 
-public class Hyvaksymiskirje {
+public class Hyvaksymiskirje implements HasPostalAddress {
 	public Hyvaksymiskirje() {
 	}
 
-	public Hyvaksymiskirje(AddressLabel addressLabel, String languageCode,
+	public Hyvaksymiskirje(PostalAddress postalAddress, String languageCode,
 			String koulu, String koulutus, List<Map<String, String>> tulokset) {
-		this.addressLabel = addressLabel;
+		this.postalAddress = postalAddress;
 		this.languageCode = languageCode;
 		this.tulokset = tulokset;
 		this.koulu = koulu;
@@ -21,7 +22,7 @@ public class Hyvaksymiskirje {
 	/**
 	 * Osoitetiedot.
 	 */
-	private AddressLabel addressLabel;
+	private PostalAddress postalAddress;
 	/**
 	 * Kielikoodi ISO 639-1.
 	 */
@@ -39,8 +40,9 @@ public class Hyvaksymiskirje {
 	 */
 	private List<Map<String, String>> tulokset;
 
-	public AddressLabel getAddressLabel() {
-		return addressLabel;
+	@Override
+	public PostalAddress postalAddress() {
+		return postalAddress;
 	}
 
 	public List<Map<String, String>> getTulokset() {
@@ -61,7 +63,7 @@ public class Hyvaksymiskirje {
 
 	@Override
 	public String toString() {
-		return "Hyvaksymiskirje [addressLabel=" + addressLabel
+		return "Hyvaksymiskirje [postalAddress=" + postalAddress
 				+ ", languageCode=" + languageCode + ", koulu=" + koulu
 				+ ", koulutus=" + koulutus + ", results=" + tulokset + "]";
 	}

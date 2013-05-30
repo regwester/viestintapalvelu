@@ -28,9 +28,10 @@ public class AddressLabelBuilder {
 			IOException {
 		Map<String, Object> context = createDataContext(
 				input.getAddressLabels(), new AddressLabelDecoratorBuilder() {
-					protected AddressLabelDecorator newAddressLabelDecorator(
+					protected PostalAddressDecorator newAddressLabelDecorator(
 							AddressLabel addressLabel) {
-						return new HtmlAddressLabelDecorator(addressLabel);
+						return new HtmlAddressLabelDecorator(addressLabel
+								.postalAddress());
 					}
 				});
 		byte[] xhtml = documentBuilder.applyTextTemplate(
@@ -42,9 +43,10 @@ public class AddressLabelBuilder {
 			IOException {
 		Map<String, Object> context = createDataContext(
 				input.getAddressLabels(), new AddressLabelDecoratorBuilder() {
-					protected AddressLabelDecorator newAddressLabelDecorator(
+					protected PostalAddressDecorator newAddressLabelDecorator(
 							AddressLabel addressLabel) {
-						return new XmlAddressLabelDecorator(addressLabel);
+						return new XmlAddressLabelDecorator(addressLabel
+								.postalAddress());
 					}
 				});
 		return documentBuilder.applyTextTemplate(ADDRESS_LABEL_XLS_TEMPLATE,
@@ -56,8 +58,8 @@ public class AddressLabelBuilder {
 			final AddressLabelDecoratorBuilder builder) {
 		Map<String, Object> data = new HashMap<String, Object>();
 		data.put("labelList", Lists.transform(addressLabels,
-				new Function<AddressLabel, AddressLabelDecorator>() {
-					public AddressLabelDecorator apply(AddressLabel label) {
+				new Function<AddressLabel, PostalAddressDecorator>() {
+					public PostalAddressDecorator apply(AddressLabel label) {
 						return builder.newAddressLabelDecorator(label);
 					}
 				}));
@@ -65,7 +67,7 @@ public class AddressLabelBuilder {
 	}
 
 	private abstract class AddressLabelDecoratorBuilder {
-		protected abstract AddressLabelDecorator newAddressLabelDecorator(
+		protected abstract PostalAddressDecorator newAddressLabelDecorator(
 				AddressLabel addressLabel);
 	}
 }

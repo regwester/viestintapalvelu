@@ -41,8 +41,8 @@ public class MergedPdfDocument {
 		int startPage = currentPageNumber + 1;
 		int pages = write(pdfDocument.getFrontPage());
 		pages += write(pdfDocument.getAttachment());
-		documentMetadata.add(new DocumentMetadata(
-				pdfDocument.getAddressLabel(), startPage, pages));
+		documentMetadata.add(new DocumentMetadata(pdfDocument.postalAddress(),
+				startPage, pages));
 	}
 
 	private int write(InputStream in) throws IOException {

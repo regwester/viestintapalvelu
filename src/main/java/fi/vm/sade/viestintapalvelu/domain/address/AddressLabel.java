@@ -1,114 +1,96 @@
 package fi.vm.sade.viestintapalvelu.domain.address;
 
-public class AddressLabel {
-	public AddressLabel() {
+public class AddressLabel implements HasPostalAddress {
+	// FIXME vpeurala 30.5.2013: Remove initial assignment
+	private PostalAddress postalAddress = new PostalAddress();
+
+	public AddressLabel(PostalAddress postalAddress) {
+		this.postalAddress = postalAddress;
 	}
 
-	public AddressLabel(String firstName, String lastName, String addressline,
-			String addressline2, String addressline3, String postalCode,
-			String city, String region, String country, String countryCode) {
-		this.firstName = firstName;
-		this.lastName = lastName;
-		this.addressline = addressline;
-		this.addressline2 = addressline2;
-		this.addressline3 = addressline3;
-		this.postalCode = postalCode;
-		this.city = city;
-		this.region = region;
-		this.country = country;
-		this.countryCode = countryCode;
-	}
-
-	/**
-	 * Etunimi. Esim. "Ville".
-	 */
-	private String firstName;
-	/**
-	 * Sukunimi. Esim. "Peurala".
-	 */
-	private String lastName;
-
-	/**
-	 * Katuosoite. Esim. "Pengerkatu 20 B 27".
-	 */
-	private String addressline;
-	/**
-	 * Toinen osoiterivi ulkomaalaisille osoitteille.
-	 */
-	private String addressline2;
-	/**
-	 * Kolmas osoiterivi ulkomaalaisille osoitteille.
-	 */
-	private String addressline3;
-	/**
-	 * Postinumero. Esim. "00500".
-	 */
-	private String postalCode;
-	/**
-	 * Postitoimipaikka. Esim. "Helsinki".
-	 */
-	private String city;
-	/**
-	 * Maakunta ulkomaalaisille osoitteille.
-	 */
-	private String region;
-	/**
-	 * Maa, jos muu kuin Suomi. Esim. "Sweden".
-	 */
-	private String country;
-	/**
-	 * Maakoodi ISO3166.
-	 */
-	private String countryCode;
-
+	// FIXME vpeurala 30.5.2013: Remove delegate methods
 	public String getFirstName() {
-		return firstName;
+		return postalAddress.getFirstName();
 	}
 
 	public String getLastName() {
-		return lastName;
+		return postalAddress.getLastName();
 	}
 
 	public String getAddressline() {
-		return addressline;
+		return postalAddress.getAddressline();
 	}
 
 	public String getAddressline2() {
-		return addressline2;
+		return postalAddress.getAddressline2();
 	}
 
 	public String getAddressline3() {
-		return addressline3;
+		return postalAddress.getAddressline3();
 	}
 
 	public String getPostalCode() {
-		return postalCode;
+		return postalAddress.getPostalCode();
 	}
 
 	public String getCity() {
-		return city;
+		return postalAddress.getCity();
 	}
 
 	public String getRegion() {
-		return region;
+		return postalAddress.getRegion();
 	}
 
 	public String getCountry() {
-		return country;
+		return postalAddress.getCountry();
 	}
 
 	public String getCountryCode() {
-		return countryCode;
+		return postalAddress.getCountryCode();
 	}
 
 	@Override
-	public String toString() {
-		return "AddressLabel [firstName=" + firstName + ", lastName="
-				+ lastName + ", addressline=" + addressline + ", addressline2="
-				+ addressline2 + ", addressline3=" + addressline3
-				+ ", postalCode=" + postalCode + ", city=" + city + ", region="
-				+ region + ", country=" + country + ", countryCode="
-				+ countryCode + "]";
+	public PostalAddress postalAddress() {
+		return postalAddress;
 	}
 
+	public void setFirstName(String firstName) {
+		postalAddress.setFirstName(firstName);
+	}
+
+	public void setLastName(String lastName) {
+		postalAddress.setLastName(lastName);
+	}
+
+	public void setAddressline(String addressline) {
+		postalAddress.setAddressline(addressline);
+	}
+
+	public void setAddressline2(String addressline2) {
+		postalAddress.setAddressline2(addressline2);
+	}
+
+	public void setAddressline3(String addressline3) {
+		postalAddress.setAddressline3(addressline3);
+	}
+
+	public void setPostalCode(String postalCode) {
+		postalAddress.setPostalCode(postalCode);
+	}
+
+	public void setCity(String city) {
+		postalAddress.setCity(city);
+	}
+
+	public void setRegion(String region) {
+		postalAddress.setRegion(region);
+	}
+
+	public void setCountry(String country) {
+		postalAddress.setCountry(country);
+	}
+
+	public void setCountryCode(String countryCode) {
+		postalAddress.setCountryCode(countryCode);
+	}
 }

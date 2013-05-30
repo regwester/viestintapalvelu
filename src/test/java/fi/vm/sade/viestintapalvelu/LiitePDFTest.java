@@ -18,8 +18,8 @@ import org.junit.runner.RunWith;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 
-import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 
 @RunWith(Enclosed.class)
 public class LiitePDFTest {
