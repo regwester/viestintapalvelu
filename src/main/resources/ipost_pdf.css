@@ -8,7 +8,7 @@
 }
 @font-face {
 	font-family: Calibri;
-	font-size: 12pt;
+	font-size: 12px;
 	src: url(classpath:/fonts/Calibri.ttf);
 	-fs-pdf-font-embed: embed;
 	-fs-pdf-font-encoding: ISO-8859-15;
@@ -45,6 +45,9 @@ body {
  	width: 60mm;
  	margin: 4mm 0 0 0mm;
 }
+.jalkiohjauskirjeTyyppi {
+ 	text-align: center;
+}
 p {
 	padding-bottom: 0;
 	margin-bottom: 0;
@@ -54,6 +57,7 @@ p {
 }
 .sisalto {
 	clear: both;
+	line-height: 140%;
 }
 table {
 	border-collapse: collapse;
