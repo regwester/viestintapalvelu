@@ -36,9 +36,9 @@ public class IPostZIPTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje1 = new Jalkiohjauskirje(Fixture.address, "FI",
-				new ArrayList<Map<String, String>>());
-		Jalkiohjauskirje kirje2 = new Jalkiohjauskirje(
+		Jalkiohjauskirje kirje1 = new JalkiohjauskirjeStub(Fixture.address,
+				"FI", new ArrayList<Map<String, String>>());
+		Jalkiohjauskirje kirje2 = new JalkiohjauskirjeStub(
 				Fixture.addressWithSpecialCharacters, "FI",
 				new ArrayList<Map<String, String>>());
 		byte[] mainZip = TestUtil.generateIPostZIP(Arrays

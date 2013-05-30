@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.BeforeClass;
@@ -22,8 +23,9 @@ public class JalkiohjauskirjePDFTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
-				new ArrayList<Map<String, String>>());
+		final List<Map<String, String>> hakutulokset = new ArrayList<Map<String, String>>();
+		Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, "EN",
+				hakutulokset);
 		pdf = TestUtil.generateJalkiohjauskirje(kirje).toString();
 	}
 
@@ -44,29 +46,29 @@ public class JalkiohjauskirjePDFTest {
 
 	@Test
 	public void canBePrintedInEN() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label,
-				"EN", new ArrayList<Map<String, String>>());
+		Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, "EN",
+				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSE() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label,
-				"SE", new ArrayList<Map<String, String>>());
+		Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, "SE",
+				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedWithoutLanguageCode() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label,
-				null, new ArrayList<Map<String, String>>());
+		Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, null,
+				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSQ() throws Exception {
-		Jalkiohjauskirje kirje = new Jalkiohjauskirje(label,
-				"SQ", new ArrayList<Map<String, String>>());
+		Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, "SQ",
+				new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
 	}
 }

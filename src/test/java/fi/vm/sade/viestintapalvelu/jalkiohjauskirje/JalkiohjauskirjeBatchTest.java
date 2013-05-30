@@ -9,6 +9,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import fi.vm.sade.viestintapalvelu.JalkiohjauskirjeStub;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
@@ -24,7 +25,7 @@ public class JalkiohjauskirjeBatchTest {
 	public void setUp() throws Exception {
 		letters = new ArrayList<Jalkiohjauskirje>();
 		for (int i = 0; i < 9999; i++) {
-			letters.add(new Jalkiohjauskirje(new PostalAddress("firstName",
+			letters.add(new JalkiohjauskirjeStub(new PostalAddress("firstName",
 					"lastName", "addressline", "addressline2", "addressline3",
 					"postalCode", "city", "region", "country", "countryCode"),
 					"FI", new ArrayList<Map<String, String>>()));
