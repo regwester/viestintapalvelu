@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.application;
 
-public interface Batch<T> {
+import java.util.List;
 
+public interface Batch<T> {
+	List<T> getContents();
 }
