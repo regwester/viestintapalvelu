@@ -42,7 +42,6 @@ public class AddressLabelResource extends AsynchronousResource {
 	public Response pdf(final AddressLabelBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, JSONException {
-		System.out.println("in: " + input.getContents().size());
 		final String documentId = UUID.randomUUID().toString();
 		byte[] pdf = labelBuilder.printPDF(input);
 		downloadCache.addDocument(new Download("application/pdf;charset=utf-8",

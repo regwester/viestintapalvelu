@@ -2,9 +2,9 @@ package fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje;
 
 import java.util.List;
 
-import fi.vm.sade.viestintapalvelu.infrastructure.Batch;
+import fi.vm.sade.viestintapalvelu.infrastructure.AbstractBatch;
 
-public class JalkiohjauskirjeBatch extends Batch<Jalkiohjauskirje> {
+public class JalkiohjauskirjeBatch extends AbstractBatch<Jalkiohjauskirje> {
 	public JalkiohjauskirjeBatch() {
 		super();
 	}
@@ -14,7 +14,7 @@ public class JalkiohjauskirjeBatch extends Batch<Jalkiohjauskirje> {
 	}
 
 	@Override
-	protected Batch<Jalkiohjauskirje> createSubBatch(
+	protected AbstractBatch<Jalkiohjauskirje> createSubBatch(
 			List<Jalkiohjauskirje> contentsOfSubBatch) {
 		return new JalkiohjauskirjeBatch(contentsOfSubBatch);
 	}

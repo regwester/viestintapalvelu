@@ -34,8 +34,12 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelBatch;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
@@ -49,15 +53,57 @@ public class TestUtil {
 	private final static String IPOST_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/zip";
 	private final static String HYVAKSYMISKIRJE_URL = "http://localhost:8080/api/v1/hyvaksymiskirje/pdf";
 
+	public static AddressLabelBatch addressLabelBatchFromPostalAddressList(
+			final List<PostalAddress> labels) {
+		AddressLabelBatch batch = new AddressLabelBatch() {
+			@Override
+			public List<AddressLabel> getAddressLabels() {
+				return Lists.transform(labels,
+						new Function<PostalAddress, AddressLabel>() {
+							public AddressLabel apply(final PostalAddress input) {
+								return new AddressLabel() {
+									@Override
+									public PostalAddress postalAddress() {
+										return input;
+									}
+								};
+							};
+						});
+			}
+		};
+		return batch;
+	}
+
+	public static List<AddressLabel> addressLabelListFromPostalAddressList(
+			final List<PostalAddress> labels) {
+		return Lists.transform(labels,
+				new Function<PostalAddress, AddressLabel>() {
+					public AddressLabel apply(final PostalAddress input) {
+						return new AddressLabel() {
+							@Override
+							public PostalAddress postalAddress() {
+								return input;
+							}
+						};
+					};
+				});
+	}
+
 	public static List<List<String>> generateAddressLabelsPDF(
-			List<AddressLabel> labels) throws Exception {
-		AddressLabelBatch batch = new AddressLabelBatch(labels);
+			final List<PostalAddress> labels) throws Exception {
+		// FIXME vp
+		AddressLabelBatch batch = addressLabelBatchFromPostalAddressList(labels);
 		return readPDF(get(batch, ADDRESS_LABEL_PDF_URL), -1, -1);
 	}
 
 	public static List<List<String>> generateAddressLabelsXLS(
-			List<AddressLabel> labels) throws Exception {
-		AddressLabelBatch batch = new AddressLabelBatch(labels);
+			final List<AddressLabel> labels) throws Exception {
+		AddressLabelBatch batch = new AddressLabelBatch() {
+			@Override
+			public List<AddressLabel> getAddressLabels() {
+				return labels;
+			}
+		};
 		return readXLS(get(batch, ADDRESS_LABEL_XLS_URL));
 	}
 
@@ -82,13 +128,11 @@ public class TestUtil {
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 
-	public static String generateLiite(Jalkiohjauskirje kirje)
-			throws Exception {
+	public static String generateLiite(Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
 				Arrays.asList(kirje));
 		return readAsHtml(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
 	}
-
 
 	private static byte[] get(Object json, String url)
 			throws UnsupportedEncodingException, IOException,
@@ -114,11 +158,12 @@ public class TestUtil {
 
 	private static List<List<String>> readPDF(byte[] byteDocument,
 			int startPage, int endPage) throws IOException, DocumentException {
-		return parseHTML(readAsHtml(byteDocument, startPage, endPage).getBytes());
+		return parseHTML(readAsHtml(byteDocument, startPage, endPage)
+				.getBytes());
 	}
-	
-	private static String readAsHtml(byte[] byteDocument,
-			int startPage, int endPage) throws IOException {
+
+	private static String readAsHtml(byte[] byteDocument, int startPage,
+			int endPage) throws IOException {
 		PDDocument document = PDDocument.load(new ByteArrayInputStream(
 				byteDocument));
 		PDFText2HTML stripper = new PDFText2HTML("UTF-8");
