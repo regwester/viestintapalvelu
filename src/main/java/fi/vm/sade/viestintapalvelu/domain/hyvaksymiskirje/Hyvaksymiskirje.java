@@ -41,7 +41,7 @@ public class Hyvaksymiskirje implements HasPostalAddress {
 	private List<Map<String, String>> tulokset;
 
 	@Override
-	public PostalAddress postalAddress() {
+	public PostalAddress getPostalAddress() {
 		return postalAddress;
 	}
 

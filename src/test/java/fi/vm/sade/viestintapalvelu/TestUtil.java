@@ -63,7 +63,7 @@ public class TestUtil {
 							public AddressLabel apply(final PostalAddress input) {
 								return new AddressLabel() {
 									@Override
-									public PostalAddress postalAddress() {
+									public PostalAddress getPostalAddress() {
 										return input;
 									}
 								};
@@ -81,7 +81,7 @@ public class TestUtil {
 					public AddressLabel apply(final PostalAddress input) {
 						return new AddressLabel() {
 							@Override
-							public PostalAddress postalAddress() {
+							public PostalAddress getPostalAddress() {
 								return input;
 							}
 						};
