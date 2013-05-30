@@ -24,7 +24,7 @@ public class HyvaksymiskirjeBuilder extends PdfBuilder {
 	public byte[] printPDF(HyvaksymiskirjeBatch batch) throws IOException,
 			DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
-		for (Hyvaksymiskirje kirje : batch.getLetters()) {
+		for (Hyvaksymiskirje kirje : batch.getContents()) {
 			System.out.println("kirje: " + kirje);
 			String kirjeTemplateName = Utils
 					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,

@@ -70,6 +70,11 @@ public class TestUtil {
 							};
 						});
 			}
+
+			@Override
+			public List<AddressLabel> getContents() {
+				return getAddressLabels();
+			}
 		};
 		return batch;
 	}
@@ -100,6 +105,11 @@ public class TestUtil {
 			final List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatch() {
 			@Override
+			public List<AddressLabel> getContents() {
+				return labels;
+			}
+
+			@Override
 			public List<AddressLabel> getAddressLabels() {
 				return labels;
 			}
@@ -121,10 +131,12 @@ public class TestUtil {
 	}
 
 	public static List<List<String>> generateHyvaksymiskirje(
-			Hyvaksymiskirje kirje) throws Exception {
-		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(
-				Arrays.asList(kirje));
-		System.out.println("batch in generateHyvaksymiskirje: " + batch);
+			final Hyvaksymiskirje kirje) throws Exception {
+		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch() {
+			public java.util.List<Hyvaksymiskirje> getContents() {
+				return Arrays.asList(kirje);
+			};
+		};
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 
