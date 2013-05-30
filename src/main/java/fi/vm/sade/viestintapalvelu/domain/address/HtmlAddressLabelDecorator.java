@@ -2,10 +2,10 @@ package fi.vm.sade.viestintapalvelu.domain.address;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-public class HtmlAddressLabelDecorator extends AddressLabelDecorator {
+public class HtmlAddressLabelDecorator extends PostalAddressDecorator {
 
-	public HtmlAddressLabelDecorator(AddressLabel addressLabel) {
-		super(addressLabel);
+	public HtmlAddressLabelDecorator(PostalAddress postalAddress) {
+		super(postalAddress);
 	}
 
 	private String decorateAddressline(String textString) {
@@ -15,15 +15,15 @@ public class HtmlAddressLabelDecorator extends AddressLabelDecorator {
 	}
 
 	public String getAddress() {
-		return decorateAddressline(decoratedLabel.getFirstName() + " "
-				+ decoratedLabel.getLastName())
-				+ decorateAddressline(decoratedLabel.getAddressline())
-				+ decorateAddressline(decoratedLabel.getAddressline2())
-				+ decorateAddressline(decoratedLabel.getAddressline3())
-				+ decorateAddressline(decoratedLabel.getPostalCode() + " "
-						+ decoratedLabel.getCity())
-				+ decorateAddressline(decoratedLabel.getRegion())
-				+ decorateCountry(decoratedLabel.getCountry());
+		return decorateAddressline(decoratedPostalAddress.getFirstName() + " "
+				+ decoratedPostalAddress.getLastName())
+				+ decorateAddressline(decoratedPostalAddress.getAddressline())
+				+ decorateAddressline(decoratedPostalAddress.getAddressline2())
+				+ decorateAddressline(decoratedPostalAddress.getAddressline3())
+				+ decorateAddressline(decoratedPostalAddress.getPostalCode()
+						+ " " + decoratedPostalAddress.getCity())
+				+ decorateAddressline(decoratedPostalAddress.getRegion())
+				+ decorateCountry(decoratedPostalAddress.getCountry());
 	}
 
 	public String toString() {

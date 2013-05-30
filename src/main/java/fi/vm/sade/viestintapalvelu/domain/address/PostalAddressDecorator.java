@@ -1,11 +1,10 @@
 package fi.vm.sade.viestintapalvelu.domain.address;
 
-public abstract class AddressLabelDecorator {
+public abstract class PostalAddressDecorator {
+	protected PostalAddress decoratedPostalAddress;
 
-	protected AddressLabel decoratedLabel;
-
-	public AddressLabelDecorator(AddressLabel addressLabel) {
-		this.decoratedLabel = addressLabel;
+	public PostalAddressDecorator(PostalAddress postalAddress) {
+		this.decoratedPostalAddress = postalAddress;
 	}
 
 	protected abstract String escape(String text);

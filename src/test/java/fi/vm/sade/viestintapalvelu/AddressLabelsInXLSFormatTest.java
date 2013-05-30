@@ -15,6 +15,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
@@ -24,9 +25,7 @@ public class AddressLabelsInXLSFormatTest {
 
 	public static class WhenCreatingLabelForValidForeignAddress {
 
-		private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
-				"Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
-				"Stockholm", "SL", "Sweden", "SE");
+		private static AddressLabel label = new AddressLabel(Fixture.address);
 		private static List<String> otsikko;
 		private static List<String> osoite;
 
@@ -259,12 +258,13 @@ public class AddressLabelsInXLSFormatTest {
 			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
 				String[] country = testData.randomArray("country");
-				return new AddressLabel(testData.random("firstname"),
+				return new AddressLabel(new PostalAddress(
+						testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
 						postOffice.substring(postOffice.indexOf(" ") + 1), "",
-						country[0], country[1]);
+						country[0], country[1]));
 			}
 		}.generateObjects(count);
 	}
@@ -273,9 +273,9 @@ public class AddressLabelsInXLSFormatTest {
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String city, String region,
 			String country, String countryCode) throws Exception {
-		AddressLabel label = new AddressLabel(firstName, lastName, addressline,
-				addressline2, addressline3, postalCode, city, region, country,
-				countryCode);
+		AddressLabel label = new AddressLabel(new PostalAddress(firstName,
+				lastName, addressline, addressline2, addressline3, postalCode,
+				city, region, country, countryCode));
 		return TestUtil.generateAddressLabelsXLS(Arrays.asList(label)).get(1);
 	}
 }

@@ -1,20 +1,23 @@
 package fi.vm.sade.viestintapalvelu.infrastructure;
 
-import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.HasPostalAddress;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 
-public class DocumentMetadata {
-	private AddressLabel addressLabel;
+public class DocumentMetadata implements HasPostalAddress {
+	private PostalAddress postalAddress;
 	private int startPage;
 	private int pages;
 
-	public DocumentMetadata(AddressLabel addressLabel, int startPage, int pages) {
-		this.addressLabel = addressLabel;
+	public DocumentMetadata(PostalAddress postalAddress, int startPage,
+			int pages) {
+		this.postalAddress = postalAddress;
 		this.startPage = startPage;
 		this.pages = pages;
 	}
 
-	public AddressLabel getAddressLabel() {
-		return addressLabel;
+	@Override
+	public PostalAddress postalAddress() {
+		return postalAddress;
 	}
 
 	public int getStartPage() {

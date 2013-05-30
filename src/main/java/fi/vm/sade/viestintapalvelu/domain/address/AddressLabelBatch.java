@@ -2,22 +2,29 @@ package fi.vm.sade.viestintapalvelu.domain.address;
 
 import java.util.List;
 
-public class AddressLabelBatch {
-	private List<AddressLabel> addressLabels;
+import fi.vm.sade.viestintapalvelu.infrastructure.Batch;
 
+public class AddressLabelBatch extends Batch<AddressLabel> {
 	public AddressLabelBatch() {
+		super();
 	}
 
 	public AddressLabelBatch(List<AddressLabel> labels) {
-		this.addressLabels = labels;
+		super(labels);
 	}
 
 	public List<AddressLabel> getAddressLabels() {
-		return addressLabels;
+		return getContents();
+	}
+
+	@Override
+	protected Batch<AddressLabel> createSubBatch(
+			List<AddressLabel> contentsOfSubBatch) {
+		return new AddressLabelBatch(contentsOfSubBatch);
 	}
 
 	@Override
 	public String toString() {
-		return "AddressLabelBatch [addressLabels=" + addressLabels + "]";
+		return "AddressLabelBatch [addressLabels=" + getContents() + "]";
 	}
 }

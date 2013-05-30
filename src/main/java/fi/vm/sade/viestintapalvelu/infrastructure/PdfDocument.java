@@ -3,22 +3,24 @@ package fi.vm.sade.viestintapalvelu.infrastructure;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 
-import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.domain.address.HasPostalAddress;
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 
-public class PdfDocument {
-	private AddressLabel addressLabel;
+public class PdfDocument implements HasPostalAddress {
+	private PostalAddress postalAddress;
 	private byte[] frontPage;
 	private byte[] attachment;
 
-	public PdfDocument(AddressLabel addressLabel, byte[] frontPage,
+	public PdfDocument(PostalAddress postalAddress, byte[] frontPage,
 			byte[] attachment) {
-		this.addressLabel = addressLabel;
+		this.postalAddress = postalAddress;
 		this.frontPage = frontPage;
 		this.attachment = attachment;
 	}
 
-	public AddressLabel getAddressLabel() {
-		return addressLabel;
+	@Override
+	public PostalAddress postalAddress() {
+		return postalAddress;
 	}
 
 	public InputStream getFrontPage() {

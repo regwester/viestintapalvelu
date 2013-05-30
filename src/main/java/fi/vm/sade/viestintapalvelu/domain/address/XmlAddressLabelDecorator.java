@@ -2,50 +2,50 @@ package fi.vm.sade.viestintapalvelu.domain.address;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
-public class XmlAddressLabelDecorator extends AddressLabelDecorator {
+public class XmlAddressLabelDecorator extends PostalAddressDecorator {
 
-	public XmlAddressLabelDecorator(AddressLabel addressLabel) {
-		super(addressLabel);
+	public XmlAddressLabelDecorator(PostalAddress postalAddress) {
+		super(postalAddress);
 	}
 
 	public String getFirstName() {
-		return escape(decoratedLabel.getFirstName());
+		return escape(decoratedPostalAddress.getFirstName());
 	}
 
 	public String getLastName() {
-		return escape(decoratedLabel.getLastName());
+		return escape(decoratedPostalAddress.getLastName());
 	}
 
 	public String getAddressline() {
-		return decorateAddressField(decoratedLabel.getAddressline());
+		return decorateAddressField(decoratedPostalAddress.getAddressline());
 	}
 
 	public String getAddressline2() {
-		return decorateAddressField(decoratedLabel.getAddressline2());
+		return decorateAddressField(decoratedPostalAddress.getAddressline2());
 	}
 
 	public String getAddressline3() {
-		return decorateAddressField(decoratedLabel.getAddressline3());
+		return decorateAddressField(decoratedPostalAddress.getAddressline3());
 	}
 
 	public String getPostalCode() {
-		return escape(decoratedLabel.getPostalCode());
+		return escape(decoratedPostalAddress.getPostalCode());
 	}
 
 	public String getCity() {
-		return escape(decoratedLabel.getCity());
+		return escape(decoratedPostalAddress.getCity());
 	}
 
 	public String getRegion() {
-		return escape(decoratedLabel.getRegion());
+		return escape(decoratedPostalAddress.getRegion());
 	}
 
 	public String getCountry() {
-		return decorateCountry(decoratedLabel.getCountry());
+		return decorateCountry(decoratedPostalAddress.getCountry());
 	}
 
 	public String getCountryCode() {
-		return escape(decoratedLabel.getCountryCode());
+		return escape(decoratedPostalAddress.getCountryCode());
 	}
 
 	@Override
