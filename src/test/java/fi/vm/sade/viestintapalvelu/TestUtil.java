@@ -78,6 +78,7 @@ public class TestUtil {
 			Hyvaksymiskirje kirje) throws Exception {
 		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(
 				Arrays.asList(kirje));
+		System.out.println("batch in generateHyvaksymiskirje: " + batch);
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 
@@ -98,8 +99,11 @@ public class TestUtil {
 				"UTF-8");
 		HttpPost post = new HttpPost(url);
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
-		post.setEntity(new StringEntity(new ObjectMapper()
-				.writeValueAsString(json), ContentType.APPLICATION_JSON));
+		System.out.println("object on client: " + json);
+		String postEntityJson = new ObjectMapper().writeValueAsString(json);
+		System.out.println("postEntityJson on client: " + postEntityJson);
+		post.setEntity(new StringEntity(postEntityJson,
+				ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
 		String resultUrl = IOUtils.toString(response.getEntity().getContent(),
 				"UTF-8");
@@ -169,7 +173,9 @@ public class TestUtil {
 
 	private static List<List<String>> parseHTML(byte[] document)
 			throws DocumentException {
-		org.w3c.dom.Document doc = newTidy().parseDOM(new ByteArrayInputStream(document), new ByteArrayOutputStream());
+		org.w3c.dom.Document doc = newTidy()
+				.parseDOM(new ByteArrayInputStream(document),
+						new ByteArrayOutputStream());
 		List<List<String>> nodes = new ArrayList<List<String>>();
 		NodeList p = doc.getElementsByTagName("p");
 		int i = 0;
