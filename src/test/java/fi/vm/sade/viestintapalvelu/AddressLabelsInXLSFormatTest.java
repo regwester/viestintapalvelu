@@ -261,7 +261,7 @@ public class AddressLabelsInXLSFormatTest {
 			protected PostalAddress createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
 				String[] country = testData.randomArray("country");
-				return new PostalAddress(testData.random("firstname"),
+				return new PostalAddressStub(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
@@ -275,7 +275,7 @@ public class AddressLabelsInXLSFormatTest {
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String city, String region,
 			String country, String countryCode) throws Exception {
-		PostalAddress label = new PostalAddress(firstName, lastName,
+		PostalAddress label = new PostalAddressStub(firstName, lastName,
 				addressline, addressline2, addressline3, postalCode, city,
 				region, country, countryCode);
 		return TestUtil.generateAddressLabelsXLS(

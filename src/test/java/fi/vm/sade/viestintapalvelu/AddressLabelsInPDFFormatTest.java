@@ -233,10 +233,10 @@ public class AddressLabelsInPDFFormatTest {
 
 	public static class WhenCreatingLabelsForDomesticAndForeignAddresses {
 
-		private static PostalAddress domestic = new PostalAddress("Åle",
+		private static PostalAddress domestic = new PostalAddressStub("Åle",
 				"Öistämö", "Mannerheimintie 177 B 149", "", "", "65330",
 				"Helsinki", "", "FINLAND", "FI");
-		private static PostalAddress foreign = new PostalAddress("Åle",
+		private static PostalAddress foreign = new PostalAddressStub("Åle",
 				"Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "13",
 				"65330", "Stockholm", "SL", "Sweden", "SE");
 		private static List<List<String>> response;
@@ -290,7 +290,7 @@ public class AddressLabelsInPDFFormatTest {
 			protected PostalAddress createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
 				String[] country = testData.randomArray("country");
-				return new PostalAddress(testData.random("firstname"),
+				return new PostalAddressStub(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
@@ -305,8 +305,9 @@ public class AddressLabelsInPDFFormatTest {
 			String addressline3, String postalCode, String postOffice,
 			String region, String country, String countryCode) throws Exception {
 		return TestUtil.generateAddressLabelsPDF(
-				Arrays.asList(new PostalAddress(firstName, lastName,
-						addressline, addressline2, addressline3, postalCode,
-						postOffice, region, country, countryCode))).get(0);
+				Arrays.asList((PostalAddress) new PostalAddressStub(firstName,
+						lastName, addressline, addressline2, addressline3,
+						postalCode, postOffice, region, country, countryCode)))
+				.get(0);
 	}
 }
