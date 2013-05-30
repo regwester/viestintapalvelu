@@ -28,16 +28,16 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
 	function generateTulokset(count) {
 		return Generator.generateObjects(count, function(data) {
 			return {
-		    	"koulu": data.any('koulu'),
-		    	"hakutoive": data.any('hakutoive'),
-		    	"ensisijaisetHakijat": data.any('ensisijaiset'),
-		    	"kaikkiHakijat": data.any('hakijat'),
-		    	"aloituspaikat": data.any('paikat'),
-		    	"varasija": data.prioritize('', 0.9).otherwise(data.any('varasija')),
-		    	"alinHyvaksytty": data.any('raja'),
-		    	"omatPisteesi": data.any('pisteetvajaa'),
-		    	"paasyJaSoveltuvuusKoe": data.any('koe'),
-		    	"hylkayksenSyy": data.any('syy')
+		    	"organisaationNimi": data.any('organisaationNimi'),
+		    	"oppilaitoksenNimi": data.any('oppilaitoksenNimi'),
+		    	"hakukohteenNimi": data.any('hakukohteenNimi'),
+		    	"hyvaksytyt": data.any('hyvaksytyt'),
+		    	"kaikkiHakeneet": data.any('kaikkiHakeneet'),
+		    	"alinHyvaksyttyPistemaara": data.any('alinHyvaksyttyPistemaara'),
+		    	"omatPisteet": data.any('pisteetvajaa'),
+		    	"paasyJaSoveltuvuuskoe": data.any('koe'),
+		    	"valinnanTulos": data.any('valinnanTulos'),
+		    	"selite": data.any('valinnanTulos')
 			}
 		})
 	}
