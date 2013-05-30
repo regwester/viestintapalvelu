@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.document;
 
+import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -19,8 +21,8 @@ import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.OPHUserAgent;
 import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
+import fi.vm.sade.viestintapalvelu.OPHUserAgent;
 
 public class DocumentBuilder {
 	private VelocityEngine templateEngine = new VelocityEngine();
@@ -75,7 +77,7 @@ public class DocumentBuilder {
 		uac.setSharedContext(renderer.getSharedContext());
 		renderer.getSharedContext().setUserAgentCallback(uac);
 		renderer.getSharedContext().setReplacedElementFactory(mref);
-		renderer.setDocumentFromString(new String(input));
+		renderer.setDocumentFromString(new String(input, UTF_8));
 		renderer.layout();
 		return renderer;
 	}
