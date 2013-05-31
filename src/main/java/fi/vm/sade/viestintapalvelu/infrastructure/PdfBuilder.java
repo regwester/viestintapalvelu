@@ -45,8 +45,7 @@ public class PdfBuilder {
 		List<JalkiohjauskirjeBatch> subBatches = batch.split(
 				Constants.IPOST_BATCH_LIMIT, "dum");
 		for (int i = 0; i < subBatches.size(); i++) {
-			JalkiohjauskirjeBatch subBatch = new JalkiohjauskirjeBatchStub(
-					subBatches.get(i).getLetters());
+			JalkiohjauskirjeBatch subBatch = subBatches.get(i);
 			MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
 			Map<String, Object> context = createDataContext(pdf
 					.getDocumentMetadata());

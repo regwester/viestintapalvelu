@@ -2,7 +2,6 @@ package fi.vm.sade.viestintapalvelu.infrastructure;
 
 // TODO isipila 23.5.2013: where should we have static utils?
 public class Utils {
-
 	public static String resolveTemplateName(String template,
 			String languageCode) {
 		languageCode = languageCode == null || "".equals(languageCode) ? "FI"

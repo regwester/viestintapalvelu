@@ -30,19 +30,4 @@ public class DownloadCache {
 		}
 		return download;
 	}
-
-	public Download getAndWait(String documentId) {
-		int ticks = 0;
-		Download download = get(documentId);
-		while (download == null && ticks < 20) {
-			try {
-				Thread.sleep(1000);
-				ticks++;
-			} catch (InterruptedException e) {
-				throw new RuntimeException(e);
-			}
-			download = get(documentId);
-		}
-		return download;
-	}
 }

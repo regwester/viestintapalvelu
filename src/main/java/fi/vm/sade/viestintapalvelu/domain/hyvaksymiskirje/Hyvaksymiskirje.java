@@ -6,6 +6,7 @@ import java.util.Map;
 import fi.vm.sade.viestintapalvelu.domain.address.HasPostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 
+// FIXME vpeurala convert to interface
 public class Hyvaksymiskirje implements HasPostalAddress {
 	public Hyvaksymiskirje() {
 	}
