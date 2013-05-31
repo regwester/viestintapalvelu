@@ -10,6 +10,15 @@ class AddressLabelStub implements AddressLabel {
 		this.input = input;
 	}
 
+	public AddressLabelStub(String firstName, String lastName,
+			String addressline, String addressline2, String addressline3,
+			String postalCode, String city, String region, String country,
+			String countryCode) {
+		input = new PostalAddressStub(firstName, lastName, addressline,
+				addressline2, addressline3, postalCode, city, region, country,
+				countryCode);
+	}
+
 	@Override
 	public String getFirstName() {
 		return input.getFirstName();
