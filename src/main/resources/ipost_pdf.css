@@ -59,6 +59,11 @@ p {
 	clear: both;
 	line-height: 140%;
 }
+
+.liiteSisalto {
+	font-size: 11px;
+	line-height: 140%;
+}
 table {
 	border-collapse: collapse;
 }
@@ -69,11 +74,12 @@ td, th {
 td {
 	text-align: center;
 }
-td.hakutoive {
+.hakutoive {
 	text-align: left;
 }
 th {
 	vertical-align: top;
+	text-align: center;
 }
 ol, ul {
 	padding-top: 0;
