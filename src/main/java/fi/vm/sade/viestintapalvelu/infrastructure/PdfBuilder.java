@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.application.Batch;
 import fi.vm.sade.viestintapalvelu.application.Constants;
 import fi.vm.sade.viestintapalvelu.domain.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
@@ -43,8 +42,8 @@ public class PdfBuilder {
 	public byte[] printZIP(JalkiohjauskirjeBatch batch) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		Map<String, byte[]> subZips = new HashMap<String, byte[]>();
-		List<Batch<Jalkiohjauskirje>> subBatches = batch
-				.split(Constants.IPOST_BATCH_LIMIT);
+		List<JalkiohjauskirjeBatch> subBatches = batch.split(
+				Constants.IPOST_BATCH_LIMIT, "dum");
 		for (int i = 0; i < subBatches.size(); i++) {
 			JalkiohjauskirjeBatch subBatch = new JalkiohjauskirjeBatchStub(
 					subBatches.get(i).getLetters());
