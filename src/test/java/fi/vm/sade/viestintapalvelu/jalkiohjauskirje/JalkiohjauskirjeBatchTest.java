@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -70,8 +71,8 @@ public class JalkiohjauskirjeBatchTest {
 				letters);
 		afterSplit = ipostBatch.split(1000, "dum");
 		for (int i = 0; i < 10; i++) {
-			assertEquals(JalkiohjauskirjeBatch.class, afterSplit.get(i)
-					.getClass());
+			assertTrue(JalkiohjauskirjeBatch.class.isAssignableFrom(afterSplit
+					.get(i).getClass()));
 			JalkiohjauskirjeBatch current = (JalkiohjauskirjeBatch) afterSplit
 					.get(i);
 			if (i < 9) {

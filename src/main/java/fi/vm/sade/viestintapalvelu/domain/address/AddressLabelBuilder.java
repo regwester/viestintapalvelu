@@ -30,8 +30,7 @@ public class AddressLabelBuilder {
 				input.getAddressLabels(), new AddressLabelDecoratorBuilder() {
 					protected PostalAddressDecorator newAddressLabelDecorator(
 							AddressLabel addressLabel) {
-						return new HtmlAddressLabelDecorator(addressLabel
-								.getPostalAddress());
+						return new HtmlAddressLabelDecorator(addressLabel);
 					}
 				});
 		byte[] xhtml = documentBuilder.applyTextTemplate(
@@ -45,8 +44,7 @@ public class AddressLabelBuilder {
 				input.getAddressLabels(), new AddressLabelDecoratorBuilder() {
 					protected PostalAddressDecorator newAddressLabelDecorator(
 							AddressLabel addressLabel) {
-						return new XmlAddressLabelDecorator(addressLabel
-								.getPostalAddress());
+						return new XmlAddressLabelDecorator(addressLabel);
 					}
 				});
 		return documentBuilder.applyTextTemplate(ADDRESS_LABEL_XLS_TEMPLATE,

@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 
@@ -28,5 +29,10 @@ public class JalkiohjauskirjeStub implements Jalkiohjauskirje {
 
 	public PostalAddress getPostalAddress() {
 		return address;
+	}
+
+	@Override
+	public AddressLabel getAddressLabel() {
+		return new AddressLabelStub(getPostalAddress());
 	}
 }
