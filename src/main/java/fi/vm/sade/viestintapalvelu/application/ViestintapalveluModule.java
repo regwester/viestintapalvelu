@@ -46,35 +46,6 @@ public class ViestintapalveluModule extends JerseyServletModule {
 	ObjectMapper objectMapper() {
 		final ObjectMapper mapper = new ObjectMapper();
 
-		// FIXME VP
-		//		SimpleModule jacksonMappingModule = new SimpleModule(
-		//				"Viestintapalvelu-Jackson-Module", new Version(1, 0, 0,
-		//						"SNAPSHOT"));
-		//		jacksonMappingModule.addDeserializer(AddressLabelBatch.class,
-		//				new JsonDeserializer<AddressLabelBatch>() {
-		//					@Override
-		//					public AddressLabelBatch deserialize(JsonParser parser,
-		//							DeserializationContext context) throws IOException,
-		//							JsonProcessingException {
-		//						JsonNode node = parser.readValueAsTree();
-		//						JsonNode addressLabels = node
-		//								.findValue("addressLabels");
-		//						Iterator<JsonNode> iterator = addressLabels.iterator();
-		//						List<AddressLabel> labels = new ArrayList<AddressLabel>();
-		//						while (iterator.hasNext()) {
-		//							// FIXME vp
-		//							//JsonNode node2 = iterator.next();
-		//							//							PostalAddress postalAddress = mapper.readValue(
-		//							//									node2, PostalAddress.class);
-		//							//							labels.add(new AddressLabel(postalAddress));
-		//						}
-		//
-		//						return new AddressLabelBatch(labels);
-		//					}
-		//				});
-		//
-		//mapper.registerModule(jacksonMappingModule);
-
 		MrBeanModule mrBean = new MrBeanModule();
 		mapper.registerModule(mrBean);
 		mapper.addMixInAnnotations(Jalkiohjauskirje.class, Mixin.class);

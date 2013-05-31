@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.infrastructure;
+package fi.vm.sade.viestintapalvelu;
 
 import java.util.List;
 

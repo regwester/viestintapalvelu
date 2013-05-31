@@ -10,11 +10,11 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 
+import fi.vm.sade.viestintapalvelu.JalkiohjauskirjeBatchStub;
 import fi.vm.sade.viestintapalvelu.JalkiohjauskirjeStub;
 import fi.vm.sade.viestintapalvelu.PostalAddressStub;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
-import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
 
 // TODO vpeurala 22.5.2013: Refactor these tests
 public class JalkiohjauskirjeBatchTest {

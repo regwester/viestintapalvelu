@@ -10,7 +10,6 @@ import javax.ws.rs.core.UriBuilder;
 
 import com.google.inject.Inject;
 
-
 public class AsynchronousResource {
 	@Inject
 	private ExecutorService executorService;

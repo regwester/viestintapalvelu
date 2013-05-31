@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.infrastructure;
 
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
@@ -20,7 +19,6 @@ import org.apache.velocity.app.VelocityEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
 import com.lowagie.text.DocumentException;
-
 
 public class DocumentBuilder {
 	private VelocityEngine templateEngine = new VelocityEngine();
@@ -75,7 +73,8 @@ public class DocumentBuilder {
 		uac.setSharedContext(renderer.getSharedContext());
 		renderer.getSharedContext().setUserAgentCallback(uac);
 		renderer.getSharedContext().setReplacedElementFactory(mref);
-		renderer.setDocumentFromString(new String(input, Charset.forName("UTF-8")));
+		renderer.setDocumentFromString(new String(input, Charset
+				.forName("UTF-8")));
 		renderer.layout();
 		return renderer;
 	}

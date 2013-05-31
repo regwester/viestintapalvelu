@@ -11,9 +11,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
-
 public class LiiteBuilder {
-
 	private DocumentBuilder documentBuilder;
 
 	@Inject

@@ -3,9 +3,6 @@ package fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
-
-// FIXME vp "implements SplittableBatch<Jalkiohjauskirje>"
 public abstract class JalkiohjauskirjeBatch {
 	public List<JalkiohjauskirjeBatch> split(int limit, String dummy) {
 		List<JalkiohjauskirjeBatch> batches = new ArrayList<JalkiohjauskirjeBatch>();
@@ -25,7 +22,13 @@ public abstract class JalkiohjauskirjeBatch {
 		}
 	}
 
-	public JalkiohjauskirjeBatch createSubBatch(List<Jalkiohjauskirje> batch) {
-		return new JalkiohjauskirjeBatchStub(batch);
+	public JalkiohjauskirjeBatch createSubBatch(
+			final List<Jalkiohjauskirje> batch) {
+		return new JalkiohjauskirjeBatch() {
+			@Override
+			public List<Jalkiohjauskirje> getLetters() {
+				return batch;
+			}
+		};
 	}
 }
