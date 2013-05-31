@@ -26,9 +26,7 @@ public class HyvaksymiskirjePDFTest {
 	public static void setUp() throws Exception {
 		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "FI", koulu,
 				koulutus, new ArrayList<Map<String, String>>());
-		System.out.println("kirje in setup: " + kirje);
 		pdf = TestUtil.generateHyvaksymiskirje(kirje).toString();
-		System.out.println("pdf in setup: " + pdf);
 	}
 
 	@Test

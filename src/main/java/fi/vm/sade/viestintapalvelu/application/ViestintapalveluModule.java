@@ -44,7 +44,6 @@ public class ViestintapalveluModule extends JerseyServletModule {
 	@Provides
 	@Singleton
 	ObjectMapper objectMapper() {
-		System.out.println("objectMapper()");
 		final ObjectMapper mapper = new ObjectMapper();
 
 		// FIXME VP
@@ -57,25 +56,9 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		//					public AddressLabelBatch deserialize(JsonParser parser,
 		//							DeserializationContext context) throws IOException,
 		//							JsonProcessingException {
-		//						System.out.println("deserialize addresslabelbatch");
-		//						System.out.println("current token: "
-		//								+ parser.getCurrentToken());
-		//						System.out.println("current location: "
-		//								+ parser.getCurrentLocation());
-		//
-		//						System.out.println(parser);
-		//						System.out.println(context);
 		//						JsonNode node = parser.readValueAsTree();
 		//						JsonNode addressLabels = node
 		//								.findValue("addressLabels");
-		//						System.out.println("isArray? "
-		//								+ addressLabels.isArray());
-		//
-		//						System.out.println("current token: "
-		//								+ parser.getCurrentToken());
-		//						System.out.println("current location: "
-		//								+ parser.getCurrentLocation());
-		//
 		//						Iterator<JsonNode> iterator = addressLabels.iterator();
 		//						List<AddressLabel> labels = new ArrayList<AddressLabel>();
 		//						while (iterator.hasNext()) {
@@ -83,7 +66,6 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		//							//JsonNode node2 = iterator.next();
 		//							//							PostalAddress postalAddress = mapper.readValue(
 		//							//									node2, PostalAddress.class);
-		//							//							System.out.println(postalAddress);
 		//							//							labels.add(new AddressLabel(postalAddress));
 		//						}
 		//
@@ -91,42 +73,6 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		//					}
 		//				});
 		//
-		//		jacksonMappingModule.addDeserializer(HyvaksymiskirjeBatch.class,
-		//				new JsonDeserializer<HyvaksymiskirjeBatch>() {
-		//					@Override
-		//					public HyvaksymiskirjeBatch deserialize(JsonParser parser,
-		//							DeserializationContext context) throws IOException,
-		//							JsonProcessingException {
-		//						System.out.println("deserialize HyvaksymiskirjeBatch");
-		//						System.out.println("current token: "
-		//								+ parser.getCurrentToken());
-		//						System.out.println("current location: "
-		//								+ parser.getCurrentLocation());
-		//
-		//						System.out.println(parser);
-		//						System.out.println(context);
-		//						JsonNode node = parser.readValueAsTree();
-		//						System.out.println("node: " + node);
-		//						JsonNode addressLabels = node
-		//								.findValue("addressLabels");
-		//						System.out.println("isArray? "
-		//								+ addressLabels.isArray());
-		//
-		//						System.out.println("current token: "
-		//								+ parser.getCurrentToken());
-		//						System.out.println("current location: "
-		//								+ parser.getCurrentLocation());
-		//
-		//						Iterator<JsonNode> iterator = addressLabels.iterator();
-		//						List<Hyvaksymiskirje> kirjeet = new ArrayList<Hyvaksymiskirje>();
-		//						while (iterator.hasNext()) {
-		//							JsonNode node2 = iterator.next();
-		//						}
-		//
-		//						return new HyvaksymiskirjeBatch(kirjeet);
-		//					}
-		//				});
-
 		//mapper.registerModule(jacksonMappingModule);
 
 		MrBeanModule mrBean = new MrBeanModule();

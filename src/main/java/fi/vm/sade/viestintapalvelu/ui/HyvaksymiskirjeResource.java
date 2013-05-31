@@ -40,7 +40,6 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
 	public Response pdf(HyvaksymiskirjeBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException {
-		System.out.println("HyvaksymiskirjeBatch on server: " + input);
 		byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
 		String documentId = downloadCache.addDocument(new Download(
 				"application/pdf;charset=utf-8", "hyvaksymiskirje.pdf", pdf));
