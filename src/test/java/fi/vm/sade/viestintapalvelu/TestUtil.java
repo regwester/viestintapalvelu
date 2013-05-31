@@ -156,9 +156,7 @@ public class TestUtil {
 				"UTF-8");
 		HttpPost post = new HttpPost(url);
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
-		System.out.println("object on client: " + json);
 		String postEntityJson = new ObjectMapper().writeValueAsString(json);
-		System.out.println("postEntityJson on client: " + postEntityJson);
 		post.setEntity(new StringEntity(postEntityJson,
 				ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
