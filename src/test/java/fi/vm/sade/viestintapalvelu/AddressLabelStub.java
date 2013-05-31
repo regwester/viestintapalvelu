@@ -11,11 +11,6 @@ class AddressLabelStub implements AddressLabel {
 	}
 
 	@Override
-	public PostalAddress getPostalAddress() {
-		return input;
-	}
-
-	@Override
 	public String getFirstName() {
 		return input.getFirstName();
 	}
