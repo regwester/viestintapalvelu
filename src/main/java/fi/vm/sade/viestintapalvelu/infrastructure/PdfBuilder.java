@@ -83,13 +83,8 @@ public class PdfBuilder {
 
 	public MergedPdfDocument createJalkiohjauskirjeBatch(
 			JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
-		System.out.println("in");
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
-		System.out.println("batch: " + batch);
-		System.out.println("batch class: " + batch.getClass().getName());
-		System.out.println("batch.getContents(): " + batch.getLetters());
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
-			System.out.println("for");
 			String kirjeTemplateName = Utils.resolveTemplateName(
 					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
 					kirje.getLanguageCode());

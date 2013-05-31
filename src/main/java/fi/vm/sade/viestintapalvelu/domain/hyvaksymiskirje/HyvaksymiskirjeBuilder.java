@@ -25,7 +25,6 @@ public class HyvaksymiskirjeBuilder extends PdfBuilder {
 			DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Hyvaksymiskirje kirje : batch.getLetters()) {
-			System.out.println("kirje: " + kirje);
 			String kirjeTemplateName = Utils
 					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,
 							kirje.getLanguageCode());
