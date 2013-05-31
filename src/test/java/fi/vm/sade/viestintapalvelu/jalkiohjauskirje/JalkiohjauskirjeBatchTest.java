@@ -11,7 +11,6 @@ import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.JalkiohjauskirjeStub;
 import fi.vm.sade.viestintapalvelu.PostalAddressStub;
-import fi.vm.sade.viestintapalvelu.application.Batch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
 import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
@@ -20,7 +19,7 @@ import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
 public class JalkiohjauskirjeBatchTest {
 	private List<Jalkiohjauskirje> letters;
 	private JalkiohjauskirjeBatch original;
-	private List<Batch<Jalkiohjauskirje>> afterSplit;
+	private List<JalkiohjauskirjeBatch> afterSplit;
 
 	@Before
 	public void setUp() throws Exception {
@@ -37,24 +36,24 @@ public class JalkiohjauskirjeBatchTest {
 
 	@Test
 	public void splitWhenLimitIsMoreThanNumberOfLetters() {
-		afterSplit = original.split(10000);
+		afterSplit = original.split(10000, "dum");
 		assertEquals(1, afterSplit.size());
 		assertEquals(original.getLetters(), afterSplit.get(0).getLetters());
 	}
 
 	@Test
 	public void splitWhenLimitIsEqualToNumberOfLetters() {
-		afterSplit = original.split(9999);
+		afterSplit = original.split(9999, "dum");
 		assertEquals(1, afterSplit.size());
 		assertEquals(original.getLetters(), afterSplit.get(0).getLetters());
 	}
 
 	@Test
 	public void splitWhenLimitIsLessToNumberOfLetters() {
-		afterSplit = original.split(1000);
+		afterSplit = original.split(1000, "dum");
 		assertEquals(10, afterSplit.size());
 		for (int i = 0; i < 10; i++) {
-			Batch<Jalkiohjauskirje> current = afterSplit.get(i);
+			JalkiohjauskirjeBatch current = afterSplit.get(i);
 			if (i < 9) {
 				// The first 9 batches contain 1000 letters each
 				assertEquals(1000, current.getLetters().size());
@@ -69,7 +68,7 @@ public class JalkiohjauskirjeBatchTest {
 	public void splitAlsoWorksWithSubclasses() {
 		JalkiohjauskirjeBatch ipostBatch = new JalkiohjauskirjeBatchStub(
 				letters);
-		afterSplit = ipostBatch.split(1000);
+		afterSplit = ipostBatch.split(1000, "dum");
 		for (int i = 0; i < 10; i++) {
 			assertEquals(JalkiohjauskirjeBatch.class, afterSplit.get(i)
 					.getClass());

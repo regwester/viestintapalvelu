@@ -3,24 +3,20 @@ package fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.vm.sade.viestintapalvelu.application.Batch;
-import fi.vm.sade.viestintapalvelu.application.SplittableBatch;
 import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
 
-public abstract class JalkiohjauskirjeBatch implements
-		SplittableBatch<Jalkiohjauskirje> {
-	@Override
-	public List<Batch<Jalkiohjauskirje>> split(int limit) {
-		List<Batch<Jalkiohjauskirje>> batches = new ArrayList<Batch<Jalkiohjauskirje>>();
+// FIXME vp "implements SplittableBatch<Jalkiohjauskirje>"
+public abstract class JalkiohjauskirjeBatch {
+	public List<JalkiohjauskirjeBatch> split(int limit, String dummy) {
+		List<JalkiohjauskirjeBatch> batches = new ArrayList<JalkiohjauskirjeBatch>();
 		split(getLetters(), batches, limit);
 		return batches;
 	}
 
-	@Override
 	public abstract List<Jalkiohjauskirje> getLetters();
 
-	private void split(List<Jalkiohjauskirje> remaining,
-			List<Batch<Jalkiohjauskirje>> batches, int limit) {
+	public void split(List<Jalkiohjauskirje> remaining,
+			List<JalkiohjauskirjeBatch> batches, int limit) {
 		if (limit >= remaining.size()) {
 			batches.add(createSubBatch(remaining));
 		} else {
@@ -29,7 +25,7 @@ public abstract class JalkiohjauskirjeBatch implements
 		}
 	}
 
-	private Batch<Jalkiohjauskirje> createSubBatch(List<Jalkiohjauskirje> batch) {
+	public JalkiohjauskirjeBatch createSubBatch(List<Jalkiohjauskirje> batch) {
 		return new JalkiohjauskirjeBatchStub(batch);
 	}
 }
