@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.fasterxml.jackson.annotation.JsonAnyGetter;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -133,16 +134,18 @@ public class ViestintapalveluModule extends JerseyServletModule {
 		mapper.addMixInAnnotations(Jalkiohjauskirje.class, Mixin.class);
 		mapper.disable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS);
 		mapper.disable(MapperFeature.USE_GETTERS_AS_SETTERS);
+		mapper.disable(MapperFeature.AUTO_DETECT_GETTERS);
 
 		return mapper;
 	}
 
-	private static abstract class Mixin {
+	public static abstract class Mixin {
 		@JsonProperty("addressLabel")
+		@JsonAnyGetter
 		public abstract PostalAddress getPostalAddress();
 
-		@JsonProperty("postalAddress")
-		public abstract String getDummyFooRemoveThis();
+		@JsonProperty("addressLabel")
+		public abstract void setPostalAddress();
 	}
 
 	@Provides
