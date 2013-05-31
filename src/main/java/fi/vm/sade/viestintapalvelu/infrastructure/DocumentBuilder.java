@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.infrastructure;
 
-import static fi.vm.sade.viestintapalvelu.application.Constants.UTF_8;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringWriter;
+import java.nio.charset.Charset;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -75,7 +75,7 @@ public class DocumentBuilder {
 		uac.setSharedContext(renderer.getSharedContext());
 		renderer.getSharedContext().setUserAgentCallback(uac);
 		renderer.getSharedContext().setReplacedElementFactory(mref);
-		renderer.setDocumentFromString(new String(input, UTF_8));
+		renderer.setDocumentFromString(new String(input, Charset.forName("UTF-8")));
 		renderer.layout();
 		return renderer;
 	}
