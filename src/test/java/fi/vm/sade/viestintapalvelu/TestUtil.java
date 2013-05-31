@@ -65,11 +65,6 @@ public class TestUtil {
 							};
 						});
 			}
-
-			@Override
-			public List<AddressLabel> getLetters() {
-				return getAddressLabels();
-			}
 		};
 		return batch;
 	}
@@ -94,11 +89,6 @@ public class TestUtil {
 	public static List<List<String>> generateAddressLabelsXLS(
 			final List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatch() {
-			@Override
-			public List<AddressLabel> getLetters() {
-				return labels;
-			}
-
 			@Override
 			public List<AddressLabel> getAddressLabels() {
 				return labels;

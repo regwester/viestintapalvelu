@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje;
 
-import fi.vm.sade.viestintapalvelu.application.Batch;
+import java.util.List;
 
-public interface HyvaksymiskirjeBatch extends Batch<Hyvaksymiskirje> {
+public interface HyvaksymiskirjeBatch {
+	public List<Hyvaksymiskirje> getLetters();
 }

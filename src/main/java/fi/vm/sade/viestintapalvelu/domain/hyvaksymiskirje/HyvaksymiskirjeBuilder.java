@@ -40,5 +40,4 @@ public class HyvaksymiskirjeBuilder extends PdfBuilder {
 		}
 		return documentBuilder.merge(source).toByteArray();
 	}
-
 }
