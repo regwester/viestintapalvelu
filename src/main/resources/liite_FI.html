@@ -59,7 +59,7 @@
 	</tr>
 	#foreach( $haku in $tulokset )
 	<tr>
-		<td class="hakutoive">$haku.organisaationNimi, $haku.oppilaitoksenNimi<br/>$haku.hakukohteenNimi</td>
+		<td class="hakutoive">$foreach.count. $haku.organisaationNimi, $haku.oppilaitoksenNimi<br/>$haku.hakukohteenNimi</td>
 		<td>$haku.hyvaksytyt / $haku.kaikkiHakeneet</td>
 		<td>$haku.omatPisteet / $haku.alinHyvaksyttyPistemaara</td>
 		#if($columns.paasyJaSoveltuvuuskoe)<td>$haku.paasyJaSoveltuvuuskoe</td>#end
