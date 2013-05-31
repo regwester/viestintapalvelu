@@ -11,15 +11,16 @@ import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.JalkiohjauskirjeStub;
 import fi.vm.sade.viestintapalvelu.PostalAddressStub;
+import fi.vm.sade.viestintapalvelu.application.Batch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
-import fi.vm.sade.viestintapalvelu.infrastructure.AbstractBatch;
+import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
 
 // TODO vpeurala 22.5.2013: Refactor these tests
 public class JalkiohjauskirjeBatchTest {
 	private List<Jalkiohjauskirje> letters;
 	private JalkiohjauskirjeBatch original;
-	private List<AbstractBatch<Jalkiohjauskirje>> afterSplit;
+	private List<Batch<Jalkiohjauskirje>> afterSplit;
 
 	@Before
 	public void setUp() throws Exception {
@@ -31,21 +32,21 @@ public class JalkiohjauskirjeBatchTest {
 					"countryCode"), "FI", new ArrayList<Map<String, String>>()));
 
 		}
-		original = new JalkiohjauskirjeBatch(letters);
+		original = new JalkiohjauskirjeBatchStub(letters);
 	}
 
 	@Test
 	public void splitWhenLimitIsMoreThanNumberOfLetters() {
 		afterSplit = original.split(10000);
 		assertEquals(1, afterSplit.size());
-		assertEquals(original.getContents(), afterSplit.get(0).getContents());
+		assertEquals(original.getLetters(), afterSplit.get(0).getLetters());
 	}
 
 	@Test
 	public void splitWhenLimitIsEqualToNumberOfLetters() {
 		afterSplit = original.split(9999);
 		assertEquals(1, afterSplit.size());
-		assertEquals(original.getContents(), afterSplit.get(0).getContents());
+		assertEquals(original.getLetters(), afterSplit.get(0).getLetters());
 	}
 
 	@Test
@@ -53,20 +54,21 @@ public class JalkiohjauskirjeBatchTest {
 		afterSplit = original.split(1000);
 		assertEquals(10, afterSplit.size());
 		for (int i = 0; i < 10; i++) {
-			AbstractBatch<Jalkiohjauskirje> current = afterSplit.get(i);
+			Batch<Jalkiohjauskirje> current = afterSplit.get(i);
 			if (i < 9) {
 				// The first 9 batches contain 1000 letters each
-				assertEquals(1000, current.getContents().size());
+				assertEquals(1000, current.getLetters().size());
 			} else {
 				// The last batch contains the rest, i.e. 9999 letters
-				assertEquals(999, current.getContents().size());
+				assertEquals(999, current.getLetters().size());
 			}
 		}
 	}
 
 	@Test
 	public void splitAlsoWorksWithSubclasses() {
-		JalkiohjauskirjeBatch ipostBatch = new JalkiohjauskirjeBatch(letters);
+		JalkiohjauskirjeBatch ipostBatch = new JalkiohjauskirjeBatchStub(
+				letters);
 		afterSplit = ipostBatch.split(1000);
 		for (int i = 0; i < 10; i++) {
 			assertEquals(JalkiohjauskirjeBatch.class, afterSplit.get(i)
@@ -75,10 +77,10 @@ public class JalkiohjauskirjeBatchTest {
 					.get(i);
 			if (i < 9) {
 				// The first 9 batches contain 1000 letters each
-				assertEquals(1000, current.getContents().size());
+				assertEquals(1000, current.getLetters().size());
 			} else {
 				// The last batch contains the rest, i.e. 9999 letters
-				assertEquals(999, current.getContents().size());
+				assertEquals(999, current.getLetters().size());
 			}
 		}
 	}

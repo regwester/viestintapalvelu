@@ -5,6 +5,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
 import com.fasterxml.jackson.module.mrbean.MrBeanModule;
@@ -14,6 +16,8 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
+import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
+import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.ui.AddressLabelResource;
 import fi.vm.sade.viestintapalvelu.ui.DownloadResource;
 import fi.vm.sade.viestintapalvelu.ui.HyvaksymiskirjeResource;
@@ -124,9 +128,21 @@ public class ViestintapalveluModule extends JerseyServletModule {
 
 		//mapper.registerModule(jacksonMappingModule);
 
-		mapper.registerModule(new MrBeanModule());
+		MrBeanModule mrBean = new MrBeanModule();
+		mapper.registerModule(mrBean);
+		mapper.addMixInAnnotations(Jalkiohjauskirje.class, Mixin.class);
+		mapper.disable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS);
+		mapper.disable(MapperFeature.USE_GETTERS_AS_SETTERS);
 
 		return mapper;
+	}
+
+	private static abstract class Mixin {
+		@JsonProperty("addressLabel")
+		public abstract PostalAddress getPostalAddress();
+
+		@JsonProperty("postalAddress")
+		public abstract String getDummyFooRemoveThis();
 	}
 
 	@Provides
