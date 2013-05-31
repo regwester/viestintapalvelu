@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.application.Batch;
 import fi.vm.sade.viestintapalvelu.application.Constants;
 import fi.vm.sade.viestintapalvelu.domain.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
@@ -42,11 +43,11 @@ public class PdfBuilder {
 	public byte[] printZIP(JalkiohjauskirjeBatch batch) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		Map<String, byte[]> subZips = new HashMap<String, byte[]>();
-		List<AbstractBatch<Jalkiohjauskirje>> subBatches = batch
+		List<Batch<Jalkiohjauskirje>> subBatches = batch
 				.split(Constants.IPOST_BATCH_LIMIT);
 		for (int i = 0; i < subBatches.size(); i++) {
-			JalkiohjauskirjeBatch subBatch = new JalkiohjauskirjeBatch(
-					subBatches.get(i).getContents());
+			JalkiohjauskirjeBatch subBatch = new JalkiohjauskirjeBatchStub(
+					subBatches.get(i).getLetters());
 			MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
 			Map<String, Object> context = createDataContext(pdf
 					.getDocumentMetadata());
@@ -64,7 +65,7 @@ public class PdfBuilder {
 	public byte[] printPDF(HyvaksymiskirjeBatch batch) throws IOException,
 			DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
-		for (Hyvaksymiskirje kirje : batch.getContents()) {
+		for (Hyvaksymiskirje kirje : batch.getLetters()) {
 			String kirjeTemplateName = Utils
 					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,
 							kirje.getLanguageCode());
@@ -83,8 +84,13 @@ public class PdfBuilder {
 
 	public MergedPdfDocument createJalkiohjauskirjeBatch(
 			JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
+		System.out.println("in");
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
-		for (Jalkiohjauskirje kirje : batch.getContents()) {
+		System.out.println("batch: " + batch);
+		System.out.println("batch class: " + batch.getClass().getName());
+		System.out.println("batch.getContents(): " + batch.getLetters());
+		for (Jalkiohjauskirje kirje : batch.getLetters()) {
+			System.out.println("for");
 			String kirjeTemplateName = Utils.resolveTemplateName(
 					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
 					kirje.getLanguageCode());

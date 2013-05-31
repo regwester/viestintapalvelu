@@ -22,7 +22,7 @@ public class JalkiohjauskirjeStub implements Jalkiohjauskirje {
 		return languageCode;
 	}
 
-	public java.util.List<java.util.Map<String, String>> getTulokset() {
+	public List<Map<String, String>> getTulokset() {
 		return hakutulokset;
 	}
 

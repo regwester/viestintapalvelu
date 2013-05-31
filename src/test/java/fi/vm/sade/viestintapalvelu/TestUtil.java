@@ -44,6 +44,7 @@ import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
+import fi.vm.sade.viestintapalvelu.infrastructure.JalkiohjauskirjeBatchStub;
 
 public class TestUtil {
 
@@ -72,7 +73,7 @@ public class TestUtil {
 			}
 
 			@Override
-			public List<AddressLabel> getContents() {
+			public List<AddressLabel> getLetters() {
 				return getAddressLabels();
 			}
 		};
@@ -105,7 +106,7 @@ public class TestUtil {
 			final List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatch() {
 			@Override
-			public List<AddressLabel> getContents() {
+			public List<AddressLabel> getLetters() {
 				return labels;
 			}
 
@@ -119,21 +120,21 @@ public class TestUtil {
 
 	public static List<List<String>> generateJalkiohjauskirje(
 			Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatchStub(
 				Arrays.asList(kirje));
 		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
 	}
 
 	public static byte[] generateIPostZIP(List<Jalkiohjauskirje> kirjeet)
 			throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(kirjeet);
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatchStub(kirjeet);
 		return get(batch, IPOST_URL);
 	}
 
 	public static List<List<String>> generateHyvaksymiskirje(
 			final Hyvaksymiskirje kirje) throws Exception {
 		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch() {
-			public java.util.List<Hyvaksymiskirje> getContents() {
+			public java.util.List<Hyvaksymiskirje> getLetters() {
 				return Arrays.asList(kirje);
 			};
 		};
@@ -141,7 +142,7 @@ public class TestUtil {
 	}
 
 	public static String generateLiite(Jalkiohjauskirje kirje) throws Exception {
-		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
+		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatchStub(
 				Arrays.asList(kirje));
 		return readAsHtml(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
 	}
