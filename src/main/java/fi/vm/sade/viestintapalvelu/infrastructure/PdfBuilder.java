@@ -24,9 +24,8 @@ import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 public class PdfBuilder {
-	// FIXME vpeurala 30.5.2013: Visibility to subclasses
-	protected DocumentBuilder documentBuilder;
-	protected LiiteBuilder liiteBuilder;
+	private DocumentBuilder documentBuilder;
+	private LiiteBuilder liiteBuilder;
 
 	@Inject
 	public PdfBuilder(DocumentBuilder documentBuilder, LiiteBuilder liiteBuilder) {
@@ -109,8 +108,7 @@ public class PdfBuilder {
 		return documentBuilder.xhtmlToPDF(xhtml);
 	}
 
-	// FIXME vpeurala 30.5.2013: Visibility
-	protected byte[] createFirstPagePDF(String templateName,
+	private byte[] createFirstPagePDF(String templateName,
 			PostalAddress postalAddress, String koulu, String koulutus)
 			throws FileNotFoundException, IOException, DocumentException {
 		Map<String, Object> dataContext = createDataContext(
