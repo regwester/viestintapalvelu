@@ -18,17 +18,16 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.domain.download.Download;
 import fi.vm.sade.viestintapalvelu.domain.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
-import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBuilder;
+import fi.vm.sade.viestintapalvelu.infrastructure.PdfBuilder;
 
 @Singleton
 @Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
 public class JalkiohjauskirjeResource extends AsynchronousResource {
 	private DownloadCache downloadCache;
-	private JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder;
+	private PdfBuilder jalkiohjauskirjeBuilder;
 
 	@Inject
-	public JalkiohjauskirjeResource(
-			JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder,
+	public JalkiohjauskirjeResource(PdfBuilder jalkiohjauskirjeBuilder,
 			DownloadCache downloadCache) {
 		this.jalkiohjauskirjeBuilder = jalkiohjauskirjeBuilder;
 		this.downloadCache = downloadCache;
