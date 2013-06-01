@@ -17,17 +17,16 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.domain.download.Download;
 import fi.vm.sade.viestintapalvelu.domain.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
-import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBuilder;
+import fi.vm.sade.viestintapalvelu.infrastructure.PdfBuilder;
 
 @Singleton
 @Path(Urls.HYVAKSYMISKIRJE_RESOURCE_PATH)
 public class HyvaksymiskirjeResource extends AsynchronousResource {
 	private DownloadCache downloadCache;
-	private HyvaksymiskirjeBuilder hyvaksymiskirjeBuilder;
+	private PdfBuilder hyvaksymiskirjeBuilder;
 
 	@Inject
-	public HyvaksymiskirjeResource(
-			HyvaksymiskirjeBuilder jalkiohjauskirjeBuilder,
+	public HyvaksymiskirjeResource(PdfBuilder jalkiohjauskirjeBuilder,
 			DownloadCache downloadCache) {
 		this.hyvaksymiskirjeBuilder = jalkiohjauskirjeBuilder;
 		this.downloadCache = downloadCache;
