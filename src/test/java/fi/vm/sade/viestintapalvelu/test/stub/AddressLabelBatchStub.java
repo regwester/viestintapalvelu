@@ -6,7 +6,7 @@ import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelBatch;
 
 public class AddressLabelBatchStub implements AddressLabelBatch {
-	private final List<AddressLabel> addressLabels;
+	private List<AddressLabel> addressLabels;
 
 	public AddressLabelBatchStub(List<AddressLabel> addressLabels) {
 		this.addressLabels = addressLabels;

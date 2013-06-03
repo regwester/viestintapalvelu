@@ -5,9 +5,8 @@ import java.util.Arrays;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 
-public class HyvaksymiskirjeBatchStub implements
-		HyvaksymiskirjeBatch {
-	private final Hyvaksymiskirje kirje;
+public class HyvaksymiskirjeBatchStub implements HyvaksymiskirjeBatch {
+	private Hyvaksymiskirje kirje;
 
 	public HyvaksymiskirjeBatchStub(Hyvaksymiskirje kirje) {
 		this.kirje = kirje;

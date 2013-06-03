@@ -5,12 +5,8 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import com.fasterxml.jackson.annotation.JsonAnyGetter;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider;
-import com.fasterxml.jackson.module.mrbean.MrBeanModule;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.sun.jersey.api.json.JSONConfiguration;
@@ -18,10 +14,8 @@ import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelResource;
-import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.download.DownloadResource;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeResource;
-import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeResource;
 
 public class ViestintapalveluModule extends JerseyServletModule {
@@ -43,25 +37,7 @@ public class ViestintapalveluModule extends JerseyServletModule {
 	@Provides
 	@Singleton
 	ObjectMapper objectMapper() {
-		final ObjectMapper mapper = new ObjectMapper();
-
-		MrBeanModule mrBean = new MrBeanModule();
-		mapper.registerModule(mrBean);
-		mapper.addMixInAnnotations(Jalkiohjauskirje.class, Mixin.class);
-		mapper.disable(MapperFeature.REQUIRE_SETTERS_FOR_GETTERS);
-		mapper.disable(MapperFeature.USE_GETTERS_AS_SETTERS);
-		mapper.disable(MapperFeature.AUTO_DETECT_GETTERS);
-
-		return mapper;
-	}
-
-	public static abstract class Mixin {
-		@JsonProperty("addressLabel")
-		@JsonAnyGetter
-		public abstract PostalAddress getPostalAddress();
-
-		@JsonProperty("addressLabel")
-		public abstract void setPostalAddress();
+		return new ViestintapalveluObjectMapper();
 	}
 
 	@Provides

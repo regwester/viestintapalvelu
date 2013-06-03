@@ -21,9 +21,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFText2HTML;
-import org.codehaus.jackson.JsonGenerationException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -34,6 +31,10 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
+import com.fasterxml.jackson.core.JsonGenerationException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+
+import fi.vm.sade.viestintapalvelu.application.ViestintapalveluObjectMapper;
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelBatch;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
@@ -103,7 +104,8 @@ public class TestUtil {
 				"UTF-8");
 		HttpPost post = new HttpPost(url);
 		post.setHeader("Content-Type", "application/json;charset=utf-8");
-		String postEntityJson = new ObjectMapper().writeValueAsString(json);
+		String postEntityJson = new ViestintapalveluObjectMapper()
+				.writeValueAsString(json);
 		post.setEntity(new StringEntity(postEntityJson,
 				ContentType.APPLICATION_JSON));
 		HttpResponse response = client.execute(post);
