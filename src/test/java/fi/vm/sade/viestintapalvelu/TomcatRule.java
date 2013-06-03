@@ -14,15 +14,18 @@ import org.junit.rules.ExternalResource;
 import fi.vm.sade.viestintapalvelu.test.Localhost;
 
 public class TomcatRule extends ExternalResource {
+	private boolean portChecked = false;
+
 	@Override
 	protected void before() throws Exception {
-		if (!isPortInUse()) {
+		if (!portChecked && !isPortInUse()) {
 			synchronized (TomcatRule.class) {
 				if (!isPortInUse()) {
 					launchAndInitialize();
 				}
 			}
 		}
+		portChecked = true;
 	}
 
 	private void launchAndInitialize() throws LifecycleException,
@@ -53,7 +56,7 @@ public class TomcatRule extends ExternalResource {
 		// Do nothing, let Tomcat run until the JVM dies.
 	}
 
-	private static boolean isPortInUse() {
+	private boolean isPortInUse() {
 		try {
 			new Socket("localhost", Launcher.DEFAULT_PORT);
 			return true;
