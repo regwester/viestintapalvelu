@@ -18,7 +18,7 @@ import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -35,8 +35,8 @@ public class IPostZIPTest {
 	private static PostalAddress label = Fixture.address;
 	private static PostalAddress labelWithSpecialCharacters = Fixture.addressWithSpecialCharacters;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		Jalkiohjauskirje kirje1 = new JalkiohjauskirjeStub(Fixture.address,
 				"FI", new ArrayList<Map<String, String>>());
 		Jalkiohjauskirje kirje2 = new JalkiohjauskirjeStub(
