@@ -63,13 +63,13 @@ public class PdfBuilder {
 			DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Hyvaksymiskirje kirje : batch.getLetters()) {
-			String kirjeTemplateName = Utils
+			String kirjeTemplateName = PdfBuilder
 					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,
 							kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
 					kirje.getPostalAddress(), kirje.getKoulu(),
 					kirje.getKoulutus());
-			String liiteTemplateName = Utils.resolveTemplateName(
+			String liiteTemplateName = PdfBuilder.resolveTemplateName(
 					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
@@ -83,12 +83,12 @@ public class PdfBuilder {
 			JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
-			String kirjeTemplateName = Utils.resolveTemplateName(
+			String kirjeTemplateName = PdfBuilder.resolveTemplateName(
 					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
 					kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
 					kirje.getAddressLabel());
-			String liiteTemplateName = Utils.resolveTemplateName(
+			String liiteTemplateName = PdfBuilder.resolveTemplateName(
 					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
@@ -148,5 +148,14 @@ public class PdfBuilder {
 		}
 		data.put("metadataList", metadataList);
 		return data;
+	}
+
+	public static String resolveTemplateName(String template,
+			String languageCode) {
+		languageCode = languageCode == null || "".equals(languageCode) ? "FI"
+				: languageCode;
+		languageCode = "SE".equalsIgnoreCase(languageCode)
+				|| "FI".equalsIgnoreCase(languageCode) ? languageCode : "EN";
+		return template.replace("{LANG}", languageCode.toUpperCase());
 	}
 }
