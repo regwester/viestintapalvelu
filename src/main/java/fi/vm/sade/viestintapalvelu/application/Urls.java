@@ -10,55 +10,6 @@ public class Urls {
 	public static final String HYVAKSYMISKIRJE_RESOURCE_PATH = "hyvaksymiskirje";
 	public static final String JALKIOHJAUSKIRJE_RESOURCE_PATH = "jalkiohjauskirje";
 
-	// FIXME vpeurala 3.6.2013: This RestServer/Localhost stuff should be in test
-	public static RestServer localhost() {
-		return new Localhost();
-	}
-
-	public static interface RestServer {
-		String root();
-
-		String index();
-
-		String apiRoot();
-
-		String addresslabelDownload();
-
-		String addresslabel();
-	}
-
-	public static class Localhost implements RestServer {
-		private static final String SCHEME = "http";
-		private static final String DOMAIN = "localhost";
-		private static final int PORT = 8080;
-
-		@Override
-		public String root() {
-			return SCHEME + "://" + DOMAIN + ":" + PORT;
-		}
-
-		@Override
-		public String index() {
-			return build(root(), "index.html");
-		}
-
-		@Override
-		public String apiRoot() {
-			return build(root(), Urls.API_PATH);
-		}
-
-		@Override
-		public String addresslabel() {
-			return build(apiRoot(), ADDRESS_LABEL_RESOURCE_PATH);
-		}
-
-		@Override
-		public String addresslabelDownload() {
-			return build(apiRoot(), ADDRESS_LABEL_RESOURCE_PATH,
-					DOWNLOAD_RESOURCE_PATH);
-		}
-	}
-
 	public static String build(String... parts) {
 		UrlBuilder builder = new UrlBuilder();
 		for (String part : parts) {
