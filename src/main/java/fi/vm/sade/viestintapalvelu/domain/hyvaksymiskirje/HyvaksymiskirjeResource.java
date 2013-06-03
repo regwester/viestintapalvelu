@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.ui;
+package fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje;
 
 import java.io.IOException;
 
@@ -14,9 +14,10 @@ import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.application.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.application.Urls;
 import fi.vm.sade.viestintapalvelu.domain.download.Download;
 import fi.vm.sade.viestintapalvelu.domain.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.infrastructure.PdfBuilder;
 
 @Singleton

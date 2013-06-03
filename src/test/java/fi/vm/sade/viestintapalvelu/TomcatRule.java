@@ -11,7 +11,7 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.rules.ExternalResource;
 
-import fi.vm.sade.viestintapalvelu.ui.Urls;
+import fi.vm.sade.viestintapalvelu.application.Urls;
 
 public class TomcatRule extends ExternalResource {
 	private static Tomcat globalTomcat;

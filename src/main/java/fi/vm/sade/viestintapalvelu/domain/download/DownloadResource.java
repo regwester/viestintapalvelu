@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.ui;
+package fi.vm.sade.viestintapalvelu.domain.download;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -11,8 +11,7 @@ import javax.ws.rs.core.Response.Status;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
-import fi.vm.sade.viestintapalvelu.domain.download.Download;
-import fi.vm.sade.viestintapalvelu.domain.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.application.Urls;
 
 @Singleton
 @Path(Urls.DOWNLOAD_RESOURCE_PATH)

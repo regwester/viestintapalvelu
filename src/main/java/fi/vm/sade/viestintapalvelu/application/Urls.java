@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.ui;
+package fi.vm.sade.viestintapalvelu.application;
 
 import java.util.ArrayList;
 import java.util.List;

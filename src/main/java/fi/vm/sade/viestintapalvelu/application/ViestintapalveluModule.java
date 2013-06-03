@@ -17,13 +17,12 @@ import com.sun.jersey.api.json.JSONConfiguration;
 import com.sun.jersey.guice.JerseyServletModule;
 import com.sun.jersey.guice.spi.container.servlet.GuiceContainer;
 
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelResource;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
+import fi.vm.sade.viestintapalvelu.domain.download.DownloadResource;
+import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeResource;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
-import fi.vm.sade.viestintapalvelu.ui.AddressLabelResource;
-import fi.vm.sade.viestintapalvelu.ui.DownloadResource;
-import fi.vm.sade.viestintapalvelu.ui.HyvaksymiskirjeResource;
-import fi.vm.sade.viestintapalvelu.ui.JalkiohjauskirjeResource;
-import fi.vm.sade.viestintapalvelu.ui.Urls;
+import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeResource;
 
 public class ViestintapalveluModule extends JerseyServletModule {
 	@Override

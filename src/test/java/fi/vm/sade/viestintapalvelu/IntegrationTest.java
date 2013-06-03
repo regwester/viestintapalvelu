@@ -16,7 +16,7 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import fi.vm.sade.viestintapalvelu.ui.Urls;
+import fi.vm.sade.viestintapalvelu.application.Urls;
 
 public class IntegrationTest {
 	@ClassRule

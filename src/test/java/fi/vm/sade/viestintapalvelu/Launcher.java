@@ -12,8 +12,8 @@ import org.apache.catalina.startup.Tomcat;
 
 import com.google.inject.servlet.GuiceFilter;
 
+import fi.vm.sade.viestintapalvelu.application.Urls;
 import fi.vm.sade.viestintapalvelu.application.ViestintapalveluGuiceServletContextListener;
-import fi.vm.sade.viestintapalvelu.ui.Urls;
 
 public class Launcher {
 	public static final int DEFAULT_PORT = 8080;

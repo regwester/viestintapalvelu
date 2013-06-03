@@ -1,7 +1,7 @@
-package fi.vm.sade.viestintapalvelu.ui;
+package fi.vm.sade.viestintapalvelu.domain.address;
 
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
+import java.util.UUID;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -11,25 +11,27 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.codehaus.jettison.json.JSONException;
+
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.application.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.application.Urls;
 import fi.vm.sade.viestintapalvelu.domain.download.Download;
 import fi.vm.sade.viestintapalvelu.domain.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
-import fi.vm.sade.viestintapalvelu.infrastructure.PdfBuilder;
 
 @Singleton
-@Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
-public class JalkiohjauskirjeResource extends AsynchronousResource {
+@Path(Urls.ADDRESS_LABEL_RESOURCE_PATH)
+public class AddressLabelResource extends AsynchronousResource {
 	private DownloadCache downloadCache;
-	private PdfBuilder jalkiohjauskirjeBuilder;
+	private AddressLabelBuilder labelBuilder;
 
 	@Inject
-	public JalkiohjauskirjeResource(PdfBuilder jalkiohjauskirjeBuilder,
+	public AddressLabelResource(AddressLabelBuilder labelBuilder,
 			DownloadCache downloadCache) {
-		this.jalkiohjauskirjeBuilder = jalkiohjauskirjeBuilder;
+		this.labelBuilder = labelBuilder;
 		this.downloadCache = downloadCache;
 	}
 
@@ -37,26 +39,26 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 	@Consumes("application/json")
 	@Produces("text/plain")
 	@Path("pdf")
-	public Response pdf(JalkiohjauskirjeBatch input,
+	public Response pdf(final AddressLabelBatch input,
 			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
-		byte[] pdf = jalkiohjauskirjeBuilder.printPDF(input);
-		String documentId = downloadCache.addDocument(new Download(
-				"application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));
+			DocumentException, JSONException {
+		final String documentId = UUID.randomUUID().toString();
+		byte[] pdf = labelBuilder.printPDF(input);
+		downloadCache.addDocument(new Download("application/pdf;charset=utf-8",
+				"addresslabels.pdf", pdf), documentId);
 		return createResponse(request, documentId);
 	}
 
 	@POST
 	@Consumes("application/json")
 	@Produces("text/plain")
-	@Path("zip")
-	public Response zip(JalkiohjauskirjeBatch input,
+	@Path("xls")
+	public Response xls(AddressLabelBatch input,
 			@Context HttpServletRequest request) throws IOException,
-			DocumentException, NoSuchAlgorithmException {
-		input.split(3, "foo");
-		byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
+			DocumentException {
+		byte[] csv = labelBuilder.printCSV(input);
 		String documentId = downloadCache.addDocument(new Download(
-				"application/zip", "jalkiohjauskirje.zip", zip));
+				"application/vnd.ms-excel", "addresslabels.xls", csv));
 		return createResponse(request, documentId);
 	}
 }

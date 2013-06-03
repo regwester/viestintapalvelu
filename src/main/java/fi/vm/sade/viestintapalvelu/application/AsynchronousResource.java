@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.ui;
+package fi.vm.sade.viestintapalvelu.application;
 
 import java.net.URI;
 import java.util.concurrent.ExecutorService;
@@ -9,6 +9,8 @@ import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 
 import com.google.inject.Inject;
+
+import fi.vm.sade.viestintapalvelu.domain.download.DownloadResource;
 
 public class AsynchronousResource {
 	@Inject
