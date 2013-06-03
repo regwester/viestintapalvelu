@@ -34,17 +34,13 @@ import org.w3c.dom.NodeList;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
-
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabelBatch;
-import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
-import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelStub;
+import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelBatchStub;
 import fi.vm.sade.viestintapalvelu.test.stub.HyvaksymiskirjeBatchStub;
 import fi.vm.sade.viestintapalvelu.test.stub.JalkiohjauskirjeBatchStub;
 
@@ -55,36 +51,10 @@ public class TestUtil {
 	private final static String IPOST_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/zip";
 	private final static String HYVAKSYMISKIRJE_URL = "http://localhost:8080/api/v1/hyvaksymiskirje/pdf";
 
-	public static AddressLabelBatch addressLabelBatchFromPostalAddressList(
-			final List<PostalAddress> labels) {
-		AddressLabelBatch batch = new AddressLabelBatch() {
-			@Override
-			public List<AddressLabel> getAddressLabels() {
-				return Lists.transform(labels,
-						new Function<PostalAddress, AddressLabel>() {
-							public AddressLabel apply(final PostalAddress input) {
-								return new AddressLabelStub(input);
-							};
-						});
-			}
-		};
-		return batch;
-	}
-
-	public static List<AddressLabel> addressLabelListFromPostalAddressList(
-			final List<PostalAddress> labels) {
-		return Lists.transform(labels,
-				new Function<PostalAddress, AddressLabel>() {
-					public AddressLabel apply(final PostalAddress input) {
-						return new AddressLabelStub(input);
-					};
-				});
-	}
-
 	public static List<List<String>> generateAddressLabelsPDF(
-			final List<PostalAddress> labels) throws Exception {
+			final List<AddressLabel> labels) throws Exception {
 		// FIXME vp
-		AddressLabelBatch batch = addressLabelBatchFromPostalAddressList(labels);
+		AddressLabelBatch batch = new AddressLabelBatchStub(labels);
 		return readPDF(get(batch, ADDRESS_LABEL_PDF_URL), -1, -1);
 	}
 
