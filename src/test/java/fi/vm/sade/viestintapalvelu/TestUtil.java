@@ -41,12 +41,14 @@ import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
+import fi.vm.sade.viestintapalvelu.test.Localhost;
 import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelBatchStub;
 import fi.vm.sade.viestintapalvelu.test.stub.HyvaksymiskirjeBatchStub;
 import fi.vm.sade.viestintapalvelu.test.stub.JalkiohjauskirjeBatchStub;
 
 public class TestUtil {
-	private final static String ADDRESS_LABEL_PDF_URL = "http://localhost:8080/api/v1/addresslabel/pdf";
+	private static final Localhost LOCALHOST = new Localhost();
+
 	private final static String ADDRESS_LABEL_XLS_URL = "http://localhost:8080/api/v1/addresslabel/xls";
 	private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/pdf";
 	private final static String IPOST_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/zip";
@@ -55,7 +57,7 @@ public class TestUtil {
 	public static List<List<String>> generateAddressLabelsPDF(
 			final List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatchStub(labels);
-		return readPDF(get(batch, ADDRESS_LABEL_PDF_URL), -1, -1);
+		return readPDF(get(batch, LOCALHOST.addresslabelPdf()), -1, -1);
 	}
 
 	public static List<List<String>> generateAddressLabelsXLS(
