@@ -87,7 +87,7 @@ public class PdfBuilder {
 					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
 					kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
-					kirje.getAddressLabel());
+					kirje.getPostalAddress());
 			String liiteTemplateName = PdfBuilder.resolveTemplateName(
 					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
