@@ -4,7 +4,7 @@ import static org.junit.Assert.assertEquals;
 
 import org.junit.Test;
 
-import fi.vm.sade.viestintapalvelu.ui.Urls;
+import fi.vm.sade.viestintapalvelu.application.Urls;
 
 public class UrlsTest {
 	@Test
