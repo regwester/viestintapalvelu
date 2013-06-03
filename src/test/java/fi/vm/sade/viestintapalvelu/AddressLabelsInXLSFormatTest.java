@@ -8,7 +8,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -29,8 +29,8 @@ public class AddressLabelsInXLSFormatTest {
 		private static List<String> otsikko;
 		private static List<String> osoite;
 
-		@BeforeClass
-		public static void setUp() throws Exception {
+		@Before
+		public void setUp() throws Exception {
 			List<List<String>> responseBody = TestUtil
 					.generateAddressLabelsXLS(Arrays.asList(label));
 			otsikko = responseBody.get(0);
@@ -239,8 +239,8 @@ public class AddressLabelsInXLSFormatTest {
 		private static List<AddressLabel> batch;
 		private static List<List<String>> responseBody;
 
-		@BeforeClass
-		public static void setUp() throws Exception {
+		@Before
+		public void setUp() throws Exception {
 			batch = createLabels(1000);
 			responseBody = TestUtil.generateAddressLabelsXLS(batch);
 		}

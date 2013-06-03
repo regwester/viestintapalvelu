@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -22,8 +22,8 @@ public class JalkiohjauskirjePDFTest {
 	private static PostalAddress label = Fixture.addressWithSpecialCharacters;
 	private static String pdf;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		final List<Map<String, String>> hakutulokset = new ArrayList<Map<String, String>>();
 		Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, "EN",
 				hakutulokset);

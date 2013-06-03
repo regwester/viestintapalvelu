@@ -9,7 +9,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.map.JsonMappingException;
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -30,8 +30,8 @@ public class AddressLabelsInPDFFormatTest {
 		private static PostalAddress label = Fixture.address;
 		private static List<String> pdf;
 
-		@BeforeClass
-		public static void setUp() throws Exception {
+		@Before
+		public void setUp() throws Exception {
 			List<AddressLabel> temp = new ArrayList<AddressLabel>();
 			temp.add(new AddressLabelStub(label));
 			pdf = TestUtil.generateAddressLabelsPDF(temp).get(0);
@@ -245,8 +245,8 @@ public class AddressLabelsInPDFFormatTest {
 				"65330", "Stockholm", "SL", "Sweden", "SE");
 		private static List<List<String>> response;
 
-		@BeforeClass
-		public static void setUp() throws Exception {
+		@Before
+		public void setUp() throws Exception {
 			response = TestUtil.generateAddressLabelsPDF(Arrays.asList(
 					domestic, foreign));
 		}
@@ -276,8 +276,8 @@ public class AddressLabelsInPDFFormatTest {
 		private static List<AddressLabel> batch;
 		private static List<List<String>> response;
 
-		@BeforeClass
-		public static void setUp() throws Exception {
+		@Before
+		public void setUp() throws Exception {
 			batch = createLabels(1000);
 			response = TestUtil.generateAddressLabelsPDF(batch);
 		}

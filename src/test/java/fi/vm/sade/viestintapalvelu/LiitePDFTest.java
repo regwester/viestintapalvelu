@@ -6,7 +6,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
@@ -31,9 +31,8 @@ public class LiitePDFTest {
 		private static Map<String, String> tulos = new HashMap<String, String>();
 		private static String liite;
 
-		@SuppressWarnings("unchecked")
-		@BeforeClass
-		public static void setUp() throws Exception {
+		@Before
+		public void setUp() throws Exception {
 			Jalkiohjauskirje kirje = new JalkiohjauskirjeStub(label, "FI",
 					Arrays.asList(tulos));
 			liite = TestUtil.generateLiite(kirje);

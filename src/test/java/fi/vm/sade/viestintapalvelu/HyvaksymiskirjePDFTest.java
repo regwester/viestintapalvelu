@@ -6,7 +6,7 @@ import static org.junit.Assert.assertTrue;
 import java.util.ArrayList;
 import java.util.Map;
 
-import org.junit.BeforeClass;
+import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
 
@@ -23,8 +23,8 @@ public class HyvaksymiskirjePDFTest {
 	private static String koulutus = "Asentaja & Kokki";
 	private static String pdf;
 
-	@BeforeClass
-	public static void setUp() throws Exception {
+	@Before
+	public void setUp() throws Exception {
 		Hyvaksymiskirje kirje = new HyvaksymiskirjeStub(label, "FI", koulu,
 				koulutus, new ArrayList<Map<String, String>>());
 		pdf = TestUtil.generateHyvaksymiskirje(kirje).toString();
