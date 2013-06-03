@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.test.stub;
 
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 

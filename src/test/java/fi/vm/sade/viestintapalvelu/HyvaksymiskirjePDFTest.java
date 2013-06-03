@@ -12,6 +12,7 @@ import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
+import fi.vm.sade.viestintapalvelu.test.stub.HyvaksymiskirjeStub;
 
 public class HyvaksymiskirjePDFTest {
 	@ClassRule
@@ -24,7 +25,7 @@ public class HyvaksymiskirjePDFTest {
 
 	@BeforeClass
 	public static void setUp() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "FI", koulu,
+		Hyvaksymiskirje kirje = new HyvaksymiskirjeStub(label, "FI", koulu,
 				koulutus, new ArrayList<Map<String, String>>());
 		pdf = TestUtil.generateHyvaksymiskirje(kirje).toString();
 	}
@@ -56,28 +57,28 @@ public class HyvaksymiskirjePDFTest {
 
 	@Test
 	public void canBePrintedInEN() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "EN", koulu,
+		Hyvaksymiskirje kirje = new HyvaksymiskirjeStub(label, "EN", koulu,
 				koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSE() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "SE", koulu,
+		Hyvaksymiskirje kirje = new HyvaksymiskirjeStub(label, "SE", koulu,
 				koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedWithoutLanguageCode() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, null, koulu,
+		Hyvaksymiskirje kirje = new HyvaksymiskirjeStub(label, null, koulu,
 				koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}
 
 	@Test
 	public void canBePrintedInSQ() throws Exception {
-		Hyvaksymiskirje kirje = new Hyvaksymiskirje(label, "SQ", koulu,
+		Hyvaksymiskirje kirje = new HyvaksymiskirjeStub(label, "SQ", koulu,
 				koulutus, new ArrayList<Map<String, String>>());
 		assertNotNull(TestUtil.generateHyvaksymiskirje(kirje));
 	}

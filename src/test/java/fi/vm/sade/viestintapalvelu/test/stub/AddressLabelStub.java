@@ -1,12 +1,12 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.test.stub;
 
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 
-class AddressLabelStub implements AddressLabel {
+public class AddressLabelStub implements AddressLabel {
 	private final PostalAddress input;
 
-	AddressLabelStub(PostalAddress input) {
+	public AddressLabelStub(PostalAddress input) {
 		this.input = input;
 	}
 

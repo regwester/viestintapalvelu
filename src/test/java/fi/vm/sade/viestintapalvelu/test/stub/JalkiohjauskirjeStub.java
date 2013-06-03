@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu;
+package fi.vm.sade.viestintapalvelu.test.stub;
 
 import java.util.List;
 import java.util.Map;
