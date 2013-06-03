@@ -49,11 +49,6 @@ import fi.vm.sade.viestintapalvelu.test.stub.JalkiohjauskirjeBatchStub;
 public class TestUtil {
 	private static final Localhost LOCALHOST = new Localhost();
 
-	private final static String ADDRESS_LABEL_XLS_URL = "http://localhost:8080/api/v1/addresslabel/xls";
-	private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/pdf";
-	private final static String IPOST_URL = "http://localhost:8080/api/v1/jalkiohjauskirje/zip";
-	private final static String HYVAKSYMISKIRJE_URL = "http://localhost:8080/api/v1/hyvaksymiskirje/pdf";
-
 	public static List<List<String>> generateAddressLabelsPDF(
 			final List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatchStub(labels);
@@ -63,32 +58,32 @@ public class TestUtil {
 	public static List<List<String>> generateAddressLabelsXLS(
 			final List<AddressLabel> labels) throws Exception {
 		AddressLabelBatch batch = new AddressLabelBatchStub(labels);
-		return readXLS(get(batch, ADDRESS_LABEL_XLS_URL));
+		return readXLS(get(batch, LOCALHOST.addresslabelXls()));
 	}
 
 	public static List<List<String>> generateJalkiohjauskirje(
 			Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatchStub(
 				Arrays.asList(kirje));
-		return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
+		return readPDF(get(batch, LOCALHOST.jalkiohjauskirjePdf()), 1, 2);
 	}
 
 	public static byte[] generateIPostZIP(List<Jalkiohjauskirje> kirjeet)
 			throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatchStub(kirjeet);
-		return get(batch, IPOST_URL);
+		return get(batch, LOCALHOST.jalkiohjauskirjeZip());
 	}
 
 	public static List<List<String>> generateHyvaksymiskirje(
 			final Hyvaksymiskirje kirje) throws Exception {
 		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatchStub(kirje);
-		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
+		return readPDF(get(batch, LOCALHOST.hyvaksymiskirjePdf()), 1, 2);
 	}
 
 	public static String generateLiite(Jalkiohjauskirje kirje) throws Exception {
 		JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatchStub(
 				Arrays.asList(kirje));
-		return readAsHtml(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
+		return readAsHtml(get(batch, LOCALHOST.jalkiohjauskirjePdf()), 2, 2);
 	}
 
 	private static byte[] get(Object json, String url)

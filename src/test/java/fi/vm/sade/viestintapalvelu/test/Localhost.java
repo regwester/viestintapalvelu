@@ -29,14 +29,38 @@ public class Localhost implements ViestintapalveluUrlProvider {
 		return Urls.build(apiRoot(), Urls.ADDRESS_LABEL_RESOURCE_PATH);
 	}
 
-	// FIXME vpeurala 3.6.2013: Path duplication
-	public String addresslabelPdf() {
-		return Urls.build(addresslabel(), "pdf");
+	public String jalkiohjauskirje() {
+		return Urls.build(apiRoot(), Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH);
+	}
+
+	public String hyvaksymiskirje() {
+		return Urls.build(apiRoot(), Urls.HYVAKSYMISKIRJE_RESOURCE_PATH);
 	}
 
 	@Override
 	public String addresslabelDownload() {
 		return Urls.build(apiRoot(), Urls.ADDRESS_LABEL_RESOURCE_PATH,
 				Urls.DOWNLOAD_RESOURCE_PATH);
+	}
+
+	// FIXME vpeurala 3.6.2013: Path duplication
+	public String addresslabelPdf() {
+		return Urls.build(addresslabel(), "pdf");
+	}
+
+	public String addresslabelXls() {
+		return Urls.build(addresslabel(), "xls");
+	}
+
+	public String jalkiohjauskirjePdf() {
+		return Urls.build(jalkiohjauskirje(), "pdf");
+	}
+
+	public String jalkiohjauskirjeZip() {
+		return Urls.build(jalkiohjauskirje(), "zip");
+	}
+
+	public String hyvaksymiskirjePdf() {
+		return Urls.build(hyvaksymiskirje(), "pdf");
 	}
 }
