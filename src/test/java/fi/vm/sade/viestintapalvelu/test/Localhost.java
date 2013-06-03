@@ -29,6 +29,11 @@ public class Localhost implements ViestintapalveluUrlProvider {
 		return Urls.build(apiRoot(), Urls.ADDRESS_LABEL_RESOURCE_PATH);
 	}
 
+	// FIXME vpeurala 3.6.2013: Path duplication
+	public String addresslabelPdf() {
+		return Urls.build(addresslabel(), "pdf");
+	}
+
 	@Override
 	public String addresslabelDownload() {
 		return Urls.build(apiRoot(), Urls.ADDRESS_LABEL_RESOURCE_PATH,
