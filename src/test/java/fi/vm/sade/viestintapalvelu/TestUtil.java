@@ -54,19 +54,13 @@ public class TestUtil {
 
 	public static List<List<String>> generateAddressLabelsPDF(
 			final List<AddressLabel> labels) throws Exception {
-		// FIXME vp
 		AddressLabelBatch batch = new AddressLabelBatchStub(labels);
 		return readPDF(get(batch, ADDRESS_LABEL_PDF_URL), -1, -1);
 	}
 
 	public static List<List<String>> generateAddressLabelsXLS(
 			final List<AddressLabel> labels) throws Exception {
-		AddressLabelBatch batch = new AddressLabelBatch() {
-			@Override
-			public List<AddressLabel> getAddressLabels() {
-				return labels;
-			}
-		};
+		AddressLabelBatch batch = new AddressLabelBatchStub(labels);
 		return readXLS(get(batch, ADDRESS_LABEL_XLS_URL));
 	}
 
