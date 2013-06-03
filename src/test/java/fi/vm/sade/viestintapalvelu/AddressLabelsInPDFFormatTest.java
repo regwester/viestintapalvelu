@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu;
 import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -14,8 +15,9 @@ import org.junit.Test;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
+import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
-import fi.vm.sade.viestintapalvelu.test.stub.PostalAddressStub;
+import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelStub;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
@@ -30,8 +32,9 @@ public class AddressLabelsInPDFFormatTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			pdf = TestUtil.generateAddressLabelsPDF(Arrays.asList(label))
-					.get(0);
+			List<AddressLabel> temp = new ArrayList<AddressLabel>();
+			temp.add(new AddressLabelStub(label));
+			pdf = TestUtil.generateAddressLabelsPDF(temp).get(0);
 		}
 
 		@Test
@@ -234,10 +237,10 @@ public class AddressLabelsInPDFFormatTest {
 
 	public static class WhenCreatingLabelsForDomesticAndForeignAddresses {
 
-		private static PostalAddress domestic = new PostalAddressStub("Åle",
+		private static AddressLabel domestic = new AddressLabelStub("Åle",
 				"Öistämö", "Mannerheimintie 177 B 149", "", "", "65330",
 				"Helsinki", "", "FINLAND", "FI");
-		private static PostalAddress foreign = new PostalAddressStub("Åle",
+		private static AddressLabel foreign = new AddressLabelStub("Åle",
 				"Öistämö", "Brännkyrksgatan 177 B 149", "Södermalm", "13",
 				"65330", "Stockholm", "SL", "Sweden", "SE");
 		private static List<List<String>> response;
@@ -270,7 +273,7 @@ public class AddressLabelsInPDFFormatTest {
 
 	public static class WhenCreatingLabelsInABigBatch {
 
-		private static List<PostalAddress> batch;
+		private static List<AddressLabel> batch;
 		private static List<List<String>> response;
 
 		@BeforeClass
@@ -285,13 +288,13 @@ public class AddressLabelsInPDFFormatTest {
 		}
 	}
 
-	private static List<PostalAddress> createLabels(int count)
+	private static List<AddressLabel> createLabels(int count)
 			throws JsonParseException, JsonMappingException, IOException {
-		return new Generator<PostalAddress>() {
-			protected PostalAddress createObject(TestData testData) {
+		return new Generator<AddressLabel>() {
+			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
 				String[] country = testData.randomArray("country");
-				return new PostalAddressStub(testData.random("firstname"),
+				return new AddressLabelStub(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
@@ -306,7 +309,7 @@ public class AddressLabelsInPDFFormatTest {
 			String addressline3, String postalCode, String postOffice,
 			String region, String country, String countryCode) throws Exception {
 		return TestUtil.generateAddressLabelsPDF(
-				Arrays.asList((PostalAddress) new PostalAddressStub(firstName,
+				Arrays.asList((AddressLabel) new AddressLabelStub(firstName,
 						lastName, addressline, addressline2, addressline3,
 						postalCode, postOffice, region, country, countryCode)))
 				.get(0);

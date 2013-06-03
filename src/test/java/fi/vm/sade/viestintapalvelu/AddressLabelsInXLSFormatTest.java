@@ -15,8 +15,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
-import fi.vm.sade.viestintapalvelu.test.stub.PostalAddressStub;
+import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelStub;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)
@@ -25,17 +24,15 @@ public class AddressLabelsInXLSFormatTest {
 	public static TomcatRule tomcat = new TomcatRule();
 
 	public static class WhenCreatingLabelForValidForeignAddress {
-
-		private static PostalAddress label = Fixture.address;
+		private static AddressLabel label = new AddressLabelStub(
+				Fixture.address);
 		private static List<String> otsikko;
 		private static List<String> osoite;
 
 		@BeforeClass
 		public static void setUp() throws Exception {
 			List<List<String>> responseBody = TestUtil
-					.generateAddressLabelsXLS(TestUtil
-							.addressLabelListFromPostalAddressList(Arrays
-									.asList(label)));
+					.generateAddressLabelsXLS(Arrays.asList(label));
 			otsikko = responseBody.get(0);
 			osoite = responseBody.get(1);
 		}
@@ -244,8 +241,7 @@ public class AddressLabelsInXLSFormatTest {
 
 		@BeforeClass
 		public static void setUp() throws Exception {
-			batch = TestUtil
-					.addressLabelListFromPostalAddressList(createLabels(1000));
+			batch = createLabels(1000);
 			responseBody = TestUtil.generateAddressLabelsXLS(batch);
 		}
 
@@ -256,13 +252,13 @@ public class AddressLabelsInXLSFormatTest {
 		}
 	}
 
-	private static List<PostalAddress> createLabels(int count)
+	private static List<AddressLabel> createLabels(int count)
 			throws JsonParseException, JsonMappingException, IOException {
-		return new Generator<PostalAddress>() {
-			protected PostalAddress createObject(TestData testData) {
+		return new Generator<AddressLabel>() {
+			protected AddressLabel createObject(TestData testData) {
 				String postOffice = testData.random("postOffice");
 				String[] country = testData.randomArray("country");
-				return new PostalAddressStub(testData.random("firstname"),
+				return new AddressLabelStub(testData.random("firstname"),
 						testData.random("lastname"), testData.random("street")
 								+ " " + testData.random("houseNumber"), "", "",
 						postOffice.substring(0, postOffice.indexOf(" ")),
@@ -276,11 +272,9 @@ public class AddressLabelsInXLSFormatTest {
 			String lastName, String addressline, String addressline2,
 			String addressline3, String postalCode, String city, String region,
 			String country, String countryCode) throws Exception {
-		PostalAddress label = new PostalAddressStub(firstName, lastName,
+		AddressLabel label = new AddressLabelStub(firstName, lastName,
 				addressline, addressline2, addressline3, postalCode, city,
 				region, country, countryCode);
-		return TestUtil.generateAddressLabelsXLS(
-				TestUtil.addressLabelListFromPostalAddressList(Arrays
-						.asList(label))).get(1);
+		return TestUtil.generateAddressLabelsXLS(Arrays.asList(label)).get(1);
 	}
 }
