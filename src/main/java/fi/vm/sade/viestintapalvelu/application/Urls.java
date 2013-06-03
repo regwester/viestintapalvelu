@@ -10,6 +10,7 @@ public class Urls {
 	public static final String HYVAKSYMISKIRJE_RESOURCE_PATH = "hyvaksymiskirje";
 	public static final String JALKIOHJAUSKIRJE_RESOURCE_PATH = "jalkiohjauskirje";
 
+	// FIXME vpeurala 3.6.2013: This RestServer/Localhost stuff should be in test
 	public static RestServer localhost() {
 		return new Localhost();
 	}
