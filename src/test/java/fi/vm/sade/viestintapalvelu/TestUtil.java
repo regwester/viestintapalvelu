@@ -44,6 +44,9 @@ import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.domain.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
+import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelStub;
+import fi.vm.sade.viestintapalvelu.test.stub.HyvaksymiskirjeBatchStub;
+import fi.vm.sade.viestintapalvelu.test.stub.JalkiohjauskirjeBatchStub;
 
 public class TestUtil {
 	private final static String ADDRESS_LABEL_PDF_URL = "http://localhost:8080/api/v1/addresslabel/pdf";
@@ -111,11 +114,7 @@ public class TestUtil {
 
 	public static List<List<String>> generateHyvaksymiskirje(
 			final Hyvaksymiskirje kirje) throws Exception {
-		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch() {
-			public java.util.List<Hyvaksymiskirje> getLetters() {
-				return Arrays.asList(kirje);
-			};
-		};
+		HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatchStub(kirje);
 		return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
 	}
 

@@ -15,6 +15,7 @@ import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
+import fi.vm.sade.viestintapalvelu.test.stub.PostalAddressStub;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
 @RunWith(Enclosed.class)

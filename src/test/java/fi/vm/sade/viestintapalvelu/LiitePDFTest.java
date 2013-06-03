@@ -14,6 +14,8 @@ import org.junit.runner.RunWith;
 
 import fi.vm.sade.viestintapalvelu.domain.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
+import fi.vm.sade.viestintapalvelu.test.stub.AddressLabelStub;
+import fi.vm.sade.viestintapalvelu.test.stub.JalkiohjauskirjeStub;
 
 @RunWith(Enclosed.class)
 public class LiitePDFTest {

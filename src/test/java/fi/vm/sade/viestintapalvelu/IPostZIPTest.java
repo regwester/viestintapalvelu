@@ -24,6 +24,7 @@ import org.junit.Test;
 
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
+import fi.vm.sade.viestintapalvelu.test.stub.JalkiohjauskirjeStub;
 
 public class IPostZIPTest {
 	@ClassRule
