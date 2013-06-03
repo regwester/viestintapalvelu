@@ -13,7 +13,6 @@ import org.apache.commons.lang.StringEscapeUtils;
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.application.Constants;
 import fi.vm.sade.viestintapalvelu.domain.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddress;
 import fi.vm.sade.viestintapalvelu.domain.address.PostalAddressDecorator;
@@ -24,6 +23,8 @@ import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.domain.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 public class PdfBuilder {
+	// TODO vpeurala 3.6.2013: Make this configurable
+	private static final int IPOST_BATCH_LIMIT = 10;
 	private DocumentBuilder documentBuilder;
 	private LiiteBuilder liiteBuilder;
 
@@ -41,15 +42,14 @@ public class PdfBuilder {
 	public byte[] printZIP(JalkiohjauskirjeBatch batch) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		Map<String, byte[]> subZips = new HashMap<String, byte[]>();
-		List<JalkiohjauskirjeBatch> subBatches = batch
-				.split(Constants.IPOST_BATCH_LIMIT);
+		List<JalkiohjauskirjeBatch> subBatches = batch.split(IPOST_BATCH_LIMIT);
 		for (int i = 0; i < subBatches.size(); i++) {
 			JalkiohjauskirjeBatch subBatch = subBatches.get(i);
 			MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
 			Map<String, Object> context = createDataContext(pdf
 					.getDocumentMetadata());
-			byte[] ipostXml = documentBuilder.applyTextTemplate(
-					Constants.IPOST_TEMPLATE, context);
+			byte[] ipostXml = documentBuilder.applyTextTemplate("/ipost.xml",
+					context);
 			Map<String, byte[]> documents = new HashMap<String, byte[]>();
 			documents.put("jalkiohjauskirje.pdf", pdf.toByteArray());
 			documents.put("jalkiohjauskirje.xml", ipostXml);
@@ -63,14 +63,13 @@ public class PdfBuilder {
 			DocumentException {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Hyvaksymiskirje kirje : batch.getLetters()) {
-			String kirjeTemplateName = PdfBuilder
-					.resolveTemplateName(Constants.HYVAKSYMISKIRJE_TEMPLATE,
-							kirje.getLanguageCode());
+			String kirjeTemplateName = PdfBuilder.resolveTemplateName(
+					"/hyvaksymiskirje_{LANG}.html", kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
 					kirje.getPostalAddress(), kirje.getKoulu(),
 					kirje.getKoulutus());
 			String liiteTemplateName = PdfBuilder.resolveTemplateName(
-					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
+					"/liite_{LANG}.html", kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getPostalAddress(), frontPage,
@@ -84,12 +83,11 @@ public class PdfBuilder {
 		List<PdfDocument> source = new ArrayList<PdfDocument>();
 		for (Jalkiohjauskirje kirje : batch.getLetters()) {
 			String kirjeTemplateName = PdfBuilder.resolveTemplateName(
-					Constants.JALKIOHJAUSKIRJE_TEMPLATE,
-					kirje.getLanguageCode());
+					"/jalkiohjauskirje_{LANG}.html", kirje.getLanguageCode());
 			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
 					kirje.getPostalAddress());
 			String liiteTemplateName = PdfBuilder.resolveTemplateName(
-					Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
+					"/liite_{LANG}.html", kirje.getLanguageCode());
 			byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
 					kirje.getTulokset());
 			source.add(new PdfDocument(kirje.getPostalAddress(), frontPage,
