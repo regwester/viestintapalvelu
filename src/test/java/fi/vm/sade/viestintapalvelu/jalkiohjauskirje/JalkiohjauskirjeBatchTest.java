@@ -37,21 +37,21 @@ public class JalkiohjauskirjeBatchTest {
 
 	@Test
 	public void splitWhenLimitIsMoreThanNumberOfLetters() {
-		afterSplit = original.split(10000, "dum");
+		afterSplit = original.split(10000);
 		assertEquals(1, afterSplit.size());
 		assertEquals(original.getLetters(), afterSplit.get(0).getLetters());
 	}
 
 	@Test
 	public void splitWhenLimitIsEqualToNumberOfLetters() {
-		afterSplit = original.split(9999, "dum");
+		afterSplit = original.split(9999);
 		assertEquals(1, afterSplit.size());
 		assertEquals(original.getLetters(), afterSplit.get(0).getLetters());
 	}
 
 	@Test
 	public void splitWhenLimitIsLessToNumberOfLetters() {
-		afterSplit = original.split(1000, "dum");
+		afterSplit = original.split(1000);
 		assertEquals(10, afterSplit.size());
 		for (int i = 0; i < 10; i++) {
 			JalkiohjauskirjeBatch current = afterSplit.get(i);
@@ -69,7 +69,7 @@ public class JalkiohjauskirjeBatchTest {
 	public void splitAlsoWorksWithSubclasses() {
 		JalkiohjauskirjeBatch ipostBatch = new JalkiohjauskirjeBatchStub(
 				letters);
-		afterSplit = ipostBatch.split(1000, "dum");
+		afterSplit = ipostBatch.split(1000);
 		for (int i = 0; i < 10; i++) {
 			assertTrue(JalkiohjauskirjeBatch.class.isAssignableFrom(afterSplit
 					.get(i).getClass()));

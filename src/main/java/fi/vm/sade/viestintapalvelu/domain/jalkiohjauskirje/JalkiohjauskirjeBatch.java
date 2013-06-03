@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class JalkiohjauskirjeBatch {
-	public List<JalkiohjauskirjeBatch> split(int limit, String dummy) {
+	public List<JalkiohjauskirjeBatch> split(int limit) {
 		List<JalkiohjauskirjeBatch> batches = new ArrayList<JalkiohjauskirjeBatch>();
 		split(getLetters(), batches, limit);
 		return batches;

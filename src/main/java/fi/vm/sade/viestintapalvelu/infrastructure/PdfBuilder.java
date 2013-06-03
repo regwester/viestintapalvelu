@@ -41,8 +41,8 @@ public class PdfBuilder {
 	public byte[] printZIP(JalkiohjauskirjeBatch batch) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
 		Map<String, byte[]> subZips = new HashMap<String, byte[]>();
-		List<JalkiohjauskirjeBatch> subBatches = batch.split(
-				Constants.IPOST_BATCH_LIMIT, "dum");
+		List<JalkiohjauskirjeBatch> subBatches = batch
+				.split(Constants.IPOST_BATCH_LIMIT);
 		for (int i = 0; i < subBatches.size(); i++) {
 			JalkiohjauskirjeBatch subBatch = subBatches.get(i);
 			MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);

@@ -54,7 +54,6 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 	public Response zip(JalkiohjauskirjeBatch input,
 			@Context HttpServletRequest request) throws IOException,
 			DocumentException, NoSuchAlgorithmException {
-		input.split(3, "foo");
 		byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
 		String documentId = downloadCache.addDocument(new Download(
 				"application/zip", "jalkiohjauskirje.zip", zip));
