@@ -17,7 +17,7 @@
 		<property name="ssh.keypass" value=""/>
 		
         <echo>Stop Tomcat</echo>
-		<sshexec command="/data00/oph/tomcat/ctltomcat ${oph.name} stop"
+		<sshexec command="/data00/oph/tomcat/ophtomcat ${oph.name} stop"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
@@ -37,10 +37,9 @@
         <echo>Copy new viestintapalvelu.war</echo>
 		  <scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
                keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}" >
-			 <!-- jos erillinen deploy scripti, talle ei nyt tarvetta.<fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/${pom.version}">-->
-			 <!-- tee deploy jokaisen buildin jalkeen -->
-			 <fileset dir="target">
-				<include name="*.war"/>
+			   
+			<fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/">
+				<include name="*-SNAPSHOT.war"/>
 			</fileset>
 		</scp>
 
@@ -56,7 +55,7 @@
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
         <echo>Start Tomcat</echo>
-		<sshexec command="/data00/oph/tomcat/ctltomcat ${oph.name} start"
+		<sshexec command="/data00/oph/tomcat/ophtomcat ${oph.name} start"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
 
