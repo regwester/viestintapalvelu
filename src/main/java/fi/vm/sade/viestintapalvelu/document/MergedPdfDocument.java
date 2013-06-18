@@ -68,13 +68,4 @@ public class MergedPdfDocument {
         document.close();
         output.close();
     }
-
-    public byte[] md5() throws NoSuchAlgorithmException, IOException {
-        MessageDigest md = MessageDigest.getInstance("MD5");
-        InputStream is = new ByteArrayInputStream(toByteArray());
-        DigestInputStream dis = new DigestInputStream(is, md);
-        IOUtils.toByteArray(dis);
-        return md.digest();
-    }
-
 }

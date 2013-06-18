@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu;
 
+import com.google.common.base.Joiner;
+import com.google.common.base.Splitter;
 import com.google.inject.Inject;
 import fi.vm.sade.viestintapalvelu.download.DownloadResource;
 
@@ -42,13 +44,6 @@ public class AsynchronousResource {
     }
 
     private static String chompSlashes(final String input) {
-        String processed = input.trim();
-        while (processed.startsWith("/")) {
-            processed = processed.substring(1);
-        }
-        while (processed.endsWith("/")) {
-            processed = processed.substring(0, processed.length() - 1);
-        }
-        return processed;
+        return Joiner.on("/").skipNulls().join(Splitter.on('/').omitEmptyStrings().trimResults().split(input));
     }
 }
