@@ -1,51 +1,50 @@
 package fi.vm.sade.viestintapalvelu;
 
-import java.io.InputStream;
-
 import org.xhtmlrenderer.pdf.ITextOutputDevice;
 import org.xhtmlrenderer.pdf.ITextUserAgent;
+
+import java.io.InputStream;
 
 /**
  * If on a template external file is referenced, flying saucer uses user agent to load the referenced
  * resource. For example:
- * 
- *  <link rel="stylesheet" type="text/css" href="classpath:/ipost_pdf.css"/> 
- *
- *	See also: https://svn.atlassian.com/svn/public/atlassian/vendor/xhtmlrenderer-8.0/tags/8.3-atlassian/www/r7/users-guide-r7.html#xil_17
- *
+ * <p/>
+ * <link rel="stylesheet" type="text/css" href="classpath:/ipost_pdf.css"/>
+ * <p/>
+ * See also: https://svn.atlassian.com/svn/public/atlassian/vendor/xhtmlrenderer-8.0/tags/8.3-atlassian/www/r7/users-guide-r7.html#xil_17
  */
 public class OPHUserAgent extends ITextUserAgent {
 
-	private static final String classpathScheme = "classpath";
-	private static final String schemeSeparator = ":";
+    private static final String classpathScheme = "classpath";
+    private static final String schemeSeparator = ":";
 
-	public OPHUserAgent(ITextOutputDevice outputDevice) {
-		super(outputDevice);
-	}
+    public OPHUserAgent(ITextOutputDevice outputDevice) {
+        super(outputDevice);
+    }
 
-	@Override
-	protected InputStream resolveAndOpenStream(String uri) {
-		if (isClasspathResource(uri)) {
-			return getClass()
-					.getResourceAsStream(toPlainClasspathResource(uri));
-		} else {
-			return super.resolveAndOpenStream(uri);
-		}
-	}
+    @Override
+    protected InputStream resolveAndOpenStream(String uri) {
+        if (isClasspathResource(uri)) {
+            return getClass()
+                    .getResourceAsStream(toPlainClasspathResource(uri));
+        } else {
+            return super.resolveAndOpenStream(uri);
+        }
+    }
 
-	@Override
-	public String resolveURI(String uri) {
-		if (isClasspathResource(uri)) {
-			return uri;
-		}
-		return super.resolveURI(uri);
-	}
+    @Override
+    public String resolveURI(String uri) {
+        if (isClasspathResource(uri)) {
+            return uri;
+        }
+        return super.resolveURI(uri);
+    }
 
-	private boolean isClasspathResource(String uri) {
-		return uri != null && uri.startsWith(classpathScheme + schemeSeparator);
-	}
+    private boolean isClasspathResource(String uri) {
+        return uri != null && uri.startsWith(classpathScheme + schemeSeparator);
+    }
 
-	private String toPlainClasspathResource(String uri) {
-		return uri.replace(classpathScheme + schemeSeparator, "");
-	}
+    private String toPlainClasspathResource(String uri) {
+        return uri.replace(classpathScheme + schemeSeparator, "");
+    }
 }

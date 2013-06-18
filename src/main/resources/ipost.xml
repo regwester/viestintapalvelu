@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<lb:LetterBundle 
-	schemaVersion="v1x0" 
-	xsi:schemaLocation="urn:itella.com:/schema/ipost/letterbundle/v1x0 LetterBundle_V1x0.xsd" 
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
-	xmlns:lb="urn:itella.com:/schema/ipost/letterbundle/v1x0">
-	
-	<lb:Bundle>
-		<lb:BundleCommon isTest="true">
-			<lb:Sender contact="laura.alalaakkola@oph.fi"/>
-			<lb:StdBundleProcessing 
-				customerId="P10165"
-				password="5738"
-				serviceFunction="0"
-				electronicArchiving="T"
-				letterClass="1"
-				envelope="S"
-				paper="0"
-				fileFormat="0"
-				departmentClassification="false"
-				isDuplex="true"/>
-			<lb:DeliveryChannelControl denyElectronicCopyDelivery="false" denyElectronicOnlyDelivery="true"/>
-			<lb:ExternalFile fileName="jalkiohjauskirje.pdf"></lb:ExternalFile>
-		</lb:BundleCommon>
-		#foreach( $metadata in $metadataList )
-		<lb:Letter>
-			<lb:LetterMeta>
-				<lb:Location startPage="$metadata.startPage" pages="$metadata.pages"/>
-				<lb:Recipient>
-					<lb:Address>
-						<lb:Eu1 name="$metadata.addressLabel.firstName $metadata.addressLabel.lastName" 
-							address="$metadata.addressLabel.addressline"
-							postalCode="$metadata.addressLabel.postalCode"
-							city="$metadata.addressLabel.city" 
-							countryCode="$metadata.addressLabel.countryCode"/>
-					</lb:Address>
-				</lb:Recipient>
-			</lb:LetterMeta>
-		</lb:Letter>
-		#end
-	</lb:Bundle>
+<lb:LetterBundle
+        schemaVersion="v1x0"
+        xsi:schemaLocation="urn:itella.com:/schema/ipost/letterbundle/v1x0 LetterBundle_V1x0.xsd"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns:lb="urn:itella.com:/schema/ipost/letterbundle/v1x0">
+
+    <lb:Bundle>
+        <lb:BundleCommon isTest="true">
+            <lb:Sender contact="laura.alalaakkola@oph.fi"/>
+            <lb:StdBundleProcessing
+                    customerId="P10165"
+                    password="5738"
+                    serviceFunction="0"
+                    electronicArchiving="T"
+                    letterClass="1"
+                    envelope="S"
+                    paper="0"
+                    fileFormat="0"
+                    departmentClassification="false"
+                    isDuplex="true"/>
+            <lb:DeliveryChannelControl denyElectronicCopyDelivery="false" denyElectronicOnlyDelivery="true"/>
+            <lb:ExternalFile fileName="jalkiohjauskirje.pdf"></lb:ExternalFile>
+        </lb:BundleCommon>
+        #foreach( $metadata in $metadataList )
+        <lb:Letter>
+            <lb:LetterMeta>
+                <lb:Location startPage="$metadata.startPage" pages="$metadata.pages"/>
+                <lb:Recipient>
+                    <lb:Address>
+                        <lb:Eu1 name="$metadata.addressLabel.firstName $metadata.addressLabel.lastName"
+                                address="$metadata.addressLabel.addressline"
+                                postalCode="$metadata.addressLabel.postalCode"
+                                city="$metadata.addressLabel.city"
+                                countryCode="$metadata.addressLabel.countryCode"/>
+                    </lb:Address>
+                </lb:Recipient>
+            </lb:LetterMeta>
+        </lb:Letter>
+        #end
+    </lb:Bundle>
 </lb:LetterBundle>

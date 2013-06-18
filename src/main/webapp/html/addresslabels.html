@@ -1,53 +1,60 @@
 <div ng-controller='OsoitetarratController'>
-	<input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi" maxlength="3">
-	<div class="run-action btn-group">
-		<button class="btn" ng-click="generatePDF()">PDF</button>
-		<button class="btn" ng-click="generateXLS()">XLS</button>
-	</div>
-	<table class="table">
-		<tr>
-			<th>Nimi</th>
-			<th>Osoiterivit</th>
-			<th>Postinumero</th>
-			<th>Postitoimipaikka</th>
-			<th>Maakunta</th>
-			<th>Maa</th>
-			<th>Maakoodi</th>
-			<th></th>
-		</tr>
-		<tr>
-			<td>
-				<input class="input-medium input-pile" type="text" ng-model="firstName" placeholder="Etunimi">
-				<input class="input-medium" type="text" ng-model="lastName" placeholder="Sukunimi">
-			</td>
-			<td>
-				<textarea class="input-medium input-pile" ng-model="addressline" placeholder="Osoiterivi"></textarea>
-				<input class="input-medium input-pile" type="text" ng-model="addressline2" placeholder="Osoiterivi">
-				<input class="input-medium" type="text" ng-model="addressline3" placeholder="Osoiterivi">
-			</td>
-			<td><input class="input-medium" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5"></td>
-			<td><input class="input-medium" type="text" ng-model="city" placeholder="Postitoimipaikka"></td>
-			<td><input class="input-medium" type="text" ng-model="region" placeholder="Maakunta"></td>
-			<td><input class="input-medium" type="text" ng-model="country" placeholder="Maa"></td>
-			<td><input class="input-small" type="text" ng-model="countryCode" placeholder="Maakoodi"></td>
-			<td class="inline-operation"><button class="btn btn-small" ng-click="addLabel()">Lisää</button></td>
-		</tr>
-		<tr ng-repeat="label in addressLabels">
-			<td>
-				<input class="input-medium input-pile" type="text"  ng-model="label.firstName"/>
-				<input class="input-medium" type="text"  ng-model="label.lastName"/>
-			</td>
-			<td>
-				<textarea class="input-medium input-pile" ng-model="label.addressline"></textarea>
-				<input class="input-medium input-pile" type="text"  ng-model="label.addressline2"/>
-				<input class="input-medium" type="text"  ng-model="label.addressline3"/>
-			</td>
-			<td><input class="input-medium" type="text"  ng-model="label.postalCode"/></td>
-			<td><input class="input-medium" type="text" ng-model="label.city"/></td>
-			<td><input class="input-medium" type="text" ng-model="label.region"/></td>
-			<td><input class="input-medium" type="text" ng-model="label.country"/></td>
-			<td><input class="input-small" type="text" ng-model="label.countryCode"></td>
-			<td class="inline-operation"><button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button></td>
-		</tr>
-	</table>
+    <input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi"
+           maxlength="3">
+
+    <div class="run-action btn-group">
+        <button class="btn" ng-click="generatePDF()">PDF</button>
+        <button class="btn" ng-click="generateXLS()">XLS</button>
+    </div>
+    <table class="table">
+        <tr>
+            <th>Nimi</th>
+            <th>Osoiterivit</th>
+            <th>Postinumero</th>
+            <th>Postitoimipaikka</th>
+            <th>Maakunta</th>
+            <th>Maa</th>
+            <th>Maakoodi</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>
+                <input class="input-medium input-pile" type="text" ng-model="firstName" placeholder="Etunimi">
+                <input class="input-medium" type="text" ng-model="lastName" placeholder="Sukunimi">
+            </td>
+            <td>
+                <textarea class="input-medium input-pile" ng-model="addressline" placeholder="Osoiterivi"></textarea>
+                <input class="input-medium input-pile" type="text" ng-model="addressline2" placeholder="Osoiterivi">
+                <input class="input-medium" type="text" ng-model="addressline3" placeholder="Osoiterivi">
+            </td>
+            <td><input class="input-medium" type="text" ng-model="postalCode" placeholder="Postinumero" maxlength="5">
+            </td>
+            <td><input class="input-medium" type="text" ng-model="city" placeholder="Postitoimipaikka"></td>
+            <td><input class="input-medium" type="text" ng-model="region" placeholder="Maakunta"></td>
+            <td><input class="input-medium" type="text" ng-model="country" placeholder="Maa"></td>
+            <td><input class="input-small" type="text" ng-model="countryCode" placeholder="Maakoodi"></td>
+            <td class="inline-operation">
+                <button class="btn btn-small" ng-click="addLabel()">Lisää</button>
+            </td>
+        </tr>
+        <tr ng-repeat="label in addressLabels">
+            <td>
+                <input class="input-medium input-pile" type="text" ng-model="label.firstName"/>
+                <input class="input-medium" type="text" ng-model="label.lastName"/>
+            </td>
+            <td>
+                <textarea class="input-medium input-pile" ng-model="label.addressline"></textarea>
+                <input class="input-medium input-pile" type="text" ng-model="label.addressline2"/>
+                <input class="input-medium" type="text" ng-model="label.addressline3"/>
+            </td>
+            <td><input class="input-medium" type="text" ng-model="label.postalCode"/></td>
+            <td><input class="input-medium" type="text" ng-model="label.city"/></td>
+            <td><input class="input-medium" type="text" ng-model="label.region"/></td>
+            <td><input class="input-medium" type="text" ng-model="label.country"/></td>
+            <td><input class="input-small" type="text" ng-model="label.countryCode"></td>
+            <td class="inline-operation">
+                <button ng-click="removeLabel($index)" class="inline-operation btn btn-small">Poista</button>
+            </td>
+        </tr>
+    </table>
 </div>
