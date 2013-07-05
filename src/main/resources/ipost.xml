@@ -7,10 +7,10 @@
 
     <lb:Bundle>
         <lb:BundleCommon isTest="true">
-            <lb:Sender contact="laura.alalaakkola@oph.fi"/>
+            <lb:Sender contact="jaana.saha@oph.fi, +358 29 533 1323"/>
             <lb:StdBundleProcessing
-                    customerId="P10165"
-                    password="5738"
+                    customerId="113512"
+                    password="7989"
                     serviceFunction="0"
                     electronicArchiving="T"
                     letterClass="1"

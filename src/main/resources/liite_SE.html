@@ -10,57 +10,57 @@
 <body>
 
 <div class="footer">
-    <div class="heading"><b>ALUEHALLINTOVIRASTOJEN OSOITTEET:</b></div>
+    <div class="heading"><b>REGIONFÖRVALTNINGSVERKENS ADRESSEN:</b></div>
     <div>
-        <div>Etelä-Suomen aluehallintovirasto</div>
-        <div>PL 110</div>
-        <div>00521 Helsinki</div>
+        <div>Regionförvaltningsverket i Södra Finland</div>
+        <div>PB 110</div>
+        <div>00521 Helsingfors</div>
     </div>
     <div>
-        <div>Itä-Suomen aluehallintovirasto</div>
-        <div>PL 50</div>
-        <div>50101 Mikkeli</div>
+        <div>Regionförvaltningsverket i Östra Finland</div>
+        <div>PB 50</div>
+        <div>50101 S:t Michel</div>
     </div>
     <div>
-        <div>Lounais-Suomen aluehallintovirasto</div>
-        <div>PL 22</div>
-        <div>20801 Turku</div>
+        <div>Regionförvaltningsverket i Sydvästra Finland</div>
+        <div>PB 22</div>
+        <div>20801 Åbo</div>
     </div>
     <div>
-        <div>Länsi- ja Sisä-Suomen aluehallintovirasto</div>
-        <div>PL 200</div>
-        <div>65101 Vaasa</div>
+        <div>Regionförvaltningsverket i Västra och Inre Finland</div>
+        <div>PB 200</div>
+        <div>65101 Vasa</div>
     </div>
     <div>
-        <div>Pohjois-Suomen aluehallintovirasto</div>
-        <div>PL 293</div>
-        <div>90101 Oulu</div>
+        <div>Regionförvaltningsverket i Norra Finland</div>
+        <div>PB 293</div>
+        <div>90101 Uleåborg</div>
     </div>
     <div>
-        <div>Lapin aluehallintovirasto</div>
-        <div>PL 8002</div>
+        <div>Regionförvaltningsverket i Lappland</div>
+        <div>PB 8002</div>
         <div>96101 Rovaniemi</div>
     </div>
 </div>
 
 <div class="liiteSisalto">
     <p>
-        <b>TILANTEESI SYKSYN 2013 YHTEISHAUSSA</b>
+        <b>DIN SITUATION I GEMENSAM ANSÖKAN HÖSTEN 2013</b>
     </p>
 
     <table>
         <tr>
-            <th class="hakutoive">Hakutoiveesi ja prioriteetti</th>
-            <th>Hyväksytyt / kaikki hakeneet</th>
-            <th>Omat pisteesi / Alin hyväksytty pistemäärä</th>
+            <th class="hakutoive">Dina ansökningsönskemål och prioritet</th>
+            <th>Antagna / alla sökande</th>
+            <th>Dina poäng / Lägsta godkända poängtal</th>
             #if($columns.paasyJaSoveltuvuuskoe)
-            <th>Pääsy- ja soveltuvuuskokeen tulos</th>
+            <th>Resultat i inträdes- och lämplighetsprov</th>
             #end
             #if($columns.valinnanTulos)
-            <th>Valinnan tulos</th>
+            <th>Urvalsresultat</th>
             #end
             #if($columns.selite)
-            <th>Selite</th>
+            <th>Förklaring</th>
             #end
         </tr>
         #foreach( $haku in $tulokset )
@@ -83,81 +83,74 @@
     </table>
 
     <p>
-        <b>Näin luet taulukkoa:</b>
+        <b>Så här läser du tabellen:</b>
     </p>
 
     <p>
-        <b>Hakutoiveesi:</b> Kaikki hakutoiveesi hakemukseen merkitsemässäsi järjestyksessä.
+        <b>Dina ansökningsönskemål:</b> Alla dina ansökningsönskemål i den ordning du placerat dem.
     </p>
 
     <p>
-        <b>Hyväksytyt ja hakeneet:</b> Kyseiseen koulutukseen hyväksyttyjen ja kaikkien hakeneiden määrä.
+        <b>Antagna och sökande:</b> Antalet antagna till utbildningen och alla sökande sammanlagt.
     </p>
 
     <p>
-        <b>Omat pisteesi ja alin hyväksytty pistemäärä:</b> Kokonaispistemäärä koostuu useasta eri osasta.
-        Pisteyttävät tekijät löydät Opintopolusta (opintopolku.fi/valintaperusteet). Alin hyväksytty pistemäärä
-        on alin pistemäärä, jolla koulutukseen on hyväksytty. Pistemäärä ei yksin vaikuta valinnan tulokseen,
-        sillä esimerkiksi hylätty kielikoetulos voi estää valinnan pisteistä huolimatta.
+        <b>Dina poäng och lägsta godkända poängtal:</b> Det sammanlagda poängtalet består av olika delar. 
+        Du hittar de faktorer som poängsätts i Studieinfo (studieinfo.fi/urvalsgrunder). Det lägsta 
+        godkända poängtalet är det lägsta poängtalet med vilket en sökande har blivit antagen till 
+        utbildningen. Urvalsresultatet påverkas inte endast av antalet poäng, eftersom till exempel 
+        ett underkänt resultat i språkprovet kan vara hinder för antagning oberoende av poängtalet.
     </p>
 
     <p>
-        <b>Pääsy- ja soveltuvuuskokeen tulos:</b> Jos hakemaasi koulutukseen on järjestetty pääsy- ja soveltuvuuskoe,
-        johon olet osallistunut, tässä on ilmoitettu kokeesta saamasi pistemäärä. Jos et ole osallistunut kokeeseen tai
-        tuloksesi on hylätty, et voi tulla valituksi koulutukseen. Jos olet hakenut koulutukseen ulkomaisella
-        todistuksella
-        tai ilman päättötodistusta, olet hakenut harkintaan perustuvassa valinnassa eikä koetulos näy taulukossa.
-        Lisätietoja
-        tuloksista saat suoraan siitä oppilaitoksesta, jonka järjestämään kokeeseen osallistuit.
+        <b>Resultat i inträdes- och lämplighetsprovet:</b> Om det ordnades ett inträdes- och 
+        lämplighetsprov till utbildningen till vilken du sökte och du har deltagit i provet, anges 
+        ditt poängtal i provet här. Om du inte har deltagit i provet eller ditt resultat har underkänts, 
+        kan du inte bli antagen till utbildningen. Om du har sökt till utbildningen med utländskt betyg 
+        eller utan avgångsbetyg, har du sökt via antagning enligt prövning och då syns ditt provresultat 
+        inte i tabellen. Du får ytterligare information om resultaten från läroanstalten som ordnade 
+        provet i vilket du deltog.
     </p>
 
     <p>
-        <b>Valinnan tulos:</b> Valinnan tulos voi olla hyväksytty, harkinnanvaraisesti hyväksytty, varasijalla, hylätty
-        tai
-        peruuntunut.
+        <b>Urvalsresultat:</b> Urvalsresultatet kan vara antagen, antagen enligt prövning, reservplats, 
+        underkänd eller annullerad.
     </p>
 
     <p>
-        <b>Selite:</b> Selitteessä kerrotaan perustelut valinnan tulokseen. Lisätietoja saat suoraan oppilaitoksesta,
-        johon
-        olet hakenut.
+        <b>Förklaring:</b> I förklaringen motiveras urvalsresultatet. Du får ytterligare information 
+        från läroanstalten till vilken du sökte. 
     </p>
 
     <p>
-        <b>Tasapistetilanteet:</b> Ammatilliseen koulutukseen hakeneet asetetaan tasapistetilanteessa
-        paremmuusjärjestykseen
-        seuraavin perustein:
+        <b>Lika många poäng:</b> Sökande till yrkesutbildning med samma poängtal placeras i ordning 
+        enligt följande grunder:
     </p>
     <ol>
-        <li>hakutoivejärjestys</li>
-        <li>mahdollisesta pääsy- tai soveltuvuuskokeesta saatava pistemäärä</li>
-        <li>yleinen koulumenestys</li>
-        <li>painotettavat arvosanat</li>
+        <li>ordning för ansökningsönskemål</li>
+        <li>poängtal i eventuellt inträdes- eller lämplighetsprov</li>
+        <li>allmän skolframgång</li>
+        <li>betonade vitsord</li>
     </ol>
     <p>
-        Tämän jälkeen tasapisteisiin päätyneet hakijat otetaan sattumanvaraisessa järjestyksessä.
+        Efter detta antas sökande med samma poängtal i slumpmässig ordning.
     </p>
 
     <p>
-        <b>Harkintaan perustuva valinta:</b> Koulutuksen järjestäjä voi erityisen syyn perusteella valita hakijan
-        opiskelijaksi
-        pistemäärästä riippumatta. Koulutuksen järjestäjä käsittelee harkintaan perustuvan valinnan hakemukset ja tekee
-        asiasta
-        päätöksen. Mahdollisia pääsy- ja soveltuvuuskoetuloksia voidaan hyödyntää valinnassa, mutta niitä ei syötetä
-        valintajärjestelmään. Hakija, joka hakee harkintaan perustuvassa valinnassa sosiaalisista syistä tai
-        oppimisvaikeudesta
-        johtuen on mukana myös normaalissa pistelaskentaan perustuvassa valinnassa. Ulkomaisella todistuksella hakeva
-        tai hakija,
-        jolla ei ole päättötodistusta, hakee ainoastaan harkintaan perustuvassa valinnassa. Tuolloin valinnan tulos on
-        joko
-        harkinnanvaraisesti hyväksytty tai hylätty.
+        <b>Antagning enligt prövning:</b> Utbildningsanordnaren kan av särskild orsak anta en sökande 
+        som studerande oberoende av poängtal. Utbildningsanordnaren behandlar ansökningarna i antagningen 
+        enligt prövning och fattar beslut i saken. Eventuella inträdes- och lämplighetsprov kan utnyttjas 
+        i urvalet, men de matas inte in i urvalssystemet. Sökande som av sociala skäl eller på grund av 
+        inlärningssvårigheter söker via antagning enligt prövning är också med i den normala antagningen 
+        på basis av poäng. Sökande som söker med utländskt betyg och sökande som saknar avgångsbetyg, 
+        söker enbart via antagning enligt prövning. Resultatet är då antagen enligt prövning eller underkänd.
     </p>
 
     <p>
-        <b>Lisätietoja</b> saat Opintopolusta (opintopolku.fi), josta löydät myös oppilaitosten yhteystiedot. Mikäli
-        tarvitset
-        apua tuloskirjeen tulkitsemisessa tai valintaan liittyy epäselvyyksiä, jotka eivät selviä yhteydenotolla suoraan
-        oppilaitokseen, voit olla yhteydessä Opintopolun hakuneuvontaan (info@studieinfo.fi tai puh. 029 533 1010).
+        <b>Ytterligare information</b> finns i Studieinfo (studieinfo.fi), där du också hittar 
+        kontaktuppgifter till läroanstalterna. Om du behöver hjälp med att tolka resultatbrevet eller har 
+        frågor om antagningen som du inte får svar på genom att kontakta läroanstalten, kan du kontakta 
+        ansökningstjänsten på Studieinfo (info@studieinfo.fi eller tel. 029 533 1010).
     </p>
 </div>
 
