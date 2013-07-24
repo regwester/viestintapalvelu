@@ -5,12 +5,12 @@
     <parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
-        <version>5.0</version>
+        <version>${project.version}</version>
     </parent>
 
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>5.0</version>
+    <version>5.1</version>
     <packaging>war</packaging>
     <name>OPH Viestintapalvelu</name>
     <url>https://github.com/Opetushallitus/viestintapalvelu</url>
