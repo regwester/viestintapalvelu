@@ -31,7 +31,6 @@ public class DownloadResource {
             return Response.status(Status.BAD_REQUEST).build();
         }
         response.setHeader("Content-Type", download.getContentType());
-        response.setHeader("Access-Control-Allow-Origin", "*");
         response.setHeader("Content-Disposition", "attachment; filename=\"" + download.getFilename() + "\"");
         response.setHeader("Content-Length", String.valueOf(download.toByteArray().length));
         return Response.ok(download.toByteArray()).type(download.getContentType()).build();
