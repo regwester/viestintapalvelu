@@ -11,7 +11,7 @@ public class CORSConfiguration {
 
     private boolean allowCredentials = true;
 
-    private String allowedMethods = "GET, POST, PUT, DELETE, OPTIONS";
+    private String allowedMethods = "GET, POST, PUT, DELETE, OPTIONS, ACCEPTED";
 
     @Inject
     public CORSConfiguration() {
