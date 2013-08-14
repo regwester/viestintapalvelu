@@ -1,46 +1,55 @@
 package fi.vm.sade.viestintapalvelu.document;
 
-import com.lowagie.text.DocumentException;
-import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
-import fi.vm.sade.viestintapalvelu.OPHUserAgent;
-import org.apache.commons.io.IOUtils;
-import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.VelocityEngine;
-import org.xhtmlrenderer.pdf.ITextRenderer;
+import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
-import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
+import org.apache.commons.io.IOUtils;
+import org.apache.velocity.VelocityContext;
+import org.apache.velocity.app.VelocityEngine;
+import org.xhtmlrenderer.pdf.ITextRenderer;
+
+import com.lowagie.text.DocumentException;
+
+import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
+import fi.vm.sade.viestintapalvelu.OPHUserAgent;
+import fi.vm.sade.viestintapalvelu.SLF4JLogChute;
 
 public class DocumentBuilder {
     private VelocityEngine templateEngine = new VelocityEngine();
 
     public DocumentBuilder() {
+        // velocity.log -> slf4j loggerille
+        templateEngine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new SLF4JLogChute());
         templateEngine.init();
     }
 
-    public byte[] xhtmlToPDF(byte[] xhtml) throws DocumentException,
-            IOException {
+    public byte[] xhtmlToPDF(byte[] xhtml) throws DocumentException, IOException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         newITextRenderer(xhtml).createPDF(output);
         return output.toByteArray();
     }
 
-    public byte[] applyTextTemplate(String templateName,
-                                    Map<String, Object> data) throws FileNotFoundException, IOException {
+    public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws FileNotFoundException,
+            IOException {
         byte[] template = readTemplate(templateName);
         StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(data), writer, "LOG",
-                new InputStreamReader(new ByteArrayInputStream(template)));
+        templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(
+                new ByteArrayInputStream(template)));
         return writer.toString().getBytes();
     }
 
-    public MergedPdfDocument merge(List<PdfDocument> input)
-            throws DocumentException, IOException {
+    public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {
         MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
         for (PdfDocument pdfDocument : input) {
             mergedPDFDocument.write(pdfDocument);
@@ -64,8 +73,8 @@ public class DocumentBuilder {
     private ITextRenderer newITextRenderer(byte[] input) {
         ITextRenderer renderer = new ITextRenderer();
         OPHUserAgent uac = new OPHUserAgent(renderer.getOutputDevice());
-        FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(
-                renderer.getSharedContext().getReplacedElementFactory());
+        FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(renderer.getSharedContext()
+                .getReplacedElementFactory());
         uac.setSharedContext(renderer.getSharedContext());
         renderer.getSharedContext().setUserAgentCallback(uac);
         renderer.getSharedContext().setReplacedElementFactory(mref);
@@ -74,12 +83,10 @@ public class DocumentBuilder {
         return renderer;
     }
 
-    private byte[] readTemplate(String templateName)
-            throws FileNotFoundException, IOException {
+    private byte[] readTemplate(String templateName) throws FileNotFoundException, IOException {
         InputStream in = getClass().getResourceAsStream(templateName);
         if (in == null) {
-            throw new FileNotFoundException("Template " + templateName
-                    + " not found");
+            throw new FileNotFoundException("Template " + templateName + " not found");
         }
         return IOUtils.toByteArray(in);
     }
