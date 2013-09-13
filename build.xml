@@ -39,7 +39,7 @@
              keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}">
 
             <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu/${pom.version}">
-                <include name="*-SNAPSHOT.war"/>
+                <include name="*.war"/>
             </fileset>
         </scp>
 
