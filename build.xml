@@ -39,7 +39,7 @@
              keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}">
 
             <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu/${pom.version}">
-                <include name="*-SNAPSHOT.war"/>
+                <include name="*.war"/>
             </fileset>
         </scp>
 
@@ -65,7 +65,7 @@
                  passphrase="${ssh.keypass}" trust="true" failonerror="false"/>
 
         <echo>Wait for service http-url</echo>
-        <waitfor maxwait="3000" checkevery="500">
+        <waitfor maxwait="30000" checkevery="500">
             <http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu"/>
         </waitfor>
         <fail message="App did not come up.  Check your log files, fix and try again.  Good Luck :-).">
