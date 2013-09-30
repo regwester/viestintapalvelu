@@ -2,18 +2,17 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    
 
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>6.1-SNAPSHOT</version>
-	<parent>
+    <version>6.2</version>
+    <parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
-        <version>6.1-SNAPSHOT</version>
+        <version>6.2</version>
     </parent>
-	
-	
+
+
     <packaging>war</packaging>
     <name>OPH Viestintapalvelu</name>
     <url>https://github.com/Opetushallitus/viestintapalvelu</url>
@@ -274,5 +273,6 @@
             </plugins>
         </pluginManagement>
     </build>
+
 </project>
 

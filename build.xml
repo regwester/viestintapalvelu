@@ -8,7 +8,7 @@
             #ant -Dtomcat-host=luokka -Dtomcat-port=8311
         -->
         <property name="oph.name" value="viestintapalvelu"/>
-        <property name="pom.version" value="6.0-SNAPSHOT"/>
+        <property name="pom.version" value="6.2"/>
 
         <property name="maven.repo" value="${user.home}/.m2/repository"/>
         <property name="tomcat.name" value="tomcat_${oph.name}"/>
