@@ -13,7 +13,7 @@ public class Header implements Comparable<Header> {
     private final Date createdAt;
 
     public int compareTo(Header o) {
-        return createdAt.compareTo(o.createdAt);
+        return o.createdAt.compareTo(createdAt);
     }
 
     public Header(String contentType, String filename, String documentId, long size, Date createdAt) {
