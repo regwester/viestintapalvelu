@@ -1,9 +1,14 @@
 package fi.vm.sade.viestintapalvelu.download;
 
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
+
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -21,6 +26,12 @@ public class DownloadResource {
     @Inject
     public DownloadResource(DownloadCache downloadCache) {
         this.downloadCache = downloadCache;
+    }
+
+    @GET
+    @Produces(APPLICATION_JSON)
+    public Collection<Header> available() {
+        return downloadCache.getListOfAvailableDocuments();
     }
 
     @GET
