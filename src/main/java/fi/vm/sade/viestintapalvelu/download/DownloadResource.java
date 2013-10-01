@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.download;
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 import java.util.Collection;
+import java.util.TreeSet;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -31,7 +32,9 @@ public class DownloadResource {
     @GET
     @Produces(APPLICATION_JSON)
     public Collection<Header> available() {
-        return downloadCache.getListOfAvailableDocuments();
+        // Wrapping to TreeSet automatically sorts the elements as TreeSet is
+        // SortedSet. Header is sorted by createdAt value.
+        return new TreeSet<Header>(downloadCache.getListOfAvailableDocuments());
     }
 
     @GET

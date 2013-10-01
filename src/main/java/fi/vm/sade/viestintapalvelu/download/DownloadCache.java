@@ -22,8 +22,8 @@ public class DownloadCache {
     public Collection<Header> getListOfAvailableDocuments() {
         return Collections2.transform(downloads.asMap().entrySet(), new Function<Entry<String, Download>, Header>() {
             public Header apply(Entry<String, Download> o) {
-                return new Header(o.getValue().getContentType(), o.getValue().getFilename(), o.getKey(), dateFormat
-                        .format(o.getValue().getTimestamp()));
+                return new Header(o.getValue().getContentType(), o.getValue().getFilename(), o.getKey(), o.getValue()
+                        .toByteArray().length, o.getValue().getTimestamp());
             }
         });
     }
