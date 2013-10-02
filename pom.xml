@@ -29,10 +29,35 @@
         <xdocreport.version>1.0.1</xdocreport.version>
         <xdocreport100.version>1.0.0</xdocreport100.version>
         <itext.version>2.1.7</itext.version>
+        
     </properties>
 
     <dependencies>
-        <dependency>
+    	<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-core</artifactId>
+    		<exclusions>
+    			<exclusion>
+    				<artifactId>commons-logging</artifactId>
+    				<groupId>commons-logging</groupId>
+    			</exclusion>
+    		</exclusions>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-context</artifactId>
+    	</dependency>
+    	<dependency>
+    		<groupId>org.springframework</groupId>
+    		<artifactId>spring-web</artifactId>
+    	</dependency>
+    	<!-- 
+    	<dependency>
+    		<groupId>com.google.inject.extensions</groupId>
+    		<artifactId>guice-spring</artifactId>
+    		<version>3.0</version>
+    	</dependency>-->
+    	<dependency>
             <groupId>org.apache.tomcat</groupId>
             <artifactId>tomcat-servlet-api</artifactId>
             <version>${tomcat.version}</version>
@@ -139,11 +164,16 @@
             <artifactId>httpclient</artifactId>
             <version>${http.client.version}</version>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-logging</artifactId>
+            		<groupId>commons-logging</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>junit</groupId>
             <artifactId>junit</artifactId>
-            <version>${junit.version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -151,6 +181,12 @@
             <artifactId>pdfbox</artifactId>
             <version>${pdfbox.version}</version>
             <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>commons-logging</artifactId>
+            		<groupId>commons-logging</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>dom4j</groupId>
@@ -181,12 +217,15 @@
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-log4j12</artifactId>
-            <version>1.7.5</version>
         </dependency>
         <dependency>
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-api</artifactId>
-            <version>1.7.5</version>
+        </dependency>
+        <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>jcl-over-slf4j</artifactId>
+            <version>${slf4j.version}</version>
         </dependency>
         <dependency>
             <groupId>org.jretrofit</groupId>
@@ -194,6 +233,38 @@
             <version>1.1</version>
             <scope>test</scope>
         </dependency>
+        
+        <!-- spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-config</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-web</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-cas</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>commons-logging</artifactId>
+					<groupId>commons-logging</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-ldap</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>fi.vm.sade.generic</groupId>
+			<artifactId>generic-common</artifactId>
+		</dependency>
     </dependencies>
 
     <build>
