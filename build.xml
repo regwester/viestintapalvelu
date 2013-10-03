@@ -71,7 +71,7 @@
         <fail message="App did not come up.  Check your log files, fix and try again.  Good Luck :-).">
             <condition>
                 <not>
-                    <http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu"/>
+                    <http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu/buildversion.txt"/>
                 </not>
             </condition>
         </fail>
