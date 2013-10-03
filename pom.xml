@@ -265,6 +265,14 @@
 			<groupId>fi.vm.sade.generic</groupId>
 			<artifactId>generic-common</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-core</artifactId>
+		</dependency>
     </dependencies>
 
     <build>
