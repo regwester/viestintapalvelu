@@ -57,7 +57,8 @@ public class AddressLabel {
      */
     private String country;
     /**
-     * Maakoodi ISO3166.
+     * The two letter country code using the ISO3166 standard. If the country code is unknown then use XX.
+     * They consist of two characters written in CAPITAL letters.
      */
     private String countryCode;
 

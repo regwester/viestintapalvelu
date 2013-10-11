@@ -6,7 +6,7 @@
         xmlns:lb="urn:itella.com:/schema/ipost/letterbundle/v1x0">
 
     <lb:Bundle>
-        <lb:BundleCommon isTest="true">
+        <lb:BundleCommon isTest="$ipostTest">
             <lb:Sender contact="jaana.saha@oph.fi, +358 29 533 1323"/>
             <lb:StdBundleProcessing
                     customerId="113512"

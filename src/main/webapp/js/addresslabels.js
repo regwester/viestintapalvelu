@@ -39,9 +39,10 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
             "addressline2": $scope.addressline2,
             "addressline3": $scope.addressline3,
             "postalCode": $scope.postalCode,
-            "region": $scope.region,
             "city": $scope.city,
-            "country": $scope.country
+            "region": $scope.region,
+            "country": $scope.country,
+            "countryCode": $scope.countryCode
         })
         $scope.count++;
         $scope.firstName = '';
@@ -50,9 +51,10 @@ angular.module('app').controller('OsoitetarratController', ['$scope', 'Generator
         $scope.addressline2 = '';
         $scope.addressline3 = '';
         $scope.postalCode = '';
-        $scope.region = '';
         $scope.city = '';
+        $scope.region = '';
         $scope.country = '';
+        $scope.countryCode = '';
     }
     $scope.generatePDF = function () {
         Printer.osoitetarratPDF($scope.addressLabels)

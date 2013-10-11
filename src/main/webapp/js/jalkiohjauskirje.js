@@ -14,8 +14,8 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
                     "addressline2": "",
                     "addressline3": "",
                     "postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
-                    "city": postoffice.substring(postoffice.indexOf(' ') + 1),
                     "region": "",
+                    "city": postoffice.substring(postoffice.indexOf(' ') + 1),
                     "country": country[0],
                     "countryCode": country[1]
                 },
@@ -112,7 +112,8 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
                 "postalCode": $scope.postalCode,
                 "region": $scope.region,
                 "city": $scope.city,
-                "country": $scope.country
+                "country": $scope.country,
+                "countryCode": $scope.countryCode.toUpperCase()
             },
             "tulokset": []
         })
@@ -127,6 +128,7 @@ angular.module('app').controller('JalkiohjauskirjeController', ['$scope', 'Gener
         $scope.region = '';
         $scope.city = '';
         $scope.country = '';
+        $scope.countryCode = '';
     }
     $scope.generatePDF = function () {
         Printer.jalkiohjauskirjePDF($scope.jalkiohjauskirjeet)

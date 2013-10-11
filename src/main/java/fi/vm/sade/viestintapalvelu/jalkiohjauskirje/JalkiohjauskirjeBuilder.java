@@ -14,9 +14,7 @@ import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -28,27 +26,22 @@ public class JalkiohjauskirjeBuilder {
     private LiiteBuilder liiteBuilder;
 
     @Inject
-    public JalkiohjauskirjeBuilder(DocumentBuilder documentBuilder,
-                                   LiiteBuilder liiteBuilder) {
+    public JalkiohjauskirjeBuilder(final DocumentBuilder documentBuilder, final LiiteBuilder liiteBuilder) {
         this.documentBuilder = documentBuilder;
         this.liiteBuilder = liiteBuilder;
     }
 
-    public byte[] printPDF(JalkiohjauskirjeBatch batch) throws IOException,
-            DocumentException {
+    public byte[] printPDF(final JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
         return createJalkiohjauskirjeBatch(batch).toByteArray();
     }
 
-    public byte[] printZIP(JalkiohjauskirjeBatch batch) throws IOException,
-            DocumentException, NoSuchAlgorithmException {
+    public byte[] printZIP(final JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
         Map<String, byte[]> subZips = new HashMap<String, byte[]>();
-        List<JalkiohjauskirjeBatch> subBatches = batch
-                .split(Constants.IPOST_BATCH_LIMIT);
+        List<JalkiohjauskirjeBatch> subBatches = batch.split(Constants.IPOST_BATCH_LIMIT);
         for (int i = 0; i < subBatches.size(); i++) {
             JalkiohjauskirjeBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
-            Map<String, Object> context = createDataContext(pdf
-                    .getDocumentMetadata());
+            Map<String, Object> context = createDataContext(pdf.getDocumentMetadata());
             byte[] ipostXml = documentBuilder.applyTextTemplate(
                     Constants.IPOST_TEMPLATE, context);
             Map<String, byte[]> documents = new HashMap<String, byte[]>();
@@ -79,9 +72,8 @@ public class JalkiohjauskirjeBuilder {
         return documentBuilder.merge(source);
     }
 
-    private byte[] createFirstPagePDF(String templateName,
-                                      AddressLabel addressLabel) throws FileNotFoundException,
-            IOException, DocumentException {
+    private byte[] createFirstPagePDF(final String templateName, final AddressLabel addressLabel)
+            throws IOException, DocumentException {
         Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(
                 addressLabel));
         byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
@@ -89,26 +81,24 @@ public class JalkiohjauskirjeBuilder {
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
-    private Map<String, Object> createDataContext(
-            AddressLabelDecorator decorator) {
+    private Map<String, Object> createDataContext(final AddressLabelDecorator decorator) {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("osoite", decorator);
         return data;
     }
 
-    private Map<String, Object> createDataContext(
-            List<DocumentMetadata> documentMetadataList) {
+    private Map<String, Object> createDataContext(final List<DocumentMetadata> documentMetadataList) {
         Map<String, Object> data = new HashMap<String, Object>();
         List<Map<String, Object>> metadataList = new ArrayList<Map<String, Object>>();
         for (DocumentMetadata documentMetadata : documentMetadataList) {
             Map<String, Object> metadata = new HashMap<String, Object>();
             metadata.put("startPage", documentMetadata.getStartPage());
             metadata.put("pages", documentMetadata.getPages());
-            metadata.put("addressLabel", new XmlAddressLabelDecorator(
-                    documentMetadata.getAddressLabel()));
+            metadata.put("addressLabel", new XmlAddressLabelDecorator(documentMetadata.getAddressLabel()));
             metadataList.add(metadata);
         }
         data.put("metadataList", metadataList);
+        data.put("ipostTest", Constants.IPOST_TEST);
         return data;
     }
 }

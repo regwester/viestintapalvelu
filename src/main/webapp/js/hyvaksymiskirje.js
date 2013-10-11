@@ -114,9 +114,10 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
                 "addressline2": $scope.addressline2,
                 "addressline3": $scope.addressline3,
                 "postalCode": $scope.postalCode,
-                "region": $scope.region,
                 "city": $scope.city,
-                "country": $scope.country
+                "region": $scope.region,
+                "country": $scope.country,
+                "countryCode": $scope.countryCode
             },
             "tulokset": []
         })
@@ -131,6 +132,7 @@ angular.module('app').controller('HyvaksymiskirjeController', ['$scope', 'Genera
         $scope.region = '';
         $scope.city = '';
         $scope.country = '';
+        $scope.countryCode = '';
     }
     $scope.generatePDF = function () {
         Printer.hyvaksymiskirjePDF($scope.hyvaksymiskirjeet)
