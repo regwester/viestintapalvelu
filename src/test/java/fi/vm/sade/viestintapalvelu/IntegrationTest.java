@@ -72,7 +72,7 @@ public class IntegrationTest {
                 "UTF-8").useDelimiter("\u001a").next();
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
-        post.setHeader("Content-Type", "application/json");
+        post.setHeader("Content-Type", "application/json; charset=UTF-8");
         post.setEntity(new StringEntity(json));
         HttpResponse response = client.execute(post);
         assertStatusCodeEquals(202, response);

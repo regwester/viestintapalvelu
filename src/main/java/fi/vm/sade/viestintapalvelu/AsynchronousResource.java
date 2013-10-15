@@ -13,12 +13,6 @@ import java.net.URI;
 import java.util.concurrent.ExecutorService;
 
 public class AsynchronousResource {
-    @Inject
-    private ExecutorService executorService;
-
-    public void executeAsynchronously(Runnable task) {
-        executorService.execute(task);
-    }
 
     protected Response createResponse(HttpServletRequest request,
                                       String documentId) {

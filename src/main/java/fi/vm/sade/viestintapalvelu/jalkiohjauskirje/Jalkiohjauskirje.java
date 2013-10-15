@@ -1,7 +1,11 @@
 package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import org.hibernate.validator.constraints.NotEmpty;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.List;
 import java.util.Map;
 
@@ -19,6 +23,8 @@ public class Jalkiohjauskirje {
     /**
      * Osoitetiedot.
      */
+    @NotNull
+    @Valid
     private AddressLabel addressLabel;
     /**
      * Kielikoodi ISO 639-1.
@@ -27,6 +33,10 @@ public class Jalkiohjauskirje {
     /**
      * Hakutulokset.
      */
+    @NotNull
+    @Size(min = 1)
+    @ContainsKeys(value = {"organisaationNimi", "oppilaitoksenNimi", "hakukohteenNimi", "hyvaksytyt", "kaikkiHakeneet",
+            "omatPisteet", "alinHyvaksyttyPistemaara"})
     private List<Map<String, String>> tulokset;
 
     public AddressLabel getAddressLabel() {

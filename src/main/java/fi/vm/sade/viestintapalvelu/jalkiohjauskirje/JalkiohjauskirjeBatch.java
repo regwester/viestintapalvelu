@@ -1,15 +1,21 @@
 package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 import java.util.ArrayList;
 import java.util.List;
 
 public class JalkiohjauskirjeBatch {
+    @NotNull
+    @Size(min = 1)
+    @Valid
     private List<Jalkiohjauskirje> letters;
 
     public JalkiohjauskirjeBatch() {
     }
 
-    public JalkiohjauskirjeBatch(List<Jalkiohjauskirje> letters) {
+    public JalkiohjauskirjeBatch(final List<Jalkiohjauskirje> letters) {
         this.letters = letters;
     }
 

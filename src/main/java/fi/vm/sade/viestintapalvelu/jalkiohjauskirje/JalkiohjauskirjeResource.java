@@ -9,6 +9,9 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.ConstraintViolation;
+import javax.validation.ValidationException;
+import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
@@ -17,36 +20,43 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Set;
 
 @Singleton
 @Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
 public class JalkiohjauskirjeResource extends AsynchronousResource {
     private DownloadCache downloadCache;
     private JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder;
+    private final Validator validator;
 
     @Inject
     public JalkiohjauskirjeResource(
             JalkiohjauskirjeBuilder jalkiohjauskirjeBuilder,
-            DownloadCache downloadCache) {
+            DownloadCache downloadCache, Validator validator) {
         this.jalkiohjauskirjeBuilder = jalkiohjauskirjeBuilder;
         this.downloadCache = downloadCache;
+        this.validator = validator;
     }
 
     @POST
-    @Consumes("application/json")
+    @Consumes("application/json; charset=utf-8")
     @Produces("text/plain")
     @Path("pdf")
-    public Response pdf(JalkiohjauskirjeBatch input,
+    public Response pdf(JalkiohjauskirjeBatch jalkiohjauskirjeBatch,
                         @Context HttpServletRequest request) throws IOException,
             DocumentException {
-        byte[] pdf = jalkiohjauskirjeBuilder.printPDF(input);
+        Set<ConstraintViolation<JalkiohjauskirjeBatch>> validate = validator.validate(jalkiohjauskirjeBatch);
+        if (!validate.isEmpty()) {
+            throw new IllegalJalkiohjauskirjeException(validate);
+        }
+        byte[] pdf = jalkiohjauskirjeBuilder.printPDF(jalkiohjauskirjeBatch);
         String documentId = downloadCache.addDocument(new Download(
                 "application/pdf;charset=utf-8", "jalkiohjauskirje.pdf", pdf));
         return createResponse(request, documentId);
     }
 
     @POST
-    @Consumes("application/json")
+    @Consumes("application/json; charset=utf-8")
     @Produces("text/plain")
     @Path("zip")
     public Response zip(JalkiohjauskirjeBatch input,

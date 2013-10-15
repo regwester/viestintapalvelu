@@ -32,7 +32,7 @@ public class LiitePDFTest {
         @BeforeClass
         public static void setUp() throws Exception {
             Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
-                    Arrays.asList(tulos));
+                    JalkiohjauskirjePDFTest.buildValidTulosList());
             liite = TestUtil.generateLiite(kirje);
         }
 

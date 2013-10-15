@@ -10,9 +10,23 @@
                 "postalCode": "74630",
                 "city": "Helsinki",
                 "region": "",
-                "country": "Finland"
+                "country": "Finland",
+                "countryCode" : "FI"
             },
-            "tulokset": []
+            "tulokset": [
+                {
+                    "organisaationNimi": "Sataedu, Huittinen",
+                    "oppilaitoksenNimi": "korkeakoulu",
+                    "hakukohteenNimi": "Verhoilijamestarin erikoisammattitutkinto",
+                    "hyvaksytyt": "45",
+                    "kaikkiHakeneet": "193",
+                    "alinHyvaksyttyPistemaara": "43",
+                    "omatPisteet": "16",
+                    "paasyJaSoveltuvuuskoe": "14",
+                    "valinnanTulos": "Hylatty",
+                    "selite": "Varasijalla"
+                }
+            ]
         },
         {
             "addressLabel": {
@@ -24,12 +38,25 @@
                 "postalCode": "55700",
                 "city": "Imatra",
                 "region": "",
-                "country": "Finland"
+                "country": "Finland",
+                "countryCode" : "FI"
             },
-            "tulokset": []
+            "tulokset": [
+                {
+                    "organisaationNimi": "Sataedu, Huittinen",
+                    "oppilaitoksenNimi": "korkeakoulu",
+                    "hakukohteenNimi": "Verhoilijamestarin erikoisammattitutkinto",
+                    "hyvaksytyt": "45",
+                    "kaikkiHakeneet": "193",
+                    "alinHyvaksyttyPistemaara": "43",
+                    "omatPisteet": "16",
+                    "paasyJaSoveltuvuuskoe": "14",
+                    "valinnanTulos": "Hylatty",
+                    "selite": "Varasijalla"
+                }
+            ]
         }
     ]
 }
-		
-		
-		
+
+

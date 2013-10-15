@@ -1,5 +1,9 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+import org.hibernate.validator.constraints.NotEmpty;
+
+import javax.validation.constraints.Size;
+
 public class AddressLabel {
     public AddressLabel() {
     }
@@ -22,15 +26,18 @@ public class AddressLabel {
     /**
      * Etunimi. Esim. "Ville".
      */
+    @NotEmpty
     private String firstName;
     /**
      * Sukunimi. Esim. "Peurala".
      */
+    @NotEmpty
     private String lastName;
 
     /**
      * Katuosoite. Esim. "Pengerkatu 20 B 27".
      */
+    @NotEmpty
     private String addressline;
     /**
      * Toinen osoiterivi ulkomaalaisille osoitteille.
@@ -43,10 +50,12 @@ public class AddressLabel {
     /**
      * Postinumero. Esim. "00500".
      */
+    @NotEmpty
     private String postalCode;
     /**
      * Postitoimipaikka. Esim. "Helsinki".
      */
+    @NotEmpty
     private String city;
     /**
      * Maakunta ulkomaalaisille osoitteille.
@@ -55,11 +64,14 @@ public class AddressLabel {
     /**
      * Maa, jos muu kuin Suomi. Esim. "Sweden".
      */
+    @NotEmpty
     private String country;
     /**
      * The two letter country code using the ISO3166 standard. If the country code is unknown then use XX.
      * They consist of two characters written in CAPITAL letters.
      */
+    @NotEmpty
+    @Size(min = 2, max = 3)
     private String countryCode;
 
     public String getFirstName() {

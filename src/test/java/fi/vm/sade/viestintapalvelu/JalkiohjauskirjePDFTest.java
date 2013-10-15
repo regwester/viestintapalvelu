@@ -1,12 +1,14 @@
 package fi.vm.sade.viestintapalvelu;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.ImmutableMap;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import static org.junit.Assert.assertNotNull;
@@ -24,7 +26,7 @@ public class JalkiohjauskirjePDFTest {
     @BeforeClass
     public static void setUp() throws Exception {
         Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "FI",
-                new ArrayList<Map<String, String>>());
+                buildValidTulosList());
         pdf = TestUtil.generateJalkiohjauskirje(kirje).toString();
     }
 
@@ -45,30 +47,41 @@ public class JalkiohjauskirjePDFTest {
 
     @Test
     public void canBePrintedInEN() throws Exception {
-        Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "EN",
-                new ArrayList<Map<String, String>>());
-        assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+        testNotNullKirjeWithLanguageCode("EN");
     }
 
     @Test
     public void canBePrintedInSE() throws Exception {
-        Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "SE",
-                new ArrayList<Map<String, String>>());
-        assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+        testNotNullKirjeWithLanguageCode("SE");
     }
 
     @Test
     public void canBePrintedWithoutLanguageCode() throws Exception {
-        Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, null,
-                new ArrayList<Map<String, String>>());
-        assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+        testNotNullKirjeWithLanguageCode(null);
     }
 
     @Test
     public void canBePrintedInSQ() throws Exception {
-        Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, "SQ",
-                new ArrayList<Map<String, String>>());
+        testNotNullKirjeWithLanguageCode("SQ");
+    }
+
+    private void testNotNullKirjeWithLanguageCode(final String languageCode) throws Exception {
+        Jalkiohjauskirje kirje = new Jalkiohjauskirje(label, languageCode,
+                buildValidTulosList());
         assertNotNull(TestUtil.generateJalkiohjauskirje(kirje));
+    }
+
+    public static List<Map<String, String>> buildValidTulosList() {
+        Map<String, String> tulos = new ImmutableMap.Builder<String, String>()
+                .put("organisaationNimi", "test")
+                .put("oppilaitoksenNimi", "test")
+                .put("hakukohteenNimi", "test")
+                .put("hyvaksytyt", "1")
+                .put("kaikkiHakeneet", "1")
+                .put("omatPisteet", "1")
+                .put("alinHyvaksyttyPistemaara", "1")
+                .build();
+        return ImmutableList.of(tulos);
     }
 
 }

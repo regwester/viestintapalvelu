@@ -49,7 +49,7 @@ public class TestUtil {
     }
 
     public static List<List<String>> generateJalkiohjauskirje(
-            Jalkiohjauskirje kirje) throws Exception {
+            Jalkiohjauskirje kirje) throws DocumentException, IOException {
         JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(
                 Arrays.asList(kirje));
         return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
@@ -96,7 +96,7 @@ public class TestUtil {
     }
 
     private static List<List<String>> readPDF(byte[] byteDocument,
-                                              int startPage, int endPage) throws IOException, DocumentException {
+                                              int startPage, int endPage) throws IOException {
         return parseHTML(readAsHtml(byteDocument, startPage, endPage).getBytes());
     }
 
@@ -154,8 +154,7 @@ public class TestUtil {
         return tidy;
     }
 
-    private static List<List<String>> parseHTML(byte[] document)
-            throws DocumentException {
+    private static List<List<String>> parseHTML(byte[] document) {
         org.w3c.dom.Document doc = newTidy().parseDOM(new ByteArrayInputStream(document), new ByteArrayOutputStream());
         List<List<String>> nodes = new ArrayList<List<String>>();
         NodeList p = doc.getElementsByTagName("p");

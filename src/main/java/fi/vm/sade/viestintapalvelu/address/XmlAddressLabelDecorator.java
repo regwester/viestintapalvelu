@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+import fi.vm.sade.viestintapalvelu.IPostCountryCodes;
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class XmlAddressLabelDecorator extends AddressLabelDecorator {
@@ -45,7 +46,7 @@ public class XmlAddressLabelDecorator extends AddressLabelDecorator {
     }
 
     public String getCountryCode() {
-        return escape(decoratedLabel.getCountryCode());
+        return escape(IPostCountryCodes.iso3CountryCodeToIso2CountryCode(decoratedLabel.getCountryCode()));
     }
 
     @Override

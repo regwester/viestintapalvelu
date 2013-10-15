@@ -5,7 +5,6 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
@@ -21,8 +20,7 @@ public class LiiteBuilder {
     }
 
     public byte[] printPDF(String templateName,
-                           List<Map<String, String>> tulokset) throws FileNotFoundException,
-            IOException, DocumentException {
+                           List<Map<String, String>> tulokset) throws IOException, DocumentException {
         Map<String, Object> dataContext = createDataContext(tulokset);
         byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
                 dataContext);
