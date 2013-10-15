@@ -1,29 +1,21 @@
 package fi.vm.sade.viestintapalvelu.document;
 
-import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.util.List;
-import java.util.Map;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
-
+import com.lowagie.text.DocumentException;
+import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
+import fi.vm.sade.viestintapalvelu.OPHUserAgent;
+import fi.vm.sade.viestintapalvelu.SLF4JLogChute;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.xhtmlrenderer.pdf.ITextRenderer;
 
-import com.lowagie.text.DocumentException;
+import java.io.*;
+import java.util.List;
+import java.util.Map;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
-import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
-import fi.vm.sade.viestintapalvelu.OPHUserAgent;
-import fi.vm.sade.viestintapalvelu.SLF4JLogChute;
+import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
 
 public class DocumentBuilder {
     private VelocityEngine templateEngine = new VelocityEngine();

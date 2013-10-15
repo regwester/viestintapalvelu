@@ -1,9 +1,8 @@
 package fi.vm.sade.viestintapalvelu.download;
 
-import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
-
-import java.util.Collection;
-import java.util.TreeSet;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import fi.vm.sade.viestintapalvelu.Urls;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
@@ -13,11 +12,10 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+import java.util.Collection;
+import java.util.TreeSet;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
-
-import fi.vm.sade.viestintapalvelu.Urls;
+import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
 
 @Singleton
 @Path(Urls.DOWNLOAD_RESOURCE_PATH)

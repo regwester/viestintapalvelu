@@ -2,7 +2,6 @@ package fi.vm.sade.viestintapalvelu;
 
 import com.google.common.base.Joiner;
 import com.google.common.base.Splitter;
-import com.google.inject.Inject;
 import fi.vm.sade.viestintapalvelu.download.DownloadResource;
 
 import javax.servlet.http.HttpServletRequest;
@@ -10,7 +9,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
-import java.util.concurrent.ExecutorService;
 
 public class AsynchronousResource {
 

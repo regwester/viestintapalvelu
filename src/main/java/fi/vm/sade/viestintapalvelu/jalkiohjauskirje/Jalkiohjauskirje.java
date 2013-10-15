@@ -1,7 +1,6 @@
 package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;

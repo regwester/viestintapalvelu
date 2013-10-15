@@ -1,8 +1,8 @@
 package fi.vm.sade.viestintapalvelu.download;
 
-import java.util.Date;
-
 import org.apache.commons.lang.time.FastDateFormat;
+
+import java.util.Date;
 
 public class Header implements Comparable<Header> {
     private static final FastDateFormat FORMATTER = FastDateFormat.getInstance("dd.MM.yyyy HH.mm");

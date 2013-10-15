@@ -10,7 +10,6 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
-import javax.validation.ValidationException;
 import javax.validation.Validator;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
