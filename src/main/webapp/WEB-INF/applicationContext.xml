@@ -9,7 +9,7 @@
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
          http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
-    <!--<context:property-placeholder
+    <context:property-placeholder
             location="file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/override.properties"
             ignore-resource-not-found="true"
             properties-ref="defaultProps"/>
@@ -27,6 +27,6 @@
     
     <context:annotation-config />
 
-    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>-->
+    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
     
 </beans>
