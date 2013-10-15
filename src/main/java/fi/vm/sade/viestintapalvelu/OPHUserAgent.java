@@ -15,8 +15,8 @@ import java.io.InputStream;
  */
 public class OPHUserAgent extends ITextUserAgent {
 
-    private static final String classpathScheme = "classpath";
-    private static final String schemeSeparator = ":";
+    private static final String CLASSPATH_SCHEME = "classpath";
+    private static final String SCHEME_SEPARATOR = ":";
 
     public OPHUserAgent(ITextOutputDevice outputDevice) {
         super(outputDevice);
@@ -41,10 +41,10 @@ public class OPHUserAgent extends ITextUserAgent {
     }
 
     private boolean isClasspathResource(String uri) {
-        return uri != null && uri.startsWith(classpathScheme + schemeSeparator);
+        return uri != null && uri.startsWith(CLASSPATH_SCHEME + SCHEME_SEPARATOR);
     }
 
     private String toPlainClasspathResource(String uri) {
-        return uri.replace(classpathScheme + schemeSeparator, "");
+        return uri.replace(CLASSPATH_SCHEME + SCHEME_SEPARATOR, "");
     }
 }

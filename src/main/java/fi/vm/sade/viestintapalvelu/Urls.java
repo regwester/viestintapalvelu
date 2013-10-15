@@ -15,11 +15,8 @@ public class Urls {
     }
 
     public static interface RestServer {
-        String root();
 
         String index();
-
-        String apiRoot();
 
         String addresslabelDownload();
 
@@ -31,8 +28,7 @@ public class Urls {
         private static final String DOMAIN = "localhost";
         private static final int PORT = 8080;
 
-        @Override
-        public String root() {
+        private String root() {
             return SCHEME + "://" + DOMAIN + ":" + PORT;
         }
 
@@ -41,8 +37,7 @@ public class Urls {
             return build(root(), "index.html");
         }
 
-        @Override
-        public String apiRoot() {
+        private String apiRoot() {
             return build(root(), Urls.API_PATH);
         }
 

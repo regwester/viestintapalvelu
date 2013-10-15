@@ -13,8 +13,8 @@ import java.util.Map;
 
 public class AddressLabelBuilder {
 
-    private final static String ADDRESS_LABEL_PDF_TEMPLATE = "/osoitetarrat.html";
-    private final static String ADDRESS_LABEL_XLS_TEMPLATE = "/osoitetarrat.xls";
+    private static final String ADDRESS_LABEL_PDF_TEMPLATE = "/osoitetarrat.html";
+    private static final String ADDRESS_LABEL_XLS_TEMPLATE = "/osoitetarrat.xls";
 
     private DocumentBuilder documentBuilder;
 

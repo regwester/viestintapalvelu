@@ -8,7 +8,8 @@ import java.util.Map;
 public class IPostCountryCodes {
 
 
-    private static final Map<String, String> ISO3ToISO2Map;
+    private static final Map<String, String> ISO3_TO_ISO2_MAP;
+    public static final String DEFAULT_COUTRY_CODE = "XX";
 
     private IPostCountryCodes() {
     }
@@ -19,15 +20,15 @@ public class IPostCountryCodes {
             Locale locale = new Locale("", countryCode);
             builder.put(locale.getISO3Country(), countryCode);
         }
-        ISO3ToISO2Map = builder.build();
+        ISO3_TO_ISO2_MAP = builder.build();
     }
 
     public static String iso3CountryCodeToIso2CountryCode(final String countryCode) {
         if (countryCode.length() == 2) {
             return countryCode;
         }
-        String iso3 = ISO3ToISO2Map.get(countryCode);
-        return (iso3 != null ? iso3 : "XX");
+        String iso3 = ISO3_TO_ISO2_MAP.get(countryCode);
+        return (iso3 != null ? iso3 : DEFAULT_COUTRY_CODE);
     }
 
     public static void main(String[] args) {
