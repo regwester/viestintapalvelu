@@ -38,7 +38,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
     }
 
     @POST
-    @Consumes("application/json; charset=utf-8")
+    @Consumes("application/json")
     @Produces("text/plain")
     @Path("pdf")
     public Response pdf(JalkiohjauskirjeBatch jalkiohjauskirjeBatch,
@@ -55,7 +55,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
     }
 
     @POST
-    @Consumes("application/json; charset=utf-8")
+    @Consumes("application/json")
     @Produces("text/plain")
     @Path("zip")
     public Response zip(JalkiohjauskirjeBatch input,
