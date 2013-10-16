@@ -32,8 +32,7 @@ public class DocumentBuilder {
         return output.toByteArray();
     }
 
-    public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws FileNotFoundException,
-            IOException {
+    public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws IOException {
         byte[] template = readTemplate(templateName);
         StringWriter writer = new StringWriter();
         templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(
