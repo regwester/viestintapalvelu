@@ -1,21 +1,22 @@
 package fi.vm.sade.viestintapalvelu.download;
 
-import com.google.common.base.Function;
-import com.google.common.cache.Cache;
-import com.google.common.cache.CacheBuilder;
-import com.google.common.collect.Collections2;
-import com.google.inject.Singleton;
-import org.apache.commons.lang.time.FastDateFormat;
-
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.commons.lang.time.FastDateFormat;
+
+import com.google.common.base.Function;
+import com.google.common.cache.Cache;
+import com.google.common.cache.CacheBuilder;
+import com.google.common.collect.Collections2;
+import com.google.inject.Singleton;
+
 @Singleton
 public class DownloadCache {
-    public static final int DURATION = 30;
-    private Cache<String, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(DURATION, TimeUnit.MINUTES)
+    public static final int DURATION = 24;
+    private Cache<String, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(DURATION, TimeUnit.HOURS)
             .build();
     private FastDateFormat dateFormat = FastDateFormat.getInstance("dd.MM.yyyy HH.mm");
 
