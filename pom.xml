@@ -28,7 +28,6 @@
         <xdocreport.version>1.0.1</xdocreport.version>
         <xdocreport100.version>1.0.0</xdocreport100.version>
         <itext.version>2.1.7</itext.version>
-         <sade-generic.version>6.2</sade-generic.version>
     </properties>
 
     <dependencies>
