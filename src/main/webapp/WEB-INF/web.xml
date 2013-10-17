@@ -18,9 +18,12 @@
     </filter>
     <filter-mapping>
         <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/api/v1/download/</url-pattern>
+    </filter-mapping>
+	<filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
         <url-pattern>/api/v1/download</url-pattern>
     </filter-mapping>
-
     <filter>
         <filter-name>guiceFilter</filter-name>
         <filter-class>com.google.inject.servlet.GuiceFilter</filter-class>
