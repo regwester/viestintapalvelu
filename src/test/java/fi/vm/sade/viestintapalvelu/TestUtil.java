@@ -77,9 +77,7 @@ public class TestUtil {
 
 
     private static byte[] get(Object json, String url)
-            throws UnsupportedEncodingException, IOException,
-            JsonGenerationException, JsonMappingException,
-            ClientProtocolException, DocumentException {
+            throws IOException, DocumentException {
         DefaultHttpClient client = new DefaultHttpClient();
         client.getParams().setParameter("http.protocol.content-charset",
                 "UTF-8");

@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.liite;
 
 import com.google.inject.Inject;
 import com.lowagie.text.DocumentException;
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import org.apache.commons.lang.StringEscapeUtils;
 
@@ -19,20 +21,21 @@ public class LiiteBuilder {
         this.documentBuilder = documentBuilder;
     }
 
-    public byte[] printPDF(String templateName,
-                           List<Map<String, String>> tulokset) throws IOException, DocumentException {
-        Map<String, Object> dataContext = createDataContext(tulokset);
+    public byte[] printPDF(final String templateName,
+                           final AddressLabel addressLabel,
+                           final List<Map<String, String>> tulokset) throws IOException, DocumentException {
+        Map<String, Object> dataContext = createDataContext(addressLabel, tulokset);
         byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
                 dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
-    private Map<String, Object> createDataContext(
-            List<Map<String, String>> tulokset) {
+    private Map<String, Object> createDataContext(final AddressLabel addressLabel,
+                                                  final List<Map<String, String>> tulokset) {
         Map<String, Boolean> columns = distinctColumns(tulokset);
-        tulokset = normalizeColumns(columns, tulokset);
         Map<String, Object> data = new HashMap<String, Object>();
-        data.put("tulokset", tulokset);
+        data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
+        data.put("tulokset", normalizeColumns(columns, tulokset));
         data.put("columns", columns);
         return data;
     }

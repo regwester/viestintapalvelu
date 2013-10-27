@@ -44,7 +44,7 @@ public class HyvaksymiskirjeBuilder {
             String liiteTemplateName = Utils.resolveTemplateName(
                     Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
             byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
-                    kirje.getTulokset());
+                    kirje.getAddressLabel(), kirje.getTulokset());
             source.add(new PdfDocument(kirje.getAddressLabel(), frontPage,
                     attachment));
         }
