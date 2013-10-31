@@ -17,10 +17,12 @@ import fi.vm.sade.viestintapalvelu.address.AddressLabelResource;
 import fi.vm.sade.viestintapalvelu.download.DownloadResource;
 import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeResource;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource;
+import fi.vm.sade.viestintapalvelu.message.MessageResource;
 
 public class ViestintapalveluModule extends JerseyServletModule {
     @Override
     protected void configureServlets() {
+        bind(MessageResource.class);
         bind(DownloadResource.class);
         bind(AddressLabelResource.class);
         bind(JalkiohjauskirjeResource.class);
