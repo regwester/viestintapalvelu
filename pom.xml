@@ -5,7 +5,7 @@
 
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>6.2.2</version>
+    <version>6.2.3</version>
 	<parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
