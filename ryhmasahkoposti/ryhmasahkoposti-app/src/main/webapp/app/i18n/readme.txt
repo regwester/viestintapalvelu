@@ -1,0 +1,1 @@
+Tänne kielisisyys properties-tiedostot
