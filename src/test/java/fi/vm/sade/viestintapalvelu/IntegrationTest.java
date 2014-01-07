@@ -1,5 +1,11 @@
 package fi.vm.sade.viestintapalvelu;
 
+import static org.junit.Assert.assertEquals;
+
+import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.util.Scanner;
+
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.ClientProtocolException;
@@ -9,12 +15,6 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.junit.ClassRule;
 import org.junit.Test;
-
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.Scanner;
-
-import static org.junit.Assert.assertEquals;
 
 public class IntegrationTest {
     @ClassRule
@@ -31,45 +31,35 @@ public class IntegrationTest {
 
     @Test
     public void addressLabelPrinting() throws Exception {
-        HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost()
-                .addresslabel() + "/pdf");
+        HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost().addresslabel() + "/pdf");
         assertStatusCodeEquals(200, response);
-        assertEquals("Content-Type: application/pdf;charset=utf-8", response
-                .getFirstHeader("Content-Type").toString());
-        assertEquals(
-                "Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
+        assertEquals("Content-Type: application/pdf;charset=utf-8", response.getFirstHeader("Content-Type").toString());
+        assertEquals("Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
                 response.getFirstHeader("Content-Disposition").toString());
     }
 
     @Test
     public void addressLabelXLSPrinting() throws Exception {
-        HttpResponse response = get("/addresslabel_xls.json", Urls.localhost()
-                .addresslabel() + "/xls");
+        HttpResponse response = get("/addresslabel_xls.json", Urls.localhost().addresslabel() + "/xls");
         assertEquals(200, response.getStatusLine().getStatusCode());
-        assertEquals("Content-Type: application/vnd.ms-excel", response
-                .getFirstHeader("Content-Type").toString());
-        assertEquals(
-                "Content-Disposition: attachment; filename=\"addresslabels.xls\"",
+        assertEquals("Content-Type: application/vnd.ms-excel", response.getFirstHeader("Content-Type").toString());
+        assertEquals("Content-Disposition: attachment; filename=\"addresslabels.xls\"",
                 response.getFirstHeader("Content-Disposition").toString());
     }
 
     @Test
     public void jalkiohjauskirjePDFPrinting() throws Exception {
-        HttpResponse response = get("/jalkiohjauskirje_pdf.json",
-                "http://localhost:8080/api/v1/jalkiohjauskirje/pdf");
+        HttpResponse response = get("/jalkiohjauskirje_pdf.json", "http://localhost:" + Launcher.DEFAULT_PORT
+                + "/api/v1/jalkiohjauskirje/pdf");
         assertEquals(200, response.getStatusLine().getStatusCode());
-        assertEquals("Content-Type: application/pdf;charset=utf-8", response
-                .getFirstHeader("Content-Type").toString());
-        assertEquals(
-                "Content-Disposition: attachment; filename=\"jalkiohjauskirje.pdf\"",
+        assertEquals("Content-Type: application/pdf;charset=utf-8", response.getFirstHeader("Content-Type").toString());
+        assertEquals("Content-Disposition: attachment; filename=\"jalkiohjauskirje.pdf\"",
                 response.getFirstHeader("Content-Disposition").toString());
     }
 
-    private HttpResponse get(String jsonFile, String url)
-            throws UnsupportedEncodingException, IOException,
+    private HttpResponse get(String jsonFile, String url) throws UnsupportedEncodingException, IOException,
             ClientProtocolException {
-        String json = new Scanner(getClass().getResourceAsStream(jsonFile),
-                "UTF-8").useDelimiter("\u001a").next();
+        String json = new Scanner(getClass().getResourceAsStream(jsonFile), "UTF-8").useDelimiter("\u001a").next();
         DefaultHttpClient client = new DefaultHttpClient();
         HttpPost post = new HttpPost(url);
         post.setHeader("Content-Type", "application/json; charset=UTF-8");
@@ -89,11 +79,8 @@ public class IntegrationTest {
         return responseBody;
     }
 
-    private void assertStatusCodeEquals(int expected, HttpResponse response)
-            throws IOException {
-        assertEquals("HTTP status code " + expected
-                + " expected, HTTP response was: " + response
-                + readResponseBody(response), expected, response
-                .getStatusLine().getStatusCode());
+    private void assertStatusCodeEquals(int expected, HttpResponse response) throws IOException {
+        assertEquals("HTTP status code " + expected + " expected, HTTP response was: " + response
+                + readResponseBody(response), expected, response.getStatusLine().getStatusCode());
     }
 }

@@ -27,7 +27,7 @@ public class Urls {
     public static class Localhost implements RestServer {
         private static final String SCHEME = "http";
         private static final String DOMAIN = "localhost";
-        private static final int PORT = 8080;
+        private static final int PORT = Launcher.DEFAULT_PORT;
 
         private String root() {
             return SCHEME + "://" + DOMAIN + ":" + PORT;
