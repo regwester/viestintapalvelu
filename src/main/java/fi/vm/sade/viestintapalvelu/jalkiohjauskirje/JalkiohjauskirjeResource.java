@@ -5,6 +5,8 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validator;
@@ -17,9 +19,8 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
-import com.google.inject.Inject;
-import com.google.inject.Singleton;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
@@ -27,6 +28,7 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
+@Service
 @Singleton
 @Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
 public class JalkiohjauskirjeResource extends AsynchronousResource {

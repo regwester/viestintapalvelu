@@ -1,7 +1,18 @@
 package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 
-import com.google.inject.Inject;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.springframework.stereotype.Service;
+
 import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
@@ -14,12 +25,8 @@ import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.liite.LiiteBuilder;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+@Service
+@Singleton
 public class JalkiohjauskirjeBuilder {
 
     private DocumentBuilder documentBuilder;
@@ -42,42 +49,33 @@ public class JalkiohjauskirjeBuilder {
             JalkiohjauskirjeBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = createJalkiohjauskirjeBatch(subBatch);
             Map<String, Object> context = createDataContext(pdf.getDocumentMetadata());
-            byte[] ipostXml = documentBuilder.applyTextTemplate(
-                    Constants.IPOST_TEMPLATE, context);
+            byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.IPOST_TEMPLATE, context);
             Map<String, byte[]> documents = new HashMap<String, byte[]>();
             documents.put("jalkiohjauskirje.pdf", pdf.toByteArray());
             documents.put("jalkiohjauskirje.xml", ipostXml);
-            subZips.put("jalkiohjauskirje_" + (i + 1) + ".zip",
-                    documentBuilder.zip(documents));
+            subZips.put("jalkiohjauskirje_" + (i + 1) + ".zip", documentBuilder.zip(documents));
         }
         return documentBuilder.zip(subZips);
     }
 
-    public MergedPdfDocument createJalkiohjauskirjeBatch(
-            JalkiohjauskirjeBatch batch) throws IOException, DocumentException {
+    public MergedPdfDocument createJalkiohjauskirjeBatch(JalkiohjauskirjeBatch batch) throws IOException,
+            DocumentException {
         List<PdfDocument> source = new ArrayList<PdfDocument>();
         for (Jalkiohjauskirje kirje : batch.getLetters()) {
-            String kirjeTemplateName = Utils.resolveTemplateName(
-                    Constants.JALKIOHJAUSKIRJE_TEMPLATE,
+            String kirjeTemplateName = Utils.resolveTemplateName(Constants.JALKIOHJAUSKIRJE_TEMPLATE,
                     kirje.getLanguageCode());
-            byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
-                    kirje.getAddressLabel());
-            String liiteTemplateName = Utils.resolveTemplateName(
-                    Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
-            byte[] attachment = liiteBuilder.printPDF(liiteTemplateName,
-                    kirje.getAddressLabel(), kirje.getTulokset());
-            source.add(new PdfDocument(kirje.getAddressLabel(), frontPage,
-                    attachment));
+            byte[] frontPage = createFirstPagePDF(kirjeTemplateName, kirje.getAddressLabel());
+            String liiteTemplateName = Utils.resolveTemplateName(Constants.LIITE_TEMPLATE, kirje.getLanguageCode());
+            byte[] attachment = liiteBuilder.printPDF(liiteTemplateName, kirje.getAddressLabel(), kirje.getTulokset());
+            source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, attachment));
         }
         return documentBuilder.merge(source);
     }
 
-    private byte[] createFirstPagePDF(final String templateName, final AddressLabel addressLabel)
-            throws IOException, DocumentException {
-        Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(
-                addressLabel));
-        byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
-                dataContext);
+    private byte[] createFirstPagePDF(final String templateName, final AddressLabel addressLabel) throws IOException,
+            DocumentException {
+        Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(addressLabel));
+        byte[] xhtml = documentBuilder.applyTextTemplate(templateName, dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 

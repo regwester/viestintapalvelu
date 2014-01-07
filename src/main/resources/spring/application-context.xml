@@ -20,13 +20,24 @@
                 <prop key="cas_mode">front</prop>
                 <prop key="cas_key">viestintapalvelu</prop>
                 <prop key="cas_service">${cas.service.viestintapalvelu}</prop>
-                <prop key="spring_security_default_access">permitAll</prop>
+                <prop key="cas_callback_url">${cas.callback.viestintapalvelu}</prop>
+                <prop key="spring_security_default_access">isAuthenticated()</prop>
             </util:properties>
         </property>
     </bean>
     
-    <context:annotation-config />
+	<context:annotation-config />
+	<import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
 
-    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
+    <bean id="validatorFactory" class="javax.validation.Validation" factory-method="buildDefaultValidatorFactory"/>
+    <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator"/>
+    <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
     
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.liite"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.address"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.document"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.download"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.hyvaksymiskirje"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
 </beans>
