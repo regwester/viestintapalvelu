@@ -2,12 +2,13 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
   	<modelVersion>4.0.0</modelVersion>
   	
-	<parent>
-		<groupId>fi.vm.sade.generic</groupId>
-		<artifactId>build-parent</artifactId>
-		<version>7.0-SNAPSHOT</version>
-	</parent>
-  
+  	<parent>
+        <groupId>fi.vm.sade.viestintapalvelu</groupId>
+		<artifactId>viestintapalvelu</artifactId>
+        <version>8.0-SNAPSHOT</version>
+        <relativePath>..</relativePath>
+    </parent>
+    
 	<groupId>fi.vm.sade.ryhmasahkoposti</groupId>
 	<artifactId>ryhmasahkoposti</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
@@ -20,8 +21,12 @@
 		<mockito.version>1.9.5</mockito.version>
 		<querydsl.version>2.6.0</querydsl.version>
         <spring.version>3.1.4.RELEASE</spring.version>
+		<generic.version>8.0-SNAPSHOT</generic.version>
+		<sade-generic.version>${generic.version}</sade-generic.version>
+		<hsqldb.version>2.0.0</hsqldb.version>
 	</properties>
 
+	
   	<dependencies> 
 	    <!-- Spring -->
         <dependency>
