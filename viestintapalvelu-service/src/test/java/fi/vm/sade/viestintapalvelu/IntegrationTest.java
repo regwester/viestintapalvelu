@@ -24,14 +24,15 @@ public class IntegrationTest {
     @Test
     public void staticResourcesWork() throws Exception {
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(Urls.localhost().index());
+        HttpGet httpGet = new HttpGet(Urls.localhost(Launcher.DEFAULT_PORT).index());
         HttpResponse response = httpClient.execute(httpGet);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
 
     @Test
     public void addressLabelPrinting() throws Exception {
-        HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost().addresslabel() + "/pdf");
+        HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost(Launcher.DEFAULT_PORT).addresslabel()
+                + "/pdf");
         assertStatusCodeEquals(200, response);
         assertEquals("Content-Type: application/pdf;charset=utf-8", response.getFirstHeader("Content-Type").toString());
         assertEquals("Content-Disposition: attachment; filename=\"addresslabels.pdf\"",
@@ -40,7 +41,8 @@ public class IntegrationTest {
 
     @Test
     public void addressLabelXLSPrinting() throws Exception {
-        HttpResponse response = get("/addresslabel_xls.json", Urls.localhost().addresslabel() + "/xls");
+        HttpResponse response = get("/addresslabel_xls.json", Urls.localhost(Launcher.DEFAULT_PORT).addresslabel()
+                + "/xls");
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals("Content-Type: application/vnd.ms-excel", response.getFirstHeader("Content-Type").toString());
         assertEquals("Content-Disposition: attachment; filename=\"addresslabels.xls\"",

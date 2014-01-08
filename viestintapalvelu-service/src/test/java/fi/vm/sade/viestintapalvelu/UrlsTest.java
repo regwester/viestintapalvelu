@@ -7,7 +7,7 @@ import org.junit.Test;
 public class UrlsTest {
     @Test
     public void addresslabelDownload() {
-        assertEquals("http://localhost:" + Launcher.DEFAULT_PORT + "/api/v1/addresslabel/download", Urls.localhost()
-                .addresslabelDownload());
+        assertEquals("http://localhost:" + Launcher.DEFAULT_PORT + "/api/v1/addresslabel/download",
+                Urls.localhost(Launcher.DEFAULT_PORT).addresslabelDownload());
     }
 }

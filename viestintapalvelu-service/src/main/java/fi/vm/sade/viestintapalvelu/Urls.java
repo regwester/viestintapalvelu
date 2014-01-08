@@ -15,6 +15,10 @@ public class Urls {
         return new Localhost();
     }
 
+    public static RestServer localhost(int port) {
+        return new Localhost(port);
+    }
+
     public static interface RestServer {
 
         String index();
@@ -27,10 +31,18 @@ public class Urls {
     public static class Localhost implements RestServer {
         private static final String SCHEME = "http";
         private static final String DOMAIN = "localhost";
-        private static final int PORT = Launcher.DEFAULT_PORT;
+        private final int port;
+
+        public Localhost() {
+            this.port = 8080;
+        }
+
+        public Localhost(int port) {
+            this.port = port;
+        }
 
         private String root() {
-            return SCHEME + "://" + DOMAIN + ":" + PORT;
+            return SCHEME + "://" + DOMAIN + ":" + port;
         }
 
         @Override
