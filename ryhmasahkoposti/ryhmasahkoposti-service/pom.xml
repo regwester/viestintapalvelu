@@ -17,27 +17,7 @@
 	</properties>
 	
 	<dependencies>
-		<!-- Generic common files -->
-        <dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>generic-common</artifactId>
-        </dependency>
-		<dependency>
-            <groupId>fi.vm.sade.generic</groupId>
-            <artifactId>dependencies-service</artifactId>
-            <version>${sade-generic.version}</version>
-            <type>pom</type>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-log4j12</artifactId>
-                </exclusion>
-                <exclusion>
-                    <groupId>org.slf4j</groupId>
-                    <artifactId>slf4j-api</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
+		
 
         <!-- Spring -->
         <dependency>
@@ -126,35 +106,32 @@
             <artifactId>mockito-all</artifactId>
             <scope>test</scope>
         </dependency>
+        
+        <!-- Generic common files -->
+        <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+        </dependency>
+		<dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>dependencies-service</artifactId>
+            <version>${sade-generic.version}</version>
+            <type>pom</type>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-log4j12</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.slf4j</groupId>
+                    <artifactId>slf4j-api</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
 	</dependencies>
 	
 	<build>
 		<plugins>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <version>3.1</version>
-                <configuration>
-                    <debug>true</debug>
-                    <debuglevel>none</debuglevel>
-                </configuration>
-            </plugin>
-			<plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>maven-apt-plugin</artifactId>
-                <version>1.0.4</version>
-                <executions>
-                    <execution>
-                        <goals>
-                            <goal>process</goal>
-                        </goals>
-                        <configuration>
-                            <outputDirectory>target/generated-sources/java</outputDirectory>
-                            <processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>
-                        </configuration>
-                    </execution>
-                </executions>
-            </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -174,6 +151,32 @@
                     </execution>
                 </executions>
             </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.1</version>
+                <configuration>
+                    <debug>true</debug>
+                    <debuglevel>none</debuglevel>
+                </configuration>
+            </plugin>
+			<plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>maven-apt-plugin</artifactId>
+                <version>1.0</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>process</goal>
+                        </goals>
+                        <configuration>
+                            <outputDirectory>target/generated-sources/java</outputDirectory>
+                            <processor>com.mysema.query.apt.jpa.JPAAnnotationProcessor</processor>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            
             <plugin>
 	            <groupId>com.googlecode.flyway</groupId>
 	            <artifactId>flyway-maven-plugin</artifactId>

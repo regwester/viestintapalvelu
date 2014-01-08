@@ -38,7 +38,7 @@
         <scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
              keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}">
 
-            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu/${pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu-service/${pom.version}">
                 <include name="*.war"/>
             </fileset>
         </scp>
