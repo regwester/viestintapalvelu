@@ -6,7 +6,7 @@
 	<parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
-        <version>7.0-SNAPSHOT</version>
+        <version>8.0-SNAPSHOT</version>
     </parent>
 	
 	<groupId>fi.vm.sade.viestintapalvelu</groupId>
@@ -20,6 +20,7 @@
         <module>ryhmasahkoposti</module>
     </modules>
 	<properties>
+		<generic.version>${project.version}</generic.version>
         <spring.version>3.1.3.RELEASE</spring.version>
         <spring.security.version>${spring.version}</spring.security.version>
         <slf4j.version>1.6.1</slf4j.version>
