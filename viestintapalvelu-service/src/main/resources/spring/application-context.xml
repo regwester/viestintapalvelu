@@ -29,8 +29,7 @@
 	<context:annotation-config />
 	<import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
 
-    <bean id="validatorFactory" class="javax.validation.Validation" factory-method="buildDefaultValidatorFactory"/>
-    <bean id="validator" factory-bean="validatorFactory" factory-method="getValidator"/>
+	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
     
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.liite"/>
