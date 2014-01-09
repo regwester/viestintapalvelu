@@ -38,7 +38,7 @@
         </init-param>
         <init-param>
 			<param-name>com.sun.jersey.config.property.WebPageContentRegex</param-name>
-			<param-value>/.*html</param-value>
+			<param-value>/app/.*</param-value>
 		</init-param>
 	</filter>
 
