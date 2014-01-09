@@ -16,7 +16,7 @@ public class TomcatRule extends ExternalResource {
             // other tests
             DefaultHttpClient client = new DefaultHttpClient();
             client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
-            HttpPost post = new HttpPost(Urls.localhost().addresslabelDownload());
+            HttpPost post = new HttpPost(Urls.localhost(Launcher.DEFAULT_PORT).addresslabelDownload());
             post.setHeader("Content-Type", "application/json;charset=utf-8");
             client.execute(post);
         }
