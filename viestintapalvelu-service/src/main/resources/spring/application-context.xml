@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans"
+	   xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:context="http://www.springframework.org/schema/context"
        xmlns:p="http://www.springframework.org/schema/p" xmlns:util="http://www.springframework.org/schema/util"
        xmlns:s="http://www.springframework.org/schema/security"
@@ -7,7 +8,8 @@
 		 http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
          http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
          http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.1.xsd
-         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+         http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+         http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd">
 
     <context:property-placeholder
             location="file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/override.properties"
@@ -39,4 +41,17 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.hyvaksymiskirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
+    
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
+    <jaxrs:client id="dokumenttipalveluRestClient"
+                  address="${dokumenttipalvelu-service.rest.url}"
+                  serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
+                  inheritHeaders="true">
+        <jaxrs:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
 </beans>
