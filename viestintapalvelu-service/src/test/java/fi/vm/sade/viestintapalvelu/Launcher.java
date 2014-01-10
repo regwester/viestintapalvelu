@@ -10,7 +10,7 @@ import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
 
 public class Launcher {
-    public static final int DEFAULT_PORT = 8080;
+    public static final int DEFAULT_PORT = PortFinder.findFreePort();
 
     public static void main(String[] args) throws Exception {
         Tomcat tomcat = start();
