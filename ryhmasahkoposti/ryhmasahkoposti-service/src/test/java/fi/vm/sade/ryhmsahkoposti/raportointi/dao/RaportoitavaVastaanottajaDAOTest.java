@@ -17,11 +17,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.raportointi.dao.RaportoitavaVastaanottajaDAO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dao.RaportoitavaViestiDAO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
+import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
