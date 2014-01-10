@@ -10,7 +10,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 // TODO isipila 23.5.2013: where should we have static utils?
 public final class Utils {
 
-    private static final FastDateFormat THREAD_SAFE_DATE_FORMATTER = FastDateFormat.getInstance("dd.MM.yyyy HH.mm");
+    private static final FastDateFormat THREAD_SAFE_DATE_FORMATTER = FastDateFormat.getInstance("dd.MM.yyyy_HH.mm");
 
     public static String resolveTemplateName(String template, String languageCode) {
         languageCode = languageCode == null || "".equals(languageCode) ? "FI" : languageCode;
