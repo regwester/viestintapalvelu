@@ -7,7 +7,5 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.service" />
-
-	<import resource="classpath:/dao-context.xml"/>
+    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.resource" />
 </beans>

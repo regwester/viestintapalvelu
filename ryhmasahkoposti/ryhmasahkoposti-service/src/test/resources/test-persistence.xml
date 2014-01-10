@@ -4,9 +4,9 @@
     <persistence-unit name="viestinta" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         
-        <class>fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaViesti</class>
-        <class>fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaVastaanottaja</class>
-        <class>fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaLiite</class>
+        <class>fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti</class>
+        <class>fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja</class>
+        <class>fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite</class>
         
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>

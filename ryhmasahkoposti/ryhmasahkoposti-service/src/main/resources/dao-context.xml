@@ -6,7 +6,7 @@
 		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.raportointi.dao" />
+    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.dao" />
 
     <!-- Add EntityManagerFactory (required by JTA) support -->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
@@ -29,10 +29,14 @@
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-	<!-- Flyway definition for creating the database 
+	<!-- Flyway definitions for creating the database 
+    <bean id="dbDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/viestinta"/>
+    </bean>
+
     <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
         <property name="initOnMigrate" value="${flyway.initOnMigrate}"/>
         <property name="dataSource" ref="dbDataSource" />
     </bean>
-     -->
+	-->
 </beans>

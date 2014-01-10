@@ -18,14 +18,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetettyVastaanottajalleDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetyksenTulosDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.raportointi.service.RaportoitavaViestiService;
-import fi.vm.sade.ryhmasahkoposti.raportointi.service.RyhmasahkopostinRaportointiService;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTulosDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
+import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
 import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 
