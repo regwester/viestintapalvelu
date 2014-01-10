@@ -1,9 +1,18 @@
 package fi.vm.sade.viestintapalvelu.download;
 
-import org.apache.commons.lang.time.FastDateFormat;
-
 import java.util.Date;
 
+import org.apache.commons.lang.time.FastDateFormat;
+
+/**
+ * 
+ * @author Jussi Jartamo
+ * 
+ * @Deprecated Viestintapalvelun tiedostolistausta ja tiedostocachea ei kayteta
+ *             tuotannossa. Tiedostot siirretaan valintojen dokumenttipalveluun
+ *             tilapaistaltiointiin ja suojaukseen.
+ */
+@Deprecated
 public class Header implements Comparable<Header> {
     private static final FastDateFormat FORMATTER = FastDateFormat.getInstance("dd.MM.yyyy HH.mm");
     private final String contentType;

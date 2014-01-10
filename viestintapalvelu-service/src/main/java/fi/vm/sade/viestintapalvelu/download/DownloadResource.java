@@ -31,6 +31,12 @@ public class DownloadResource {
         this.downloadCache = downloadCache;
     }
 
+    /**
+     * @Deprecated Viestintapalvelun tiedostolistausta ja tiedostocachea ei
+     *             kayteta tuotannossa. Tiedostot siirretaan valintojen
+     *             dokumenttipalveluun tilapaistaltiointiin ja suojaukseen.
+     */
+    @Deprecated
     @GET
     @Produces(APPLICATION_JSON)
     public Collection<Header> available() {
