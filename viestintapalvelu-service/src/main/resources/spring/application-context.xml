@@ -30,7 +30,8 @@
     
 	<context:annotation-config />
 	<import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
-
+	<bean class="fi.vm.sade.viestintapalvelu.DokumenttipalveluConfiguration"/>
+	
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
     
@@ -42,16 +43,5 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
     
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
-    <jaxrs:client id="dokumenttipalveluRestClient"
-                  address="${dokumenttipalvelu-service.rest.url}"
-                  serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
-                  inheritHeaders="true">
-        <jaxrs:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-        </jaxrs:providers>
-    </jaxrs:client>
+    
 </beans>
