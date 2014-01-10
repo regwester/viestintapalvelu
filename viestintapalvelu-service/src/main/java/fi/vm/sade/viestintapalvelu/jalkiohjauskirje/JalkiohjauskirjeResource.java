@@ -25,6 +25,8 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
@@ -118,9 +120,11 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
     @Path("/async/zip")
     public Response asynczip(final JalkiohjauskirjeBatch input, @Context HttpServletRequest request)
             throws IOException, DocumentException, NoSuchAlgorithmException {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String documentId = globalRandomId();
         executor.execute(new Runnable() {
             public void run() {
+                SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
                     dokumenttiResource.tallenna(filenamePrefixWithUsernameAndTimestamp("jalkiohjauskirje.zip"), now()

@@ -98,11 +98,25 @@
 					<artifactId>validation-api</artifactId>
 					<groupId>javax.validation</groupId>
 				</exclusion>
+				<exclusion>
+					<artifactId>javax.ws.rs-api</artifactId>
+					<groupId>javax.ws.rs</groupId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.glassfish.jersey.media</groupId>
 			<artifactId>jersey-media-json-jackson</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.ext</groupId>
+			<artifactId>jersey-proxy-client</artifactId>
+			<version>2.4.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.glassfish.jersey.core</groupId>
+			<artifactId>jersey-client</artifactId>
 			<version>2.4.1</version>
 		</dependency>
 		<dependency>
@@ -113,6 +127,10 @@
 				<exclusion>
 					<artifactId>bean-validator</artifactId>
 					<groupId>org.glassfish.hk2.external</groupId>
+				</exclusion>
+				<exclusion>
+					<artifactId>javax.ws.rs-api</artifactId>
+					<groupId>javax.ws.rs</groupId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -214,11 +232,11 @@
 			<scope>test</scope>
 		</dependency>
 		<dependency>
-            <groupId>org.kubek2k</groupId>
-            <artifactId>springockito</artifactId>
-            <version>1.0.9</version>
-            <scope>test</scope>
-        </dependency>
+			<groupId>org.kubek2k</groupId>
+			<artifactId>springockito</artifactId>
+			<version>1.0.9</version>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>org.apache.pdfbox</groupId>
 			<artifactId>pdfbox</artifactId>
@@ -329,28 +347,19 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-core</artifactId>
 			<version>2.6.6</version>
 		</dependency>
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-			<version>2.7.6</version>
-		</dependency>
-		<dependency>
-  <groupId>org.apache.cxf</groupId>
-  <artifactId>cxf-rt-transports-http-hc</artifactId>
-		  <version>2.7.6</version>
-		</dependency>
+
 		<dependency>
 			<groupId>fi.vm.sade.dokumenttipalvelu</groupId>
 			<artifactId>dokumenttipalvelu-api</artifactId>
 			<version>1.0-SNAPSHOT</version>
 		</dependency>
-		
+
 	</dependencies>
 
 	<build>
