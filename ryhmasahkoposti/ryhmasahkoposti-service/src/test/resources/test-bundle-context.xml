@@ -8,7 +8,7 @@
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.raportointi"/>
+    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti"/>
 
     <!-- Spring service and persistence configuration -->
     <import resource="/test-service-context.xml"/>

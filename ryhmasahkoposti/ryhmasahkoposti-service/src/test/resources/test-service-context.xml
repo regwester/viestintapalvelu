@@ -7,6 +7,6 @@
        http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.raportointi" />
+    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti" />
 
 </beans>

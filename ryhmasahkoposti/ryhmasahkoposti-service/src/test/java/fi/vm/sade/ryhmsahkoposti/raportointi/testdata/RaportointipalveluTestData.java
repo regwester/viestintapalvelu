@@ -5,12 +5,12 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetettyVastaanottajalleDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.raportointi.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 public class RaportointipalveluTestData {
 
