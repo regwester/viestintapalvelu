@@ -83,7 +83,12 @@ public class RaportoitavaVastaanottajaDAOImpl extends AbstractJpaDAOImpl<Raporto
 			"JOIN a.raportoitavaviesti WHERE a.raportoitavaviesti.id = :viestiID AND a.lahetysOnnistui = :lahetysonnistui";
 		TypedQuery<Long> query = em.createQuery(findVastaanottajienLukumaara, Long.class);
 		query.setParameter("viestiID", viestiID);
-		query.setParameter("lahetysonnistui", lahetysonnistui);
+		
+		if (lahetysonnistui) {
+			query.setParameter("lahetysonnistui", "1");
+		} else {
+			query.setParameter("lahetysonnistui", "0");
+		}
 		
 		return query.getSingleResult();
 	}
