@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.api;
 
+import org.junit.Ignore;
 import junit.framework.Test;
 import junit.framework.TestCase;
 import junit.framework.TestSuite;
@@ -7,6 +8,7 @@ import junit.framework.TestSuite;
 /**
  * Unit test for simple App.
  */
+@Ignore
 public class AppTest 
     extends TestCase
 {
