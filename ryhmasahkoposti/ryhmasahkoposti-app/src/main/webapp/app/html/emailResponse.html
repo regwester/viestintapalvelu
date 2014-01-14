@@ -1,0 +1,70 @@
+<div ng-controller="EmailResponseController">
+    <form novalidate="novalidate" >
+        <table border="0">
+        	<tr>
+	            <td><button class="inline-operation btn btn-small">Takaisin</button></td>
+	            <td><h3>Viesti</h3></td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>&nbsp;</td>
+	            <td>Viesti lähetetty onnistuneesti</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Prosessi</td>
+	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Lähettäjä</td>
+	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Vastausosoite</td>
+	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Lähetystunnus</td>
+	            <td>{{emailresponse[0].header.deliveryCode}}</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Lähetysajankohta</td>
+	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Aihe</td>
+	            <td>{{emailresponse[0].subject}}</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Sisältö</td>
+	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>
+            </tr><tr>
+	            <td>Liitetiedostot</td>
+	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>
+
+            </tr><tr>
+               	<td>{{emailresponse.length}} vastaanottajaa</td>
+		    	<td>&nbsp;</td>
+	            <td>&nbsp;</td>
+			</tr>
+			<tr>
+    			<td>&nbsp;</td>
+    			<td>
+    		 		<div border="0" ng-repeat="response in emailresponse">								    		 
+    					{{response.header.email}} - {{response.header.sendStatus}}
+					</div>		        
+				</td>
+			</tr>
+
+        </table>
+    </form>	    
+</div>
+
+ 
+<div>
+	<tr>
+ 		<td>emailresponse  : {{ emailresponse[0]}}</td>
+ 		<td>emailresponse  : {{ emailresponse[1]}}</td>
+ 		<td>&nbsp;</td>
+	</tr>
+</div>
