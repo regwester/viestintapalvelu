@@ -1,10 +1,34 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html id="ng-app" ng-app="viestintapalvelu">
+
 <head>
-<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
-<title>Testi</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OPH - Viestintäpalvelu</title>
+
+    <!-- libs -->
+
+    <!-- css -->
+    <link rel="stylesheet" href="./css/bootstrap-combined.css"/>
+    <link rel="stylesheet" href="./css/virkailija.css"/>
+    
 </head>
 <body>
-	<h1>Tämä on testi</h1>
+	<div id="application-wrapper">
+	    <div id="angularbox" ng-view=""></div>
+	</div>
+   	
+    <script type="text/javascript" src="./lib/jquery/jquery-1.8.3.js"></script>
+    
+    <script type="text/javascript" src="./lib/angular/angular.js"></script> 
+    <script type="text/javascript" src="./lib/angular/angular-resource.js"></script>
+    <script type="text/javascript" src="./lib/angular/angular-route.js"></script>
+    <script type="text/javascript" src="./lib/angular/angular-animate.js"></script>
+
+    <script src="./js/email.js"></script>
+    <script src="./js/emailCancel.js"></script>
+    <script src="./js/emailService.js"></script>
+    <script src="./js/emailResponse.js"></script>
+    
 </body>
+
 </html>
