@@ -73,6 +73,7 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 		vastaanottaja.setVastaanottajaOid(lahetettyVastaanottajalle.getVastaanottajaOid());
 		vastaanottaja.setVastaanottajaOidTyyppi(lahetettyVastaanottajalle.getVastaanottajanOidTyyppi());
 		vastaanottaja.setVastaanottajanSahkoposti(lahetettyVastaanottajalle.getVastaanottajanSahkoposti());
+		vastaanottaja.setHakuNimi("");
 		vastaanottaja.setLahetysalkoi(lahetettyVastaanottajalle.getLahetysalkoi());
 		vastaanottaja.setLahetyspaattyi(lahetettyVastaanottajalle.getLahetyspaattyi());
 		

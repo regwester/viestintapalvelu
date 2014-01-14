@@ -110,6 +110,7 @@ public class RaportointipalveluTestData {
 		raportoitavaVastaanottaja.setVastaanottajaOid("102030405100");
 		raportoitavaVastaanottaja.setVastaanottajaOidTyyppi("oppilas");
 		raportoitavaVastaanottaja.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
+		raportoitavaVastaanottaja.setHakuNimi("");
 		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		raportoitavaVastaanottaja.setEpaonnistumisenSyy("");
