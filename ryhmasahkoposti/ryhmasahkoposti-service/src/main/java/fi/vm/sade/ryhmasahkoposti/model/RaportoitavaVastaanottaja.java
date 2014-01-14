@@ -31,6 +31,9 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 	@Column(name="vastaanottajan_sahkopostiosoite", nullable=false)
 	private String vastaanottajanSahkoposti;
 	
+	@Column(name="hakunimi", nullable=false)
+	private String hakuNimi;
+	
 	@Column(name="lahetysalkoi", nullable=true)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date lahetysalkoi;
@@ -75,6 +78,14 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 
 	public void setVastaanottajanSahkoposti(String vastaanottajanSahkoposti) {
 		this.vastaanottajanSahkoposti = vastaanottajanSahkoposti;
+	}
+
+	public String getHakuNimi() {
+		return hakuNimi;
+	}
+
+	public void setHakuNimi(String hakuNimi) {
+		this.hakuNimi = hakuNimi;
 	}
 
 	public Date getLahetysalkoi() {

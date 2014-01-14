@@ -9,12 +9,13 @@ import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 public interface RaportoitavaViestiService {
 	/**
-	 * Hakee kaikki raportoitavat viestit
+	 * Hakee käyttäjän ja käyttäjän käyttöoikeusryhmien kaikki raportoitavat viestit
 	 * 
+	 * @param Käyttäjätunnus
 	 * @return Lista raportoitavia viestejä {@link RaportoitavaViesti} 
-	 */
+	 */	
 	public List<RaportoitavaViesti> haeRaportoitavatViestit();
-	
+
 	/**
 	 * Hakee raportoitavan viestin viestin avaimella
 	 * 
@@ -29,7 +30,7 @@ public interface RaportoitavaViestiService {
 	 * @param query Hakuparametrit
 	 * @return Lists raportoitavia viestejä {@link RaportoitavaViesti}
 	 */
-	public List<RaportoitavaViesti> haeRaportoitavatViestit(RyhmasahkopostiViestiQueryDTO query);
+	public List<RaportoitavaViesti> haeRaportoitavatViestit(String query);
 	
 	/**
 	 * Muodostaa raportoitavan viestin tiedot kutsujalta saaduista tiedoista
