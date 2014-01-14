@@ -29,9 +29,29 @@ public class Launcher {
         staticCtx.addParameter("contextConfigLocation", "classpath:test-application-context.xml");
         staticCtx.addApplicationListener("org.springframework.web.context.ContextLoaderListener");
 
+        // <servlet>
+        // <servlet-name>Jersey REST Service</servlet-name>
+        // <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
+        // <init-param>
+        // <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
+        // <param-value>fi.vm.sade.generic.rest.CorsFilter</param-value>
+        // </init-param>
+        // <init-param>
+        // <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
+        // <param-value>true</param-value>
+        // </init-param>
+        // <load-on-startup>1</load-on-startup>
+        // </servlet>
+        // <servlet-mapping>
+        // <servlet-name>Jersey REST Service</servlet-name>
+        // <url-pattern>/api/v1/*</url-pattern>
+        // </servlet-mapping>
+
         Wrapper w = Tomcat.addServlet(staticCtx, jerseyServletName,
-                org.glassfish.jersey.servlet.ServletContainer.class.getName());
-        w.addInitParameter("javax.ws.rs.Application", "fi.vm.sade.viestintapalvelu.ViestintapaveluConfiguration");
+                com.sun.jersey.spi.spring.container.servlet.SpringServlet.class.getName());
+        w.addInitParameter("com.sun.jersey.spi.container.ContainerResponseFilters",
+                "fi.vm.sade.generic.rest.CorsFilter");
+        w.addInitParameter("com.sun.jersey.api.json.POJOMappingFeature", "true");
         staticCtx.addServletMapping("/api/v1/*", jerseyServletName);
         Tomcat.initWebappDefaults(staticCtx);
         staticCtx.setCachingAllowed(false);

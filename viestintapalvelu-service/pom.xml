@@ -90,49 +90,99 @@
 
 		<!-- Jersey, REST, Json -->
 		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-multipart</artifactId>
-			<version>2.4.1</version>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-spring</artifactId>
+			<version>1.18</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>validation-api</artifactId>
-					<groupId>javax.validation</groupId>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>javax.ws.rs-api</artifactId>
-					<groupId>javax.ws.rs</groupId>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-core</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-web</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-beans</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.springframework</groupId>
+					<artifactId>spring-context</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.media</groupId>
-			<artifactId>jersey-media-json-jackson</artifactId>
-			<version>2.4.1</version>
+			<groupId>com.sun.jersey.contribs</groupId>
+			<artifactId>jersey-multipart</artifactId>
+			<version>1.18</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-proxy-client</artifactId>
-			<version>2.4.1</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+			<version>1.18</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.core</groupId>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-server</artifactId>
+			<version>1.18</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
 			<artifactId>jersey-client</artifactId>
-			<version>2.4.1</version>
+			<version>1.18</version>
 		</dependency>
 		<dependency>
-			<groupId>org.glassfish.jersey.ext</groupId>
-			<artifactId>jersey-spring3</artifactId>
-			<version>2.4.1</version>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-servlet</artifactId>
+			<version>1.18</version>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<version>1.18</version>
 			<exclusions>
 				<exclusion>
-					<artifactId>bean-validator</artifactId>
-					<groupId>org.glassfish.hk2.external</groupId>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-core-asl</artifactId>
 				</exclusion>
 				<exclusion>
-					<artifactId>javax.ws.rs-api</artifactId>
-					<groupId>javax.ws.rs</groupId>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-jaxrs</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-mapper-asl</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.codehaus.jackson</groupId>
+					<artifactId>jackson-xc</artifactId>
 				</exclusion>
 			</exclusions>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-core-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-jaxrs</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-mapper-asl</artifactId>
+			<version>1.9.13</version>
+		</dependency>
+		<dependency>
+			<groupId>org.codehaus.jackson</groupId>
+			<artifactId>jackson-xc</artifactId>
+			<version>1.9.13</version>
 		</dependency>
 
 		<!-- Tomcat -->
@@ -174,9 +224,9 @@
 			<version>3.4.4</version>
 		</dependency>
 		<dependency>
-			<groupId>com.google.inject</groupId>
-			<artifactId>guice</artifactId>
-			<version>${guice.version}</version>
+			<groupId>javax.inject</groupId>
+			<artifactId>javax.inject</artifactId>
+			<version>1</version>
 		</dependency>
 		<dependency>
 			<groupId>com.lowagie</groupId>
@@ -355,9 +405,14 @@
 		</dependency>
 
 		<dependency>
-  <groupId>org.apache.cxf</groupId>
-  <artifactId>cxf-rt-transports-http-hc</artifactId>
-		  <version>2.7.6</version>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-transports-http-hc</artifactId>
+			<version>2.7.6</version>
+		</dependency>
+		<dependency>
+			<groupId>org.apache.cxf</groupId>
+			<artifactId>cxf-rt-frontend-jaxrs</artifactId>
+			<version>2.7.6</version>
 		</dependency>
 		<dependency>
   <groupId>org.apache.cxf</groupId>
