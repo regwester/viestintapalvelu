@@ -1,0 +1,64 @@
+<div ng-controller="EmailController">
+
+    <form novalidate="novalidate" class="form-horizontal">
+    
+		<div class="control-group">		
+		    <label class="control-label"></label>
+		    <div class="controls">
+	            	<h2>Viesti</h3>
+		    </div>		
+		</div>
+		
+		<hr></hr>
+		            
+		<div class="control-group" ng-hide="showTo">		
+		    <label class="control-label">Vastaanottajat</label>
+		    <div class="controls">
+            		{{emaildata.headers.length}} vastaanottajaa
+		    </div>		
+		</div>
+            
+		<div class="control-group" ng-hide="showCnt">		
+		    <label class="control-label">Vastaanottajat</label>
+		    <div class="controls">		    
+		 		<div border="0" ng-repeat="header in emaildata.headers">								    		 
+	  					{{header.email}}
+				</div>	
+		    </div>						        
+		</div>
+    	            
+		<div class="control-group">		
+		    <label class="control-label">Lähettäjä</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="emaildata.email.sender"/>
+		    </div>		
+		</div>
+		
+		<div class="control-group">		
+		    <label class="control-label">Otsikko</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="emaildata.email.subject"/>
+		    </div>		
+		</div>
+
+		<div class="control-group">		
+		    <label class="control-label">Viesti</label>
+		    <div class="controls">
+ 		    	<textarea rows="10" cols="120" ng-model="emaildata.email.body"/>
+		    </div>		
+		</div>
+    	
+		<div class="control-group">		
+		    <label class="control-label"></label>
+	<!--    <div class="controls pagination-right">   -->
+		    <div class="controls pagination-centered"> 
+					<button ng-click="cancelEmail()" 	class="inline-operation btn btn-small">Peruuta</button>
+					<button ng-click="sendGroupEmail()" class="inline-operation btn btn-small">Lähetä</button>
+		    </div>		
+		</div>
+    	 
+		<hr></hr>
+    
+    </form>
+
+</div>
