@@ -5,6 +5,8 @@ import java.util.Map.Entry;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.stereotype.Service;
 
@@ -12,7 +14,6 @@ import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
-import com.google.inject.Singleton;
 
 @Service
 @Singleton
