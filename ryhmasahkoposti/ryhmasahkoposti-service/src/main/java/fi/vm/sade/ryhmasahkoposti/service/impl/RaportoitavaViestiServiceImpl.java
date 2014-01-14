@@ -28,20 +28,20 @@ public class RaportoitavaViestiServiceImpl implements RaportoitavaViestiService 
 	}
 
 	@Override
-	public List<RaportoitavaViesti> haeRaportoitavatViestit(RyhmasahkopostiViestiQueryDTO query) {
+	public List<RaportoitavaViesti> haeRaportoitavatViestit(String query) {
 		List<RaportoitavaViesti> raportoitavatViestit = new ArrayList<RaportoitavaViesti>();
 		
-		if (query.getLahettajanOid() != null && !query.getLahettajanOid().isEmpty()) {
+		RyhmasahkopostiViestiQueryDTO queryDTO = null;
+		
+		if (queryDTO.getLahettajanOid() != null && !queryDTO.getLahettajanOid().isEmpty()) {
 			List<String> lahettajanOidList = new ArrayList<String>();
-			lahettajanOidList.add(query.getLahettajanOid());
+			lahettajanOidList.add(queryDTO.getLahettajanOid());
 			
 			raportoitavatViestit = raportoitavaViestiDAO.findLahettajanRaportoitavatViestit(lahettajanOidList);
 		}
 		
 		return raportoitavatViestit;
 	}
-	
-	
 
 	@Override
 	public RaportoitavaViesti haeRaportoitavaViesti(Long id) {

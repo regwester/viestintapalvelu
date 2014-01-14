@@ -52,7 +52,13 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public List<RaportoitavaViesti> haeRaportoitavatViestit(RyhmasahkopostiViestiQueryDTO query) {
+	public List<RaportoitavaViesti> haeRaportoitavatViestit() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<RaportoitavaViesti> haeRaportoitavatViestit(String query) {
 		return raportoitavaViestiService.haeRaportoitavatViestit(query);
 	}
 
