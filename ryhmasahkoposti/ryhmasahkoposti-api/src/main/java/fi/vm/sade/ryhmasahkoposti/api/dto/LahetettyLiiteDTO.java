@@ -7,6 +7,7 @@ public class LahetettyLiiteDTO implements Serializable {
 
 	private String liitetiedostonNimi;
 	private byte[] liitetiedosto;
+	private String sisaltotyyppi;
 	
 	public String getLiitetiedostonNimi() {
 		return liitetiedostonNimi;
@@ -23,8 +24,12 @@ public class LahetettyLiiteDTO implements Serializable {
 	public void setLiitetiedosto(byte[] liitetiedosto) {
 		this.liitetiedosto = liitetiedosto;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+
+	public String getSisaltotyyppi() {
+		return sisaltotyyppi;
+	}
+
+	public void setSisaltotyyppi(String sisaltotyyppi) {
+		this.sisaltotyyppi = sisaltotyyppi;
 	}
 }

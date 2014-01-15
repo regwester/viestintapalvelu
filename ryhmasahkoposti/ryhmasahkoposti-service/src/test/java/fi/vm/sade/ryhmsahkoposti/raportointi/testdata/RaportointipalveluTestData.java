@@ -19,6 +19,7 @@ public class RaportointipalveluTestData {
 		
 		lahetettyVastaanottajalle.setVastaanottajaOid("102030405100");
 		lahetettyVastaanottajalle.setVastaanottajanOidTyyppi("oppilas");
+		lahetettyVastaanottajalle.setKielikoodi("FI");
 		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
 		lahetettyVastaanottajalle.setLahetyspaattyi(new Date());
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
@@ -37,6 +38,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus.setVastauksensaajaOid("102030405100");
 		lahetyksenAloitus.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
+		lahetyksenAloitus.setHtmlViesti(false);
 		lahetyksenAloitus.setAihe("Koekutsu");
 		lahetyksenAloitus.setViesti(new String("Kutsu kokeeseen").getBytes());
 		lahetyksenAloitus.setLahetysAlkoi(new Date());
@@ -56,6 +58,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus1.setVastauksensaajaOid("102030405110");
 		lahetyksenAloitus1.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus1.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
+		lahetyksenAloitus1.setHtmlViesti(false);
 		lahetyksenAloitus1.setAihe("Koekutsu");
 		lahetyksenAloitus1.setViesti(new String("Kutsu kokeeseen").getBytes());
 		lahetyksenAloitus1.setLahetysAlkoi(new Date());
@@ -71,6 +74,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus2.setVastauksensaajaOid("102030405120");
 		lahetyksenAloitus2.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus2.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
+		lahetyksenAloitus2.setHtmlViesti(false);
 		lahetyksenAloitus2.setAihe("Koekutsu");
 		lahetyksenAloitus2.setViesti(new String("Kutsu kokeeseen").getBytes());
 		lahetyksenAloitus2.setLahetysAlkoi(new Date());
@@ -110,10 +114,12 @@ public class RaportointipalveluTestData {
 		raportoitavaVastaanottaja.setVastaanottajaOid("102030405100");
 		raportoitavaVastaanottaja.setVastaanottajaOidTyyppi("oppilas");
 		raportoitavaVastaanottaja.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
+		raportoitavaVastaanottaja.setKielikoodi("FI");
 		raportoitavaVastaanottaja.setHakuNimi("");
 		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		raportoitavaVastaanottaja.setEpaonnistumisenSyy("");
+		raportoitavaVastaanottaja.setAikaleima(new Date());
 		
 		return raportoitavaVastaanottaja;
 	}
@@ -133,7 +139,9 @@ public class RaportointipalveluTestData {
 		raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
 		raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 		raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
+		raportoitavaViesti.setHtmlViesti("");
 		raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
+		raportoitavaViesti.setAikaleima(new Date());
 		
 		return raportoitavaViesti;
 	}
@@ -156,7 +164,9 @@ public class RaportointipalveluTestData {
 			raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
 			raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 			raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
+			raportoitavaViesti.setHtmlViesti("");
 			raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
+			raportoitavaViesti.setAikaleima(new Date());
 			
 			raportoitavatViestit.add(raportoitavaViesti);
 		}

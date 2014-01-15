@@ -10,6 +10,7 @@ public class LahetettyVastaanottajalleDTO implements Serializable {
 	private String vastaanottajaOid;
 	private String vastaanottajanOidTyyppi;
 	private String vastaanottajanSahkoposti;
+	private String kielikoodi;
 	private Date lahetysalkoi;
 	private Date lahetyspaattyi;
 	private String epaonnistumisenSyy;
@@ -44,6 +45,14 @@ public class LahetettyVastaanottajalleDTO implements Serializable {
 	
 	public void setVastaanottajanSahkoposti(String vastaanottajanSahkoposti) {
 		this.vastaanottajanSahkoposti = vastaanottajanSahkoposti;
+	}
+
+	public String getKielikoodi() {
+		return kielikoodi;
+	}
+
+	public void setKielikoodi(String kielikoodi) {
+		this.kielikoodi = kielikoodi;
 	}
 
 	public Date getLahetysalkoi() {

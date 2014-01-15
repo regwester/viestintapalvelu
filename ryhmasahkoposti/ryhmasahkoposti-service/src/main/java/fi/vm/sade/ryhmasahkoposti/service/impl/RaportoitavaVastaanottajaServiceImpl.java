@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -87,6 +88,7 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 		vastaanottaja.setVastaanottajaOid(lahetettyVastaanottajalle.getVastaanottajaOid());
 		vastaanottaja.setVastaanottajaOidTyyppi(lahetettyVastaanottajalle.getVastaanottajanOidTyyppi());
 		vastaanottaja.setVastaanottajanSahkoposti(lahetettyVastaanottajalle.getVastaanottajanSahkoposti());
+		vastaanottaja.setKielikoodi(lahetettyVastaanottajalle.getKielikoodi());
 		vastaanottaja.setHakuNimi("");
 		vastaanottaja.setLahetysalkoi(lahetettyVastaanottajalle.getLahetysalkoi());
 		vastaanottaja.setLahetyspaattyi(lahetettyVastaanottajalle.getLahetyspaattyi());
@@ -99,6 +101,7 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 		
 		vastaanottaja.setLahetysOnnistui(lahetysOnnistui);
 		vastaanottaja.setEpaonnistumisenSyy(lahetettyVastaanottajalle.getEpaonnistumisenSyy());
+		vastaanottaja.setAikaleima(new Date());
 		
 		return vastaanottaja;
 	}

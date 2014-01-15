@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,13 @@ public class RaportoitavaViestiServiceImpl implements RaportoitavaViestiService 
 		raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
 		raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 		raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
+		if (lahetyksenAloitus.isHtmlViesti()) {
+			raportoitavaViesti.setHtmlViesti("html");
+		} else {
+			raportoitavaViesti.setHtmlViesti("");
+		}
 		raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
+		raportoitavaViesti.setAikaleima(new Date());
 		
 		return raportoitavaViesti;
 	}

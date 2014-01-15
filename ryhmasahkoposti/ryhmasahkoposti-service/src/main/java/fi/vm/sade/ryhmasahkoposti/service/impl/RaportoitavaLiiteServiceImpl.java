@@ -38,6 +38,8 @@ public class RaportoitavaLiiteServiceImpl implements RaportoitavaLiiteService {
 			byte[] zippedLiitetiedosto = zipLiitetiedosto(liite.getLiitetiedostonNimi(), liite.getLiitetiedosto());
 			raportoitavaLiite.setLiitetiedosto(zippedLiitetiedosto);
 			
+			raportoitavaLiite.setSisaltotyyppi(liite.getSisaltotyyppi());
+			
 			raportoitavatLiitteet.add(raportoitavaLiite);
 		}
 			

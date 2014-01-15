@@ -23,6 +23,9 @@ public class RaportoitavaLiite extends BaseEntity {
 	
 	@Column(name="liitetiedosto")
 	private byte[] liitetiedosto;
+	
+	@Column(name="sisaltotyyppi", nullable=false)
+	private String sisaltotyyppi;
 
 	public RaportoitavaViesti getRaportoitavaviesti() {
 		return raportoitavaviesti;
@@ -46,6 +49,14 @@ public class RaportoitavaLiite extends BaseEntity {
 
 	public void setLiitetiedosto(byte[] liitetiedosto) {
 		this.liitetiedosto = liitetiedosto;
+	}
+
+	public String getSisaltotyyppi() {
+		return sisaltotyyppi;
+	}
+
+	public void setSisaltotyyppi(String sisaltotyyppi) {
+		this.sisaltotyyppi = sisaltotyyppi;
 	}
 	
 	

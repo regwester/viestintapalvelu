@@ -21,10 +21,10 @@ public class RaportoitavaViesti extends BaseEntity {
 	@Column(name="prosessi", nullable=false)
 	private String prosessi;
 	
-	@Column(name="lahettajan_oid", nullable=false)
+	@Column(name="lahettajan_oid", nullable=true)
 	private String lahettajanOid;
 
-	@Column(name="lahettajan_oid_tyyppi", nullable=false)
+	@Column(name="lahettajan_oid_tyyppi", nullable=true)
 	private String lahettajanOidTyyppi;
 
 	@Column(name="lahettajan_sahkopostiosoite", nullable=false)
@@ -45,6 +45,9 @@ public class RaportoitavaViesti extends BaseEntity {
 	@Column(name="viesti", nullable=false)
 	private byte[] viesti;
 
+	@Column(name="htmlviesti", nullable=false)
+	private String htmlViesti;
+	
 	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
 	
@@ -56,6 +59,9 @@ public class RaportoitavaViesti extends BaseEntity {
 	
 	@Column(name="lahetyspaattyi", nullable=true)
 	private Date lahetysPaattyi;
+	
+	@Column(name="aikaleima", nullable=false)
+	private Date aikaleima;
 	
 	public String getProsessi() {
 		return prosessi;
@@ -129,6 +135,14 @@ public class RaportoitavaViesti extends BaseEntity {
 		this.viesti = viesti;
 	}
 
+	public String getHtmlViesti() {
+		return htmlViesti;
+	}
+
+	public void setHtmlViesti(String htmlViesti) {
+		this.htmlViesti = htmlViesti;
+	}
+
 	public List<RaportoitavaVastaanottaja> getRaportoitavatVastaanottajat() {
 		return raportoitavatVastaanottajat;
 	}
@@ -159,6 +173,14 @@ public class RaportoitavaViesti extends BaseEntity {
 
 	public void setLahetysPaattyi(Date lahetysPaattyi) {
 		this.lahetysPaattyi = lahetysPaattyi;
+	}
+
+	public Date getAikaleima() {
+		return aikaleima;
+	}
+
+	public void setAikaleima(Date aikaleima) {
+		this.aikaleima = aikaleima;
 	}
 
 	@Override
