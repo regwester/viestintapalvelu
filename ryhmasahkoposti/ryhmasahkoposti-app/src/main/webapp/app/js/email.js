@@ -3,8 +3,9 @@ var email = angular.module('viestintapalvelu', ['ngRoute', 'ngResource']);
 email.config(['$routeProvider',  function ($routeProvider) {
 //		alert("email.config");
 		$routeProvider.when('/', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
-		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
+//		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
 		$routeProvider.when('/cancel/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailCancel.html', controller: 'EmailCancelController'});
+		$routeProvider.when('/status/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailSendStatus.html', controller: 'EmailSendStatusController'});
 	    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
@@ -64,7 +65,8 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 		
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
-			$location.path("/response");
+//			$location.path("/response");
+			$location.path("/status");
 			
 			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
 			$rootScope.emailresponse = $scope.emailresponse;
@@ -77,6 +79,7 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 
 			$rootScope.callingProcess = $scope.emaildata.headers[0].callingProcess;			
 		};
+		
 	
 }]);
 

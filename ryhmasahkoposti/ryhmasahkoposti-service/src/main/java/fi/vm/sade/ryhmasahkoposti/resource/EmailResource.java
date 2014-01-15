@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.core.MediaType;
@@ -17,31 +19,48 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
+import org.aspectj.weaver.NewConstructorTypeMunger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
+
+
+
+
+
+
+
+
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
 //import com.google.inject.Singleton;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
+import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
+import fi.vm.sade.ryhmasahkoposti.service.impl.RyhmasahkopostinRaportointiServiceImpl;
 //import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 
 @Component
 @Path("email")
 public class EmailResource {
-	
+    private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResource.class.getName());	
     private final EmailService emailService;
     
 	@Autowired    
-    public EmailResource(EmailService emailBuilder) {
-        this.emailService = emailBuilder;
+    public EmailResource(EmailService emailService) {
+        this.emailService = emailService;
     }
+	@Autowired
+	private RyhmasahkopostinRaportointiService sendDbService;
+	
 
 	@POST
 	@Consumes("application/json")
@@ -49,28 +68,48 @@ public class EmailResource {
 	@Path("sendGroupEmail")
 //	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
 	public void sendGroupEmail(EmailData emailData) {
-		EmailMessage  email = emailData.getEmail();
-
-		// Getting footer with the first ones language code
-	    email.setFooter(emailData.getHeaders().get(0).getLanguageCode());  
+		EmailMessage email = emailData.getEmail();		
+	    email.setFooter(emailData.getHeaders().get(0).getLanguageCode()); // Setting footer with the first ones language code  
+	    	    
+	    LahetyksenAloitusDTO emailInfo = new LahetyksenAloitusDTO();	    
+	    copyEmailInfo(email, emailInfo);
 		
-//		String deliveryCode = getDeliverycode();		
-
-//    	List<EmailResponse> responses = new ArrayList<EmailResponse>();
-		
+	    List<LahetettyVastaanottajalleDTO> recipients = new ArrayList<LahetettyVastaanottajalleDTO>(); 	    
+	    
 		for (EmailRecipient header : emailData.getHeaders()) {
-//			header.setDeliveryCode(deliveryCode); 
-//			email.setHeader(header);
+			log.log(Level.INFO, "Adding " + header.getEmail() + " to be sending list.");
 			
-			System.err.println("Save to DB - " + header.getEmail());
+			LahetettyVastaanottajalleDTO recipient = new LahetettyVastaanottajalleDTO();
+			copyRecipientInfo(header, recipient);
 			
-			//EmailResponse resp = emailService.sendEmail(email);		
-//	    	responses.add(resp);			
-			
+			recipients.add(recipient);
 		}
-		
+
+		//sendDbService.
 //		return responses;
     }
+
+	private void copyRecipientInfo(EmailRecipient header, LahetettyVastaanottajalleDTO recipient) {
+		recipient.setLahetysalkoi(new Date());
+		recipient.setVastaanottajaOid(header.getOid());
+		recipient.setVastaanottajanOidTyyppi(header.getOidType());
+		recipient.setVastaanottajanSahkoposti(header.getEmail());
+		//recipient  header.getLanguageCode();
+	}
+
+	private void copyEmailInfo(EmailMessage email, LahetyksenAloitusDTO emailInfo) {
+		emailInfo.setProsessi(email.getCallingProcess());
+	    emailInfo.setLahettajanSahkopostiosoite(email.getOwnerEmail());
+	    emailInfo.setVastauksensaajaOid(email.getSenderEmail());
+	    emailInfo.setVastauksenSaajanOidTyyppi(email.getSenderOidType());
+	    emailInfo.setVastauksensaajanSahkoposti(email.getSenderEmail());
+	    emailInfo.setAihe(email.getSubject());
+//	    emailInfo.setViesti(email.getBody()+email.getFooter());
+//	    emailInfo  email.isHtml();
+//	    emailInfo  email.getCharset()
+	}
+	
+	
 		
 //	@POST
 //	@Consumes(MediaType.MULTIPART_FORM_DATA)
