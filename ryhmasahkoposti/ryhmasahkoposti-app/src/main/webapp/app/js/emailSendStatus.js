@@ -5,6 +5,7 @@ emailCancel.controller('EmailSendStatusController', ['$scope', '$rootScope', '$l
 //	alert("EmailSendStatusController");
 	
 //	 $scope.callingProcess = $rootScope.callingProcess;
+	 $scope.sendStarted = $rootScope.sendStarted;
 	 
 }]);
 

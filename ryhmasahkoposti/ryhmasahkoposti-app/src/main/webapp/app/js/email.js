@@ -66,10 +66,13 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
 //			$location.path("/response");
+			
+//			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
+//			$rootScope.emailresponse = $scope.emailresponse;
+
 			$location.path("/status");
 			
-			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
-			$rootScope.emailresponse = $scope.emailresponse;
+			$rootScope.sendStarted   =  GroupEmailFactory.sendGroupEmail($scope.emaildata);			
 		};
 
 		

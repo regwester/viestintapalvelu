@@ -67,7 +67,7 @@ public class EmailResource {
 //	@Produces("application/json")
 	@Path("sendGroupEmail")
 //	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
-	public void sendGroupEmail(EmailData emailData) {
+	public String sendGroupEmail(EmailData emailData) {
 		EmailMessage email = emailData.getEmail();		
 	    email.setFooter(emailData.getHeaders().get(0).getLanguageCode()); // Setting footer with the first ones language code  
 	    	    
@@ -84,8 +84,15 @@ public class EmailResource {
 			
 			recipients.add(recipient);
 		}
-
-		//sendDbService.
+		emailInfo.setVastaanottajat(recipients);
+		
+		String sendStarted = "OK";
+		try {
+			sendDbService.raportoiLahetyksenAloitus(emailInfo);
+		} catch (IOException e) {			
+			sendStarted = "Problems in uploading email info to db: "  +e.getMessage();
+		}
+		return sendStarted;
 //		return responses;
     }
 
@@ -94,7 +101,7 @@ public class EmailResource {
 		recipient.setVastaanottajaOid(header.getOid());
 		recipient.setVastaanottajanOidTyyppi(header.getOidType());
 		recipient.setVastaanottajanSahkoposti(header.getEmail());
-		//recipient  header.getLanguageCode();
+		recipient.setKielikoodi(header.getLanguageCode());
 	}
 
 	private void copyEmailInfo(EmailMessage email, LahetyksenAloitusDTO emailInfo) {
@@ -104,9 +111,9 @@ public class EmailResource {
 	    emailInfo.setVastauksenSaajanOidTyyppi(email.getSenderOidType());
 	    emailInfo.setVastauksensaajanSahkoposti(email.getSenderEmail());
 	    emailInfo.setAihe(email.getSubject());
-//	    emailInfo.setViesti(email.getBody()+email.getFooter());
-//	    emailInfo  email.isHtml();
-//	    emailInfo  email.getCharset()
+	    emailInfo.setViesti(email.getBody()+email.getFooter());
+	    emailInfo.setHtmlViesti(email.isHtml());
+//	    emailInfo.set  email.getCharset()
 	}
 	
 	
