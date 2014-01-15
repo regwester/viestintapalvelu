@@ -39,6 +39,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
 		lahetyksenAloitus.setHtmlViesti(false);
+		lahetyksenAloitus.setMerkisto("utf-8");
 		lahetyksenAloitus.setAihe("Koekutsu");
 		lahetyksenAloitus.setViesti(new String("Kutsu kokeeseen").getBytes());
 		lahetyksenAloitus.setLahetysAlkoi(new Date());
@@ -59,6 +60,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus1.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus1.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
 		lahetyksenAloitus1.setHtmlViesti(false);
+		lahetyksenAloitus1.setMerkisto("utf-8");
 		lahetyksenAloitus1.setAihe("Koekutsu");
 		lahetyksenAloitus1.setViesti(new String("Kutsu kokeeseen").getBytes());
 		lahetyksenAloitus1.setLahetysAlkoi(new Date());
@@ -75,6 +77,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus2.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus2.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
 		lahetyksenAloitus2.setHtmlViesti(false);
+		lahetyksenAloitus2.setMerkisto("utf-8");
 		lahetyksenAloitus2.setAihe("Koekutsu");
 		lahetyksenAloitus2.setViesti(new String("Kutsu kokeeseen").getBytes());
 		lahetyksenAloitus2.setLahetysAlkoi(new Date());

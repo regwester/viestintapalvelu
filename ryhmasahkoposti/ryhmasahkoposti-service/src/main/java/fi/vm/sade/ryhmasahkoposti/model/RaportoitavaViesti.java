@@ -47,7 +47,10 @@ public class RaportoitavaViesti extends BaseEntity {
 
 	@Column(name="htmlviesti", nullable=false)
 	private String htmlViesti;
-	
+
+	@Column(name="merkisto", nullable=false)
+	private String merkisto;
+
 	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
 	List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
 	
@@ -143,6 +146,14 @@ public class RaportoitavaViesti extends BaseEntity {
 		this.htmlViesti = htmlViesti;
 	}
 
+	public String getMerkisto() {
+		return merkisto;
+	}
+
+	public void setMerkisto(String merkisto) {
+		this.merkisto = merkisto;
+	}
+
 	public List<RaportoitavaVastaanottaja> getRaportoitavatVastaanottajat() {
 		return raportoitavatVastaanottajat;
 	}
@@ -181,15 +192,5 @@ public class RaportoitavaViesti extends BaseEntity {
 
 	public void setAikaleima(Date aikaleima) {
 		this.aikaleima = aikaleima;
-	}
-
-	@Override
-	public String toString() {
-		return "RaportoitavaViesti [prosessi=" + prosessi + ", lahettajanOid=" + lahettajanOid
-			+ ", lahettajanSahkopostiosoite=" + lahettajanSahkopostiosoite + ", vastauksensaajanOid="
-			+ vastauksensaajanOid + ", vastauksensaajanSahkopostiosoite=" + vastauksensaajanSahkopostiosoite
-			+ ", aihe=" + aihe + ", viesti=" + Arrays.toString(viesti) + ", raportoitavatVastaanottajat="
-			+ raportoitavatVastaanottajat + ", raportoitavatLiitteet=" + raportoitavatLiitteet + ", lahetysAlkoi="
-			+ lahetysAlkoi + ", lahetysPaattyi=" + lahetysPaattyi + ", getId()=" + getId() + "]";
 	}
 }
