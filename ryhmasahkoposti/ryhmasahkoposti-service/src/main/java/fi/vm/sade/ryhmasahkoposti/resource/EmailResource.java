@@ -29,7 +29,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 //import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailHeader;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 
 @Component
@@ -45,25 +45,31 @@ public class EmailResource {
 
 	@POST
 	@Consumes("application/json")
-	@Produces("application/json")
+//	@Produces("application/json")
 	@Path("sendGroupEmail")
-	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
+//	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
+	public void sendGroupEmail(EmailData emailData) {
 		EmailMessage  email = emailData.getEmail();
-		
-		String deliveryCode = getDeliverycode();		
 
-    	List<EmailResponse> responses = new ArrayList<EmailResponse>();
+		// Getting footer with the first ones language code
+	    email.setFooter(emailData.getHeaders().get(0).getLanguageCode());  
 		
-		for (EmailHeader header : emailData.getHeaders()) {
-			header.setDeliveryCode(deliveryCode); 
-			email.setHeader(header);
+//		String deliveryCode = getDeliverycode();		
+
+//    	List<EmailResponse> responses = new ArrayList<EmailResponse>();
+		
+		for (EmailRecipient header : emailData.getHeaders()) {
+//			header.setDeliveryCode(deliveryCode); 
+//			email.setHeader(header);
 			
-			EmailResponse resp = emailService.sendEmail(email);		
-	    	responses.add(resp);			
+			System.err.println("Save to DB - " + header.getEmail());
+			
+			//EmailResponse resp = emailService.sendEmail(email);		
+//	    	responses.add(resp);			
 			
 		}
 		
-		return responses;
+//		return responses;
     }
 		
 //	@POST
@@ -88,8 +94,8 @@ public class EmailResource {
 	@Produces("application/json")
 	@Path("sendEmail")
 	public EmailResponse sendEmail(EmailMessage input) {
-		String deliveryCode = getDeliverycode();
-		input.setDeliveryCode(deliveryCode);
+//		String deliveryCode = getDeliverycode();
+//		input.setDeliveryCode(deliveryCode);
 		
 		EmailResponse response = emailService.sendEmail(input); 
 		return response;
@@ -105,7 +111,7 @@ public class EmailResource {
     	List<EmailResponse> responses = new ArrayList<EmailResponse>();
 		
 		for (EmailMessage email : input) {			
-			email.setDeliveryCode(deliveryCode);
+//			email.setDeliveryCode(deliveryCode);
 			EmailResponse resp = emailService.sendEmail(email);
 	    	responses.add(resp);			
 		}
