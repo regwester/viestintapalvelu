@@ -7,6 +7,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 /**
@@ -23,6 +24,14 @@ public interface RyhmasahkopostinRaportointiService {
 	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link LahetyksenTilanneDTO}
 	 */
 	public LahetyksenTilanneDTO haeLahetyksenTulos(Long viestiID);
+
+	/**
+	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
+	 * 
+	 * @param vastaanottajienLukumaara Palautettavien vasttanottajien lukumaara
+	 * @return Lista raportoitavan viestin vastaanottajien tietoja {@link RaportoitavaVastaanottaja}
+	 */
+	public List<RaportoitavaVastaanottaja> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara);
 
 	/**
 	 * Hakee raportoitavan viestin viestintunnuksella 

@@ -51,6 +51,11 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
+	public List<RaportoitavaVastaanottaja> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara) {
+		return raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(vastaanottajienLukumaara);
+	}
+
+	@Override
 	public RaportoitavaViesti haeRaportoitavatViesti(Long viestiID) {
 		return raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
 	}
