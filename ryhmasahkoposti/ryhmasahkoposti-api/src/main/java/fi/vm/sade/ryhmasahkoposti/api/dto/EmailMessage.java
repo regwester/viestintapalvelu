@@ -14,9 +14,11 @@ import org.apache.commons.io.IOUtils;
 public class EmailMessage {
     private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class.getName()); 
 
-    private EmailHeader header = new EmailHeader();
-	private String owner;
-	private String sender;
+	private String callingProcess = "";    
+	private String ownerEmail;
+	private String senderEmail;
+	private String senderOid;
+	private String senderOidType;	
 	private String subject;
 	private String body;
 	private String footer;
@@ -25,36 +27,18 @@ public class EmailMessage {
 	List<EmailAttachment> attachments = new LinkedList<EmailAttachment>(); 
 
 	public EmailMessage() {
-
 	}
 
-//	public EmailMessage(String sender, String subject, String body) {
-//		this.sender = sender;
-//		this.subject = subject;
-//		this.body = body;
-//	}
-	
-	protected EmailMessage(EmailHeader header, String owner, String sender, String subject, String body) {
-		this.header = header;
-		this.owner = owner;
-		this.sender = sender;
+	protected EmailMessage(String callingProcess, String ownerEmail, String senderEmail, String senderOid, String senderOidType, String subject, String body) {
+		this.callingProcess = callingProcess; 
+		this.ownerEmail = ownerEmail;
+		this.senderEmail = senderEmail;
+		this.senderOid = senderOid; 		
+		this.senderOidType = senderOidType; 		
 		this.subject = subject;
 		this.body = body;
-		this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, header.getLanguageCode());
 	}
 	
-	public void setDeliveryCode(String code) {
-		header.setDeliveryCode(code);		
-	}
-
-	public void setSendStatus(String status) {
-		header.setSendStatus(status);		
-	}
-	
-	public void setHeader(EmailHeader header) {
-		this.header = header;
-	}
-
 	/**
 	 * Sets the message body. 
 	 * Note: Searches for <br/> or <p> within the body and sets the isHtml if found. Use 'setHtml(false)' to 
@@ -70,8 +54,8 @@ public class EmailMessage {
 		this.body = body;
 	}
 
-	public EmailHeader getHeader() {
-		return header;
+	public String getCallingProcess() {
+		return callingProcess;
 	}
 
 	public String getBody() {
@@ -94,16 +78,24 @@ public class EmailMessage {
 		return subject;
 	}
 	
-	public String getSender() {
-		return sender;
+	public String getSenderEmail() {
+		return senderEmail;
+	}
+		
+	public String getSenderOid() {
+		return senderOid;
 	}
 
-	public void setOwner(String owner) {
-		this.owner = owner;
+	public String getSenderOidType() {
+		return senderOidType;
 	}
 
-	public String getOwner() {
-		return owner;
+	public void setOwnerEmail(String ownerEmail) {
+		this.ownerEmail = ownerEmail;
+	}
+
+	public String getOwnerEmail() {
+		return ownerEmail;
 	}
 
 	public boolean isHtml() {
@@ -174,10 +166,11 @@ public class EmailMessage {
 
 	@Override
 	public String toString() {
-		return "EmailMessage [header=" + header + ", owner=" + owner
-				+ ", sender=" + sender + ", subject=" + subject + ", body="
-				+ body + ", footer=" + footer + ", isHtml=" + isHtml
-				+ ", charset=" + charset + ", attachments=" + attachments + "]";
+		return "EmailMessage [callingProcess=" + callingProcess
+				+ ", ownerEmail=" + ownerEmail + ", senderEmail=" + senderEmail
+				+ ", senderOid=" + senderOid + ", senderOidType="
+				+ senderOidType + ", subject=" + subject + ", body=" + body
+				+ ", footer=" + footer + ", isHtml=" + isHtml + ", charset="
+				+ charset + ", attachments=" + attachments + "]";
 	}
-
 }

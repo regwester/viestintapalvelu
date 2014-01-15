@@ -2,7 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 
 public class EmailResponse {
-	private EmailHeader header;	
+	private EmailRecipient header;	
 //	private String recipient;
     private String status;
     private String subject;
@@ -16,14 +16,14 @@ public class EmailResponse {
 			
 	public EmailResponse(/*String recipient, */String status, String subject) {
 		super();
-		this.header = new EmailHeader("");		
+		this.header = new EmailRecipient("");		
 //        this.recipient = recipient;
 		this.status = status;
 		this.subject = subject;
 		this.nbrOfAttachements = "0";
 	}
 
-	public EmailResponse(EmailHeader header, /*String recipient, */String status, String subject, String nbrOfAttachements) {
+	public EmailResponse(EmailRecipient header, /*String recipient, */String status, String subject, String nbrOfAttachements) {
 		super();
 		this.header = header;		
 //        this.recipient = recipient;
@@ -32,7 +32,7 @@ public class EmailResponse {
 		this.nbrOfAttachements = nbrOfAttachements;
 	}
 
-    public EmailHeader getHeader() {
+    public EmailRecipient getHeader() {
 		return header;
 	}
 

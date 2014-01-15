@@ -17,34 +17,23 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 	
 	$scope.emaildata = {
 			headers: [
-					{callingProcess: 'Osoitetietojarjestelma',
-					oid: '1234567890ABCD',
+					{oid: '1234567890ABCD',
 					oidType: 'henkilo',
 					email: 'ville.vastaanottaja@gmail.com',
-					languageCode: 'FI',
-					deliveryCode: '',
-					sendStatus: '' },
+					languageCode: 'FI'},
 								
-					{callingProcess: 'Osoitetietojarjestelma',
-					oid: 'ABCD0987654321',
+					{oid: 'ABCD0987654321',
 					oidType: 'henkilo',
 					email: 'torspo.uolevi@gmail.com',
-					languageCode: 'FI',
-					deliveryCode: '',
-					sendStatus: '' }	
+					languageCode: 'FI'}	
 			],		
-			email: {
-					header: 
-						{	oid: '',
-							email: '',
-							languageCode: 'FI',
-							deliveryCode: '',
-							sendStatus: '' },
-					owner: 'oph_tiedotus@oph.fi',
-					sender: 'Mikko.Mallikas@oph.fi',
+			email: {callingProcess: 'Osoitetietojarjestelma',
+					ownerEmail: 'oph_tiedotus@oph.fi',
+					senderEmail: 'Mikko.Mallikas@oph.fi',
+					senderOid: '11223344556677',
+					senderOidType: 'henkilo',
 					subject: 'Testi viesti',
-					body: 'Testi bodya ja sporttia.',
-					footer: ''
+					body: 'Testi bodya ja sporttia.'
 			}
 		};
 	
