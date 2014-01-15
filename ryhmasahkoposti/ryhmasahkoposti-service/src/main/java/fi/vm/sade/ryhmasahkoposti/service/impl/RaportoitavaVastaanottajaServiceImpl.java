@@ -28,6 +28,21 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 	}
 
 	@Override
+	public List<RaportoitavaVastaanottaja> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara) {		
+		List<RaportoitavaVastaanottaja> vastaanottajat = raportoitavaVastaanottajaDAO.findLahettamattomat();
+		
+		if (vastaanottajat == null || vastaanottajat.isEmpty()) {
+			return new ArrayList<RaportoitavaVastaanottaja>();
+		}
+		
+		if (vastaanottajienLukumaara > vastaanottajat.size()) {
+			return vastaanottajat;
+		}
+		
+		return vastaanottajat.subList(0, vastaanottajienLukumaara);
+	}
+
+	@Override
 	public RaportoitavaVastaanottaja haeRaportoitavaVastaanottaja(Long id) {
 		// TODO Auto-generated method stub
 		return null;
@@ -35,7 +50,6 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 
 	@Override
 	public RaportoitavaVastaanottaja haeRaportoitavaVastaanottaja(Long viestiID, String vastaanottajanSahkopostiosoite) {
-		System.out.println("viestiID: " + viestiID + " vastaanottajanSahkopostiosoite: " + vastaanottajanSahkopostiosoite);
 		return raportoitavaVastaanottajaDAO.findByLahetettyviestiIdAndVastaanottajanSahkopostiosoite(
 			viestiID, vastaanottajanSahkopostiosoite);
 	}
@@ -95,6 +109,13 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 	}
 
 	@Override
+	public void tallennaRaportoitavatVastaanottajat(List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat) {
+		for (RaportoitavaVastaanottaja raportoitavaVastaanottaja : raportoitavatVastaanottajat) {
+			raportoitavaVastaanottajaDAO.insert(raportoitavaVastaanottaja);
+		}
+	}
+
+	@Override
 	public RaportoitavaVastaanottaja taydennaRaportoitavaaVastaanottajaa(
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja, LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
 		raportoitavaVastaanottaja.setLahetysalkoi(lahetettyVastaanottajalle.getLahetysalkoi());
@@ -110,12 +131,5 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 		raportoitavaVastaanottaja.setEpaonnistumisenSyy(lahetettyVastaanottajalle.getEpaonnistumisenSyy());
 		
 		return raportoitavaVastaanottaja;
-	}
-
-	@Override
-	public void tallennaRaportoitavatVastaanottajat(List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat) {
-		for (RaportoitavaVastaanottaja raportoitavaVastaanottaja : raportoitavatVastaanottajat) {
-			raportoitavaVastaanottajaDAO.insert(raportoitavaVastaanottaja);
-		}
 	}
 }

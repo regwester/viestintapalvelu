@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiViestiQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 public interface RaportoitavaViestiService {

@@ -6,7 +6,7 @@ import java.util.List;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTulosDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 /**
@@ -20,9 +20,17 @@ public interface RyhmasahkopostinRaportointiService {
 	 * Hakee lähetyksen tuloksen
 	 * 
 	 * @param viestiID Halutun viestin tunnus
-	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link LahetyksenTulosDTO}
+	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link LahetyksenTilanneDTO}
 	 */
-	public LahetyksenTulosDTO haeLahetyksenTulos(Long viestiID);
+	public LahetyksenTilanneDTO haeLahetyksenTulos(Long viestiID);
+
+	/**
+	 * Hakee raportoitavan viestin viestintunnuksella 
+	 * 
+	 * @param viestiID Viestintunnus
+	 * @return Lista raportoitavia viestejä
+	 */
+	public RaportoitavaViesti haeRaportoitavatViesti(Long viestiID);
 
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -53,15 +61,17 @@ public interface RyhmasahkopostinRaportointiService {
 	 * Raportoi ryhmäsähköpostinlähetys vastaanottajalle
 	 * 
 	 * @param lahetettyVastaanottajalle Vastaanottajalle lähetyksen tiedot
+	 * @return true, jos raportointi onnistui. false, jos raportointi on jo tehty.
 	 */
-	public void raportoiLahetysVastaanottajalle(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle);
+	public boolean raportoiLahetysVastaanottajalle(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle);
 	
 	/**
 	 * Raportoi ryhmäsähköpostin lähetetyksen lopetus
 	 * 
 	 * @param lahetyksenLopetus Ryhmäsähköpostin lähetyksen lopetustiedot
+	 * @return true, jos raportointi onnistui. false, jos raportointi on jo tehty.
 	 */
-	public void raportoiLahetyksenLopetus(LahetyksenLopetusDTO lahetyksenLopetus);
+	public boolean raportoiLahetyksenLopetus(LahetyksenLopetusDTO lahetyksenLopetus);
 	
 	public String testaa();
 }

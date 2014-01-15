@@ -22,6 +22,13 @@ public interface RaportoitavaVastaanottajaDAO extends JpaDAO<RaportoitavaVastaan
 	 */
 	public RaportoitavaVastaanottaja findByLahetettyviestiIdAndVastaanottajanSahkopostiosoite(Long viestiID,
 		String vastaanottajanSahkopostiosoite);
+
+	/**
+	 * Hakee raportoitavat vastaanottajat, joille viestiä ei ole lähetetty 
+	 *  
+	 * @return Lista raportoitavan vastaanottajien tietoja
+	 */	
+	public List<RaportoitavaVastaanottaja> findLahettamattomat();
 	
 	/**
 	 * Hakee raportoitavia vastaanottajien tietoja halutuilla hakuparametreilla

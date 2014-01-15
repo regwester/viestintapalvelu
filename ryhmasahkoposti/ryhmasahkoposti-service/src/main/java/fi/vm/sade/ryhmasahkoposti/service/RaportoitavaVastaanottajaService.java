@@ -19,7 +19,15 @@ public interface RaportoitavaVastaanottajaService {
 	 * @return Lista raportoittavien viestin vastaanottajien tietoja {@link RaportoitavaVastaanottaja}
 	 */
 	public List<RaportoitavaVastaanottaja> haeRaportoitavatVastaanottajat();
-	
+
+	/**
+	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
+	 * 
+	 * @param vastaanottajienLukumaara Palautettavien vasttanottajien lukumaara
+	 * @return Lista raportoitavan viestin vastaanottajien tietoja {@link RaportoitavaVastaanottaja}
+	 */
+	public List<RaportoitavaVastaanottaja> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara);
+
 	/**
 	 * Hakee raportoitavan viestin vastaanottajan tiedot
 	 * 

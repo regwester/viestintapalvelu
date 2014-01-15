@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmsahkoposti.raportointi.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
 import java.util.List;
@@ -51,7 +52,7 @@ public class RaportoitavaVastaanottajaDAOTest {
                 .findBySearchCriterias(query);
 
         assertNotNull(haetutRaportoitavatVastaanottajat);
-        org.junit.Assert.assertTrue(1 <= haetutRaportoitavatVastaanottajat.size());
+        assertTrue(1 <= haetutRaportoitavatVastaanottajat.size());
     }
 
     @Test
@@ -67,8 +68,8 @@ public class RaportoitavaVastaanottajaDAOTest {
 
         RyhmasahkopostiVastaanottajaQueryDTO query = RaportointipalveluTestData.getRaportoitavaVastaanottajaQuery();
         query.setLahetysajankohta(lahetysajankohta);
-        List<RaportoitavaVastaanottaja> haetutRaportoitavatVastaanottajat = raportoitavaVastaanottajaDAO
-                .findBySearchCriterias(query);
+        List<RaportoitavaVastaanottaja> haetutRaportoitavatVastaanottajat =	
+        	raportoitavaVastaanottajaDAO.findBySearchCriterias(query);
 
         assertNotNull(haetutRaportoitavatVastaanottajat);
         assertEquals(1, haetutRaportoitavatVastaanottajat.size());
@@ -79,16 +80,16 @@ public class RaportoitavaVastaanottajaDAOTest {
         RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
         RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
 
-        RaportoitavaVastaanottaja raportoitavaVastaanottaja = RaportointipalveluTestData
-                .getRaportoitavaVastaanottaja(tallennettuRaportoitavaViesti);
+        RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+        	RaportointipalveluTestData.getRaportoitavaVastaanottaja(tallennettuRaportoitavaViesti);
         Date lahetysajankohta = new Date();
         raportoitavaVastaanottaja.setLahetyspaattyi(lahetysajankohta);
         raportoitavaVastaanottajaDAO.insert(raportoitavaVastaanottaja);
 
         RyhmasahkopostiVastaanottajaQueryDTO query = RaportointipalveluTestData.getRaportoitavaVastaanottajaQuery();
         query.setVastaanottajanSahkopostiosoite("vastaanottaja@sposti.fi");
-        List<RaportoitavaVastaanottaja> haetutRaportoitavatVastaanottajat = raportoitavaVastaanottajaDAO
-                .findBySearchCriterias(query);
+        List<RaportoitavaVastaanottaja> haetutRaportoitavatVastaanottajat = 
+        	raportoitavaVastaanottajaDAO.findBySearchCriterias(query);
 
         assertNotNull(haetutRaportoitavatVastaanottajat);
         assertEquals(0, haetutRaportoitavatVastaanottajat.size());
@@ -99,16 +100,34 @@ public class RaportoitavaVastaanottajaDAOTest {
         RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
         RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
 
-        RaportoitavaVastaanottaja raportoitavaVastaanottaja = RaportointipalveluTestData
-                .getRaportoitavaVastaanottaja(tallennettuRaportoitavaViesti);
+        RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+        	RaportointipalveluTestData.getRaportoitavaVastaanottaja(tallennettuRaportoitavaViesti);
         Date lahetysajankohta = new Date();
         raportoitavaVastaanottaja.setLahetyspaattyi(lahetysajankohta);
         raportoitavaVastaanottajaDAO.insert(raportoitavaVastaanottaja);
 
-        RaportoitavaVastaanottaja haettuRaportoitavaVastaanottaja = raportoitavaVastaanottajaDAO
-                .findByLahetettyviestiIdAndVastaanottajanSahkopostiosoite(tallennettuRaportoitavaViesti.getId(),
-                        raportoitavaVastaanottaja.getVastaanottajanSahkoposti());
+        RaportoitavaVastaanottaja haettuRaportoitavaVastaanottaja = 
+        	raportoitavaVastaanottajaDAO.findByLahetettyviestiIdAndVastaanottajanSahkopostiosoite(
+        	tallennettuRaportoitavaViesti.getId(), raportoitavaVastaanottaja.getVastaanottajanSahkoposti());
 
         assertNotNull(haettuRaportoitavaVastaanottaja);
+    }
+    
+    @Test
+    public void testLahettamattomienHakuOnnistuu() {
+        RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+        RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
+
+        RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+        	RaportointipalveluTestData.getRaportoitavaVastaanottaja(tallennettuRaportoitavaViesti);
+        raportoitavaVastaanottaja.setLahetysalkoi(null);
+        raportoitavaVastaanottaja.setLahetyspaattyi(null);
+        raportoitavaVastaanottajaDAO.insert(raportoitavaVastaanottaja);
+
+        List<RaportoitavaVastaanottaja> vastaanottajat = 
+        	raportoitavaVastaanottajaDAO.findLahettamattomat();
+        
+        assertNotNull(vastaanottajat);
+        assertTrue(vastaanottajat.size() > 0);
     }
 }

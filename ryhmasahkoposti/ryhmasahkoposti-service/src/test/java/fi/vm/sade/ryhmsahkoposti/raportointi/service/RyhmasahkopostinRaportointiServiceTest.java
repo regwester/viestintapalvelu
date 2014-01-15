@@ -1,7 +1,10 @@
 package fi.vm.sade.ryhmsahkoposti.raportointi.service;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -21,7 +24,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTulosDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
@@ -53,7 +56,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
 		
-		LahetyksenTulosDTO tulos = ryhmasahkopostinRaportointiService.haeLahetyksenTulos(viestiID);
+		LahetyksenTilanneDTO tulos = ryhmasahkopostinRaportointiService.haeLahetyksenTulos(viestiID);
 		
 		assertEquals(new Long(1), tulos.getVastaanottajienLukumaara());
 		assertEquals(new Long(1), tulos.getLahetysEpaonnistuiLukumaara());
@@ -100,13 +103,15 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		assertNotNull(raportoitavatViestit);
 		assertEquals(lahetyksenLopetus.getLahetysPaattyi(), raportoitavatViestit.get(0).getLahetysPaattyi());		
 	}
-	
+
 	@Test
-	public void testRaportoiLahetysVastaanottajalle() throws IOException {
+	public void testRaportoiLahetysVastaanottajalleOnnistui() throws IOException {
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
-		vastaanottaja.setVastaanottajanSahkoposti("testRaportoiLahetysVastaanottajalle@sposti.fi");
+		vastaanottaja.setLahetysalkoi(null);
+		vastaanottaja.setLahetyspaattyi(null);
+		vastaanottaja.setVastaanottajanSahkoposti("testRaportoiLahetysVastaanottajalleOnnistui@sposti.fi");
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(vastaanottaja);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
@@ -117,10 +122,13 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		lahetettyVastaanottajalle.setViestiID(viestiID);
 		lahetettyVastaanottajalle.setVastaanottajanSahkoposti(vastaanottaja.getVastaanottajanSahkoposti());
 		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
-		lahetettyVastaanottajalle.setLahetyspaattyi(new Date());
-		lahetettyVastaanottajalle.setEpaonnistumisenSyy("Failed");
+		lahetettyVastaanottajalle.setLahetyspaattyi(null);
+		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
 
-		ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+		boolean vastaus = 
+			ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+		
+		assertTrue(vastaus);
 		
 		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
 		
@@ -131,7 +139,33 @@ public class RyhmasahkopostinRaportointiServiceTest {
 			raportoitavaViesti.getRaportoitavatVastaanottajat().get(0);
 		
 		assertNotNull(raportoitavaVastaanottaja.getLahetysalkoi());
-		assertNotNull(raportoitavaVastaanottaja.getLahetyspaattyi());
-		assertEquals(raportoitavaVastaanottaja.getEpaonnistumisenSyy(), lahetettyVastaanottajalle.getEpaonnistumisenSyy());
+		assertNull(raportoitavaVastaanottaja.getLahetyspaattyi());
+		assertEquals(raportoitavaVastaanottaja.getEpaonnistumisenSyy(), "");
+	}
+	
+	@Test
+	public void testRaportoiLahetysVastaanottajalleEpaonnistui() throws IOException {
+		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
+		
+		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
+		vastaanottaja.setLahetyspaattyi(null);
+		vastaanottaja.setVastaanottajanSahkoposti("testRaportoiLahetysVastaanottajalleEpaonnistui@sposti.fi");
+		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
+		vastaanottajat.add(vastaanottaja);
+		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
+
+		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
+		lahetettyVastaanottajalle.setViestiID(viestiID);
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti(vastaanottaja.getVastaanottajanSahkoposti());
+		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
+		lahetettyVastaanottajalle.setLahetyspaattyi(null);
+		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
+
+		boolean vastaus = 
+			ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+		
+		assertFalse(vastaus);
 	}
 }

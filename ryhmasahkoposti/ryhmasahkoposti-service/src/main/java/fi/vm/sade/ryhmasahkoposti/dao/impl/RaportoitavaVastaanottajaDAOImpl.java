@@ -21,6 +21,17 @@ import fi.vm.sade.ryhmasahkoposti.model.QRaportoitavaViesti;
 @Repository
 public class RaportoitavaVastaanottajaDAOImpl extends AbstractJpaDAOImpl<RaportoitavaVastaanottaja, Long> 
 	implements RaportoitavaVastaanottajaDAO {
+	@Override
+	public List<RaportoitavaVastaanottaja> findLahettamattomat() {
+		EntityManager em = getEntityManager();
+		
+		String findLahettamattomat = "SELECT a FROM RaportoitavaVastaanottaja a JOIN a.raportoitavaviesti " + 
+			"WHERE a.lahetysalkoi = null";
+		TypedQuery<RaportoitavaVastaanottaja> query = 
+			em.createQuery(findLahettamattomat, RaportoitavaVastaanottaja.class);
+		
+		return query.getResultList();
+	}
 
 	@Override
 	public RaportoitavaVastaanottaja findByLahetettyviestiIdAndVastaanottajanSahkopostiosoite(Long viestiID,
@@ -35,7 +46,7 @@ public class RaportoitavaVastaanottajaDAOImpl extends AbstractJpaDAOImpl<Raporto
 			raportoitavaVastaanottaja.raportoitavaviesti, raportoitavaViesti).where(
 			whereExpression).singleResult(raportoitavaVastaanottaja);
 	}
-	
+
 	@Override
 	public List<RaportoitavaVastaanottaja> findBySearchCriterias(RyhmasahkopostiVastaanottajaQueryDTO query) {
 		QRaportoitavaVastaanottaja raportoitavaVastaanottaja = QRaportoitavaVastaanottaja.raportoitavaVastaanottaja;

@@ -11,8 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTulosDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
@@ -33,8 +32,8 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 	
 	@Override
-	public LahetyksenTulosDTO haeLahetyksenTulos(Long viestiID) {
-		LahetyksenTulosDTO lahetyksenTulos = new LahetyksenTulosDTO();
+	public LahetyksenTilanneDTO haeLahetyksenTulos(Long viestiID) {
+		LahetyksenTilanneDTO lahetyksenTulos = new LahetyksenTilanneDTO();
 		
 		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
 		
@@ -49,6 +48,11 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 			raportoitavaVastaanottajaService.haeRaportoitavienVastaanottajienLukumaara(viestiID, false));
 		
 		return lahetyksenTulos;
+	}
+
+	@Override
+	public RaportoitavaViesti haeRaportoitavatViesti(Long viestiID) {
+		return raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
 	}
 
 	@Override
@@ -78,25 +82,43 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public void raportoiLahetyksenLopetus(LahetyksenLopetusDTO lahetyksenLopetus) {
+	public boolean raportoiLahetyksenLopetus(LahetyksenLopetusDTO lahetyksenLopetus) {
 		RaportoitavaViesti raportoitavaViesti = 
 			raportoitavaViestiService.haeRaportoitavaViesti(lahetyksenLopetus.getViestiID());
 		
+		if (raportoitavaViesti.getLahetysPaattyi() != null) {
+			return false;
+		}
+		
 		raportoitavaViesti.setLahetysPaattyi(lahetyksenLopetus.getLahetysPaattyi());
-		raportoitavaViestiService.paivitaRaportoitavaViesti(raportoitavaViesti);	
+		raportoitavaViestiService.paivitaRaportoitavaViesti(raportoitavaViesti);
+		
+		return true;
 	}
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public void raportoiLahetysVastaanottajalle(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
+	public boolean raportoiLahetysVastaanottajalle(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
 			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(lahetettyVastaanottajalle.getViestiID(), 
 			lahetettyVastaanottajalle.getVastaanottajanSahkoposti());
-				 
+		
+		if (lahetettyVastaanottajalle.getLahetysalkoi() != null && lahetettyVastaanottajalle.getLahetyspaattyi() == null) {
+			if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
+				return false;
+			}
+		}
+
+		if (lahetettyVastaanottajalle.getLahetyspaattyi() != null && raportoitavaVastaanottaja.getLahetyspaattyi() != null) {
+			return false;
+		}
+		
 		raportoitavaVastaanottaja = raportoitavaVastaanottajaService.taydennaRaportoitavaaVastaanottajaa(
 			raportoitavaVastaanottaja, lahetettyVastaanottajalle);
 		
-		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);		
+		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		
+		return true;
 	}
 
 	@Override
