@@ -143,6 +143,7 @@ public class RaportointipalveluTestData {
 		raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 		raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
 		raportoitavaViesti.setHtmlViesti("");
+		raportoitavaViesti.setMerkisto("utf-8");
 		raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
 		raportoitavaViesti.setAikaleima(new Date());
 		
@@ -168,6 +169,7 @@ public class RaportointipalveluTestData {
 			raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 			raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
 			raportoitavaViesti.setHtmlViesti("");
+			raportoitavaViesti.setMerkisto("utf-8");
 			raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
 			raportoitavaViesti.setAikaleima(new Date());
 			

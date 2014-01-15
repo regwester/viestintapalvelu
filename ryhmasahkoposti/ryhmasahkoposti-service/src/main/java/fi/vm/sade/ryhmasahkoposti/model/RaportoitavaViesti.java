@@ -1,6 +1,5 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 

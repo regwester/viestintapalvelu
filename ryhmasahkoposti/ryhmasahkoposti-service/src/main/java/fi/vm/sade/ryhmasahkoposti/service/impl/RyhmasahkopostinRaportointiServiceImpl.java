@@ -12,8 +12,10 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
 import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
@@ -23,6 +25,7 @@ import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
 public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinRaportointiService {
 	private RaportoitavaViestiService raportoitavaViestiService;
 	private RaportoitavaVastaanottajaService raportoitavaVastaanottajaService;
+	private RaportoitavaLiiteService raportoitavaLiiteService;
 
 	@Autowired
 	public RyhmasahkopostinRaportointiServiceImpl(RaportoitavaViestiService raportoitavaViestiService,
@@ -82,7 +85,15 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 			raportoitavaVastaanottajaService.muodostaRaportoitavatVastaanottajat(tallennettuRaportoitavaViesti, 
 			lahetyksenAloitus.getVastaanottajat());
 		raportoitavaVastaanottajaService.tallennaRaportoitavatVastaanottajat(raportoitavatVastaanottajat);		
-				
+		
+		if (lahetyksenAloitus.getLahetetynviestinliitteet() != null && 
+			!lahetyksenAloitus.getLahetetynviestinliitteet().isEmpty()) {
+			List<RaportoitavaLiite> raportoitavatLiitteet = 
+				raportoitavaLiiteService.muodostaRaportoitavatLiitteet(tallennettuRaportoitavaViesti, 
+				lahetyksenAloitus.getLahetetynviestinliitteet());
+			raportoitavaLiiteService.tallennaRaportoitavatLiitteet(raportoitavatLiitteet);
+		}
+		
 		return tallennettuRaportoitavaViesti.getId();
 	}
 

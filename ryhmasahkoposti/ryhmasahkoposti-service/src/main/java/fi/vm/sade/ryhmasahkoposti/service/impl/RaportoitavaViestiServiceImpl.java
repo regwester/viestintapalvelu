@@ -68,6 +68,7 @@ public class RaportoitavaViestiServiceImpl implements RaportoitavaViestiService 
 		} else {
 			raportoitavaViesti.setHtmlViesti("");
 		}
+		raportoitavaViesti.setMerkisto(lahetyksenAloitus.getMerkisto());
 		raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
 		raportoitavaViesti.setAikaleima(new Date());
 		
