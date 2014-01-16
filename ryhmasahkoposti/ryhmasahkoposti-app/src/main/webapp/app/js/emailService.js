@@ -3,7 +3,7 @@ var services = angular.module('viestintapalvelu');
 
 services.factory('GroupEmailFactory', function ($resource) {
 	return $resource('/ryhmasahkoposti-service/email/sendGroupEmail', {}, {  
-		  sendGroupEmail: { method: 'POST', isArray: true}
+		  sendGroupEmail: { method: 'POST', isArray: false}
 	  });
 });
 

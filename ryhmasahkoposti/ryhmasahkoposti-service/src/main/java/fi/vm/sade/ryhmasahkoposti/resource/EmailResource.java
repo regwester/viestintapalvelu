@@ -64,7 +64,7 @@ public class EmailResource {
 
 	@POST
 	@Consumes("application/json")
-//	@Produces("application/json")
+	@Produces("application/json")
 	@Path("sendGroupEmail")
 //	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
 	public String sendGroupEmail(EmailData emailData) {
@@ -113,7 +113,7 @@ public class EmailResource {
 	    emailInfo.setAihe(email.getSubject());
 	    emailInfo.setViesti(email.getBody()+email.getFooter());
 	    emailInfo.setHtmlViesti(email.isHtml());
-//	    emailInfo.set  email.getCharset()
+	    emailInfo.setMerkisto(email.getCharset());
 	}
 	
 	

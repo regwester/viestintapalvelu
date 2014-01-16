@@ -3,9 +3,9 @@ var email = angular.module('viestintapalvelu', ['ngRoute', 'ngResource']);
 email.config(['$routeProvider',  function ($routeProvider) {
 //		alert("email.config");
 		$routeProvider.when('/', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
-//		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
 		$routeProvider.when('/cancel/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailCancel.html', controller: 'EmailCancelController'});
 		$routeProvider.when('/status/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailSendStatus.html', controller: 'EmailSendStatusController'});
+//		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
 	    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
@@ -15,6 +15,7 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 //	alert("EmailController");
 	
 	$scope.emailresponse = [];
+	$scope.sendStarted = 'OK';
 	
 	$scope.emaildata = {
 			headers: [
@@ -72,7 +73,9 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 
 			$location.path("/status");
 			
-			$rootScope.sendStarted   =  GroupEmailFactory.sendGroupEmail($scope.emaildata);			
+//			$rootScope.sendStarted = GroupEmailFactory.sendGroupEmail($scope.emaildata);			
+			$scope.sendStarted = GroupEmailFactory.sendGroupEmail($scope.emaildata);						
+			$rootScope.sendStarted = $scope.sendStarted;
 		};
 
 		
