@@ -25,12 +25,25 @@ import org.springframework.stereotype.Component;
 
 import com.sun.jersey.core.header.FormDataContentDisposition;
 
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.fileupload.FileItemFactory;
+import org.apache.commons.fileupload.FileUploadException;
+import org.apache.commons.fileupload.disk.DiskFileItemFactory;
+import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 
 
+import java.util.Iterator;
+import java.net.URISyntaxException;
+import java.util.UUID;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
-
-
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
@@ -196,69 +209,65 @@ public class EmailResource {
 		}
  
 	}	
+    @POST
+    @Consumes(MediaType.MULTIPART_FORM_DATA)
+    @Produces("application/json")
+    @Path("addAttachment")
+    public AttachmentResponse addAttachment(@Context HttpServletRequest request,
+            @Context HttpServletResponse response) throws IOException,
+            URISyntaxException, ServletException {
+
+        System.out.println("Adding attachment "+request.getMethod());
+        
+        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+        AttachmentResponse result = null;
+        
+        if (isMultipart) {
+            FileItemFactory factory = new DiskFileItemFactory();
+            ServletFileUpload upload = new ServletFileUpload(factory);
+
+            try {
+                List<FileItem> items = upload.parseRequest(request);
+                Iterator<FileItem> iterator = items.iterator();
+                while (iterator.hasNext()) {
+                    FileItem item = (FileItem) iterator.next();
+                    result = storeAttachment(item);
+                }
+            } catch (FileUploadException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
+            response.setStatus(400);
+            response.getWriter().append("Not a multipart request");
+        }
+        System.out.println(result);
+        return result;
+    }
     
-//	@POST
-//	@Consumes("application/json")
-//	@Produces("application/json")
-//	@Path("sendEmail")
-//    public Response sendEmail(EmailMessage input, @Context HttpServletResponse response) {
-//System.err.println("<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<<");
-//
-//		String deliveryCode = getDeliverycode();
-//		input.setDeliveryCode(deliveryCode);
-//		
-////		EmailResponse resp = emailBuilder.sendEmail(input);
-//		resp = emailBuilder.sendEmail(input);
-//    	
-//        if (!"".equals(resp.getStatus())) { 
-//        	return Response.status(200).entity(resp).build();        	
-//        } else {
-//        	return Response.serverError().build();        	
-//        }
-//    }
+    public AttachmentResponse storeAttachment(FileItem item) throws Exception {
+        AttachmentResponse result = new AttachmentResponse();
+        
+        if (!item.isFormField()) {
+            String fileName = item.getName();
+            String contentType = item.getContentType();
+            byte[] data = item.get();
+            result.setFileName(fileName);
+            result.setContentType(contentType);
+            result.setFileSize(data.length);
+            result.setUuid(UUID.randomUUID().toString());
+            
+            //  Tallenna datat tässä!
+            
+            //File uploadedFile = new File("/home/jkorkala/uploads/"
+            //        + fileName);
+            //System.out.println(uploadedFile.getAbsolutePath());
+            //item.write(uploadedFile);
+        }
+        
+        return result;
+    }
 
-	
-	
-	
-	
-	
-	
-//	@POST
-//	@Consumes("application/json")
-//	@Produces("application/json")
-//	@Path("sendEmails")
-//    public Response sendEmails(List<EmailMessage> input, @Context HttpServletResponse response) { 
-//		String deliveryCode = getDeliverycode();
-//
-//    	List<EmailResponse> responses = new ArrayList<EmailResponse>();
-//		
-//		for (EmailMessage email : input) {			
-//			email.setDeliveryCode(deliveryCode);
-//			EmailResponse resp = emailBuilder.sendEmail(email);
-//	    	responses.add(resp);			
-//		}
-//		return Response.status(200).entity(responses).build();
-//    }
-
-	
-	
-//	@GET
-//	@Produces("application/json")
-//	public EmailResponse getRespond() {
-//System.err.println("--------------------------------------------------------------------------------");
-//	    return resp;
-//	}
-	
-
-//    @GET
-//    @Consumes("application/json")
-//    @Produces("application/json")
-//    @Path("email")
-//    public Response email(EmailMessage input, @Context HttpServletResponse response) {
-//System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");
-//    	EmailResponse resp = new EmailResponse(input.getRecipient(), "KO", input.getSubject());
-//    	
-//    	return Response.status(200).entity(resp).build();
-//    }
 	
 }
