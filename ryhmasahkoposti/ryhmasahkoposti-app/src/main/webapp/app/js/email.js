@@ -9,9 +9,8 @@ email.config(['$routeProvider',  function ($routeProvider) {
 	    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
-
-email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFactory', 'GroupEmailFactory' , '$location', 
-                                     function($scope, $rootScope, EmailAttachmentFactory, GroupEmailFactory, $location) { 	
+email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location', 
+                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
 //	alert("EmailController");
 	
 	$scope.emailresponse = [];
