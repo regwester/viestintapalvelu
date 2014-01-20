@@ -42,27 +42,6 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 		$scope.showCnt = $scope.emaildata.headers.length >  30;
 		
 	
-	// Tästä alkaa testi
-		$scope.files = [];
-		$scope.percentage = 0;	
-	
-		$scope.upload = function () {
-			alert("Upload pressed");
-			EmailAttachmentFactory.upload();
-			$scope.files = [];
-		};
- 
-		$rootScope.$on('fileAdded', function (e, call) {
-			$scope.files.push(call);
-			$scope.$apply();
-		});
-		 
-		$rootScope.$on('uploadProgress', function (e, call) {
-			$scope.percentage = call;
-			$scope.$apply();
-		});		
-	// Tässä loppuu testi
-		
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
 //			$location.path("/response");
