@@ -60,6 +60,7 @@ services.directive('upload', ['uploadManager', function factory(uploadManager) {
             });
         }
    };
+}]);
 
 
 
