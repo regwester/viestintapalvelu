@@ -45,11 +45,15 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 
+
+
+
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
 //import com.google.inject.Singleton;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
 import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
@@ -58,8 +62,10 @@ import fi.vm.sade.ryhmasahkoposti.service.impl.RyhmasahkopostinRaportointiServic
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 
 @Component
 @Path("email")
@@ -73,23 +79,26 @@ public class EmailResource {
     }
 	@Autowired
 	private RyhmasahkopostinRaportointiService sendDbService;
+
+	
 	
 
 	@POST
 	@Consumes("application/json")
-	@Produces("application/json")
+	@Produces("application/json")	
+//	@Produces("text/plain")
 	@Path("sendGroupEmail")
 //	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
-	public String sendGroupEmail(EmailData emailData) {
+	public EmailSendId sendGroupEmail(EmailData emailData) {
 		EmailMessage email = emailData.getEmail();		
-	    email.setFooter(emailData.getHeaders().get(0).getLanguageCode()); // Setting footer with the first ones language code  
+	    email.setFooter(emailData.getRecipient().get(0).getLanguageCode()); // Setting footer with the first ones language code  
 	    	    
 	    LahetyksenAloitusDTO emailInfo = new LahetyksenAloitusDTO();	    
 	    copyEmailInfo(email, emailInfo);
 		
 	    List<LahetettyVastaanottajalleDTO> recipients = new ArrayList<LahetettyVastaanottajalleDTO>(); 	    
 	    
-		for (EmailRecipient header : emailData.getHeaders()) {
+		for (EmailRecipient header : emailData.getRecipient()) {
 			log.log(Level.INFO, "Adding " + header.getEmail() + " to be sending list.");
 			
 			LahetettyVastaanottajalleDTO recipient = new LahetettyVastaanottajalleDTO();
@@ -99,16 +108,41 @@ public class EmailResource {
 		}
 		emailInfo.setVastaanottajat(recipients);
 		
-		String sendStarted = "OK";
+		String sendId = "";
 		try {
-			sendDbService.raportoiLahetyksenAloitus(emailInfo);
-		} catch (IOException e) {			
-			sendStarted = "Problems in uploading email info to db: "  +e.getMessage();
+			sendId = Long.toString( sendDbService.raportoiLahetyksenAloitus(emailInfo) );
+			log.log(Level.INFO, "DB index is " + sendId);
+			
+		} catch (IOException e) {	
+			log.log(Level.SEVERE, "Problems in writing send data info to DB, "+ e.getMessage());
 		}
-		return sendStarted;
+		return new EmailSendId(sendId);
 //		return responses;
     }
 
+	
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	@Path("sendEmailStatus")
+	public LahetyksenTilanneDTO sendEmailStatus(String sendId) {
+		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
+
+		return sendDbService.haeLahetyksenTulos(Long.valueOf(sendId));
+    }
+	
+	@POST
+	@Consumes("application/json")
+	@Produces("application/json")
+	@Path("sendResult")
+	public RaportoitavaViesti sendResult(String sendId) {
+		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
+
+		/// TMÄM ON VÄÄRÄ KUTSU
+		return sendDbService.haeRaportoitavatViesti(Long.valueOf(sendId));
+    }
+	
+	
 	private void copyRecipientInfo(EmailRecipient header, LahetettyVastaanottajalleDTO recipient) {
 		recipient.setLahetysalkoi(new Date());
 		recipient.setVastaanottajaOid(header.getOid());

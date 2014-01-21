@@ -63,4 +63,15 @@ services.directive('upload', ['uploadManager', function factory(uploadManager) {
 }]);
 
 
+services.factory('EmailSendStatusFactory', function ($resource) {
+	return $resource('/ryhmasahkoposti-service/email/sendEmailStatus', {}, {  
+		sendEmailStatus: { method: 'POST', isArray: false}
+	  });
+});
+
+services.factory('EmailResultFactory', function ($resource) {
+	return $resource('/ryhmasahkoposti-service/email/sendResult', {}, {  
+		sendResult: { method: 'POST', isArray: false}
+	  });
+});
 

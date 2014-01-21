@@ -5,7 +5,8 @@ email.config(['$routeProvider',  function ($routeProvider) {
 		$routeProvider.when('/', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
 		$routeProvider.when('/cancel/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailCancel.html', controller: 'EmailCancelController'});
 		$routeProvider.when('/status/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailSendStatus.html', controller: 'EmailSendStatusController'});
-//		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
+		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
+		$routeProvider.when('/hidden/', {templateUrl: '/ryhmasahkoposti-app/app/html/hidden.html', controller: 'HiddenController'});
 	    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
@@ -13,11 +14,11 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
                                      function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
 //	alert("EmailController");
 	
-	$scope.emailresponse = [];
-	$scope.sendStarted = 'OK';
+	$rootScope.emailsendid = "";
+//	$scope.emailresponse = [];
 	
 	$scope.emaildata = {
-			headers: [
+			recipient: [
 					{oid: '1234567890ABCD',
 					oidType: 'henkilo',
 					email: 'ville.vastaanottaja@gmail.com',
@@ -38,30 +39,45 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 			}
 		};
 	
+<<<<<<< HEAD
 		$scope.showTo  = $scope.emaildata.headers.length <= 30;
 		$scope.showCnt = $scope.emaildata.headers.length >  30;
 		
 	
+=======
+		$scope.showTo  = $scope.emaildata.recipient.length <= 30;
+		$scope.showCnt = $scope.emaildata.recipient.length >  30;
+				
+>>>>>>> More calls to VMs Db
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
 //			$location.path("/response");
 			
 //			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
 //			$rootScope.emailresponse = $scope.emailresponse;
-
-			$location.path("/status");
 			
-//			$rootScope.sendStarted = GroupEmailFactory.sendGroupEmail($scope.emaildata);			
-			$scope.sendStarted = GroupEmailFactory.sendGroupEmail($scope.emaildata);						
-			$rootScope.sendStarted = $scope.sendStarted;
+			$scope.emailsendid = GroupEmailFactory.sendGroupEmail($scope.emaildata).$promise.then(
+                    function(value) {
+                        $rootScope.emailsendid = value;                 
+            			$location.path("/status");                        
+                    },
+                    function(error) {
+                        alert("Error " + error);
+                    },
+                    function(update) {
+                        alert("Notification " + update);
+                    }
+            );
+			
+			
 		};
-
+					
 		
 		$scope.cancelEmail = function () {
 //			alert("cancelEmail mail pressed" );
 			$location.path("/cancel");
 
-			$rootScope.callingProcess = $scope.emaildata.headers[0].callingProcess;			
+			$rootScope.callingProcess = $scope.emaildata.email.callingProcess;			
 		};
 		
 			$scope.files = [];

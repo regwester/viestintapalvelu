@@ -14,14 +14,14 @@
 		<div class="control-group" ng-hide="showTo">		
 		    <label class="control-label">Vastaanottajat</label>
 		    <div class="controls">
-            		{{emaildata.headers.length}} vastaanottajaa
+            		{{emaildata.recipient.length}} vastaanottajaa
 		    </div>		
 		</div>
             
 		<div class="control-group" ng-hide="showCnt">		
 		    <label class="control-label">Vastaanottajat</label>
 		    <div class="controls">		    
-		 		<div border="0" ng-repeat="header in emaildata.headers">								    		 
+		 		<div border="0" ng-repeat="header in emaildata.recipient">								    		 
 	  					{{header.email}}
 				</div>	
 		    </div>						        
@@ -80,5 +80,4 @@
 		<hr></hr>
     
     </form>
-
 </div>

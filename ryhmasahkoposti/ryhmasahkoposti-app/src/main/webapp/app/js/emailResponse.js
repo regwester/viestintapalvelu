@@ -1,15 +1,13 @@
 
 var emailResp = angular.module('viestintapalvelu');
 
-emailResp.controller('EmailResponseController', ['$scope', '$rootScope', '$location', function($scope, $rootScope, $location) { 	
+emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailResultFactory', '$location', 
+                                                 function($scope, $rootScope, EmailResultFactory, $location) { 	
 //	alert("EmailResponseController");
 	
-	 $scope.emailresponse = $rootScope.emailresponse;
-	
-//	$scope.test = function () {
-//		alert("TEST pressed");
-//		$location.path("/response");
-//	}
-		
+	 $scope.emailsendid = $rootScope.emailsendid;
+	 $scope.RaportoitavaViesti = EmailResultFactory.sendResult($scope.emailsendid.id);
+	 
+	 		
 }]);
 

@@ -1,4 +1,4 @@
-<div ng-controller="EmailController">
+<div ng-controller="EmailSendStatusController">
 
     <form novalidate="novalidate" class="form-horizontal">
     
@@ -14,13 +14,16 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
- 		    	Viestiä lähetetään ( Käynnistetty {{sendStarted }} )
+ 		    	Viestiä lähetetään ( Käynnistetty lähetys indeksillä {{emailsendid.id}}) 
 		    </div>		
 		</div>
 		
     	 
 		<hr></hr>
-    
+    LahetyksenTilanneDTO {{LahetyksenTilanneDTO}} <br>
+    ok {{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}} <br>
+    notOk {{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}} <br>
+    all {{LahetyksenTilanneDTO.vastaanottajienLukumaara}} <br>
     </form>
 
 </div>

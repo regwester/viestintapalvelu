@@ -1,4 +1,70 @@
 <div ng-controller="EmailResponseController">
+
+    <form novalidate="novalidate" class="form-horizontal">
+    
+		<div class="control-group">		
+		    <label class="control-label"></label>
+		    <div class="controls">
+	            	<h2>Viesti</h3>
+		    </div>		
+		</div>
+		
+		<hr></hr>
+		            
+		<div class="control-group">		
+		    <label class="control-label"></label>
+		    <div class="controls">Viesti lähetetty onnistuneesti</div>		
+		</div>
+		
+		<div class="control-group">		
+		    <label class="control-label">Prosessi</label>
+		    <div class="controls">{{RaportoitavaViesti.prosessi}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Lähettäjä</label>
+		    <div class="controls">{{RaportoitavaViesti.lahettajan_sahkopostiosoite}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Vastausosoite</label>
+		    <div class="controls">{{RaportoitavaViesti.vastauksensaajan_sahkopostiosoite}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Lähetystunnus</label>
+		    <div class="controls">{{emailsendid.id}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Lähetysajankohta</label>
+		    <div class="controls">{{RaportoitavaViesti.lahetysAlkoi}} - {{RaportoitavaViesti.lahetysPaattyi}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Aihe</label>
+		    <div class="controls">{{RaportoitavaViesti.aihe}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Sisältö</label>
+		    <div class="controls">{{RaportoitavaViesti.viesti}}</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">Liitetiedostot</label>
+		    <div class="controls">Liitetiedostot</div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{}} vastaanottajaa</label>
+		    <div class="controls">Liitetiedostot</div>		
+		</div>
+    	 
+		<hr></hr>
+    </form>
+
+
     <form novalidate="novalidate" >
         <table border="0">
         	<tr>
@@ -11,39 +77,39 @@
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Prosessi</td>
-	            <td>&nbsp;</td>
+	            <td>{{RaportoitavaViesti.prosessi}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Lähettäjä</td>
-	            <td>&nbsp;</td>
+	            <td>{{RaportoitavaViesti.lahettajan_sahkopostiosoite}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Vastausosoite</td>
-	            <td>&nbsp;</td>
+	            <td>{{RaportoitavaViesti.vastauksensaajan_sahkopostiosoite}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Lähetystunnus</td>
-	            <td>{{emailresponse[0].header.deliveryCode}}</td>
+	            <td>{{emailsendid.id}}</td>
 	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Lähetysajankohta</td>
+            </tr><tr> <!-- 
+                <td>Lähetysajankohta</td>
+	            <td>{{RaportoitavaViesti.lahetysAlkoi}} - {{RaportoitavaViesti.lahetysPaattyi}}</td>
 	            <td>&nbsp;</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
+            </tr><tr> -->
 	            <td>Aihe</td>
-	            <td>{{emailresponse[0].subject}}</td>
+	            <td>{{RaportoitavaViesti.aihe}}</td>
 	            <td>&nbsp;</td>
-            </tr><tr>
+            </tr><tr><!-- 
 	            <td>Sisältö</td>
-	            <td>&nbsp;</td>
+	            <td>{{RaportoitavaViesti.viesti}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Liitetiedostot</td>
 	            <td>&nbsp;</td>
-	            <td>&nbsp;</td>
+	            <td>&nbsp;</td>-->
 
             </tr><tr>
-               	<td>{{emailresponse.length}} vastaanottajaa</td>
+               	<td>{{}} vastaanottajaa</td>
 		    	<td>&nbsp;</td>
 	            <td>&nbsp;</td>
 			</tr>
@@ -51,7 +117,7 @@
     			<td>&nbsp;</td>
     			<td>
     		 		<div border="0" ng-repeat="response in emailresponse">								    		 
-    					{{response.header.email}} - {{response.header.sendStatus}}
+<!-- 		{{response.header.email}} - {{response.header.sendStatus}}  -->    			
 					</div>		        
 				</td>
 			</tr>
@@ -60,11 +126,3 @@
     </form>	    
 </div>
 
- 
-<div>
-	<tr>
- 		<td>emailresponse  : {{ emailresponse[0]}}</td>
- 		<td>emailresponse  : {{ emailresponse[1]}}</td>
- 		<td>&nbsp;</td>
-	</tr>
-</div>
