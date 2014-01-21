@@ -42,7 +42,7 @@ public class RaportoitavaViesti extends BaseEntity {
 	private String aihe;
 	
 	@Column(name="viesti", nullable=false)
-	private byte[] viesti;
+	private String viesti;
 
 	@Column(name="htmlviesti", nullable=false)
 	private String htmlViesti;
@@ -129,11 +129,11 @@ public class RaportoitavaViesti extends BaseEntity {
 		this.aihe = aihe;
 	}
 
-	public byte[] getViesti() {
+	public String getViesti() {
 		return viesti;
 	}
 
-	public void setViesti(byte[] viesti) {
+	public void setViesti(String viesti) {
 		this.viesti = viesti;
 	}
 

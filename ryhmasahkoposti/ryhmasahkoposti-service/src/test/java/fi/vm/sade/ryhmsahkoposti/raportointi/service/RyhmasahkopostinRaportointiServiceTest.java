@@ -1,10 +1,10 @@
 package fi.vm.sade.ryhmsahkoposti.raportointi.service;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +25,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
@@ -167,5 +168,35 @@ public class RyhmasahkopostinRaportointiServiceTest {
 			ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
 		
 		assertFalse(vastaus);
+	}
+	
+	@Test
+	public void testRaportoitujenViestienHakuOnnistui() throws IOException {
+		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
+		
+		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
+		vastaanottaja.setLahetysalkoi(null);
+		vastaanottaja.setLahetyspaattyi(null);
+		vastaanottaja.setVastaanottajanSahkoposti("testRaportoitujenViestienHakuOnnistui@sposti.fi");
+		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
+		vastaanottajat.add(vastaanottaja);
+		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
+
+		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
+		lahetettyVastaanottajalle.setViestiID(viestiID);
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti(vastaanottaja.getVastaanottajanSahkoposti());
+		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
+		lahetettyVastaanottajalle.setLahetyspaattyi(null);
+		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
+
+		ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+
+        String hakuKentta = "testRaportoitujenViestienHakuOnnistui@sposti.fi";
+		List<RaportoitavaViestiDTO> viestit = ryhmasahkopostinRaportointiService.haeRaportoitavatViestit(hakuKentta);
+		
+		assertNotNull(viestit);
+		assertTrue(viestit.size() == 0);
 	}
 }

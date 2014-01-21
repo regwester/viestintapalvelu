@@ -20,14 +20,13 @@ public class RyhmasahkopostiSelailuResourceImpl implements RyhmasahkopostiSelail
 
 	@Override
 	public List<RaportoitavaViestiDTO> getRaportoitavatViestit() {
-		// TODO Auto-generated method stub
+		System.out.println("getRaportoitavatViestit()");
 		return null;
 	}
 
 	@Override
-	public List<RaportoitavaViestiDTO> getRaportoitavatViestit(String query) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<RaportoitavaViestiDTO> getRaportoitavatViestit(String hakuKentta) {
+		return ryhmasahkopostinRaportointiService.haeRaportoitavatViestit(hakuKentta);
 	}
 	
 

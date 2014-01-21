@@ -28,6 +28,9 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 	@Column(name="vastaanottajan_oid_tyyppi", nullable=false)
 	private String vastaanottajaOidTyyppi;
 
+	@Column(name="henkilotunnus", nullable=false)
+	private String henkilotunnus;
+	
 	@Column(name="vastaanottajan_sahkopostiosoite", nullable=false)
 	private String vastaanottajanSahkoposti;
 	
@@ -76,6 +79,14 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 
 	public void setVastaanottajaOidTyyppi(String vastaanottajaOidTyyppi) {
 		this.vastaanottajaOidTyyppi = vastaanottajaOidTyyppi;
+	}
+
+	public String getHenkilotunnus() {
+		return henkilotunnus;
+	}
+
+	public void setHenkilotunnus(String henkilotunnus) {
+		this.henkilotunnus = henkilotunnus;
 	}
 
 	public String getVastaanottajanSahkoposti() {

@@ -12,11 +12,10 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.QRaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.QRaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 
 @Repository
 public class RaportoitavaVastaanottajaDAOImpl extends AbstractJpaDAOImpl<RaportoitavaVastaanottaja, Long> 
@@ -45,33 +44,6 @@ public class RaportoitavaVastaanottajaDAOImpl extends AbstractJpaDAOImpl<Raporto
 		return from(raportoitavaVastaanottaja).join(
 			raportoitavaVastaanottaja.raportoitavaviesti, raportoitavaViesti).where(
 			whereExpression).singleResult(raportoitavaVastaanottaja);
-	}
-
-	@Override
-	public List<RaportoitavaVastaanottaja> findBySearchCriterias(RyhmasahkopostiVastaanottajaQueryDTO query) {
-		QRaportoitavaVastaanottaja raportoitavaVastaanottaja = QRaportoitavaVastaanottaja.raportoitavaVastaanottaja;
-		QRaportoitavaViesti raportoitavaViesti = QRaportoitavaViesti.raportoitavaViesti;
-		
-		BooleanExpression whereExpression = null;
-		
-		if (query.getVastaanottajanOid() != null) {
-			whereExpression = raportoitavaVastaanottaja.vastaanottajaOid.eq(query.getVastaanottajanOid());
-		}
-		
-		if (query.getVastaanottajanSahkopostiosoite() != null) {
-			whereExpression = 
-				raportoitavaVastaanottaja.vastaanottajanSahkoposti.eq(query.getVastaanottajanSahkopostiosoite());
-		}
-		
-		if (query.getLahetysajankohta() != null) {
-			whereExpression = 
-				whereExpression.and(raportoitavaVastaanottaja.lahetysalkoi.loe(query.getLahetysajankohta()));
-			whereExpression = 
-				whereExpression.and(raportoitavaVastaanottaja.lahetyspaattyi.goe(query.getLahetysajankohta()));
-		}
-		
-		return from(raportoitavaVastaanottaja).where(whereExpression).join(
-			raportoitavaVastaanottaja.raportoitavaviesti, raportoitavaViesti).list(raportoitavaVastaanottaja);
 	}
 
 	@Override

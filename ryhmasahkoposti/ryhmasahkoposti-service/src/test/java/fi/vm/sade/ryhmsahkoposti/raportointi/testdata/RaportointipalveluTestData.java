@@ -8,7 +8,6 @@ import java.util.List;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
@@ -19,6 +18,7 @@ public class RaportointipalveluTestData {
 		
 		lahetettyVastaanottajalle.setVastaanottajaOid("102030405100");
 		lahetettyVastaanottajalle.setVastaanottajanOidTyyppi("oppilas");
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti("vastaan.ottaja@sposti.fi");
 		lahetettyVastaanottajalle.setKielikoodi("FI");
 		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
 		lahetettyVastaanottajalle.setLahetyspaattyi(new Date());
@@ -41,7 +41,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus.setHtmlViesti(false);
 		lahetyksenAloitus.setMerkisto("utf-8");
 		lahetyksenAloitus.setAihe("Koekutsu");
-		lahetyksenAloitus.setViesti(new String("Kutsu kokeeseen").getBytes());
+		lahetyksenAloitus.setViesti("Kutsu kokeeseen");
 		lahetyksenAloitus.setLahetysAlkoi(new Date());
 		
 		return lahetyksenAloitus;
@@ -62,7 +62,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus1.setHtmlViesti(false);
 		lahetyksenAloitus1.setMerkisto("utf-8");
 		lahetyksenAloitus1.setAihe("Koekutsu");
-		lahetyksenAloitus1.setViesti(new String("Kutsu kokeeseen").getBytes());
+		lahetyksenAloitus1.setViesti("Kutsu kokeeseen");
 		lahetyksenAloitus1.setLahetysAlkoi(new Date());
 		
 		lahetyksenAloitukset.add(lahetyksenAloitus1);
@@ -79,7 +79,7 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus2.setHtmlViesti(false);
 		lahetyksenAloitus2.setMerkisto("utf-8");
 		lahetyksenAloitus2.setAihe("Koekutsu");
-		lahetyksenAloitus2.setViesti(new String("Kutsu kokeeseen").getBytes());
+		lahetyksenAloitus2.setViesti("Kutsu kokeeseen");
 		lahetyksenAloitus2.setLahetysAlkoi(new Date());
 		
 		lahetyksenAloitukset.add(lahetyksenAloitus2);
@@ -102,23 +102,16 @@ public class RaportointipalveluTestData {
 		return timestamp.getTime();
 	}
 
-	public static RyhmasahkopostiVastaanottajaQueryDTO getRaportoitavaVastaanottajaQuery() {
-		RyhmasahkopostiVastaanottajaQueryDTO query = new RyhmasahkopostiVastaanottajaQueryDTO();
-		
-		query.setVastaanottajanOid("102030405100");
-		
-		return query;
-	}
-	
 	public static RaportoitavaVastaanottaja getRaportoitavaVastaanottaja(RaportoitavaViesti raportoitavaViesti) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = new RaportoitavaVastaanottaja();
 		
 		raportoitavaVastaanottaja.setRaportoitavaViesti(raportoitavaViesti);
 		raportoitavaVastaanottaja.setVastaanottajaOid("102030405100");
 		raportoitavaVastaanottaja.setVastaanottajaOidTyyppi("oppilas");
+		raportoitavaVastaanottaja.setHenkilotunnus("");
 		raportoitavaVastaanottaja.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
 		raportoitavaVastaanottaja.setKielikoodi("FI");
-		raportoitavaVastaanottaja.setHakuNimi("");
+		raportoitavaVastaanottaja.setHakuNimi("Testi Oppilas");
 		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		raportoitavaVastaanottaja.setEpaonnistumisenSyy("");

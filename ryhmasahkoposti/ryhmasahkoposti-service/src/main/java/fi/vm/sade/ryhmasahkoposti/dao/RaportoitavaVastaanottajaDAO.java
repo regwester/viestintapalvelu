@@ -3,7 +3,6 @@ package fi.vm.sade.ryhmasahkoposti.dao;
 import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 
 /**
@@ -29,14 +28,6 @@ public interface RaportoitavaVastaanottajaDAO extends JpaDAO<RaportoitavaVastaan
 	 * @return Lista raportoitavan vastaanottajien tietoja
 	 */	
 	public List<RaportoitavaVastaanottaja> findLahettamattomat();
-	
-	/**
-	 * Hakee raportoitavia vastaanottajien tietoja halutuilla hakuparametreilla
-	 * 
-	 * @param query Vastaanottajien hakuparametrit
-	 * @return Lista rapotoitavia vastaanottajia
-	 */
-	public List<RaportoitavaVastaanottaja> findBySearchCriterias(RyhmasahkopostiVastaanottajaQueryDTO query);
 	
 	/**
 	 * Hakee vastaanottajien lukumäärän viestintunnuksella

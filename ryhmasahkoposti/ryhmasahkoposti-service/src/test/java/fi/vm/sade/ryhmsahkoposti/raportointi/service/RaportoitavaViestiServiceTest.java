@@ -25,7 +25,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaVastaanottajaQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
 import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
@@ -40,6 +44,8 @@ public class RaportoitavaViestiServiceTest {
 		
 	@Autowired
 	private RaportoitavaViestiService raportoitavaViestiService;
+	@Autowired
+	private RaportoitavaVastaanottajaService raportoitavaVastaanottajaService;
 
 	@Test
 	public void testRaportoitavanViestinMuodostusOnnistuu() throws IOException {
@@ -92,6 +98,33 @@ public class RaportoitavaViestiServiceTest {
 		assertNotEquals(0, raportoitavatViestit.size());
 	}
 
+	@Test
+	public void testRaportoitavatViestitLoytyvatHakutekijoilla() throws IOException {
+		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
+		
+		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
+		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
+		vastaanottajat.add(lahetettyVastaanottajalle);
+		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.muodostaRaportoitavaViesti(lahetyksenAloitus);
+		List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
+			raportoitavaVastaanottajaService.muodostaRaportoitavatVastaanottajat(raportoitavaViesti, vastaanottajat);
+		raportoitavaViesti.setRaportoitavatVastaanottajat(raportoitavatVastaanottajat);
+ 		raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
+
+		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
+        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
+        raportoitavaVastaanottajaQuery.setVastaanottajanSahkopostiosoite("vastaan.ottaja@sposti.fi");
+        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+
+		List<RaportoitavaViesti> raportoitavatViestit = 
+			raportoitavaViestiService.haeRaportoitavatViestit(raportoitavaViestiQuery);
+		
+		assertNotNull(raportoitavatViestit);
+		assertNotEquals(0, raportoitavatViestit.size());		
+	}
+	
 	@Test
 	public void testHaeRaportoitavaViestiPaaAvaimella() throws IOException {
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();

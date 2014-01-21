@@ -7,6 +7,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
@@ -52,10 +53,10 @@ public interface RyhmasahkopostinRaportointiService {
 	/**
 	 * Hakee hakuparametrin mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
 	 * 
-	 * @param query Hakuparametri
+	 * @param hakuKentta Hakuparametri
 	 * @return Lista raportoitavia viestejä
 	 */
-	public List<RaportoitavaViesti> haeRaportoitavatViestit(String query);
+	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit(String hakuKentta);
 	
 	/**
 	 * Raportoi ryhmäsähköpostin lähetyksen aloittamisen 
