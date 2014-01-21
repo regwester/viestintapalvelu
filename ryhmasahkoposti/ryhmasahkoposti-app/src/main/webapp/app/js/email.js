@@ -3,17 +3,18 @@ var email = angular.module('viestintapalvelu', ['ngRoute', 'ngResource']);
 email.config(['$routeProvider',  function ($routeProvider) {
 //		alert("email.config");
 		$routeProvider.when('/', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
-		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
 		$routeProvider.when('/cancel/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailCancel.html', controller: 'EmailCancelController'});
+		$routeProvider.when('/status/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailSendStatus.html', controller: 'EmailSendStatusController'});
+//		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
 	    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
-
-email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFactory', 'GroupEmailFactory' , '$location', 
-                                     function($scope, $rootScope, EmailAttachmentFactory, GroupEmailFactory, $location) { 	
+email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location', 
+                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
 //	alert("EmailController");
 	
 	$scope.emailresponse = [];
+	$scope.sendStarted = 'OK';
 	
 	$scope.emaildata = {
 			headers: [
@@ -41,33 +42,18 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 		$scope.showCnt = $scope.emaildata.headers.length >  30;
 		
 	
-	// Tästä alkaa testi
-		$scope.files = [];
-		$scope.percentage = 0;	
-	
-		$scope.upload = function () {
-			alert("Upload pressed");
-			EmailAttachmentFactory.upload();
-			$scope.files = [];
-		};
- 
-		$rootScope.$on('fileAdded', function (e, call) {
-			$scope.files.push(call);
-			$scope.$apply();
-		});
-		 
-		$rootScope.$on('uploadProgress', function (e, call) {
-			$scope.percentage = call;
-			$scope.$apply();
-		});		
-	// Tässä loppuu testi
-		
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
-			$location.path("/response");
+//			$location.path("/response");
 			
-			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
-			$rootScope.emailresponse = $scope.emailresponse;
+//			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
+//			$rootScope.emailresponse = $scope.emailresponse;
+
+			$location.path("/status");
+			
+//			$rootScope.sendStarted = GroupEmailFactory.sendGroupEmail($scope.emaildata);			
+			$scope.sendStarted = GroupEmailFactory.sendGroupEmail($scope.emaildata);						
+			$rootScope.sendStarted = $scope.sendStarted;
 		};
 
 		
@@ -77,6 +63,29 @@ email.controller('EmailController', ['$scope', '$rootScope', 'EmailAttachmentFac
 
 			$rootScope.callingProcess = $scope.emaildata.headers[0].callingProcess;			
 		};
-	
+		
+			$scope.files = [];
+	    $scope.percentage = 0;
+
+	    $scope.upload = function () {
+	    	uploadManager.upload();
+	        $scope.files = [];
+	    };
+
+	    $rootScope.$on('fileAdded', function (e, call) {
+	        $scope.files.push(call);
+	        $scope.$apply();
+	    });
+
+	    $rootScope.$on('uploadProgress', function (e, call) {
+	        $scope.percentage = call;
+	        $scope.$apply();
+	    });
+	    
+	    $rootScope.$on('uploadDone', function (e, call) {
+	        alert(call);
+	    	$scope.$apply();
+	    });
+	    
 }]);
 

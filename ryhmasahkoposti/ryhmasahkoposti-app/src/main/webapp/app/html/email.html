@@ -48,6 +48,26 @@
 		    </div>		
 		</div>
     	
+    			<div class="control-group">
+		<label class="control-label">Liitteet</label>
+			
+			<div class="controls">
+				<div>
+					<span ng-show="!files.length">No files selected</span>
+					<ul>
+						<li ng-repeat="file in files">{{file}}</li>
+					</ul>
+				</div>
+				
+				<span class="btn btn-success fileinput-button"> <i
+					class="icon-plus icon-white"></i> <input type="file" name="file"
+					data-url="/ryhmasahkoposti-service/email/addAttachment" multiple
+					upload><span>Add files...</span>
+				</span>
+				<span><button type="submit" class="btn btn-primary pull-left" ng-click="upload()">Upload</button></span>
+			</div>
+		</div>
+    	
 		<div class="control-group">		
 		    <label class="control-label"></label>
 	<!--    <div class="controls pagination-right">   -->
