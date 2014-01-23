@@ -1,10 +1,10 @@
-package fi.vm.sade.ryhmsahkoposti.raportointi.service;
+package fi.vm.sade.ryhmsahkoposti.raportointi.converter;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -14,8 +14,8 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -23,24 +23,38 @@ import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
 	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
-public class RaportoitavaVastaanottajaServiceTest {
-	@Autowired
-	private RaportoitavaVastaanottajaService raportoitavaVastaanottajaService;
-
+public class LahetettyVastaanottajalleDTOToRaportoitavaVastaanottajaTest {
 	@Test
-	public void testMuodostaRaportoitavaVastaanottaja() {
+	public void testRaportoitavanVastaanottajanMuodostaminenOnnistuu() {
 		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = 
 			RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
-		lahetettyVastaanottajalle.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti("testMuodostaRaportoitavaVastaanottaja@sposti.fi");
+		lahetettyVastaanottajalle.setLahetyspaattyi(null);
 		
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			raportoitavaVastaanottajaService.muodostaRaportoitavaVastaanottaja(lahetettyVastaanottajalle);
+			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(lahetettyVastaanottajalle);
 		
 		assertNotNull(raportoitavaVastaanottaja);
 		assertNotNull(raportoitavaVastaanottaja.getVastaanottajaOid());
 		assertNotNull(raportoitavaVastaanottaja.getVastaanottajanSahkoposti());
 		assertNotNull(raportoitavaVastaanottaja.getLahetysalkoi());
-		assertNotNull(raportoitavaVastaanottaja.getLahetyspaattyi());
+		assertTrue(raportoitavaVastaanottaja.getLahetyspaattyi() == null);
 		assertNotNull(raportoitavaVastaanottaja.getEpaonnistumisenSyy());
+		assertTrue(raportoitavaVastaanottaja.getLahetysOnnistui() == null);
 	}
+	
+	@Test
+	public void testLahetysOnnistuiOnArvoltaanEpaonnistui() {
+		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = 
+			RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti("testLahetysOnnistuiOnArvoltaanEpaonnistui@sposti.fi");
+		lahetettyVastaanottajalle.setEpaonnistumisenSyy("Postilaatikko täynnä");
+		
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(lahetettyVastaanottajalle);
+		
+		assertNotNull(raportoitavaVastaanottaja);
+		assertNotNull(raportoitavaVastaanottaja.getEpaonnistumisenSyy());
+		assertTrue(raportoitavaVastaanottaja.getLahetysOnnistui().equals("0"));
+	}	
 }

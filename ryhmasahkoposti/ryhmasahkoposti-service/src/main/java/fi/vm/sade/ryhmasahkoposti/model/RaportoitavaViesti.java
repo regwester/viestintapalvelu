@@ -7,6 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -51,10 +54,13 @@ public class RaportoitavaViesti extends BaseEntity {
 	private String merkisto;
 
 	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
+	private List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
 	
-	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.LAZY)
-	List<RaportoitavaLiite> raportoitavatLiitteet;	
+	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="raportoitavaviesti_raportoitavaliite",	
+		joinColumns=@JoinColumn(name="raportoitavaviesti_id", referencedColumnName="id"), 
+		inverseJoinColumns=@JoinColumn(name="raportoitavaliite_id", referencedColumnName="id"))
+	private List<RaportoitavaLiite> raportoitavatLiitteet;	
 	
 	@Column(name="lahetysalkoi", nullable=false)
 	private Date lahetysAlkoi;

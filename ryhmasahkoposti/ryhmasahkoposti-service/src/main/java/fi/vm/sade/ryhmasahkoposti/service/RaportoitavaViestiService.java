@@ -1,9 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import java.io.IOException;
 import java.util.List;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
@@ -31,15 +29,6 @@ public interface RaportoitavaViestiService {
 	 * @return Lists raportoitavia viestejä {@link RaportoitavaViesti}
 	 */
 	public List<RaportoitavaViesti> haeRaportoitavatViestit(RaportoitavaViestiQueryDTO query);
-	
-	/**
-	 * Muodostaa raportoitavan viestin tiedot kutsujalta saaduista tiedoista
-	 * 
-	 * @param lahetyksenAloitus Kutsujan lähettämä viestinlähetyksen aloitustiedot 
-	 * @return Raportoitavan viestin tiedot
-	 * @throws IOException
-	 */
-	public RaportoitavaViesti muodostaRaportoitavaViesti(LahetyksenAloitusDTO lahetyksenAloitus) throws IOException;
 	
 	/**
 	 * Päivittä raportoitavan viestin tietoja tietokantaan

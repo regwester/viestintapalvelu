@@ -5,14 +5,29 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 public class RaportointipalveluTestData {
 
+	public static LahetettyLiiteDTO getLahetettyLiiteDTO(Long id) {
+		LahetettyLiiteDTO liiteDTO = new LahetettyLiiteDTO();
+		
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		liiteDTO.setLiitetiedosto(sisalto);
+		liiteDTO.setLiitetiedostonID(id);
+		liiteDTO.setLiitetiedostonNimi("application/pdf");
+		liiteDTO.setSisaltotyyppi("koekutsu.doc");
+		
+		return liiteDTO;
+	}
+	
 	public static LahetettyVastaanottajalleDTO getLahetettyVastaanottajalleDTO() {
 		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
 		
@@ -27,7 +42,7 @@ public class RaportointipalveluTestData {
 		return lahetettyVastaanottajalle;
 	
 	}
-	
+
 	public static LahetyksenAloitusDTO getLahetyksenAloitusDTO() {
 		LahetyksenAloitusDTO lahetyksenAloitus = new LahetyksenAloitusDTO();
 		
@@ -86,7 +101,7 @@ public class RaportointipalveluTestData {
 		
 		return lahetyksenAloitukset;
 	}
-
+	
 	public static LahetyksenLopetusDTO getLahetyksenLopetusDTO(Long viestiID) {
 		LahetyksenLopetusDTO lahetyksenLopetus = new LahetyksenLopetusDTO();
 		
@@ -95,11 +110,17 @@ public class RaportointipalveluTestData {
 		
 		return lahetyksenLopetus;
 	}
-	
-	public static Long getViestiID() {
-		Date date = new Date();
-		Timestamp timestamp = new Timestamp(date.getTime());
-		return timestamp.getTime();
+
+	public static RaportoitavaLiite getRaportoitavaLiite() {
+		RaportoitavaLiite liite = new RaportoitavaLiite();
+		
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		liite.setLiitetiedostonNimi("koekutsu.doc");
+		liite.setSisaltotyyppi("application/pdf");
+		liite.setLiitetiedosto(sisalto);
+		
+		return liite;
 	}
 
 	public static RaportoitavaVastaanottaja getRaportoitavaVastaanottaja(RaportoitavaViesti raportoitavaViesti) {
@@ -170,5 +191,11 @@ public class RaportointipalveluTestData {
 		}
 		
 		return raportoitavatViestit;
+	}
+
+	public static Long getViestiID() {
+		Date date = new Date();
+		Timestamp timestamp = new Timestamp(date.getTime());
+		return timestamp.getTime();
 	}
 }

@@ -1,7 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,7 +9,6 @@ import org.springframework.stereotype.Service;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 
 @Service
@@ -64,47 +62,6 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 	public Long haeRaportoitavienVastaanottajienLukumaara(Long viestiID, boolean lahetysOnnistui) {
 		return raportoitavaVastaanottajaDAO.findVastaanottajienLukumaaraByViestiIdJaLahetysonnistui(
 			viestiID, lahetysOnnistui);
-	}
-
-	@Override
-	public List<RaportoitavaVastaanottaja> muodostaRaportoitavatVastaanottajat(
-		RaportoitavaViesti raportoitavaViesti, List<LahetettyVastaanottajalleDTO> lahetettyVastaanottajille) {
-		List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
-		
-		for (LahetettyVastaanottajalleDTO lahetettyVastaanottajalle : lahetettyVastaanottajille) {
-			RaportoitavaVastaanottaja vastaanottaja = muodostaRaportoitavaVastaanottaja(lahetettyVastaanottajalle);
-			vastaanottaja.setRaportoitavaViesti(raportoitavaViesti);
-			raportoitavatVastaanottajat.add(vastaanottaja);
-		}
-		
-		return raportoitavatVastaanottajat;
-	}
-
-	@Override
-	public RaportoitavaVastaanottaja muodostaRaportoitavaVastaanottaja(
-		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
-		RaportoitavaVastaanottaja vastaanottaja = new RaportoitavaVastaanottaja();
-		
-		vastaanottaja.setVastaanottajaOid(lahetettyVastaanottajalle.getVastaanottajaOid());
-		vastaanottaja.setVastaanottajaOidTyyppi(lahetettyVastaanottajalle.getVastaanottajanOidTyyppi());
-		vastaanottaja.setHenkilotunnus("");
-		vastaanottaja.setVastaanottajanSahkoposti(lahetettyVastaanottajalle.getVastaanottajanSahkoposti());
-		vastaanottaja.setKielikoodi(lahetettyVastaanottajalle.getKielikoodi());
-		vastaanottaja.setHakuNimi("");
-		vastaanottaja.setLahetysalkoi(lahetettyVastaanottajalle.getLahetysalkoi());
-		vastaanottaja.setLahetyspaattyi(lahetettyVastaanottajalle.getLahetyspaattyi());
-		
-		String lahetysOnnistui = "0";
-		if (lahetettyVastaanottajalle.getEpaonnistumisenSyy() == null || 
-			lahetettyVastaanottajalle.getEpaonnistumisenSyy().isEmpty()) {
-			lahetysOnnistui = "1";
-		}
-		
-		vastaanottaja.setLahetysOnnistui(lahetysOnnistui);
-		vastaanottaja.setEpaonnistumisenSyy(lahetettyVastaanottajalle.getEpaonnistumisenSyy());
-		vastaanottaja.setAikaleima(new Date());
-		
-		return vastaanottaja;
 	}
 
 	@Override

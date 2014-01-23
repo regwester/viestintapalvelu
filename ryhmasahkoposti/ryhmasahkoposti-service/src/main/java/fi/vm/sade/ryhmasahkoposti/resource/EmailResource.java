@@ -5,67 +5,50 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.URISyntaxException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
-import java.util.LinkedList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.core.MediaType;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-
-import org.aspectj.weaver.NewConstructorTypeMunger;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
-import com.sun.jersey.core.header.FormDataContentDisposition;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-
-
-import java.util.Iterator;
-import java.net.URISyntaxException;
-import java.util.UUID;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-
-
-
-
+//import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
 //import com.google.inject.Singleton;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
-import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
-import fi.vm.sade.ryhmasahkoposti.service.impl.RyhmasahkopostinRaportointiServiceImpl;
-//import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
+import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
 
 @Component
 @Path("email")
@@ -135,11 +118,11 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendResult")
-	public RaportoitavaViesti sendResult(String sendId) {
+	public RaportoitavaViestiDTO sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
 
 		/// TMÄM ON VÄÄRÄ KUTSU
-		return sendDbService.haeRaportoitavatViesti(Long.valueOf(sendId));
+		return sendDbService.haeRaportoitavaViesti(Long.valueOf(sendId));
     }
 	
 	
@@ -284,20 +267,15 @@ public class EmailResource {
         AttachmentResponse result = new AttachmentResponse();
         
         if (!item.isFormField()) {
+            Long id = sendDbService.tallennaLiite(item);
+        	
             String fileName = item.getName();
             String contentType = item.getContentType();
             byte[] data = item.get();
             result.setFileName(fileName);
             result.setContentType(contentType);
-            result.setFileSize(data.length);
-            result.setUuid(UUID.randomUUID().toString());
-            
-            //  Tallenna datat tässä!
-            
-            //File uploadedFile = new File("/home/jkorkala/uploads/"
-            //        + fileName);
-            //System.out.println(uploadedFile.getAbsolutePath());
-            //item.write(uploadedFile);
+            result.setFileSize(data.length);    
+            result.setUuid(id.toString());
         }
         
         return result;

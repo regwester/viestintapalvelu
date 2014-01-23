@@ -10,7 +10,7 @@ public class RaportoitavaVastaanottajaDTO implements Serializable {
 	private String organisaationNimi;
 	private String vastaanottajan_oid;
 	private String vastaanottajanSahkopostiosoite;
-	private boolean lahetysOnnistui;
+	private String lahetysOnnistui;
 	
 	public String getEtunimi() {
 		return etunimi;
@@ -53,11 +53,11 @@ public class RaportoitavaVastaanottajaDTO implements Serializable {
 		this.vastaanottajanSahkopostiosoite = vastaanottajanSahkopostiosoite;
 	}
 	
-	public boolean isLahetysOnnistui() {
+	public String isLahetysOnnistui() {
 		return lahetysOnnistui;
 	}
 	
-	public void setLahetysOnnistui(boolean lahetysOnnistui) {
+	public void setLahetysOnnistui(String lahetysOnnistui) {
 		this.lahetysOnnistui = lahetysOnnistui;
 	}
 }

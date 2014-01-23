@@ -5,12 +5,15 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +24,7 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
@@ -46,14 +50,29 @@ public class RyhmasahkopostinRaportointiServiceTest {
 
 	@Test
 	public void testLahetyksenTulosVastaaRaportoitujatietoja() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
 		vastaanottaja.setVastaanottajanSahkoposti("testLahetyksenTulosVastaaRaportoitujatietoja@sposti.fi");
 		vastaanottaja.setEpaonnistumisenSyy("Failed");
+		
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(vastaanottaja);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
 		
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
 		
@@ -66,6 +85,15 @@ public class RyhmasahkopostinRaportointiServiceTest {
 	
 	@Test
 	public void testRaportoiLahetyksenAloitus() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
@@ -73,6 +101,11 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(vastaanottaja);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
 
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);		
 
@@ -85,6 +118,15 @@ public class RyhmasahkopostinRaportointiServiceTest {
 	
 	@Test
 	public void testRaportoiLahetyksenLopetus() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
@@ -92,7 +134,12 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(lahetettyVastaanottajalle);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
-		
+
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
+
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
 		
 		LahetyksenLopetusDTO lahetyksenLopetus = 
@@ -107,6 +154,14 @@ public class RyhmasahkopostinRaportointiServiceTest {
 
 	@Test
 	public void testRaportoiLahetysVastaanottajalleOnnistui() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
@@ -116,6 +171,11 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(vastaanottaja);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
 		
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
 
@@ -146,6 +206,15 @@ public class RyhmasahkopostinRaportointiServiceTest {
 	
 	@Test
 	public void testRaportoiLahetysVastaanottajalleEpaonnistui() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
@@ -154,6 +223,11 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(vastaanottaja);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
 		
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
 
@@ -172,6 +246,15 @@ public class RyhmasahkopostinRaportointiServiceTest {
 	
 	@Test
 	public void testRaportoitujenViestienHakuOnnistui() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
@@ -181,7 +264,12 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
 		vastaanottajat.add(vastaanottaja);
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
-		
+
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
+
 		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
 
 		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
@@ -197,6 +285,67 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		List<RaportoitavaViestiDTO> viestit = ryhmasahkopostinRaportointiService.haeRaportoitavatViestit(hakuKentta);
 		
 		assertNotNull(viestit);
-		assertTrue(viestit.size() == 0);
+		assertTrue(viestit.size() > 0);
+	}
+	
+	@Test
+	public void testLiitteenTallennusOnnistuu() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		
+		assertNotNull(liiteID);
+		assertTrue(liiteID.longValue() > 0);
+	}
+	
+	@Test
+	public void testRaportoitavanViestinHakuOnnistuu() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+
+		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
+		
+		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
+		vastaanottaja.setLahetysalkoi(null);
+		vastaanottaja.setLahetyspaattyi(null);
+		vastaanottaja.setVastaanottajanSahkoposti("testRaportoitavanViestinHakuOnnistuu@sposti.fi");
+		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
+		vastaanottajat.add(vastaanottaja);
+		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
+
+		Long viestiID = ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);
+
+		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
+		lahetettyVastaanottajalle.setViestiID(viestiID);
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti(vastaanottaja.getVastaanottajanSahkoposti());
+		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
+		lahetettyVastaanottajalle.setLahetyspaattyi(null);
+		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
+
+		ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+
+		RaportoitavaViestiDTO viestiDTO = ryhmasahkopostinRaportointiService.haeRaportoitavaViesti(viestiID);
+		
+		assertNotNull(viestiDTO);
+		assertNotNull(viestiDTO.getVastaanottajat());
+		assertEquals(vastaanottaja.getVastaanottajanSahkoposti(), viestiDTO.getVastaanottajat().get(0).getVastaanottajanSahkopostiosoite());
+		assertNotNull(viestiDTO.getLiitetiedostot());
+		assertEquals(mockedFileItem.getName(), viestiDTO.getLiitetiedostot().get(0));
 	}
 }

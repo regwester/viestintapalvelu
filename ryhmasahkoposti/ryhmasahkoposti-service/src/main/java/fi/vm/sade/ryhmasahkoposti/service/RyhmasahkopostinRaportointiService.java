@@ -3,13 +3,14 @@ package fi.vm.sade.ryhmasahkoposti.service;
 import java.io.IOException;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 /**
  * Rajapinta lähetettävän ryhmäsähköpostiviestin raportointia varten
@@ -40,7 +41,7 @@ public interface RyhmasahkopostinRaportointiService {
 	 * @param viestiID Viestintunnus
 	 * @return Lista raportoitavia viestejä
 	 */
-	public RaportoitavaViesti haeRaportoitavatViesti(Long viestiID);
+	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID);
 
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -48,7 +49,7 @@ public interface RyhmasahkopostinRaportointiService {
 	 * @param query Hakuparametri
 	 * @return Lista raportoitavia viestejä
 	 */
-	public List<RaportoitavaViesti> haeRaportoitavatViestit();
+	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit();
 
 	/**
 	 * Hakee hakuparametrin mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -83,5 +84,11 @@ public interface RyhmasahkopostinRaportointiService {
 	 */
 	public boolean raportoiLahetyksenLopetus(LahetyksenLopetusDTO lahetyksenLopetus);
 	
-	public String testaa();
+	/**
+	 * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
+	 * 
+	 * @param fileItem Liitetiedoston tiedot
+	 * @return Liitteelle generoitu avain
+	 */
+	public Long tallennaLiite(FileItem fileItem) throws IOException;
 }

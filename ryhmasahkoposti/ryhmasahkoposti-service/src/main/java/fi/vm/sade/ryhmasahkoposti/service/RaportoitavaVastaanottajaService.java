@@ -4,7 +4,6 @@ import java.util.List;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 /**
  * Rajapinta raportoittavien viestin vastaanottajien liiketoimintalogiikkaa varten
@@ -61,24 +60,6 @@ public interface RaportoitavaVastaanottajaService {
 	 * @return Epäonnistuneiden tai onnistuneiden viestien vastaanottajien lukumäärä
 	 */
 	public Long haeRaportoitavienVastaanottajienLukumaara(Long viestiID, boolean lahetysOnnistui);	
-	/**
-	 * Muodostaa raprtoitavan viestin vastaanottajan tiedot liittymältä saaduista tiedoista 
-	 * 
-	 * @param lahetettyVastaanottajalle Liittymältä saadut tiedot viestin lähettämisestä vastaanottajalle {@link LahetettyVastaanottajalleDTO}
-	 * @return Raportoitavan viestin vastaanottajan tiedot {@link RaportoitavaVastaanottaja}
-	 */
-	public RaportoitavaVastaanottaja muodostaRaportoitavaVastaanottaja(
-		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle);
-	
-	/**
-	 * Muodostaa raprtoitavan viestin vastaanottajien tiedot liittymältä saaduista tiedoista 
-	 * @param raportoitavaViesti TODO
-	 * @param lahetettyVastaanottajalle Lista liittymältä saadut tiedot viestin lähettämisestä vastaanottajalle {@link LahetettyVastaanottajalleDTO}
-	 * 
-	 * @return Lista raportoitavan viestin vastaanottajan tietoja {@link RaportoitavaVastaanottaja}
-	 */
-	public List<RaportoitavaVastaanottaja> muodostaRaportoitavatVastaanottajat(
-		RaportoitavaViesti raportoitavaViesti, List<LahetettyVastaanottajalleDTO> lahetettyVastaanottajille);
 	
 	/**
 	 * Täydentää raportoitavan viestin vastaanottajan tietoja liittymältä saaduilla tiedoilla

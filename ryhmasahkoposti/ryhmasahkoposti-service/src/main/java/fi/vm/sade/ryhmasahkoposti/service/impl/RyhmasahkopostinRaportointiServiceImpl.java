@@ -1,9 +1,9 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.fileupload.FileItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -15,7 +15,11 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.FileItemToRaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.converter.HakukenttaToRaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
+import fi.vm.sade.ryhmasahkoposti.converter.LahetyksenAloitusDTOToRaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiToRaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
@@ -33,9 +37,11 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 
 	@Autowired
 	public RyhmasahkopostinRaportointiServiceImpl(RaportoitavaViestiService raportoitavaViestiService,
-		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService) {
+		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService, 
+		RaportoitavaLiiteService raportoitavaLiiteService) {
 		this.raportoitavaViestiService = raportoitavaViestiService;
 		this.raportoitavaVastaanottajaService = raportoitavaVastaanottajaService;
+		this.raportoitavaLiiteService = raportoitavaLiiteService;
 	}
 	
 	@Override
@@ -63,45 +69,42 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public RaportoitavaViesti haeRaportoitavatViesti(Long viestiID) {
-		return raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
+	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID) {
+		RaportoitavaViesti viesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
+		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti);
 	}
 
 	@Override
-	public List<RaportoitavaViesti> haeRaportoitavatViestit() {
+	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
 	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit(String hakuKentta) {
-		List<RaportoitavaViestiDTO> raportoitavatViestitDTO = new ArrayList<RaportoitavaViestiDTO>();
-		
 		RaportoitavaViestiQueryDTO query = HakukenttaToRaportoitavaViestiQueryDTO.convert(hakuKentta);
 		List<RaportoitavaViesti> raportoitavatViestit = raportoitavaViestiService.haeRaportoitavatViestit(query);
 		
-		return raportoitavatViestitDTO;
+		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(raportoitavatViestit);
 	}
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Long raportoiLahetyksenAloitus(LahetyksenAloitusDTO lahetyksenAloitus) throws IOException {
-		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.muodostaRaportoitavaViesti(lahetyksenAloitus);
+		RaportoitavaViesti raportoitavaViesti = 
+			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+		
+		List<RaportoitavaLiite> raportoitavatLiitteet = 
+			raportoitavaLiiteService.haeRaportoitavatLiitteet(lahetyksenAloitus.getLahetetynviestinliitteet());
+		raportoitavaViesti.setRaportoitavatLiitteet(raportoitavatLiitteet);
+		
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 		
 		List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
-			raportoitavaVastaanottajaService.muodostaRaportoitavatVastaanottajat(tallennettuRaportoitavaViesti, 
-			lahetyksenAloitus.getVastaanottajat());
+			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(
+			tallennettuRaportoitavaViesti, lahetyksenAloitus.getVastaanottajat());
 		raportoitavaVastaanottajaService.tallennaRaportoitavatVastaanottajat(raportoitavatVastaanottajat);		
-		
-		if (lahetyksenAloitus.getLahetetynviestinliitteet() != null && 
-			!lahetyksenAloitus.getLahetetynviestinliitteet().isEmpty()) {
-			List<RaportoitavaLiite> raportoitavatLiitteet = 
-				raportoitavaLiiteService.muodostaRaportoitavatLiitteet(tallennettuRaportoitavaViesti, 
-				lahetyksenAloitus.getLahetetynviestinliitteet());
-			raportoitavaLiiteService.tallennaRaportoitavatLiitteet(raportoitavatLiitteet);
-		}
 		
 		return tallennettuRaportoitavaViesti.getId();
 	}
@@ -147,7 +150,8 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public String testaa() {
-		return "RyhmasahkopostinRaportointiServiceImpl vastasi";
+	public Long tallennaLiite(FileItem fileItem) throws IOException {
+		RaportoitavaLiite liite = FileItemToRaportoitavaLiite.convert(fileItem);
+		return raportoitavaLiiteService.tallennaRaportoitavaLiite(liite);
 	}
 }
