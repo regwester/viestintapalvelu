@@ -6,7 +6,6 @@ email.config(['$routeProvider',  function ($routeProvider) {
 		$routeProvider.when('/cancel/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailCancel.html', controller: 'EmailCancelController'});
 		$routeProvider.when('/status/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailSendStatus.html', controller: 'EmailSendStatusController'});
 		$routeProvider.when('/response/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailResponse.html', controller: 'EmailResponseController'});
-		$routeProvider.when('/hidden/', {templateUrl: '/ryhmasahkoposti-app/app/html/hidden.html', controller: 'HiddenController'});
 	    $routeProvider.otherwise({redirectTo: '/'});
 }]);
 
@@ -15,7 +14,6 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 //	alert("EmailController");
 	
 	$rootScope.emailsendid = "";
-//	$scope.emailresponse = [];
 	
 	$scope.emaildata = {
 			recipient: [
@@ -35,20 +33,14 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 					senderOid: '11223344556677',
 					senderOidType: 'henkilo',
 					subject: 'Testi viesti',
-					body: 'Testi bodya ja sporttia.'
+					body: 'Testi bodya ja sporttia.',
+					attachId: []
 			}
 		};
 	
-<<<<<<< HEAD
-		$scope.showTo  = $scope.emaildata.headers.length <= 30;
-		$scope.showCnt = $scope.emaildata.headers.length >  30;
-		
-	
-=======
 		$scope.showTo  = $scope.emaildata.recipient.length <= 30;
 		$scope.showCnt = $scope.emaildata.recipient.length >  30;
 				
->>>>>>> More calls to VMs Db
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
 //			$location.path("/response");
@@ -68,8 +60,6 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
                         alert("Notification " + update);
                     }
             );
-			
-			
 		};
 					
 		
@@ -80,11 +70,14 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 			$rootScope.callingProcess = $scope.emaildata.email.callingProcess;			
 		};
 		
-			$scope.files = [];
+		
+		$scope.files = [];
 	    $scope.percentage = 0;
+		$scope.attfile = [];
 
 	    $scope.upload = function () {
 	    	uploadManager.upload();
+//	    	alert("ladattu");
 	        $scope.files = [];
 	    };
 
@@ -99,9 +92,17 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 	    });
 	    
 	    $rootScope.$on('uploadDone', function (e, call) {
-	        alert(call);
+//	        alert(call);
 	    	$scope.$apply();
 	    });
+	    
+	    $rootScope.$on('fileLoaded', function (e, call) {
+	    	var file = call;
+	        $scope.attfile.push(file);
+	        $scope.emaildata.email.attachId.push(file.uuid);
+	        $scope.$apply();
+	    });
+
 	    
 }]);
 

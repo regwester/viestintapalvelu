@@ -6,6 +6,20 @@ services.factory('GroupEmailFactory', function ($resource) {
 	  });
 });
 
+services.factory('EmailSendStatusFactory', function ($resource) {
+	return $resource('/ryhmasahkoposti-service/email/sendEmailStatus', {}, {  
+		sendEmailStatus: { method: 'POST', isArray: false}
+	  });
+});
+
+services.factory('EmailResultFactory', function ($resource) {
+	return $resource('/ryhmasahkoposti-service/email/sendResult', {}, {  
+		sendResult: { method: 'POST', isArray: false}
+	  });
+});
+
+// ----- //
+
 services.factory('uploadManager', function ($rootScope) {
     var _files = [];
     return {
@@ -28,12 +42,15 @@ services.factory('uploadManager', function ($rootScope) {
                 file.submit();
             });
             this.clear();
+            
         },
         setProgress: function (percentage) {
             $rootScope.$broadcast('uploadProgress', percentage);
         },
-        setUuid : function(uuid) {
-        	alert(uuid);
+        setResult : function(result) {
+//        	alert("result " + result);
+            $rootScope.$broadcast('fileLoaded', result);
+        	
         }
     };
 });
@@ -44,7 +61,8 @@ services.directive('upload', ['uploadManager', function factory(uploadManager) {
         restrict: 'A',
         link: function (scope, element, attrs) {
             $(element).fileupload({
-                dataType: 'text',
+//                dataType: 'text',
+                dataType: 'json',
                 add: function (e, data) {
                     uploadManager.add(data);
                 },
@@ -53,25 +71,12 @@ services.directive('upload', ['uploadManager', function factory(uploadManager) {
                     uploadManager.setProgress(progress);
                 },
                 done: function (e, data) {
-                    alert("done:" + data.result);
-                    uploadManager.setUuid(data.result);
+//                    alert("done:" + data.result);
+                    uploadManager.setResult(data.result);
                 	uploadManager.setProgress(0);
                 }
             });
         }
    };
 }]);
-
-
-services.factory('EmailSendStatusFactory', function ($resource) {
-	return $resource('/ryhmasahkoposti-service/email/sendEmailStatus', {}, {  
-		sendEmailStatus: { method: 'POST', isArray: false}
-	  });
-});
-
-services.factory('EmailResultFactory', function ($resource) {
-	return $resource('/ryhmasahkoposti-service/email/sendResult', {}, {  
-		sendResult: { method: 'POST', isArray: false}
-	  });
-});
 

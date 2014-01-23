@@ -29,6 +29,7 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+<<<<<<< HEAD
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,6 +43,33 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 //import com.google.inject.Singleton;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
+=======
+
+import java.util.Iterator;
+import java.net.URISyntaxException;
+import java.util.UUID;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+
+
+
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
+import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
+import fi.vm.sade.ryhmasahkoposti.service.impl.RyhmasahkopostinRaportointiServiceImpl;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+>>>>>>> Attachment handling on first page added.
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
@@ -205,8 +233,7 @@ public class EmailResource {
   
 	
 	// save uploaded file to new location
-	private void writeToFile(InputStream uploadedInputStream,
-		String uploadedFileLocation) {
+	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
  
 		try {
 			OutputStream out = new FileOutputStream(new File(
@@ -225,16 +252,17 @@ public class EmailResource {
 			e.printStackTrace();
 		}
  
-	}	
+	}
+	
+	
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json")
     @Path("addAttachment")
-    public AttachmentResponse addAttachment(@Context HttpServletRequest request,
-            @Context HttpServletResponse response) throws IOException,
-            URISyntaxException, ServletException {
+    public AttachmentResponse addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
+    											throws IOException, URISyntaxException, ServletException {
 
-        System.out.println("Adding attachment "+request.getMethod());
+		log.log(Level.INFO, "Adding attachment "+request.getMethod());
         
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         AttachmentResponse result = null;
@@ -259,7 +287,7 @@ public class EmailResource {
             response.setStatus(400);
             response.getWriter().append("Not a multipart request");
         }
-        System.out.println(result);
+		log.log(Level.INFO, "Added attachment: " + result);
         return result;
     }
     
@@ -276,6 +304,9 @@ public class EmailResource {
             result.setContentType(contentType);
             result.setFileSize(data.length);    
             result.setUuid(id.toString());
+//            result.setUuid(UUID.randomUUID().toString());
+//            File uploadedFile = new File("d://" + fileName); // For Test
+//            item.write(uploadedFile); // For Test
         }
         
         return result;
