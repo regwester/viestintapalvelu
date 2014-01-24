@@ -14,16 +14,21 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
- 		    	Viestiä lähetetään ( Käynnistetty lähetys indeksillä {{emailsendid.id}}) 
+ 		    	Viestiä lähetetään. Yhteensä {{LahetyksenTilanneDTO.vastaanottajienLukumaara}} viestiä. <br>
+ 		    	Siirretty: {{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}} <br>
+ 		    	Epäonnistuneet: {{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}}
 		    </div>		
 		</div>
+
+		<div class="control-group">		
+		    <label class="control-label"></label>
+			<div class="progress" ng-show="percentage">
+				<div class="bar" style="width: {{percentage}}%;"></div>
+			</div>
+		</div>
 		
-    	 
+		    	 
 		<hr></hr>
-    LahetyksenTilanneDTO {{LahetyksenTilanneDTO}} <br>
-    ok {{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}} <br>
-    notOk {{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}} <br>
-    all {{LahetyksenTilanneDTO.vastaanottajienLukumaara}} <br>
     </form>
 
 </div>

@@ -1,18 +1,19 @@
 
-var emailCancel = angular.module('viestintapalvelu');
+var emailStatus = angular.module('viestintapalvelu');
 
-emailCancel.controller('EmailSendStatusController', ['$scope', '$rootScope', 'EmailSendStatusFactory', '$location', 
-                                                     function($scope, $rootScope, EmailSendStatusFactory, $location) { 	
+emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'EmailSendStatusFactory', '$location', '$timeout', 
+                                                     function($scope, $rootScope, EmailSendStatusFactory, $location, $timeout) { 	
 //emailCancel.controller('EmailSendStatusController', ['$scope', '$rootScope', '$location', 
 //                                                     function($scope, $rootScope, $location) { 	
-//	alert("EmailSendStatusController");
 
-	//	$scope.emailsendid          = GroupEmailFactory.sendGroupEmail($scope.emaildata).$promise.then(
+	alert("EmailSendStatusController");
+	$scope.percentage = 0;
 			
 	$scope.emailsendid = $rootScope.emailsendid;
+	
 	$scope.LahetyksenTilanneDTO = EmailSendStatusFactory.sendEmailStatus($scope.emailsendid.id).$promise.then(	
             function(value) {
-                alert("Success " + value);
+//              alert("Success " + value);
                 
             	$scope.LahetyksenTilanneDTO = value; 
             	
@@ -20,12 +21,25 @@ emailCancel.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
         		var notOk = $scope.LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara;
         		var all = $scope.LahetyksenTilanneDTO.vastaanottajienLukumaara;
         		
-        		if (all == ok + notOk) {
-        			$location.path("/response");
+        		$scope.percentage = parseInt((ok + notOk) / all * 100, 10);    		
+//        		$scope.percentage = parseInt((ok + notOk +1) / (all + 1) * 100, 10);        		
+//        		
+//        		$timeout(function() {
+//            		$scope.percentage = parseInt((ok + notOk +2) / (all + 1) * 100, 10);        		        			
+//        		}, 2000);
 
-        		} else {
-        			$location.path("/status");                        
-        		}
+        		
+//        		if (all == ok + notOk) {
+//        			$location.path("/response");        			
+//
+//        		} else {
+////        			$timeout(function() {
+////        				// Wait 2 sec for next round        		        			
+////    				}, 10000);       		
+//        			$location.path("/status");                        
+//        		}
+        		
+        		$location.path("/response");        		
             	
             },
             function(error) {
@@ -35,8 +49,5 @@ emailCancel.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
                 alert("Notification " + update);
             }
     );
-	
-	
-	
 	
 }]);

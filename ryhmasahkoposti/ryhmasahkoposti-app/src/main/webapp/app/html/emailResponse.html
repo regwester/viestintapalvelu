@@ -18,17 +18,17 @@
 		
 		<div class="control-group">		
 		    <label class="control-label">Prosessi</label>
-		    <div class="controls">{{RaportoitavaViesti.prosessi}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.prosessi}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähettäjä</label>
-		    <div class="controls">{{RaportoitavaViesti.lahettajan_sahkopostiosoite}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.lahettajan_sahkopostiosoite}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Vastausosoite</label>
-		    <div class="controls">{{RaportoitavaViesti.vastauksensaajan_sahkopostiosoite}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.vastauksensaajan_sahkopostiosoite}}</div>		
 		</div>
     	 
 		<div class="control-group">		
@@ -38,17 +38,17 @@
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähetysajankohta</label>
-		    <div class="controls">{{RaportoitavaViesti.lahetysAlkoi}} - {{RaportoitavaViesti.lahetysPaattyi}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.lahetysAlkoi}} - {{RaportoitavaViestiDTO.lahetysPaattyi}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Aihe</label>
-		    <div class="controls">{{RaportoitavaViesti.aihe}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.aihe}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Sisältö</label>
-		    <div class="controls">{{RaportoitavaViesti.viesti}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.viesti}}</div>		
 		</div>
     	 
 		<div class="control-group">		
@@ -64,7 +64,7 @@
 		<hr></hr>
     </form>
 
-
+<!-- 
     <form novalidate="novalidate" >
         <table border="0">
         	<tr>
@@ -77,15 +77,15 @@
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Prosessi</td>
-	            <td>{{RaportoitavaViesti.prosessi}}</td>
+	            <td>{{RaportoitavaViestiDTO.prosessi}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Lähettäjä</td>
-	            <td>{{RaportoitavaViesti.lahettajan_sahkopostiosoite}}</td>
+	            <td>{{RaportoitavaViestiDTO.lahettajan_sahkopostiosoite}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Vastausosoite</td>
-	            <td>{{RaportoitavaViesti.vastauksensaajan_sahkopostiosoite}}</td>
+	            <td>{{RaportoitavaViestiDTO.vastauksensaajan_sahkopostiosoite}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Lähetystunnus</td>
@@ -93,20 +93,20 @@
 	            <td>&nbsp;</td>
             </tr><tr> <!-- 
                 <td>Lähetysajankohta</td>
-	            <td>{{RaportoitavaViesti.lahetysAlkoi}} - {{RaportoitavaViesti.lahetysPaattyi}}</td>
+	            <td>{{RaportoitavaViestiDTO.lahetysAlkoi}} - {{RaportoitavaViestiDTO.lahetysPaattyi}}</td>
 	            <td>&nbsp;</td>
-            </tr><tr> -->
+            </tr><tr>
 	            <td>Aihe</td>
-	            <td>{{RaportoitavaViesti.aihe}}</td>
+	            <td>{{RaportoitavaViestiDTO.aihe}}</td>
 	            <td>&nbsp;</td>
-            </tr><tr><!-- 
+            </tr><tr>
 	            <td>Sisältö</td>
-	            <td>{{RaportoitavaViesti.viesti}}</td>
+	            <td>{{RaportoitavaViestiDTO.viesti}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Liitetiedostot</td>
 	            <td>&nbsp;</td>
-	            <td>&nbsp;</td>-->
+	            <td>&nbsp;</td>
 
             </tr><tr>
                	<td>{{}} vastaanottajaa</td>
@@ -116,13 +116,14 @@
 			<tr>
     			<td>&nbsp;</td>
     			<td>
-    		 		<div border="0" ng-repeat="response in emailresponse">								    		 
-<!-- 		{{response.header.email}} - {{response.header.sendStatus}}  -->    			
+    		 		<div border="0" ng-repeat="response in emailresponse"> 								    		 
+ 						{{response.header.email}} - {{response.header.sendStatus}}      			
 					</div>		        
 				</td>
 			</tr>
 
         </table>
-    </form>	    
+    </form>	  
+ -->      
 </div>
 

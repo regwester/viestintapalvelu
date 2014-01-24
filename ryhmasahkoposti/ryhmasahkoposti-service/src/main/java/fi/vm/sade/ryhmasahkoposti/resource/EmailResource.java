@@ -10,6 +10,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -43,6 +44,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
@@ -69,7 +71,6 @@ public class EmailResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")	
-//	@Produces("text/plain")
 	@Path("sendGroupEmail")
 //	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
 	public EmailSendId sendGroupEmail(EmailData emailData) {
@@ -121,13 +122,12 @@ public class EmailResource {
 	public RaportoitavaViestiDTO sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
 
-		/// TMÄM ON VÄÄRÄ KUTSU
 		return sendDbService.haeRaportoitavaViesti(Long.valueOf(sendId));
     }
 	
 	
 	private void copyRecipientInfo(EmailRecipient header, LahetettyVastaanottajalleDTO recipient) {
-		recipient.setLahetysalkoi(new Date());
+//		recipient.setLahetysalkoi(new Date());
 		recipient.setVastaanottajaOid(header.getOid());
 		recipient.setVastaanottajanOidTyyppi(header.getOidType());
 		recipient.setVastaanottajanSahkoposti(header.getEmail());
@@ -144,6 +144,17 @@ public class EmailResource {
 	    emailInfo.setViesti(email.getBody()+email.getFooter());
 	    emailInfo.setHtmlViesti(email.isHtml());
 	    emailInfo.setMerkisto(email.getCharset());
+	    
+	    List<LahetettyLiiteDTO> attachList = new LinkedList<LahetettyLiiteDTO>();
+	    for (AttachmentResponse attach : email.getAttachInfo()) {
+	    	LahetettyLiiteDTO att = new LahetettyLiiteDTO();
+	    	att.setLiitetiedostonID(Long.valueOf(attach.getUuid()));
+	    	att.setLiitetiedostonNimi(attach.getFileName());
+	    	att.setSisaltotyyppi(attach.getContentType());
+	    	attachList.add(att);	    	
+		}	    
+	    emailInfo.setLahetetynviestinliitteet(attachList);
+	    emailInfo.setLahetysAlkoi(new Date());
 	}
 	
 	

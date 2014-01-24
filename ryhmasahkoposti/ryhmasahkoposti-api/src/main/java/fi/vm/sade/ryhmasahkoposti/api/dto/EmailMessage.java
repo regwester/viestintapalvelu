@@ -25,7 +25,7 @@ public class EmailMessage {
 	private boolean isHtml = false;
 	private String charset = EmailConstants.UTF8;
 	List<EmailAttachment> attachments = new LinkedList<EmailAttachment>(); 
-	List<String> attachId = new LinkedList<String>();
+	List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
 
 	public EmailMessage() {
 	}
@@ -130,18 +130,18 @@ public class EmailMessage {
 		return attachments;
 	}
 	
-	public void addAttachId(String attachId) {
-		if (this.attachId == null) {
-			this.attachId = new LinkedList<String>();
+	public void addAttachInfo(AttachmentResponse attachInfo) {
+		if (this.attachInfo == null) {
+			this.attachInfo = new LinkedList<AttachmentResponse>();
 		}
-		this.attachId.add(attachId);
+		this.attachInfo.add(attachInfo);
 	}
-	public List<String> getAttachId() {
-		return attachId;
+	public List<AttachmentResponse> getAttachInfo() {
+		return attachInfo;
 	}
 
-	public void setAttachId(List<String> attachId) {
-		this.attachId = attachId;
+	public void setAttachInfo(List<AttachmentResponse> attachInfo) {
+		this.attachInfo = attachInfo;
 	}
 
 	private String generateFooter(String emailFooter, String lang) {

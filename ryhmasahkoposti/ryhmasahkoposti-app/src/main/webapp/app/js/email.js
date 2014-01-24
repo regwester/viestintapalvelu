@@ -11,7 +11,6 @@ email.config(['$routeProvider',  function ($routeProvider) {
 
 email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location', 
                                      function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
-//	alert("EmailController");
 	
 	$rootScope.emailsendid = "";
 	
@@ -34,7 +33,7 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 					senderOidType: 'henkilo',
 					subject: 'Testi viesti',
 					body: 'Testi bodya ja sporttia.',
-					attachId: []
+					attachInfo: []
 			}
 		};
 	
@@ -43,7 +42,6 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 				
 		$scope.sendGroupEmail = function () {
 //			alert("sendGroupEmail mail pressed");
-//			$location.path("/response");
 			
 //			$scope.emailresponse = GroupEmailFactory.sendGroupEmail($scope.emaildata);					
 //			$rootScope.emailresponse = $scope.emailresponse;
@@ -97,9 +95,8 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 	    });
 	    
 	    $rootScope.$on('fileLoaded', function (e, call) {
-	    	var file = call;
-	        $scope.attfile.push(file);
-	        $scope.emaildata.email.attachId.push(file.uuid);
+	        $scope.attfile.push(call);
+	        $scope.emaildata.email.attachInfo.push(call);
 	        $scope.$apply();
 	    });
 
