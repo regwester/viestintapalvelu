@@ -69,9 +69,9 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID) {
+	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID, boolean lahetysRaportti) {
 		RaportoitavaViesti viesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
-		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti);
+		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti, lahetysRaportti);
 	}
 
 	@Override

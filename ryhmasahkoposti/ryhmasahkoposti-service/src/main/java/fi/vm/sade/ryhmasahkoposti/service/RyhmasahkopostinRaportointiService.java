@@ -39,9 +39,10 @@ public interface RyhmasahkopostinRaportointiService {
 	 * Hakee raportoitavan viestin viestintunnuksella 
 	 * 
 	 * @param viestiID Viestintunnus
+	 * @param lahetysRaportti true muodostetaan viestin lähetysraportti, false ei muodosteta 
 	 * @return Lista raportoitavia viestejä
 	 */
-	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID);
+	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID, boolean lahetysRaportti);
 
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
