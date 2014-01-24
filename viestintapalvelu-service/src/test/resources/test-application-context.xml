@@ -23,6 +23,7 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.download"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.hyvaksymiskirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.koekutsukirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
     
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />

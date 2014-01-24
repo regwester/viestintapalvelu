@@ -26,6 +26,11 @@ public class PdfDocument {
     }
 
     public InputStream getAttachment() {
-        return new ByteArrayInputStream(attachment);
+    	// There are no attachments in e.g. koekutsukirje
+    	if (attachment != null) {
+    		return new ByteArrayInputStream(attachment);
+    	}
+    	return null;
+    	
     }
 }
