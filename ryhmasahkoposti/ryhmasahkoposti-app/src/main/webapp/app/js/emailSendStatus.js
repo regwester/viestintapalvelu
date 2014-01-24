@@ -6,15 +6,16 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
 //emailCancel.controller('EmailSendStatusController', ['$scope', '$rootScope', '$location', 
 //                                                     function($scope, $rootScope, $location) { 	
 
-	alert("EmailSendStatusController");
+//	alert("EmailSendStatusController");
 	$scope.percentage = 0;
 			
 	$scope.emailsendid = $rootScope.emailsendid;
 	
+	$scope.testi='>>>>>>>>>>>';
+	
 	$scope.LahetyksenTilanneDTO = EmailSendStatusFactory.sendEmailStatus($scope.emailsendid.id).$promise.then(	
-            function(value) {
+			function(value) {				
 //              alert("Success " + value);
-                
             	$scope.LahetyksenTilanneDTO = value; 
             	
         		var ok = $scope.LahetyksenTilanneDTO.lahetysOnnistuiLukumaara;
@@ -29,19 +30,22 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
 //        		}, 2000);
 
         		
-//        		if (all == ok + notOk) {
-//        			$location.path("/response");        			
-//
-//        		} else {
-////        			$timeout(function() {
-////        				// Wait 2 sec for next round        		        			
-////    				}, 10000);       		
-//        			$location.path("/status");                        
-//        		}
+        		if (all == ok + notOk) {
+        			$location.path("/response");        			
+
+        		} else {
+//        			$timeout(function() {
+//        				// Wait 2 sec for next round        		        			
+//        				$scope.testi='!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!';
+//        				$location.path("/status");
+//    				}, 5000);       		
+////        			$location.path("/status");                        
+        		}
         		
         		$location.path("/response");        		
             	
             },
+            
             function(error) {
                 alert("Error " + error);
             },

@@ -53,7 +53,10 @@
 		    <div class="controls">
 				<span ng-show="!attfile.length">Ei liitteitä</span>
 				<ul>
-					<li ng-repeat="name in attfile">{{name.fileName}} </li>
+					<li ng-repeat="name in attfile">{{name.fileName}}  
+					
+					<button ng-click="removeAtt({{name.uuid}})" class="inline-operation btn btn-small">Poista</button>
+					</li>
 				</ul>
 			</div>
 		</div>
@@ -96,7 +99,12 @@
 				</div>
 				<span>
 					<button type="submit" class="inline-operation btn btn-small" ng-click="upload()">Liitä liite viestiin</button>
+				
+					<button class="btn" ng-click="upload()">Lataa<i class="icon-download"></i></button>
+				
 				</span>
+								
+
 
 			</div>
 				
