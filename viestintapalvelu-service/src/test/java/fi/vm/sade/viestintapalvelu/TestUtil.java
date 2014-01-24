@@ -36,6 +36,8 @@ import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.Hyvaksymiskirje;
 import fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeBatch;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
+import fi.vm.sade.viestintapalvelu.koekutsukirje.Koekutsukirje;
+import fi.vm.sade.viestintapalvelu.koekutsukirje.KoekutsukirjeBatch;
 
 public class TestUtil {
 
@@ -49,6 +51,8 @@ public class TestUtil {
             + "/api/v1/jalkiohjauskirje/zip";
     private final static String HYVAKSYMISKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/hyvaksymiskirje/pdf";
+    private final static String KOEKUTSUKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    		+ "/api/v1/koekutsukirje/pdf";
 
     public static List<List<String>> generateAddressLabelsPDF(List<AddressLabel> labels) throws Exception {
         AddressLabelBatch batch = new AddressLabelBatch(labels);
@@ -76,6 +80,10 @@ public class TestUtil {
         return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
     }
 
+    public static List<List<String>> generateKoekutsukirje(Koekutsukirje kirje) throws Exception {
+        KoekutsukirjeBatch batch = new KoekutsukirjeBatch(Arrays.asList(kirje));
+        return readPDF(get(batch, KOEKUTSUKIRJE_URL), 1, 2);
+    }
     public static String generateLiite(Jalkiohjauskirje kirje) throws Exception {
         JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(Arrays.asList(kirje));
         return readAsHtml(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);

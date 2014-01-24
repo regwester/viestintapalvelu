@@ -4,6 +4,7 @@ app.config(function ($locationProvider) {
     $locationProvider.html5Mode(true).hashPrefix('!');
 });
 
+
 angular.module('app').controller('TabsController', ['$scope', '$http', '$compile', function ($scope, $http, $compile) {
     $scope.showContent = function (uri, target) {
         var tabContent = $(target);

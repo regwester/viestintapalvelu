@@ -43,6 +43,15 @@ body {
     padding: 0;
 }
 
+.koekutsuosoitetarra {
+    font-size: 14px;
+    font-family: Calibri;
+	width: 70mm;
+    height: 37mm;
+    margin: 0;
+    padding: 0;
+}
+
 .lahetysMerkinta {
     font-size: 90%;
 }
@@ -52,6 +61,11 @@ body {
     text-align: left;
     width: 60mm;
     margin: 4mm 0 0 0mm;
+}
+
+.kirjeenpaivays {
+    margin-top: 50px;
+    margin-left: 500px;
 }
 
 .jalkiohjauskirjeTyyppi {
@@ -71,6 +85,13 @@ p {
     clear: both;
     line-height: 140%;
 }
+
+.koekutsusisalto {
+    clear: both;
+    line-height: 140%;
+    margin-top: 40px;
+}
+
 
 .liiteSisalto {
     font-size: 11px;
@@ -92,6 +113,11 @@ td {
 
 .hakutoive {
     text-align: left;
+}
+
+.koekutsuhakukohde {
+    text-align: left;
+    margin-top: 20px;
 }
 
 th {
