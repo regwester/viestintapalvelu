@@ -122,7 +122,7 @@ public class EmailResource {
 	public RaportoitavaViestiDTO sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
 
-		return sendDbService.haeRaportoitavaViesti(Long.valueOf(sendId));
+		return sendDbService.haeRaportoitavaViesti(Long.valueOf(sendId), false);
     }
 	
 	
