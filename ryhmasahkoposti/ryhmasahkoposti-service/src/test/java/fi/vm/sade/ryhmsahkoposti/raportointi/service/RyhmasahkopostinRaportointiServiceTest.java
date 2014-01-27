@@ -191,7 +191,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		
 		assertTrue(vastaus);
 		
-		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
+		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID, false);
 		
 		assertNotNull(raportoitavaViesti);
 		assertNotNull(raportoitavaViesti.getRaportoitavatVastaanottajat());
@@ -340,7 +340,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 
 		ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
 
-		RaportoitavaViestiDTO viestiDTO = ryhmasahkopostinRaportointiService.haeRaportoitavaViesti(viestiID);
+		RaportoitavaViestiDTO viestiDTO = ryhmasahkopostinRaportointiService.haeRaportoitavaViesti(viestiID, false);
 		
 		assertNotNull(viestiDTO);
 		assertNotNull(viestiDTO.getVastaanottajat());
