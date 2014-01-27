@@ -16,10 +16,25 @@
     -fs-pdf-font-encoding: ISO-8859-15;
 }
 
+koekutsubody {
+    font-size: 14px;
+    font-family: Calibri;
+    margin: 0 0 0 11mm;
+}
+
 body {
     font-size: 12px;
     font-family: Calibri;
     margin: 0;
+}
+
+.koekutsuheader {
+    font-size: 14px;
+    font-family: Calibri;
+	margin: 4mm 0 0 11mm;
+    height: 50mm;
+    width: 100mm;
+    float: left;
 }
 
 .header {
@@ -63,8 +78,10 @@ body {
     margin: 4mm 0 0 0mm;
 }
 
-.kirjeenpaivays {
-    margin-top: 50px;
+.koekutsukirjeenpaivays {
+	font-size: 14px;
+    font-family: Calibri;
+	margin-top: 50px;
     margin-left: 500px;
 }
 
@@ -77,6 +94,14 @@ p {
     margin-bottom: 0;
 }
 
+.koekutsuasiaotsikko {
+	font-size: 14px;
+    font-family: Calibri;
+	margin:  15mm 0 0 11mm;
+    clear: both;
+    font-weight: bold;
+}
+
 .asiaotsikko {
     clear: both;
 }
@@ -87,9 +112,11 @@ p {
 }
 
 .koekutsusisalto {
-    clear: both;
+	font-size: 14px;
+    font-family: Calibri;
+	margin:  15mm 0 0 11mm;
+	clear: both;
     line-height: 140%;
-    margin-top: 40px;
 }
 
 
@@ -116,8 +143,11 @@ td {
 }
 
 .koekutsuhakukohde {
+	font-size: 14px;
+    font-family: Calibri;
+    margin: 5mm 0 0 11mm;
     text-align: left;
-    margin-top: 20px;
+    font-weight: bold;
 }
 
 th {
