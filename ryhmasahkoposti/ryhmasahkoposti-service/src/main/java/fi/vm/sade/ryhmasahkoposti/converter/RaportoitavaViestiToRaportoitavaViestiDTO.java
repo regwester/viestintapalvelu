@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaVastaanottajaDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
@@ -33,26 +34,28 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		return raportoitavatViestitDTO;
 	}
 
-	public static RaportoitavaViestiDTO convert(RaportoitavaViesti raportoitavaViesti, boolean lahetysRaportti) {
+	public static RaportoitavaViestiDTO convert(RaportoitavaViesti raportoitavaViesti, 
+		List<RaportoitavaLiite> raportoitavatLiitteet, boolean lahetysRaportti) {
 		RaportoitavaViestiDTO raportoitavaViestiDTO = convertRaportoivaViesti(raportoitavaViesti, lahetysRaportti);
-		raportoitavaViestiDTO.setLiitetiedostot(convertRaportoitavatLiitteet(raportoitavaViesti));
-		raportoitavaViestiDTO.setVastaanottajat(converRaportoitavatVastaanottajat(raportoitavaViesti));
+		raportoitavaViestiDTO.setLiitetiedostot(convertRaportoitavatLiitteet(raportoitavatLiitteet));
+		raportoitavaViestiDTO.setVastaanottajat(convertRaportoitavatVastaanottajat(raportoitavaViesti));
 
 		return raportoitavaViestiDTO;
 	}
 
-	private static List<RaportoitavaVastaanottajaDTO> converRaportoitavatVastaanottajat(
+	private static List<RaportoitavaVastaanottajaDTO> convertRaportoitavatVastaanottajat(
 		RaportoitavaViesti raportoitavaViesti) {
 		List<RaportoitavaVastaanottajaDTO> vastaanottajat = new ArrayList<RaportoitavaVastaanottajaDTO>();
 		
 		for (RaportoitavaVastaanottaja vastaanottaja : raportoitavaViesti.getRaportoitavatVastaanottajat()) {
 			RaportoitavaVastaanottajaDTO raportoitavaVastaanottajaDTO = new RaportoitavaVastaanottajaDTO();
 			
+			raportoitavaVastaanottajaDTO.setVastaanottajaID(vastaanottaja.getId());
 			raportoitavaVastaanottajaDTO.setEtunimi("");
 			raportoitavaVastaanottajaDTO.setSukunimi(""); 
 			raportoitavaVastaanottajaDTO.setLahetysOnnistui(vastaanottaja.getLahetysOnnistui());
 			raportoitavaVastaanottajaDTO.setOrganisaationNimi("");
-			raportoitavaVastaanottajaDTO.setVastaanottajan_oid(vastaanottaja.getVastaanottajaOid());
+			raportoitavaVastaanottajaDTO.setVastaanottajanOid(vastaanottaja.getVastaanottajaOid());
 			raportoitavaVastaanottajaDTO.setVastaanottajanSahkopostiosoite(vastaanottaja.getVastaanottajanSahkoposti());
 			
 			vastaanottajat.add(raportoitavaVastaanottajaDTO);
@@ -61,11 +64,18 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		return vastaanottajat;
 	}
 
-	private static List<String> convertRaportoitavatLiitteet(RaportoitavaViesti raportoitavaViesti) {
-		List<String> liitteidenNimet = new ArrayList<String>();
+	private static List<RaportoitavaLiiteDTO> convertRaportoitavatLiitteet(List<RaportoitavaLiite> raportoitavatLiitteet) {
+		List<RaportoitavaLiiteDTO> liitteidenNimet = new ArrayList<RaportoitavaLiiteDTO>();
 		
-		for (RaportoitavaLiite liite : raportoitavaViesti.getRaportoitavatLiitteet()) {
-			liitteidenNimet.add(liite.getLiitetiedostonNimi());
+		for (RaportoitavaLiite liite : raportoitavatLiitteet) {
+			RaportoitavaLiiteDTO liiteDTO = new RaportoitavaLiiteDTO();
+			
+			liiteDTO.setLiiteID(liite.getId());
+			liiteDTO.setLiitetiedostonNimi(liite.getLiitetiedostonNimi());
+			liiteDTO.setLiitetiedosto(liite.getLiitetiedosto());
+			liiteDTO.setSisaltotyyppi(liite.getSisaltotyyppi());
+			
+			liitteidenNimet.add(liiteDTO);
 		}
 			
 		return liitteidenNimet;
@@ -75,6 +85,7 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		boolean lahetysRaportti) {
 		RaportoitavaViestiDTO raportoitavaViestiDTO = new RaportoitavaViestiDTO();
 		
+		raportoitavaViestiDTO.setViestiID(raportoitavaViesti.getId());
 		raportoitavaViestiDTO.setAihe(raportoitavaViesti.getAihe());
 		raportoitavaViestiDTO.setLahettajanSahkopostiosoite(raportoitavaViesti.getLahettajanSahkopostiosoite());
 		raportoitavaViestiDTO.setLahetysAlkoi(raportoitavaViesti.getLahetysAlkoi());
@@ -84,7 +95,6 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 			raportoitavaViestiDTO.setLahetysraportti(muodostaLahetysraportti(raportoitavaViesti));
 		}
 		
-		raportoitavaViestiDTO.setLahetystunnus(raportoitavaViesti.getId());
 		raportoitavaViestiDTO.setProsessi(raportoitavaViesti.getProsessi());
 		raportoitavaViestiDTO.setVastauksenSaajanSahkopostiosoite(
 			raportoitavaViesti.getVastauksensaajanSahkopostiosoite());

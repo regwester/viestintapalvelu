@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -20,6 +21,7 @@ public class FileItemToRaportoitavaLiite {
 		liite.setSisaltotyyppi(fileItem.getContentType());
 		byte[] zippedLiite = zipLiitetiedosto(fileItem.getName(), fileItem.get());
 		liite.setLiitetiedosto(zippedLiite);
+		liite.setAikaleima(new Date());
 		
 		return liite;
 	}

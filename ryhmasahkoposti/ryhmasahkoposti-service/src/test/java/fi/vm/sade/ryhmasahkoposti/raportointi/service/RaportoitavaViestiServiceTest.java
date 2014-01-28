@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmsahkoposti.raportointi.service;
+package fi.vm.sade.ryhmasahkoposti.raportointi.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -31,9 +32,9 @@ import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaport
 import fi.vm.sade.ryhmasahkoposti.converter.LahetyksenAloitusDTOToRaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
-import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
@@ -97,7 +98,7 @@ public class RaportoitavaViestiServiceTest {
 		
 		RaportoitavaViesti raportoitavaViesti = 
 			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
-		List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
+		Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
 			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(raportoitavaViesti, vastaanottajat);
 		raportoitavaViesti.setRaportoitavatVastaanottajat(raportoitavatVastaanottajat);
  		raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);

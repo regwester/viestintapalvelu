@@ -7,18 +7,26 @@ import java.util.List;
 public class RaportoitavaViestiDTO implements Serializable {
 	private static final long serialVersionUID = 1899969471276794216L;
 
+	private Long viestiID;
 	private String prosessi;
 	private String lahettajanSahkopostiosoite;
 	private String vastauksenSaajanSahkopostiosoite;
-	private Long lahetystunnus;
 	private Date lahetysAlkoi;
 	private Date lahetysPaattyi;
 	private String lahetysraportti;
 	private String aihe;
 	private String viestinSisalto;
-	private List<String> liitetiedostot;
+	private List<RaportoitavaLiiteDTO> liitetiedostot;
 	private List<RaportoitavaVastaanottajaDTO> vastaanottajat;
 	
+	public Long getViestiID() {
+		return viestiID;
+	}
+
+	public void setViestiID(Long viestiID) {
+		this.viestiID = viestiID;
+	}
+
 	public String getProsessi() {
 		return prosessi;
 	}
@@ -42,14 +50,6 @@ public class RaportoitavaViestiDTO implements Serializable {
 	public void setVastauksenSaajanSahkopostiosoite(
 			String vastauksenSaajanSahkopostiosoite) {
 		this.vastauksenSaajanSahkopostiosoite = vastauksenSaajanSahkopostiosoite;
-	}
-	
-	public Long getLahetystunnus() {
-		return lahetystunnus;
-	}
-	
-	public void setLahetystunnus(Long lahetystunnus) {
-		this.lahetystunnus = lahetystunnus;
 	}
 	
 	public Date getLahetysAlkoi() {
@@ -92,11 +92,11 @@ public class RaportoitavaViestiDTO implements Serializable {
 		this.viestinSisalto = viestinSisalto;
 	}
 
-	public List<String> getLiitetiedostot() {
+	public List<RaportoitavaLiiteDTO> getLiitetiedostot() {
 		return liitetiedostot;
 	}
 
-	public void setLiitetiedostot(List<String> liitetiedostot) {
+	public void setLiitetiedostot(List<RaportoitavaLiiteDTO> liitetiedostot) {
 		this.liitetiedostot = liitetiedostot;
 	}
 

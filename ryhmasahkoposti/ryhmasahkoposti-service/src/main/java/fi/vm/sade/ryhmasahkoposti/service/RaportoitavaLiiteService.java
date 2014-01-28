@@ -1,19 +1,29 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.List;
+import java.util.Set;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavanViestinLiite;
 
 public interface RaportoitavaLiiteService {
 	/**
-	 * Hakee raportoitavat liitteet 
+	 * Hakee raportoitavat liitteet aiemmin tallennetujen liitteiden tietojen perusteella
 	 * 
-	 * @param liiteidenIDt Lista raportoitavien liitteiden tunnuksia
-	 * @return Lista raportoitavia liitteitä
+	 * @param lahetetytLiitteet Kokoelma lähetettävien liitteiden tietoja
+	 * @return Kokoelma raportoitavia liitteitä
 	 */
 	public List<RaportoitavaLiite> haeRaportoitavatLiitteet(List<LahetettyLiiteDTO> lahetetytLiitteet); 
-	
+
+	/**
+	 * Hakee raportoitavat liitteet aiemmin tallennetujen liitteiden tietojen perusteella
+	 * 
+	 * @param viestinLiitteet Kokoelma lähetettävien viestin liitteiden avaintietoja
+	 * @return Kokoelma raportoitavia liitteitä
+	 */
+	public List<RaportoitavaLiite> haeRaportoitavanViestinLiitteet(Set<RaportoitavanViestinLiite> viestinLiitteet); 
+
 	/**
 	 * Tallentaa ryhmäsähköpostin raportoitavat liitteet
 	 * 

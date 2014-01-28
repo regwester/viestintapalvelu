@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,12 +14,14 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaVastaanottajaDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.FileItemToRaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.converter.HakukenttaToRaportoitavaViestiQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.converter.LahetyksenAloitusDTOToRaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiToRaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
@@ -26,6 +29,7 @@ import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavanViestinLiiteService;
 import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
 
 @Service
@@ -34,14 +38,17 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	private RaportoitavaViestiService raportoitavaViestiService;
 	private RaportoitavaVastaanottajaService raportoitavaVastaanottajaService;
 	private RaportoitavaLiiteService raportoitavaLiiteService;
+	private RaportoitavanViestinLiiteService raportoitavanViestinLiiteService;
 
 	@Autowired
 	public RyhmasahkopostinRaportointiServiceImpl(RaportoitavaViestiService raportoitavaViestiService,
 		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService, 
-		RaportoitavaLiiteService raportoitavaLiiteService) {
+		RaportoitavaLiiteService raportoitavaLiiteService, 
+		RaportoitavanViestinLiiteService raportoitavanViestinLiiteService) {
 		this.raportoitavaViestiService = raportoitavaViestiService;
 		this.raportoitavaVastaanottajaService = raportoitavaVastaanottajaService;
 		this.raportoitavaLiiteService = raportoitavaLiiteService;
+		this.raportoitavanViestinLiiteService = raportoitavanViestinLiiteService;
 	}
 	
 	@Override
@@ -64,14 +71,18 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public List<RaportoitavaVastaanottaja> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara) {
-		return raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(vastaanottajienLukumaara);
+	public List<RaportoitavaVastaanottajaDTO> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara) {
+		List<RaportoitavaVastaanottaja> vastaanottajat = 
+			raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(vastaanottajienLukumaara);
+		return RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO.convert(vastaanottajat);
 	}
 
 	@Override
 	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID, boolean lahetysRaportti) {
 		RaportoitavaViesti viesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
-		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti, lahetysRaportti);
+		List<RaportoitavaLiite> liitteet = 
+			raportoitavaLiiteService.haeRaportoitavanViestinLiitteet(viesti.getRaportoitavanViestinLiitteet());
+		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti, liitteet, lahetysRaportti);
 	}
 
 	@Override
@@ -93,15 +104,16 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	public Long raportoiLahetyksenAloitus(LahetyksenAloitusDTO lahetyksenAloitus) throws IOException {
 		RaportoitavaViesti raportoitavaViesti = 
 			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
-		
-		List<RaportoitavaLiite> raportoitavatLiitteet = 
-			raportoitavaLiiteService.haeRaportoitavatLiitteet(lahetyksenAloitus.getLahetetynviestinliitteet());
-		raportoitavaViesti.setRaportoitavatLiitteet(raportoitavatLiitteet);
-		
+			
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
-		
-		List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
+	
+		List<RaportoitavaLiite> raportoitavatLiitteet = 
+			raportoitavaLiiteService.haeRaportoitavatLiitteet(lahetyksenAloitus.getLahetetynviestinliitteet());		
+		raportoitavanViestinLiiteService.tallennaRaportoitavanViestinLiitteet(
+			tallennettuRaportoitavaViesti, raportoitavatLiitteet);
+
+		Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
 			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(
 			tallennettuRaportoitavaViesti, lahetyksenAloitus.getVastaanottajat());
 		raportoitavaVastaanottajaService.tallennaRaportoitavatVastaanottajat(raportoitavatVastaanottajat);		
@@ -126,7 +138,7 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public boolean raportoiLahetysVastaanottajalle(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
+	public boolean raportoiLahetyksenTilanne(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
 			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(lahetettyVastaanottajalle.getViestiID(), 
 			lahetettyVastaanottajalle.getVastaanottajanSahkoposti());
@@ -150,6 +162,7 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
 	public Long tallennaLiite(FileItem fileItem) throws IOException {
 		RaportoitavaLiite liite = FileItemToRaportoitavaLiite.convert(fileItem);
 		return raportoitavaLiiteService.tallennaRaportoitavaLiite(liite);

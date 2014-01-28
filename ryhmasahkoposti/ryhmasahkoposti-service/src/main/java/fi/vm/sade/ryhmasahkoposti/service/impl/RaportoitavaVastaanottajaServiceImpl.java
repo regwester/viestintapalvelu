@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -70,7 +71,7 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 	}
 
 	@Override
-	public void tallennaRaportoitavatVastaanottajat(List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat) {
+	public void tallennaRaportoitavatVastaanottajat(Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat) {
 		for (RaportoitavaVastaanottaja raportoitavaVastaanottaja : raportoitavatVastaanottajat) {
 			raportoitavaVastaanottajaDAO.insert(raportoitavaVastaanottaja);
 		}

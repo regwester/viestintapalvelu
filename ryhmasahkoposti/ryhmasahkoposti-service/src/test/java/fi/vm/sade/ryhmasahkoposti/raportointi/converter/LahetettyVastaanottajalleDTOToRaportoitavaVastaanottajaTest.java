@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmsahkoposti.raportointi.converter;
+package fi.vm.sade.ryhmasahkoposti.raportointi.converter;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -16,7 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
+import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")

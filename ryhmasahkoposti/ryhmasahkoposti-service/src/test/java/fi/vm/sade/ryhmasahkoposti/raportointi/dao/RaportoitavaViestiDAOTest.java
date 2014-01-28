@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmsahkoposti.raportointi.dao;
+package fi.vm.sade.ryhmasahkoposti.raportointi.dao;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
@@ -8,7 +8,9 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,7 +31,7 @@ import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
+import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
@@ -47,7 +49,7 @@ public class RaportoitavaViestiDAOTest {
 
 	@Test
 	public void testRaportoitavanViestinLisaysOnnistuu() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
 		
 		assertNotNull(tallennettuRaportoitavaViesti);
@@ -57,7 +59,7 @@ public class RaportoitavaViestiDAOTest {
 
 	@Test
 	public void testRaportoitaviaViestejäLoytyy() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
 
 		List<RaportoitavaViesti> raportoitavatViestit = raportoitavaViestiDAO.findAll();
@@ -68,7 +70,7 @@ public class RaportoitavaViestiDAOTest {
 	
 	@Test
 	public void testRaportoitavaViestiLoytyyLahetystunnuksella() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
 
 		Long id = tallennettuRaportoitavaViesti.getId();
@@ -80,10 +82,10 @@ public class RaportoitavaViestiDAOTest {
 
     @Test
     public void testViestiLoytyyVastaanottajanOID() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
 			RaportointipalveluTestData.getRaportoitavaVastaanottaja(raportoitavaViesti);
-		List<RaportoitavaVastaanottaja> vastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		Set<RaportoitavaVastaanottaja> vastaanottajat = new HashSet<RaportoitavaVastaanottaja>();
 		vastaanottajat.add(raportoitavaVastaanottaja);
 		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
@@ -102,10 +104,10 @@ public class RaportoitavaViestiDAOTest {
 
     @Test
     public void testViestiLoytyyVastaanottajanNimella() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
 			RaportointipalveluTestData.getRaportoitavaVastaanottaja(raportoitavaViesti);
-		List<RaportoitavaVastaanottaja> vastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		Set<RaportoitavaVastaanottaja> vastaanottajat = new HashSet<RaportoitavaVastaanottaja>();
 		vastaanottajat.add(raportoitavaVastaanottaja);
 		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
@@ -124,10 +126,10 @@ public class RaportoitavaViestiDAOTest {
 
     @Test
     public void testViestiaEiLoydyHakutekijalla() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
 			RaportointipalveluTestData.getRaportoitavaVastaanottaja(raportoitavaViesti);
-		List<RaportoitavaVastaanottaja> vastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		Set<RaportoitavaVastaanottaja> vastaanottajat = new HashSet<RaportoitavaVastaanottaja>();
 		vastaanottajat.add(raportoitavaVastaanottaja);
 		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
@@ -146,7 +148,7 @@ public class RaportoitavaViestiDAOTest {
 
 	@Test
 	public void testRaportoitavanViestinPaivitysOnnistuu() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
 		
 		assertEquals(new Long(0), tallennettuRaportoitavaViesti.getVersion());
@@ -167,7 +169,7 @@ public class RaportoitavaViestiDAOTest {
 	
 	@Test
 	public void testRaportoitvienViestienLukumaara() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViestiLahetyksenAloitusDTOTiedosta();
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
 		
 		Long lkm = raportoitavaViestiDAO.findRaportoitavienViestienLukumaara();
@@ -178,7 +180,7 @@ public class RaportoitavaViestiDAOTest {
 	
 	@Test
 	public void testViestinlahettajilleLoytyyRaportoitavatViestit() {
-		List<RaportoitavaViesti> raportoitavatViestit = RaportointipalveluTestData.getRaportoitavaViestiLista();
+		List<RaportoitavaViesti> raportoitavatViestit = RaportointipalveluTestData.getRaportoitavaViestiListaLahetyksenAloitusDTOTiedoista();
 		
 		for (RaportoitavaViesti raportoitavaViesti : raportoitavatViestit) {
 			RaportoitavaViesti tallennettuRaportoitavaViesti = raportoitavaViestiDAO.insert(raportoitavaViesti);
