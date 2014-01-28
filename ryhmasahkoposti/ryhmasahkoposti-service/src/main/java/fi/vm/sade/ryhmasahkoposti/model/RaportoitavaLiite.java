@@ -1,8 +1,12 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
@@ -19,6 +23,10 @@ public class RaportoitavaLiite extends BaseEntity {
 	
 	@Column(name="sisaltotyyppi", nullable=false)
 	private String sisaltotyyppi;
+	
+	@Column(name="aikaleima", nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
+	private Date aikaleima;
 
 	public String getLiitetiedostonNimi() {
 		return liitetiedostonNimi;
@@ -42,6 +50,14 @@ public class RaportoitavaLiite extends BaseEntity {
 
 	public void setSisaltotyyppi(String sisaltotyyppi) {
 		this.sisaltotyyppi = sisaltotyyppi;
+	}
+
+	public Date getAikaleima() {
+		return aikaleima;
+	}
+
+	public void setAikaleima(Date aikaleima) {
+		this.aikaleima = aikaleima;
 	}
 	
 	

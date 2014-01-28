@@ -1,17 +1,16 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
 import java.util.Date;
-import java.util.List;
+import java.util.Set;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
-import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
@@ -54,13 +53,10 @@ public class RaportoitavaViesti extends BaseEntity {
 	private String merkisto;
 
 	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	private List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
+	private Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
 	
-	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE})
-	@JoinTable(name="raportoitavaviesti_raportoitavaliite",	
-		joinColumns=@JoinColumn(name="raportoitavaviesti_id", referencedColumnName="id"), 
-		inverseJoinColumns=@JoinColumn(name="raportoitavaliite_id", referencedColumnName="id"))
-	private List<RaportoitavaLiite> raportoitavatLiitteet;	
+	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Set<RaportoitavanViestinLiite> raportoitavanViestinLiitteet;	
 	
 	@Column(name="lahetysalkoi", nullable=false)
 	private Date lahetysAlkoi;
@@ -69,6 +65,7 @@ public class RaportoitavaViesti extends BaseEntity {
 	private Date lahetysPaattyi;
 	
 	@Column(name="aikaleima", nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date aikaleima;
 	
 	public String getProsessi() {
@@ -159,20 +156,20 @@ public class RaportoitavaViesti extends BaseEntity {
 		this.merkisto = merkisto;
 	}
 
-	public List<RaportoitavaVastaanottaja> getRaportoitavatVastaanottajat() {
+	public Set<RaportoitavaVastaanottaja> getRaportoitavatVastaanottajat() {
 		return raportoitavatVastaanottajat;
 	}
 
-	public void setRaportoitavatVastaanottajat(List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat) {
+	public void setRaportoitavatVastaanottajat(Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat) {
 		this.raportoitavatVastaanottajat = raportoitavatVastaanottajat;
 	}
 
-	public List<RaportoitavaLiite> getRaportoitavatLiitteet() {
-		return raportoitavatLiitteet;
+	public Set<RaportoitavanViestinLiite> getRaportoitavanViestinLiitteet() {
+		return raportoitavanViestinLiitteet;
 	}
 
-	public void setRaportoitavatLiitteet(List<RaportoitavaLiite> raportoitavatLiitteet) {
-		this.raportoitavatLiitteet = raportoitavatLiitteet;
+	public void setRaportoitavanViestinLiitteet(Set<RaportoitavanViestinLiite> raportoitavanViestinLiitteet) {
+		this.raportoitavanViestinLiitteet = raportoitavanViestinLiitteet;
 	}
 
 	public Date getLahetysAlkoi() {

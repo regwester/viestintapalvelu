@@ -1,8 +1,9 @@
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.stereotype.Component;
 
@@ -32,9 +33,9 @@ public class LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja {
 		return vastaanottaja;
 	}
 
-	public static List<RaportoitavaVastaanottaja> convert(RaportoitavaViesti raportoitavaViesti, 
+	public static Set<RaportoitavaVastaanottaja> convert(RaportoitavaViesti raportoitavaViesti, 
 		List<LahetettyVastaanottajalleDTO> lahetettyVastaanottajille) {
-		List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = new HashSet<RaportoitavaVastaanottaja>();
 		
 		for (LahetettyVastaanottajalleDTO lahetettyVastaanottajalle : lahetettyVastaanottajille) {
 			RaportoitavaVastaanottaja vastaanottaja = convert(lahetettyVastaanottajalle);

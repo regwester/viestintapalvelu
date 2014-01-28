@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmsahkoposti.raportointi.service;
+package fi.vm.sade.ryhmasahkoposti.raportointi.service;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
+import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
-import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
@@ -33,6 +33,7 @@ public class RaportoitavaLiiteServiceTest {
 	@Test
 	public void testRaportoitavanLiitteenTallennusOnnistuu() {
 		RaportoitavaLiite raportoitavaLiite = RaportointipalveluTestData.getRaportoitavaLiite();
+		raportoitavaLiite.setId(null);
 		
 		Long liitteenID = raportoitavaLiiteService.tallennaRaportoitavaLiite(raportoitavaLiite);
 		
@@ -42,7 +43,8 @@ public class RaportoitavaLiiteServiceTest {
 	
 	@Test
 	public void testTallennetunLiitteenHakuOnnistuu() {
-		RaportoitavaLiite raportoitavaLiite = RaportointipalveluTestData.getRaportoitavaLiite();		
+		RaportoitavaLiite raportoitavaLiite = RaportointipalveluTestData.getRaportoitavaLiite();
+		raportoitavaLiite.setId(null);
 		Long liitteenID = raportoitavaLiiteService.tallennaRaportoitavaLiite(raportoitavaLiite);
 	
 		LahetettyLiiteDTO lahetettyLiiteDTO = RaportointipalveluTestData.getLahetettyLiiteDTO(liitteenID);

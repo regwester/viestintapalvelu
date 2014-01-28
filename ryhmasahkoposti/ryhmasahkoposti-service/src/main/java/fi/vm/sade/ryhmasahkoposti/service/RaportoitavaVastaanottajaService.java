@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.List;
+import java.util.Set;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
@@ -83,5 +84,5 @@ public interface RaportoitavaVastaanottajaService {
 	 * 
 	 * @param raportoitavatVastaanottajat Lista raportoitavan viestin vastaanottajien tietoja
 	 */
-	public void tallennaRaportoitavatVastaanottajat(List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat);
+	public void tallennaRaportoitavatVastaanottajat(Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat);
 }

@@ -55,6 +55,7 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 	private String epaonnistumisenSyy;
 	
 	@Column(name="aikaleima", nullable=false)
+	@Temporal(TemporalType.TIMESTAMP)
 	private Date aikaleima;
 
 	public RaportoitavaViesti getRaportoitavaviesti() {

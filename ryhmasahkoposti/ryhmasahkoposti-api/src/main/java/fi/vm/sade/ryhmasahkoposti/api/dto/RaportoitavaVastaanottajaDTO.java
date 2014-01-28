@@ -5,13 +5,24 @@ import java.io.Serializable;
 public class RaportoitavaVastaanottajaDTO implements Serializable {
 	private static final long serialVersionUID = 139612329429841338L;
 	
+	private Long vastaanottajaID;
 	private String etunimi;
 	private String sukunimi;
 	private String organisaationNimi;
-	private String vastaanottajan_oid;
+	private String vastaanottajanOid;
 	private String vastaanottajanSahkopostiosoite;
 	private String lahetysOnnistui;
+	private RaportoitavaViestiDTO raportoitavaViesti;
+	private String aikaleima;
 	
+	public Long getVastaanottajaID() {
+		return vastaanottajaID;
+	}
+
+	public void setVastaanottajaID(Long vastaanottajaID) {
+		this.vastaanottajaID = vastaanottajaID;
+	}
+
 	public String getEtunimi() {
 		return etunimi;
 	}
@@ -36,12 +47,12 @@ public class RaportoitavaVastaanottajaDTO implements Serializable {
 		this.organisaationNimi = organisaationNimi;
 	}
 	
-	public String getVastaanottajan_oid() {
-		return vastaanottajan_oid;
+	public String getVastaanottajanOid() {
+		return vastaanottajanOid;
 	}
 	
-	public void setVastaanottajan_oid(String vastaanottajan_oid) {
-		this.vastaanottajan_oid = vastaanottajan_oid;
+	public void setVastaanottajanOid(String vastaanottajanOid) {
+		this.vastaanottajanOid = vastaanottajanOid;
 	}
 	
 	public String getVastaanottajanSahkopostiosoite() {
@@ -59,5 +70,22 @@ public class RaportoitavaVastaanottajaDTO implements Serializable {
 	
 	public void setLahetysOnnistui(String lahetysOnnistui) {
 		this.lahetysOnnistui = lahetysOnnistui;
+	}
+
+
+	public RaportoitavaViestiDTO getRaportoitavaViesti() {
+		return raportoitavaViesti;
+	}
+
+	public void setRaportoitavaViesti(RaportoitavaViestiDTO raportoitavaViesti) {
+		this.raportoitavaViesti = raportoitavaViesti;
+	}
+
+	public String getAikaleima() {
+		return aikaleima;
+	}
+
+	public void setAikaleima(String aikaleima) {
+		this.aikaleima = aikaleima;
 	}
 }

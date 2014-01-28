@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmsahkoposti.raportointi.service;
+package fi.vm.sade.ryhmasahkoposti.raportointi.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
@@ -11,6 +11,7 @@ import static org.mockito.Mockito.when;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
@@ -29,12 +30,13 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaVastaanottajaDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
 import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
-import fi.vm.sade.ryhmsahkoposti.raportointi.testdata.RaportointipalveluTestData;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -187,7 +189,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
 
 		boolean vastaus = 
-			ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+			ryhmasahkopostinRaportointiService.raportoiLahetyksenTilanne(lahetettyVastaanottajalle);
 		
 		assertTrue(vastaus);
 		
@@ -196,8 +198,9 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		assertNotNull(raportoitavaViesti);
 		assertNotNull(raportoitavaViesti.getRaportoitavatVastaanottajat());
 		
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			raportoitavaViesti.getRaportoitavatVastaanottajat().get(0);
+		Iterator<RaportoitavaVastaanottaja> iterator = raportoitavaViesti.getRaportoitavatVastaanottajat().iterator();
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = iterator.next();
+			
 		
 		assertNotNull(raportoitavaVastaanottaja.getLahetysalkoi());
 		assertNull(raportoitavaVastaanottaja.getLahetyspaattyi());
@@ -239,7 +242,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
 
 		boolean vastaus = 
-			ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+			ryhmasahkopostinRaportointiService.raportoiLahetyksenTilanne(lahetettyVastaanottajalle);
 		
 		assertFalse(vastaus);
 	}
@@ -279,7 +282,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		lahetettyVastaanottajalle.setLahetyspaattyi(null);
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
 
-		ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+		ryhmasahkopostinRaportointiService.raportoiLahetyksenTilanne(lahetettyVastaanottajalle);
 
         String hakuKentta = "testRaportoitujenViestienHakuOnnistui@sposti.fi";
 		List<RaportoitavaViestiDTO> viestit = ryhmasahkopostinRaportointiService.haeRaportoitavatViestit(hakuKentta);
@@ -308,7 +311,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		FileItem mockedFileItem = mock(FileItem.class);
 		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
 		
-		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getName()).thenReturn("koekutsu.doc");
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
@@ -338,14 +341,52 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		lahetettyVastaanottajalle.setLahetyspaattyi(null);
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
 
-		ryhmasahkopostinRaportointiService.raportoiLahetysVastaanottajalle(lahetettyVastaanottajalle);
+		ryhmasahkopostinRaportointiService.raportoiLahetyksenTilanne(lahetettyVastaanottajalle);
 
-		RaportoitavaViestiDTO viestiDTO = ryhmasahkopostinRaportointiService.haeRaportoitavaViesti(viestiID);
+		RaportoitavaViestiDTO viestiDTO = ryhmasahkopostinRaportointiService.haeRaportoitavaViesti(viestiID, true);
 		
 		assertNotNull(viestiDTO);
 		assertNotNull(viestiDTO.getVastaanottajat());
 		assertEquals(vastaanottaja.getVastaanottajanSahkoposti(), viestiDTO.getVastaanottajat().get(0).getVastaanottajanSahkopostiosoite());
 		assertNotNull(viestiDTO.getLiitetiedostot());
-		assertEquals(mockedFileItem.getName(), viestiDTO.getLiitetiedostot().get(0));
+		assertEquals(mockedFileItem.getName(), viestiDTO.getLiitetiedostot().get(0).getLiitetiedostonNimi());
+	}
+	
+	@Test
+	public void testHaeRaportoitavatVastaanottajatViestiLahettamatta() throws IOException {
+		FileItem mockedFileItem = mock(FileItem.class);
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		when(mockedFileItem.getName()).thenReturn("Koekutsu");
+		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
+		when(mockedFileItem.get()).thenReturn(sisalto);
+		
+		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		
+		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
+
+		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
+		vastaanottaja.setVastaanottajanSahkoposti("testRaportoiLahetyksenAloitus@sposti.fi");
+		vastaanottaja.setLahetysalkoi(null);
+		vastaanottaja.setLahetyspaattyi(null);
+		List<LahetettyVastaanottajalleDTO> vastaanottajat = new ArrayList<LahetettyVastaanottajalleDTO>();
+		vastaanottajat.add(vastaanottaja);
+		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
+		
+		LahetettyLiiteDTO liite = RaportointipalveluTestData.getLahetettyLiiteDTO(liiteID);
+		List<LahetettyLiiteDTO> liitteet = new ArrayList<LahetettyLiiteDTO>();
+		liitteet.add(liite);
+		lahetyksenAloitus.setLahetetynviestinliitteet(liitteet);
+
+		ryhmasahkopostinRaportointiService.raportoiLahetyksenAloitus(lahetyksenAloitus);		
+
+		List<RaportoitavaVastaanottajaDTO> vastaanottajatDTO = 
+			ryhmasahkopostinRaportointiService.haeRaportoitavatVastaanottajatViestiLahettamatta(10); 
+		
+		assertNotNull(vastaanottajatDTO);
+		assertNotNull(vastaanottajatDTO.get(0).getVastaanottajaID());
+		assertNotNull(vastaanottajatDTO.get(0).getRaportoitavaViesti());
+		assertNotNull(vastaanottajatDTO.get(0).getRaportoitavaViesti().getLiitetiedostot());
+		assertTrue(vastaanottajatDTO.get(0).getRaportoitavaViesti().getLiitetiedostot().size() > 0);
 	}
 }
