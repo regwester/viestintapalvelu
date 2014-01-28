@@ -9,4 +9,9 @@
     <context:annotation-config/>
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti" />
 
+	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
+  		<property name="basenames">
+  			<value>messages</value>
+  		</property>
+	</bean>
 </beans>

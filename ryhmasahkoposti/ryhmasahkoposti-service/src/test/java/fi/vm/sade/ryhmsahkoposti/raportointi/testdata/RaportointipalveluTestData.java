@@ -5,20 +5,36 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiVastaanottajaQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 public class RaportointipalveluTestData {
 
+	public static LahetettyLiiteDTO getLahetettyLiiteDTO(Long id) {
+		LahetettyLiiteDTO liiteDTO = new LahetettyLiiteDTO();
+		
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		liiteDTO.setLiitetiedosto(sisalto);
+		liiteDTO.setLiitetiedostonID(id);
+		liiteDTO.setLiitetiedostonNimi("application/pdf");
+		liiteDTO.setSisaltotyyppi("koekutsu.doc");
+		
+		return liiteDTO;
+	}
+	
 	public static LahetettyVastaanottajalleDTO getLahetettyVastaanottajalleDTO() {
 		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
 		
 		lahetettyVastaanottajalle.setVastaanottajaOid("102030405100");
 		lahetettyVastaanottajalle.setVastaanottajanOidTyyppi("oppilas");
+		lahetettyVastaanottajalle.setVastaanottajanSahkoposti("vastaan.ottaja@sposti.fi");
+		lahetettyVastaanottajalle.setKielikoodi("FI");
 		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
 		lahetettyVastaanottajalle.setLahetyspaattyi(new Date());
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
@@ -26,7 +42,7 @@ public class RaportointipalveluTestData {
 		return lahetettyVastaanottajalle;
 	
 	}
-	
+
 	public static LahetyksenAloitusDTO getLahetyksenAloitusDTO() {
 		LahetyksenAloitusDTO lahetyksenAloitus = new LahetyksenAloitusDTO();
 		
@@ -37,8 +53,10 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus.setVastauksensaajaOid("102030405100");
 		lahetyksenAloitus.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
+		lahetyksenAloitus.setHtmlViesti(false);
+		lahetyksenAloitus.setMerkisto("utf-8");
 		lahetyksenAloitus.setAihe("Koekutsu");
-		lahetyksenAloitus.setViesti(new String("Kutsu kokeeseen").getBytes());
+		lahetyksenAloitus.setViesti("Kutsu kokeeseen");
 		lahetyksenAloitus.setLahetysAlkoi(new Date());
 		
 		return lahetyksenAloitus;
@@ -56,8 +74,10 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus1.setVastauksensaajaOid("102030405110");
 		lahetyksenAloitus1.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus1.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
+		lahetyksenAloitus1.setHtmlViesti(false);
+		lahetyksenAloitus1.setMerkisto("utf-8");
 		lahetyksenAloitus1.setAihe("Koekutsu");
-		lahetyksenAloitus1.setViesti(new String("Kutsu kokeeseen").getBytes());
+		lahetyksenAloitus1.setViesti("Kutsu kokeeseen");
 		lahetyksenAloitus1.setLahetysAlkoi(new Date());
 		
 		lahetyksenAloitukset.add(lahetyksenAloitus1);
@@ -71,15 +91,17 @@ public class RaportointipalveluTestData {
 		lahetyksenAloitus2.setVastauksensaajaOid("102030405120");
 		lahetyksenAloitus2.setVastauksenSaajanOidTyyppi("oppilaitos");
 		lahetyksenAloitus2.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
+		lahetyksenAloitus2.setHtmlViesti(false);
+		lahetyksenAloitus2.setMerkisto("utf-8");
 		lahetyksenAloitus2.setAihe("Koekutsu");
-		lahetyksenAloitus2.setViesti(new String("Kutsu kokeeseen").getBytes());
+		lahetyksenAloitus2.setViesti("Kutsu kokeeseen");
 		lahetyksenAloitus2.setLahetysAlkoi(new Date());
 		
 		lahetyksenAloitukset.add(lahetyksenAloitus2);
 		
 		return lahetyksenAloitukset;
 	}
-
+	
 	public static LahetyksenLopetusDTO getLahetyksenLopetusDTO(Long viestiID) {
 		LahetyksenLopetusDTO lahetyksenLopetus = new LahetyksenLopetusDTO();
 		
@@ -88,32 +110,33 @@ public class RaportointipalveluTestData {
 		
 		return lahetyksenLopetus;
 	}
-	
-	public static Long getViestiID() {
-		Date date = new Date();
-		Timestamp timestamp = new Timestamp(date.getTime());
-		return timestamp.getTime();
+
+	public static RaportoitavaLiite getRaportoitavaLiite() {
+		RaportoitavaLiite liite = new RaportoitavaLiite();
+		
+		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		liite.setLiitetiedostonNimi("koekutsu.doc");
+		liite.setSisaltotyyppi("application/pdf");
+		liite.setLiitetiedosto(sisalto);
+		
+		return liite;
 	}
 
-	public static RyhmasahkopostiVastaanottajaQueryDTO getRaportoitavaVastaanottajaQuery() {
-		RyhmasahkopostiVastaanottajaQueryDTO query = new RyhmasahkopostiVastaanottajaQueryDTO();
-		
-		query.setVastaanottajanOid("102030405100");
-		
-		return query;
-	}
-	
 	public static RaportoitavaVastaanottaja getRaportoitavaVastaanottaja(RaportoitavaViesti raportoitavaViesti) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = new RaportoitavaVastaanottaja();
 		
 		raportoitavaVastaanottaja.setRaportoitavaViesti(raportoitavaViesti);
 		raportoitavaVastaanottaja.setVastaanottajaOid("102030405100");
 		raportoitavaVastaanottaja.setVastaanottajaOidTyyppi("oppilas");
+		raportoitavaVastaanottaja.setHenkilotunnus("");
 		raportoitavaVastaanottaja.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
-		raportoitavaVastaanottaja.setHakuNimi("");
+		raportoitavaVastaanottaja.setKielikoodi("FI");
+		raportoitavaVastaanottaja.setHakuNimi("Testi Oppilas");
 		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		raportoitavaVastaanottaja.setEpaonnistumisenSyy("");
+		raportoitavaVastaanottaja.setAikaleima(new Date());
 		
 		return raportoitavaVastaanottaja;
 	}
@@ -133,7 +156,10 @@ public class RaportointipalveluTestData {
 		raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
 		raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 		raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
+		raportoitavaViesti.setHtmlViesti("");
+		raportoitavaViesti.setMerkisto("utf-8");
 		raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
+		raportoitavaViesti.setAikaleima(new Date());
 		
 		return raportoitavaViesti;
 	}
@@ -156,11 +182,20 @@ public class RaportointipalveluTestData {
 			raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
 			raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
 			raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
+			raportoitavaViesti.setHtmlViesti("");
+			raportoitavaViesti.setMerkisto("utf-8");
 			raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
+			raportoitavaViesti.setAikaleima(new Date());
 			
 			raportoitavatViestit.add(raportoitavaViesti);
 		}
 		
 		return raportoitavatViestit;
+	}
+
+	public static Long getViestiID() {
+		Date date = new Date();
+		Timestamp timestamp = new Timestamp(date.getTime());
+		return timestamp.getTime();
 	}
 }

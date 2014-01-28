@@ -16,7 +16,9 @@ public class LahetyksenAloitusDTO implements Serializable {
 	private String vastauksensaajanSahkoposti;
 	private List<LahetettyVastaanottajalleDTO> vastaanottajat;
 	private String aihe;
-	private byte[] viesti;
+	private String viesti;
+	private boolean htmlViesti;
+	private String merkisto;
 	private List<LahetettyLiiteDTO> lahetetynviestinliitteet;	
 	private Date lahetysAlkoi;
 	
@@ -92,14 +94,30 @@ public class LahetyksenAloitusDTO implements Serializable {
 		this.aihe = aihe;
 	}
 	
-	public byte[] getViesti() {
+	public String getViesti() {
 		return viesti;
 	}
 	
-	public void setViesti(byte[] viesti) {
+	public void setViesti(String viesti) {
 		this.viesti = viesti;
 	}
 	
+	public boolean isHtmlViesti() {
+		return htmlViesti;
+	}
+
+	public void setHtmlViesti(boolean htmlViesti) {
+		this.htmlViesti = htmlViesti;
+	}
+
+	public String getMerkisto() {
+		return merkisto;
+	}
+
+	public void setMerkisto(String merkisto) {
+		this.merkisto = merkisto;
+	}
+
 	public List<LahetettyLiiteDTO> getLahetetynviestinliitteet() {
 		return lahetetynviestinliitteet;
 	}

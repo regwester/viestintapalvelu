@@ -1,6 +1,5 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -8,6 +7,9 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
+import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
@@ -21,10 +23,10 @@ public class RaportoitavaViesti extends BaseEntity {
 	@Column(name="prosessi", nullable=false)
 	private String prosessi;
 	
-	@Column(name="lahettajan_oid", nullable=false)
+	@Column(name="lahettajan_oid", nullable=true)
 	private String lahettajanOid;
 
-	@Column(name="lahettajan_oid_tyyppi", nullable=false)
+	@Column(name="lahettajan_oid_tyyppi", nullable=true)
 	private String lahettajanOidTyyppi;
 
 	@Column(name="lahettajan_sahkopostiosoite", nullable=false)
@@ -43,19 +45,31 @@ public class RaportoitavaViesti extends BaseEntity {
 	private String aihe;
 	
 	@Column(name="viesti", nullable=false)
-	private byte[] viesti;
+	private String viesti;
+
+	@Column(name="htmlviesti", nullable=false)
+	private String htmlViesti;
+
+	@Column(name="merkisto", nullable=false)
+	private String merkisto;
 
 	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
+	private List<RaportoitavaVastaanottaja> raportoitavatVastaanottajat;
 	
-	@OneToMany(mappedBy="raportoitavaviesti", fetch=FetchType.LAZY)
-	List<RaportoitavaLiite> raportoitavatLiitteet;	
+	@ManyToMany(cascade={CascadeType.PERSIST, CascadeType.MERGE})
+	@JoinTable(name="raportoitavaviesti_raportoitavaliite",	
+		joinColumns=@JoinColumn(name="raportoitavaviesti_id", referencedColumnName="id"), 
+		inverseJoinColumns=@JoinColumn(name="raportoitavaliite_id", referencedColumnName="id"))
+	private List<RaportoitavaLiite> raportoitavatLiitteet;	
 	
 	@Column(name="lahetysalkoi", nullable=false)
 	private Date lahetysAlkoi;
 	
 	@Column(name="lahetyspaattyi", nullable=true)
 	private Date lahetysPaattyi;
+	
+	@Column(name="aikaleima", nullable=false)
+	private Date aikaleima;
 	
 	public String getProsessi() {
 		return prosessi;
@@ -121,12 +135,28 @@ public class RaportoitavaViesti extends BaseEntity {
 		this.aihe = aihe;
 	}
 
-	public byte[] getViesti() {
+	public String getViesti() {
 		return viesti;
 	}
 
-	public void setViesti(byte[] viesti) {
+	public void setViesti(String viesti) {
 		this.viesti = viesti;
+	}
+
+	public String getHtmlViesti() {
+		return htmlViesti;
+	}
+
+	public void setHtmlViesti(String htmlViesti) {
+		this.htmlViesti = htmlViesti;
+	}
+
+	public String getMerkisto() {
+		return merkisto;
+	}
+
+	public void setMerkisto(String merkisto) {
+		this.merkisto = merkisto;
 	}
 
 	public List<RaportoitavaVastaanottaja> getRaportoitavatVastaanottajat() {
@@ -161,13 +191,11 @@ public class RaportoitavaViesti extends BaseEntity {
 		this.lahetysPaattyi = lahetysPaattyi;
 	}
 
-	@Override
-	public String toString() {
-		return "RaportoitavaViesti [prosessi=" + prosessi + ", lahettajanOid=" + lahettajanOid
-			+ ", lahettajanSahkopostiosoite=" + lahettajanSahkopostiosoite + ", vastauksensaajanOid="
-			+ vastauksensaajanOid + ", vastauksensaajanSahkopostiosoite=" + vastauksensaajanSahkopostiosoite
-			+ ", aihe=" + aihe + ", viesti=" + Arrays.toString(viesti) + ", raportoitavatVastaanottajat="
-			+ raportoitavatVastaanottajat + ", raportoitavatLiitteet=" + raportoitavatLiitteet + ", lahetysAlkoi="
-			+ lahetysAlkoi + ", lahetysPaattyi=" + lahetysPaattyi + ", getId()=" + getId() + "]";
+	public Date getAikaleima() {
+		return aikaleima;
+	}
+
+	public void setAikaleima(Date aikaleima) {
+		this.aikaleima = aikaleima;
 	}
 }

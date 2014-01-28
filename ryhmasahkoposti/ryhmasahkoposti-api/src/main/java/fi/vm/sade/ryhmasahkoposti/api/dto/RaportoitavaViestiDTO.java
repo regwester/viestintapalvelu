@@ -10,7 +10,7 @@ public class RaportoitavaViestiDTO implements Serializable {
 	private String prosessi;
 	private String lahettajanSahkopostiosoite;
 	private String vastauksenSaajanSahkopostiosoite;
-	private String lahetystunnus;
+	private Long lahetystunnus;
 	private Date lahetysAlkoi;
 	private Date lahetysPaattyi;
 	private String lahetysraportti;
@@ -44,11 +44,11 @@ public class RaportoitavaViestiDTO implements Serializable {
 		this.vastauksenSaajanSahkopostiosoite = vastauksenSaajanSahkopostiosoite;
 	}
 	
-	public String getLahetystunnus() {
+	public Long getLahetystunnus() {
 		return lahetystunnus;
 	}
 	
-	public void setLahetystunnus(String lahetystunnus) {
+	public void setLahetystunnus(Long lahetystunnus) {
 		this.lahetystunnus = lahetystunnus;
 	}
 	

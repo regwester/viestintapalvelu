@@ -30,14 +30,16 @@ public class EmailServiceImpl implements EmailService {
 	public EmailResponse sendEmail(EmailMessage email) {
 	    final Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class.getName());
 	    
-	    email.setFooter(email.getHeader().getLanguageCode());
+//	    email.setFooter(email.getHeader().getLanguageCode());
 	    log.info("Send email info: " + email.toString());
 	    
-	    boolean sendStatus = EmailUtil.sendMail(email);	   
+	    boolean sendStatus = EmailUtil.sendMail(email, "tähän vastaanottajan osoite jotenkin");	   
 	    String      status = (sendStatus ? "OK" : "Error");
-	    email.setSendStatus(status);
-	    
-    	EmailResponse resp = new EmailResponse(email.getHeader(), status, email.getSubject(), Integer.toString(email.getAttachments().size()));					
+//	    email.setSendStatus(status);  LAITETAAN KANTAAN.
+	
+//      MITEN TÄMÄ MUUTTUU	    
+//    	EmailResponse resp = new EmailResponse(email.getHeader(), status, email.getSubject(), Integer.toString(email.getAttachments().size()));					
+    	EmailResponse resp = new EmailResponse(status, email.getSubject() );					
     	log.info("Email  response: " + resp.toString());
     	return resp;
 	}

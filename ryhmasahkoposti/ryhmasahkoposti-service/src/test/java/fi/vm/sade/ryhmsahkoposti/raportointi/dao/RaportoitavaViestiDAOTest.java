@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -22,6 +23,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaVastaanottajaQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
@@ -74,7 +77,73 @@ public class RaportoitavaViestiDAOTest {
 		assertNotNull(haettuRaportoitavaViesti);
 		assertEquals(tallennettuRaportoitavaViesti.getId(), haettuRaportoitavaViesti.getId());
 	}
-	
+
+    @Test
+    public void testViestiLoytyyVastaanottajanOID() {
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+			RaportointipalveluTestData.getRaportoitavaVastaanottaja(raportoitavaViesti);
+		List<RaportoitavaVastaanottaja> vastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		vastaanottajat.add(raportoitavaVastaanottaja);
+		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
+		raportoitavaViestiDAO.insert(raportoitavaViesti);
+
+		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
+        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
+        raportoitavaVastaanottajaQuery.setVastaanottajanOid("102030405100");
+        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+                
+        List<RaportoitavaViesti> haetutRaportoitavatViestit = 
+        	raportoitavaViestiDAO.findBySearchCriteria(raportoitavaViestiQuery);
+
+        assertNotNull(haetutRaportoitavatViestit);
+        assertTrue(1 <= haetutRaportoitavatViestit.size());
+    }
+
+    @Test
+    public void testViestiLoytyyVastaanottajanNimella() {
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+			RaportointipalveluTestData.getRaportoitavaVastaanottaja(raportoitavaViesti);
+		List<RaportoitavaVastaanottaja> vastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		vastaanottajat.add(raportoitavaVastaanottaja);
+		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
+		raportoitavaViestiDAO.insert(raportoitavaViesti);
+
+		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
+        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
+        raportoitavaVastaanottajaQuery.setVastaanottajanNimi("Testi Oppilas");
+        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+                
+        List<RaportoitavaViesti> haetutRaportoitavatViestit = 
+        	raportoitavaViestiDAO.findBySearchCriteria(raportoitavaViestiQuery);
+
+        assertNotNull(haetutRaportoitavatViestit);
+        assertTrue(1 <= haetutRaportoitavatViestit.size());
+    }
+
+    @Test
+    public void testViestiaEiLoydyHakutekijalla() {
+		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+			RaportointipalveluTestData.getRaportoitavaVastaanottaja(raportoitavaViesti);
+		List<RaportoitavaVastaanottaja> vastaanottajat = new ArrayList<RaportoitavaVastaanottaja>();
+		vastaanottajat.add(raportoitavaVastaanottaja);
+		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
+		raportoitavaViestiDAO.insert(raportoitavaViesti);
+
+		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
+        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
+        raportoitavaVastaanottajaQuery.setVastaanottajanSahkopostiosoite("ei.loydy@sposti.fi");
+        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+                
+        List<RaportoitavaViesti> haetutRaportoitavatViestit = 
+        	raportoitavaViestiDAO.findBySearchCriteria(raportoitavaViestiQuery);
+
+        assertNotNull(haetutRaportoitavatViestit);
+        assertTrue(haetutRaportoitavatViestit.size() == 0);
+    }
+
 	@Test
 	public void testRaportoitavanViestinPaivitysOnnistuu() {
 		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavaViesti();

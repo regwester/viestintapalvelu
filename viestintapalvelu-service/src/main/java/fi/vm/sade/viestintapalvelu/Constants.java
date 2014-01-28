@@ -8,6 +8,7 @@ public class Constants {
     public static final String HYVAKSYMISKIRJE_TEMPLATE = "/hyvaksymiskirje_{LANG}.html";
     public static final String LIITE_TEMPLATE = "/liite_{LANG}.html";
     public static final String JALKIOHJAUSKIRJE_TEMPLATE = "/jalkiohjauskirje_{LANG}.html";
+    public static final String KOEKUTSUKIRJE_TEMPLATE = "/koekutsukirje_{LANG}.html";
     public static final String IPOST_TEMPLATE = "/ipost.xml";
     public static final Charset UTF_8 = Charset.forName("UTF-8");
     public static final Boolean IPOST_TEST = Boolean.FALSE;

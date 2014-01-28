@@ -9,24 +9,24 @@ import java.util.List;
  */
 public class EmailData {
 	
-	List<EmailHeader> headers = new LinkedList<EmailHeader>(); 
+	List<EmailRecipient> recipient = new LinkedList<EmailRecipient>(); 
 	EmailMessage email = new EmailMessage();
 		
 	public EmailData() {
 		super();
 	}
 
-	public EmailData(List<EmailHeader> headers, EmailMessage email) {
+	public EmailData(List<EmailRecipient> recipient, EmailMessage email) {
 		super();
-		this.headers = headers;
+		this.recipient = recipient;
 		this.email = email;
 	}
 	
-	public List<EmailHeader> getHeaders() {
-		return headers;
+	public List<EmailRecipient> getRecipient() {
+		return recipient;
 	}
-	public void setHeaders(List<EmailHeader> headers) {
-		this.headers = headers;
+	public void setRecipient(List<EmailRecipient> recipient) {
+		this.recipient = recipient;
 	}
 	public EmailMessage getEmail() {
 		return email;

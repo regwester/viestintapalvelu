@@ -3,7 +3,7 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 import java.io.Serializable;
 import java.util.Date;
 
-public class LahetyksenTulosDTO implements Serializable {
+public class LahetyksenTilanneDTO implements Serializable {
 	private static final long serialVersionUID = 6159889196702219857L;
 
 	private Long viestiID;

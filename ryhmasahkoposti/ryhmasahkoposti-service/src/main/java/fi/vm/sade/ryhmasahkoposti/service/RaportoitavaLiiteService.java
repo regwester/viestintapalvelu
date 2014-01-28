@@ -1,19 +1,24 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import java.io.IOException;
 import java.util.List;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 
 public interface RaportoitavaLiiteService {
 	/**
-	 * Muodostaa kutsujalta saaduista liitetiedoista tietokantaan tallennettavat raportoitavat liitteet
+	 * Hakee raportoitavat liitteet 
 	 * 
-	 * @param lahetyksenAloitus Kutsujan välittämä viestin lähetyksen aloitustiedot
-	 * @return Lista raportoittavien liitteiden tietoja {@link RaportoitavaLiite}
-	 * @throws IOException
+	 * @param liiteidenIDt Lista raportoitavien liitteiden tunnuksia
+	 * @return Lista raportoitavia liitteitä
 	 */
-	public List<RaportoitavaLiite> muodostaRaportoitavatLiitteet(LahetyksenAloitusDTO lahetyksenAloitus) 
-		throws IOException;
+	public List<RaportoitavaLiite> haeRaportoitavatLiitteet(List<LahetettyLiiteDTO> lahetetytLiitteet); 
+	
+	/**
+	 * Tallentaa ryhmäsähköpostin raportoitavat liitteet
+	 * 
+	 * @param Raportoitavan liitteen tiedot {@link RaportoitavaLiite}
+	 * @return Liitteen generoitu avain
+	 */
+	public Long tallennaRaportoitavaLiite(RaportoitavaLiite raportoitavaLiite);
 }

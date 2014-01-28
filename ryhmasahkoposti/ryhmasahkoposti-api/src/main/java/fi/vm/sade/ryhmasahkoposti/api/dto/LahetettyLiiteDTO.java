@@ -5,9 +5,19 @@ import java.io.Serializable;
 public class LahetettyLiiteDTO implements Serializable {
 	private static final long serialVersionUID = -3491620065722103252L;
 
+	private Long liitetiedostonID;
 	private String liitetiedostonNimi;
 	private byte[] liitetiedosto;
+	private String sisaltotyyppi;
 	
+	public Long getLiitetiedostonID() {
+		return liitetiedostonID;
+	}
+
+	public void setLiitetiedostonID(Long liitetiedostonID) {
+		this.liitetiedostonID = liitetiedostonID;
+	}
+
 	public String getLiitetiedostonNimi() {
 		return liitetiedostonNimi;
 	}
@@ -23,8 +33,12 @@ public class LahetettyLiiteDTO implements Serializable {
 	public void setLiitetiedosto(byte[] liitetiedosto) {
 		this.liitetiedosto = liitetiedosto;
 	}
-	
-	public static long getSerialversionuid() {
-		return serialVersionUID;
+
+	public String getSisaltotyyppi() {
+		return sisaltotyyppi;
+	}
+
+	public void setSisaltotyyppi(String sisaltotyyppi) {
+		this.sisaltotyyppi = sisaltotyyppi;
 	}
 }

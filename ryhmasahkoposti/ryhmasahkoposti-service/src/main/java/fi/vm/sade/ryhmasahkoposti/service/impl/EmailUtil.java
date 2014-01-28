@@ -34,7 +34,7 @@ public class EmailUtil {
     
 	public static Properties props;
 
-	public static boolean sendMail(EmailMessage emailMessage) {		 
+	public static boolean sendMail(EmailMessage emailMessage, String emailAddress) {		 
 		final String username = "username";
 		final String password = "password";		
 		
@@ -80,9 +80,10 @@ public class EmailUtil {
 //			});
 			
 			MimeMessage msg = new MimeMessage(session);
-			InternetAddress[] toAddrs = InternetAddress.parse(emailMessage.getHeader().getEmail(), false);
+//			InternetAddress[] toAddrs = InternetAddress.parse(emailMessage.getHeader().getEmail(), false);
+			InternetAddress[] toAddrs = InternetAddress.parse(emailAddress, false);
 			msg.setRecipients(Message.RecipientType.TO, toAddrs);
-			msg.setFrom(new InternetAddress(emailMessage.getSender())); //msgFrom)); /* !!!!! */
+			msg.setFrom(new InternetAddress(emailMessage.getSenderEmail())); //msgFrom)); /* !!!!! */
 			msg.setSubject(emailMessage.getSubject(), emailMessage.getCharset());
 
 			// Setup message part (part I)
@@ -119,14 +120,16 @@ public class EmailUtil {
 			}
 		} catch (Exception e) {
 			sentOk = false;								
-			log.log(Level.SEVERE, "Failed to build message to " + emailMessage.getHeader().getEmail() + ": " + emailMessage.getBody() + emailMessage.getFooter(), e);
+//			log.log(Level.SEVERE, "Failed to build message to " + emailMessage.getHeader().getEmail() + ": " + emailMessage.getBody() + emailMessage.getFooter(), e);
+			log.log(Level.SEVERE, "Failed to build message to " + emailAddress + ": " + emailMessage.getBody() + emailMessage.getFooter(), e);
 		}
 
 		if (message != null) { // message was created successfully
 			
 			if (EmailConstants.TEST_MODE.equals("NO")) {
 
-				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP + "), message '" + emailMessage.getSubject() + "' to '" + emailMessage.getHeader().getEmail() + "'";
+//				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP + "), message '" + emailMessage.getSubject() + "' to '" + emailMessage.getHeader().getEmail() + "'";
+				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP + "), message '" + emailMessage.getSubject() + "' to '" + emailAddress + "'";
 				try {
 					Transport.send(message);
 					log.info("Success"+logMsg);
@@ -139,9 +142,10 @@ public class EmailUtil {
 			} else { // just log what would have been sent
 				StringBuffer sb = new StringBuffer("Email dummysender:");
 				sb.append("\nFROM:    ");
-				sb.append(emailMessage.getSender());
+				sb.append(emailMessage.getSenderEmail());
 				sb.append("\nTO:      ");
-				sb.append(emailMessage.getHeader().getEmail());
+//				sb.append(emailMessage.getHeader().getEmail());
+				sb.append(emailAddress);
 				sb.append("\nSUBJECT: ");
 				sb.append(emailMessage.getSubject());
 				if (emailMessage.getAttachments() != null && emailMessage.getAttachments().size() > 0) {

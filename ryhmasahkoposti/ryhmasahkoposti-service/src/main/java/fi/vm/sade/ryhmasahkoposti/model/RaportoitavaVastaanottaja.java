@@ -28,8 +28,14 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 	@Column(name="vastaanottajan_oid_tyyppi", nullable=false)
 	private String vastaanottajaOidTyyppi;
 
+	@Column(name="henkilotunnus", nullable=false)
+	private String henkilotunnus;
+	
 	@Column(name="vastaanottajan_sahkopostiosoite", nullable=false)
 	private String vastaanottajanSahkoposti;
+	
+	@Column(name="kielikoodi", nullable=false)
+	private String kielikoodi;
 	
 	@Column(name="hakunimi", nullable=false)
 	private String hakuNimi;
@@ -47,6 +53,9 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 	
 	@Column(name="epaonnistumisensyy", nullable=true)
 	private String epaonnistumisenSyy;
+	
+	@Column(name="aikaleima", nullable=false)
+	private Date aikaleima;
 
 	public RaportoitavaViesti getRaportoitavaviesti() {
 		return raportoitavaviesti;
@@ -72,12 +81,28 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 		this.vastaanottajaOidTyyppi = vastaanottajaOidTyyppi;
 	}
 
+	public String getHenkilotunnus() {
+		return henkilotunnus;
+	}
+
+	public void setHenkilotunnus(String henkilotunnus) {
+		this.henkilotunnus = henkilotunnus;
+	}
+
 	public String getVastaanottajanSahkoposti() {
 		return vastaanottajanSahkoposti;
 	}
 
 	public void setVastaanottajanSahkoposti(String vastaanottajanSahkoposti) {
 		this.vastaanottajanSahkoposti = vastaanottajanSahkoposti;
+	}
+
+	public String getKielikoodi() {
+		return kielikoodi;
+	}
+
+	public void setKielikoodi(String kielikoodi) {
+		this.kielikoodi = kielikoodi;
 	}
 
 	public String getHakuNimi() {
@@ -118,6 +143,14 @@ public class RaportoitavaVastaanottaja extends BaseEntity {
 
 	public void setEpaonnistumisenSyy(String epaonnistumisenSyy) {
 		this.epaonnistumisenSyy = epaonnistumisenSyy;
+	}
+
+	public Date getAikaleima() {
+		return aikaleima;
+	}
+
+	public void setAikaleima(Date aikaleima) {
+		this.aikaleima = aikaleima;
 	}
 
 }

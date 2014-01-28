@@ -3,7 +3,7 @@ package fi.vm.sade.ryhmasahkoposti.dao;
 import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RyhmasahkopostiViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 /**
@@ -19,7 +19,7 @@ public interface RaportoitavaViestiDAO extends JpaDAO<RaportoitavaViesti, Long> 
 	 * @param query Hakuparametrit
 	 * @return Lista raportoituja ryhmäsähköpostiviesteja
 	 */
-	public List<RaportoitavaViesti> findBySearchCriteria(RyhmasahkopostiViestiQueryDTO query);
+	public List<RaportoitavaViesti> findBySearchCriteria(RaportoitavaViestiQueryDTO query);
 
 	/**
 	 * Hakee raportoitavat viestit lahettajien oid-tunnuksen perusteella
