@@ -21,7 +21,7 @@
     </modules>
 	<properties>
 		<hibernate.version>4.1.0.Final</hibernate.version>
-		<generic.version>${project.version}</generic.version>
+		<generic.version>9.0-SNAPSHOT</generic.version>
         <spring.version>3.1.3.RELEASE</spring.version>
         <spring.security.version>${spring.version}</spring.security.version>
         <slf4j.version>1.6.1</slf4j.version>

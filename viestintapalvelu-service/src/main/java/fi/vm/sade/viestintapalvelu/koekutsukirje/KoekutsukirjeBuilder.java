@@ -61,7 +61,7 @@ public class KoekutsukirjeBuilder {
         Map<String, Object> data = new HashMap<String, Object>();
         data.put("osoite", decorator);
         data.put("hakukohde", 	StringEscapeUtils.escapeHtml(hakukohde));
-        data.put("letterDate", new SimpleDateFormat("dd-MM-yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
        	data.put("letterBodyText", escapeAllButGtLt(letterBodyText));  // Scandics escaped properly, but HTML markup retained
         return data;
     }

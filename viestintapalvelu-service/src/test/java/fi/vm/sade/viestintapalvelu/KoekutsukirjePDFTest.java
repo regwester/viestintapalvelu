@@ -58,7 +58,7 @@ public class KoekutsukirjePDFTest {
 
     @Test
     public void containsPVM() throws Exception {
-    	assertTrue("Päivämäärä puuttuu", pdf.contains(new SimpleDateFormat("dd-MM-yyyy").format(new Date())));
+    	assertTrue("Päivämäärä puuttuu", pdf.contains(new SimpleDateFormat("dd.MM.yyyy").format(new Date())));
     }
 
     @Test
