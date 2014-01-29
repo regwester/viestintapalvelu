@@ -385,8 +385,5 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		
 		assertNotNull(vastaanottajatDTO);
 		assertNotNull(vastaanottajatDTO.get(0).getVastaanottajaID());
-		assertNotNull(vastaanottajatDTO.get(0).getRaportoitavaViesti());
-		assertNotNull(vastaanottajatDTO.get(0).getRaportoitavaViesti().getLiitetiedostot());
-		assertTrue(vastaanottajatDTO.get(0).getRaportoitavaViesti().getLiitetiedostot().size() > 0);
 	}
 }
