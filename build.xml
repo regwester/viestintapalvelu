@@ -62,8 +62,8 @@ unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viest
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-app*.war;
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-service*.war;
 
-rm -rf ${tomcat.home}/webapps/*.war;
-"
+rm -rf ${tomcat.home}/webapps/*.war;"
+
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false"/>
 
