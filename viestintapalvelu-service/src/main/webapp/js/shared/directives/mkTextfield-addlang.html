@@ -1,0 +1,17 @@
+<div id="mkTextfieldADL">
+
+    <div class="modal-header">
+        <h3 tt="tarjonta.mkt.valitse_lisattava_kieli"></h3>
+    </div>
+    
+    <ul class="modal-body">
+		<li ng-repeat="e in codes" ng-click="select(e.uri)" ng-class="preselection==e.uri ? 'selected' : ''"><a href ng-click="select(e.uri)">{{e.nimi}}</a></li>
+		
+    </ul>
+    
+    <div class="modal-footer">
+        <button class="btn btn-warning" ng-click="cancel()" tt="tarjonta.toiminnot.peruuta">(cancel)</button>
+        <button class="btn btn-primary" ng-disabled="preselection==null" ng-click="ok()" tt="tarjonta.toiminnot.ok">(ok)</button>
+    </div>
+
+</div>
