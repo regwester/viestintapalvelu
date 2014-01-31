@@ -14,10 +14,7 @@ public class EmailAttachment {
 	String contentType;
 	String attachment;
 
-	@SuppressWarnings("unused")
-	private EmailAttachment() {
-
-	}
+	public EmailAttachment() {}
 
 	public EmailAttachment(String attachmentFile) {		
 		name = attachmentFile;
@@ -40,6 +37,18 @@ public class EmailAttachment {
 		return contentType;
 	}
 	
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public void setAttachment(String attachment) {
+		this.attachment = attachment;
+	}
+
 	private String fileToEncodedStr(String attachmentFile) {
 	    File file = new File(attachmentFile);
 	    byte[] fileBytes;
