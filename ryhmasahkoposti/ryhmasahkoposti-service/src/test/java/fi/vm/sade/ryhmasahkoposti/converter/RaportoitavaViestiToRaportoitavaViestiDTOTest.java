@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.raportointi.converter;
+package fi.vm.sade.ryhmasahkoposti.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
@@ -18,8 +18,8 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiToRaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")

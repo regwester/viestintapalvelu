@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.raportointi.dao;
+package fi.vm.sade.ryhmasahkoposti.dao;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -21,7 +21,7 @@ import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")

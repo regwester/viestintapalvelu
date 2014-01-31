@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.raportointi.converter;
+package fi.vm.sade.ryhmasahkoposti.converter;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.raportointi.testdata;
+package fi.vm.sade.ryhmasahkoposti.testdata;
 
 import java.sql.Timestamp;
 import java.util.ArrayList;

@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.raportointi.service;
+package fi.vm.sade.ryhmasahkoposti.service;
 
 import static org.junit.Assert.*;
 
@@ -18,8 +18,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
-import fi.vm.sade.ryhmasahkoposti.raportointi.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")

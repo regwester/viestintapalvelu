@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.util;
+package fi.vm.sade.ryhmasahkoposti.common.util;
 
 import java.util.Locale;
 

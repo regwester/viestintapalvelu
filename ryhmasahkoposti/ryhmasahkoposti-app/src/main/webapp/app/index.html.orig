@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html id="ng-app" ng-app="viestintapalvelu">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OPH - Viestintäpalvelu</title>
+
+    <!-- libs -->
+
+    <!-- css -->
+    <link rel="stylesheet" href="./css/bootstrap-combined.css"/>
+    <link rel="stylesheet" href="./css/virkailija.css"/>
+    
+</head>
+<body>
+	<div id="application-wrapper">
+	    <div id="angularbox" ng-view=""></div>
+	</div>
+   	
+<<<<<<< HEAD
+    <script type="text/javascript" src="./lib/jquery/jquery-1.8.3.js"></script>
+    <script type="text/javascript" src="./lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script>
+    
+=======
+    <script type="text/javascript" src="./lib/jquery/jquery-1.10.2.min.js"></script>
+    <!-- script type="text/javascript" src="./lib/jquery/jquery-1.8.3.js"></script> -->
+    <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js"></script>
+
+>>>>>>> 2e31dd113750e0991c7f673beaeb0369a3bef280
+    <script type="text/javascript" src="./lib/angular/angular.js"></script> 
+    <script type="text/javascript" src="./lib/angular/angular-resource.js"></script>
+    <script type="text/javascript" src="./lib/angular/angular-route.js"></script>
+    <script type="text/javascript" src="./lib/angular/angular-animate.js"></script>
+    <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js"></script>
+	
+    <script src="./js/email.js"></script>
+    <script src="./js/emailCancel.js"></script>
+    <script src="./js/emailSendStatus.js"></script>
+    <script src="./js/emailService.js"></script>
+    <script src="./js/emailResponse.js"></script>
+    
+</body>
+
+</html>

@@ -53,7 +53,7 @@ public interface RyhmasahkopostinRaportointiService {
 	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit(String hakuKentta);
 
 	/**
-	 * Hakee raportoitavan viestin viestintunnuksella 
+	 * Hakee viestintunnuksella raportoitavan viestin ja haluttaessa viestille lähetysraportin  
 	 * 
 	 * @param viestiID Viestintunnus
 	 * @param lahetysRaportti true muodostetaan viestin lähetysraportti, false ei muodosteta 

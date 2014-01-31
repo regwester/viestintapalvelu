@@ -9,11 +9,11 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaVastaanottajaDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
+import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
-import fi.vm.sade.ryhmasahkoposti.util.MessageUtil;
 
 @Component
 public class RaportoitavaViestiToRaportoitavaViestiDTO {

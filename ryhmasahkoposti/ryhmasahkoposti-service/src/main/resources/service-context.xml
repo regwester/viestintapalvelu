@@ -1,16 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:camel="http://camel.apache.org/schema/spring"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd">
+       http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd 
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
     <context:annotation-config/>
-    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti.service" />
-
-	<import resource="classpath:/dao-context.xml"/>
+    <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti" />
 	
+	<!-- Apache Camel routing context -->
+	<camelContext xmlns="http://camel.apache.org/schema/spring">
+		<routeBuilder ref="henkiloRoute"/>
+	</camelContext>
+
+	<!-- Route to HenkiloService -->
+	<bean id="henkiloRoute" class="fi.vm.sade.ryhmasahkoposti.route.HenkiloRoute"/>
+	
+	<!-- Resourcebundle for localizing -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
   		<property name="basenames" value="messages"/>
 	</bean>
