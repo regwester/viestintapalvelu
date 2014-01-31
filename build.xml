@@ -59,8 +59,8 @@ mkdir ${tomcat.home}/webapps/ryhmasahkoposti-app;
 mkdir ${tomcat.home}/webapps/ryhmasahkoposti-service;
 
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
-unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-app.war;
-unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-service.war;
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-app*.war;
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-service*.war;
 
 rm -rf ${tomcat.home}/webapps/*.war;
 "
