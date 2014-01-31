@@ -4,7 +4,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-public class RaportoitavaViestiDTO implements Serializable {
+public class RaportoitavaViestiDTO extends EmailMessageDTO implements Serializable {
 	private static final long serialVersionUID = 1899969471276794216L;
 
 	private Long viestiID;
@@ -107,4 +107,6 @@ public class RaportoitavaViestiDTO implements Serializable {
 	public void setVastaanottajat(List<RaportoitavaVastaanottajaDTO> vastaanottajat) {
 		this.vastaanottajat = vastaanottajat;
 	}
+
+
 }

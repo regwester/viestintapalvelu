@@ -5,7 +5,19 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
  * @author migar1
  */
 public class EmailRecipient {
-	private String oid = "";
+	public void setOid(String oid) {
+        this.oid = oid;
+    }
+
+    public void setOidType(String oidType) {
+        this.oidType = oidType;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+    private String oid = "";
 	private String oidType = "";
 	private String email = "";
 	private String languageCode = "FI";

@@ -32,12 +32,4 @@
     <import resource="classpath:/service-context.xml"/>
     <import resource="classpath:/dao-context.xml"/>
     <import resource="classpath:/rest-context.xml"/>
-    
-    
-    <!--
-        Enable @Scheduled annotations
-    -->
-    <task:annotation-driven />
-	<bean id="emailSender" class="fi.vm.sade.ryhmasahkoposti.service.EmailSender">
-	</bean>
 </beans>
