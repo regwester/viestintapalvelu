@@ -43,11 +43,11 @@ shell command:
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti/ryhmasahkoposti-service/${ryhmasahkoposti.pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti-service/${ryhmasahkoposti.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti/ryhmasahkoposti-app/${ryhmasahkoposti.pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti-app/${ryhmasahkoposti.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
