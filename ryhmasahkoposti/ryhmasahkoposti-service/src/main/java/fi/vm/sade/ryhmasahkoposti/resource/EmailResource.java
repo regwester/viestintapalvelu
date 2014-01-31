@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -103,7 +104,15 @@ public class EmailResource {
 		return new EmailSendId(sendId);
 //		return responses;
     }
-
+    
+	@GET
+    //@Consumes("application/json")
+    //@Produces("application/json")
+    @Path("status")
+    public String status(String sendId) {
+        System.out.println("hop");
+        return("success");
+    }
 	
 	@POST
 	@Consumes("application/json")
