@@ -181,8 +181,9 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	@Override
 	public boolean startSending(EmailRecipientDTO recipient) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getEmailMessageID(), 
-				recipient.getEmail());
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
+
+		System.out.println(raportoitavaVastaanottaja.getId() +" "+ raportoitavaVastaanottaja.getLahetysalkoi() + " "+ recipient.getEmailMessageID());
 		if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
 			return false;
 		}
@@ -192,10 +193,8 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 	@Override
 	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
-
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = raportoitavaVastaanottajaService
-				.haeRaportoitavaVastaanottaja(recipient.getEmailMessageID(),
-						recipient.getEmail());
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
 		raportoitavaVastaanottaja.setEpaonnistumisenSyy(result);
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		raportoitavaVastaanottajaService
@@ -206,8 +205,7 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	@Override
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getEmailMessageID(), 
-				recipient.getEmail());;
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
 		raportoitavaVastaanottaja.setLahetysOnnistui(result);
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);

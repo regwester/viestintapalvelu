@@ -86,26 +86,33 @@ public class EmailServiceImpl implements EmailService {
 		int queueSize = queue.size();
 		for (EmailRecipientDTO er : queue) {
 			long vStart = System.currentTimeMillis();
-			Long messageId = er.getEmailMessageID();
-			
-			EmailMessageDTO message = messageCache.get(messageId);
-			if (message == null) {
-				message = rrService.getMessage(messageId);
-				messageCache.put(messageId, message);
-			}
-			String result = "";
-			boolean success = false;
-			try {
-				success = emailSender.sendMail(message, er.getEmail());
-			} catch (Exception e ) {
-				result = e.toString();
-			}
-			if (success) {
-				rrService.recipientHandledSuccess(er, result);
-				sent ++;
-			} else {
-				rrService.recipientHandledFailure(er, result);
-				errors ++;
+			log.info("Handling " + er + " " +er.getRecipientID());
+			if (rrService.startSending(er)) {
+				log.info("Handling really " + er + " " +er.getRecipientID());
+				Long messageId = er.getEmailMessageID();
+				EmailMessageDTO message = messageCache.get(messageId);
+				if (message == null) {
+					message = rrService.getMessage(messageId);
+					messageCache.put(messageId, message);
+				}
+				String result = "";
+				boolean success = false;
+				try {
+					success = emailSender.sendMail(message, er.getEmail());
+				} catch (Exception e ) {
+					result = e.toString();
+				}
+				if (success) {
+					System.out.println("success");
+					result = "1";
+					rrService.recipientHandledSuccess(er, result);
+					sent ++;
+				} else {
+					System.out.println("failure");
+					result = "0";
+					rrService.recipientHandledFailure(er, result);
+					errors ++;
+				}
 			}
 			long took = System.currentTimeMillis() - vStart;
 			System.out.println("Message handling Took " + took);

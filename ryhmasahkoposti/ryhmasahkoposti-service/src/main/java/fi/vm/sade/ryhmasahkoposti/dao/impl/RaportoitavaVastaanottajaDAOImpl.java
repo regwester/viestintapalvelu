@@ -33,6 +33,11 @@ public class RaportoitavaVastaanottajaDAOImpl extends AbstractJpaDAOImpl<Raporto
 	}
 
 	@Override
+	public RaportoitavaVastaanottaja findByVastaanottajanID(Long vastaanottajaID) {
+		return read(vastaanottajaID);
+	}
+
+	@Override
 	public RaportoitavaVastaanottaja findByLahetettyviestiIdAndVastaanottajanSahkopostiosoite(Long viestiID,
 		String vastaanottajanSahkopostiosoite) {
 		QRaportoitavaVastaanottaja raportoitavaVastaanottaja = QRaportoitavaVastaanottaja.raportoitavaVastaanottaja;
