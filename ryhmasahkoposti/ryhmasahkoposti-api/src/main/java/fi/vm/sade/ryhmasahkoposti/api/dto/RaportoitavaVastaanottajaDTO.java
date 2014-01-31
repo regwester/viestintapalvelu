@@ -12,7 +12,7 @@ public class RaportoitavaVastaanottajaDTO implements Serializable {
 	private String vastaanottajanOid;
 	private String vastaanottajanSahkopostiosoite;
 	private String lahetysOnnistui;
-	private RaportoitavaViestiDTO raportoitavaViesti;
+	private Long viestiID;
 	private String aikaleima;
 	
 	public Long getVastaanottajaID() {
@@ -73,12 +73,12 @@ public class RaportoitavaVastaanottajaDTO implements Serializable {
 	}
 
 
-	public RaportoitavaViestiDTO getRaportoitavaViesti() {
-		return raportoitavaViesti;
+	public Long getViestiID() {
+		return viestiID;
 	}
 
-	public void setRaportoitavaViesti(RaportoitavaViestiDTO raportoitavaViesti) {
-		this.raportoitavaViesti = raportoitavaViesti;
+	public void setViestiID(Long viestiID) {
+		this.viestiID = viestiID;
 	}
 
 	public String getAikaleima() {

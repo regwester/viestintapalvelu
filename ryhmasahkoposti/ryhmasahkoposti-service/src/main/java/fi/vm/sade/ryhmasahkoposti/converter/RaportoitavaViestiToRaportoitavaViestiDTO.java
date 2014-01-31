@@ -6,6 +6,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaLiiteDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaVastaanottajaDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
@@ -33,7 +35,7 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		
 		return raportoitavatViestitDTO;
 	}
-
+	
 	public static RaportoitavaViestiDTO convert(RaportoitavaViesti raportoitavaViesti, 
 		List<RaportoitavaLiite> raportoitavatLiitteet, boolean lahetysRaportti) {
 		RaportoitavaViestiDTO raportoitavaViestiDTO = convertRaportoivaViesti(raportoitavaViesti, lahetysRaportti);
@@ -43,6 +45,13 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		return raportoitavaViestiDTO;
 	}
 
+	public static EmailMessageDTO convertToEmailMessageDTO(RaportoitavaViesti raportoitavaViesti, 
+			List<RaportoitavaLiite> raportoitavatLiitteet) {
+		EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(raportoitavaViesti);
+		emailMessageDTO.setAttachmentDTOs(convertEmailAttachmentDTO(raportoitavatLiitteet));
+		return emailMessageDTO;
+	}
+	
 	private static List<RaportoitavaVastaanottajaDTO> convertRaportoitavatVastaanottajat(
 		RaportoitavaViesti raportoitavaViesti) {
 		List<RaportoitavaVastaanottajaDTO> vastaanottajat = new ArrayList<RaportoitavaVastaanottajaDTO>();
@@ -64,6 +73,21 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		return vastaanottajat;
 	}
 
+	private static List<EmailAttachmentDTO> convertEmailAttachmentDTO(List<RaportoitavaLiite> raportoitavatLiitteet) {
+		List<EmailAttachmentDTO> attachments = new ArrayList<EmailAttachmentDTO>();
+		
+		for (RaportoitavaLiite liite : raportoitavatLiitteet) {
+			EmailAttachmentDTO attachmentDTO = new EmailAttachmentDTO();
+			attachmentDTO.setAttachmentID(liite.getId());
+			attachmentDTO.setName(liite.getLiitetiedostonNimi());
+			attachmentDTO.setData(liite.getLiitetiedosto());
+			attachmentDTO.setContentType(liite.getSisaltotyyppi());
+			attachments.add(attachmentDTO);
+		}
+			
+		return attachments;
+	}
+
 	private static List<RaportoitavaLiiteDTO> convertRaportoitavatLiitteet(List<RaportoitavaLiite> raportoitavatLiitteet) {
 		List<RaportoitavaLiiteDTO> liitteidenNimet = new ArrayList<RaportoitavaLiiteDTO>();
 		
@@ -81,6 +105,20 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		return liitteidenNimet;
 	}
 
+	private static EmailMessageDTO convertToEmailMessageDTO(RaportoitavaViesti raportoitavaViesti) {
+		EmailMessageDTO emailMessageDTO = new EmailMessageDTO();
+		
+		emailMessageDTO.setMessageID(raportoitavaViesti.getId());
+		emailMessageDTO.setSubject(raportoitavaViesti.getAihe());
+		emailMessageDTO.setSenderEmail(raportoitavaViesti.getLahettajanSahkopostiosoite());
+		emailMessageDTO.setStartTime(raportoitavaViesti.getLahetysAlkoi());
+		emailMessageDTO.setEndTime(raportoitavaViesti.getLahetysPaattyi());
+		emailMessageDTO.setCallingProcess(raportoitavaViesti.getProsessi());
+		emailMessageDTO.setReplyToAddress(raportoitavaViesti.getVastauksensaajanSahkopostiosoite());
+		emailMessageDTO.setBody(raportoitavaViesti.getViesti());
+		return emailMessageDTO;
+	}
+	
 	private static RaportoitavaViestiDTO convertRaportoivaViesti(RaportoitavaViesti raportoitavaViesti, 
 		boolean lahetysRaportti) {
 		RaportoitavaViestiDTO raportoitavaViestiDTO = new RaportoitavaViestiDTO();

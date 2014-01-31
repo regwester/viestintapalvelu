@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -10,6 +11,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
@@ -71,6 +74,12 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
+	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
+		List<RaportoitavaVastaanottaja> vastaanottajat = raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(listSize);
+		return RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO.convertToEmailRecipientDTO(vastaanottajat);
+	}
+	
+	@Override
 	public List<RaportoitavaVastaanottajaDTO> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara) {
 		List<RaportoitavaVastaanottaja> vastaanottajat = 
 			raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(vastaanottajienLukumaara);
@@ -85,6 +94,14 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti, liitteet, lahetysRaportti);
 	}
 
+	public EmailMessageDTO getMessage(Long viestiID) {
+		RaportoitavaViesti viesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
+		List<RaportoitavaLiite> liitteet = 
+			raportoitavaLiiteService.haeRaportoitavanViestinLiitteet(viesti.getRaportoitavanViestinLiitteet());
+		return RaportoitavaViestiToRaportoitavaViestiDTO.convertToEmailMessageDTO(viesti, liitteet);
+	}
+
+	
 	@Override
 	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit() {
 		// TODO Auto-generated method stub
@@ -161,6 +178,40 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 		return true;
 	}
 
+	@Override
+	public boolean startSending(EmailRecipientDTO recipient) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
+
+		System.out.println(raportoitavaVastaanottaja.getId() +" "+ raportoitavaVastaanottaja.getLahetysalkoi() + " "+ recipient.getEmailMessageID());
+		if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
+			return false;
+		}
+		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
+		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		return true;
+	}
+	@Override
+	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
+		raportoitavaVastaanottaja.setEpaonnistumisenSyy(result);
+		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
+		raportoitavaVastaanottajaService
+				.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		return true;
+	}
+	
+	@Override
+	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
+		raportoitavaVastaanottaja.setLahetysOnnistui(result);
+		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
+		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		return true;
+	}
+	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Long tallennaLiite(FileItem fileItem) throws IOException {

@@ -1,93 +1,123 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import java.io.IOException;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 
-
-
-//import org.apache.http.HttpEntity;
-//import org.apache.http.HttpResponse;
-//import org.apache.http.client.methods.HttpPost;
-//import org.apache.http.entity.ContentType;
-//import org.apache.http.entity.StringEntity;
-//import org.apache.http.impl.client.DefaultHttpClient;
-//import org.apache.http.util.EntityUtils;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.dom4j.DocumentException;
-
-//import com.google.gson.Gson;
-
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-
+import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
+import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
 
 @Service
 public class EmailServiceImpl implements EmailService {
+	private static final Logger log = Logger
+			.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class
+					.getName());
 
+	private static final int MAX_CACHE_ENTRIES = 10;
+
+	@Autowired
+	private RyhmasahkopostinRaportointiService rrService;
+
+	@Autowired
+	private RaportoitavaLiiteService liiteService;
+
+	@Autowired
+	private EmailSender emailSender;
+
+	@Value("${ryhmasahkoposti.queue.handle.size}")
+	String queueSizeString = "1000";
+
+	private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(
+			MAX_CACHE_ENTRIES + 1) {
+		private static final long serialVersionUID = 1L;
+
+		protected boolean removeEldestEntry(
+				Map.Entry<Long, EmailMessageDTO> eldest) {
+			return size() > MAX_CACHE_ENTRIES;
+		};
+	};
+
+	@Override
 	public EmailResponse sendEmail(EmailMessage email) {
-	    final Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class.getName());
-	    
-//	    email.setFooter(email.getHeader().getLanguageCode());
-	    log.info("Send email info: " + email.toString());
-	    
-	    boolean sendStatus = EmailUtil.sendMail(email, "tähän vastaanottajan osoite jotenkin");	   
-	    String      status = (sendStatus ? "OK" : "Error");
-//	    email.setSendStatus(status);  LAITETAAN KANTAAN.
-	
-//      MITEN TÄMÄ MUUTTUU	    
-//    	EmailResponse resp = new EmailResponse(email.getHeader(), status, email.getSubject(), Integer.toString(email.getAttachments().size()));					
-    	EmailResponse resp = new EmailResponse(status, email.getSubject() );					
-    	log.info("Email  response: " + resp.toString());
-    	return resp;
-	}
-	
-//    public static HttpResponse get(Object json, String url) throws IOException, DocumentException {
-//        DefaultHttpClient client = new DefaultHttpClient();
-//        client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
-//        HttpPost post = new HttpPost(url);
-//        post.setHeader("Content-Type", "application/json;charset=utf-8");
-//        post.setEntity(new StringEntity(new ObjectMapper().writeValueAsString(json), ContentType.APPLICATION_JSON));
-//        HttpResponse response = client.execute(post);
-//        
-//        return response;
-//    }
-    
-  
-//    public static EmailResponse getEmailResponse (HttpResponse response) throws IOException {
-//        HttpEntity entity = response.getEntity();
-//        String responseStr = ""; 
-//        if (entity != null) {
-//        	responseStr = EntityUtils.toString(entity);
-//        } else {
-//        	return new EmailResponse();
-//        }
-//
-//        try {
-//	        Gson gson = new Gson();
-//	        return gson.fromJson(responseStr, EmailResponse.class);
-//		} catch (Exception e) {
-//			return new EmailResponse(responseStr,"");
-//		}                
-//    }
-//	
-//    public static EmailResponse[] getEmailResponses (HttpResponse response) throws IOException {
-//        HttpEntity entity = response.getEntity();
-//        String responseStr = ""; 
-//        if (entity != null) {
-//        	responseStr = EntityUtils.toString(entity);
-//        } else {
-//        	return new EmailResponse[]{};
-//        }
-//
-//        try {
-//	        Gson gson = new Gson();
-//	        return gson.fromJson(responseStr, EmailResponse[].class);
-//		} catch (Exception e) {
-//			return new EmailResponse[] {new EmailResponse(responseStr,"")};
-//		}                
-//    }
 
+		// email.setFooter(email.getHeader().getLanguageCode());
+		log.info("Send email info: " + email.toString());
+
+		boolean sendStatus = emailSender.sendMail(email,
+				"tähän vastaanottajan osoite jotenkin");
+		String status = (sendStatus ? "OK" : "Error");
+		// email.setSendStatus(status); LAITETAAN KANTAAN.
+
+		// MITEN TÄMÄ MUUTTUU
+		// EmailResponse resp = new EmailResponse(email.getHeader(), status,
+		// email.getSubject(), Integer.toString(email.getAttachments().size()));
+		EmailResponse resp = new EmailResponse(status, email.getSubject());
+		log.info("Email  response: " + resp.toString());
+		return resp;
+	}
+
+	/**
+	 * Spring scheduler method
+	 */
+	public void handleEmailQueue() {
+		int queueMaxSize = 1000;
+		try {
+			queueMaxSize = Integer.parseInt(queueSizeString);
+		} catch (NumberFormatException nfe) {
+			// never mind use default
+		}
+		long start = System.currentTimeMillis();
+		log.info("Handling queue (max size "+ queueMaxSize + "). Sending emails using: " +emailSender);
+		
+		List<EmailRecipientDTO> queue = rrService.getUnhandledMessageRecipients(queueMaxSize);
+		
+		int sent = 0;
+		int errors = 0;
+		int queueSize = queue.size();
+		for (EmailRecipientDTO er : queue) {
+			long vStart = System.currentTimeMillis();
+			log.info("Handling " + er + " " +er.getRecipientID());
+			if (rrService.startSending(er)) {
+				log.info("Handling really " + er + " " +er.getRecipientID());
+				Long messageId = er.getEmailMessageID();
+				EmailMessageDTO message = messageCache.get(messageId);
+				if (message == null) {
+					message = rrService.getMessage(messageId);
+					messageCache.put(messageId, message);
+				}
+				String result = "";
+				boolean success = false;
+				try {
+					success = emailSender.sendMail(message, er.getEmail());
+				} catch (Exception e ) {
+					result = e.toString();
+				}
+				if (success) {
+					System.out.println("success");
+					result = "1";
+					rrService.recipientHandledSuccess(er, result);
+					sent ++;
+				} else {
+					System.out.println("failure");
+					result = "0";
+					rrService.recipientHandledFailure(er, result);
+					errors ++;
+				}
+			}
+			long took = System.currentTimeMillis() - vStart;
+			System.out.println("Message handling Took " + took);
+		}
+		long took = System.currentTimeMillis() - start;
+		log.info("Sending emails done. Queue: " + queueSize + ", sent: "+ sent +", errors: "+errors + ", took: "+took+" ms.");
+	}
 }

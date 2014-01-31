@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
@@ -34,6 +36,8 @@ public interface RyhmasahkopostinRaportointiService {
 	 * @param vastaanottajienLukumaara Palautettavien vastaanottajien lukumaara
 	 * @return Lista raportoitavan viestin vastaanottajien tietoja {@link RaportoitavaVastaanottaja}
 	 */
+	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
+	
 	public List<RaportoitavaVastaanottajaDTO> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara);
 
 	/**
@@ -61,6 +65,8 @@ public interface RyhmasahkopostinRaportointiService {
 	 */
 	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID, boolean lahetysRaportti);
 	
+	public EmailMessageDTO getMessage(Long messageID);
+	
 	/**
 	 * Raportoi ryhmäsähköpostin lähetyksen aloittamisen 
 	 *  
@@ -87,6 +93,10 @@ public interface RyhmasahkopostinRaportointiService {
 	 * @return true, jos raportointi onnistui. false, jos raportoinin on jo tehty esim. toinen lähetyssäie.
 	 */
 	public boolean raportoiLahetyksenTilanne(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle);
+	
+	public boolean startSending(EmailRecipientDTO recipient);
+	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
+	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result);
 	
 	/**
 	 * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
