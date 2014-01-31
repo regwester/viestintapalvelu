@@ -55,8 +55,8 @@ shell command:
         <echo>unzip war-files to tom webapp dir...</echo>
         <sshexec command="
 mkdir ${tomcat.home}/webapps/viestintapalvelu;
-mkdir ${tomcat.home}/webapps/ryhmasahkoposti-app;
-mkdir ${tomcat.home}/webapps/ryhmasahkoposti-service;
+mkdir ${tomcat.home}/webapps/ryhmasahkoposti/ryhmasahkoposti-app;
+mkdir ${tomcat.home}/webapps/ryhmasahkoposti/ryhmasahkoposti-service;
 
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-app*.war;
