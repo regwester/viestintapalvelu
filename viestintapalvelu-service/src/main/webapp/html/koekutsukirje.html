@@ -1,0 +1,21 @@
+<div>
+<h3>Testikäyttöliittymän testivaihe</h3>
+<p>Toiminnallisuus: valitse tulostettavien koekutsukirjeiden lukumäärä (1-999) valintalistasta. 
+   Koekutsukirjeet generoidaan  kun PDF-painiketta on painettu.</p>
+
+
+<div ng-controller='KoekutsuController'>
+<!-- 
+ 	<div> 	
+		<rich-textarea model="bodyTextTemplate" ng-model="bodyTextTemplate" max="100"></rich-textarea>
+	</div>
+-->
+	
+
+    <input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi"
+           min="1" max="5" >
+
+    <div class="run-action btn-group">
+        <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1">PDF</button>
+    </div>
+</div>
