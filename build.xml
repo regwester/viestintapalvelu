@@ -9,6 +9,7 @@ shell command:
 -->
         <property name="oph.name" value="viestintapalvelu"/>
         <property name="pom.version" value="8.0-SNAPSHOT"/>
+        <property name="ryhmasahkoposti.pom.version" value="0.0.1-SNAPSHOT"/>
 
         <property name="maven.repo" value="${user.home}/.m2/repository"/>
         <property name="tomcat.name" value="tomcat_${oph.name}"/>
@@ -42,11 +43,11 @@ shell command:
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti/ryhmasahkoposti-service/${pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti/ryhmasahkoposti-service/${ryhmasahkoposti.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti/ryhmasahkoposti-app/${pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti/ryhmasahkoposti-app/${ryhmasahkoposti.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
