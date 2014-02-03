@@ -19,8 +19,12 @@ public class FileItemToRaportoitavaLiite {
 		
 		liite.setLiitetiedostonNimi(fileItem.getName());
 		liite.setSisaltotyyppi(fileItem.getContentType());
+		if (false) {
 		byte[] zippedLiite = zipLiitetiedosto(fileItem.getName(), fileItem.get());
-		liite.setLiitetiedosto(zippedLiite);
+			liite.setLiitetiedosto(zippedLiite);
+		} else {
+			liite.setLiitetiedosto(fileItem.get());
+		}
 		liite.setAikaleima(new Date());
 		
 		return liite;
