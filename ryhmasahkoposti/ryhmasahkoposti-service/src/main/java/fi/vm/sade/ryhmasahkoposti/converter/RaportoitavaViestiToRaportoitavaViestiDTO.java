@@ -6,6 +6,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaLiiteDTO;
@@ -48,7 +49,7 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 	public static EmailMessageDTO convertToEmailMessageDTO(RaportoitavaViesti raportoitavaViesti, 
 			List<RaportoitavaLiite> raportoitavatLiitteet) {
 		EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(raportoitavaViesti);
-		emailMessageDTO.setAttachmentDTOs(convertEmailAttachmentDTO(raportoitavatLiitteet));
+		emailMessageDTO.setAttachments(convertEmailAttachmentDTO(raportoitavatLiitteet));
 		return emailMessageDTO;
 	}
 	
@@ -73,9 +74,8 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 		return vastaanottajat;
 	}
 
-	private static List<EmailAttachmentDTO> convertEmailAttachmentDTO(List<RaportoitavaLiite> raportoitavatLiitteet) {
-		List<EmailAttachmentDTO> attachments = new ArrayList<EmailAttachmentDTO>();
-		
+	private static List<EmailAttachment> convertEmailAttachmentDTO(List<RaportoitavaLiite> raportoitavatLiitteet) {
+		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
 		for (RaportoitavaLiite liite : raportoitavatLiitteet) {
 			EmailAttachmentDTO attachmentDTO = new EmailAttachmentDTO();
 			attachmentDTO.setAttachmentID(liite.getId());
@@ -84,7 +84,6 @@ public class RaportoitavaViestiToRaportoitavaViestiDTO {
 			attachmentDTO.setContentType(liite.getSisaltotyyppi());
 			attachments.add(attachmentDTO);
 		}
-			
 		return attachments;
 	}
 
