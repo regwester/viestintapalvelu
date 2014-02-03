@@ -62,12 +62,25 @@ public class KoekutsukirjeBuilder {
         data.put("osoite", decorator);
         data.put("hakukohde", 	StringEscapeUtils.escapeHtml(hakukohde));
         data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-       	data.put("letterBodyText", escapeAllButGtLt(letterBodyText));  // Scandics escaped properly, but HTML markup retained
+       	data.put("letterBodyText", escapeHtmlFromEditor(letterBodyText));  // Scandics escaped properly, but HTML markup retained
         return data;
     }
 
-  private String escapeAllButGtLt(String letterBody) {
-	return StringEscapeUtils.escapeHtml(letterBody).replaceAll("&gt;", ">").replaceAll("&lt;", "<");
+   
+  /**
+   * Escape all of letter body to "safe" HTML. But since we want to show some of the HTML, 
+   * we still unescape <, > and &amp, for the time being. This solution is not good. 
+   * TODO: figure out how angular feeds us HTML, then figure out the correct escaping-functions
+   * provided by libraries, we should use, to reliably get all necessary HTML-markup and scandic letters etc
+   * down to the "koekutsukirje"-template.
+ * @param letterBody
+ * @return
+ */
+private String escapeHtmlFromEditor(String letterBody) {
+	return StringEscapeUtils.escapeHtml(letterBody).
+			replaceAll("&gt;", ">").
+			replaceAll("&lt;", "<").
+			replaceAll("&amp;", "&");
 }
     
 }

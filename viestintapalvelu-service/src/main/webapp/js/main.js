@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngResource', 'RichTextArea']);
+var app = angular.module('app', ['ngResource', 'ui.tinymce']);
 
 window.CONFIG = {};
 window.CONFIG.env = {};
