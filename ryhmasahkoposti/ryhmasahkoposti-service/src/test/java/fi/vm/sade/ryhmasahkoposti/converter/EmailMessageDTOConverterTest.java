@@ -14,8 +14,9 @@ import org.junit.runner.RunWith;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiToRaportoitavaViestiDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
@@ -23,7 +24,7 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
-public class RaportoitavaViestiToRaportoitavaViestiDTOTest {
+public class EmailMessageDTOConverterTest {
 	
 	@Test
 	public void testRaportoitavienviestienConvertOnnistuu() {
@@ -34,7 +35,7 @@ public class RaportoitavaViestiToRaportoitavaViestiDTOTest {
 		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService = mock(RaportoitavaVastaanottajaService.class);
 		when(raportoitavaVastaanottajaService.haeRaportoitavienVastaanottajienLukumaara(viestiID, false)).thenReturn(new Long(0));		
 		
-		List<RaportoitavaViestiDTO> viestit = RaportoitavaViestiToRaportoitavaViestiDTO.convert(raportoitavatViestit);
+		List<EmailMessageDTO> viestit = EmailMessageDTOConverter.convert(raportoitavatViestit);
 		
 		assertNotNull(viestit);
 		assertTrue(viestit.size() == 1);
@@ -50,7 +51,7 @@ public class RaportoitavaViestiToRaportoitavaViestiDTOTest {
 		raportoitavatLiitteet.add(raportoitavaLiite);
 				
 		RaportoitavaViestiDTO viestiDTO = 
-			RaportoitavaViestiToRaportoitavaViestiDTO.convert(raportoitavaViesti, raportoitavatLiitteet, false);
+			EmailMessageDTOConverter.convert(raportoitavaViesti, raportoitavatLiitteet, false);
 		
 		assertNotNull(viestiDTO);
 		assertEquals(raportoitavaViesti.getId(), viestiDTO.getViestiID());

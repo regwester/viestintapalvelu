@@ -14,7 +14,7 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.LahetyksenAloitusDTOToRaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiConverter;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -33,7 +33,7 @@ public class LahetyksenAloitusDTOToRaportoitavaViestiTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
 
 		assertNotNull(raportoitavaViesti);
 		assertEquals(lahetyksenAloitus.getLahettajanOid(), raportoitavaViesti.getLahettajanOid());

@@ -3,7 +3,7 @@ package fi.vm.sade.ryhmasahkoposti.service;
 import java.util.List;
 import java.util.Set;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavanViestinLiite;
 
@@ -14,7 +14,7 @@ public interface RaportoitavaLiiteService {
 	 * @param lahetetytLiitteet Kokoelma lähetettävien liitteiden tietoja
 	 * @return Kokoelma raportoitavia liitteitä
 	 */
-	public List<RaportoitavaLiite> haeRaportoitavatLiitteet(List<LahetettyLiiteDTO> lahetetytLiitteet); 
+	public List<RaportoitavaLiite> haeRaportoitavatLiitteet(List<AttachmentResponse> attachmentResponses); 
 
 	/**
 	 * Hakee raportoitavat liitteet aiemmin tallennetujen liitteiden tietojen perusteella

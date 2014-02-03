@@ -2,7 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.List;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 
 public interface RaportoitavaViestiService {
@@ -28,7 +28,7 @@ public interface RaportoitavaViestiService {
 	 * @param query Hakuparametrit
 	 * @return Lists raportoitavia viestejä {@link RaportoitavaViesti}
 	 */
-	public List<RaportoitavaViesti> haeRaportoitavatViestit(RaportoitavaViestiQueryDTO query);
+	public List<RaportoitavaViesti> haeRaportoitavatViestit(EmailMessageQueryDTO query);
 	
 	/**
 	 * Päivittä raportoitavan viestin tietoja tietokantaan

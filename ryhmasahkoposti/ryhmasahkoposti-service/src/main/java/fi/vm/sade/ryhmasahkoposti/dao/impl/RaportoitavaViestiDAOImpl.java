@@ -12,8 +12,8 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaVastaanottajaQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailRecipientQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
 import fi.vm.sade.ryhmasahkoposti.model.QRaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.QRaportoitavaViesti;
@@ -24,29 +24,29 @@ public class RaportoitavaViestiDAOImpl extends AbstractJpaDAOImpl<RaportoitavaVi
 	implements RaportoitavaViestiDAO {
 	
 	@Override
-	public List<RaportoitavaViesti> findBySearchCriteria(RaportoitavaViestiQueryDTO query) {
-		RaportoitavaVastaanottajaQueryDTO vastaanottajaQuery = query.getVastaanottajaQuery();
+	public List<RaportoitavaViesti> findBySearchCriteria(EmailMessageQueryDTO query) {
+		EmailRecipientQueryDTO vastaanottajaQuery = query.getEmailRecipientQueryDTO();
 		
 		QRaportoitavaVastaanottaja raportoitavaVastaanottaja = QRaportoitavaVastaanottaja.raportoitavaVastaanottaja;
 		QRaportoitavaViesti raportoitavaViesti = QRaportoitavaViesti.raportoitavaViesti;
 		
 		BooleanExpression whereExpression = null;
 		
-		if (vastaanottajaQuery.getVastaanottajanOid() != null) {
-			whereExpression = raportoitavaVastaanottaja.vastaanottajaOid.eq(vastaanottajaQuery.getVastaanottajanOid());
+		if (vastaanottajaQuery.getRecipientOid() != null) {
+			whereExpression = raportoitavaVastaanottaja.vastaanottajaOid.eq(vastaanottajaQuery.getRecipientOid());
 		}
 		
-		if (vastaanottajaQuery.getVastaanottajanSahkopostiosoite() != null) {
+		if (vastaanottajaQuery.getRecipientEmail() != null) {
 			whereExpression = raportoitavaVastaanottaja.vastaanottajanSahkoposti.eq(
-				vastaanottajaQuery.getVastaanottajanSahkopostiosoite());
+				vastaanottajaQuery.getRecipientEmail());
 		}
 		
-		if (vastaanottajaQuery.getVastaanottajanHenkilotunnus() != null) {
+		if (vastaanottajaQuery.getRecipientSocialSecurityID() != null) {
 		}
 
-		if (vastaanottajaQuery.getVastaanottajanNimi() != null) {
+		if (vastaanottajaQuery.getRecipientName() != null) {
 			whereExpression = raportoitavaVastaanottaja.hakuNimi.containsIgnoreCase(
-				vastaanottajaQuery.getVastaanottajanNimi());
+				vastaanottajaQuery.getRecipientName());
 		}
 		
 		return from(raportoitavaViesti).leftJoin(

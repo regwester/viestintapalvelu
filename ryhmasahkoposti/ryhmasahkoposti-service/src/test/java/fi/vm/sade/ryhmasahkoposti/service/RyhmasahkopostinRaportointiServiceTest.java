@@ -35,7 +35,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
-import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 
@@ -45,7 +45,7 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 public class RyhmasahkopostinRaportointiServiceTest {
 	@Autowired
-	private RyhmasahkopostinRaportointiService ryhmasahkopostinRaportointiService;
+	private GroupEmailReportingService ryhmasahkopostinRaportointiService;
 	
 	@Autowired
 	private RaportoitavaViestiService raportoitavaViestiService;
@@ -59,7 +59,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 		
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
@@ -94,7 +94,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 		
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 
@@ -127,7 +127,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
@@ -163,7 +163,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
 		LahetettyVastaanottajalleDTO vastaanottaja = RaportointipalveluTestData.getLahetettyVastaanottajalleDTO();
@@ -216,7 +216,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
@@ -256,7 +256,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
@@ -285,7 +285,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		ryhmasahkopostinRaportointiService.raportoiLahetyksenTilanne(lahetettyVastaanottajalle);
 
         String hakuKentta = "testRaportoitujenViestienHakuOnnistui@sposti.fi";
-		List<RaportoitavaViestiDTO> viestit = ryhmasahkopostinRaportointiService.haeRaportoitavatViestit(hakuKentta);
+		List<RaportoitavaViestiDTO> viestit = ryhmasahkopostinRaportointiService.getMessages(hakuKentta);
 		
 		assertNotNull(viestit);
 		assertTrue(viestit.size() > 0);
@@ -300,7 +300,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 		
 		assertNotNull(liiteID);
 		assertTrue(liiteID.longValue() > 0);
@@ -315,7 +315,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 		
@@ -361,7 +361,7 @@ public class RyhmasahkopostinRaportointiServiceTest {
 		when(mockedFileItem.getContentType()).thenReturn("application/pdf");
 		when(mockedFileItem.get()).thenReturn(sisalto);
 		
-		Long liiteID = ryhmasahkopostinRaportointiService.tallennaLiite(mockedFileItem);
+		Long liiteID = ryhmasahkopostinRaportointiService.saveAttachment(mockedFileItem);
 		
 		LahetyksenAloitusDTO lahetyksenAloitus = RaportointipalveluTestData.getLahetyksenAloitusDTO();
 

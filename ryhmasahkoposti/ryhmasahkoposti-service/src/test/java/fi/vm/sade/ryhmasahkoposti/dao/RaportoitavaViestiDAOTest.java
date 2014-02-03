@@ -25,8 +25,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaVastaanottajaQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailRecipientQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaVastaanottajaDAO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
@@ -90,10 +90,10 @@ public class RaportoitavaViestiDAOTest {
 		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
 
-		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
-        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
-        raportoitavaVastaanottajaQuery.setVastaanottajanOid("102030405100");
-        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+		EmailMessageQueryDTO raportoitavaViestiQuery = new EmailMessageQueryDTO();
+        EmailRecipientQueryDTO raportoitavaVastaanottajaQuery = new EmailRecipientQueryDTO();
+        raportoitavaVastaanottajaQuery.setRecipientOid("102030405100");
+        raportoitavaViestiQuery.setEmailRecipientQueryDTO(raportoitavaVastaanottajaQuery);
                 
         List<RaportoitavaViesti> haetutRaportoitavatViestit = 
         	raportoitavaViestiDAO.findBySearchCriteria(raportoitavaViestiQuery);
@@ -112,10 +112,10 @@ public class RaportoitavaViestiDAOTest {
 		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
 
-		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
-        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
-        raportoitavaVastaanottajaQuery.setVastaanottajanNimi("Testi Oppilas");
-        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+		EmailMessageQueryDTO raportoitavaViestiQuery = new EmailMessageQueryDTO();
+        EmailRecipientQueryDTO raportoitavaVastaanottajaQuery = new EmailRecipientQueryDTO();
+        raportoitavaVastaanottajaQuery.setRecipientName("Testi Oppilas");
+        raportoitavaViestiQuery.setEmailRecipientQueryDTO(raportoitavaVastaanottajaQuery);
                 
         List<RaportoitavaViesti> haetutRaportoitavatViestit = 
         	raportoitavaViestiDAO.findBySearchCriteria(raportoitavaViestiQuery);
@@ -134,10 +134,10 @@ public class RaportoitavaViestiDAOTest {
 		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
 		raportoitavaViestiDAO.insert(raportoitavaViesti);
 
-		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
-        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
-        raportoitavaVastaanottajaQuery.setVastaanottajanSahkopostiosoite("ei.loydy@sposti.fi");
-        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+		EmailMessageQueryDTO raportoitavaViestiQuery = new EmailMessageQueryDTO();
+        EmailRecipientQueryDTO raportoitavaVastaanottajaQuery = new EmailRecipientQueryDTO();
+        raportoitavaVastaanottajaQuery.setRecipientEmail("ei.loydy@sposti.fi");
+        raportoitavaViestiQuery.setEmailRecipientQueryDTO(raportoitavaVastaanottajaQuery);
                 
         List<RaportoitavaViesti> haetutRaportoitavatViestit = 
         	raportoitavaViestiDAO.findBySearchCriteria(raportoitavaViestiQuery);

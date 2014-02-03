@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 
 @Component
-public class FileItemToRaportoitavaLiite {
+public class RaportoitavaLiiteConverter {
 
 	public static RaportoitavaLiite convert(FileItem fileItem) throws IOException {
 		RaportoitavaLiite liite = new RaportoitavaLiite();

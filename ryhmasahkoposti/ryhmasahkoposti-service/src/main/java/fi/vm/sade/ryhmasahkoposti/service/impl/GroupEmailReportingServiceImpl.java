@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
@@ -10,19 +11,17 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaVastaanottajaDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.FileItemToRaportoitavaLiite;
-import fi.vm.sade.ryhmasahkoposti.converter.HakukenttaToRaportoitavaViestiQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.converter.LahetyksenAloitusDTOToRaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageQueryDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaLiiteConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiToRaportoitavaViestiDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiConverter;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
@@ -30,18 +29,18 @@ import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavanViestinLiiteService;
-import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Service
 @Transactional(readOnly=true)
-public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinRaportointiService {
+public class GroupEmailReportingServiceImpl implements GroupEmailReportingService {
 	private RaportoitavaViestiService raportoitavaViestiService;
 	private RaportoitavaVastaanottajaService raportoitavaVastaanottajaService;
 	private RaportoitavaLiiteService raportoitavaLiiteService;
 	private RaportoitavanViestinLiiteService raportoitavanViestinLiiteService;
 
 	@Autowired
-	public RyhmasahkopostinRaportointiServiceImpl(RaportoitavaViestiService raportoitavaViestiService,
+	public GroupEmailReportingServiceImpl(RaportoitavaViestiService raportoitavaViestiService,
 		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService, 
 		RaportoitavaLiiteService raportoitavaLiiteService, 
 		RaportoitavanViestinLiiteService raportoitavanViestinLiiteService) {
@@ -71,100 +70,107 @@ public class RyhmasahkopostinRaportointiServiceImpl implements RyhmasahkopostinR
 	}
 
 	@Override
-	public List<RaportoitavaVastaanottajaDTO> haeRaportoitavatVastaanottajatViestiLahettamatta(int vastaanottajienLukumaara) {
+	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
 		List<RaportoitavaVastaanottaja> vastaanottajat = 
-			raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(vastaanottajienLukumaara);
-		return RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO.convert(vastaanottajat);
+			raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(listSize);
+		return RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO.convertToEmailRecipientDTO(vastaanottajat);
 	}
-
+	
 	@Override
-	public RaportoitavaViestiDTO haeRaportoitavaViesti(Long viestiID, boolean lahetysRaportti) {
+	public EmailMessageDTO getMessage(Long viestiID) {
 		RaportoitavaViesti viesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
 		List<RaportoitavaLiite> liitteet = 
 			raportoitavaLiiteService.haeRaportoitavanViestinLiitteet(viesti.getRaportoitavanViestinLiitteet());
-		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(viesti, liitteet, lahetysRaportti);
+		return EmailMessageDTOConverter.convertToEmailMessageDTO(viesti, liitteet);
 	}
 
+	
 	@Override
-	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit() {
+	public List<EmailMessageDTO> getMessages() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public List<RaportoitavaViestiDTO> haeRaportoitavatViestit(String hakuKentta) {
-		RaportoitavaViestiQueryDTO query = HakukenttaToRaportoitavaViestiQueryDTO.convert(hakuKentta);
+	public List<EmailMessageDTO> getMessages(String searchArgument) {
+		EmailMessageQueryDTO query = EmailMessageQueryDTOConverter.convert(searchArgument);
 		List<RaportoitavaViesti> raportoitavatViestit = raportoitavaViestiService.haeRaportoitavatViestit(query);
 		
-		return RaportoitavaViestiToRaportoitavaViestiDTO.convert(raportoitavatViestit);
+		return EmailMessageDTOConverter.convert(raportoitavatViestit);
 	}
 
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public Long raportoiLahetyksenAloitus(LahetyksenAloitusDTO lahetyksenAloitus) throws IOException {
+	public Long saveSendingEmail(EmailData emailData) throws IOException {
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(emailData.getEmail());
 			
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 	
 		List<RaportoitavaLiite> raportoitavatLiitteet = 
-			raportoitavaLiiteService.haeRaportoitavatLiitteet(lahetyksenAloitus.getLahetetynviestinliitteet());		
+			raportoitavaLiiteService.haeRaportoitavatLiitteet(emailData.getEmail().getAttachInfo());		
 		raportoitavanViestinLiiteService.tallennaRaportoitavanViestinLiitteet(
 			tallennettuRaportoitavaViesti, raportoitavatLiitteet);
 
 		Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
-			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(
-			tallennettuRaportoitavaViesti, lahetyksenAloitus.getVastaanottajat());
+			RaportoitavaVastaanottajaConverter.convert(
+			tallennettuRaportoitavaViesti, emailData.getRecipient());
 		raportoitavaVastaanottajaService.tallennaRaportoitavatVastaanottajat(raportoitavatVastaanottajat);		
 		
 		return tallennettuRaportoitavaViesti.getId();
 	}
 
 	@Override
-	public boolean raportoiLahetyksenLopetus(LahetyksenLopetusDTO lahetyksenLopetus) {
-		RaportoitavaViesti raportoitavaViesti = 
-			raportoitavaViestiService.haeRaportoitavaViesti(lahetyksenLopetus.getViestiID());
+	@Transactional(propagation=Propagation.REQUIRED)
+	public boolean startSending(EmailRecipientDTO recipient) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(
+			recipient.getEmailMessageID(), recipient.getEmail());
 		
-		if (raportoitavaViesti.getLahetysPaattyi() != null) {
+		if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
 			return false;
 		}
 		
-		raportoitavaViesti.setLahetysPaattyi(lahetyksenLopetus.getLahetysPaattyi());
-		raportoitavaViestiService.paivitaRaportoitavaViesti(raportoitavaViesti);
+		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
+		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
 		
 		return true;
 	}
-
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public boolean raportoiLahetyksenTilanne(LahetettyVastaanottajalleDTO lahetettyVastaanottajalle) {
+	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(lahetettyVastaanottajalle.getViestiID(), 
-			lahetettyVastaanottajalle.getVastaanottajanSahkoposti());
+			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(
+			recipient.getEmailMessageID(), recipient.getEmail());
 		
-		if (lahetettyVastaanottajalle.getLahetysalkoi() != null && lahetettyVastaanottajalle.getLahetyspaattyi() == null) {
-			if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
-				return false;
-			}
-		}
-
-		if (lahetettyVastaanottajalle.getLahetyspaattyi() != null && raportoitavaVastaanottaja.getLahetyspaattyi() != null) {
-			return false;
-		}
-		
-		raportoitavaVastaanottaja = raportoitavaVastaanottajaService.taydennaRaportoitavaaVastaanottajaa(
-			raportoitavaVastaanottaja, lahetettyVastaanottajalle);
+		raportoitavaVastaanottaja.setEpaonnistumisenSyy(result);
+		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		
 		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
 		
 		return true;
 	}
-
+	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public Long tallennaLiite(FileItem fileItem) throws IOException {
-		RaportoitavaLiite liite = FileItemToRaportoitavaLiite.convert(fileItem);
+	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(
+			recipient.getEmailMessageID(), recipient.getEmail());
+		
+		raportoitavaVastaanottaja.setLahetysOnnistui(result);
+		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
+		
+		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		
+		return true;
+	}
+	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public Long saveAttachment(FileItem fileItem) throws IOException {
+		RaportoitavaLiite liite = RaportoitavaLiiteConverter.convert(fileItem);
 		return raportoitavaLiiteService.tallennaRaportoitavaLiite(liite);
 	}
 }

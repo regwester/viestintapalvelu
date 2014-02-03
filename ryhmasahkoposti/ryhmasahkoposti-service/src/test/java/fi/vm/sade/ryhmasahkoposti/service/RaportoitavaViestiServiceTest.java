@@ -26,10 +26,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaVastaanottajaQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.converter.LahetyksenAloitusDTOToRaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailRecipientQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiConverter;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
@@ -60,7 +60,7 @@ public class RaportoitavaViestiServiceTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 		
@@ -78,7 +78,7 @@ public class RaportoitavaViestiServiceTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
  		raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 
 		List<RaportoitavaViesti> raportoitavatViestit = raportoitavaViestiService.haeRaportoitavatViestit();
@@ -97,16 +97,16 @@ public class RaportoitavaViestiServiceTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
 		Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
-			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(raportoitavaViesti, vastaanottajat);
+			RaportoitavaVastaanottajaConverter.convert(raportoitavaViesti, vastaanottajat);
 		raportoitavaViesti.setRaportoitavatVastaanottajat(raportoitavatVastaanottajat);
  		raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 
-		RaportoitavaViestiQueryDTO raportoitavaViestiQuery = new RaportoitavaViestiQueryDTO();
-        RaportoitavaVastaanottajaQueryDTO raportoitavaVastaanottajaQuery = new RaportoitavaVastaanottajaQueryDTO();
-        raportoitavaVastaanottajaQuery.setVastaanottajanSahkopostiosoite("vastaan.ottaja@sposti.fi");
-        raportoitavaViestiQuery.setVastaanottajaQuery(raportoitavaVastaanottajaQuery);
+		EmailMessageQueryDTO raportoitavaViestiQuery = new EmailMessageQueryDTO();
+        EmailRecipientQueryDTO raportoitavaVastaanottajaQuery = new EmailRecipientQueryDTO();
+        raportoitavaVastaanottajaQuery.setRecipientEmail("vastaan.ottaja@sposti.fi");
+        raportoitavaViestiQuery.setEmailRecipientQueryDTO(raportoitavaVastaanottajaQuery);
 
 		List<RaportoitavaViesti> raportoitavatViestit = 
 			raportoitavaViestiService.haeRaportoitavatViestit(raportoitavaViestiQuery);
@@ -125,7 +125,7 @@ public class RaportoitavaViestiServiceTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 
@@ -152,7 +152,7 @@ public class RaportoitavaViestiServiceTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 
@@ -172,7 +172,7 @@ public class RaportoitavaViestiServiceTest {
 		lahetyksenAloitus.setVastaanottajat(vastaanottajat);
 		
 		RaportoitavaViesti raportoitavaViesti = 
-			LahetyksenAloitusDTOToRaportoitavaViesti.convert(lahetyksenAloitus);
+			RaportoitavaViestiConverter.convert(lahetyksenAloitus);
 		RaportoitavaViesti tallennettuRaportoitavaViesti = 
 			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
 		

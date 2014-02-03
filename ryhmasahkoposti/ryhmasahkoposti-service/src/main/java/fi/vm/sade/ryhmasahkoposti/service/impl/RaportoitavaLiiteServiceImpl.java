@@ -7,7 +7,7 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaLiiteDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavanViestinLiite;
@@ -35,11 +35,12 @@ public class RaportoitavaLiiteServiceImpl implements RaportoitavaLiiteService {
 	}
 
 	@Override
-	public List<RaportoitavaLiite> haeRaportoitavatLiitteet(List<LahetettyLiiteDTO> lahetetytLiitteet) {
+	public List<RaportoitavaLiite> haeRaportoitavatLiitteet(List<AttachmentResponse> attachmentResponses) {
 		List<RaportoitavaLiite> liitteet = new ArrayList<RaportoitavaLiite>();
 		
-		for (LahetettyLiiteDTO lahetettyLiite : lahetetytLiitteet) {
-			RaportoitavaLiite liite = raportoitavaLiiteDAO.read(lahetettyLiite.getLiitetiedostonID());
+		for (AttachmentResponse attachmentResponse : attachmentResponses) {
+			Long liitteenID = new Long(attachmentResponse.getUuid());
+			RaportoitavaLiite liite = raportoitavaLiiteDAO.read(liitteenID);
 			liitteet.add(liite);
 		}
 		

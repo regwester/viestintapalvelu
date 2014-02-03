@@ -14,7 +14,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja;
+import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaConverter;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -32,7 +32,7 @@ public class LahetettyVastaanottajalleDTOToRaportoitavaVastaanottajaTest {
 		lahetettyVastaanottajalle.setLahetyspaattyi(null);
 		
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(lahetettyVastaanottajalle);
+			RaportoitavaVastaanottajaConverter.convert(lahetettyVastaanottajalle);
 		
 		assertNotNull(raportoitavaVastaanottaja);
 		assertNotNull(raportoitavaVastaanottaja.getVastaanottajaOid());
@@ -51,7 +51,7 @@ public class LahetettyVastaanottajalleDTOToRaportoitavaVastaanottajaTest {
 		lahetettyVastaanottajalle.setEpaonnistumisenSyy("Postilaatikko täynnä");
 		
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			LahetettyVastaanottajalleDTOToRaportoitavaVastaanottaja.convert(lahetettyVastaanottajalle);
+			RaportoitavaVastaanottajaConverter.convert(lahetettyVastaanottajalle);
 		
 		assertNotNull(raportoitavaVastaanottaja);
 		assertNotNull(raportoitavaVastaanottaja.getEpaonnistumisenSyy());

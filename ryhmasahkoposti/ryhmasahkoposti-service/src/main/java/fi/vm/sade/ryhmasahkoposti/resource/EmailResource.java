@@ -19,6 +19,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -37,6 +38,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 //import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
@@ -50,7 +52,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.RyhmasahkopostinRaportointiService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
 @Path("email")
@@ -63,7 +65,7 @@ public class EmailResource {
         this.emailService = emailService;
     }
 	@Autowired
-	private RyhmasahkopostinRaportointiService sendDbService;
+	private GroupEmailReportingService sendDbService;
 
 	
 	
@@ -76,25 +78,10 @@ public class EmailResource {
 	public EmailSendId sendGroupEmail(EmailData emailData) {
 		EmailMessage email = emailData.getEmail();		
 	    email.setFooter(emailData.getRecipient().get(0).getLanguageCode()); // Setting footer with the first ones language code  
-	    	    
-	    LahetyksenAloitusDTO emailInfo = new LahetyksenAloitusDTO();	    
-	    copyEmailInfo(email, emailInfo);
-		
-	    List<LahetettyVastaanottajalleDTO> recipients = new ArrayList<LahetettyVastaanottajalleDTO>(); 	    
-	    
-		for (EmailRecipient header : emailData.getRecipient()) {
-			log.log(Level.INFO, "Adding " + header.getEmail() + " to be sending list.");
-			
-			LahetettyVastaanottajalleDTO recipient = new LahetettyVastaanottajalleDTO();
-			copyRecipientInfo(header, recipient);
-			
-			recipients.add(recipient);
-		}
-		emailInfo.setVastaanottajat(recipients);
-		
+	    	    		
 		String sendId = "";
 		try {
-			sendId = Long.toString( sendDbService.raportoiLahetyksenAloitus(emailInfo) );
+			sendId = Long.toString( sendDbService.saveSendingEmail(emailData));
 			log.log(Level.INFO, "DB index is " + sendId);
 			
 		} catch (IOException e) {	
@@ -103,7 +90,15 @@ public class EmailResource {
 		return new EmailSendId(sendId);
 //		return responses;
     }
-
+    
+	@GET
+    //@Consumes("application/json")
+    //@Produces("application/json")
+    @Path("status")
+    public String status(String sendId) {
+        System.out.println("hop");
+        return("success");
+    }
 	
 	@POST
 	@Consumes("application/json")
@@ -119,45 +114,11 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendResult")
-	public RaportoitavaViestiDTO sendResult(String sendId) {
+	public EmailMessageDTO sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
 
-		return sendDbService.haeRaportoitavaViesti(Long.valueOf(sendId), false);
+		return sendDbService.getMessage(Long.valueOf(sendId));
     }
-	
-	
-	private void copyRecipientInfo(EmailRecipient header, LahetettyVastaanottajalleDTO recipient) {
-//		recipient.setLahetysalkoi(new Date());
-		recipient.setVastaanottajaOid(header.getOid());
-		recipient.setVastaanottajanOidTyyppi(header.getOidType());
-		recipient.setVastaanottajanSahkoposti(header.getEmail());
-		recipient.setKielikoodi(header.getLanguageCode());
-	}
-
-	private void copyEmailInfo(EmailMessage email, LahetyksenAloitusDTO emailInfo) {
-		emailInfo.setProsessi(email.getCallingProcess());
-	    emailInfo.setLahettajanSahkopostiosoite(email.getOwnerEmail());
-	    emailInfo.setVastauksensaajaOid(email.getSenderEmail());
-	    emailInfo.setVastauksenSaajanOidTyyppi(email.getSenderOidType());
-	    emailInfo.setVastauksensaajanSahkoposti(email.getSenderEmail());
-	    emailInfo.setAihe(email.getSubject());
-	    emailInfo.setViesti(email.getBody()+email.getFooter());
-	    emailInfo.setHtmlViesti(email.isHtml());
-	    emailInfo.setMerkisto(email.getCharset());
-	    
-	    List<LahetettyLiiteDTO> attachList = new LinkedList<LahetettyLiiteDTO>();
-	    for (AttachmentResponse attach : email.getAttachInfo()) {
-	    	LahetettyLiiteDTO att = new LahetettyLiiteDTO();
-	    	att.setLiitetiedostonID(Long.valueOf(attach.getUuid()));
-	    	att.setLiitetiedostonNimi(attach.getFileName());
-	    	att.setSisaltotyyppi(attach.getContentType());
-	    	attachList.add(att);	    	
-		}	    
-	    emailInfo.setLahetetynviestinliitteet(attachList);
-	    emailInfo.setLahetysAlkoi(new Date());
-	}
-	
-	
 		
 //	@POST
 //	@Consumes(MediaType.MULTIPART_FORM_DATA)
@@ -278,7 +239,7 @@ public class EmailResource {
         AttachmentResponse result = new AttachmentResponse();
         
         if (!item.isFormField()) {
-            Long id = sendDbService.tallennaLiite(item);
+            Long id = sendDbService.saveAttachment(item);
         	
             String fileName = item.getName();
             String contentType = item.getContentType();

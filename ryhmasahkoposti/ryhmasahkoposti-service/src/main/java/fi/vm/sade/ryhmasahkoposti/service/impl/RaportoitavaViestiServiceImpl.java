@@ -5,7 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.RaportoitavaViestiQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.RaportoitavaViestiDAO;
 import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
 import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
@@ -25,7 +25,7 @@ public class RaportoitavaViestiServiceImpl implements RaportoitavaViestiService 
 	}
 
 	@Override
-	public List<RaportoitavaViesti> haeRaportoitavatViestit(RaportoitavaViestiQueryDTO query) {
+	public List<RaportoitavaViesti> haeRaportoitavatViestit(EmailMessageQueryDTO query) {
 		return raportoitavaViestiDAO.findBySearchCriteria(query);
 	}
 

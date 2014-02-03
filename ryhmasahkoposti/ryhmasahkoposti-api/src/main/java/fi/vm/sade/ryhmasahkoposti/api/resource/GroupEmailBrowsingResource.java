@@ -9,7 +9,7 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
-import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 
 /**
  * REST-rajapinta ryhmäsähköpostien selailua varten
@@ -18,25 +18,25 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
  *
  */
 @Path(RestConstants.PATH_RYHMASAHKOPOSTI)
-public interface RyhmasahkopostiSelailuResource {
+public interface GroupEmailBrowsingResource {
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä lähettämät ryhmäshköpostiviestit
 	 * 
-	 * @return Lista raportoitavia viestejä {@link RaportoitavaViestiDTO} tai tyhjä lista
+	 * @return Lista raportoitavia viestejä {@link EmailMessageDTO} tai tyhjä lista
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_RYHMASAHKOPOSTI_SELAA)
 	@GET
-	public List<RaportoitavaViestiDTO> getRaportoitavatViestit();
+	public List<EmailMessageDTO> getBrowsingMessages();
 	
 	/**
 	 * Hakee hakuparametrin mulaiset viestit käyttäjän ja hänen käyttäjäryhmänsä lähettämistä ryhmäshköpostiviesteistä
 	 * 
 	 * @param hakuKentta Käyttäjän antama hakuparametri
-	 * @return Lista raportoitavia viestejä {@link RaportoitavaViestiDTO} tai tyhjä lista 
+	 * @return Lista raportoitavia viestejä {@link EmailMessageDTO} tai tyhjä lista 
 	 */
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_RYHMASAHKOPOSTI_HAE)
 	@GET
-	public List<RaportoitavaViestiDTO> getRaportoitavatViestit(@QueryParam(RestConstants.PARAM_HAKUKENTTA) String hakuKentta);	
+	public List<EmailMessageDTO> getBrowsingMessages(@QueryParam(RestConstants.PARAM_HAKUKENTTA) String searchArgument);	
 }

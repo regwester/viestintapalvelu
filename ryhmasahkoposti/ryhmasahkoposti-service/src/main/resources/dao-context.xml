@@ -29,7 +29,7 @@
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />
 
-	<!-- Flyway definitions for creating the database 
+	<!-- Flyway definitions for creating the database -->
     <bean id="dbDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
         <property name="jndiName" value="java:comp/env/jdbc/viestinta"/>
     </bean>
@@ -38,5 +38,4 @@
         <property name="initOnMigrate" value="${flyway.initOnMigrate}"/>
         <property name="dataSource" ref="dbDataSource" />
     </bean>
-	-->
 </beans>
