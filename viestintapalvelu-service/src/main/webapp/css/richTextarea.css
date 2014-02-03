@@ -1,0 +1,49 @@
+div.richTextArea {
+}
+
+div.richTextArea > div.editor, div.richTextArea > div.preview {
+	min-height:1em;
+}
+	
+div.richTextArea > div.preview {
+    max-height:190px;
+	border: 1px solid #cccccc;
+    border-radius:4px;
+	padding:20px 10px 10px 10px;
+	overflow:auto;
+	cursor:pointer;
+}
+
+div.richTextArea > div.preview.empty {
+	background-color: #cccccc;
+	text-align:center;
+	font-style: italic;
+}
+
+div.richTextArea > div.preview:hover {
+/*	padding:0;*/
+	border: 1px dotted #000000;
+	overflow:auto;
+}
+
+div.richTextArea > div.editor {
+	overflow:hidden;
+	height:220px;
+	padding: 1px 0 1px 0;
+}
+
+div.richTextArea > div.editor > div.mce-tinymce {
+/*	height:100%;*/
+}
+
+div.richTextArea > div.editor > div.mce-tinymce > iframe {
+	height:auto;	
+}
+
+div.richTextArea > div.editor > p {
+	text-align:right;
+}
+
+div.richTextArea > div.editor > p.overflow {
+	color:#e0a020;
+}

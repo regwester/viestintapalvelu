@@ -4,11 +4,12 @@
     <target name="deploy-to-remote-tomcat">
 
         <!--
-            shell command:
-            #ant -Dtomcat-host=luokka -Dtomcat-port=8311
-        -->
+shell command:
+#ant -Dtomcat-host=luokka -Dtomcat-port=8311
+-->
         <property name="oph.name" value="viestintapalvelu"/>
         <property name="pom.version" value="8.0-SNAPSHOT"/>
+        <property name="ryhmasahkoposti.pom.version" value="0.0.2-SNAPSHOT"/>
 
         <property name="maven.repo" value="${user.home}/.m2/repository"/>
         <property name="tomcat.name" value="tomcat_${oph.name}"/>
@@ -34,31 +35,44 @@
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false"/>
 
-        <echo>Copy new viestintapalvelu.war</echo>
+        <echo>Copy files to server...</echo>
         <scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
              keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}">
 
             <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu-service/${pom.version}">
                 <include name="*.war"/>
             </fileset>
+
+            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/ryhmasahkoposti-service/${ryhmasahkoposti.pom.version}">
+                <include name="*.war"/>
+            </fileset>
+
+            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/ryhmasahkoposti-app/${ryhmasahkoposti.pom.version}">
+                <include name="*.war"/>
+            </fileset>
+
         </scp>
 
         <echo>unzip war-files to tom webapp dir...</echo>
         <sshexec command="
-				
-				mkdir ${tomcat.home}/webapps/viestintapalvelu;
-				unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
-				
-				rm -rf ${tomcat.home}/webapps/*.war;
-				"
+mkdir ${tomcat.home}/webapps/viestintapalvelu;
+mkdir ${tomcat.home}/webapps/ryhmasahkoposti/ryhmasahkoposti-app;
+mkdir ${tomcat.home}/webapps/ryhmasahkoposti/ryhmasahkoposti-service;
+
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-app*.war;
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/ryhmasahkoposti-service*.war;
+
+rm -rf ${tomcat.home}/webapps/*.war;"
+
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false"/>
 
-		<echo>Remove extra log4j config-files</echo>
-		<sshexec command="find ${tomcat.home} -name 'log4j.properties' -exec rm -rf {} \;"
+<echo>Remove extra log4j config-files</echo>
+<sshexec command="find ${tomcat.home} -name 'log4j.properties' -exec rm -rf {} \;"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
                  passphrase="${ssh.keypass}" trust="true" failonerror="false" />
-				 
+
         <echo>Start Tomcat</echo>
         <sshexec command="/data00/oph/tomcat/ophtomcat ${oph.name} start"
                  host="${tomcat-host}" username="tomcat" keyfile="${ssh.keyfile}"
@@ -68,7 +82,7 @@
         <waitfor maxwait="30000" checkevery="500">
             <http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu"/>
         </waitfor>
-        <fail message="App did not come up.  Check your log files, fix and try again.  Good Luck :-).">
+        <fail message="App did not come up. Check your log files, fix and try again. Good Luck :-).">
             <condition>
                 <not>
                     <http url="http://${tomcat-host}:${tomcat-port}/viestintapalvelu/buildversion.txt"/>
@@ -76,7 +90,8 @@
             </condition>
         </fail>
 
-        <echo>Successfully deployed viestintapalvelu.war to ${tomcat-host}</echo>
+        <echo>Successfully deployed to ${tomcat-host}</echo>
     </target>
 
 </project>
+

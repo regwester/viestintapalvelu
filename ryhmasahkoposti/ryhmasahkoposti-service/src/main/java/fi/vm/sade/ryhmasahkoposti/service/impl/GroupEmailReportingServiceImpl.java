@@ -151,14 +151,36 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		
 		return true;
 	}
+
+	@Override
+	public boolean startSending(EmailRecipientDTO recipient) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
+
+		System.out.println(raportoitavaVastaanottaja.getId() +" "+ raportoitavaVastaanottaja.getLahetysalkoi() + " "+ recipient.getEmailMessageID());
+		if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
+			return false;
+		}
+		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
+		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		return true;
+	}
+	@Override
+	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
+		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
+		raportoitavaVastaanottaja.setEpaonnistumisenSyy(result);
+		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
+		raportoitavaVastaanottajaService
+				.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		return true;
+	}
 	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
 		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(
-			recipient.getEmailMessageID(), recipient.getEmail());
-		
+				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
 		raportoitavaVastaanottaja.setLahetysOnnistui(result);
 		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
 		

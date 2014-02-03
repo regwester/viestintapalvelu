@@ -10,7 +10,6 @@ public class EmailRecipientDTO extends EmailRecipient {
     private String sendSuccessfull;
     private String timestamp;
     
-    
     public Long getRecipientID() {
         return recipientID;
     }

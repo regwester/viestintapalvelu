@@ -44,8 +44,7 @@ public class RaportoitavaVastaanottajaServiceImpl implements RaportoitavaVastaan
 
 	@Override
 	public RaportoitavaVastaanottaja haeRaportoitavaVastaanottaja(Long id) {
-		// TODO Auto-generated method stub
-		return null;
+		return raportoitavaVastaanottajaDAO.findByVastaanottajanID(id);
 	}
 
 	@Override
