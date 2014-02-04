@@ -7,7 +7,7 @@
  <li> Aina kun klikataan valintalistasta lisää tulostettavia kirjeitä nuoli ylöspäin-näppäimellä,
       generoidaan muistiin (client-päässä) kirje käyttäen sillä hetkellä editorissa olevaa sisältöä! </li>
  <li> Kun valitaan tulostettavien kirjeiden lukumäärää pienemmäksi, poistetaan (client-päässä) generoitujen kirjeiden
-      jonosta viimeisimpä, joten muutokset editorin sisältöön eivät luonnollisesti vaikuta tässä vaiheessa.
+      jonosta viimeisin, joten muutokset editorin sisältöön eivät luonnollisesti vaikuta tässä vaiheessa.
  <li> Alussa on kirjeiden lista tyhjä. Muokkaa siis ensin kirjepohjaa ja lisää sitten tulostettavien kirjeiden määrää.</li>
  <li> Jos valitset tulostettavien määräksi nolla, tyhjenee valmiiksi alustettujen kirjeiden lista ja PDF-painike disabloituu. </li>
 </ul>
@@ -27,7 +27,5 @@
     
     <h4>Alla on raakana HTML-koodina ylläolevan editorin sisältö</h4>
     <div>{{tinymceModel}}</div>
-    <hr>
-    <div>{{getTrustedHTML()}}</div>
     
 </div>

@@ -67,9 +67,16 @@ public class KoekutsukirjeResource extends AsynchronousResource {
     @Path("/pdf")
     public Response pdf(KoekutsukirjeBatch input, @Context HttpServletRequest request) throws IOException,
             DocumentException {
-        byte[] pdf = koekutsukirjeBuilder.printPDF(input);
-        String documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8",
-                "koekutsukirje.pdf", pdf));
+    	String documentId;
+    	try {
+    		byte[] pdf = koekutsukirjeBuilder.printPDF(input);
+    		documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8",
+    				"koekutsukirje.pdf", pdf));
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		LOG.error("Koekutsukirje PDF failed: {}", e.getMessage());
+    		return createFailureResponse(request);
+    	}
         return createResponse(request, documentId);
     }
 
@@ -86,7 +93,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/async/pdf")
-    public Response asyncPdf(final KoekutsukirjeBatch input, @Context HttpServletRequest request) throws IOException,
+    public Response asyncPdf(final KoekutsukirjeBatch input, @Context final HttpServletRequest request) throws IOException,
             DocumentException {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String documentId = globalRandomId();
@@ -102,6 +109,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
                 } catch (Exception e) {
                     e.printStackTrace();
                     LOG.error("Koekutsukirje PDF async failed: {}", e.getMessage());
+                    createFailureResponse(request);
                 }
             }
         });

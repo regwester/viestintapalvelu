@@ -148,9 +148,14 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function print(url, batch) {
-            $http.post(url, batch).success(function (data) {
-                $window.location.href = data;
-            })
+            $http.post(url, batch).
+            	success(function (data) {
+            		$window.location.href = data;
+            	}).
+            	error(function (data) {
+            		// This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+            		$window.alert("Tulostiedoston luonti epäonnistui");
+            	})
         }
 
         return {
