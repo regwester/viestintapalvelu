@@ -1,5 +1,6 @@
 var services = angular.module('viestintapalvelu');
 
+// --- Resources ---
 services.factory('GroupEmailFactory', function ($resource) {
 	return $resource('/ryhmasahkoposti-service/email/sendGroupEmail', {}, {  
 		  sendGroupEmail: { method: 'POST', isArray: false}
@@ -18,8 +19,8 @@ services.factory('EmailResultFactory', function ($resource) {
 	  });
 });
 
-// ----- //
 
+//--- Upload ---
 services.factory('uploadManager', function ($rootScope) {
     var _files = [];
     return {
@@ -48,7 +49,7 @@ services.factory('uploadManager', function ($rootScope) {
             $rootScope.$broadcast('uploadProgress', percentage);
         },
         setResult : function(result) {
-//        	alert("result " + result);
+//        	alert("result " + result); 
             $rootScope.$broadcast('fileLoaded', result);
         	
         }
@@ -61,7 +62,6 @@ services.directive('upload', ['uploadManager', function factory(uploadManager) {
         restrict: 'A',
         link: function (scope, element, attrs) {
             $(element).fileupload({
-//                dataType: 'text',
                 dataType: 'json',
                 add: function (e, data) {
                     uploadManager.add(data);

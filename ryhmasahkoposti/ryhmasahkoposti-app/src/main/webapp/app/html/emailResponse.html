@@ -5,16 +5,39 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
-	            	<h2>Viesti</h3>
+	            	<h2>Viesti</h2>
 		    </div>		
 		</div>
 		
 		<hr></hr>
 		            
-		<div class="control-group">		
-		    <label class="control-label"></label>
-		    <div class="controls">Viesti lähetetty onnistuneesti</div>		
+		<div class="control-group">			    
+			<div class="alert alert-block alert-info">		
+	 			<table border="0">
+				  <tr>
+				    <td>Viestejä yhteensä&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				    <td>{{LahetyksenTilanneDTO.vastaanottajienLukumaara}}</td>
+				  </tr>
+				  <tr>
+				    <td>Siirretty</td>
+				    <td>{{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}}</td>
+				  </tr>
+				  <tr>
+				    <td>Epäonnistuneet</td>
+				    <td>{{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}}</td>
+				  </tr>
+				</table>		
+			</div>
 		</div>
+		       
+		<!-- <div class="control-group">		
+		    <label class="control-label">Tilasto</label>
+ 		    <div class="controls">
+ 		    	Viestejä yhteensä {{LahetyksenTilanneDTO.vastaanottajienLukumaara}}. <br>
+ 		    	Siirretty: {{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}} <br>
+ 		    	Epäonnistuneet: {{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}}
+ 		    </div> 		    	
+		</div>-->
 		
 		<div class="control-group">		
 		    <label class="control-label">Prosessi</label>
@@ -23,22 +46,22 @@
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähettäjä</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.lahettajan_sahkopostiosoite}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.lahettajanSahkopostiosoite}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Vastausosoite</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.vastauksensaajan_sahkopostiosoite}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.vastauksenSaajanSahkopostiosoite}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähetystunnus</label>
-		    <div class="controls">{{emailsendid.id}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.lahetystunnus}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähetysajankohta</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.lahetysAlkoi}} - {{RaportoitavaViestiDTO.lahetysPaattyi}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.lahetysAlkoi | date:'yyyy-MM-dd HH:mm'}} - {{RaportoitavaViestiDTO.lahetysPaattyi | date:'HH:mm'}}</div>		
 		</div>
     	 
 		<div class="control-group">		
@@ -48,32 +71,40 @@
     	 
 		<div class="control-group">		
 		    <label class="control-label">Sisältö</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.viesti}}</div>		
+		    <div class="controls">{{RaportoitavaViestiDTO.viestinSisalto}}</div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Liitetiedostot</label>
-		    <div class="controls">Liitetiedostot</div>		
+			<div class="controls" border="0" ng-repeat="vast in RaportoitavaViestiDTO.liitetiedostot">								    		 
+ 					{{vast}}
+			</div>	
 		</div>
     	 
 		<div class="control-group">		
-		    <label class="control-label">{{}} vastaanottajaa</label>
-		    <div class="controls">Liitetiedostot</div>		
+		    <label class="control-label">{{RaportoitavaViestiDTO.vastaanottajat.length}} vastaanottajaa</label>
+				<div class="controls" border="0" ng-repeat="vast in RaportoitavaViestiDTO.vastaanottajat">								    		 
+  					{{vast.vastaanottajanSahkopostiosoite}}
+				</div>	
 		</div>
     	 
 		<hr></hr>
     </form>
 
-<!-- 
+ <!-- 
     <form novalidate="novalidate" >
         <table border="0">
         	<tr>
-	            <td><button class="inline-operation btn btn-small">Takaisin</button></td>
+	            <td>&nbsp;</td>
 	            <td><h3>Viesti</h3></td>
 	            <td>&nbsp;</td>
-            </tr><tr>
+            </tr>
+            
+			<hr></hr>
+            
+            <tr>
 	            <td>&nbsp;</td>
-	            <td>Viesti lähetetty onnistuneesti</td>
+	            <td>Viesti lähetetty</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Prosessi</td>
@@ -81,19 +112,19 @@
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Lähettäjä</td>
-	            <td>{{RaportoitavaViestiDTO.lahettajan_sahkopostiosoite}}</td>
+	            <td>{{RaportoitavaViestiDTO.lahettajanSahkopostiosoite}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Vastausosoite</td>
-	            <td>{{RaportoitavaViestiDTO.vastauksensaajan_sahkopostiosoite}}</td>
+	            <td>{{RaportoitavaViestiDTO.vastauksenSaajanSahkopostiosoite}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Lähetystunnus</td>
-	            <td>{{emailsendid.id}}</td>
+	            <td>{{RaportoitavaViestiDTO.lahetystunnus}}</td>
 	            <td>&nbsp;</td>
-            </tr><tr> <!-- 
-                <td>Lähetysajankohta</td>
-	            <td>{{RaportoitavaViestiDTO.lahetysAlkoi}} - {{RaportoitavaViestiDTO.lahetysPaattyi}}</td>
+            </tr><tr>
+                <td>Lähetysajankohta&nbsp;&nbsp;&nbsp;</td>
+	            <td>{{RaportoitavaViestiDTO.lahetysAlkoi | date:'yyyy-MM-dd HH:mm'}} - {{RaportoitavaViestiDTO.lahetysPaattyi | date:'HH:mm'}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Aihe</td>
@@ -101,7 +132,7 @@
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Sisältö</td>
-	            <td>{{RaportoitavaViestiDTO.viesti}}</td>
+	            <td>{{RaportoitavaViestiDTO.viestinSisalto}}</td>
 	            <td>&nbsp;</td>
             </tr><tr>
 	            <td>Liitetiedostot</td>
@@ -109,21 +140,20 @@
 	            <td>&nbsp;</td>
 
             </tr><tr>
-               	<td>{{}} vastaanottajaa</td>
-		    	<td>&nbsp;</td>
+               	<td>{{RaportoitavaViestiDTO.vastaanottajat.length}} vastaanottajaa</td>
+    			<td>
+					<div border="0" ng-repeat="vast in RaportoitavaViestiDTO.vastaanottajat">								    		 
+	  					{{vast.vastaanottajanSahkopostiosoite}}
+					</div>	
+				</td>
 	            <td>&nbsp;</td>
 			</tr>
-			<tr>
-    			<td>&nbsp;</td>
-    			<td>
-    		 		<div border="0" ng-repeat="response in emailresponse"> 								    		 
- 						{{response.header.email}} - {{response.header.sendStatus}}      			
-					</div>		        
-				</td>
-			</tr>
+
+		<hr></hr>
 
         </table>
-    </form>	  
- -->      
+    </form>	
+     -->  
+      
 </div>
 
