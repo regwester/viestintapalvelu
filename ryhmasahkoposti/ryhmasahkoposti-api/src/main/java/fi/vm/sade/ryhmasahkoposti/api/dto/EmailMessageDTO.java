@@ -7,7 +7,6 @@ public class EmailMessageDTO extends EmailMessage {
 	private Long messageID;
 	private Date startTime;
 	private Date endTime;
-	private String sendingReport;
 	private List<EmailAttachmentDTO> attachments;
 	private List<EmailRecipientDTO> recipients;
 
@@ -59,13 +58,4 @@ public class EmailMessageDTO extends EmailMessage {
 	public void setEndTime(Date endTime) {
 		this.endTime = endTime;
 	}
-
-	public String getSendingReport() {
-		return sendingReport;
-	}
-
-	public void setSendingReport(String sendingReport) {
-		this.sendingReport = sendingReport;
-	}
-
 }

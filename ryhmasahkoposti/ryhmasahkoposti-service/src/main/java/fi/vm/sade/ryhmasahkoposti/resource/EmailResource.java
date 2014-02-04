@@ -10,7 +10,6 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -39,18 +38,13 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
 //import com.google.inject.Singleton;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
@@ -104,10 +98,10 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendEmailStatus")
-	public LahetyksenTilanneDTO sendEmailStatus(String sendId) {
+	public SendingStatusDTO sendEmailStatus(String sendId) {
 		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
 
-		return sendDbService.haeLahetyksenTulos(Long.valueOf(sendId));
+		return sendDbService.getSendingStatus(Long.valueOf(sendId));
     }
 	
 	@POST

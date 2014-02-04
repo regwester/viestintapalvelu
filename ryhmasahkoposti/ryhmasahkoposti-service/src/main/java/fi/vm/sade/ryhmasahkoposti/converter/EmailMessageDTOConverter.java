@@ -8,76 +8,75 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
 @Component
 public class EmailMessageDTOConverter {
-	public static List<EmailMessageDTO> convert(List<RaportoitavaViesti> raportoitavatViestit) {
-		List<EmailMessageDTO> emailMessageDTO = new ArrayList<EmailMessageDTO>();
+	public static List<EmailMessageDTO> convert(List<ReportedMessage> reportedMessages) {
+		List<EmailMessageDTO> emailMessageDTOs = new ArrayList<EmailMessageDTO>();
 		
-		for (RaportoitavaViesti raportoitavaViesti : raportoitavatViestit) {			
-			emailMessageDTO.add(convertToEmailMessageDTO(raportoitavaViesti));
+		for (ReportedMessage reportedMessage : reportedMessages) {
+			EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(reportedMessage);
+			emailMessageDTO.setRecipientDTOs(convertEmailRecipientDTO(reportedMessage));
+			emailMessageDTOs.add(emailMessageDTO);
 		}
 		
-		return emailMessageDTO;
+		return emailMessageDTOs;
 	}
 
-	public static EmailMessageDTO convertToEmailMessageDTO(RaportoitavaViesti raportoitavaViesti, 
-		List<RaportoitavaLiite> raportoitavatLiitteet) {
-		
-		EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(raportoitavaViesti);
-		emailMessageDTO.setAttachmentDTOs(convertEmailAttachmentDTO(raportoitavatLiitteet));
-		emailMessageDTO.setRecipients(convertEmailRecipientDTO(raportoitavaViesti));
+	public static EmailMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments) {
+		EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(reportedMessage);
+		emailMessageDTO.setAttachmentDTOs(convertEmailAttachmentDTO(reportedAttachments));
+		emailMessageDTO.setRecipients(convertEmailRecipientDTO(reportedMessage));
 		
 		return emailMessageDTO;
 	}
 	
-	private static List<EmailRecipientDTO> convertEmailRecipientDTO(
-		RaportoitavaViesti raportoitavaViesti) {
-		List<EmailRecipientDTO> vastaanottajat = new ArrayList<EmailRecipientDTO>();
+	private static List<EmailRecipientDTO> convertEmailRecipientDTO(ReportedMessage reportedMessage) {
+		List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
 		
-		for (RaportoitavaVastaanottaja vastaanottaja : raportoitavaViesti.getRaportoitavatVastaanottajat()) {
+		for (ReportedRecipient reportedRecipient : reportedMessage.getReportedRecipients()) {
 			EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
 			
-			emailRecipientDTO.setRecipientID(vastaanottaja.getId());
-			emailRecipientDTO.setSendSuccessfull(vastaanottaja.getLahetysOnnistui());
-			emailRecipientDTO.setOid(vastaanottaja.getVastaanottajaOid());
-			emailRecipientDTO.setEmail(vastaanottaja.getVastaanottajanSahkoposti());
+			emailRecipientDTO.setRecipientID(reportedRecipient.getId());
+			emailRecipientDTO.setSendSuccessfull(reportedRecipient.getSendingSuccesful());
+			emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
+			emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
 			
-			vastaanottajat.add(emailRecipientDTO);
+			recipients.add(emailRecipientDTO);
 		}
 		
-		return vastaanottajat;
+		return recipients;
 	}
 
-	private static List<EmailAttachmentDTO> convertEmailAttachmentDTO(List<RaportoitavaLiite> raportoitavatLiitteet) {
+	private static List<EmailAttachmentDTO> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
 		List<EmailAttachmentDTO> attachments = new ArrayList<EmailAttachmentDTO>();
 		
-		for (RaportoitavaLiite liite : raportoitavatLiitteet) {
+		for (ReportedAttachment reportedAttachment : reportedAttachments) {
 			EmailAttachmentDTO attachmentDTO = new EmailAttachmentDTO();
-			attachmentDTO.setAttachmentID(liite.getId());
-			attachmentDTO.setName(liite.getLiitetiedostonNimi());
-			attachmentDTO.setData(liite.getLiitetiedosto());
-			attachmentDTO.setContentType(liite.getSisaltotyyppi());
+			attachmentDTO.setAttachmentID(reportedAttachment.getId());
+			attachmentDTO.setName(reportedAttachment.getAttachmentName());
+			attachmentDTO.setData(reportedAttachment.getAttachment());
+			attachmentDTO.setContentType(reportedAttachment.getContentType());
 			attachments.add(attachmentDTO);
 		}
 			
 		return attachments;
 	}
 
-	private static EmailMessageDTO convertToEmailMessageDTO(RaportoitavaViesti raportoitavaViesti) {
+	private static EmailMessageDTO convertToEmailMessageDTO(ReportedMessage reportedMessage) {
 		EmailMessageDTO emailMessageDTO = new EmailMessageDTO();
 		
-		emailMessageDTO.setMessageID(raportoitavaViesti.getId());
-		emailMessageDTO.setSubject(raportoitavaViesti.getAihe());
-		emailMessageDTO.setSenderEmail(raportoitavaViesti.getLahettajanSahkopostiosoite());
-		emailMessageDTO.setStartTime(raportoitavaViesti.getLahetysAlkoi());
-		emailMessageDTO.setEndTime(raportoitavaViesti.getLahetysPaattyi());
-		emailMessageDTO.setCallingProcess(raportoitavaViesti.getProsessi());
-		emailMessageDTO.setReplyToAddress(raportoitavaViesti.getVastauksensaajanSahkopostiosoite());
-		emailMessageDTO.setBody(raportoitavaViesti.getViesti());
+		emailMessageDTO.setMessageID(reportedMessage.getId());
+		emailMessageDTO.setSubject(reportedMessage.getSubject());
+		emailMessageDTO.setSenderEmail(reportedMessage.getSenderEmail());
+		emailMessageDTO.setStartTime(reportedMessage.getSendingStarted());
+		emailMessageDTO.setEndTime(reportedMessage.getSendingEnded());
+		emailMessageDTO.setCallingProcess(reportedMessage.getProcess());
+		emailMessageDTO.setReplyToAddress(reportedMessage.getReplyToEmail());
+		emailMessageDTO.setBody(reportedMessage.getMessage());
 		
 		return emailMessageDTO;
 	}

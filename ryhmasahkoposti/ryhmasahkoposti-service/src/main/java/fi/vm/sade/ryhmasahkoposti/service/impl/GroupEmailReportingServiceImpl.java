@@ -14,185 +14,150 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageQueryDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaLiiteConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.RaportoitavaViestiConverter;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaViestiService;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavanViestinLiiteService;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Service
 @Transactional(readOnly=true)
 public class GroupEmailReportingServiceImpl implements GroupEmailReportingService {
-	private RaportoitavaViestiService raportoitavaViestiService;
-	private RaportoitavaVastaanottajaService raportoitavaVastaanottajaService;
-	private RaportoitavaLiiteService raportoitavaLiiteService;
-	private RaportoitavanViestinLiiteService raportoitavanViestinLiiteService;
+	private ReportedMessageService reportedMessageService;
+	private ReportedRecipientService reportedRecipientService;
+	private ReportedAttachmentService reportedAttachmentService;
+	private ReportedMessageAttachmentService reportedMessageAttachmentService;
 
 	@Autowired
-	public GroupEmailReportingServiceImpl(RaportoitavaViestiService raportoitavaViestiService,
-		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService, 
-		RaportoitavaLiiteService raportoitavaLiiteService, 
-		RaportoitavanViestinLiiteService raportoitavanViestinLiiteService) {
-		this.raportoitavaViestiService = raportoitavaViestiService;
-		this.raportoitavaVastaanottajaService = raportoitavaVastaanottajaService;
-		this.raportoitavaLiiteService = raportoitavaLiiteService;
-		this.raportoitavanViestinLiiteService = raportoitavanViestinLiiteService;
-	}
-	
-	@Override
-	public LahetyksenTilanneDTO haeLahetyksenTulos(Long viestiID) {
-		LahetyksenTilanneDTO lahetyksenTulos = new LahetyksenTilanneDTO();
-		
-		RaportoitavaViesti raportoitavaViesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
-		
-		lahetyksenTulos.setViestiID(viestiID);
-		lahetyksenTulos.setLahetysAlkoi(raportoitavaViesti.getLahetysAlkoi());
-		lahetyksenTulos.setLahetysPaattyi(raportoitavaViesti.getLahetysPaattyi());
-		lahetyksenTulos.setVastaanottajienLukumaara(
-			raportoitavaVastaanottajaService.haeRaportoitavienVastaanottajienLukumaara(viestiID));
-		lahetyksenTulos.setLahetysOnnistuiLukumaara(
-			raportoitavaVastaanottajaService.haeRaportoitavienVastaanottajienLukumaara(viestiID, true));
-		lahetyksenTulos.setLahetysEpaonnistuiLukumaara(
-			raportoitavaVastaanottajaService.haeRaportoitavienVastaanottajienLukumaara(viestiID, false));
-		
-		return lahetyksenTulos;
-	}
-
-	@Override
-	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
-		List<RaportoitavaVastaanottaja> vastaanottajat = 
-			raportoitavaVastaanottajaService.haeRaportoitavatVastaanottajatViestiLahettamatta(listSize);
-		return RaportoitavaVastaanottajaToRaportoitavaVastaanottajaDTO.convertToEmailRecipientDTO(vastaanottajat);
+	public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
+		ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService, 
+		ReportedMessageAttachmentService reportedMessageAttachmentService) {
+		this.reportedMessageService = reportedMessageService;
+		this.reportedRecipientService = reportedRecipientService;
+		this.reportedAttachmentService = reportedAttachmentService;
+		this.reportedMessageAttachmentService = reportedMessageAttachmentService;
 	}
 	
 	@Override
 	public EmailMessageDTO getMessage(Long viestiID) {
-		RaportoitavaViesti viesti = raportoitavaViestiService.haeRaportoitavaViesti(viestiID);
-		List<RaportoitavaLiite> liitteet = 
-			raportoitavaLiiteService.haeRaportoitavanViestinLiitteet(viesti.getRaportoitavanViestinLiitteet());
-		return EmailMessageDTOConverter.convertToEmailMessageDTO(viesti, liitteet);
+		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(viestiID);
+		List<ReportedAttachment> liitteet = 
+			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+		return EmailMessageDTOConverter.convert(reportedMessage, liitteet);
 	}
 
-	
 	@Override
 	public List<EmailMessageDTO> getMessages() {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
+	
 	@Override
 	public List<EmailMessageDTO> getMessages(String searchArgument) {
 		EmailMessageQueryDTO query = EmailMessageQueryDTOConverter.convert(searchArgument);
-		List<RaportoitavaViesti> raportoitavatViestit = raportoitavaViestiService.haeRaportoitavatViestit(query);
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);
 		
-		return EmailMessageDTOConverter.convert(raportoitavatViestit);
+		return EmailMessageDTOConverter.convert(reportedMessages);
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
-	public Long saveSendingEmail(EmailData emailData) throws IOException {
-		RaportoitavaViesti raportoitavaViesti = 
-			RaportoitavaViestiConverter.convert(emailData.getEmail());
-			
-		RaportoitavaViesti tallennettuRaportoitavaViesti = 
-			raportoitavaViestiService.tallennaRaportoitavaViesti(raportoitavaViesti);
-	
-		List<RaportoitavaLiite> raportoitavatLiitteet = 
-			raportoitavaLiiteService.haeRaportoitavatLiitteet(emailData.getEmail().getAttachInfo());		
-		raportoitavanViestinLiiteService.tallennaRaportoitavanViestinLiitteet(
-			tallennettuRaportoitavaViesti, raportoitavatLiitteet);
-
-		Set<RaportoitavaVastaanottaja> raportoitavatVastaanottajat = 
-			RaportoitavaVastaanottajaConverter.convert(
-			tallennettuRaportoitavaViesti, emailData.getRecipient());
-		raportoitavaVastaanottajaService.tallennaRaportoitavatVastaanottajat(raportoitavatVastaanottajat);		
+	public SendingStatusDTO getSendingStatus(Long messageID) {
+		SendingStatusDTO sendingStatus = new SendingStatusDTO();
 		
-		return tallennettuRaportoitavaViesti.getId();
+		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+		
+		sendingStatus.setMessageID(messageID);
+		sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
+		sendingStatus.setSendingEnded(reportedMessage.getSendingEnded());
+		sendingStatus.setNumberOfReciepients(
+			reportedRecipientService.getNumberOfRecipients(messageID));
+		sendingStatus.setNumberOfSuccesfulSendings(
+			reportedRecipientService.getNumerOfReportedRecipients(messageID, true));
+		sendingStatus.setNumberOfFailedSendings(
+			reportedRecipientService.getNumerOfReportedRecipients(messageID, false));
+		
+		return sendingStatus;
 	}
 
 	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
-	public boolean startSending(EmailRecipientDTO recipient) {
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(
-			recipient.getEmailMessageID(), recipient.getEmail());
-		
-		if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
-			return false;
-		}
-		
-		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
-		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
-		
-		return true;
+	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
+		List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
+		return EmailRecipientDTOConverter.convert(reportedRecipients);
 	}
+
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-			raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(
-			recipient.getEmailMessageID(), recipient.getEmail());
-		
-		raportoitavaVastaanottaja.setEpaonnistumisenSyy(result);
-		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
-		
-		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
-		
+		ReportedRecipient reportedRecipient = 
+			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
+		reportedRecipient.setFailureReason(result);
+		reportedRecipient.setSendingEnded(new Date());
+		reportedRecipientService.updateReportedRecipient(reportedRecipient);
 		return true;
 	}
 
-	@Override
-	public boolean startSending(EmailRecipientDTO recipient) {
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
-
-		System.out.println(raportoitavaVastaanottaja.getId() +" "+ raportoitavaVastaanottaja.getLahetysalkoi() + " "+ recipient.getEmailMessageID());
-		if (raportoitavaVastaanottaja.getLahetysalkoi() != null) {
-			return false;
-		}
-		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
-		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
-		return true;
-	}
-	@Override
-	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
-		raportoitavaVastaanottaja.setEpaonnistumisenSyy(result);
-		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
-		raportoitavaVastaanottajaService
-				.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
-		return true;
-	}
-	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = 
-				raportoitavaVastaanottajaService.haeRaportoitavaVastaanottaja(recipient.getRecipientID());
-		raportoitavaVastaanottaja.setLahetysOnnistui(result);
-		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
+		ReportedRecipient reportedRecipient = 
+			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
+		reportedRecipient.setSendingSuccesful(result);
+		reportedRecipient.setSendingEnded(new Date());
 		
-		raportoitavaVastaanottajaService.paivitaRaportoitavaVastaanottaja(raportoitavaVastaanottaja);
+		reportedRecipientService.updateReportedRecipient(reportedRecipient);
 		
 		return true;
+	}
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public Long saveAttachment(FileItem fileItem) throws IOException {
+		ReportedAttachment reportedAttachment = ReportedAttachmentConverter.convert(fileItem);
+		return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
 	}
 	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public Long saveAttachment(FileItem fileItem) throws IOException {
-		RaportoitavaLiite liite = RaportoitavaLiiteConverter.convert(fileItem);
-		return raportoitavaLiiteService.tallennaRaportoitavaLiite(liite);
+	public Long saveSendingEmail(EmailData emailData) throws IOException {
+		ReportedMessage reportedMessage = ReportedMessageConverter.convert(emailData.getEmail());
+			
+		ReportedMessage savedReportedMessage = 
+			reportedMessageService.saveReportedMessage(reportedMessage);
+	
+		List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
+			emailData.getEmail().getAttachInfo());		
+		reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
+
+		Set<ReportedRecipient> reportedRecipients = ReportedRecipientConverter.convert(
+			savedReportedMessage, emailData.getRecipient());
+		reportedRecipientService.saveReportedRecipients(reportedRecipients);		
+		
+		return savedReportedMessage.getId();
+	}
+	
+	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public boolean startSending(EmailRecipientDTO recipient) {
+		ReportedRecipient reportedRecipient = 
+			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
+
+		if (reportedRecipient.getSendingStarted() != null) {
+			return false;
+		}
+
+		reportedRecipient.setSendingStarted(new Date());
+		reportedRecipientService.updateReportedRecipient(reportedRecipient);
+		
+		return true;
 	}
 }

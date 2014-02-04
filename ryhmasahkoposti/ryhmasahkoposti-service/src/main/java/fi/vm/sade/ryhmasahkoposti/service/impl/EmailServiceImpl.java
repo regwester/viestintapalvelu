@@ -14,7 +14,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaLiiteService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Service
@@ -29,7 +29,7 @@ public class EmailServiceImpl implements EmailService {
 	private GroupEmailReportingService rrService;
 
 	@Autowired
-	private RaportoitavaLiiteService liiteService;
+	private ReportedAttachmentService liiteService;
 
 	@Autowired
 	private EmailSender emailSender;

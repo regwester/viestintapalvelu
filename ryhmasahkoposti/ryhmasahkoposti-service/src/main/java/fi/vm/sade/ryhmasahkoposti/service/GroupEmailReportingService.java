@@ -8,8 +8,8 @@ import org.apache.commons.fileupload.FileItem;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenTilanneDTO;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 /**
  * Rajapinta lähetettävän ryhmäsähköpostiviestin raportointia varten
@@ -19,20 +19,13 @@ import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
  */
 public interface GroupEmailReportingService {
 	/**
-	 * Hakee lähetyksen tuloksen
+	 * Hakee viestintunnuksella raportoitavan viestin ja haluttaessa viestille lähetysraportin  
 	 * 
-	 * @param viestiID Halutun viestin tunnus
-	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link LahetyksenTilanneDTO}
+	 * @param viestiID Viestintunnus
+	 * @param lahetysRaportti true muodostetaan viestin lähetysraportti, false ei muodosteta 
+	 * @return Lista raportoitavia viestejä
 	 */
-	public LahetyksenTilanneDTO haeLahetyksenTulos(Long viestiID);
-
-	/**
-	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
-	 * 
-	 * @param vastaanottajienLukumaara Palautettavien vastaanottajien lukumaara
-	 * @return Lista raportoitavan viestin vastaanottajien tietoja {@link RaportoitavaVastaanottaja}
-	 */
-	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
+	public EmailMessageDTO getMessage(Long messageID);
 
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -50,30 +43,20 @@ public interface GroupEmailReportingService {
 	public List<EmailMessageDTO> getMessages(String searchArgument);
 
 	/**
-	 * Hakee viestintunnuksella raportoitavan viestin ja haluttaessa viestille lähetysraportin  
+	 * Hakee lähetyksen tuloksen
 	 * 
-	 * @param viestiID Viestintunnus
-	 * @param lahetysRaportti true muodostetaan viestin lähetysraportti, false ei muodosteta 
-	 * @return Lista raportoitavia viestejä
+	 * @param viestiID Halutun viestin tunnus
+	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link SendingStatusDTO}
 	 */
-	public EmailMessageDTO getMessage(Long messageID);
-	
+	public SendingStatusDTO getSendingStatus(Long viestiID);
+
 	/**
-	 * Merkitsee sähköpostin lähetyksen vastaanottajalle alkaneeksi
+	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
 	 * 
-	 * @param recipient Ryhmäsähköpostin vastaanottajan tiedot
-	 * @return true, jos merkintä lähettäjälle onnistui. false, jos lähetys on jo aloitettu toisen säikeen toimesta
+	 * @param vastaanottajienLukumaara Palautettavien vastaanottajien lukumaara
+	 * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
 	 */
-	public boolean startSending(EmailRecipientDTO recipient);
-	
-	/**
-	 * Päivittää tiedon, että sähköpostin lähetys vastaanottajalle on onnistunut
-	 *   
-	 * @param recipient Ryhmäsähköpostin vastaanottajan tiedot
-	 * @param result Tieto, että lähetys onnistui
-	 * @return true, päivitys on tehty.
-	 */
-	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
+	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
 	
 	/**
 	 * Päivittää tiedon, että sähköpostin lähetys vastaanottajalle ei onnistunut
@@ -85,13 +68,22 @@ public interface GroupEmailReportingService {
 	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result);
 	
 	/**
+	 * Päivittää tiedon, että sähköpostin lähetys vastaanottajalle on onnistunut
+	 *   
+	 * @param recipient Ryhmäsähköpostin vastaanottajan tiedot
+	 * @param result Tieto, että lähetys onnistui
+	 * @return true, päivitys on tehty.
+	 */
+	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
+	
+	/**
 	 * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
 	 * 
 	 * @param fileItem Liitetiedoston tiedot
 	 * @return Liitteelle generoitu avain
 	 */
 	public Long saveAttachment(FileItem fileItem) throws IOException;
-
+	
 	/**
 	 * Tallentaa ryhmäsähköpostin tiedot
 	 *  
@@ -100,4 +92,12 @@ public interface GroupEmailReportingService {
 	 * @throws IOException
 	 */
 	public Long saveSendingEmail(EmailData emailData) throws IOException;
+
+	/**
+	 * Merkitsee sähköpostin lähetyksen vastaanottajalle alkaneeksi
+	 * 
+	 * @param recipient Ryhmäsähköpostin vastaanottajan tiedot
+	 * @return true, jos merkintä lähettäjälle onnistui. false, jos lähetys on jo aloitettu toisen säikeen toimesta
+	 */
+	public boolean startSending(EmailRecipientDTO recipient);
 }

@@ -6,39 +6,39 @@ import fi.vm.sade.generic.common.HetuUtils;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
-import fi.vm.sade.ryhmasahkoposti.validation.SahkopostiValidator;
+import fi.vm.sade.ryhmasahkoposti.validation.EmailAddressValidator;
 
 @Component
 public class EmailMessageQueryDTOConverter {
 
-	public static EmailMessageQueryDTO convert(String hakuKentta) {
+	public static EmailMessageQueryDTO convert(String searchArgument) {
 		EmailMessageQueryDTO emailMessageQueryDTO = new EmailMessageQueryDTO();
 		EmailRecipientQueryDTO emailRecipientQueryDTO = new EmailRecipientQueryDTO();
 				
-		if (HetuUtils.isHetuValid(hakuKentta)) {
-			emailRecipientQueryDTO.setRecipientSocialSecurityID(hakuKentta.trim());
+		if (HetuUtils.isHetuValid(searchArgument)) {
+			emailRecipientQueryDTO.setRecipientSocialSecurityID(searchArgument.trim());
 			emailMessageQueryDTO.setEmailRecipientQueryDTO(emailRecipientQueryDTO);
 			
 			return emailMessageQueryDTO;
 		}
 		
-		if (OidValidator.isOID(hakuKentta)) {
-			emailRecipientQueryDTO.setRecipientOid(hakuKentta.trim());
+		if (OidValidator.isOID(searchArgument)) {
+			emailRecipientQueryDTO.setRecipientOid(searchArgument.trim());
 			emailMessageQueryDTO.setEmailRecipientQueryDTO(emailRecipientQueryDTO);
 			
 			return emailMessageQueryDTO;
 		}
 		
-		if (SahkopostiValidator.validate(hakuKentta)) {
-			emailRecipientQueryDTO.setRecipientEmail(hakuKentta.trim());
+		if (EmailAddressValidator.validate(searchArgument)) {
+			emailRecipientQueryDTO.setRecipientEmail(searchArgument.trim());
 			emailMessageQueryDTO.setEmailRecipientQueryDTO(emailRecipientQueryDTO);
 			
 			return emailMessageQueryDTO;			
 		}
 		
-		emailRecipientQueryDTO.setRecipientName(hakuKentta);
+		emailRecipientQueryDTO.setRecipientName(searchArgument);
 		emailMessageQueryDTO.setEmailRecipientQueryDTO(emailRecipientQueryDTO);
-		emailMessageQueryDTO.setSearchArgument(hakuKentta);		
+		emailMessageQueryDTO.setSearchArgument(searchArgument);		
 		
 		return emailMessageQueryDTO;
 	}

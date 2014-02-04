@@ -3,11 +3,11 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,11 +15,9 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.RaportoitavaViestiDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.service.RaportoitavaVastaanottajaService;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -27,38 +25,45 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 public class EmailMessageDTOConverterTest {
 	
 	@Test
-	public void testRaportoitavienviestienConvertOnnistuu() {
-		List<RaportoitavaViesti> raportoitavatViestit = new ArrayList<RaportoitavaViesti>();
-		raportoitavatViestit.add(RaportointipalveluTestData.getRaportoitavatViesti());
-		Long viestiID = new Long(1);
+	public void testEmailMessageDTOConversion() {
+		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		reportedMessage.setId(new Long(1));
+		reportedMessage.setVersion(new Long(0));
 		
-		RaportoitavaVastaanottajaService raportoitavaVastaanottajaService = mock(RaportoitavaVastaanottajaService.class);
-		when(raportoitavaVastaanottajaService.haeRaportoitavienVastaanottajienLukumaara(viestiID, false)).thenReturn(new Long(0));		
+		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
+		reportedRecipient.setReportedMessage(reportedMessage);
+		reportedRecipients.add(reportedRecipient);
+
+		reportedMessage.setReportedRecipients(reportedRecipients);
+		mockedReportedMessages.add(reportedMessage);
 		
-		List<EmailMessageDTO> viestit = EmailMessageDTOConverter.convert(raportoitavatViestit);
+		List<EmailMessageDTO> emailMessageDTOs = EmailMessageDTOConverter.convert(mockedReportedMessages);
 		
-		assertNotNull(viestit);
-		assertTrue(viestit.size() == 1);
-		assertNotNull(viestit.get(0).getLahetysraportti());
+		assertNotNull(emailMessageDTOs);
+		assertTrue(emailMessageDTOs.size() == 1);
 	}
 
 	@Test
-	public void testRaportoitavienviestinConvertOnnistuu() {
-		RaportoitavaViesti raportoitavaViesti = RaportointipalveluTestData.getRaportoitavatViesti();
+	public void testEmailMessageDTOConversionWithAttachments() {
+		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		
-		List<RaportoitavaLiite> raportoitavatLiitteet = new ArrayList<RaportoitavaLiite>();
-		RaportoitavaLiite raportoitavaLiite = RaportointipalveluTestData.getRaportoitavaLiite();
-		raportoitavatLiitteet.add(raportoitavaLiite);
+		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+		reportedRecipients.add(RaportointipalveluTestData.getReportedRecipient());
+		reportedMessage.setReportedRecipients(reportedRecipients);
+		
+		List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+		reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
 				
-		RaportoitavaViestiDTO viestiDTO = 
-			EmailMessageDTOConverter.convert(raportoitavaViesti, raportoitavatLiitteet, false);
+		EmailMessageDTO emailMessageDTO = EmailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 		
-		assertNotNull(viestiDTO);
-		assertEquals(raportoitavaViesti.getId(), viestiDTO.getViestiID());
-		assertEquals(raportoitavaViesti.getViesti(), viestiDTO.getViestinSisalto());
-		assertTrue(viestiDTO.getVastaanottajat().size() > 0);
-		assertNotNull(viestiDTO.getVastaanottajat().get(0).getVastaanottajanSahkopostiosoite());
-		assertTrue(viestiDTO.getLiitetiedostot().size() > 0);
-		assertNotNull(viestiDTO.getLiitetiedostot().get(0).getLiitetiedostonNimi());
+		assertNotNull(emailMessageDTO);
+		assertEquals(reportedMessage.getId(), emailMessageDTO.getMessageID());
+		assertEquals(reportedMessage.getMessage(), emailMessageDTO.getBody());
+		assertTrue(emailMessageDTO.getRecipients().size() > 0);
+		assertNotNull(emailMessageDTO.getRecipients().get(0).getEmail());
+		assertTrue(emailMessageDTO.getAttachmentDTOs().size() > 0);
+		assertNotNull(emailMessageDTO.getAttachmentDTOs().get(0).getName());
 	}
 }

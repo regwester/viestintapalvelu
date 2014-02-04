@@ -1,255 +1,164 @@
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
 import java.sql.Timestamp;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyLiiteDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetettyVastaanottajalleDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenAloitusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.LahetyksenLopetusDTO;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaLiite;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaVastaanottaja;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavaViesti;
-import fi.vm.sade.ryhmasahkoposti.model.RaportoitavanViestinLiite;
+import org.apache.commons.fileupload.FileItem;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 public class RaportointipalveluTestData {
 
-	public static LahetettyLiiteDTO getLahetettyLiiteDTO(Long id) {
-		LahetettyLiiteDTO liiteDTO = new LahetettyLiiteDTO();
-		
-		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
-		
-		liiteDTO.setLiitetiedosto(sisalto);
-		liiteDTO.setLiitetiedostonID(id);
-		liiteDTO.setLiitetiedostonNimi("koekutsu.doc");
-		liiteDTO.setSisaltotyyppi("application/pdf");
-		
-		return liiteDTO;
+	public static EmailData getEmailData() {
+		EmailData emailData = new EmailData();		
+		return emailData;
 	}
 	
-	public static LahetettyVastaanottajalleDTO getLahetettyVastaanottajalleDTO() {
-		LahetettyVastaanottajalleDTO lahetettyVastaanottajalle = new LahetettyVastaanottajalleDTO();
+	public static EmailMessage getEmailMessage() {
+		EmailMessage emailMessage = new EmailMessage();
 		
-		lahetettyVastaanottajalle.setVastaanottajaOid("102030405100");
-		lahetettyVastaanottajalle.setVastaanottajanOidTyyppi("oppilas");
-		lahetettyVastaanottajalle.setVastaanottajanSahkoposti("vastaan.ottaja@sposti.fi");
-		lahetettyVastaanottajalle.setKielikoodi("FI");
-		lahetettyVastaanottajalle.setLahetysalkoi(new Date());
-		lahetettyVastaanottajalle.setLahetyspaattyi(new Date());
-		lahetettyVastaanottajalle.setEpaonnistumisenSyy("");
+		emailMessage.setBody("Tämä on koekutsu");
+		emailMessage.setCallingProcess("Hakuprosessi");
+		emailMessage.setCharset("utf-8");
+		emailMessage.setFooter("");
+		emailMessage.setHtml(false);
+		emailMessage.setReplyToAddress("vastaus.oppilaitos@sposti.fi");
+		emailMessage.setOwnerEmail("");
+		emailMessage.setSenderEmail("lahettaja.oppilaitos@sposti.fi");
+		emailMessage.setSenderOid("1.2.246.562.24.42645159413");
+		emailMessage.setSenderOidType("virkailija");
+		emailMessage.setSubject("Koekutsu");
 		
-		return lahetettyVastaanottajalle;
+		return emailMessage;
+	}
+	
+	public static EmailAttachment getEmailAttachment() {
+		EmailAttachment emailAttachment = new EmailAttachment();
+				
+		emailAttachment.setAttachment("koekutsu");
+		emailAttachment.setName("koekutsu.doc");
+		emailAttachment.setContentType("application/pdf");		
+		
+		return emailAttachment;
+	}
+	
+	public static EmailRecipient getEmailRecipient() {
+		EmailRecipient emailRecipient = new EmailRecipient();
+		
+		emailRecipient.setOid("102030405100");
+		emailRecipient.setOidType("oppilas");
+		emailRecipient.setEmail("vastaan.ottaja@sposti.fi");
+		emailRecipient.setLanguageCode("FI");
+		
+		return emailRecipient;
+	}
+
+	public static EmailRecipientDTO getEmailRecipientDTO() {
+		EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
+		
+		emailRecipientDTO.setOid("1.2.246.562.24.34397748041");
+		emailRecipientDTO.setOidType("oppilas");
+		emailRecipientDTO.setEmail("vastaan.ottaja@sposti.fi");
+		emailRecipientDTO.setLanguageCode("FI");
+		
+		return emailRecipientDTO;
 	
 	}
 
-	public static LahetyksenAloitusDTO getLahetyksenAloitusDTO() {
-		LahetyksenAloitusDTO lahetyksenAloitus = new LahetyksenAloitusDTO();
+	public static AttachmentResponse getAttachmentResponse(Long id, FileItem fileItem) {
+		AttachmentResponse attachmentResponse = new AttachmentResponse();
 		
-		lahetyksenAloitus.setProsessi("Haku-prosessi");
-		lahetyksenAloitus.setLahettajanOid("102030405000");
-		lahetyksenAloitus.setLahettajanOidTyyppi("virkailija");
-		lahetyksenAloitus.setLahettajanSahkopostiosoite("testi.lahettaja@oph.fi");
-		lahetyksenAloitus.setVastauksensaajaOid("102030405100");
-		lahetyksenAloitus.setVastauksenSaajanOidTyyppi("oppilaitos");
-		lahetyksenAloitus.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
-		lahetyksenAloitus.setHtmlViesti(false);
-		lahetyksenAloitus.setMerkisto("utf-8");
-		lahetyksenAloitus.setAihe("Koekutsu");
-		lahetyksenAloitus.setViesti("Kutsu kokeeseen");
-		lahetyksenAloitus.setLahetysAlkoi(new Date());
+		attachmentResponse.setUuid(id.toString());
+		attachmentResponse.setFileName(fileItem.getName());
+		attachmentResponse.setContentType(fileItem.getContentType());
 		
-		return lahetyksenAloitus;
-	}
-
-	public static List<LahetyksenAloitusDTO> getLahetyksenAloitusDTOLista() {
-		List<LahetyksenAloitusDTO> lahetyksenAloitukset = new ArrayList<LahetyksenAloitusDTO>();
-		
-		LahetyksenAloitusDTO lahetyksenAloitus1 = new LahetyksenAloitusDTO();
-		
-		lahetyksenAloitus1.setProsessi("Haku-prosessi");
-		lahetyksenAloitus1.setLahettajanOid("102030405010");
-		lahetyksenAloitus1.setLahettajanOidTyyppi("virkailija");
-		lahetyksenAloitus1.setLahettajanSahkopostiosoite("testi1.lahettaja@oph.fi");
-		lahetyksenAloitus1.setVastauksensaajaOid("102030405110");
-		lahetyksenAloitus1.setVastauksenSaajanOidTyyppi("oppilaitos");
-		lahetyksenAloitus1.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
-		lahetyksenAloitus1.setHtmlViesti(false);
-		lahetyksenAloitus1.setMerkisto("utf-8");
-		lahetyksenAloitus1.setAihe("Koekutsu");
-		lahetyksenAloitus1.setViesti("Kutsu kokeeseen");
-		lahetyksenAloitus1.setLahetysAlkoi(new Date());
-		
-		lahetyksenAloitukset.add(lahetyksenAloitus1);
-
-		LahetyksenAloitusDTO lahetyksenAloitus2 = new LahetyksenAloitusDTO();
-		
-		lahetyksenAloitus2.setProsessi("Haku-prosessi");
-		lahetyksenAloitus2.setLahettajanOid("102030405020");
-		lahetyksenAloitus2.setLahettajanOidTyyppi("virkailija");
-		lahetyksenAloitus2.setLahettajanSahkopostiosoite("testi2.lahettaja@oph.fi");
-		lahetyksenAloitus2.setVastauksensaajaOid("102030405120");
-		lahetyksenAloitus2.setVastauksenSaajanOidTyyppi("oppilaitos");
-		lahetyksenAloitus2.setVastauksensaajanSahkoposti("testi.vastauksensaaja@oph.fi");
-		lahetyksenAloitus2.setHtmlViesti(false);
-		lahetyksenAloitus2.setMerkisto("utf-8");
-		lahetyksenAloitus2.setAihe("Koekutsu");
-		lahetyksenAloitus2.setViesti("Kutsu kokeeseen");
-		lahetyksenAloitus2.setLahetysAlkoi(new Date());
-		
-		lahetyksenAloitukset.add(lahetyksenAloitus2);
-		
-		return lahetyksenAloitukset;
+		return attachmentResponse;
 	}
 	
-	public static LahetyksenLopetusDTO getLahetyksenLopetusDTO(Long viestiID) {
-		LahetyksenLopetusDTO lahetyksenLopetus = new LahetyksenLopetusDTO();
+	public static ReportedMessage getReportedMessage() {
+		ReportedMessage reportedMessage = new ReportedMessage();
 		
-		lahetyksenLopetus.setViestiID(viestiID);
-		lahetyksenLopetus.setLahetysPaattyi(new Date());
+		reportedMessage.setSubject("Kokekutsu");
+		reportedMessage.setProcess("Hakuprosessi");
+		reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
+		reportedMessage.setSenderOidType("virkailija");
+		reportedMessage.setSenderEmail("testi.virkailija@sposti.fi");
+		reportedMessage.setReplyToOid("1.2.246.562.24.42645159413");
+		reportedMessage.setReplyToOidType("virkailija");
+		reportedMessage.setReplyToEmail("testi.virkailija@sposti.fi");
+		reportedMessage.setMessage("Tämä on koekutsu");
+		reportedMessage.setHtmlMessage("");
+		reportedMessage.setCharacterSet("utf-8");
+		reportedMessage.setSendingStarted(new Date());
+		reportedMessage.setTimestamp(new Date());
+
+		return reportedMessage;
+	}
+	
+	public static ReportedMessageAttachment getReportedMessageAttachment() {		
+		ReportedMessageAttachment reportedMessageAttachment = new ReportedMessageAttachment();
 		
-		return lahetyksenLopetus;
+		reportedMessageAttachment.setId(new Long(400));
+		reportedMessageAttachment.setReportedAttachmentID(new Long(100));
+		reportedMessageAttachment.setVersion(new Long(0));
+		reportedMessageAttachment.setTimestamp(new Date());
+		
+		return reportedMessageAttachment;
 	}
 
-	public static RaportoitavaVastaanottaja getRaportoitavaVastaanottaja(RaportoitavaViesti raportoitavaViesti) {
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = new RaportoitavaVastaanottaja();
+	public static ReportedRecipient getReportedRecipient(ReportedMessage reportedMessage) {
+		ReportedRecipient raportoitavaVastaanottaja = new ReportedRecipient();
 		
-		raportoitavaVastaanottaja.setRaportoitavaViesti(raportoitavaViesti);
-		raportoitavaVastaanottaja.setVastaanottajaOid("102030405100");
-		raportoitavaVastaanottaja.setVastaanottajaOidTyyppi("oppilas");
-		raportoitavaVastaanottaja.setHenkilotunnus("");
-		raportoitavaVastaanottaja.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
-		raportoitavaVastaanottaja.setKielikoodi("FI");
-		raportoitavaVastaanottaja.setHakuNimi("Testi Oppilas");
-		raportoitavaVastaanottaja.setLahetysalkoi(new Date());
-		raportoitavaVastaanottaja.setLahetyspaattyi(new Date());
-		raportoitavaVastaanottaja.setEpaonnistumisenSyy("");
-		raportoitavaVastaanottaja.setAikaleima(new Date());
+		raportoitavaVastaanottaja.setReportedMessage(reportedMessage);
+		raportoitavaVastaanottaja.setRecipientOid("1.2.246.562.24.34397748041");
+		raportoitavaVastaanottaja.setRecipientOidType("oppilas");
+		raportoitavaVastaanottaja.setSocialSecurityID("");
+		raportoitavaVastaanottaja.setRecipientEmail("testi.vastaanottaja@sposti.fi");
+		raportoitavaVastaanottaja.setLanguageCode("FI");
+		raportoitavaVastaanottaja.setSearchName("Testi Oppilas");
+		raportoitavaVastaanottaja.setSendingStarted(new Date());
+		raportoitavaVastaanottaja.setSendingEnded(new Date());
+		raportoitavaVastaanottaja.setFailureReason("");
+		raportoitavaVastaanottaja.setTimestamp(new Date());
 		
 		return raportoitavaVastaanottaja;
 	}
 
-	public static RaportoitavaViesti getRaportoitavaViestiLahetyksenAloitusDTOTiedosta() {
-		LahetyksenAloitusDTO lahetyksenAloitus = getLahetyksenAloitusDTO();
+	public static ReportedRecipient getReportedRecipient() {
+		ReportedRecipient reportedRecipient = new ReportedRecipient();
 		
-		RaportoitavaViesti raportoitavaViesti = new RaportoitavaViesti();
+		reportedRecipient.setRecipientOid("1.2.246.562.24.34397748041");
+		reportedRecipient.setRecipientOidType("oppilas");
+		reportedRecipient.setSocialSecurityID("");
+		reportedRecipient.setRecipientEmail("testi.vastaanottaja@sposti.fi");
+		reportedRecipient.setLanguageCode("FI");
+		reportedRecipient.setSearchName("Testi Oppilas");
+		reportedRecipient.setSendingStarted(null);
+		reportedRecipient.setSendingEnded(null);
+		reportedRecipient.setFailureReason("");
+		reportedRecipient.setTimestamp(new Date());
 		
-		raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
-		raportoitavaViesti.setProsessi(lahetyksenAloitus.getProsessi());
-		raportoitavaViesti.setLahettajanOid(lahetyksenAloitus.getLahettajanOid());
-		raportoitavaViesti.setLahettajanOidTyyppi(lahetyksenAloitus.getLahettajanOidTyyppi());
-		raportoitavaViesti.setLahettajanSahkopostiosoite(lahetyksenAloitus.getLahettajanSahkopostiosoite());
-		raportoitavaViesti.setVastauksensaajanOid(lahetyksenAloitus.getVastauksensaajaOid());
-		raportoitavaViesti.setVastauksensaajanOidTyyppi(lahetyksenAloitus.getVastauksenSaajanOidTyyppi());
-		raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
-		raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
-		raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
-		raportoitavaViesti.setHtmlViesti("");
-		raportoitavaViesti.setMerkisto("utf-8");
-		raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
-		raportoitavaViesti.setAikaleima(new Date());
-		
-		return raportoitavaViesti;
-	}
-
-	public static List<RaportoitavaViesti> getRaportoitavaViestiListaLahetyksenAloitusDTOTiedoista() {
-		List<RaportoitavaViesti> raportoitavatViestit = new ArrayList<RaportoitavaViesti>();
-		
-		List<LahetyksenAloitusDTO> lahetyksenAloitukset = getLahetyksenAloitusDTOLista();
-		
-		for (LahetyksenAloitusDTO lahetyksenAloitus : lahetyksenAloitukset) {
-			RaportoitavaViesti raportoitavaViesti = new RaportoitavaViesti();
-			
-			raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
-			raportoitavaViesti.setProsessi(lahetyksenAloitus.getProsessi());
-			raportoitavaViesti.setLahettajanOid(lahetyksenAloitus.getLahettajanOid());
-			raportoitavaViesti.setLahettajanOidTyyppi(lahetyksenAloitus.getLahettajanOidTyyppi());
-			raportoitavaViesti.setLahettajanSahkopostiosoite(lahetyksenAloitus.getLahettajanSahkopostiosoite());
-			raportoitavaViesti.setVastauksensaajanOid(lahetyksenAloitus.getVastauksensaajaOid());
-			raportoitavaViesti.setVastauksensaajanOidTyyppi(lahetyksenAloitus.getVastauksenSaajanOidTyyppi());
-			raportoitavaViesti.setVastauksensaajanSahkopostiosoite(lahetyksenAloitus.getVastauksensaajanSahkoposti());
-			raportoitavaViesti.setAihe(lahetyksenAloitus.getAihe());
-			raportoitavaViesti.setViesti(lahetyksenAloitus.getViesti());
-			raportoitavaViesti.setHtmlViesti("");
-			raportoitavaViesti.setMerkisto("utf-8");
-			raportoitavaViesti.setLahetysAlkoi(lahetyksenAloitus.getLahetysAlkoi());
-			raportoitavaViesti.setAikaleima(new Date());
-			
-			raportoitavatViestit.add(raportoitavaViesti);
-		}
-		
-		return raportoitavatViestit;
-	}
-
-	public static RaportoitavaViesti getRaportoitavatViesti() {
-		RaportoitavaViesti raportoitavaViesti = new RaportoitavaViesti();
-		
-		raportoitavaViesti.setId(new Long(200));
-		raportoitavaViesti.setVersion(new Long(0));
-		raportoitavaViesti.setAihe("Kokekutsu");
-		raportoitavaViesti.setProsessi("Hakuprosessi");
-		raportoitavaViesti.setLahettajanOid("1.2.246.562.24.42645159413");
-		raportoitavaViesti.setLahettajanOidTyyppi("virkailija");
-		raportoitavaViesti.setLahettajanSahkopostiosoite("testi.virkailija@sposti.fi");
-		raportoitavaViesti.setVastauksensaajanOid("1.2.246.562.24.42645159413");
-		raportoitavaViesti.setVastauksensaajanOidTyyppi("virkailija");
-		raportoitavaViesti.setVastauksensaajanSahkopostiosoite("testi.virkailija@sposti.fi");
-		raportoitavaViesti.setViesti("Tämä on koekutsu");
-		raportoitavaViesti.setHtmlViesti("");
-		raportoitavaViesti.setMerkisto("utf-8");
-		raportoitavaViesti.setLahetysAlkoi(null);
-		raportoitavaViesti.setAikaleima(new Date());
-
-		RaportoitavanViestinLiite viestinLiite = new RaportoitavanViestinLiite();
-		
-		viestinLiite.setId(new Long(400));
-		viestinLiite.setRaportoitavaliiteID(new Long(100));
-		viestinLiite.setRaportoitavaviesti(raportoitavaViesti);
-		viestinLiite.setVersion(new Long(0));
-		viestinLiite.setAikaleima(new Date());
-		
-		Set<RaportoitavanViestinLiite> viestinLiitteet = new HashSet<RaportoitavanViestinLiite>();
-		viestinLiitteet.add(viestinLiite);
-		raportoitavaViesti.setRaportoitavanViestinLiitteet(viestinLiitteet);
-
-		RaportoitavaVastaanottaja raportoitavaVastaanottaja = new RaportoitavaVastaanottaja();
-		
-		raportoitavaVastaanottaja.setId(new Long(300));
-		raportoitavaVastaanottaja.setVersion(new Long(0));
-		raportoitavaVastaanottaja.setRaportoitavaViesti(raportoitavaViesti);
-		raportoitavaVastaanottaja.setVastaanottajaOid("1.2.246.562.24.34397748041");
-		raportoitavaVastaanottaja.setVastaanottajaOidTyyppi("oppilas");
-		raportoitavaVastaanottaja.setHenkilotunnus("");
-		raportoitavaVastaanottaja.setVastaanottajanSahkoposti("testi.vastaanottaja@sposti.fi");
-		raportoitavaVastaanottaja.setKielikoodi("FI");
-		raportoitavaVastaanottaja.setHakuNimi("Testi Oppilas");
-		raportoitavaVastaanottaja.setLahetysalkoi(null);
-		raportoitavaVastaanottaja.setLahetyspaattyi(null);
-		raportoitavaVastaanottaja.setEpaonnistumisenSyy("");
-		raportoitavaVastaanottaja.setAikaleima(new Date());
-		
-		Set<RaportoitavaVastaanottaja> vastaanottajat = new HashSet<RaportoitavaVastaanottaja>();
-		vastaanottajat.add(raportoitavaVastaanottaja);
-		raportoitavaViesti.setRaportoitavatVastaanottajat(vastaanottajat);
-		
-		
-		return raportoitavaViesti;
+		return reportedRecipient;
 	}
 	
-	public static RaportoitavaLiite getRaportoitavaLiite() {
-		RaportoitavaLiite raportoitavaLiite = new RaportoitavaLiite();
+	public static ReportedAttachment getReportedAttachment() {
+		ReportedAttachment raportoitavaLiite = new ReportedAttachment();
 		
 		byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
 		
-		raportoitavaLiite.setId(new Long(100));
-		raportoitavaLiite.setVersion(new Long(0));
-		raportoitavaLiite.setLiitetiedostonNimi("koekutsu.doc");
-		raportoitavaLiite.setSisaltotyyppi("application/pdf");
-		raportoitavaLiite.setLiitetiedosto(sisalto);
-		raportoitavaLiite.setAikaleima(new Date());
+		raportoitavaLiite.setAttachmentName("koekutsu.doc");
+		raportoitavaLiite.setContentType("application/pdf");
+		raportoitavaLiite.setAttachment(sisalto);
+		raportoitavaLiite.setTimkestamp(new Date());
 		
 		return raportoitavaLiite; 		
 	}
