@@ -43,8 +43,10 @@ public class RaportointipalveluTestData {
 	
 	public static EmailAttachment getEmailAttachment() {
 		EmailAttachment emailAttachment = new EmailAttachment();
-				
-		emailAttachment.setAttachment("koekutsu");
+		
+		byte[] attachment = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+		
+		emailAttachment.setData(attachment);
 		emailAttachment.setName("koekutsu.doc");
 		emailAttachment.setContentType("application/pdf");		
 		

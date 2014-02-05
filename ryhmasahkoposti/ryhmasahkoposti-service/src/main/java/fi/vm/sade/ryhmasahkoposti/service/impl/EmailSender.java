@@ -1,12 +1,10 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import java.io.IOException;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
-import javax.activation.DataSource;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Multipart;
@@ -18,7 +16,6 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -79,9 +76,12 @@ public class EmailSender {
 
 			if (emailMessage.getAttachments() != null) {
 				for (EmailAttachment attachment : emailMessage.getAttachments()) {
-					DataSource ds = stringToDataSource(attachment);
-					if ((attachment.getAttachment() != null)
-							&& (attachment.getName() != null) && (ds != null)) {
+					//DataSource ds = stringToDataSource(attachment);
+					if ((attachment.getData() != null)
+							&& (attachment.getName() != null)) {
+						ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(), 
+								attachment.getContentType());
+						
 						// Attachment part (part II)
 						mimeBodyPart = new MimeBodyPart();
 						mimeBodyPart.setDataHandler(new DataHandler(ds));
@@ -158,21 +158,6 @@ public class EmailSender {
 		}
 
 		return sentOk;
-	}
-
-	private static DataSource stringToDataSource(EmailAttachment attachment) {
-		byte[] encoded = attachment.getAttachment().getBytes();
-		byte[] decoded = Base64.decodeBase64(encoded);
-		String attach = new String(decoded);
-
-		try {
-			return new ByteArrayDataSource(attach, attachment.getContentType());
-
-		} catch (IOException e) {
-			attachment = null;
-			e.printStackTrace();
-			return null;
-		}
 	}
 
 	public String getSmtpHost() {

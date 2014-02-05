@@ -10,22 +10,17 @@ import java.util.List;
 import java.util.Set;
 
 import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
-@RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/test-bundle-context.xml")
-public class EmailMessageDTOConverterTest {
-	
+public class ReportedMessageDTOConverterTest {
+
 	@Test
-	public void testEmailMessageDTOConversion() {
+	public void testConvertListOfReportedMessage() {
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -39,14 +34,14 @@ public class EmailMessageDTOConverterTest {
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		mockedReportedMessages.add(reportedMessage);
 		
-		List<EmailMessageDTO> emailMessageDTOs = EmailMessageDTOConverter.convert(mockedReportedMessages);
+		List<ReportedMessageDTO> reportedMessageDTOs = ReportedMessageDTOConverter.convert(mockedReportedMessages);
 		
-		assertNotNull(emailMessageDTOs);
-		assertTrue(emailMessageDTOs.size() == 1);
+		assertNotNull(reportedMessageDTOs);
+		assertTrue(reportedMessageDTOs.size() == 1);
 	}
 
 	@Test
-	public void testEmailMessageDTOConversionWithAttachments() {
+	public void testConvertReportedMessageListOfReportedAttachment() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		
 		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
@@ -56,12 +51,13 @@ public class EmailMessageDTOConverterTest {
 		List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
 		reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
 				
-		EmailMessageDTO emailMessageDTO = EmailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
+		ReportedMessageDTO reportedMessageDTO = ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 		
-		assertNotNull(emailMessageDTO);
-		assertEquals(reportedMessage.getId(), emailMessageDTO.getMessageID());
-		assertEquals(reportedMessage.getMessage(), emailMessageDTO.getBody());
-		assertTrue(emailMessageDTO.getAttachments().size() > 0);
-		assertNotNull(emailMessageDTO.getAttachments().get(0).getName());
+		assertNotNull(reportedMessageDTO);
+		assertEquals(reportedMessage.getId(), reportedMessageDTO.getMessageID());
+		assertEquals(reportedMessage.getMessage(), reportedMessageDTO.getBody());
+		assertTrue(reportedMessageDTO.getAttachments().size() > 0);
+		assertNotNull(reportedMessageDTO.getAttachments().get(0).getName());
 	}
+
 }

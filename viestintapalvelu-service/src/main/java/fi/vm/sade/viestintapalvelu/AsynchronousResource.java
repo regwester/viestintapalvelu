@@ -20,6 +20,11 @@ public class AsynchronousResource {
                 .contentLocation(contentLocation)
                 .entity(contentLocation.toString()).build();
     }
+    
+    protected Response createFailureResponse(HttpServletRequest request) {
+    	return Response.status(Status.NOT_FOUND).entity("PDF creation failed").build();
+    }
+
 
     String urlTo(HttpServletRequest request,
                  Class<DownloadResource> resourceClass) {

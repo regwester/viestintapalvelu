@@ -37,13 +37,13 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 //import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 //import com.sun.jersey.multipart.FormDataParam;
 //import com.google.inject.Inject;
 //import com.google.inject.Singleton;
 //
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
@@ -75,7 +75,7 @@ public class EmailResource {
 	    	    		
 		String sendId = "";
 		try {
-			sendId = Long.toString( sendDbService.saveSendingEmail(emailData));
+			sendId = Long.toString( sendDbService.addSendingGroupEmail(emailData));
 			log.log(Level.INFO, "DB index is " + sendId);
 			
 		} catch (IOException e) {	
@@ -108,10 +108,10 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendResult")
-	public EmailMessageDTO sendResult(String sendId) {
+	public ReportedMessageDTO sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
 
-		return sendDbService.getMessage(Long.valueOf(sendId));
+		return sendDbService.getReportedMessage(Long.valueOf(sendId));
     }
 		
 //	@POST

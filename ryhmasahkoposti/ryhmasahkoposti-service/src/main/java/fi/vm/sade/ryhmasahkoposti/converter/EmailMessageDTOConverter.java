@@ -5,11 +5,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
 @Component
@@ -19,7 +18,6 @@ public class EmailMessageDTOConverter {
 		
 		for (ReportedMessage reportedMessage : reportedMessages) {
 			EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(reportedMessage);
-			emailMessageDTO.setRecipientDTOs(convertEmailRecipientDTO(reportedMessage));
 			emailMessageDTOs.add(emailMessageDTO);
 		}
 		
@@ -28,31 +26,13 @@ public class EmailMessageDTOConverter {
 
 	public static EmailMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments) {
 		EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(reportedMessage);
-		emailMessageDTO.setAttachmentDTOs(convertEmailAttachmentDTO(reportedAttachments));
-		emailMessageDTO.setRecipients(convertEmailRecipientDTO(reportedMessage));
+		emailMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
 		
 		return emailMessageDTO;
 	}
-	
-	private static List<EmailRecipientDTO> convertEmailRecipientDTO(ReportedMessage reportedMessage) {
-		List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
-		
-		for (ReportedRecipient reportedRecipient : reportedMessage.getReportedRecipients()) {
-			EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-			
-			emailRecipientDTO.setRecipientID(reportedRecipient.getId());
-			emailRecipientDTO.setSendSuccessfull(reportedRecipient.getSendingSuccesful());
-			emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
-			emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
-			
-			recipients.add(emailRecipientDTO);
-		}
-		
-		return recipients;
-	}
 
-	private static List<EmailAttachmentDTO> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
-		List<EmailAttachmentDTO> attachments = new ArrayList<EmailAttachmentDTO>();
+	private static List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
+		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
 		
 		for (ReportedAttachment reportedAttachment : reportedAttachments) {
 			EmailAttachmentDTO attachmentDTO = new EmailAttachmentDTO();

@@ -2,8 +2,10 @@ angular.module('app').controller(
 		'KoekutsuController', 
 		['$scope', 'Generator', 'Printer', function ($scope, Generator, Printer) {
     $scope.koekutsukirjeet = [];
-    $scope.count = 1;
-    $scope.bodyTextTemplate='<p><i>Tervehdys</i></p><p>Leipäteksti</p><pre>Allekirjoitus</p>';
+    $scope.count = 0
+    $scope.select_min = 0 // Min count of letters selectable from UI drop-down list
+    $scope.select_max = 100;  // Max count
+    $scope.tinymceModel='<p><i>Tervehdys</i></p><p>Leipäteksti</p><pre>Allekirjoitus</pre>';
     function generateKoekutsukirje(count) {
         $scope.koekutsukirjeet = $scope.koekutsukirjeet.concat(Generator.generateObjects(count, function (data) {
             var postoffice = data.any('postoffice')
@@ -23,7 +25,7 @@ angular.module('app').controller(
                 },
                 "languageCode": data.prioritize('FI', 0.80).prioritize('SE', 0.60).otherwise(data.any('language')),
                 "hakukohde" : data.any('hakukohteenNimi'),
-                "letterBodyText" : "<i>Arvoisa tähän kokeeseen tulija</i><p>Koe alkaa yyyymmddThhmm paikassa X</p><p>Tervetuloa</p><pre>Kutsuja</pre>"
+                "letterBodyText" : $scope.tinymceModel
             }
         }))
     }

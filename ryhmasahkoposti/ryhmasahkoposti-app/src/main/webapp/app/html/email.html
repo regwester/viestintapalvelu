@@ -5,7 +5,7 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
-	            	<h2>Viesti</h3>
+	            	<h2>Viesti</h2>
 		    </div>		
 		</div>
 		
@@ -51,13 +51,15 @@
     	<div class="control-group">
 			<label class="control-label">Liitteet</label>
 		    <div class="controls">
-				<span ng-show="!attfile.length">Ei liitteitä</span>
-				<ul>
-					<li ng-repeat="name in attfile">{{name.fileName}} </li>
-				</ul>
+ 				<span ng-show="!emaildata.email.attachInfo.length">Ei liitteitä</span> 
+				<ul>					
+ 					<li ng-repeat="name in emaildata.email.attachInfo">{{name.fileName}}  						
+						<a ng-click="remove($index)">Poista</a>												
+					</li>
+ 				</ul>  								
 			</div>
 		</div>
-		
+ 
 		<div class="control-group">		
 		    <label class="control-label"></label>
 	<!--    <div class="controls pagination-right">   -->
@@ -69,37 +71,48 @@
 				
     	<hr></hr>
     	
-    	<div class="control-group">	
-			<label class="control-label">Liitteiden lataus</label>    			
-
+		<div class="control-group">		
+		    <label class="control-label"></label>
 		    <div class="controls">
+	            	<h4>Liitteiden lataus</h4>
+		    </div>		
+		</div>
+    	<div class="control-group">	
+			<label class="control-label">Vaihe 1</label>    			
+		    <div class="controls">
+				<div>
+					<span>												 
+						<div class="image-upload" >
+						        <label for="attachment-input" class="inline-operation btn btn-small">
+						            Valitse ladattava tiedosto(t)
+						        </label>
+								<input  id="attachment-input" 
+										type="file" name="file"
+										style="display:none;"
+								       	data-url="/ryhmasahkoposti-service/email/addAttachment" 
+								       	multiple upload>
+						
+						</div>
+					</span>				
+				</div>
 				<span ng-show="!files.length">Ei ladattavia liitteitä</span>
 				<ul>
 					<li ng-repeat="file in files">{{file}}</li>
 				</ul>
+			</div>				
+		</div>
 
-				<div>
-				<!-- <span class="btn btn-success fileinput-button">  -->
-				<span>				 
-					<!-- <i class="icon-plus icon-white"></i> -->
-						<input  type="file" name="file"
-								class="input-medium" 
-							   	value="Valitse tiedosto(t)" 
-						       	data-url="/ryhmasahkoposti-service/email/addAttachment" 
-						       	multiple upload>
-					<!-- <span>Add files...</span> -->
+    	<div class="control-group">	
+			<label class="control-label">Vaihe 2</label>    			
+		    <div class="controls">
+				<span>
+					<button type="submit" class="inline-operation btn btn-small" ng-click="upload()">Liitä tiedosto(t) viestiin</button>				
 				</span>
-				</div>
 				<br>
 				<div class="progress" ng-show="percentage">
 				    <div class="bar" style="width: {{percentage}}%;"></div>
-				</div>
-				<span>
-					<button type="submit" class="inline-operation btn btn-small" ng-click="upload()">Liitä liite viestiin</button>
-				</span>
-
+				</div>								
 			</div>
-				
 		</div>
     
 		<hr></hr>

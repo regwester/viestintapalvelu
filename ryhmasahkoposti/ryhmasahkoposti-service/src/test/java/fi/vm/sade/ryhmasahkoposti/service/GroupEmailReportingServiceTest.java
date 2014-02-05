@@ -34,6 +34,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
@@ -121,7 +122,7 @@ public class GroupEmailReportingServiceTest {
 		emailData.setEmail(emailMessage);
 		emailData.setRecipient(emailRecipients);
 		
-		Long messageID = groupEmailReportingService.saveSendingEmail(emailData);		
+		Long messageID = groupEmailReportingService.addSendingGroupEmail(emailData);		
 		
 		assertNotNull(messageID);
 	}
@@ -240,7 +241,7 @@ public class GroupEmailReportingServiceTest {
 	}
 	
 	@Test
-	public void testGetMessages() {
+	public void testGetReportedMessages() {
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -257,10 +258,33 @@ public class GroupEmailReportingServiceTest {
 		when(mockedReportedMessageService.getReportedMessages(
 			any(EmailMessageQueryDTO.class))).thenReturn(mockedReportedMessages);
 
-		List<EmailMessageDTO> emailMessageDTOs = groupEmailReportingService.getMessages("testi.vastaanottaja@sposti.fi");
+		List<ReportedMessageDTO> reportedMessageDTOs = 
+			groupEmailReportingService.getReportedMessages("testi.vastaanottaja@sposti.fi");
 		
-		assertNotNull(emailMessageDTOs);
-		assertTrue(emailMessageDTOs.size() == 1);
-		assertTrue(emailMessageDTOs.get(0).getRecipientDTOs().size() == 1);
+		assertNotNull(reportedMessageDTOs);
+		assertTrue(reportedMessageDTOs.size() == 1);
+	}
+	
+	@Test
+	public void testGetReportedMessage() {
+		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		reportedMessage.setId(new Long(1));
+		reportedMessage.setVersion(new Long(0));
+		
+		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
+		reportedRecipient.setReportedMessage(reportedMessage);
+		reportedRecipients.add(reportedRecipient);
+
+		reportedMessage.setReportedRecipients(reportedRecipients);
+		
+		when(mockedReportedMessageService.getReportedMessage(
+			any(Long.class))).thenReturn(reportedMessage);
+
+		ReportedMessageDTO reportedMessageDTO = 
+			groupEmailReportingService.getReportedMessage(new Long(1));
+		
+		assertNotNull(reportedMessageDTO);
+		assertTrue(reportedMessageDTO.getMessageID().equals(new Long(1)));
 	}
 }

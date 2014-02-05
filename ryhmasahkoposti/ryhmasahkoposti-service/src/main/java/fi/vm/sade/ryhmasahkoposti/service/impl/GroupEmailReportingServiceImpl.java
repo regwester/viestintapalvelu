@@ -14,11 +14,13 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
@@ -50,25 +52,32 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 	
 	@Override
-	public EmailMessageDTO getMessage(Long viestiID) {
-		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(viestiID);
-		List<ReportedAttachment> liitteet = 
+	public EmailMessageDTO getMessage(Long messageID) {
+		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+		List<ReportedAttachment> reportedAttachments = 
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
-		return EmailMessageDTOConverter.convert(reportedMessage, liitteet);
+		return EmailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 	}
 
 	@Override
-	public List<EmailMessageDTO> getMessages() {
-		// TODO Auto-generated method stub
-		return null;
+	public ReportedMessageDTO getReportedMessage(Long messageID) {
+		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+		List<ReportedAttachment> reportedAttachments = 
+			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+		return ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 	}
 	
 	@Override
-	public List<EmailMessageDTO> getMessages(String searchArgument) {
+	public List<ReportedMessageDTO> getReportedMessages() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<ReportedMessageDTO> getReportedMessages(String searchArgument) {
 		EmailMessageQueryDTO query = EmailMessageQueryDTOConverter.convert(searchArgument);
-		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);
-		
-		return EmailMessageDTOConverter.convert(reportedMessages);
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);		
+		return ReportedMessageDTOConverter.convert(reportedMessages);
 	}
 
 	@Override
@@ -106,7 +115,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		reportedRecipientService.updateReportedRecipient(reportedRecipient);
 		return true;
 	}
-
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
@@ -119,6 +127,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		
 		return true;
 	}
+	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Long saveAttachment(FileItem fileItem) throws IOException {
@@ -128,7 +137,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
-	public Long saveSendingEmail(EmailData emailData) throws IOException {
+	public Long addSendingGroupEmail(EmailData emailData) throws IOException {
 		ReportedMessage reportedMessage = ReportedMessageConverter.convert(emailData.getEmail());
 			
 		ReportedMessage savedReportedMessage = 
@@ -144,7 +153,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		
 		return savedReportedMessage.getId();
 	}
-	
+
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean startSending(EmailRecipientDTO recipient) {

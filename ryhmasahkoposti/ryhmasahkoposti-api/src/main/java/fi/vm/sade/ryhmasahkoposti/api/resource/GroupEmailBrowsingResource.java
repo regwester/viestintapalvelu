@@ -10,6 +10,7 @@ import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 
 /**
  * REST-rajapinta ryhmäsähköpostien selailua varten
@@ -27,7 +28,7 @@ public interface GroupEmailBrowsingResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_RYHMASAHKOPOSTI_SELAA)
 	@GET
-	public List<EmailMessageDTO> getBrowsingMessages();
+	public List<ReportedMessageDTO> getBrowsingMessages();
 	
 	/**
 	 * Hakee hakuparametrin mulaiset viestit käyttäjän ja hänen käyttäjäryhmänsä lähettämistä ryhmäshköpostiviesteistä
@@ -38,5 +39,5 @@ public interface GroupEmailBrowsingResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_RYHMASAHKOPOSTI_HAE)
 	@GET
-	public List<EmailMessageDTO> getBrowsingMessages(@QueryParam(RestConstants.PARAM_HAKUKENTTA) String searchArgument);	
+	public List<ReportedMessageDTO> getBrowsingMessages(@QueryParam(RestConstants.PARAM_HAKUKENTTA) String searchArgument);	
 }

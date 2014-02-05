@@ -168,11 +168,11 @@ public class EmailMessage {
 	/* (non-Javadoc)
      * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#addEmailAttachement(fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment)
      */
-	public void addEmailAttachement(EmailAttachment attachement) {
+	public void addEmailAttachement(EmailAttachment attachment) {
 		if (this.attachments == null) {
 			this.attachments = new ArrayList<EmailAttachment>();
 		}
-		this.attachments.add(attachement);
+		this.attachments.add(attachment);
 	}
 
 	/* (non-Javadoc)
@@ -185,7 +185,7 @@ public class EmailMessage {
 	/* (non-Javadoc)
      * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getAttachments()
      */
-	public List<EmailAttachment> getAttachments() {
+	public List<? extends EmailAttachment> getAttachments() {
 		return attachments;
 	}
 	
