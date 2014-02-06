@@ -23,10 +23,12 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 			<div class="progress" ng-show="percentage">
-				<div class="bar" style="width: {{percentage}}%;"></div>
+				<div class="bar" style="width: {{percentage(LahetyksenTilanneDTO.lahetysOnnistuiLukumaara,
+															LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara,
+															LahetyksenTilanneDTO.vastaanottajienLukumaara) }}%;"></div>
 			</div>
 		</div>
-		
+
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls pagination-centered"> 		    
