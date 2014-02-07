@@ -4,6 +4,10 @@ import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "Kirjeen vastaanottajan osoitetiedot")
 public class AddressLabel {
     public AddressLabel() {
     }
@@ -23,55 +27,42 @@ public class AddressLabel {
         this.countryCode = countryCode;
     }
 
-    /**
-     * Etunimi. Esim. "Ville".
-     */
     @NotEmpty
+    @ApiModelProperty(value = "Etunimi. Esim. 'Ville'", required=true)
     private String firstName;
-    /**
-     * Sukunimi. Esim. "Peurala".
-     */
+
     @NotEmpty
+    @ApiModelProperty(value = "Sukunimi. Esim. 'Peurala'", required=true)
     private String lastName;
 
-    /**
-     * Katuosoite. Esim. "Pengerkatu 20 B 27".
-     */
     @NotEmpty
+    @ApiModelProperty(value = "Katuosoite. Esim. 'Pengerkatu 20 B 27'", required=true)
     private String addressline;
-    /**
-     * Toinen osoiterivi ulkomaalaisille osoitteille.
-     */
+
+    @ApiModelProperty(value = "Toinen osoiterivi ulkomaalaisille osoitteille")
     private String addressline2;
-    /**
-     * Kolmas osoiterivi ulkomaalaisille osoitteille.
-     */
+
+    @ApiModelProperty(value = "Kolmas osoiterivi ulkomaalaisille osoitteille")
     private String addressline3;
-    /**
-     * Postinumero. Esim. "00500".
-     */
+    
     @NotEmpty
+    @ApiModelProperty(value = "Postinumero. Esim. '00500'", required=true)
     private String postalCode;
-    /**
-     * Postitoimipaikka. Esim. "Helsinki".
-     */
+
     @NotEmpty
+    @ApiModelProperty(value = "Postitoimipaikka. Esim. 'Helsinki'", required=true)
     private String city;
-    /**
-     * Maakunta ulkomaalaisille osoitteille.
-     */
+
+    @ApiModelProperty(value = "Maakunta ulkomaalaisille osoitteille")
     private String region;
-    /**
-     * Maa, jos muu kuin Suomi. Esim. "Sweden".
-     */
+
     @NotEmpty
+    @ApiModelProperty(value = "Maa, jos muu kuin Suomi. Esim. 'Sweden'", required=true)
     private String country;
-    /**
-     * The two letter country code using the ISO3166 standard. If the country code is unknown then use XX.
-     * They consist of two characters written in CAPITAL letters.
-     */
+
     @NotEmpty
     @Size(min = 2, max = 3)
+    @ApiModelProperty(value = "The two letter country code using the ISO3166 standard. If the country code is unknown then use XX. They consist of two characters written in CAPITAL letters,", required=true)
     private String countryCode;
 
     public String getFirstName() {

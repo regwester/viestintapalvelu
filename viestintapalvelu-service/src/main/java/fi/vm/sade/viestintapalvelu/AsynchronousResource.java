@@ -11,6 +11,16 @@ import javax.ws.rs.core.UriBuilder;
 import java.net.URI;
 
 public class AsynchronousResource {
+	
+	protected static final String AsyncResponseLogicDocumentation = "" +
+			"Asynkroninen dokumentin luonti palauttaa välittömästi URLin download-palvelulla " + 
+			"ladattavaan dokumenttiin. Asynkronisen palvelun luonteen takia dokumentti ei välttämättä " + 
+			"ole välittömästi ladattavissa. Kutsuvan osapuolen on tarvittaessa osattava uusia haku " + 
+			"mahdollisesti toistuvasti kunnes dokumentti on valmistunut. Huom! Jos asynkroninen " +
+			"dokumentin luonti epäonnistuu, ei siitä tule erikseen mitään muuta indikaatiota kuin " + 
+			"palvelimelle lokiin merkintä. Jos dokumenttia ei siis ala kuulua download-palvelusta " +
+			"järkevän ajan kuluessa, on kutsuvan osapuolen osattava päätellä sopivan ajan kuluttua, " + 
+			"ettei enää kannata yrittää hakea, koska todennäköisesti dokumentti ei tule koskaan valmistumaan.";
 
     protected Response createResponse(HttpServletRequest request,
                                       String documentId) {
@@ -22,7 +32,7 @@ public class AsynchronousResource {
     }
     
     protected Response createFailureResponse(HttpServletRequest request) {
-    	return Response.status(Status.NOT_FOUND).entity("PDF creation failed").build();
+    	return Response.status(Status.BAD_REQUEST).entity("Document creation failed").build();
     }
 
 
