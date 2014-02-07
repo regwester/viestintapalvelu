@@ -26,6 +26,11 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
@@ -36,6 +41,8 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 @Service
 @Singleton
 @Path(Urls.KOEKUTSUKIRJE_RESOURCE_PATH)
+//Use HTML-entities instead of scandinavian letters in @Api-description, since swagger-ui.js treats model's description as HTML and does not escape it properly
+@Api (value="/" + Urls.API_PATH + "/" + Urls.KOEKUTSUKIRJE_RESOURCE_PATH, description = "Koekutsukirjeen k&auml;sittelyn rajapinnat")
 public class KoekutsukirjeResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(KoekutsukirjeResource.class);
     private final DownloadCache downloadCache;
@@ -43,6 +50,10 @@ public class KoekutsukirjeResource extends AsynchronousResource {
     private final DokumenttiResource dokumenttiResource;
     private final ExecutorService executor;
 
+    private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; synkroninen"; 
+    private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; asynkroninen"; 
+    private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+    
     @Inject
     public KoekutsukirjeResource(KoekutsukirjeBuilder koekutsukirjeBuilder, DownloadCache downloadCache,
             DokumenttiResource dokumenttiResource, ExecutorService executor) {
@@ -65,7 +76,9 @@ public class KoekutsukirjeResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/pdf")
-    public Response pdf(KoekutsukirjeBatch input, @Context HttpServletRequest request) throws IOException,
+    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public Response pdf(@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final KoekutsukirjeBatch input, @Context HttpServletRequest request) throws IOException,
             DocumentException {
     	String documentId;
     	try {
@@ -93,7 +106,8 @@ public class KoekutsukirjeResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/async/pdf")
-    public Response asyncPdf(final KoekutsukirjeBatch input, @Context final HttpServletRequest request) throws IOException,
+    @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync + AsyncResponseLogicDocumentation)
+    public Response asyncPdf(@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final KoekutsukirjeBatch input, @Context final HttpServletRequest request) throws IOException,
             DocumentException {
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String documentId = globalRandomId();
@@ -109,7 +123,6 @@ public class KoekutsukirjeResource extends AsynchronousResource {
                 } catch (Exception e) {
                     e.printStackTrace();
                     LOG.error("Koekutsukirje PDF async failed: {}", e.getMessage());
-                    createFailureResponse(request);
                 }
             }
         });

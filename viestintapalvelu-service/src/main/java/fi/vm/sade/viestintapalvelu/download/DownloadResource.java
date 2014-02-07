@@ -18,11 +18,18 @@ import javax.ws.rs.core.Response.Status;
 
 import org.springframework.stereotype.Service;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
 import fi.vm.sade.viestintapalvelu.Urls;
 
 @Service
 @Singleton
 @Path(Urls.DOWNLOAD_RESOURCE_PATH)
+@Api (value="/" + Urls.API_PATH + "/" + Urls.DOWNLOAD_RESOURCE_PATH, description = "Valmiin PDF/ZIP-tiedoston haku")
 public class DownloadResource {
     private DownloadCache downloadCache;
 
@@ -46,8 +53,10 @@ public class DownloadResource {
     }
 
     @GET
-    @Path("{documentId}")
-    public Response download(@PathParam("documentId") String input, @Context HttpServletResponse response) {
+    @Path("/{documentId}")
+    @ApiOperation(value = "Lataa valmis PDF/ZIP-tiedosto", notes = "Lataa valmis PDF/ZIP-tiedosto kirje- tai osoitetarra-palveluiden palauttamalla dokumentin tunnisteella")
+    @ApiResponses(@ApiResponse(code = 400, message = "BAD_REQUEST; annetulla ID:llä ei löydy ladattavaa dokumenttia"))    
+    public Response download(@ApiParam(value = "Ladattavan dokumentin ID", required = true) @PathParam("documentId") String input, @Context HttpServletResponse response) {
         Download download = downloadCache.get(input);
         if (download == null) {
             return Response.status(Status.BAD_REQUEST).build();
