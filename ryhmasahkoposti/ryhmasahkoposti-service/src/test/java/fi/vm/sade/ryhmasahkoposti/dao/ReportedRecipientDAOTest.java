@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Date;
@@ -65,4 +66,47 @@ public class ReportedRecipientDAOTest {
         assertNotNull(recipients);
         assertTrue(recipients.size() > 0);
     }
+    
+    @Test
+    public void testFindMaxValueOfSendingEndedByMessageID() {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
+
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+		reportedRecipient.setRecipientEmail("testFindMaxValueOfSendingEndedByMessageID1@sposti.fi");
+        reportedRecipientDAO.insert(reportedRecipient);
+
+        ReportedRecipient reportedRecipient2 = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+        long time = System.currentTimeMillis() + 5000;
+        reportedRecipient2.setSendingEnded(new Date(time));
+		reportedRecipient2.setRecipientEmail("testFindMaxValueOfSendingEndedByMessageID2@sposti.fi");
+        reportedRecipientDAO.insert(reportedRecipient2);
+
+        Date maxDateValue = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(savedReportedMessage.getId());
+        
+        assertNotNull(maxDateValue);
+        assertTrue(maxDateValue.after(reportedRecipient.getSendingEnded()));
+        assertTrue(maxDateValue.compareTo(new Date(time)) == 0);    	
+    }
+    
+    @Test
+    public void testFindMaxValueOfSendingEndedByMessageIDisNull() {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
+
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+        reportedRecipient.setSendingEnded(null);
+		reportedRecipient.setRecipientEmail("testFindMaxValueOfSendingEndedByMessageID1@sposti.fi");
+        reportedRecipientDAO.insert(reportedRecipient);
+
+        ReportedRecipient reportedRecipient2 = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+        reportedRecipient2.setSendingEnded(null);
+		reportedRecipient2.setRecipientEmail("testFindMaxValueOfSendingEndedByMessageID2@sposti.fi");
+        reportedRecipientDAO.insert(reportedRecipient2);
+
+        Date maxDateValue = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(savedReportedMessage.getId());
+        
+        assertNull(maxDateValue);	
+    }
+
 }

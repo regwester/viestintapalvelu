@@ -19,19 +19,19 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageQueryDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageAttachmentService;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageAttachmentService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
 
 @Service
 @Transactional(readOnly=true)
@@ -52,6 +52,25 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 	
 	@Override
+	@Transactional(propagation=Propagation.REQUIRED)
+	public Long addSendingGroupEmail(EmailData emailData) throws IOException {
+		ReportedMessage reportedMessage = ReportedMessageConverter.convert(emailData.getEmail());
+			
+		ReportedMessage savedReportedMessage = 
+			reportedMessageService.saveReportedMessage(reportedMessage);
+	
+		List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
+			emailData.getEmail().getAttachInfo());		
+		reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
+	
+		Set<ReportedRecipient> reportedRecipients = ReportedRecipientConverter.convert(
+			savedReportedMessage, emailData.getRecipient());
+		reportedRecipientService.saveReportedRecipients(reportedRecipients);		
+		
+		return savedReportedMessage.getId();
+	}
+
+	@Override
 	public EmailMessageDTO getMessage(Long messageID) {
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 		List<ReportedAttachment> reportedAttachments = 
@@ -62,8 +81,13 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	public ReportedMessageDTO getReportedMessage(Long messageID) {
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+				
+		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfNumberOfRecipients(messageID);
+		reportedMessage.setSendingEnded(sendingStatus.getSendingEnded());
+		
 		List<ReportedAttachment> reportedAttachments = 
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+		
 		return ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 	}
 	
@@ -81,24 +105,16 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 
 	@Override
-	public SendingStatusDTO getSendingStatus(Long messageID) {
-		SendingStatusDTO sendingStatus = new SendingStatusDTO();
-		
+	public SendingStatusDTO getSendingStatus(Long messageID) {	
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-		
+				
+		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfNumberOfRecipients(messageID);
 		sendingStatus.setMessageID(messageID);
 		sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
-		sendingStatus.setSendingEnded(reportedMessage.getSendingEnded());
-		sendingStatus.setNumberOfReciepients(
-			reportedRecipientService.getNumberOfRecipients(messageID));
-		sendingStatus.setNumberOfSuccesfulSendings(
-			reportedRecipientService.getNumerOfReportedRecipients(messageID, true));
-		sendingStatus.setNumberOfFailedSendings(
-			reportedRecipientService.getNumerOfReportedRecipients(messageID, false));
-		
+
 		return sendingStatus;
 	}
-
+	
 	@Override
 	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
 		List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
@@ -135,25 +151,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
 	}
 	
-	@Override
-	@Transactional(propagation=Propagation.REQUIRED)
-	public Long addSendingGroupEmail(EmailData emailData) throws IOException {
-		ReportedMessage reportedMessage = ReportedMessageConverter.convert(emailData.getEmail());
-			
-		ReportedMessage savedReportedMessage = 
-			reportedMessageService.saveReportedMessage(reportedMessage);
-	
-		List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
-			emailData.getEmail().getAttachInfo());		
-		reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
-
-		Set<ReportedRecipient> reportedRecipients = ReportedRecipientConverter.convert(
-			savedReportedMessage, emailData.getRecipient());
-		reportedRecipientService.saveReportedRecipients(reportedRecipients);		
-		
-		return savedReportedMessage.getId();
-	}
-
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean startSending(EmailRecipientDTO recipient) {

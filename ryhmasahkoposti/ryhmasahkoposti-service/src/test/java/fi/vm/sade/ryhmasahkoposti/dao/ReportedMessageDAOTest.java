@@ -156,8 +156,8 @@ public class ReportedMessageDAOTest {
 
 	@Test
 	public void testReportedMessageNotFoundByID() {
-		Long viestiID = new Long(2013121452);
-		ReportedMessage reportedMessage = reportedMessageDAO.read(viestiID);
+		Long messageID = new Long(2013121452);
+		ReportedMessage reportedMessage = reportedMessageDAO.read(messageID);
 		
 		assertNull(reportedMessage);
 	}

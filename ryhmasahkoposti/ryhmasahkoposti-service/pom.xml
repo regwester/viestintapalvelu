@@ -208,6 +208,10 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+		<dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-spring-security</artifactId>
+        </dependency> 
 		
 		<!-- Logging -->
 		<dependency>
@@ -269,6 +273,16 @@
 			<artifactId>mockito-all</artifactId>
 			<scope>test</scope>
 		</dependency>
+		<dependency>
+			<groupId>org.powermock</groupId>
+			<artifactId>powermock-module-junit4</artifactId>
+       		<scope>test</scope>
+   		</dependency>
+   		<dependency>
+			<groupId>org.powermock</groupId>
+       		<artifactId>powermock-api-mockito</artifactId>
+       		<scope>test</scope>
+   		</dependency>
 				
 		<!-- Javax Mail -->
 		<dependency>

@@ -3,7 +3,6 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
@@ -14,16 +13,9 @@ import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
 
 @Component
 public class ReportedMessageDTOConverter {
-	private static ReportedRecipientService reportedRecipientService;
-
-	@Autowired
-	public ReportedMessageDTOConverter(ReportedRecipientService reportedRecipientService) {
-		ReportedMessageDTOConverter.reportedRecipientService = reportedRecipientService;
-	}
 	
 	public static List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages) {
 		List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
@@ -46,6 +38,26 @@ public class ReportedMessageDTOConverter {
 		return reportedMessageDTO;
 	}
 	
+	public static void setSendingReport(ReportedMessageDTO reportedMessageDTO, Long numberOfFailed) {
+		if (numberOfFailed != null && numberOfFailed.compareTo(new Long(0)) > 0) {
+			Object[] parametrit = {numberOfFailed};
+			reportedMessageDTO.setSendingReport(
+				MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", parametrit));
+			return;
+		}
+		
+		if (reportedMessageDTO.getStartTime() != null && reportedMessageDTO.getEndTime() == null) {
+			reportedMessageDTO.setSendingReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_kesken"));
+			return;
+		}
+		
+		if (reportedMessageDTO.getStartTime() != null && reportedMessageDTO.getEndTime() != null) {
+			reportedMessageDTO.setSendingReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_onnistui"));
+		}
+		  
+		return;
+	}
+
 	private static List<EmailRecipientDTO> convertEmailRecipientDTO(ReportedMessage reportedMessage) {
 		List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
 		
@@ -87,24 +99,5 @@ public class ReportedMessageDTOConverter {
 		reportedMessageDTO.setCallingProcess(reportedMessage.getProcess());
 		reportedMessageDTO.setReplyToAddress(reportedMessage.getReplyToEmail());
 		reportedMessageDTO.setBody(reportedMessage.getMessage());
-	}
-	
-	private static String muodostaLahetysraportti(ReportedMessage reportedMessage) {
-		Long numberOfFailed = reportedRecipientService.getNumerOfReportedRecipients(reportedMessage.getId(), false);
-		
-		if (numberOfFailed != null && numberOfFailed.compareTo(new Long(0)) > 0) {
-			Object[] parametrit = {numberOfFailed};
-			return MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", parametrit);
-		}
-		
-		if (reportedMessage.getSendingStarted() != null && reportedMessage.getSendingEnded() == null) {
-			return MessageUtil.getMessage("ryhmasahkoposti.lahetys_kesken");
-		}
-		
-		if (reportedMessage.getSendingStarted() != null && reportedMessage.getSendingEnded() != null) {
-			return MessageUtil.getMessage("ryhmasahkoposti.lahetys_onnistui");
-		}
-		  
-		return "";
 	}
 }

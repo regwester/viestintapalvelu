@@ -22,7 +22,7 @@ public interface GroupEmailReportingService {
 	/**
 	 * Hakee viestintunnuksella lähetettävän ryhmäsähköpostiviestin  
 	 * 
-	 * @param viestiID Viestintunnus 
+	 * @param messageID Viestintunnus 
 	 * @return Lähetettävän ryhmäsähköpostiviestin tiedot
 	 */
 	public EmailMessageDTO getMessage(Long messageID);
@@ -30,7 +30,7 @@ public interface GroupEmailReportingService {
 	/**
 	 * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin  
 	 * 
-	 * @param viestiID Viestintunnus 
+	 * @param messageID Viestintunnus 
 	 * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
 	 */
 	public ReportedMessageDTO getReportedMessage(Long messageID);
@@ -53,10 +53,10 @@ public interface GroupEmailReportingService {
 	/**
 	 * Hakee lähetyksen tuloksen
 	 * 
-	 * @param viestiID Halutun viestin tunnus
+	 * @param messageID Halutun viestin tunnus
 	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link SendingStatusDTO}
 	 */
-	public SendingStatusDTO getSendingStatus(Long viestiID);
+	public SendingStatusDTO getSendingStatus(Long messageID);
 
 	/**
 	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä

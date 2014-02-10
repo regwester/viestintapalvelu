@@ -1,6 +1,5 @@
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
-import java.sql.Timestamp;
 import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
@@ -11,6 +10,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
@@ -165,9 +165,14 @@ public class RaportointipalveluTestData {
 		return raportoitavaLiite; 		
 	}
 	
-	public static Long getViestiID() {
-		Date date = new Date();
-		Timestamp timestamp = new Timestamp(date.getTime());
-		return timestamp.getTime();
+	public static SendingStatusDTO getSendingStatusDTO() {
+		SendingStatusDTO sendingStatusDTO = new SendingStatusDTO();
+		sendingStatusDTO.setMessageID(new Long(1));
+		sendingStatusDTO.setNumberOfReciepients(new Long(10));
+		sendingStatusDTO.setNumberOfFailedSendings(new Long(2));
+		sendingStatusDTO.setNumberOfSuccesfulSendings(new Long(5));
+		sendingStatusDTO.setSendingStarted(new Date());
+		
+		return sendingStatusDTO;
 	}
 }

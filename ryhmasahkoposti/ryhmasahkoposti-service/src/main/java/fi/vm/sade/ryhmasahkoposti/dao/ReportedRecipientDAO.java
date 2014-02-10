@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
@@ -28,13 +29,14 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
 	 * @return Raportoitavan vastaanottajan tiedot
 	 */
 	public ReportedRecipient findByRecipientID(Long recipientID);
-	
+
 	/**
-	 * Hakee raportoitavat vastaanottajat, joille viestiä ei ole lähetetty 
-	 *  
-	 * @return Lista raportoitavan vastaanottajien tietoja
-	 */	
-	public List<ReportedRecipient> findUnhandled();
+	 * Hakee lähettävästä ryhmäsähköpostista viimeiseksi lähetetyn
+	 * 
+	 * @param messageID Sanoman tunnus
+	 * @return Viimeiseksi lähetetyn ajanhetki
+	 */
+	public Date findMaxValueOfSendingEndedByMessageID(Long messageID);
 	
 	/**
 	 * Hakee vastaanottajien lukumäärän viestintunnuksella
@@ -52,4 +54,11 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
 	 * @return Viestin vastaanottajien lukumäärän
 	 */
 	public Long findNumberOfRecipientsByMessageIDAndSendingSuccesful(Long messageID, boolean sendingSuccesful);
+	
+	/**
+	 * Hakee raportoitavat vastaanottajat, joille viestiä ei ole lähetetty 
+	 *  
+	 * @return Lista raportoitavan vastaanottajien tietoja
+	 */	
+	public List<ReportedRecipient> findUnhandled();
 }

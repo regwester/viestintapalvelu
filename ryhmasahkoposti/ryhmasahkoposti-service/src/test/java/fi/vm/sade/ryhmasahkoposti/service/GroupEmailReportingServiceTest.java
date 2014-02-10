@@ -1,14 +1,15 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -222,11 +223,38 @@ public class GroupEmailReportingServiceTest {
 	@Test
 	public void testGetSendingStatus() {	
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		reportedMessage.setId(new Long(1));
+		
+		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
 		
 		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
-		when(mockedReportedRecipientService.getNumberOfRecipients(any(Long.class))).thenReturn(new Long(10));
-		when(mockedReportedRecipientService.getNumerOfReportedRecipients(any(Long.class), eq(true))).thenReturn(new Long(8));
-		when(mockedReportedRecipientService.getNumerOfReportedRecipients(any(Long.class), eq(false))).thenReturn(new Long(2));
+		when(mockedReportedRecipientService.getSendingStatusOfNumberOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
+		
+		SendingStatusDTO sendingStatus = groupEmailReportingService.getSendingStatus(new Long(1));
+
+		assertNotNull(sendingStatus);
+		assertNotNull(sendingStatus.getMessageID());
+		assertNotNull(sendingStatus.getNumberOfReciepients());
+		assertTrue(sendingStatus.getNumberOfReciepients().equals(new Long(10)));
+		assertNotNull(sendingStatus.getNumberOfSuccesfulSendings());
+		assertTrue(sendingStatus.getNumberOfSuccesfulSendings().equals(new Long(5)));
+		assertNotNull(sendingStatus.getNumberOfFailedSendings());
+		assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
+		assertNull(sendingStatus.getSendingEnded());
+	}
+	
+	@Test
+	public void testGetSendingStatusWhenSendingHasEnded() {	
+		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		reportedMessage.setId(new Long(1));
+		
+		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
+		sendingStatusDTO.setNumberOfSuccesfulSendings(new Long(8));
+		sendingStatusDTO.setSendingEnded(new Date());
+		
+		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
+		when(mockedReportedRecipientService.getSendingStatusOfNumberOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
+		when(mockedReportedRecipientService.getLatestReportedRecipientsSendingEnded(any(Long.class))).thenReturn(new Date());
 		
 		SendingStatusDTO sendingStatus = groupEmailReportingService.getSendingStatus(new Long(1));
 
@@ -238,8 +266,8 @@ public class GroupEmailReportingServiceTest {
 		assertTrue(sendingStatus.getNumberOfSuccesfulSendings().equals(new Long(8)));
 		assertNotNull(sendingStatus.getNumberOfFailedSendings());
 		assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
+		assertNotNull(sendingStatus.getSendingEnded());
 	}
-	
 	@Test
 	public void testGetReportedMessages() {
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
@@ -265,6 +293,7 @@ public class GroupEmailReportingServiceTest {
 		assertTrue(reportedMessageDTOs.size() == 1);
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Test
 	public void testGetReportedMessage() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -277,10 +306,17 @@ public class GroupEmailReportingServiceTest {
 		reportedRecipients.add(reportedRecipient);
 
 		reportedMessage.setReportedRecipients(reportedRecipients);
-		
+
 		when(mockedReportedMessageService.getReportedMessage(
 			any(Long.class))).thenReturn(reportedMessage);
 
+		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
+		when(mockedReportedRecipientService.getSendingStatusOfNumberOfRecipients(any(Long.class))).thenReturn(
+			sendingStatusDTO);
+		
+		when(mockedReportedAttachmentService.getReportedAttachments(any(Set.class))).thenReturn(
+			new ArrayList<ReportedAttachment>());
+		
 		ReportedMessageDTO reportedMessageDTO = 
 			groupEmailReportingService.getReportedMessage(new Long(1));
 		
