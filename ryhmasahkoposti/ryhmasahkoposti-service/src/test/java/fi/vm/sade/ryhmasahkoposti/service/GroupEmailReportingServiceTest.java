@@ -228,7 +228,7 @@ public class GroupEmailReportingServiceTest {
 		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
 		
 		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
-		when(mockedReportedRecipientService.getSendingStatusOfNumberOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
+		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
 		
 		SendingStatusDTO sendingStatus = groupEmailReportingService.getSendingStatus(new Long(1));
 
@@ -253,7 +253,7 @@ public class GroupEmailReportingServiceTest {
 		sendingStatusDTO.setSendingEnded(new Date());
 		
 		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
-		when(mockedReportedRecipientService.getSendingStatusOfNumberOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
+		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
 		when(mockedReportedRecipientService.getLatestReportedRecipientsSendingEnded(any(Long.class))).thenReturn(new Date());
 		
 		SendingStatusDTO sendingStatus = groupEmailReportingService.getSendingStatus(new Long(1));
@@ -311,7 +311,7 @@ public class GroupEmailReportingServiceTest {
 			any(Long.class))).thenReturn(reportedMessage);
 
 		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
-		when(mockedReportedRecipientService.getSendingStatusOfNumberOfRecipients(any(Long.class))).thenReturn(
+		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(
 			sendingStatusDTO);
 		
 		when(mockedReportedAttachmentService.getReportedAttachments(any(Set.class))).thenReturn(

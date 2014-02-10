@@ -82,13 +82,15 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	public ReportedMessageDTO getReportedMessage(Long messageID) {
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 				
-		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfNumberOfRecipients(messageID);
-		reportedMessage.setSendingEnded(sendingStatus.getSendingEnded());
+		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
 		
 		List<ReportedAttachment> reportedAttachments = 
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 		
-		return ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments);
+		ReportedMessageDTO reportedMessageDTO = ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments);
+		reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
+		
+		return reportedMessageDTO;
 	}
 	
 	@Override
@@ -108,7 +110,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	public SendingStatusDTO getSendingStatus(Long messageID) {	
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 				
-		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfNumberOfRecipients(messageID);
+		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
 		sendingStatus.setMessageID(messageID);
 		sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 

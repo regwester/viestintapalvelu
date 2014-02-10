@@ -20,7 +20,7 @@ public interface ReportedRecipientService {
 	 * @param messageID Sanoman tunnus
 	 * @return Lähetyksen tilannetiedot täydennettynä vastaanottajien lukumäärillä
 	 */
-	public SendingStatusDTO getSendingStatusOfNumberOfRecipients(Long messageID);
+	public SendingStatusDTO getSendingStatusOfRecipients(Long messageID);
 	
 	/**
 	 * Hakee kaikkien raportoittavien viestin vastaanottajien tiedot

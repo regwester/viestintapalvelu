@@ -52,7 +52,7 @@ public class ReportedRecipientServiceTest {
 			any(Long.class), eq(false))).thenReturn(new Long(2));
 		when(mockedReportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(any(Long.class))).thenReturn(new Date());
 		
-		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfNumberOfRecipients(new Long(1));
+		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(new Long(1));
 		
 		assertNotNull(sendingStatus);
 		assertTrue(sendingStatus.getNumberOfReciepients().longValue() == 10);

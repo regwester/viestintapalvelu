@@ -23,7 +23,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 	}
 	
 	@Override
-	public SendingStatusDTO getSendingStatusOfNumberOfRecipients(Long messageID) {
+	public SendingStatusDTO getSendingStatusOfRecipients(Long messageID) {
 		SendingStatusDTO sendingStatus = new SendingStatusDTO();
 		
 		long nbrOfSuccesfulAndFailed = 0;
