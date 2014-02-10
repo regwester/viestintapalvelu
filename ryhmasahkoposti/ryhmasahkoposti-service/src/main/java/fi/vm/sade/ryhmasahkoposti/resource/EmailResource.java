@@ -193,11 +193,7 @@ public class EmailResource {
             result.setContentType(contentType);
             result.setFileSize(data.length);    
             result.setUuid(id.toString());
-//            result.setUuid(UUID.randomUUID().toString());
-//            File uploadedFile = new File("d://" + fileName); // For Test
-//            item.write(uploadedFile); // For Test
         }
-        
         return result;
     }
 }
