@@ -19,6 +19,188 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 //	$scope.emaildata = $rootScope.emaildata;
 	$scope.emaildata = {
 			recipient: [
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+													
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+														
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+						
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+													
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+														
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+							
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+													
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+														
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+										
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+											
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+												
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},
+
+// Originaalidata.						
+						
 					{oid: '1234567890ABCD',
 					oidType: 'henkilo',
 					email: 'ville.vastaanottaja@gmail.com',
@@ -46,16 +228,16 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 	$scope.sendGroupEmail = function () {
 		
 		$scope.emailsendid = GroupEmailFactory.sendGroupEmail($scope.emaildata).$promise.then(
-                function(value) {
-                    $rootScope.emailsendid = value;                 
-        			$location.path("/status");                        
-                },
-                function(error) {
-                    alert("Error " + error);
-                },
-                function(update) {
-                    alert("Notification " + update);
-                }
+            function(value) {
+                $rootScope.emailsendid = value;                 
+    			$location.path("/status");                        
+            },
+            function(error) {
+                alert("Error " + error);
+            },
+            function(update) {
+                alert("Notification " + update);
+            }
         );
 	};
 					

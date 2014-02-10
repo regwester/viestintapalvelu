@@ -26,6 +26,14 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+
+
+
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
@@ -36,12 +44,20 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 @Service
 @Singleton
 @Path(Urls.HYVAKSYMISKIRJE_RESOURCE_PATH)
+// Use HTML-entities instead of scandinavian letters in @Api-description, since swagger-ui.js treats model's description as HTML and does not escape it properly
+@Api (value="/" + Urls.API_PATH + "/" + Urls.HYVAKSYMISKIRJE_RESOURCE_PATH, description = "Hyv&auml;ksymiskirjeen k&auml;sittelyn rajapinnat")
 public class HyvaksymiskirjeResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(HyvaksymiskirjeResource.class);
     private final DownloadCache downloadCache;
     private final HyvaksymiskirjeBuilder hyvaksymiskirjeBuilder;
     private final DokumenttiResource dokumenttiResource;
     private final ExecutorService executor;
+
+    private final static String FixedTemplateNote = "Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. ";
+    private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata hyväksymiskirjeen/kirjeet PDF-muodossa; synkroninen. " + FixedTemplateNote; 
+    private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata hyväksymiskirjeen/kirjeet PDF-muodossa; asynkroninen. " + FixedTemplateNote; 
+    private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+
 
     @Inject
     public HyvaksymiskirjeResource(HyvaksymiskirjeBuilder jalkiohjauskirjeBuilder, DownloadCache downloadCache,
@@ -65,12 +81,21 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/pdf")
-    public Response pdf(HyvaksymiskirjeBatch input, @Context HttpServletRequest request) throws IOException,
+    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public Response pdf(@ApiParam(value = "Muodostettavien hyväksymiskirjeiden tiedot (1-n)", required = true) HyvaksymiskirjeBatch input, @Context HttpServletRequest request) throws IOException,
             DocumentException {
-        byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
-        String documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8",
-                "hyvaksymiskirje.pdf", pdf));
-        return createResponse(request, documentId);
+    	String documentId;
+    	try {
+    		byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
+    		documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8",
+    				"hyvaksymiskirje.pdf", pdf));
+    	} catch (Exception e) {
+    		e.printStackTrace();
+    		LOG.error("Hyväksymiskirje PDF failed: {}", e.getMessage());
+    		return createFailureResponse(request);
+    	}
+    	return createResponse(request, documentId);
     }
 
     /**
@@ -86,12 +111,13 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/async/pdf")
-    public Response asyncPdf(final HyvaksymiskirjeBatch input, @Context HttpServletRequest request) throws IOException,
+    @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync + AsyncResponseLogicDocumentation)
+    public Response asyncPdf(@ApiParam(value = "Muodostettavien hyväksymiskirjeiden tiedot (1-n)", required = true) final HyvaksymiskirjeBatch input, @Context final HttpServletRequest request) throws IOException,
             DocumentException {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         final String documentId = globalRandomId();
         executor.execute(new Runnable() {
             public void run() {
+            	final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
@@ -102,6 +128,7 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
                 } catch (Exception e) {
                     e.printStackTrace();
                     LOG.error("Hyvaksymiskirje PDF async failed: {}", e.getMessage());
+            		createFailureResponse(request);
                 }
             }
         });
