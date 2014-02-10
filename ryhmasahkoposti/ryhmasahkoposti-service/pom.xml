@@ -288,7 +288,29 @@
 		<dependency>
 			<groupId>javax.mail</groupId>
 			<artifactId>mail</artifactId>
-		</dependency>        
+		</dependency>
+		
+		<!-- CAS-client distribution -->
+		<dependency>
+            <groupId>org.jasig.cas</groupId>
+            <artifactId>cas-client-support-distributed-ehcache</artifactId>
+            <exclusions>
+				<exclusion>
+					<groupId>net.sf.ehcache</groupId>
+					<artifactId>ehcache</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+		
+		<!-- JGroups -->
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-jgroupsreplication</artifactId>
+           </dependency>
+		<dependency>
+		    <groupId>org.jgroups</groupId>
+		    <artifactId>jgroups</artifactId>
+		</dependency>		      
 	</dependencies>
 
 	
