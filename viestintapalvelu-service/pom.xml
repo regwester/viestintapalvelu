@@ -451,7 +451,20 @@
 					<artifactId>ehcache</artifactId>
 				</exclusion>
 			</exclusions>
-		</dependency>		
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.ehcache</groupId>
+			<artifactId>ehcache-jgroupsreplication</artifactId>
+			<version>1.5</version>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jgroups</groupId>
+			<artifactId>jgroups</artifactId>
+			<version>2.10.0.GA</version>
+		</dependency>
+	
 	</dependencies>
 	
 
