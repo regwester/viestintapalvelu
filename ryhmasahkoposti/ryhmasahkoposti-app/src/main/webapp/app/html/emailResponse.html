@@ -16,15 +16,15 @@
 	 			<table border="0">
 				  <tr>
 				    <td>Viestejä yhteensä&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				    <td>{{LahetyksenTilanneDTO.vastaanottajienLukumaara}}</td>
+				    <td>{{SendingStatusDTO.numberOfReciepients}}</td>
 				  </tr>
 				  <tr>
 				    <td>Siirretty</td>
-				    <td>{{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}}</td>
+				    <td>{{SendingStatusDTO.numberOfSuccesfulSendings}}</td>
 				  </tr>
 				  <tr>
 				    <td>Epäonnistuneet</td>
-				    <td>{{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}}</td>
+				    <td>{{SendingStatusDTO.numberOfFailedSendings}}</td>
 				  </tr>
 				</table>		
 			</div>
@@ -33,60 +33,101 @@
 		<!-- <div class="control-group">		
 		    <label class="control-label">Tilasto</label>
  		    <div class="controls">
- 		    	Viestejä yhteensä {{LahetyksenTilanneDTO.vastaanottajienLukumaara}}. <br>
- 		    	Siirretty: {{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}} <br>
- 		    	Epäonnistuneet: {{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}}
+ 		    	Viestejä yhteensä {{SendingStatusDTO.numberOfReciepients}}. <br>
+ 		    	Siirretty: {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
+ 		    	Epäonnistuneet: {{SendingStatusDTO.numberOfFailedSendings}}
  		    </div> 		    	
 		</div>-->
 		
 		<div class="control-group">		
 		    <label class="control-label">Prosessi</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.prosessi}}</div>		
+		    <!--  <div class="controls">{{ReportedMessageDTO.callingProcess}}</div>		-->		    
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.callingProcess"  disabled/>
+		    </div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähettäjä</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.lahettajanSahkopostiosoite}}</div>		
+		    <!-- <div class="controls">{{ReportedMessageDTO.senderEmail}}</div> -->		
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.senderEmail"  disabled/>
+		    </div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Vastausosoite</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.vastauksenSaajanSahkopostiosoite}}</div>		
+		    <!--  <div class="controls">{{ReportedMessageDTO.replyToAddress}}</div>  -->		
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.replyToAddress"  disabled/>
+		    </div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Lähetystunnus</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.lahetystunnus}}</div>		
+		    <!-- <div class="controls">{{ReportedMessageDTO.messageID}}</div>  -->		
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.messageID"  disabled/>
+		    </div>		
 		</div>
     	 
-		<div class="control-group">		
+		<!-- <div class="control-group">		
 		    <label class="control-label">Lähetysajankohta</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.lahetysAlkoi | date:'yyyy-MM-dd HH:mm'}} - {{RaportoitavaViestiDTO.lahetysPaattyi | date:'HH:mm'}}</div>		
-		</div>
+		    <div class="controls">{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{ReportedMessageDTO.endTime | date:'HH:mm'}}</div>		
+		</div> -->
     	 
 		<div class="control-group">		
 		    <label class="control-label">Aihe</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.aihe}}</div>		
+		    <!-- <div class="controls">{{ReportedMessageDTO.subject}}</div>  -->		
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.subject"  disabled/>
+		    </div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Sisältö</label>
-		    <div class="controls">{{RaportoitavaViestiDTO.viestinSisalto}}</div>		
+		    <!-- <div class="controls">{{ReportedMessageDTO.body}}</div>  -->		
+		    <div class="controls">
+ 		    	<!-- <input type="text" size="40" ng-model="ReportedMessageDTO.body"  disabled/>  -->
+ 		    	<textarea rows="10" cols="120" ng-model="ReportedMessageDTO.body" disabled/>
+		    </div>		
 		</div>
     	 
 		<div class="control-group">		
 		    <label class="control-label">Liitetiedostot</label>
-			<div class="controls" border="0" ng-repeat="vast in RaportoitavaViestiDTO.liitetiedostot">								    		 
- 					{{vast}}
+			<div class="controls" border="0" ng-repeat="att in ReportedMessageDTO.attachments">								    		 
+ 					{{att.name}}
 			</div>	
 		</div>
     	 
-		<div class="control-group">		
-		    <label class="control-label">{{RaportoitavaViestiDTO.vastaanottajat.length}} vastaanottajaa</label>
-				<div class="controls" border="0" ng-repeat="vast in RaportoitavaViestiDTO.vastaanottajat">								    		 
-  					{{vast.vastaanottajanSahkopostiosoite}}
+		<!-- <div class="control-group">		
+		    <label class="control-label">{{ReportedMessageDTO.emailRecipients.length}} vastaanottajaa</label>
+				<div class="controls" border="0" ng-repeat="recip in ReportedMessageDTO.emailRecipients">								    		 
+  					{{recip.email}}
 				</div>	
+		</div>-->
+		
+		<div class="control-group" ng-hide="showTo">		
+		    <label class="control-label">Vastaanottajat</label>
+		    <!-- <div class="controls">
+            		{{ReportedMessageDTO.emailRecipients.length}} vastaanottajaa
+		    </div> -->		
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="recipCnt"  disabled/>
+		    </div>		
 		</div>
+            
+		<div class="control-group" ng-hide="showCnt">		
+		    <label class="control-label">Vastaanottajat</label>
+		    <div class="controls">		    
+		 		<div border="0" ng-repeat="recip in ReportedMessageDTO.emailRecipients">								    		 
+	  					{{recip.email}}
+				</div>	
+		    </div>						        
+		</div>
+		
+		
+		
     	 
 		<hr></hr>
     </form>

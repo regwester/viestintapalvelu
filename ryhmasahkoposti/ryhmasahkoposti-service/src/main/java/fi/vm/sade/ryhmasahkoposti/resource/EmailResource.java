@@ -1,14 +1,8 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.URISyntaxException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -18,7 +12,6 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -34,13 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-//import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-//import com.sun.jersey.multipart.FormDataParam;
-//import com.google.inject.Inject;
-//import com.google.inject.Singleton;
-//
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
@@ -68,11 +56,13 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")	
 	@Path("sendGroupEmail")
-//	public List<EmailResponse> sendGroupEmail(EmailData emailData) {
 	public EmailSendId sendGroupEmail(EmailData emailData) {
-		EmailMessage email = emailData.getEmail();		
-	    email.setFooter(emailData.getRecipient().get(0).getLanguageCode()); // Setting footer with the first ones language code  
-	    	    		
+
+		// Setting footer with the first ones language code
+	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
+	    // Footer is moved to the end of the body here
+	    emailData.setEmailFooter(languageCode);
+	    
 		String sendId = "";
 		try {
 			sendId = Long.toString( sendDbService.addSendingGroupEmail(emailData));
@@ -82,18 +72,8 @@ public class EmailResource {
 			log.log(Level.SEVERE, "Problems in writing send data info to DB, "+ e.getMessage());
 		}
 		return new EmailSendId(sendId);
-//		return responses;
     }
     
-	@GET
-    //@Consumes("application/json")
-    //@Produces("application/json")
-    @Path("status")
-    public String status(String sendId) {
-        System.out.println("hop");
-        return("success");
-    }
-	
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
@@ -114,31 +94,11 @@ public class EmailResource {
 		return sendDbService.getReportedMessage(Long.valueOf(sendId));
     }
 		
-//	@POST
-//	@Consumes(MediaType.MULTIPART_FORM_DATA)
-//	@Path("loadEmailAttachment")
-//	public String loadEmailAttachment(	@FormDataParam("attachment") InputStream uploadedInputStream, 
-//										@FormDataParam("attachment") FormDataContentDisposition fileDetail) {
-//	 
-//System.err.println(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>");		
-//		String uploadedFileLocation = "d://" + fileDetail.getFileName();
-//	 
-//		// save it
-//		writeToFile(uploadedInputStream, uploadedFileLocation);
-//	 
-//		String output = "File uploaded to : " + uploadedFileLocation;
-//		return output;
-////		return Response.status(200).entity(output).build();
-//	}
-    
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendEmail")
 	public EmailResponse sendEmail(EmailMessage input) {
-//		String deliveryCode = getDeliverycode();
-//		input.setDeliveryCode(deliveryCode);
-		
 		EmailResponse response = emailService.sendEmail(input); 
 		return response;
     }
@@ -148,49 +108,40 @@ public class EmailResource {
 	@Produces("application/json")
 	@Path("sendEmails")
     public List<EmailResponse> sendEmails(List<EmailMessage> input) { 
-		String deliveryCode = getDeliverycode();
-
-    	List<EmailResponse> responses = new ArrayList<EmailResponse>();
-		
+    	List<EmailResponse> responses = new ArrayList<EmailResponse>();		
 		for (EmailMessage email : input) {			
-//			email.setDeliveryCode(deliveryCode);
 			EmailResponse resp = emailService.sendEmail(email);
 	    	responses.add(resp);			
 		}
 		return responses;
     }
     
-	private String getDeliverycode() {
-		String timeStamp = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date());
-		long epoch = System.currentTimeMillis(); // /1000;
-
-		return timeStamp + "_" + Long.toString(epoch);
-	}
+//	private String getDeliverycode() {
+//		String timeStamp = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date());
+//		long epoch = System.currentTimeMillis(); // /1000;
+//
+//		return timeStamp + "_" + Long.toString(epoch);
+//	}
     
-    
-  
-	
-	// save uploaded file to new location
-	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
- 
-		try {
-			OutputStream out = new FileOutputStream(new File(
-					uploadedFileLocation));
-			int read = 0;
-			byte[] bytes = new byte[1024];
- 
-			out = new FileOutputStream(new File(uploadedFileLocation));
-			while ((read = uploadedInputStream.read(bytes)) != -1) {
-				out.write(bytes, 0, read);
-			}
-			out.flush();
-			out.close();
-		} catch (IOException e) {
- 
-			e.printStackTrace();
-		}
- 
-	}
+//	// save uploaded file to new location
+//	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
+// 
+//		try {
+//			OutputStream out = new FileOutputStream(new File(
+//					uploadedFileLocation));
+//			int read = 0;
+//			byte[] bytes = new byte[1024];
+// 
+//			out = new FileOutputStream(new File(uploadedFileLocation));
+//			while ((read = uploadedInputStream.read(bytes)) != -1) {
+//				out.write(bytes, 0, read);
+//			}
+//			out.flush();
+//			out.close();
+//		} catch (IOException e) { 
+//			e.printStackTrace();
+//		} 
+//	}
 	
 	
     @POST
@@ -249,6 +200,4 @@ public class EmailResource {
         
         return result;
     }
-
-	
 }

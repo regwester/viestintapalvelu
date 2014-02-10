@@ -9,7 +9,7 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
 	$scope.getStatus = function () {
 //		alert("$scope.getStatus");
 		
-		$scope.LahetyksenTilanneDTO = EmailSendStatusFactory.sendEmailStatus($scope.emailsendid.id);	
+		$scope.SendingStatusDTO = EmailSendStatusFactory.sendEmailStatus($scope.emailsendid.id);	
 	
 		$scope.percentage = function (ok, notOk, all) {
 			var o = parseInt(ok);
@@ -25,10 +25,6 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
 		
 	        $rootScope.promise = $timeout($scope.getStatus, 3000);				
 	}	
-	
-//	$scope.updateStatus = function () {
-//		$location.path("/status");        		
-//	};	
 	
 	$scope.statisticsEmail = function () {
 		$timeout.cancel($rootScope.promise);			

@@ -67,7 +67,7 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
 		EntityManager em = getEntityManager();
 		
 		String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a "	+ 
-			"JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID AND a.sendingSuccesful = :sendingSuccesful";
+			"JOIN a.reportedMessage WHERE a.reportedMessage.id = :viestiID AND a.sendingSuccesful = :sendingSuccesful";
 		TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
 		query.setParameter("messageID", messageID);
 		

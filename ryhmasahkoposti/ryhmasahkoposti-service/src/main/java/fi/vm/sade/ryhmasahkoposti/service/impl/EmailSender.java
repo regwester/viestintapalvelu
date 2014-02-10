@@ -25,9 +25,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 
 @Service
 public class EmailSender {
-	private final static Logger log = Logger
-			.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class
-					.getName());
+	private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class.getName());
 
 	@Value("${ryhmasahkoposti.smtp.host}")
 	String smtpHost;
@@ -50,37 +48,28 @@ public class EmailSender {
 			mailProps.put("mail.smtp.port", smtpPort);
 			Session session = Session.getInstance(mailProps);
 			MimeMessage msg = new MimeMessage(session);
-			InternetAddress[] toAddrs = InternetAddress.parse(emailAddress,
-					false);
+			InternetAddress[] toAddrs = InternetAddress.parse(emailAddress, false);
 
 			msg.setRecipients(Message.RecipientType.TO, toAddrs);
 			msg.setFrom(new InternetAddress(emailMessage.getSenderEmail())); 
 			msg.setSubject(emailMessage.getSubject(), emailMessage.getCharset());
 			if (emailMessage.getReplyToAddress() != null) {
-				InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyToAddress(),
-						false);
+				InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyToAddress(), false);
 				msg.setReplyTo(replyToAddrs);
 			}
 			
 			// Setup message part (part I)
 			MimeBodyPart mimeBodyPart = new MimeBodyPart();
-			mimeBodyPart.setText(emailMessage.getBody()
-					+ emailMessage.getFooter());
-			mimeBodyPart.setContent(
-					emailMessage.getBody() + emailMessage.getFooter(),
-					(emailMessage.isHtml() ? "text/html" : "text/plain")
-							+ "; charset=" + emailMessage.getCharset());
-
+			mimeBodyPart.setText(emailMessage.getBody());
+			mimeBodyPart.setContent(emailMessage.getBody(), (emailMessage.isHtml() ? "text/html" : "text/plain") + "; charset=" + emailMessage.getCharset());
 			Multipart multipart = new MimeMultipart();
 			multipart.addBodyPart(mimeBodyPart);
 
 			if (emailMessage.getAttachments() != null) {
 				for (EmailAttachment attachment : emailMessage.getAttachments()) {
 					//DataSource ds = stringToDataSource(attachment);
-					if ((attachment.getData() != null)
-							&& (attachment.getName() != null)) {
-						ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(), 
-								attachment.getContentType());
+					if ((attachment.getData() != null) && (attachment.getName() != null)) {
+						ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(),  attachment.getContentType());
 						
 						// Attachment part (part II)
 						mimeBodyPart = new MimeBodyPart();
@@ -107,9 +96,7 @@ public class EmailSender {
 			}
 		} catch (Exception e) {
 			sentOk = false;
-			log.log(Level.SEVERE, "Failed to build message to " + emailAddress
-					+ ": " + emailMessage.getBody() + emailMessage.getFooter(),
-					e);
+			log.log(Level.SEVERE, "Failed to build message to " + emailAddress + ": " + emailMessage.getBody(), e);
 		}
 
 		if (message != null) { // message was created successfully
@@ -137,12 +124,9 @@ public class EmailSender {
 				sb.append(emailAddress);
 				sb.append("\nSUBJECT: ");
 				sb.append(emailMessage.getSubject());
-				if (emailMessage.getAttachments() != null
-						&& emailMessage.getAttachments().size() > 0) {
+				if (emailMessage.getAttachments() != null && emailMessage.getAttachments().size() > 0) {
 					sb.append("\nATTACHMENTS:");
-					for (EmailAttachment attachment : emailMessage
-							.getAttachments()) {
-
+					for (EmailAttachment attachment : emailMessage.getAttachments()) {
 						sb.append(" ");
 						sb.append(attachment.getName());
 						sb.append("(");
@@ -151,7 +135,7 @@ public class EmailSender {
 					}
 				}
 				sb.append("\n");
-				sb.append(emailMessage.getBody() + emailMessage.getFooter());
+				sb.append(emailMessage.getBody());
 				log.info(sb.toString());
 				sentOk = true;
 			}
@@ -170,8 +154,7 @@ public class EmailSender {
 
 	@Override
 	public String toString() {
-		return "EmailSender: [smtp host " + smtpHost + " port " + smtpPort
-				+ "]";
+		return "EmailSender: [smtp host " + smtpHost + " port " + smtpPort + "]";
 	}
 
 }
