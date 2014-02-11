@@ -100,7 +100,7 @@ public class EmailSender {
 		}
 
 		if (message != null) { // message was created successfully
-
+			
 			if (EmailConstants.TEST_MODE.equals("NO")) {
 
 				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP

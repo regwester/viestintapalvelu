@@ -37,12 +37,10 @@ public class EmailServiceImpl implements EmailService {
 	@Value("${ryhmasahkoposti.queue.handle.size}")
 	String queueSizeString = "1000";
 
-	private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(
-			MAX_CACHE_ENTRIES + 1) {
+	private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(MAX_CACHE_ENTRIES + 1) {
 		private static final long serialVersionUID = 1L;
 
-		protected boolean removeEldestEntry(
-				Map.Entry<Long, EmailMessageDTO> eldest) {
+		protected boolean removeEldestEntry(Map.Entry<Long, EmailMessageDTO> eldest) {
 			return size() > MAX_CACHE_ENTRIES;
 		};
 	};
@@ -53,8 +51,7 @@ public class EmailServiceImpl implements EmailService {
 		// email.setFooter(email.getHeader().getLanguageCode());
 		log.info("Send email info: " + email.toString());
 
-		boolean sendStatus = emailSender.sendMail(email,
-				"tähän vastaanottajan osoite jotenkin");
+		boolean sendStatus = emailSender.sendMail(email, "tähän vastaanottajan osoite jotenkin");
 		String status = (sendStatus ? "OK" : "Error");
 		// email.setSendStatus(status); LAITETAAN KANTAAN.
 
@@ -103,19 +100,19 @@ public class EmailServiceImpl implements EmailService {
 					result = e.toString();
 				}
 				if (success) {
-					System.out.println("success");
+//					System.out.println("success");
 					result = "1";
 					rrService.recipientHandledSuccess(er, result);
 					sent ++;
 				} else {
-					System.out.println("failure");
+//					System.out.println("failure");
 					result = "0";
 					rrService.recipientHandledFailure(er, result);
 					errors ++;
 				}
 			}
 			long took = System.currentTimeMillis() - vStart;
-			System.out.println("Message handling Took " + took);
+			log.info("Message handling took " + took);
 		}
 		long took = System.currentTimeMillis() - start;
 		log.info("Sending emails done. Queue: " + queueSize + ", sent: "+ sent +", errors: "+errors + ", took: "+took+" ms.");

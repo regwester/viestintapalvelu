@@ -260,7 +260,7 @@ public class EmailMessage {
         if (in == null) {
             throw new FileNotFoundException("Template " + footer + " not found");
         }
-        return new String(IOUtils.toByteArray(in));
+        return new String(IOUtils.toByteArray(in), "UTF-8");
     }
 
 	@Override
