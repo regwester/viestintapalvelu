@@ -11,13 +11,23 @@
 		
 		<hr></hr>
 		            
-		<div class="control-group">		
-		    <label class="control-label"></label>
+		<div class="control-group">	
+		
+		    <label class="control-label">
+				<button ng-click="getStatus()" 	class="inline-operation btn btn-small">Käynnistä seuranta</button>
+			</label>
+		    
 		    <div class="controls">
- 		    	Viestiä lähetetään. Yhteensä {{SendingStatusDTO.numberOfReciepients}} viestiä. <br>
- 		    	Siirretty: {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
- 		    	Epäonnistuneet: {{SendingStatusDTO.numberOfFailedSendings}}
+			    <span ng-show="!SendingStatusDTO.numberOfReciepients">
+		    		Viestiä lähetetään.<br>
+			    </span>
+			    <span ng-show="SendingStatusDTO.numberOfReciepients">
+		    		Viestiä lähetetään. Yhteensä {{SendingStatusDTO.numberOfReciepients}} viestiä. <br>
+			    </span>		    
+		    	Siirretty: {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
+		    	Epäonnistuneet: {{SendingStatusDTO.numberOfFailedSendings}}
 		    </div>		
+
 		</div>
 
 		<div class="control-group">		
@@ -32,8 +42,8 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls pagination-centered"> 		    
-					<button ng-click="getStatus()" 	class="inline-operation btn btn-small">Aloita päivitys</button>
-					<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">Tilasto</button>
+					<!-- <button ng-click="getStatus()" 	class="inline-operation btn btn-small">Aloita päivitys</button>-->
+					<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">Siirry tilastoihin</button>
 		    </div>		
 		</div>
 		    	 
