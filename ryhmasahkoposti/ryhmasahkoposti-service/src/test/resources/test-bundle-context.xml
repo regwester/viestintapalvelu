@@ -11,7 +11,7 @@
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti"/>
 
     <context:property-placeholder 
-    	location="classpath:ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties" 
+    	location="classpath:ryhmasahkopostipalvelu-test.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties" 
     	ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
 	<!-- Authentication and security -->
