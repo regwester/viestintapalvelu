@@ -18,7 +18,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
  *
  */
 @Path(RestConstants.PATH_REPORT_MESSAGES)
-public interface ReportedMessageResource {
+public interface MessageReportingResource {
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä lähettämät ryhmäshköpostiviestit
 	 * 

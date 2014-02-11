@@ -95,8 +95,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	
 	@Override
 	public List<ReportedMessageDTO> getReportedMessages() {
-		// TODO Auto-generated method stub
-		return null;
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages();
+		return ReportedMessageDTOConverter.convert(reportedMessages);
 	}
 
 	@Override

@@ -9,15 +9,15 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.resource.ReportedMessageResource;
+import fi.vm.sade.ryhmasahkoposti.api.resource.MessageReportingResource;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
-public class ReportedMessageResourceImpl implements ReportedMessageResource {
+public class MessageReportingResourceImpl implements MessageReportingResource {
 	private GroupEmailReportingService groupEmailReportingService;
 
 	@Autowired
-	public ReportedMessageResourceImpl(GroupEmailReportingService groupEmailReportingService) {
+	public MessageReportingResourceImpl(GroupEmailReportingService groupEmailReportingService) {
 		this.groupEmailReportingService = groupEmailReportingService;
 	}
 
