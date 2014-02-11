@@ -26,7 +26,7 @@
     </bean>
     
     <!-- Security configuration  -->
-    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
+    <!-- import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/ -->
 
     <!-- Spring service and persistence configuration -->
     <import resource="/test-service-context.xml"/>
