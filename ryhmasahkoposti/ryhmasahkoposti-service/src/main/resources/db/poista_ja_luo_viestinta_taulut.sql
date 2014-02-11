@@ -37,7 +37,7 @@ CREATE TABLE raportoitavaliite (
 	version bigint NOT NULL,
     liitetiedoston_nimi character varying(255),
     liitetiedosto bytea,
-    sisaltotyyppi character varying(50),
+    sisaltotyyppi character varying(255),
     aikaleima timestamp without time zone
 );
 
