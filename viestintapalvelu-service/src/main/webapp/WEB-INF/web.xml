@@ -33,41 +33,11 @@
             <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
             <param-value>true</param-value>
         </init-param>
-		<init-param>
-		    <param-name>com.sun.jersey.config.property.packages</param-name>
-    		<param-value>
-    			fi.vm.sade.viestintapalvelu.address.AddressLabelResource;
-    			fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeResource;
-    			fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource;
-    			fi.vm.sade.viestintapalvelu.koekutsukirje.KoekutsukirjeResource;
-    			fi.vm.sade.viestintapalvelu.download.DownloadResource;
-    			com.wordnik.swagger.jersey.listing
-    		</param-value>
-  		</init-param>        
         <load-on-startup>1</load-on-startup>
     </servlet>
-
-	<servlet>
-		<servlet-name>JerseyJaxrsConfig</servlet-name>
-		<servlet-class>com.wordnik.swagger.jersey.config.JerseyJaxrsConfig</servlet-class>
-		<init-param>
-			<param-name>api.version</param-name>
-			<param-value>1.0.0</param-value>
-		</init-param>
-		<init-param>
-			<param-name>swagger.api.basepath</param-name>
-			<param-value>http://localhost:8080/viestintapalvelu/api/v1</param-value>
-		</init-param>
-		<load-on-startup>2</load-on-startup>
-	</servlet>    
-	
     <servlet-mapping>
         <servlet-name>Jersey REST Service</servlet-name>
         <url-pattern>/api/v1/*</url-pattern>
     </servlet-mapping>
 
-    <servlet-mapping>
-        <servlet-name>default</servlet-name>
-        <url-pattern>/swagger/*</url-pattern> <!-- UI for examining REST-API-documentation extracted from swagger-annotations -->
-    </servlet-mapping>
 </web-app>
