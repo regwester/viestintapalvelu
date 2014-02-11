@@ -20,9 +20,10 @@ public class ReportedAttachmentConverter {
 		liite.setAttachmentName(fileItem.getName());
 		liite.setContentType(fileItem.getContentType());
 		
-		byte[] zippedAttachment = zipAttachment(fileItem.getName(), fileItem.get());
-
-		liite.setAttachment(zippedAttachment);
+//		byte[] zippedAttachment = zipAttachment(fileItem.getName(), fileItem.get());
+//		liite.setAttachment(zippedAttachment);
+		
+		liite.setAttachment(fileItem.get());
 		liite.setTimkestamp(new Date());
 		
 		return liite;
