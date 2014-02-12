@@ -10,23 +10,8 @@
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti"/>
 
-    <context:property-placeholder 
-    	location="classpath:ryhmasahkopostipalvelu-test.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties" 
-    	ignore-resource-not-found="true" properties-ref="defaultProps"/>
-
-	<!-- Authentication and security -->
-    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="properties">
-            <util:properties local-override="true">
-                <prop key="cas_key">ryhmasahkoposti</prop>
-                <prop key="cas_service">${cas.service.ryhmasahkoposti}</prop>
-                <prop key="spring_security_default_access">permitAll</prop>
-            </util:properties>
-        </property>
-    </bean>
-    
-    <!-- Security configuration  -->
-    <!-- import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/ -->
+	<!-- Test properties -->
+    <context:property-placeholder location="classpath:ryhmasahkopostipalvelu-test.properties"/>
 
     <!-- Spring service and persistence configuration -->
     <import resource="/test-service-context.xml"/>
