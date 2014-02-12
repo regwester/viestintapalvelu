@@ -24,6 +24,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
@@ -35,28 +37,27 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.service.impl.EmailRole;
 
 @Component
 @Path("email")
+@PreAuthorize("isAuthenticated()")
 public class EmailResource {
     private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResource.class.getName());	
-    private final EmailService emailService;
     
-	@Autowired    
-    public EmailResource(EmailService emailService) {
-        this.emailService = emailService;
-    }
+    
+    @Autowired    
+    private EmailService emailService;
+    
 	@Autowired
 	private GroupEmailReportingService sendDbService;
-
-	
-	
 
 	@POST
 	@Consumes("application/json")
 	@Produces("application/json")	
 	@Path("sendGroupEmail")
-	public EmailSendId sendGroupEmail(EmailData emailData) {
+	@Secured({EmailRole.SEND})
+    public EmailSendId sendGroupEmail(EmailData emailData) {
 
 		// Setting footer with the first ones language code
 	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
@@ -78,7 +79,8 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendEmailStatus")
-	public SendingStatusDTO sendEmailStatus(String sendId) {
+	@Secured({EmailRole.SEND})
+    public SendingStatusDTO sendEmailStatus(String sendId) {
 		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
 
 		return sendDbService.getSendingStatus(Long.valueOf(sendId));
@@ -88,7 +90,8 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendResult")
-	public ReportedMessageDTO sendResult(String sendId) {
+	@Secured({EmailRole.SEND})
+    public ReportedMessageDTO sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
 
 		return sendDbService.getReportedMessage(Long.valueOf(sendId));
@@ -98,7 +101,8 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendEmail")
-	public EmailResponse sendEmail(EmailMessage input) {
+	@Secured({EmailRole.SEND})
+    public EmailResponse sendEmail(EmailMessage input) {
 		EmailResponse response = emailService.sendEmail(input); 
 		return response;
     }
@@ -107,6 +111,7 @@ public class EmailResource {
 	@Consumes("application/json")
 	@Produces("application/json")
 	@Path("sendEmails")
+	@Secured({EmailRole.SEND})
     public List<EmailResponse> sendEmails(List<EmailMessage> input) { 
     	List<EmailResponse> responses = new ArrayList<EmailResponse>();		
 		for (EmailMessage email : input) {			
@@ -115,39 +120,12 @@ public class EmailResource {
 		}
 		return responses;
     }
-    
-//	private String getDeliverycode() {
-//		String timeStamp = (new SimpleDateFormat("yyyy-MM-dd")).format(new Date());
-//		long epoch = System.currentTimeMillis(); // /1000;
-//
-//		return timeStamp + "_" + Long.toString(epoch);
-//	}
-    
-//	// save uploaded file to new location
-//	private void writeToFile(InputStream uploadedInputStream, String uploadedFileLocation) {
-// 
-//		try {
-//			OutputStream out = new FileOutputStream(new File(
-//					uploadedFileLocation));
-//			int read = 0;
-//			byte[] bytes = new byte[1024];
-// 
-//			out = new FileOutputStream(new File(uploadedFileLocation));
-//			while ((read = uploadedInputStream.read(bytes)) != -1) {
-//				out.write(bytes, 0, read);
-//			}
-//			out.flush();
-//			out.close();
-//		} catch (IOException e) { 
-//			e.printStackTrace();
-//		} 
-//	}
-	
-	
+
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json")
     @Path("addAttachment")
+    @Secured({EmailRole.SEND})
     public AttachmentResponse addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
     											throws IOException, URISyntaxException, ServletException {
 
