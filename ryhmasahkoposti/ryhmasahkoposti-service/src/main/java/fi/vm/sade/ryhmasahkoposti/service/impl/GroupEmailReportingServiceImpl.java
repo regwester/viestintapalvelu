@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
@@ -129,6 +130,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		ReportedRecipient reportedRecipient = 
 			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
 		reportedRecipient.setFailureReason(result);
+		reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_FAILED);
 		reportedRecipient.setSendingEnded(new Date());
 		reportedRecipientService.updateReportedRecipient(reportedRecipient);
 		return true;
@@ -138,7 +140,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
 		ReportedRecipient reportedRecipient = 
 			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
-		reportedRecipient.setSendingSuccesful(result);
+		reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_SUCCESFUL);
 		reportedRecipient.setSendingEnded(new Date());
 		
 		reportedRecipientService.updateReportedRecipient(reportedRecipient);
