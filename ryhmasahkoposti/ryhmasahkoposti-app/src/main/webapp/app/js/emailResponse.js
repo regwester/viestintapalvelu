@@ -6,7 +6,6 @@ emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailR
 	
 	$scope.emailsendid = $rootScope.emailsendid;
 	
-//	$scope.ReportedMessageDTO = EmailResultFactory.sendResult($scope.emailsendid.id);
 	$scope.ReportedMessageDTO = EmailResultFactory.sendResult($scope.emailsendid.id).$promise.then(	
 			function(value) {				
             	$scope.ReportedMessageDTO = value; 

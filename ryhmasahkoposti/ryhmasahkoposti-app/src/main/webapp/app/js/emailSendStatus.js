@@ -7,7 +7,6 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
 	$scope.emailsendid = $rootScope.emailsendid;
 
 	$scope.getStatus = function () {
-//		alert("$scope.getStatus");
 		
 		$scope.SendingStatusDTO = EmailSendStatusFactory.sendEmailStatus($scope.emailsendid.id);	
 	
@@ -31,10 +30,11 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
 		$location.path("/response");        		
 	};
 	
-	// --------------
 	
 	// Start the poll	
-//	$scope.getStatus();
+	$scope.$on('$viewContentLoaded', function() {
+		$scope.getStatus();
+	});		
 		
 	// Stop the poll
 	$scope.$on('$locationChangeStart', function() {

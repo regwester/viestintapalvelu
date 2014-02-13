@@ -14,34 +14,34 @@
 		<div class="control-group">			    
 			<div class="alert alert-block alert-info">		
 	 			<table border="0">
-				  <tr>
-				    <td>Viestejä yhteensä&nbsp;&nbsp;&nbsp;&nbsp;</td>
-				    <td>{{SendingStatusDTO.numberOfReciepients}}</td>
-				  </tr>
-				  <tr>
-				    <td>Siirretty</td>
-				    <td>{{SendingStatusDTO.numberOfSuccesfulSendings}}</td>
-				  </tr>
-				  <tr>
-				    <td>Epäonnistuneet</td>
-				    <td>{{SendingStatusDTO.numberOfFailedSendings}}</td>
-				  </tr>
+					<tr>
+				    	<td>Lähetysajankohta</td>
+				    	<td>
+							<span ng-show="!ReportedMessageDTO.endTime">
+								{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - (Lähetys käynnissä, lopullinen tilasto nähtävissä Raportointisivuilla.)
+							</span>							
+							<span ng-show="ReportedMessageDTO.endTime">	 			
+			    				{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{ReportedMessageDTO.endTime | date:'HH:mm'}}
+							</span>
+						</td>	
+				  	</tr>											  	
+				  			  
+					<tr>
+				    	<td>Viestejä yhteensä&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				    	<td>{{SendingStatusDTO.numberOfReciepients}}</td>
+				  	</tr>
+				  	<tr>
+				    	<td>Siirretty</td>
+				    	<td>{{SendingStatusDTO.numberOfSuccesfulSendings}}</td>
+				  	</tr>
+				  	<tr>
+				    	<td>Epäonnistuneet</td>
+				    	<td>{{SendingStatusDTO.numberOfFailedSendings}}</td>
+				  	</tr>
 				</table>		
 			</div>
 		</div>
 		
-		<div class="control-group">			    
-			<div class="alert alert-block alert-info">		
-	 			<table border="0">
-				  <tr>
-				    <td >Jos tälle sivulle on siirrytte automaattisesti, on tilasto lopullinen.<br>
-				        Jos sivulle tultiin kesken viestin lähetyksen, on lopullinen tilasto nähtävissä Raportointisivuilla.
-				    </td>
-				  </tr>
-				</table>		
-			</div>
-		</div>
-		       
 		<div class="control-group">		
 		    <label class="control-label">Prosessi</label>
 		    <!--  <div class="controls">{{ReportedMessageDTO.callingProcess}}</div>		-->		    
@@ -74,11 +74,6 @@
 		    </div>		
 		</div>
     	 
-		<!-- <div class="control-group">		
-		    <label class="control-label">Lähetysajankohta</label>
-		    <div class="controls">{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{ReportedMessageDTO.endTime | date:'HH:mm'}}</div>		
-		</div> -->
-    	 
 		<div class="control-group">		
 		    <label class="control-label">Aihe</label>
 		    <!-- <div class="controls">{{ReportedMessageDTO.subject}}</div>  -->		
@@ -91,7 +86,6 @@
 		    <label class="control-label">Sisältö</label>
 		    <!-- <div class="controls">{{ReportedMessageDTO.body}}</div>  -->		
 		    <div class="controls">
- 		    	<!-- <input type="text" size="40" ng-model="ReportedMessageDTO.body"  disabled/>  -->
  		    	<textarea rows="10" cols="120" ng-model="ReportedMessageDTO.body" disabled/>
 		    </div>		
 		</div>
@@ -102,19 +96,9 @@
  					{{att.name}}
 			</div>	
 		</div>
-    	 
-		<!-- <div class="control-group">		
-		    <label class="control-label">{{ReportedMessageDTO.emailRecipients.length}} vastaanottajaa</label>
-				<div class="controls" border="0" ng-repeat="recip in ReportedMessageDTO.emailRecipients">								    		 
-  					{{recip.email}}
-				</div>	
-		</div>-->
-		
+    	 		
 		<div class="control-group" ng-hide="showTo">		
 		    <label class="control-label">Vastaanottajat</label>
-		    <!-- <div class="controls">
-            		{{ReportedMessageDTO.emailRecipients.length}} vastaanottajaa
-		    </div> -->		
 		    <div class="controls">
  		    	<input type="text" size="40" ng-model="recipCnt"  disabled/>
 		    </div>		
@@ -129,75 +113,8 @@
 		    </div>						        
 		</div>
 		
-		
-		
-    	 
 		<hr></hr>
     </form>
 
- <!-- 
-    <form novalidate="novalidate" >
-        <table border="0">
-        	<tr>
-	            <td>&nbsp;</td>
-	            <td><h3>Viesti</h3></td>
-	            <td>&nbsp;</td>
-            </tr>
-            
-			<hr></hr>
-            
-            <tr>
-	            <td>&nbsp;</td>
-	            <td>Viesti lähetetty</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Prosessi</td>
-	            <td>{{RaportoitavaViestiDTO.prosessi}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Lähettäjä</td>
-	            <td>{{RaportoitavaViestiDTO.lahettajanSahkopostiosoite}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Vastausosoite</td>
-	            <td>{{RaportoitavaViestiDTO.vastauksenSaajanSahkopostiosoite}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Lähetystunnus</td>
-	            <td>{{RaportoitavaViestiDTO.lahetystunnus}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-                <td>Lähetysajankohta&nbsp;&nbsp;&nbsp;</td>
-	            <td>{{RaportoitavaViestiDTO.lahetysAlkoi | date:'yyyy-MM-dd HH:mm'}} - {{RaportoitavaViestiDTO.lahetysPaattyi | date:'HH:mm'}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Aihe</td>
-	            <td>{{RaportoitavaViestiDTO.aihe}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Sisältö</td>
-	            <td>{{RaportoitavaViestiDTO.viestinSisalto}}</td>
-	            <td>&nbsp;</td>
-            </tr><tr>
-	            <td>Liitetiedostot</td>
-	            <td>&nbsp;</td>
-	            <td>&nbsp;</td>
-
-            </tr><tr>
-               	<td>{{RaportoitavaViestiDTO.vastaanottajat.length}} vastaanottajaa</td>
-    			<td>
-					<div border="0" ng-repeat="vast in RaportoitavaViestiDTO.vastaanottajat">								    		 
-	  					{{vast.vastaanottajanSahkopostiosoite}}
-					</div>	
-				</td>
-	            <td>&nbsp;</td>
-			</tr>
-
-		<hr></hr>
-
-        </table>
-    </form>	
-     -->  
-      
 </div>
 

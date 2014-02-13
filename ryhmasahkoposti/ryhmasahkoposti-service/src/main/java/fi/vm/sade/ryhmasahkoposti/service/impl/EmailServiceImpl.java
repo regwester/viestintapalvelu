@@ -51,7 +51,12 @@ public class EmailServiceImpl implements EmailService {
 		// email.setFooter(email.getHeader().getLanguageCode());
 		log.info("Send email info: " + email.toString());
 
-		boolean sendStatus = emailSender.sendMail(email, "tähän vastaanottajan osoite jotenkin");
+		boolean sendStatus;
+		try {
+			sendStatus = emailSender.sendMail(email, "tähän vastaanottajan osoite jotenkin");
+		} catch (Exception e) {
+			sendStatus = false;
+		}
 		String status = (sendStatus ? "OK" : "Error");
 		// email.setSendStatus(status); LAITETAAN KANTAAN.
 
@@ -96,17 +101,21 @@ public class EmailServiceImpl implements EmailService {
 				boolean success = false;
 				try {
 					success = emailSender.sendMail(message, er.getEmail());
+
 				} catch (Exception e ) {
-					result = e.toString();
+					result = e.getMessage();												
+					if (result==null) {
+						result = "e.getMessage() == null";
+					} else {
+						if (result.length()>250) result = result.substring(0, 250);
+					}
 				}
+				
 				if (success) {
-//					System.out.println("success");
-					result = "1";
-					rrService.recipientHandledSuccess(er, result);
+					result = "";  
+					rrService.recipientHandledSuccess(er, result);	// result is not updated in OK situations. It's left empty.
 					sent ++;
 				} else {
-//					System.out.println("failure");
-					result = "0";
 					rrService.recipientHandledFailure(er, result);
 					errors ++;
 				}

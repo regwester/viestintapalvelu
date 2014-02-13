@@ -16,191 +16,8 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 
 	$scope.emaildata = "";
 	
-//	$scope.emaildata = $rootScope.emaildata;
 	$scope.emaildata = {
 			recipient: [
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//													
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//														
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//						
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//													
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//														
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//							
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//													
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//														
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//										
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//											
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-//												
-//						{oid: '1234567890ABCD',
-//						oidType: 'henkilo',
-//						email: 'ville.vastaanottaja@gmail.com',
-//						languageCode: 'FI'},
-
-// Originaalidata.						
-						
 					{oid: '1234567890ABCD',
 					oidType: 'henkilo',
 					email: 'ville.vastaanottaja@gmail.com',
@@ -221,6 +38,16 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 					attachInfo: []
 			}
 		};
+	
+	// For testing
+	for(var i=0; i<0; i++) {
+		$scope.emaildata.recipient.push(
+				{oid: '1234567890ABCD',
+				oidType: 'henkilo',
+				email: 'herra_' +i+ '.vastaanottaja@gmail.com',
+				languageCode: 'FI'}	);
+		}
+	// For testing
 	
 	$scope.showTo  = $scope.emaildata.recipient.length <= 30;
 	$scope.showCnt = $scope.emaildata.recipient.length >  30;
@@ -279,7 +106,6 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
     
     //--- 'Poista' ---	    
     $scope.remove = function(id) {
-//        alert("Poista " + id);
 	    $scope.emaildata.email.attachInfo.splice(id, 1);
     };
 	    	    

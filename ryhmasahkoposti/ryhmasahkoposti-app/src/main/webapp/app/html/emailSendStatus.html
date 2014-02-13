@@ -11,12 +11,14 @@
 		
 		<hr></hr>
 		            
-		<div class="control-group">	
-		
-		    <label class="control-label">
-				<button ng-click="getStatus()" 	class="inline-operation btn btn-small">Käynnistä seuranta</button>
-			</label>
-		    
+		<div class="alert alert-block alert-info">		
+		    Sovellus siirtyy automaattisesti seuraavalle sivulle, kun kaikki lähetettävät viestit on käsitelty. <br>
+		    Voit siirtyä yhteenvetosivulle 'Siirry tilastoihin' -napilla. Tällöin näet tämänhetken lähetystilanteen.<br>
+		    Voit siirtyä myös muualle sovelluksessa. Sähköpostien lähetys ei keskeydy vaan ne tullaan käsittelemään kaikki.
+		</div>						            
+		            
+		<div class="control-group">			
+		    <label class="control-label"></label>		    
 		    <div class="controls">
 			    <span ng-show="!SendingStatusDTO.numberOfReciepients">
 		    		Viestiä lähetetään.<br>
@@ -42,7 +44,7 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls pagination-centered"> 		    
-					<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">Siirry tilastoihin</button>
+				<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">Siirry tilastoihin</button>
 		    </div>		
 		</div>
 		    	 

@@ -32,7 +32,7 @@ public class EmailSender {
 	@Value("${ryhmasahkoposti.smtp.port}")
 	String smtpPort;
 
-	public boolean sendMail(EmailMessage emailMessage, String emailAddress) {
+	public boolean sendMail(EmailMessage emailMessage, String emailAddress) throws Exception {
 
 		if (emailMessage == null) {
 			throw new IllegalStateException("Email message missing");
@@ -112,7 +112,8 @@ public class EmailSender {
 					sentOk = true;
 				} catch (MessagingException e) {
 					sentOk = false;
-					log.log(Level.SEVERE, " Problems" + logMsg + ": " + e);
+					log.log(Level.SEVERE, " Problems" + logMsg + ": " + e.getMessage());
+					throw new Exception (e.getMessage());
 				}
 
 			} else { // just log what would have been sent

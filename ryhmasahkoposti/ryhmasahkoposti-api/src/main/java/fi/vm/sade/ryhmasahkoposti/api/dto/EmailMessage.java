@@ -86,7 +86,7 @@ public class EmailMessage {
      */
     public void setFooter(String languageCode) {
 		this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
-		this.body = this.body + this.footer; // Catenate the footer here to body.		
+		this.body = this.body + "\n" + this.footer; // Catenate the footer here to body.		
 	}
 
 	/* (non-Javadoc)
