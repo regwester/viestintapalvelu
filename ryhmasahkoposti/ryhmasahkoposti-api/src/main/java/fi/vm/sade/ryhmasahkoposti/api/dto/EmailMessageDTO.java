@@ -6,6 +6,24 @@ public class EmailMessageDTO extends EmailMessage {
 	private Long messageID;
 	private Date startTime;
 	private Date endTime;
+	private boolean isVirusChecked;
+	private boolean isInfected;
+
+	public boolean isVirusChecked() {
+		return isVirusChecked;
+	}
+
+	public void setVirusChecked(boolean virusChecked) {
+		this.isVirusChecked = virusChecked;
+	}
+
+	public boolean isInfected() {
+		return isInfected;
+	}
+
+	public void setInfected(boolean isInfected) {
+		this.isInfected = isInfected;
+	}
 
 	public Long getMessageID() {
 		return messageID;

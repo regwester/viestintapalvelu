@@ -40,60 +40,8 @@ public class EmailSender {
 
 		MimeMessage message = null;
 		boolean sentOk = false;
-
-		// build the message (both in real and debug mode)
 		try {
-			Properties mailProps = new Properties();
-			mailProps.put("mail.smtp.host", smtpHost);
-			mailProps.put("mail.smtp.port", smtpPort);
-			Session session = Session.getInstance(mailProps);
-			MimeMessage msg = new MimeMessage(session);
-			InternetAddress[] toAddrs = InternetAddress.parse(emailAddress, false);
-
-			msg.setRecipients(Message.RecipientType.TO, toAddrs);
-			msg.setFrom(new InternetAddress(emailMessage.getSenderEmail())); 
-			msg.setSubject(emailMessage.getSubject(), emailMessage.getCharset());
-			if (emailMessage.getReplyToAddress() != null) {
-				InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyToAddress(), false);
-				msg.setReplyTo(replyToAddrs);
-			}
-			
-			// Setup message part (part I)
-			MimeBodyPart mimeBodyPart = new MimeBodyPart();
-			mimeBodyPart.setText(emailMessage.getBody());
-			mimeBodyPart.setContent(emailMessage.getBody(), (emailMessage.isHtml() ? "text/html" : "text/plain") + "; charset=" + emailMessage.getCharset());
-			Multipart multipart = new MimeMultipart();
-			multipart.addBodyPart(mimeBodyPart);
-
-			if (emailMessage.getAttachments() != null) {
-				for (EmailAttachment attachment : emailMessage.getAttachments()) {
-					//DataSource ds = stringToDataSource(attachment);
-					if ((attachment.getData() != null) && (attachment.getName() != null)) {
-						ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(),  attachment.getContentType());
-						
-						// Attachment part (part II)
-						mimeBodyPart = new MimeBodyPart();
-						mimeBodyPart.setDataHandler(new DataHandler(ds));
-						mimeBodyPart.setFileName(attachment.getName());
-						multipart.addBodyPart(mimeBodyPart);
-						mimeBodyPart.setHeader("Content-Type",
-								attachment.getContentType());
-					} else {
-						msg = null;
-						log.log(Level.SEVERE,
-								"Failed to insert attachment - it is not valid "
-										+ attachment.getName());
-
-						break;
-					}
-				}
-			}
-
-			if (msg != null) {
-				msg.setContent(multipart); // parts to message
-				message = msg;
-
-			}
+			message = createMessage(emailMessage, emailAddress);
 		} catch (Exception e) {
 			sentOk = false;
 			log.log(Level.SEVERE, "Failed to build message to " + emailAddress + ": " + emailMessage.getBody(), e);
@@ -145,6 +93,63 @@ public class EmailSender {
 		return sentOk;
 	}
 
+	public MimeMessage createMessage(EmailMessage emailMessage, String emailAddress) throws MessagingException {
+		MimeMessage message = null;
+		// build the message (both in real and debug mode)
+		Properties mailProps = new Properties();
+		mailProps.put("mail.smtp.host", smtpHost);
+		mailProps.put("mail.smtp.port", smtpPort);
+		Session session = Session.getInstance(mailProps);
+		MimeMessage msg = new MimeMessage(session);
+		InternetAddress[] toAddrs = InternetAddress.parse(emailAddress, false);
+
+		msg.setRecipients(Message.RecipientType.TO, toAddrs);
+		msg.setFrom(new InternetAddress(emailMessage.getSenderEmail())); 
+		msg.setSubject(emailMessage.getSubject(), emailMessage.getCharset());
+		if (emailMessage.getReplyToAddress() != null) {
+			InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyToAddress(), false);
+			msg.setReplyTo(replyToAddrs);
+		}
+		
+		// Setup message part (part I)
+		MimeBodyPart mimeBodyPart = new MimeBodyPart();
+		mimeBodyPart.setText(emailMessage.getBody());
+		mimeBodyPart.setContent(emailMessage.getBody(), (emailMessage.isHtml() ? "text/html" : "text/plain") + "; charset=" + emailMessage.getCharset());
+		Multipart multipart = new MimeMultipart();
+		multipart.addBodyPart(mimeBodyPart);
+
+		if (emailMessage.getAttachments() != null) {
+			for (EmailAttachment attachment : emailMessage.getAttachments()) {
+				//DataSource ds = stringToDataSource(attachment);
+				if ((attachment.getData() != null) && (attachment.getName() != null)) {
+					ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(),  attachment.getContentType());
+					
+					// Attachment part (part II)
+					mimeBodyPart = new MimeBodyPart();
+					mimeBodyPart.setDataHandler(new DataHandler(ds));
+					mimeBodyPart.setFileName(attachment.getName());
+					multipart.addBodyPart(mimeBodyPart);
+					mimeBodyPart.setHeader("Content-Type",
+							attachment.getContentType());
+				} else {
+					msg = null;
+					log.log(Level.SEVERE,
+							"Failed to insert attachment - it is not valid "
+									+ attachment.getName());
+
+					break;
+				}
+			}
+		}
+
+		if (msg != null) {
+			msg.setContent(multipart); // parts to message
+			message = msg;
+
+		}
+		return message;
+	}
+	
 	public String getSmtpHost() {
 		return smtpHost;
 	}
