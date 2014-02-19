@@ -12,7 +12,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
-import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityAndRoleConstants;
+import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 
 /**
@@ -21,7 +21,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
  * @author vehei1
  *
  */
-@PreAuthorize(SecurityAndRoleConstants.USER_IS_AUTHENTICATED)
+@PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Path(RestConstants.PATH_REPORT_MESSAGES)
 public interface MessageReportingResource {
 	/**
@@ -29,7 +29,7 @@ public interface MessageReportingResource {
 	 * 
 	 * @return Lista raportoitavia viestejä {@link ReportedMessageDTO} tai tyhjä lista
 	 */
-	@Secured(SecurityAndRoleConstants.READ)
+	@Secured(SecurityConstants.READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGES_LIST)
 	@GET
@@ -41,7 +41,7 @@ public interface MessageReportingResource {
 	 * @param hakuKentta Käyttäjän antama hakuparametri
 	 * @return Lista raportoitavia viestejä {@link ReportedMessageDTO} tai tyhjä lista 
 	 */
-	@Secured(SecurityAndRoleConstants.READ)
+	@Secured(SecurityConstants.READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGES_SEARCH)
 	@GET
@@ -53,7 +53,7 @@ public interface MessageReportingResource {
 	 * @param Ryhmäsähköpostiviestin tunnus
 	 * @return Raportoitavan ryhmäsähköpostin tiedot {@link ReportedMessageDTO}}
 	 */
-	@Secured(SecurityAndRoleConstants.READ)
+	@Secured(SecurityConstants.READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGE_VIEW)
 	@GET	
