@@ -34,6 +34,13 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
+
+        <!-- Java Servlet API -->
+       <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 		
 		<!-- Spring security -->
 		<dependency>

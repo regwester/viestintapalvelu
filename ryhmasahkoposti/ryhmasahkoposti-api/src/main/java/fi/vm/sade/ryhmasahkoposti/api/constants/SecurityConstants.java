@@ -6,11 +6,11 @@ package fi.vm.sade.ryhmasahkoposti.api.constants;
  * @author vehei1
  *
  */
-public interface SecurityAndRoleConstants {
+public interface SecurityConstants {
 	// Autentikointi  
 	public static final String USER_IS_AUTHENTICATED = "isAuthenticated()";
 	
 	// Käyttäjäroolit
 	public static final String SEND = "ROLE_APP_RYHMASAHKOPOSTI_SEND";
-	public static final String READ = "ROLE_APP_RYHMASAHKOPOSTI_READ";
+	public static final String READ = "ROLE_APP_RYHMASAHKOPOSTI_VIEW";
 }

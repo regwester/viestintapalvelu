@@ -11,12 +11,7 @@ import java.util.logging.Logger;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -24,8 +19,6 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
@@ -35,99 +28,25 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
-import fi.vm.sade.ryhmasahkoposti.service.impl.EmailRole;
 
 @Component
-@Path("email")
-@PreAuthorize("isAuthenticated()")
-public class EmailResource {
-    private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResource.class.getName());	
-    
-    
+public class EmailResourceImpl implements EmailResource {
+    private final static Logger log = 
+    		Logger.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class.getName());	
+     
     @Autowired    
     private EmailService emailService;
     
 	@Autowired
 	private GroupEmailReportingService sendDbService;
 
-	@POST
-	@Consumes("application/json")
-	@Produces("application/json")	
-	@Path("sendGroupEmail")
-	@Secured({EmailRole.SEND})
-    public EmailSendId sendGroupEmail(EmailData emailData) {
-
-		// Setting footer with the first ones language code
-	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
-	    // Footer is moved to the end of the body here
-	    emailData.setEmailFooter(languageCode);
-	    
-		String sendId = "";
-		try {
-			sendId = Long.toString( sendDbService.addSendingGroupEmail(emailData));
-			log.log(Level.INFO, "DB index is " + sendId);
-			
-		} catch (IOException e) {	
-			log.log(Level.SEVERE, "Problems in writing send data info to DB, "+ e.getMessage());
-		}
-		return new EmailSendId(sendId);
-    }
-    
-	@POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	@Path("sendEmailStatus")
-	@Secured({EmailRole.SEND})
-    public SendingStatusDTO sendEmailStatus(String sendId) {
-		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
-
-		return sendDbService.getSendingStatus(Long.valueOf(sendId));
-    }
-	
-	@POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	@Path("sendResult")
-	@Secured({EmailRole.SEND})
-    public ReportedMessageDTO sendResult(String sendId) {
-		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
-
-		return sendDbService.getReportedMessage(Long.valueOf(sendId));
-    }
-		
-	@POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	@Path("sendEmail")
-	@Secured({EmailRole.SEND})
-    public EmailResponse sendEmail(EmailMessage input) {
-		EmailResponse response = emailService.sendEmail(input); 
-		return response;
-    }
-    
-	@POST
-	@Consumes("application/json")
-	@Produces("application/json")
-	@Path("sendEmails")
-	@Secured({EmailRole.SEND})
-    public List<EmailResponse> sendEmails(List<EmailMessage> input) { 
-    	List<EmailResponse> responses = new ArrayList<EmailResponse>();		
-		for (EmailMessage email : input) {			
-			EmailResponse resp = emailService.sendEmail(email);
-	    	responses.add(resp);			
-		}
-		return responses;
-    }
-
-    @POST
-    @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces("application/json")
-    @Path("addAttachment")
-    @Secured({EmailRole.SEND})
+    @SuppressWarnings("unchecked")
+    @Override
     public AttachmentResponse addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
-    											throws IOException, URISyntaxException, ServletException {
+        throws IOException, URISyntaxException, ServletException {
 
 		log.log(Level.INFO, "Adding attachment "+request.getMethod());
         
@@ -157,8 +76,58 @@ public class EmailResource {
 		log.log(Level.INFO, "Added attachment: " + result);
         return result;
     }
+
+    @Override
+    public EmailResponse sendEmail(EmailMessage input) {
+		EmailResponse response = emailService.sendEmail(input); 
+		return response;
+    }
+	
+
+	@Override
+    public List<EmailResponse> sendEmails(List<EmailMessage> input) {
+        List<EmailResponse> responses = new ArrayList<EmailResponse>();     
+        for (EmailMessage email : input) {          
+            EmailResponse resp = emailService.sendEmail(email);
+            responses.add(resp);            
+        }
+        return responses;   
+    }
     
-    public AttachmentResponse storeAttachment(FileItem item) throws Exception {
+	@Override
+    public SendingStatusDTO sendEmailStatus(String sendId) {
+		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
+
+		return sendDbService.getSendingStatus(Long.valueOf(sendId));
+    }
+
+	@Override
+    public EmailSendId sendGroupEmail(EmailData emailData) {
+
+		// Setting footer with the first ones language code
+	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
+	    // Footer is moved to the end of the body here
+	    emailData.setEmailFooter(languageCode);
+	    
+		String sendId = "";
+		try {
+			sendId = Long.toString( sendDbService.addSendingGroupEmail(emailData));
+			log.log(Level.INFO, "DB index is " + sendId);
+			
+		} catch (IOException e) {	
+			log.log(Level.SEVERE, "Problems in writing send data info to DB, "+ e.getMessage());
+		}
+		return new EmailSendId(sendId);
+    }
+    
+	@Override
+    public ReportedMessageDTO sendResult(String sendId) {
+		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
+
+		return sendDbService.getReportedMessage(Long.valueOf(sendId));
+    }
+
+    private AttachmentResponse storeAttachment(FileItem item) throws Exception {
         AttachmentResponse result = new AttachmentResponse();
         
         if (!item.isFormField()) {
