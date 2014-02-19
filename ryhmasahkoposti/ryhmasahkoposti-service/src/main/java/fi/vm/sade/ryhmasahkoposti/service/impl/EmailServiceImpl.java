@@ -34,9 +34,15 @@ public class EmailServiceImpl implements EmailService {
 	@Autowired
 	private EmailSender emailSender;
 
+	@Autowired
+	private EmailAVChecker emailAVChecker;
+
+	@Value("${ryhmasahkoposti.require.virus.check}")
+	String virusChekcRequired;
+
 	@Value("${ryhmasahkoposti.queue.handle.size}")
 	String queueSizeString = "1000";
-
+	
 	private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(MAX_CACHE_ENTRIES + 1) {
 		private static final long serialVersionUID = 1L;
 
@@ -83,6 +89,11 @@ public class EmailServiceImpl implements EmailService {
 		
 		List<EmailRecipientDTO> queue = rrService.getUnhandledMessageRecipients(queueMaxSize);
 		
+		boolean checkForViruses = true;
+		if (virusChekcRequired != null && virusChekcRequired.equalsIgnoreCase("false")) {
+			checkForViruses = false;
+		}
+		
 		int sent = 0;
 		int errors = 0;
 		int queueSize = queue.size();
@@ -100,8 +111,18 @@ public class EmailServiceImpl implements EmailService {
 				String result = "";
 				boolean success = false;
 				try {
-					success = emailSender.sendMail(message, er.getEmail());
-
+					if (checkForViruses && !message.isVirusChecked()) {
+						try {
+							emailAVChecker.checkMessage(emailSender, message);
+						} catch (Exception e) {
+							log.severe("Virus check failed" + e);
+						}
+					}
+					if (!checkForViruses || (message.isVirusChecked() && !message.isInfected())) {
+						success = emailSender.sendMail(message, er.getEmail());
+					} else {
+						result = "Virus check problem. File infected: " + message.isInfected();
+					}
 				} catch (Exception e ) {
 					result = e.getMessage();												
 					if (result==null) {

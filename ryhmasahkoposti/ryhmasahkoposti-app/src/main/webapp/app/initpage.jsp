@@ -2,7 +2,7 @@
 <html>
 
 <body>
-	<form action="http://localhost:8080/ryhmasahkoposti-app/app/index.jsp" method="post">
+	<form action="index.jsp" method="post">
 		<textarea rows="30" cols="200" name="emailData">
 			{
 					recipient: [<%for (int i = 0; i < 29; i++) {%>

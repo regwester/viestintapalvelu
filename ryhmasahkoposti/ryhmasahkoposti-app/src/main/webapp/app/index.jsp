@@ -1,3 +1,5 @@
+<%@ page import="org.jsoup.*" %>
+<%@ page import="org.jsoup.safety.*" %>
 <!DOCTYPE html>
 <html id="ng-app" ng-app="viestintapalvelu">
 
@@ -26,8 +28,9 @@
 	<%
 		String emailData = request.getParameter("emailData");
 		if (emailData != null) {
-			// parse data:
-			
+			// Sanitize data:
+			emailData = Jsoup.clean(emailData, Whitelist.relaxed());
+		System.out.println(emailData);
 		} else {
 			// no emaildata found.
 			emailData = "";
