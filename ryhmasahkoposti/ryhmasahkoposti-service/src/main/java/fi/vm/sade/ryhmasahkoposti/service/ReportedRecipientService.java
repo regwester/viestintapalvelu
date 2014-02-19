@@ -15,27 +15,19 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
  */
 public interface ReportedRecipientService {
 	/**
-	 * Hakee lähetyksen tilannetietojen vastaanottajien lukumäärät
-	 * 
-	 * @param messageID Sanoman tunnus
-	 * @return Lähetyksen tilannetiedot täydennettynä vastaanottajien lukumäärillä
-	 */
-	public SendingStatusDTO getSendingStatusOfRecipients(Long messageID);
-	
-	/**
-	 * Hakee kaikkien raportoittavien viestin vastaanottajien tiedot
-	 * 
-	 * @return Lista raportoittavien viestin vastaanottajien tietoja {@link ReportedRecipient}
-	 */
-	public List<ReportedRecipient> getReportedRecipients();
-
-	/**
-	 * Hakee ryhmäsähköpostin viimeisimmän lähetysajankohdan vastaanottajien tiedoista  
+	 * Hakee ryhmäsähköpostin viimeisimmän lähetysajankohdan vastaanottajien tiedoista 
+	 *  
 	 * @param messageID vistin tunnus
 	 * @return Viimeisin lähetysajankohta tai null, jos mitään ei ole vielä lähetetty
 	 */
-	public Date getLatestReportedRecipientsSendingEnded(Long messageID);
+	public Date getLatestReportedRecipientsSendingEndedDate(Long messageID);
 
+	/**
+	 * Hakee ryhmäsähköpostin vastaanottajien lukumäärän, joiden lähetys on epäonnistunut 
+	 * @param messageID
+	 * @return
+	 */
+	public Long getNumberOfSendingFailed(Long messageID);
 	/**
 	 * Hakee raportoitavan viestin vastaanottajan tiedot
 	 * 
@@ -43,7 +35,7 @@ public interface ReportedRecipientService {
 	 * @return Raportoitavan viestin vastaanottajan tiedot {@link ReportedRecipient}
 	 */
 	public ReportedRecipient getReportedRecipient(Long id);
-	
+
 	/**
 	 * Hakee raportoitavan viestin vastaanottajan tiedot viestin tunnuksella ja vastaanottajan sähköpostiosoitteella
 	 * 
@@ -52,6 +44,21 @@ public interface ReportedRecipientService {
 	 * @return Raportoitavan viestin vastaanottajan tiedot {@link ReportedRecipient}
 	 */
 	public ReportedRecipient getReportedRecipient(Long messageID, String recipientEmail);
+
+	/**
+	 * Hakee kaikkien raportoittavien viestin vastaanottajien tiedot
+	 * 
+	 * @return Lista raportoittavien viestin vastaanottajien tietoja {@link ReportedRecipient}
+	 */
+	public List<ReportedRecipient> getReportedRecipients();
+	
+	/**
+	 * Hakee lähetyksen tilannetietojen vastaanottajien lukumäärät
+	 * 
+	 * @param messageID Sanoman tunnus
+	 * @return Lähetyksen tilannetiedot täydennettynä vastaanottajien lukumäärillä
+	 */
+	public SendingStatusDTO getSendingStatusOfRecipients(Long messageID);
 	
 	/**
 	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä

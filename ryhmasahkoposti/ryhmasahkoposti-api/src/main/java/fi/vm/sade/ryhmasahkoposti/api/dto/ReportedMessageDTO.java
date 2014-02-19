@@ -4,6 +4,8 @@ import java.util.List;
 
 public class ReportedMessageDTO extends EmailMessageDTO {
 	private List<EmailRecipientDTO> emailRecipients;
+	private SendingStatusDTO sendingStatus;
+	private String statusReport;
 	private String sendingReport;
 
 	public List<EmailRecipientDTO> getEmailRecipients() {
@@ -14,6 +16,22 @@ public class ReportedMessageDTO extends EmailMessageDTO {
 		this.emailRecipients = emailRecipients;
 	}
 	
+	public SendingStatusDTO getSendingStatus() {
+		return sendingStatus;
+	}
+
+	public void setSendingStatus(SendingStatusDTO sendingStatus) {
+		this.sendingStatus = sendingStatus;
+	}
+
+	public String getStatusReport() {
+		return statusReport;
+	}
+
+	public void setStatusReport(String statusReport) {
+		this.statusReport = statusReport;
+	}
+
 	public String getSendingReport() {
 		return sendingReport;
 	}

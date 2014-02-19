@@ -23,46 +23,13 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 	}
 	
 	@Override
-	public SendingStatusDTO getSendingStatusOfRecipients(Long messageID) {
-		SendingStatusDTO sendingStatus = new SendingStatusDTO();
-		
-		long nbrOfSuccesfulAndFailed = 0;
-		
-		Long nbrOfRecipients = reportedRecipientDAO.findNumberOfRecipientsByMessageID(messageID);
-		sendingStatus.setNumberOfReciepients(nbrOfRecipients);
-		
-		Long nbrOfSuccesful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(
-			messageID, true);
-		if (nbrOfSuccesful != null) {
-			nbrOfSuccesfulAndFailed += nbrOfSuccesful.longValue();
-		}
-		sendingStatus.setNumberOfSuccesfulSendings(nbrOfSuccesful);
-		
-		Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(
-			messageID, false);
-		if (nbrOfFailed != null) {
-			nbrOfSuccesfulAndFailed += nbrOfFailed.longValue();
-		} 	
-		sendingStatus.setNumberOfFailedSendings(nbrOfFailed);
-		
-		if (nbrOfSuccesfulAndFailed == nbrOfRecipients.longValue()) {
-			Date latestSendingEnded = 
-				reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
-			sendingStatus.setSendingEnded(latestSendingEnded);
-		}
-		
-		return sendingStatus;
-	}
-
-	@Override
-	public Date getLatestReportedRecipientsSendingEnded(Long messageID) {
+	public Date getLatestReportedRecipientsSendingEndedDate(Long messageID) {
 		return reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
 	}
 
 	@Override
-	public List<ReportedRecipient> getReportedRecipients() {
-		// TODO Auto-generated method stub
-		return null;
+	public Long getNumberOfSendingFailed(Long messageID) {
+		return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(messageID, false);
 	}
 
 	@Override
@@ -74,7 +41,42 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 	public ReportedRecipient getReportedRecipient(Long messageID, String recipientEmail) {
 		return reportedRecipientDAO.findByMessageIdAndRecipientEmail(messageID, recipientEmail);
 	}
+
+	@Override
+	public List<ReportedRecipient> getReportedRecipients() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 	
+	@Override
+	public SendingStatusDTO getSendingStatusOfRecipients(Long messageID) {
+		SendingStatusDTO sendingStatus = new SendingStatusDTO();
+		
+		long nbrOfSuccesfulAndFailed = 0;
+		
+		Long nbrOfRecipients = reportedRecipientDAO.findNumberOfRecipientsByMessageID(messageID);
+		sendingStatus.setNumberOfReciepients(nbrOfRecipients);
+		
+		Long nbrOfSuccesful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(messageID, true);
+		if (nbrOfSuccesful != null) {
+			nbrOfSuccesfulAndFailed += nbrOfSuccesful.longValue();
+		}
+		sendingStatus.setNumberOfSuccesfulSendings(nbrOfSuccesful);
+		
+		Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(messageID, false);
+		if (nbrOfFailed != null) {
+			nbrOfSuccesfulAndFailed += nbrOfFailed.longValue();
+		} 	
+		sendingStatus.setNumberOfFailedSendings(nbrOfFailed);
+		
+		if (nbrOfSuccesfulAndFailed == nbrOfRecipients.longValue()) {
+			Date latestSendingEnded = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
+			sendingStatus.setSendingEnded(latestSendingEnded);
+		}
+		
+		return sendingStatus;
+	}
+
 	@Override
 	public List<ReportedRecipient> getUnhandledReportedRecipients(int listSize) {		
 		List<ReportedRecipient> reportedRecipients = reportedRecipientDAO.findUnhandled();

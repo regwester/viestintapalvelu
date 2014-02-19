@@ -1,13 +1,10 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.resource.MessageReportingResource;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
@@ -32,19 +29,7 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
 	}
 
 	@Override
-	public ReportedMessageDTO getReportedMessage() {
-		ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();	
-
-		EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-		List<EmailRecipientDTO> emailRecipientDTOs = new ArrayList<EmailRecipientDTO>();
-		emailRecipientDTOs.add(emailRecipientDTO);
-		reportedMessageDTO.setEmailRecipients(emailRecipientDTOs);
-		
-		EmailAttachment emailAttachment = new EmailAttachment();
-		List<EmailAttachment> emailAttachments = new ArrayList<EmailAttachment>();
-		emailAttachments.add(emailAttachment);
-		reportedMessageDTO.setAttachments(emailAttachments);
-		
-		return reportedMessageDTO;
+	public ReportedMessageDTO getReportedMessage(Long messageID) {
+		return groupEmailReportingService.getReportedMessage(messageID);
 	}
 }

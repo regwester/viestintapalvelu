@@ -36,6 +36,14 @@ public interface GroupEmailReportingService {
 	public ReportedMessageDTO getReportedMessage(Long messageID);
 
 	/**
+	 * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
+	 * 
+	 * @param messageID Viestintunnus 
+	 * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
+	 */
+	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID);
+
+	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
 	 * 
 	 * @return Lista raportoitavia viestejä

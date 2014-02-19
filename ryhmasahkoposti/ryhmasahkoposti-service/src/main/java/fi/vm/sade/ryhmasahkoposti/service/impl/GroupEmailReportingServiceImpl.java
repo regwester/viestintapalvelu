@@ -2,7 +2,9 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -88,7 +90,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		List<ReportedAttachment> reportedAttachments = 
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 		
-		ReportedMessageDTO reportedMessageDTO = ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments);
+		ReportedMessageDTO reportedMessageDTO = 
+			ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatus);
 		reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 		
 		return reportedMessageDTO;
@@ -97,7 +100,14 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	public List<ReportedMessageDTO> getReportedMessages() {
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages();
-		return ReportedMessageDTOConverter.convert(reportedMessages);
+		
+		Map<Long, Long> nbrOfSendingFaileds = new HashMap<Long, Long>();
+		for (ReportedMessage reportedMessage : reportedMessages) {
+			Long nbrOfSendingFailed = reportedRecipientService.getNumberOfSendingFailed(reportedMessage.getId());
+			nbrOfSendingFaileds.put(reportedMessage.getId(), nbrOfSendingFailed);
+		}
+		
+		return ReportedMessageDTOConverter.convert(reportedMessages, nbrOfSendingFaileds);
 	}
 
 	@Override
@@ -105,6 +115,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		EmailMessageQueryDTO query = EmailMessageQueryDTOConverter.convert(searchArgument);
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);		
 		return ReportedMessageDTOConverter.convert(reportedMessages);
+	}
+
+	@Override
+	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 	@Override

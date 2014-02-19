@@ -20,8 +20,10 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
-import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.powermock.api.mockito.PowerMockito;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -38,6 +40,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
@@ -45,10 +48,11 @@ import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 
-@RunWith(MockitoJUnitRunner.class)
+@RunWith(PowerMockRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
 	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@PrepareForTest(MessageUtil.class)
 public class GroupEmailReportingServiceTest {
 	private GroupEmailReportingService groupEmailReportingService;
 	@Mock
@@ -254,7 +258,7 @@ public class GroupEmailReportingServiceTest {
 		
 		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
 		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
-		when(mockedReportedRecipientService.getLatestReportedRecipientsSendingEnded(any(Long.class))).thenReturn(new Date());
+		when(mockedReportedRecipientService.getLatestReportedRecipientsSendingEndedDate(any(Long.class))).thenReturn(new Date());
 		
 		SendingStatusDTO sendingStatus = groupEmailReportingService.getSendingStatus(new Long(1));
 
@@ -268,8 +272,39 @@ public class GroupEmailReportingServiceTest {
 		assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
 		assertNotNull(sendingStatus.getSendingEnded());
 	}
+	
 	@Test
 	public void testGetReportedMessages() {
+		PowerMockito.mockStatic(MessageUtil.class);
+		when(MessageUtil.getMessage(any(String.class))).thenReturn("lahetys kesken");
+		
+		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		reportedMessage.setId(new Long(1));
+		reportedMessage.setVersion(new Long(0));
+		
+		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
+		reportedRecipient.setReportedMessage(reportedMessage);
+		reportedRecipients.add(reportedRecipient);
+
+		reportedMessage.setReportedRecipients(reportedRecipients);
+		mockedReportedMessages.add(reportedMessage);
+		
+		when(mockedReportedMessageService.getReportedMessages()).thenReturn(mockedReportedMessages);
+		
+		when(mockedReportedRecipientService.getNumberOfSendingFailed(any(Long.class))).thenReturn(new Long(0));
+
+		List<ReportedMessageDTO> reportedMessageDTOs = groupEmailReportingService.getReportedMessages();
+		
+		assertNotNull(reportedMessageDTOs);
+		assertTrue(reportedMessageDTOs.size() == 1);
+		assertNotNull(reportedMessageDTOs.get(0).getStatusReport());
+		assertTrue(reportedMessageDTOs.get(0).getStatusReport().equalsIgnoreCase("lahetys kesken"));
+	}
+	
+	@Test
+	public void testGetReportedMessagesBySearchArgument() {
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -295,7 +330,7 @@ public class GroupEmailReportingServiceTest {
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testGetReportedMessage() {
+	public void testGetReportedMessageWithReports() {		
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
 		reportedMessage.setVersion(new Long(0));
@@ -314,6 +349,12 @@ public class GroupEmailReportingServiceTest {
 		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(
 			sendingStatusDTO);
 		
+		PowerMockito.mockStatic(MessageUtil.class);
+		PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", 
+			new Object[]{new Long(5), new Long(2)})).thenReturn("2 lahetystä epäonnistui");
+		PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", 
+			new Object[] {new Long(2)})).thenReturn("Lahetyksiä epäonnistui");
+		
 		when(mockedReportedAttachmentService.getReportedAttachments(any(Set.class))).thenReturn(
 			new ArrayList<ReportedAttachment>());
 		
@@ -322,5 +363,7 @@ public class GroupEmailReportingServiceTest {
 		
 		assertNotNull(reportedMessageDTO);
 		assertTrue(reportedMessageDTO.getMessageID().equals(new Long(1)));
+		assertNotNull(reportedMessageDTO.getStatusReport());
+		assertNotNull(reportedMessageDTO.getSendingReport());
 	}
 }
