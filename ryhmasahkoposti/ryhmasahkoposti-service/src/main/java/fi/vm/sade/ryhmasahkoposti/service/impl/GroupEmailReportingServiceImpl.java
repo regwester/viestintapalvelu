@@ -113,8 +113,15 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	public List<ReportedMessageDTO> getReportedMessages(String searchArgument) {
 		EmailMessageQueryDTO query = EmailMessageQueryDTOConverter.convert(searchArgument);
-		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);		
-		return ReportedMessageDTOConverter.convert(reportedMessages);
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);	
+		
+        Map<Long, Long> nbrOfSendingFaileds = new HashMap<Long, Long>();
+        for (ReportedMessage reportedMessage : reportedMessages) {
+            Long nbrOfSendingFailed = reportedRecipientService.getNumberOfSendingFailed(reportedMessage.getId());
+            nbrOfSendingFaileds.put(reportedMessage.getId(), nbrOfSendingFailed);
+        }		
+		
+		return ReportedMessageDTOConverter.convert(reportedMessages, nbrOfSendingFaileds);
 	}
 
 	@Override

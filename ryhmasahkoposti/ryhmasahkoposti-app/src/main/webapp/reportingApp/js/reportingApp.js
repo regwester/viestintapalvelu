@@ -7,7 +7,7 @@ reportingApp.config(function ($routeProvider) {
 		when('/reportMessages/list', {
             controller: 'ReportedMessageListController',
             resolve: {
-                reportedMessages: ["GetReportedMessages", function(GetReportedMessages) {
+                reportedMessages: ['GetReportedMessages', function(GetReportedMessages) {
                   return GetReportedMessages.get();
                 }]
             },

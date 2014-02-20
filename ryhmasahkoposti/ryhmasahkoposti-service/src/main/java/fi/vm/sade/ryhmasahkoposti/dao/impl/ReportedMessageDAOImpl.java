@@ -46,9 +46,9 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 			whereExpression = reportedRecipient.searchName.containsIgnoreCase(emailRecipientQuery.getRecipientName());
 		}
 		
-		return from(reportedMessage).leftJoin(
+		return from(reportedMessage).distinct().leftJoin(
 			reportedMessage.reportedRecipients, reportedRecipient).fetch().where(
-			whereExpression).list(reportedMessage);
+			whereExpression).orderBy(reportedMessage.sendingStarted.asc()).list(reportedMessage);
 	}
 
 	@Override
