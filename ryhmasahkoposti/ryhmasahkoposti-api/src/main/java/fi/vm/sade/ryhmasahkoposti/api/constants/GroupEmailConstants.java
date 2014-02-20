@@ -9,6 +9,6 @@ public interface GroupEmailConstants {
 	
 	// OID-vakiot
 	public static final String OID_OPH_TREE = "1.2.246.562";
-	public static final String OID_OPH_PERSON_TREE = "1.2.246.562.10";
-	public static final String OID_OPH_ORGANISATION_TREE = "1.2.246.562.24";
+	public static final String OID_OPH_PERSON_TREE = "1.2.246.562.24";
+	public static final String OID_OPH_ORGANISATION_TREE = "1.2.246.562.10";
 }

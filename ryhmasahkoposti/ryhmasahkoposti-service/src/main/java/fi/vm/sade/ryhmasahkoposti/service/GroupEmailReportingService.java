@@ -20,6 +20,15 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
  */
 public interface GroupEmailReportingService {
 	/**
+	 * Lisää lähetettävän ryhmäsähköpostin tiedot odottamaan lähetystä
+	 *  
+	 * @param emailData Ryhmäshköpostin tiedot
+	 * @return Tallenetun ryhmäsköpostiviestin avain
+	 * @throws IOException
+	 */
+	public Long addSendingGroupEmail(EmailData emailData) throws IOException;
+
+	/**
 	 * Hakee viestintunnuksella lähetettävän ryhmäsähköpostiviestin  
 	 * 
 	 * @param messageID Viestintunnus 
@@ -34,14 +43,6 @@ public interface GroupEmailReportingService {
 	 * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
 	 */
 	public ReportedMessageDTO getReportedMessage(Long messageID);
-
-	/**
-	 * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
-	 * 
-	 * @param messageID Viestintunnus 
-	 * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
-	 */
-	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID);
 
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -59,13 +60,21 @@ public interface GroupEmailReportingService {
 	public List<ReportedMessageDTO> getReportedMessages(String searchArgument);
 
 	/**
+	 * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
+	 * 
+	 * @param messageID Viestintunnus 
+	 * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
+	 */
+	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID);
+
+	/**
 	 * Hakee lähetyksen tuloksen
 	 * 
 	 * @param messageID Halutun viestin tunnus
 	 * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link SendingStatusDTO}
 	 */
 	public SendingStatusDTO getSendingStatus(Long messageID);
-
+	
 	/**
 	 * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
 	 * 
@@ -99,15 +108,6 @@ public interface GroupEmailReportingService {
 	 * @return Liitteelle generoitu avain
 	 */
 	public Long saveAttachment(FileItem fileItem) throws IOException;
-	
-	/**
-	 * Lisää lähetettävän ryhmäsähköpostin tiedot odottamaan lähetystä
-	 *  
-	 * @param emailData Ryhmäshköpostin tiedot
-	 * @return Tallenetun ryhmäsköpostiviestin avain
-	 * @throws IOException
-	 */
-	public Long addSendingGroupEmail(EmailData emailData) throws IOException;
 
 	/**
 	 * Merkitsee sähköpostin lähetyksen vastaanottajalle alkaneeksi

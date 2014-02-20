@@ -40,7 +40,7 @@ public class HenkiloRoute extends AbstractJsonToDtoRouteBuilder {
 	 * @param oid Henkilön OID-tunnus
 	 * @return Henkilön tiedot
 	 */
-	public Henkilo haeHenkilo(String oid) {
+	public Henkilo getHenkilo(String oid) {
 		ProducerTemplate camelTemplate = getCamelTemplate();
 		return camelTemplate.requestBodyAndHeader(REITTI_HAE_HENKILO, "", "oid", oid, Henkilo.class);
 	}
