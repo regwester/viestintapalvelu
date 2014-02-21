@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import java.sql.Timestamp;
 import java.util.Properties;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -51,16 +52,17 @@ public class EmailSender {
 			
 			if (EmailConstants.TEST_MODE.equals("NO")) {
 
-				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP
-						+ "), message '" + emailMessage.getSubject() + "' to '"
-						+ emailAddress + "'";
+				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP + "), "
+						+ " SUBJECT '" + emailMessage.getSubject()
+						+ "' FROM '" + emailMessage.getSenderEmail()
+						+ "' TO '" + emailAddress + "'";
 				try {
 					Transport.send(message);
-					log.info("Success" + logMsg);
+					log.info(getTimestamp() + "Success" + logMsg);
 					sentOk = true;
 				} catch (MessagingException e) {
 					sentOk = false;
-					log.log(Level.SEVERE, " Problems" + logMsg + ": " + e.getMessage());
+					log.log(Level.SEVERE, getTimestamp() + " Problems" + logMsg + ": " + e.getMessage());
 					throw new Exception (e.getMessage());
 				}
 
@@ -133,10 +135,7 @@ public class EmailSender {
 							attachment.getContentType());
 				} else {
 					msg = null;
-					log.log(Level.SEVERE,
-							"Failed to insert attachment - it is not valid "
-									+ attachment.getName());
-
+					log.log(Level.SEVERE, "Failed to insert attachment - it is not valid " + attachment.getName());
 					break;
 				}
 			}
@@ -156,6 +155,11 @@ public class EmailSender {
 
 	public String getSmtpPort() {
 		return smtpPort;
+	}
+	
+	private String getTimestamp() {
+		java.util.Date date= new java.util.Date();
+		return "RYHMAVIESTI: " + new Timestamp(date.getTime())+": ";
 	}
 
 	@Override
