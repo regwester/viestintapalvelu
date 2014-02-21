@@ -305,6 +305,9 @@ public class GroupEmailReportingServiceTest {
 	
 	@Test
 	public void testGetReportedMessagesBySearchArgument() {
+        PowerMockito.mockStatic(MessageUtil.class);
+        when(MessageUtil.getMessage(any(String.class))).thenReturn("lahetys kesken");
+
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -321,6 +324,8 @@ public class GroupEmailReportingServiceTest {
 		when(mockedReportedMessageService.getReportedMessages(
 			any(EmailMessageQueryDTO.class))).thenReturn(mockedReportedMessages);
 
+		when(mockedReportedRecipientService.getNumberOfSendingFailed(any(Long.class))).thenReturn(new Long(0));
+	      
 		List<ReportedMessageDTO> reportedMessageDTOs = 
 			groupEmailReportingService.getReportedMessages("testi.vastaanottaja@sposti.fi");
 		
