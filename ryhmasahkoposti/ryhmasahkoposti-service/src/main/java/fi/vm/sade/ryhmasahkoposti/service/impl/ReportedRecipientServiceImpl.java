@@ -99,16 +99,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
 	@Override
 	public void saveReportedRecipients(Set<ReportedRecipient> reportedRecipients) {
-		for (ReportedRecipient reportedRecipient : reportedRecipients) {
-		    
-    	    if (OidValidator.isHenkiloOID("1.2.246.562.24.16711044433")) {
-    		    Henkilo henkilo = henkiloRoute.getHenkilo("1.2.246.562.24.16711044433");
-    		    
-    		    String searchName = henkilo.getSukunimi() + "," + henkilo.getEtunimet();
-    		    reportedRecipient.setSearchName(searchName);
-    		    reportedRecipient.setSocialSecurityID(henkilo.getHetu());
-    		}
-		    
+		for (ReportedRecipient reportedRecipient : reportedRecipients) {		    
 			reportedRecipientDAO.insert(reportedRecipient);
 		}
 	}
