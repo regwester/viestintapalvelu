@@ -75,7 +75,7 @@
 		    			$location.path("/status");                        
 		            },
 		            function(error) {
-		                alert("Error " + error);
+		                alert("Virhe: Ei valtuuksia l‰hett‰‰. \nSis‰‰nkirjautuminen puuttuu/puutteellinen.");
 		            },
 		            function(update) {
 		                alert("Notification " + update);

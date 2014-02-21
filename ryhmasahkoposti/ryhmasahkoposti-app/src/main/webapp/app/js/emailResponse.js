@@ -16,7 +16,7 @@ emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailR
             	$scope.recipCnt = $scope.ReportedMessageDTO.emailRecipients.length + " vastaanottajaa";
 			},	            
             function(error) {
-                alert("Error " + error);
+                alert("Error (sendResult)" + error);
             },
             function(update) {
                 alert("Notification " + update);
@@ -28,7 +28,7 @@ emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailR
             	$scope.SendingStatusDTO = value; 
 			},	            
             function(error) {
-                alert("Error " + error);
+                alert("Error (sendEmailStatus)" + error);
             },
             function(update) {
                 alert("Notification " + update);

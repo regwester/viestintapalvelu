@@ -1,7 +1,6 @@
 var email = angular.module('viestintapalvelu', ['ngRoute', 'ngResource']);
 
 email.config(['$routeProvider',  function ($routeProvider) {
-//		$routeProvider.when('/test/', {templateUrl: '/ryhmasahkoposti-app/app/html/test.html', controller: 'TestController'});
 		$routeProvider.when('/email', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
 		$routeProvider.when('/cancel/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailCancel.html', controller: 'EmailCancelController'});
 		$routeProvider.when('/status/', {templateUrl: '/ryhmasahkoposti-app/app/html/emailSendStatus.html', controller: 'EmailSendStatusController'});
@@ -60,7 +59,7 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
     			$location.path("/status");                        
             },
             function(error) {
-                alert("Error " + error);
+                alert("Virhe: Ei valtuuksia lähettää. \nSisäänkirjautuminen puuttuu/puutteellinen.");
             },
             function(update) {
                 alert("Notification " + update);

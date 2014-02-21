@@ -5,7 +5,7 @@
 	<form action="index.jsp" method="post">
 		<textarea rows="30" cols="200" name="emailData">
 			{
-					recipient: [<%for (int i = 0; i < 29; i++) {%>
+					recipient: [<%for (int i = 0; i < 2; i++) {%>
 						{oid: '1234567890ABCD<%=i%>',
 						oidType: 'henkilo',
 						email: 'ville.vastaanottaja@gmail.com',
