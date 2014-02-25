@@ -11,6 +11,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.security.access.annotation.Secured;
@@ -43,13 +44,14 @@ public interface EmailResource {
      * @throws URISyntaxException
      * @throws ServletException
      */
-	@POST
+	
+    @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("application/json")
     @Path("addAttachment")
     @Secured({SecurityConstants.SEND})
-	public AttachmentResponse addAttachment(HttpServletRequest request,	HttpServletResponse response) 
-		throws IOException,	URISyntaxException, ServletException;
+    public AttachmentResponse addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
+    											throws IOException, URISyntaxException, ServletException ;
 
 	/**
 	 * Lähettää sähköpostin
