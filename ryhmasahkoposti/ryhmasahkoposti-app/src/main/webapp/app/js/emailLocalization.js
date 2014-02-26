@@ -13,7 +13,7 @@ angular.module('localization', [])
         } else {
             language = "FI";
         }
-                
+
         jQuery.i18n.properties({
             name:'messages',
             path:'./i18n/',
@@ -25,6 +25,6 @@ angular.module('localization', [])
         });
 
         return function(text) {
-            return jQuery.i18n.prop(text);
+        	return jQuery.i18n.prop(text);
         };
 	}]);

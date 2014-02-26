@@ -11,22 +11,20 @@
 		
 		<hr></hr>
 		            
-		<div class="control-group" ng-hide="showTo">
+		<div class="control-group">
 		    <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
-		    <div class="controls">
+
+		    <div class="controls" ng-hide="showTo">
             		{{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
-		    </div>		
-		</div>
-            
-		<div class="control-group" ng-hide="showCnt">		
-		    <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
-		    <div class="controls">		    
+		    </div>	
+		    
+		    <div class="controls" ng-hide="showCnt">		    
 		 		<div border="0" ng-repeat="header in emaildata.recipient">								    		 
 	  					{{header.email}}
 				</div>	
 		    </div>						        
 		</div>
-    	            
+		
 		<div class="control-group">		
 		    <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
 		    <div class="controls">

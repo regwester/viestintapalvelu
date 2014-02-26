@@ -15,14 +15,13 @@ public class ReportedMessageConverter {
 		ReportedMessage reportedMessage = new ReportedMessage();
 		
 		reportedMessage.setSubject(emailMessage.getSubject());
-		reportedMessage.setProcess(emailMessage.getCallingProcess());
-		/* TODO: Tässä todennäköisesti sender <-> replytiedot todennäköisesti väärinpäin. */
-		reportedMessage.setSenderOid(emailMessage.getSenderOid());
-		reportedMessage.setSenderOidType(emailMessage.getSenderOidType());
-		reportedMessage.setSenderEmail(emailMessage.getSenderEmail());
-		reportedMessage.setReplyToOid("");
-		reportedMessage.setReplyToOidType("");
-		reportedMessage.setReplyToEmail(emailMessage.getOwnerEmail());
+		reportedMessage.setProcess(emailMessage.getCallingProcess());		
+		reportedMessage.setSenderOid("");
+		reportedMessage.setSenderOidType("");
+		reportedMessage.setSenderEmail(emailMessage.getOwnerEmail()); // Can be just an alias name
+		reportedMessage.setReplyToOid(emailMessage.getSenderOid());
+		reportedMessage.setReplyToOidType(emailMessage.getSenderOidType());
+		reportedMessage.setReplyToEmail(emailMessage.getSenderEmail());		
 		reportedMessage.setSubject(emailMessage.getSubject());
 		reportedMessage.setMessage(emailMessage.getBody());
 		if (emailMessage.isHtml()) {
