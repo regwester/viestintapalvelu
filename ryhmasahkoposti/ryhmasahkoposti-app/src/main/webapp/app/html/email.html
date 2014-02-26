@@ -5,21 +5,21 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
-	            	<h2>Viesti</h2>
+	            	<h2>{{'email.header.viesti' | i18n}}</h2>
 		    </div>		
 		</div>
 		
 		<hr></hr>
 		            
-		<div class="control-group" ng-hide="showTo">		
-		    <label class="control-label">Vastaanottajat</label>
+		<div class="control-group" ng-hide="showTo">
+		    <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
 		    <div class="controls">
-            		{{emaildata.recipient.length}} vastaanottajaa
+            		{{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
 		    </div>		
 		</div>
             
 		<div class="control-group" ng-hide="showCnt">		
-		    <label class="control-label">Vastaanottajat</label>
+		    <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
 		    <div class="controls">		    
 		 		<div border="0" ng-repeat="header in emaildata.recipient">								    		 
 	  					{{header.email}}
@@ -28,33 +28,33 @@
 		</div>
     	            
 		<div class="control-group">		
-		    <label class="control-label">Lähettäjä</label>
+		    <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
 		    <div class="controls">
- 		    	<input type="text" size="40" ng-model="emaildata.email.senderEmail"/>
+ 		    	<input type="text" size="40" ng-model="emaildata.email.ownerEmail"/>
 		    </div>		
 		</div>
 		
 		<div class="control-group">		
-		    <label class="control-label">Otsikko</label>
+		    <label class="control-label">{{'email.label.otsikko' | i18n}}</label>
 		    <div class="controls">
  		    	<input type="text" size="40" ng-model="emaildata.email.subject"/>
 		    </div>		
 		</div>
 
 		<div class="control-group">		
-		    <label class="control-label">Viesti</label>
+		    <label class="control-label">{{'email.label.viesti' | i18n}}</label>
 		    <div class="controls">
  		    	<textarea rows="10" cols="120" ng-model="emaildata.email.body"/>
 		    </div>		
 		</div>
     	
     	<div class="control-group">
-			<label class="control-label">Liitteet</label>
+		    <label class="control-label">{{'email.label.liitteet' | i18n}}</label>
 		    <div class="controls">
- 				<span ng-show="!emaildata.email.attachInfo.length">Ei liitteitä</span> 
+ 				<span ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
 				<ul>					
  					<li ng-repeat="name in emaildata.email.attachInfo">{{name.fileName}}  						
-						<a ng-click="remove($index)">Poista</a>												
+						<a ng-click="remove($index)">{{'email.liitteet.poista' | i18n}}</a>												
 					</li>
  				</ul>  								
 			</div>
@@ -64,8 +64,8 @@
 		    <label class="control-label"></label>
 			<!-- <div class="controls pagination-right"> -->
 		    <div class="controls pagination-centered"> 
-					<button ng-click="cancelEmail()" 	class="inline-operation btn btn-small">Peruuta</button>
-					<button ng-click="sendGroupEmail()" class="inline-operation btn btn-small">Lähetä</button>
+					<button ng-click="cancelEmail()" 	class="inline-operation btn btn-small">{{'email.button.peruuta' | i18n}}</button>
+					<button ng-click="sendGroupEmail()" class="inline-operation btn btn-small">{{'email.button.laheta' | i18n}}</button>
 		    </div>		
 		</div>
 				
@@ -74,17 +74,17 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
-	            	<h4>Liitteiden lataus</h4>
+	            	<h4>{{'email.header.liitteet' | i18n}}</h4>
 		    </div>		
 		</div>
     	<div class="control-group">	
-			<label class="control-label">Vaihe 1</label>    			
+			<label class="control-label">{{'email.label.liite.vaihe.1' | i18n}}</label>    			
 		    <div class="controls">
 				<div>
 					<span>												 
 						<div class="image-upload" >
 						        <label for="attachment-input" class="inline-operation btn btn-small">
-						            Valitse ladattava tiedosto(t)
+						            {{'email.button.liite.valitse' | i18n}}
 						        </label>
 								<input  id="attachment-input" 
 										type="file" name="file"
@@ -95,7 +95,7 @@
 						</div>
 					</span>				
 				</div>
-				<span ng-show="!files.length">Ei ladattavia liitteitä</span>
+				<span ng-show="!files.length">{{'email.liitteet.lataus.ei' | i18n}}</span>
 				<ul>
 					<li ng-repeat="file in files">{{file}}</li>
 				</ul>
@@ -103,10 +103,10 @@
 		</div>
 
     	<div class="control-group">	
-			<label class="control-label">Vaihe 2</label>    			
+			<label class="control-label">{{'email.label.liite.vaihe.2' | i18n}}</label>    			
 		    <div class="controls">
 				<span>
-					<button type="submit" class="inline-operation btn btn-small" ng-click="upload()">Liitä tiedosto(t) viestiin</button>				
+					<button type="submit" class="inline-operation btn btn-small" ng-click="upload()">{{'email.button.liite.liita' | i18n}}</button>				
 				</span>
 				<br>
 				<div class="progress" ng-show="percentage">

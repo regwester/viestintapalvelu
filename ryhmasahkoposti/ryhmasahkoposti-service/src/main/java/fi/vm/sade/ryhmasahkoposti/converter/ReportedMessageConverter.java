@@ -16,6 +16,7 @@ public class ReportedMessageConverter {
 		
 		reportedMessage.setSubject(emailMessage.getSubject());
 		reportedMessage.setProcess(emailMessage.getCallingProcess());
+		/* TODO: Tässä todennäköisesti sender <-> replytiedot todennäköisesti väärinpäin. */
 		reportedMessage.setSenderOid(emailMessage.getSenderOid());
 		reportedMessage.setSenderOidType(emailMessage.getSenderOidType());
 		reportedMessage.setSenderEmail(emailMessage.getSenderEmail());

@@ -8,8 +8,8 @@ email.config(['$routeProvider',  function ($routeProvider) {
 	    $routeProvider.otherwise({redirectTo: '/email'});
 }]);
 
-email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location', 
-                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
+email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location', 'i18n',
+                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location, i18n) { 	
 
 	$rootScope.emailsendid = "";
 
