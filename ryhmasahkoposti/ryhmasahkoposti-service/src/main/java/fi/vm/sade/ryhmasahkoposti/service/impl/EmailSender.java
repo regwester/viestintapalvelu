@@ -54,7 +54,7 @@ public class EmailSender {
 
 				String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP + "), "
 						+ " SUBJECT '" + emailMessage.getSubject()
-						+ "' FROM '" + emailMessage.getReplyToAddress() //.getSenderEmail()
+						+ "' FROM '" + emailMessage.getReplyToAddress()
 						+ "' TO '" + emailAddress + "'";
 				try {
 					Transport.send(message);
@@ -69,7 +69,7 @@ public class EmailSender {
 			} else { // just log what would have been sent
 				StringBuffer sb = new StringBuffer("Email dummysender:");
 				sb.append("\nFROM:    ");
-				sb.append(emailMessage.getReplyToAddress()); //.getSenderEmail());
+				sb.append(emailMessage.getReplyToAddress());
 				sb.append("\nTO:      ");
 				// sb.append(emailMessage.getHeader().getEmail());
 				sb.append(emailAddress);
@@ -106,7 +106,7 @@ public class EmailSender {
 		InternetAddress[] toAddrs = InternetAddress.parse(emailAddress, false);
 
 		msg.setRecipients(Message.RecipientType.TO, toAddrs);
-		msg.setFrom(new InternetAddress(emailMessage.getReplyToAddress())); //.getSenderEmail())); 
+		msg.setFrom(new InternetAddress(emailMessage.getReplyToAddress())); 
 		msg.setSubject(emailMessage.getSubject(), emailMessage.getCharset());
 		if (emailMessage.getReplyToAddress() != null) {
 			InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyToAddress(), false);
