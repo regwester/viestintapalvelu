@@ -47,6 +47,13 @@
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
     
+    <!-- Viestintapalvelu-service's resourcebeans -->
+	<bean id="AddressLabelResource"     class="fi.vm.sade.viestintapalvelu.address.AddressLabelResource"/>
+	<bean id="HyvaksymiskirjeResource"  class="fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeResource"/>
+	<bean id="JalkiohjauskirjeResource" class="fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource"/>
+	<bean id="KoekutsukirjeResource"    class="fi.vm.sade.viestintapalvelu.koekutsukirje.KoekutsukirjeResource"/>
+
+    
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.liite"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.address"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.document"/>
@@ -56,5 +63,21 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.koekutsukirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
     
-    
+    <!-- Swagger -->
+	<!-- Swagger API listing resource -->
+    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+
+    <!-- Swagger writers -->
+    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
+    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
+
+    <!-- Swagger configuration -->
+    <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+        <property name="resourcePackage" value="fi.vm.sade.viestintapalvelu"/>
+        <property name="version" value="1.0"/>
+        <property name="basePath" value="/viestintapalvelu/api/v1"/>
+
+        <property name="title" value="Swagger API documentation"/>
+        <property name="scan" value="true"/>
+    </bean>
 </beans>

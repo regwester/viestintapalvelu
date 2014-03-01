@@ -10,6 +10,9 @@
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti"/>
 
+	<!-- Test properties -->
+    <context:property-placeholder location="classpath:ryhmasahkopostipalvelu-test.properties"/>
+
     <!-- Spring service and persistence configuration -->
     <import resource="/test-service-context.xml"/>
     <import resource="/test-dao-context.xml"/>

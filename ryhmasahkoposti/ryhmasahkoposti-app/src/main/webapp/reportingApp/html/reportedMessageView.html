@@ -1,0 +1,92 @@
+<div class="container">
+	<div class="row-fluid">
+		<div class="span2">
+			<button type="button" ng-click="back()" class="btn"><span class="bbutton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;takaisin</span></button>
+		</div>
+		<div class="span10">
+	    	<h1>L&auml;hetysraportti</h1>
+	    </div>
+	</div>
+
+	<div class="row-fluid" ng-if="reportedMessage.sendingStatus.numberOfFailedSendings > 0">
+    	<div class="span9">
+			<img style="margin-right:10px;" src="../img/alert-icon28x29.png">L&auml;hetys ep&auml;onnistui vastaanottajalle.
+    	</div>
+	</div>
+		
+	<div class="row-fluid">
+		<div class="span2">Prosessi</div>
+		<div class="span10">{{reportedMessage.callingProcess}}</div>
+	</div>	
+
+	<div class="row-fluid">
+		<div class="span2">L&auml;hettaja</div>
+		<div class="span10">{{reportedMessage.senderEmail}}</div>
+	</div>	
+
+	<div class="row-fluid">
+		<div class="span2">Vastausosoite</div>
+		<div class="span10">{{reportedMessage.replyToAddress}}</div>
+	</div>	
+
+	<div class="row-fluid">
+		<div class="span2">L&auml;hetystunnus</div>
+		<div class="span10">{{reportedMessage.messageID}}</div>
+	</div>
+
+	<div class="row-fluid">
+		<div class="span2">L&auml;hetysajankohta</div>
+		<div class="span10">{{reportedMessage.startTime | date:'dd.MM.yyyy hh:m'}}&nbsp;-&nbsp;{{reportedMessage.endTime | date:'dd.MM.yyyy hh:mm'}}</div>
+	</div>
+
+	<div class="row-fluid">
+		<div class="span2">L&auml;hetysraportti</div>
+		<div class="span10">{{reportedMessage.sendingReport}}</div>
+	</div>
+	
+	<div class="row-fluid">
+		<div class="span2">Aihe</div>
+		<div class="span10">{{reportedMessage.subject}}</div>
+	</div>
+	
+	<div class="row-fluid">
+		<div class="span2">Sisalt&ouml;</div>
+		<div class="span10">{{reportedMessage.body}}</div>
+	</div>
+	
+	<div ng-repeat="attachment in reportedMessage.attachments">
+		<div class="row-fluid">
+			<div class="span2" ng-if="$index == 0">Liitetiedostot</div>
+			<div class="span10">{{attachment.name}}</div>
+		</div>
+	</div>
+
+	<div class="row-fluid">
+		<div class="span3">
+		</div>
+	</div>
+	
+	<div class="row-fluid">
+		<div class="span3">
+			{{reportedMessage.emailRecipients.length}} &nbsp vastaanottajaa
+		</div>
+	</div>
+	
+    <div class="results" ng-if="reportedMessage.emailRecipients.length > 0">
+        <div pagination-page-list></div>
+        <table pagination-paginated-element model="model">
+            <tr>
+                <th ng-click="lajittele('nimi')" ng-class="">Nimi</th>
+                <th>Tunnus</th>
+                <th>S&auml;hk&ouml;postiosoite</th>
+                <th>Tila</th>
+            </tr>
+            <tr ng-repeat="emailRecipient in reportedMessage.emailRecipients">
+                <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
+                <td>{{emailRecipient.oid}}</td>
+                <td>{{emailRecipient.email}}</td>
+                <td>{{emailRecipient.statusReport}}</td>
+            </tr>
+        </table>
+    </div>
+</div>

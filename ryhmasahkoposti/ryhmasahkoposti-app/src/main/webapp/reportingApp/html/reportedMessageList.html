@@ -1,0 +1,45 @@
+<div class="container">
+	<div class="row-fluid">
+		<div class="span12">
+	    	<h1>Viestint&auml;palvelu raportointi</h1>
+	    </div>
+	</div>
+	
+    <div class="row-fluid">
+    	<div class="span6 form-inline">
+	        <input type="text" name="searchArgument" id="searchArgument" ng-model="searchArgument" size="30" placeholder="Hae viestin sis&auml;ll&ouml;ll&auml; tai vastaanottajan tiedoilla"/>
+	        <button ng-click="search(searchArgument)" class="btn btn-primary" type="button"><span>Hae</span></button>
+	        <button ng-click="clean()" class="btn" type="button"><span>Tyhjenn&auml;</span></button>
+        </div>
+    </div>
+	
+	<div class="row-fluid">
+		<div class="span3">
+		</div>
+	</div>
+	
+	<div class="row-fluid" ng-if="reportedMessages.length > 0">
+		<div class="span3">
+			{{reportedMessages.length}} &nbsp raporttia
+		</div>
+	</div>
+	
+    <div class="results" ng-if="reportedMessages.length > 0">
+        <div pagination-page-list></div>
+        <table pagination-paginated-element model="model">
+            <tr>
+                <th ng-click="lajittele('ajankohta')" ng-class="">Ajankohta</th>
+                <th>Prosessi</th>
+                <th>Aihe</th>
+                <th>Tila</th>
+            </tr>
+            <tr ng-repeat="reportedMessage in reportedMessages">
+                <td><a href="#/reportMessages/view/{{reportedMessage.messageID}}">{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
+                <td>{{reportedMessage.callingProcess}}</td>
+                <td>{{reportedMessage.subject}}</td>
+                <td>{{reportedMessage.statusReport}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+

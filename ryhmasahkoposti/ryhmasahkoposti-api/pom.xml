@@ -5,7 +5,8 @@
 	<parent>
 	    <groupId>fi.vm.sade.ryhmasahkoposti</groupId>
 	    <artifactId>ryhmasahkoposti</artifactId>
-	    <version>0.0.1-SNAPSHOT</version>
+	    <version>0.0.2-SNAPSHOT</version>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 	<artifactId>ryhmasahkoposti-api</artifactId>
@@ -15,33 +16,46 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
+
+
 	<dependencies>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-core</artifactId>
-            <version>${jersey.version}</version>
+		<!-- Jersey -->
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-core</artifactId>
+		</dependency>
+		<dependency>
+			<groupId>com.sun.jersey</groupId>
+			<artifactId>jersey-json</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>jersey-core</artifactId>
+					<groupId>com.sun.jersey</groupId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+
+        <!-- Java Servlet API -->
+       <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>com.sun.jersey</groupId>
-            <artifactId>jersey-json</artifactId>
-            <version>${jersey.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jersey-core</artifactId>
-                    <groupId>com.sun.jersey</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>	
-        <dependency>
-            <groupId>commons-io</groupId>
-            <artifactId>commons-io</artifactId>
-            <version>${commonsio.version}</version>
-        </dependency>
+		
+		<!-- Spring security -->
+		<dependency>
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-core</artifactId>
+		</dependency>
+		
+		<!-- Apache commons -->
+		<dependency>
+			<groupId>commons-io</groupId>
+			<artifactId>commons-io</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>commons-codec</groupId>
 			<artifactId>commons-codec</artifactId>
-            <version>${commonscodec.version}</version>
 		</dependency>
 	</dependencies>
 	
@@ -56,6 +70,16 @@
                		<target>1.6</target>
                     <debug>true</debug>
                     <debuglevel>none</debuglevel>
+                </configuration>
+            </plugin>
+			<plugin>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>2.5</version>
+                <configuration>
+                    <encoding>UTF-8</encoding>
+                    <nonFilteredFileExtensions>
+                        <nonFilteredFileExtension>ttf</nonFilteredFileExtension>
+                    </nonFilteredFileExtensions>
                 </configuration>
             </plugin>
             <plugin>

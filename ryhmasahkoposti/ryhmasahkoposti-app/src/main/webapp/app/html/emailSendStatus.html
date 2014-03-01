@@ -5,28 +5,48 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
-	            	<h2>Viesti</h3>
+	            	<h2>{{'sendstatus.header.viesti' | i18n}}</h2>
 		    </div>		
 		</div>
 		
 		<hr></hr>
 		            
-		<div class="control-group">		
-		    <label class="control-label"></label>
+		<div class="alert alert-block alert-info">
+			{{'sendstatus.message.1' | i18n}} <br>
+			{{'sendstatus.message.2' | i18n}} <br>
+			{{'sendstatus.message.3' | i18n}}
+		</div>						            
+		            
+		<div class="control-group">			
+		    <label class="control-label"></label>		    
 		    <div class="controls">
- 		    	Viestiä lähetetään. Yhteensä {{LahetyksenTilanneDTO.vastaanottajienLukumaara}} viestiä. <br>
- 		    	Siirretty: {{LahetyksenTilanneDTO.lahetysOnnistuiLukumaara}} <br>
- 		    	Epäonnistuneet: {{LahetyksenTilanneDTO.lahetysEpaonnistuiLukumaara}}
+			    <span ng-show="!SendingStatusDTO.numberOfReciepients">
+		    		{{'sendstatus.status.1' | i18n}}<br>
+			    </span>
+			    <span ng-show="SendingStatusDTO.numberOfReciepients">
+		    		{{'sendstatus.status.2.1' | i18n}} {{SendingStatusDTO.numberOfReciepients}} {{'sendstatus.status.2.2' | i18n}}<br>
+			    </span>		    
+		    	{{'sendstatus.statistics.ok' | i18n}} {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
+		    	{{'sendstatus.statistics.error' | i18n}} {{SendingStatusDTO.numberOfFailedSendings}}
 		    </div>		
+
 		</div>
 
 		<div class="control-group">		
 		    <label class="control-label"></label>
 			<div class="progress" ng-show="percentage">
-				<div class="bar" style="width: {{percentage}}%;"></div>
+				<div class="bar" style="width: {{percentage(SendingStatusDTO.numberOfSuccesfulSendings,
+															SendingStatusDTO.numberOfFailedSendings,
+															SendingStatusDTO.numberOfReciepients) }}%;"></div>
 			</div>
 		</div>
-		
+
+		<div class="control-group">		
+		    <label class="control-label"></label>
+		    <div class="controls pagination-centered"> 		    
+				<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">{{'sendstatus.button.next' | i18n}}</button>
+		    </div>		
+		</div>
 		    	 
 		<hr></hr>
     </form>

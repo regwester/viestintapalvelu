@@ -3,13 +3,19 @@ package fi.vm.sade.viestintapalvelu.jalkiohjauskirje;
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
+
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import java.util.ArrayList;
 import java.util.List;
 
+@ApiModel(value = "Kerralla muodostettavien jälkiohjauskirjeiden joukko")
 public class JalkiohjauskirjeBatch {
     @NotNull
     @Size(min = 1)
     @Valid
+	@ApiModelProperty(value = "Kerralla muodostettavien jälkiohjauskirjeiden joukko, (1-n)", required=true)    
     private List<Jalkiohjauskirje> letters;
 
     public JalkiohjauskirjeBatch() {
