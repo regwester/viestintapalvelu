@@ -147,6 +147,7 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
 					byte[] pdf = hyvaksymiskirjeBuilder.printPDF(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("hyvaksymiskirje.pdf"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",

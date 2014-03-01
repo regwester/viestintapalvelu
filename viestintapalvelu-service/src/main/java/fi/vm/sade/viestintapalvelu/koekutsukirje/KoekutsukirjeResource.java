@@ -155,6 +155,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 					byte[] pdf = koekutsukirjeBuilder.printPDF(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("koekutsukirje.pdf"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",

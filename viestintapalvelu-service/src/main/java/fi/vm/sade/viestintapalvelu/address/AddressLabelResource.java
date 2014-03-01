@@ -153,6 +153,7 @@ public class AddressLabelResource extends AsynchronousResource {
 					byte[] pdf = labelBuilder.printPDF(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("addresslabels.pdf"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",
@@ -188,6 +189,7 @@ public class AddressLabelResource extends AsynchronousResource {
 					byte[] csv = labelBuilder.printCSV(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("addresslabels.xls"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",

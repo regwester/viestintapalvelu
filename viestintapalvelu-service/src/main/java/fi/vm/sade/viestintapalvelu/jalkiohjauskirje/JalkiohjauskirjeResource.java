@@ -188,6 +188,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 					byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("jalkiohjauskirje.zip"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",
