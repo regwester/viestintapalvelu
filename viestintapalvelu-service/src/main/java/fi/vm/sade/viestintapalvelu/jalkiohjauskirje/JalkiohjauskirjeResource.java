@@ -6,6 +6,7 @@ import static org.joda.time.DateTime.now;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Set;
@@ -141,6 +142,19 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 			return createFailureResponse(request);
 		}
 		return createResponse(request, documentId);
+	}
+
+	@POST
+	@Consumes("application/json")
+	@Produces("application/octet-stream")
+	@Path("/sync/zip")
+	@ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
+	@ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
+	public InputStream syncZip(
+			@ApiParam(value = "Muodostettavien jälkiohjauskirjeiden tiedot (1-n)", required = true) JalkiohjauskirjeBatch input,
+			@Context HttpServletRequest request) throws IOException,
+			DocumentException, NoSuchAlgorithmException {
+		return new ByteArrayInputStream(jalkiohjauskirjeBuilder.printZIP(input));
 	}
 
 	/**
