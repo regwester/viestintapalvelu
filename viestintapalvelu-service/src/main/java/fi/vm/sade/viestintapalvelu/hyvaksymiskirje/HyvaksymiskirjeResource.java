@@ -41,7 +41,6 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Service
-@PreAuthorize("isAuthenticated()")
 @Singleton
 @Path(Urls.HYVAKSYMISKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
@@ -126,6 +125,7 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
 	@Consumes("application/json")
 	@Produces("text/plain")
 	@Path("/async/pdf")
+	@PreAuthorize("isAuthenticated()")
 	@ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
 			+ AsyncResponseLogicDocumentation)
 	public Response asyncPdf(

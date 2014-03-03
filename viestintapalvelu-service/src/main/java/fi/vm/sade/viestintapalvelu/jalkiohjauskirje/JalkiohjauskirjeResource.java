@@ -44,7 +44,6 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Component
-@PreAuthorize("isAuthenticated()")
 @Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
@@ -172,6 +171,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("text/plain")
+	@PreAuthorize("isAuthenticated()")
 	@Path("/async/zip")
 	@ApiOperation(value = ApiZIPAsync, notes = ApiZIPAsync
 			+ ". Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. "
