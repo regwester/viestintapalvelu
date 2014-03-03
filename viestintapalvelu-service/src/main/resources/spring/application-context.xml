@@ -47,12 +47,6 @@
 	<bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
     
-    <!-- Viestintapalvelu-service's resourcebeans -->
-	<bean id="AddressLabelResource"     class="fi.vm.sade.viestintapalvelu.address.AddressLabelResource"/>
-	<bean id="HyvaksymiskirjeResource"  class="fi.vm.sade.viestintapalvelu.hyvaksymiskirje.HyvaksymiskirjeResource"/>
-	<bean id="JalkiohjauskirjeResource" class="fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeResource"/>
-	<bean id="KoekutsukirjeResource"    class="fi.vm.sade.viestintapalvelu.koekutsukirje.KoekutsukirjeResource"/>
-
     
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.liite"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.address"/>

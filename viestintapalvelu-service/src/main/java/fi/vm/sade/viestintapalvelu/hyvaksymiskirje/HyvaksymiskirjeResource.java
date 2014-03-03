@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -22,6 +21,8 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,6 +41,7 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Service
+@PreAuthorize("isAuthenticated()")
 @Singleton
 @Path(Urls.HYVAKSYMISKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
@@ -49,10 +51,14 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 public class HyvaksymiskirjeResource extends AsynchronousResource {
 	private final Logger LOG = LoggerFactory
 			.getLogger(HyvaksymiskirjeResource.class);
-	private final DownloadCache downloadCache;
-	private final HyvaksymiskirjeBuilder hyvaksymiskirjeBuilder;
-	private final DokumenttiResource dokumenttiResource;
-	private final ExecutorService executor;
+	@Autowired
+	private DownloadCache downloadCache;
+	@Autowired
+	private HyvaksymiskirjeBuilder hyvaksymiskirjeBuilder;
+	@Autowired
+	private DokumenttiResource dokumenttiResource;
+	@Autowired
+	private ExecutorService executor;
 
 	private final static String FixedTemplateNote = "Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. ";
 	private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata hyväksymiskirjeen/kirjeet PDF-muodossa; synkroninen. "
@@ -60,17 +66,6 @@ public class HyvaksymiskirjeResource extends AsynchronousResource {
 	private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata hyväksymiskirjeen/kirjeet PDF-muodossa; asynkroninen. "
 			+ FixedTemplateNote;
 	private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
-
-	@Inject
-	public HyvaksymiskirjeResource(
-			HyvaksymiskirjeBuilder jalkiohjauskirjeBuilder,
-			DownloadCache downloadCache, DokumenttiResource dokumenttiResource,
-			ExecutorService executor) {
-		this.hyvaksymiskirjeBuilder = jalkiohjauskirjeBuilder;
-		this.downloadCache = downloadCache;
-		this.dokumenttiResource = dokumenttiResource;
-		this.executor = executor;
-	}
 
 	/**
 	 * Hyvaksymiskirje PDF sync

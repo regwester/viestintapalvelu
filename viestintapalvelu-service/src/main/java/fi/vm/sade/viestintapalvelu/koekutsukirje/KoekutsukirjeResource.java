@@ -40,6 +40,7 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Component
+@PreAuthorize("isAuthenticated()")
 @Path(Urls.KOEKUTSUKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
@@ -71,7 +72,6 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	@PreAuthorize("isAuthenticated()")
 	@POST
 	@Consumes("application/json")
 	@Produces("text/plain")
@@ -121,7 +121,6 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	 * @throws IOException
 	 * @throws DocumentException
 	 */
-	@PreAuthorize("isAuthenticated()")
 	@POST
 	@Consumes("application/json")
 	@Produces("text/plain")
