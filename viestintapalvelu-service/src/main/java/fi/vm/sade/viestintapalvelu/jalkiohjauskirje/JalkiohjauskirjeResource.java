@@ -25,6 +25,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -43,6 +44,7 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Component
+@PreAuthorize("isAuthenticated()")
 @Path(Urls.JALKIOHJAUSKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it

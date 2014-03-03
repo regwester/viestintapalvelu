@@ -10,7 +10,6 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -22,6 +21,8 @@ import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -40,16 +41,21 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Service
+@PreAuthorize("isAuthenticated()")
 @Singleton
 @Path(Urls.ADDRESS_LABEL_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.ADDRESS_LABEL_RESOURCE_PATH, description = "Osoitetarrojen k&auml;sittelyn rajapinnat")
 public class AddressLabelResource extends AsynchronousResource {
 	private final Logger LOG = LoggerFactory
 			.getLogger(AddressLabelResource.class);
-	private final DownloadCache downloadCache;
-	private final AddressLabelBuilder labelBuilder;
-	private final DokumenttiResource dokumenttiResource;
-	private final ExecutorService executor;
+	@Autowired
+	private DownloadCache downloadCache;
+	@Autowired
+	private AddressLabelBuilder labelBuilder;
+	@Autowired
+	private DokumenttiResource dokumenttiResource;
+	@Autowired
+	private ExecutorService executor;
 
 	private final static String FixedTemplateNote = "Tarrapohjan malli on kiinteästi tiedostona jakelupaketissa. ";
 	private final static String ApiPDFSync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa synkronisesti. "
@@ -62,16 +68,6 @@ public class AddressLabelResource extends AsynchronousResource {
 			+ FixedTemplateNote;
 	private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
 	private final static String XLSResponse400 = "BAD_REQUEST; Excel-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
-
-	@Inject
-	public AddressLabelResource(AddressLabelBuilder labelBuilder,
-			DownloadCache downloadCache, DokumenttiResource dokumenttiResource,
-			ExecutorService executor) {
-		this.labelBuilder = labelBuilder;
-		this.downloadCache = downloadCache;
-		this.dokumenttiResource = dokumenttiResource;
-		this.executor = executor;
-	}
 
 	// Sync routes
 
