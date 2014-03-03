@@ -40,7 +40,6 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Component
-@PreAuthorize("isAuthenticated()")
 @Path(Urls.KOEKUTSUKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
@@ -106,9 +105,8 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
 	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
 	public InputStream syncPdf(
-			@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final KoekutsukirjeBatch input,
-			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
+			@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final KoekutsukirjeBatch input)
+			throws IOException, DocumentException {
 		return new ByteArrayInputStream(koekutsukirjeBuilder.printPDF(input));
 	}
 
@@ -123,6 +121,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	 */
 	@POST
 	@Consumes("application/json")
+	@PreAuthorize("isAuthenticated()")
 	@Produces("text/plain")
 	@Path("/async/pdf")
 	@ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync

@@ -41,7 +41,6 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Service
-@PreAuthorize("isAuthenticated()")
 @Singleton
 @Path(Urls.ADDRESS_LABEL_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.ADDRESS_LABEL_RESOURCE_PATH, description = "Osoitetarrojen k&auml;sittelyn rajapinnat")
@@ -122,13 +121,13 @@ public class AddressLabelResource extends AsynchronousResource {
 	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
 	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
 	public InputStream syncPdf(
-			@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input,
-			@Context HttpServletRequest request) throws DocumentException,
-			IOException {
+			@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input)
+			throws DocumentException, IOException {
 		return new ByteArrayInputStream(labelBuilder.printPDF(input));
 	}
 
 	// Async routes
+	@PreAuthorize("isAuthenticated()")
 	@POST
 	@Consumes("application/json")
 	@Produces("text/plain")
