@@ -8,7 +8,7 @@ angular.module('localization', [])
             language.substring(0, 2).toUpperCase();
 
             if (language != "FI" && language != "SV") {
-                language = "FI";
+                language = "EN";
             }
         } else {
             language = "FI";

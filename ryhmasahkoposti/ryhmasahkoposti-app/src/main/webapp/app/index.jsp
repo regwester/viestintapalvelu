@@ -64,7 +64,7 @@
 		
 			$rootScope.emailsendid = "";
 		
-			$scope.emaildata = "";
+			$scope.emaildata = "";												
 			$scope.emaildata = <%= emailData %>;
 			
 			$scope.showTo  = $scope.emaildata.recipient.length <= 30;

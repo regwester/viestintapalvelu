@@ -35,8 +35,28 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 					subject: 'Testi viesti',
 					body: 'Testi bodya ja sporttia.',
 					attachInfo: []
-			}
+			}	
 		};
+//	$scope.emaildata = {
+//			recipient: [
+//					{oid: '',
+//					oidType: '',
+//					email: '',
+//					languageCode: ''}	
+//			],		
+//			email: {callingProcess: '',
+//				senderEmail: '',
+//				senderOid: '',
+//				senderOidType: '',	
+//				replyToAddress: '',
+//				replyToOid: '',
+//				replyToOidType: '',
+//				subject: '',
+//				body: '',
+//				attachInfo: []
+//			}
+//		};
+	
 	
 	// For testing
 	for(var i=0; i<0; i++) {
