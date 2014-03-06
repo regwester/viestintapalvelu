@@ -2,8 +2,9 @@
 
 angular.module('localization', [])
 	.filter('i18n', ['$rootScope', '$locale', '$window', function($rootScope, $locale, $window) {
-        var language = $window.navigator.userLanguage || $window.navigator.language;
-
+//        var language = $window.navigator.userLanguage || $window.navigator.language;
+        var language = navigator.userLanguage; // Works in IE
+        
         if (language) {
             language.substring(0, 2).toUpperCase();
 

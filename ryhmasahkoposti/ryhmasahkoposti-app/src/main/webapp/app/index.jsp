@@ -64,8 +64,28 @@
 		
 			$rootScope.emailsendid = "";
 		
+			// Create empty email to get the attachInfo[] to the object
+			$scope.email = 
+					{callingProcess: '',
+					from: '',
+					replyTo: '',
+					subject: '',
+					body: '',
+					attachInfo: []
+			};
+			
 			$scope.emaildata = "";												
 			$scope.emaildata = <%= emailData %>;
+			
+			// Copy the received email values to the empty email 
+			$scope.email.callingProcess	= $scope.emaildata.email.callingProcess;
+			$scope.email.from			= $scope.emaildata.email.from;
+			$scope.email.replyTo		= $scope.emaildata.email.replyTo;
+			$scope.email.subject		= $scope.emaildata.email.subject;	
+			$scope.email.body			= $scope.emaildata.email.body;
+			
+			// Copy to emaildata.email the original sended values WITH the empty attachInfo[]
+			$scope.emaildata.email = $scope.email; 
 			
 			$scope.showTo  = $scope.emaildata.recipient.length <= 30;
 			$scope.showCnt = $scope.emaildata.recipient.length >  30;

@@ -22,11 +22,10 @@
 						languageCode: 'FI'}	
 					],		
 					email: {callingProcess: 'Osoitetietojarjestelma',
-							from: 'oph_tiedotus@oph.fi',
-							replyTo: 'Mikko.Mallikas@oph.fi',
-							subject: 'Testi viesti',
-							body: 'Testi bodya ja sporttia.',
-							attachInfo: []
+						from: 'oph_tiedotus@oph.fi',
+						replyTo: 'Mikko.Mallikas@oph.fi',
+						subject: 'Testi viesti',
+						body: 'Testi bodya ja sporttia.'
 					}
 			}
 		</textarea>
