@@ -31,11 +31,9 @@ public class RaportointipalveluTestData {
 		emailMessage.setCharset("utf-8");
 		emailMessage.setFooter("");
 		emailMessage.setHtml(false);
-		emailMessage.setReplyToAddress("vastaus.oppilaitos@sposti.fi");
-		emailMessage.setOwnerEmail("");
-		emailMessage.setSenderEmail("lahettaja.oppilaitos@sposti.fi");
+		emailMessage.setReplyTo("vastaus.oppilaitos@sposti.fi");
+		emailMessage.setFrom("lahettaja.oppilaitos@sposti.fi");
 		emailMessage.setSenderOid("1.2.246.562.24.42645159413");
-		emailMessage.setSenderOidType("virkailija");
 		emailMessage.setSubject("Koekutsu");
 		
 		return emailMessage;

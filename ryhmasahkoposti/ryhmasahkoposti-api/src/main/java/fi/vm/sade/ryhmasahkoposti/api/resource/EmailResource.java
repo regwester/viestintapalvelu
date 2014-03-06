@@ -93,7 +93,7 @@ public interface EmailResource {
 	public SendingStatusDTO sendEmailStatus(String sendId);
 
     /**
-     * Lähettää ryhmäshköpostin 
+     * Lähettää ryhmäsähköpostin 
      * 
      * @param emailData Ryhmäsähköpostin tiedot
      * @return Ryhmäsähköpostin tunnus

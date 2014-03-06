@@ -26,7 +26,6 @@ public class ReportedMessageConverterTest {
 			ReportedMessageConverter.convert(emailMessage);
 
 		assertNotNull(reportedMessage);
-		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid());
-		assertEquals(emailMessage.getSenderEmail(), reportedMessage.getSenderEmail());
+		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 
 	}
 }
