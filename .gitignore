@@ -17,3 +17,6 @@ target
 #idea
 *.iml
 .idea/
+
+**/Scrapbook.jpage
+**/.tern-project

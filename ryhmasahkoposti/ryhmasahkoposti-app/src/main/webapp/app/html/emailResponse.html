@@ -1,0 +1,112 @@
+<div ng-controller="EmailResponseController">
+
+    <form novalidate="novalidate" class="form-horizontal">
+    
+		<div class="control-group">		
+		    <label class="control-label"></label>
+		    <div class="controls">
+	            	<h2>{{'response.header.viesti' | i18n}}</h2>
+		    </div>		
+		</div>
+		
+		<hr></hr>
+		            
+		<div class="control-group">			    
+			<div class="alert alert-block alert-info">		
+	 			<table border="0">
+					<tr>
+				    	<td>{{'response.statistics.time' | i18n}}</td>
+				    	<td>
+							<span ng-show="!ReportedMessageDTO.endTime">
+								{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{'response.statistics.time.endtime' | i18n}}
+							</span>							
+							<span ng-show="ReportedMessageDTO.endTime">	 			
+			    				{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{ReportedMessageDTO.endTime | date:'HH:mm'}}
+							</span>
+						</td>	
+				  	</tr>											  	
+				  			  
+					<tr>
+				    	<td>{{'response.statistics.cnt' | i18n}}&nbsp;&nbsp;&nbsp;&nbsp;</td>
+				    	<td>{{SendingStatusDTO.numberOfReciepients}}</td>
+				  	</tr>
+				  	<tr>
+				    	<td>{{'response.statistics.ok' | i18n}}</td>
+				    	<td>{{SendingStatusDTO.numberOfSuccesfulSendings}}</td>
+				  	</tr>
+				  	<tr>
+				    	<td>{{'response.statistics.error' | i18n}}</td>
+				    	<td>{{SendingStatusDTO.numberOfFailedSendings}}</td>
+				  	</tr>
+				</table>		
+			</div>
+		</div>
+		
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.prosessi' | i18n}}</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.callingProcess"  disabled/>
+		    </div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.lahettaja' | i18n}}</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.from"  disabled/>
+		    </div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.vastausosoite' | i18n}}</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.replyTo"  disabled/>
+		    </div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.lahetystunnus' | i18n}}</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.messageID"  disabled/>
+		    </div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.otsikko' | i18n}}</label>
+		    <div class="controls">
+ 		    	<input type="text" size="40" ng-model="ReportedMessageDTO.subject"  disabled/>
+		    </div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.viesti' | i18n}}</label>
+		    <div class="controls">
+ 		    	<textarea rows="10" cols="120" ng-model="ReportedMessageDTO.body" disabled/>
+		    </div>		
+		</div>
+    	 
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.liitteet' | i18n}}</label>
+			<div class="controls" border="0" ng-repeat="att in ReportedMessageDTO.attachments">								    		 
+ 					{{att.name}}
+			</div>	
+		</div>
+    	 		
+		<div class="control-group">		
+		    <label class="control-label">{{'response.label.vastaanottajat' | i18n}}</label>
+
+		    <div class="controls" ng-hide="showTo">
+ 		    	<input type="text" size="40" ng-model="recipCnt"  disabled/>
+		    </div>		
+
+		    <div class="controls" ng-hide="showCnt">		    
+		 		<div border="0" ng-repeat="recip in ReportedMessageDTO.emailRecipients">								    		 
+	  					{{recip.email}}
+				</div>	
+		    </div>						        
+		</div>
+		
+		<hr></hr>
+    </form>
+
+</div>
+

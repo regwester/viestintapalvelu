@@ -1,0 +1,165 @@
+
+
+
+.hakuVirheet .valintakoe:nth-child(odd), .hakuVirheet .jonosija:nth-child(odd) {background: #F0fafF;}
+.hakuVirheet .valintakoe:nth-child(even), .hakuVirheet .jonosija:nth-child(even) {}
+.jonosija, .valintakoe {border-top: 5px solid #eee; padding-left: 20px;}
+.jarjestyskriteeri{margin-left: -20px; padding-left: 40px!important;}
+.jonosija { cursor:default; padding:10px 0;}
+.hakuVirheet {padding:10px!important; cursor:pointer;}
+.hakuVirheet table {margin: 10px;}
+.jonosija div {cursor:pointer;}
+
+
+
+
+
+
+.hakukohdeNav a.ng-hide-add {
+  animation:1s hide;
+  -webkit-animation:1s hide;
+}
+
+.hakukohdeNav a.ng-hide-remove {
+  animation:1s show;
+  -webkit-animation:1s show;
+
+  /* remember, the .hg-hide class is already on
+     the element which renders it as display=none
+     so it must be overridden to render the "show"
+     animation */
+  display:inline-block!important;
+}
+
+#hakuKentta {
+    background: url("../img/search-icon.png") 5px 5px no-repeat;
+    border-radius: 3px;
+    font-size: 12px;
+    height: 20px;
+    line-height: 20px;
+    padding-left: 30px;
+}
+#hakuKentta:hover, #hakuKentta:focus {
+	background: #fff6da url("../img/search-icon.png") 5px 5px no-repeat;
+}
+.select-style {
+	border: 1px solid #bdbdbd;
+    width: 160px;
+    height: 23px;
+    overflow: hidden;
+    background: #fff url("../img/select-icon.png") no-repeat 90% 50%;
+}
+.select-style select {
+    padding: 3px 8px;
+    width: 130%;
+    border: none;
+    box-shadow: none;
+    background: transparent;
+    background-image: none;
+    -webkit-appearance: none;
+}
+.select-style select:focus {
+    outline: none;
+}
+.results table {
+   border-left: 1px solid #e3e3e3;
+   border-collapse: collapse;
+   text-align: left;
+   margin-bottom: 28px;
+   color: #4d4d4d;
+   font-size: 13px;
+}
+.results table th, .results table td {
+   border-left: 1px solid #fff;
+   border-top: 1px solid #fff;
+   padding: 4px 10px 4px 10px;
+   vertical-align: middle;
+}
+.results table tr {
+   background-color: #fff;
+}
+.results table tr:nth-child(odd) {
+   background-color: #e6ebed;
+}
+.results table th {
+   background-color: #e8ecee;
+   border-bottom: 2px solid #fff;
+}
+
+.bbutton {
+	background-image: url(../img/icon-back.gif);
+    background-position: left center;
+    background-repeat: no-repeat;
+    text-align: right;
+    width: 85px;
+}
+
+.sbutton {
+	overflow: hidden;
+	color: transparent;
+	-webkit-appearance: none;
+	-moz-appearance: none;
+	appearance: none;
+	background-image: url(../img/settings.gif);
+    background-position: center center;
+    background-repeat: no-repeat;
+    width: 120px;
+}
+
+.soption {
+	color: black;
+    text-align: left;
+}
+
+#container {
+	display: table;
+	width: auto;
+}
+
+#row {
+	display: table-row;
+	width: auto;
+}
+
+#left {
+	float: left;
+	display: table-column;
+	width: 150px;
+}
+
+#middle {
+	float: left;
+	display: table-column;
+}
+
+#right {
+	float: left;
+	display: table-column;
+}
+
+.rinnakkaiset {
+}
+
+.laatikko {
+	margin-right: 15px;
+	float: left;
+}
+
+.alekkain {
+	clear: both;
+}
+
+.modal {
+    width: inherit;
+}
+
+
+.results .modal-header h1 {
+    margin: 0;
+}
+
+.results .modal-body ul table th, .results .modal-body ul table td {
+   padding: 0;
+   border-top: 0;
+   border-bottom: 0;
+}
