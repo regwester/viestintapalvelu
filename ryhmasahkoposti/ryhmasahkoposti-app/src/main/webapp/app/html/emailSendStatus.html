@@ -21,11 +21,13 @@
 		    <label class="control-label"></label>		    
 		    <div class="controls">
 			    <span ng-show="!SendingStatusDTO.numberOfReciepients">
-		    		{{'sendstatus.status.1' | i18n}}<br>
+		    		{{'sendstatus.status.1' | i18n}}<br> <br>
 			    </span>
 			    <span ng-show="SendingStatusDTO.numberOfReciepients">
+		    		{{'sendstatus.status.1' | i18n}}<br>
 		    		{{'sendstatus.status.2.1' | i18n}} {{SendingStatusDTO.numberOfReciepients}} {{'sendstatus.status.2.2' | i18n}}<br>
-			    </span>		    
+			    </span>			    
+			    		    
 		    	{{'sendstatus.statistics.ok' | i18n}} {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
 		    	{{'sendstatus.statistics.error' | i18n}} {{SendingStatusDTO.numberOfFailedSendings}}
 		    </div>		

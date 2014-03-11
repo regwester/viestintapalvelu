@@ -157,7 +157,8 @@
     <script src="./js/emailResponse.js"></script>
     
     <!-- css -->
-    <link rel="stylesheet" href="./css/bootstrap-combined.css"/>
+    <link rel="stylesheet" href="./css/bootstrap.css"/>
     <link rel="stylesheet" href="./css/virkailija.css"/>
+    <link rel="stylesheet" href="./css/other.css"/>
     
 </body>
