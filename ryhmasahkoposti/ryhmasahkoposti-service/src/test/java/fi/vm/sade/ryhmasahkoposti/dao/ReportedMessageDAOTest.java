@@ -24,8 +24,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailRecipientQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
@@ -87,13 +88,16 @@ public class ReportedMessageDAOTest {
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		reportedMessageDAO.insert(reportedMessage);
 
-		EmailMessageQueryDTO emailMessageQuery = new EmailMessageQueryDTO();
-        EmailRecipientQueryDTO emailRecipientQuery = new EmailRecipientQueryDTO();
-        emailRecipientQuery.setRecipientOid("1.2.246.562.24.34397748041");
-        emailMessageQuery.setEmailRecipientQueryDTO(emailRecipientQuery);
+		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedRecipientQuery.setRecipientOid("1.2.246.562.24.34397748041");
+        reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
+        
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
                 
         List<ReportedMessage> searchedReportedMessages = 
-        	reportedMessageDAO.findBySearchCriteria(emailMessageQuery);
+        	reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(1 <= searchedReportedMessages.size());
@@ -109,12 +113,16 @@ public class ReportedMessageDAOTest {
 		reportedMessage.setReportedRecipients(recipients);
 		reportedMessageDAO.insert(reportedMessage);
 
-		EmailMessageQueryDTO emailMessageQuery = new EmailMessageQueryDTO();
-        EmailRecipientQueryDTO emailRecipientQuery = new EmailRecipientQueryDTO();
-        emailRecipientQuery.setRecipientName("Testi Oppilas");
-        emailMessageQuery.setEmailRecipientQueryDTO(emailRecipientQuery);
-                
-        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySearchCriteria(emailMessageQuery);
+		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedRecipientQuery.setRecipientName("Testi Oppilas");
+        reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
+
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
+        
+        List<ReportedMessage> searchedReportedMessages = 
+            reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(1 <= searchedReportedMessages.size());
@@ -130,12 +138,16 @@ public class ReportedMessageDAOTest {
 		reportedMessage.setReportedRecipients(recipients);
 		reportedMessageDAO.insert(reportedMessage);
 
-		EmailMessageQueryDTO emailMessageQuery = new EmailMessageQueryDTO();
-        EmailRecipientQueryDTO emailRecipientQuery = new EmailRecipientQueryDTO();
-        emailRecipientQuery.setRecipientEmail("ei.loydy@sposti.fi");
-        emailMessageQuery.setEmailRecipientQueryDTO(emailRecipientQuery);
+		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedRecipientQuery.setRecipientEmail("ei.loydy@sposti.fi");
+        reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
+        
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
                 
-        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySearchCriteria(emailMessageQuery);
+        List<ReportedMessage> searchedReportedMessages = 
+            reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(searchedReportedMessages.size() == 0);

@@ -1,18 +1,18 @@
 'use strict';
 
 reportingApp.factory('ReportedMessage', function($resource) {
-	return $resource("/ryhmasahkoposti-service/reportMessages/view/:messageID", {messageID: '@messageID'});
+	return $resource("/ryhmasahkoposti-service/reportMessages/vwp/:messageID", {messageID: '@messageID'});
 });
 
 reportingApp.factory('GetReportedMessages', function($resource) {
     return $resource("/ryhmasahkoposti-service/reportMessages/list", {}, {
-    	get: {method: "GET", isArray: true}
+    	get: {method: "GET", isArray: false}
     });	
 });
 
 reportingApp.factory('GetReportedMessagesBySearchArgument', function($resource) {
 	return $resource("/ryhmasahkoposti-service/reportMessages/search/:searchArgument", {}, {
-		get: {method: "GET", params: {searchArgument: '@searchArgument'}, isArray: true}
+		get: {method: "GET", params: {searchArgument: '@searchArgument'}, isArray: false}
     });
 });
 

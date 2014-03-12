@@ -25,19 +25,10 @@ public class ReportedMessage extends BaseEntity {
 	@Column(name="lahettajan_oid", nullable=true)
 	private String senderOid;
 
-	@Column(name="lahettajan_oid_tyyppi", nullable=true)
-	private String senderOidType;
-
 	@Column(name="lahettajan_sahkopostiosoite", nullable=false)
 	private String senderEmail;
 
-	@Column(name="vastauksensaajan_oid", nullable=true)
-	private String replyToOid;
-
-	@Column(name="vastauksensaajan_oid_tyyppi", nullable=true)
-	private String replyToOidType;
-
-	@Column(name="vastauksensaajan_sahkopostiosoite", nullable=true)
+	@Column(name="vastaus_sahkopostiosoite", nullable=true)
 	private String replyToEmail;
 
 	@Column(name="aihe", nullable=false)
@@ -84,36 +75,12 @@ public class ReportedMessage extends BaseEntity {
 		this.senderOid = senderOid;
 	}
 
-	public String getSenderOidType() {
-		return senderOidType;
-	}
-
-	public void setSenderOidType(String senderOidType) {
-		this.senderOidType = senderOidType;
-	}
-
 	public String getSenderEmail() {
 		return senderEmail;
 	}
 
 	public void setSenderEmail(String senderEmail) {
 		this.senderEmail = senderEmail;
-	}
-
-	public String getReplyToOid() {
-		return replyToOid;
-	}
-
-	public void setReplyToOid(String replyToOid) {
-		this.replyToOid = replyToOid;
-	}
-
-	public String getReplyToOidType() {
-		return replyToOidType;
-	}
-
-	public void setReplyToOidType(String replyToOidType) {
-		this.replyToOidType = replyToOidType;
 	}
 
 	public String getReplyToEmail() {

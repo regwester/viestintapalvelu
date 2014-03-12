@@ -19,6 +19,7 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
@@ -103,7 +104,6 @@ public class EmailResourceImpl implements EmailResource {
 
 	@Override
     public EmailSendId sendGroupEmail(EmailData emailData) {
-
 		// Setting footer with the first ones language code
 	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
 	    // Footer is moved to the end of the body here

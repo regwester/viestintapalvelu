@@ -2,17 +2,25 @@ package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.List;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
-public interface ReportedMessageService {
-	/**
-	 * Hakee käyttäjän ja käyttäjän käyttöoikeusryhmien kaikki raportoitavat viestit
-	 * 
-	 * @param Käyttäjätunnus
-	 * @return Lista raportoitavia viestejä {@link ReportedMessage} 
-	 */	
-	public List<ReportedMessage> getReportedMessages();
+public interface ReportedMessageService {  
+    /**
+     * Hakee raportoitavien ryhmäsähköpostien lukumäärän
+     * 
+     * @return Raportoitavien ryhmäsähköpostien lukumäärän
+     */
+    public Long getNumberOfReportedMessages();
+    
+    /**
+     * Hakee käyttäjän ja käyttäjän käyttöoikeusryhmien kaikki raportoitavat viestit
+     * 
+     * @param pagingAndSorting Lajittelutekijät 
+     * @return Lista raportoitavia viestejä {@link ReportedMessage} 
+     */ 
+    public List<ReportedMessage> getReportedMessages(PagingAndSortingDTO pagingAndSorting);
 
 	/**
 	 * Hakee raportoitavan viestin viestin avaimella
@@ -28,7 +36,8 @@ public interface ReportedMessageService {
 	 * @param query Hakuparametrit
 	 * @return Lists raportoitavia viestejä {@link ReportedMessage}
 	 */
-	public List<ReportedMessage> getReportedMessages(EmailMessageQueryDTO query);
+	public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
+	    PagingAndSortingDTO pagingAndSorting);
 	
 	/**
 	 * Päivittä raportoitavan viestin tietoja tietokantaan

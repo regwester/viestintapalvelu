@@ -1,16 +1,11 @@
 'use strict';
 
-var reportingApp = angular.module('reportingApp', ['ngRoute', 'ngResource']);
+var reportingApp = angular.module('reportingApp', ['ngRoute', 'ngResource', 'ui.bootstrap', 'listpaging', 'localization']);
 
 reportingApp.config(function ($routeProvider) {
 	$routeProvider.
 		when('/reportMessages/list', {
             controller: 'ReportedMessageListController',
-            resolve: {
-                reportedMessages: ['GetReportedMessages', function(GetReportedMessages) {
-                  return GetReportedMessages.get();
-                }]
-            },
             templateUrl:'/ryhmasahkoposti-app/reportingApp/html/reportedMessageList.html'
         }).when('/reportMessages/search/:searchArgument', {
             controller: 'ReportedMessageListController',

@@ -43,10 +43,9 @@ public class ReportedRecipientDAOTest {
         ReportedRecipient reportedRecipient = 
         	RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         reportedRecipient.setSendingEnded(new Date());
-        reportedRecipientDAO.insert(reportedRecipient);
+        ReportedRecipient savedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipient searchedReportedRecipient = reportedRecipientDAO.findByMessageIdAndRecipientEmail(
-        	savedReportedMessage.getId(), reportedRecipient.getRecipientEmail());
+        ReportedRecipient searchedReportedRecipient = reportedRecipientDAO.findByRecipientID(savedRecipient.getId());
 
         assertNotNull(searchedReportedRecipient);
     }

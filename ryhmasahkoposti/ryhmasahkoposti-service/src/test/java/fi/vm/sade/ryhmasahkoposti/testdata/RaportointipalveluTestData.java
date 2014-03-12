@@ -1,15 +1,20 @@
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
 
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -18,7 +23,17 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 public class RaportointipalveluTestData {
 
-	public static EmailData getEmailData() {
+	public static AttachmentResponse getAttachmentResponse(Long id, FileItem fileItem) {
+    	AttachmentResponse attachmentResponse = new AttachmentResponse();
+    	
+    	attachmentResponse.setUuid(id.toString());
+    	attachmentResponse.setFileName(fileItem.getName());
+    	attachmentResponse.setContentType(fileItem.getContentType());
+    	
+    	return attachmentResponse;
+    }
+
+    public static EmailData getEmailData() {
 		EmailData emailData = new EmailData();		
 		return emailData;
 	}
@@ -56,7 +71,7 @@ public class RaportointipalveluTestData {
 	public static EmailRecipient getEmailRecipient() {
 		EmailRecipient emailRecipient = new EmailRecipient();
 		
-		emailRecipient.setOid("102030405100");
+		emailRecipient.setOid("1.2.246.562.24.34397748041");
 		emailRecipient.setOidType("oppilas");
 		emailRecipient.setEmail("vastaan.ottaja@sposti.fi");
 		emailRecipient.setLanguageCode("FI");
@@ -73,17 +88,38 @@ public class RaportointipalveluTestData {
 		emailRecipientDTO.setLanguageCode("FI");
 		
 		return emailRecipientDTO;
-	
 	}
 
-	public static AttachmentResponse getAttachmentResponse(Long id, FileItem fileItem) {
-		AttachmentResponse attachmentResponse = new AttachmentResponse();
-		
-		attachmentResponse.setUuid(id.toString());
-		attachmentResponse.setFileName(fileItem.getName());
-		attachmentResponse.setContentType(fileItem.getContentType());
-		
-		return attachmentResponse;
+	public static Henkilo getHenkilo() {
+	    Henkilo henkilo = new Henkilo();
+	    
+	    henkilo.setOidHenkilo("1.2.246.562.24.34397748041");
+	    henkilo.setHetu("081181-9984");
+	    henkilo.setEtunimet("Etunimi");
+	    henkilo.setSukunimi("Sukunimi");
+	    
+	    return henkilo;
+	}
+
+	public static OrganisaatioRDTO getOrganisaatioRDTO() {
+	    OrganisaatioRDTO organisaatio = new OrganisaatioRDTO();
+	    
+	    Map<String, String> nimet = new HashMap<String, String>();
+	    nimet.put("fi", "Oppilaitos");
+	    organisaatio.setNimi(nimet);
+	    
+	    return organisaatio;
+	}
+
+	public static PagingAndSortingDTO getPagingAndSortingDTO() {
+	    PagingAndSortingDTO pagingAndSorting = new PagingAndSortingDTO();
+	    
+	    pagingAndSorting.setFromIndex(0);
+	    pagingAndSorting.setNumberOfRows(10);
+	    pagingAndSorting.setSortedBy("");
+	    pagingAndSorting.setSortOrder("asc");
+	    
+	    return pagingAndSorting;
 	}
 	
 	public static ReportedMessage getReportedMessage() {
@@ -92,10 +128,7 @@ public class RaportointipalveluTestData {
 		reportedMessage.setSubject("Kokekutsu");
 		reportedMessage.setProcess("Hakuprosessi");
 		reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
-		reportedMessage.setSenderOidType("virkailija");
 		reportedMessage.setSenderEmail("testi.virkailija@sposti.fi");
-		reportedMessage.setReplyToOid("1.2.246.562.24.42645159413");
-		reportedMessage.setReplyToOidType("virkailija");
 		reportedMessage.setReplyToEmail("testi.virkailija@sposti.fi");
 		reportedMessage.setMessage("Tämä on koekutsu");
 		reportedMessage.setHtmlMessage("");
@@ -143,7 +176,7 @@ public class RaportointipalveluTestData {
 		reportedRecipient.setSocialSecurityID("");
 		reportedRecipient.setRecipientEmail("testi.vastaanottaja@sposti.fi");
 		reportedRecipient.setLanguageCode("FI");
-		reportedRecipient.setSearchName("Testi Oppilas");
+		reportedRecipient.setSearchName("Testi,Oppilas");
 		reportedRecipient.setSendingStarted(null);
 		reportedRecipient.setSendingEnded(null);
 		reportedRecipient.setFailureReason("");

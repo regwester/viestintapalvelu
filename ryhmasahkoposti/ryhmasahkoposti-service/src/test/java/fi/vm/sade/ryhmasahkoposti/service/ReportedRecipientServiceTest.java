@@ -25,7 +25,6 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.route.HenkiloRoute;
 import fi.vm.sade.ryhmasahkoposti.service.impl.ReportedRecipientServiceImpl;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -35,15 +34,13 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
 public class ReportedRecipientServiceTest {
-    @Mock
-    private HenkiloRoute mockedHenkiloRoute;
 	@Mock
 	private ReportedRecipientDAO mockedReportedRecipientDAO;
 	private ReportedRecipientService reportedRecipientService;
 	
 	@Before
 	public void setup() {
-		reportedRecipientService = new ReportedRecipientServiceImpl(mockedHenkiloRoute, mockedReportedRecipientDAO);
+		reportedRecipientService = new ReportedRecipientServiceImpl(mockedReportedRecipientDAO);
 	}
 	
 	@Test

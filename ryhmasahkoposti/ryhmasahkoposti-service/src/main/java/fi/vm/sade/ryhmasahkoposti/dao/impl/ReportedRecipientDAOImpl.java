@@ -10,27 +10,28 @@ import org.springframework.stereotype.Repository;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
-import fi.vm.sade.ryhmasahkoposti.model.QReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 @Repository
 public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipient, Long> implements ReportedRecipientDAO {
 	@Override
-	public ReportedRecipient findByMessageIdAndRecipientEmail(Long messageID, String recipientEmail) {
+	public List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting) {
 		QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
-		QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
 		
 		BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-		whereExpression = reportedRecipient.recipientEmail.eq(recipientEmail);
+		OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 		
-		return from(reportedRecipient).join(
-			reportedRecipient.reportedMessage, reportedMessage).where(
-			whereExpression).singleResult(reportedRecipient);
+		JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(
+		    pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
+		
+		return findByMessageIdQuery.list(reportedRecipient);
 	}
 
 	@Override
@@ -93,5 +94,37 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
 	
 	protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
+    }
+	
+    protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting) {
+        if (pagingAndSorting.getSortedBy() == null || pagingAndSorting.getSortedBy().isEmpty()) {
+            return QReportedRecipient.reportedRecipient.searchName.asc(); 
+        }
+        
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("searchName")) {
+            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+                return QReportedRecipient.reportedRecipient.searchName.asc();
+            }
+            
+            return QReportedRecipient.reportedRecipient.searchName.desc();
+        }
+        
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("recipientOid")) {
+            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+                return QReportedRecipient.reportedRecipient.recipientOid.asc();
+            }
+            
+            return QReportedRecipient.reportedRecipient.recipientOid.desc();         
+        }
+
+       if (pagingAndSorting.getSortedBy().equalsIgnoreCase("recipientEmail")) {
+           if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+               return QReportedRecipient.reportedRecipient.recipientEmail.asc();
+           }
+           
+           return QReportedRecipient.reportedRecipient.recipientEmail.desc();                      
+       }
+
+       return QReportedRecipient.reportedRecipient.searchName.asc();
     }
 }

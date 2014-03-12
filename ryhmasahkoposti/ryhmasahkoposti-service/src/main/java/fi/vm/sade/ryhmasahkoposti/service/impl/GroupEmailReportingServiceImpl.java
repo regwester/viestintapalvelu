@@ -17,11 +17,13 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageQueryDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
@@ -98,36 +100,67 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 	
 	@Override
-	public List<ReportedMessageDTO> getReportedMessages() {
-		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages();
+    public ReportedMessageDTO getReportedMessage(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(
+            messageID, pagingAndSorting);
+        
+        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        
+        List<ReportedAttachment> reportedAttachments = 
+            reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+        
+        ReportedMessageDTO reportedMessageDTO = ReportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
+            reportedAttachments, sendingStatus);
+        reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
+        
+        return reportedMessageDTO;
+    }
+	
+	@Override
+	public ReportedMessagesDTO getReportedMessages(PagingAndSortingDTO pagingAndSorting) {
+	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
+	    
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(pagingAndSorting);
+		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
 		
-		Map<Long, Long> nbrOfSendingFaileds = new HashMap<Long, Long>();
+		Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
 		for (ReportedMessage reportedMessage : reportedMessages) {
-			Long nbrOfSendingFailed = reportedRecipientService.getNumberOfSendingFailed(reportedMessage.getId());
-			nbrOfSendingFaileds.put(reportedMessage.getId(), nbrOfSendingFailed);
+			SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
+			sendingStatuses.put(reportedMessage.getId(), sendingStatus);
 		}
 		
-		return ReportedMessageDTOConverter.convert(reportedMessages, nbrOfSendingFaileds);
+		List<ReportedMessageDTO> listOfReportedMessageDTO = 
+		    ReportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+		
+		reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
+		reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
+
+		return reportedMessagesDTO;
 	}
 
 	@Override
-	public List<ReportedMessageDTO> getReportedMessages(String searchArgument) {
-		EmailMessageQueryDTO query = EmailMessageQueryDTOConverter.convert(searchArgument);
-		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query);	
+	public ReportedMessagesDTO getReportedMessages(String searchArgument, PagingAndSortingDTO pagingAndSorting) {
+	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
+	       
+		ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert(searchArgument);
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
+		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
 		
-        Map<Long, Long> nbrOfSendingFaileds = new HashMap<Long, Long>();
+        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
         for (ReportedMessage reportedMessage : reportedMessages) {
-            Long nbrOfSendingFailed = reportedRecipientService.getNumberOfSendingFailed(reportedMessage.getId());
-            nbrOfSendingFaileds.put(reportedMessage.getId(), nbrOfSendingFailed);
-        }		
-		
-		return ReportedMessageDTOConverter.convert(reportedMessages, nbrOfSendingFaileds);
-	}
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
+            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
+        }
+        
+        List<ReportedMessageDTO> listOfReportedMessageDTO = 
+            ReportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        
+        reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
+        reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
 
-	@Override
-	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID) {
-		// TODO Auto-generated method stub
-		return null;
+        return reportedMessagesDTO;        
 	}
 
 	@Override

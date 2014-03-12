@@ -8,22 +8,18 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.route.HenkiloRoute;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
-import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Service
 public class ReportedRecipientServiceImpl implements ReportedRecipientService {
-    private HenkiloRoute henkiloRoute;
 	private ReportedRecipientDAO reportedRecipientDAO;
 	
 	@Autowired
-	public ReportedRecipientServiceImpl(HenkiloRoute henkiloRoute, ReportedRecipientDAO reportedRecipientDAO) {
-	    this.henkiloRoute = henkiloRoute;
+	public ReportedRecipientServiceImpl(ReportedRecipientDAO reportedRecipientDAO) {
 		this.reportedRecipientDAO = reportedRecipientDAO;
 	}
 	
@@ -43,8 +39,8 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 	}
 
 	@Override
-	public ReportedRecipient getReportedRecipient(Long messageID, String recipientEmail) {
-		return reportedRecipientDAO.findByMessageIdAndRecipientEmail(messageID, recipientEmail);
+	public List<ReportedRecipient> getReportedRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+		return reportedRecipientDAO.findByMessageId(messageID, pagingAndSorting);
 	}
 
 	@Override
@@ -99,7 +95,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
 	@Override
 	public void saveReportedRecipients(Set<ReportedRecipient> reportedRecipients) {
-		for (ReportedRecipient reportedRecipient : reportedRecipients) {		    
+		for (ReportedRecipient reportedRecipient : reportedRecipients) {
 			reportedRecipientDAO.insert(reportedRecipient);
 		}
 	}

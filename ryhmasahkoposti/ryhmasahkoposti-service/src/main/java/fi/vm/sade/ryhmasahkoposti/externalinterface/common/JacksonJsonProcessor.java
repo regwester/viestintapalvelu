@@ -1,11 +1,9 @@
-package fi.vm.sade.ryhmasahkoposti.route;
+package fi.vm.sade.ryhmasahkoposti.externalinterface.common;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
-
-import fi.vm.sade.ryhmasahkoposti.common.ObjectMapperProvider;
 
 /**
  * Camel-viestiketjun prosessori, jonka avulla voi helposti tehdä JSON konversion 
@@ -37,6 +35,7 @@ public class JacksonJsonProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         ObjectMapper objectMapper = mapperProvider.getContext(targetClassType.getClass());
         String jsonData = exchange.getIn().getBody(String.class);
+        System.out.println(jsonData);
         exchange.getOut().setBody(objectMapper.readValue(jsonData, targetClassType));
     }
 }
