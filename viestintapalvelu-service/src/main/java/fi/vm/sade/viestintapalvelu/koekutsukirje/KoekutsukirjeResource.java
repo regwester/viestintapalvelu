@@ -6,6 +6,7 @@ import static org.joda.time.DateTime.now;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
@@ -39,7 +40,6 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 
 @Component
-@PreAuthorize("isAuthenticated()")
 @Path(Urls.KOEKUTSUKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
@@ -95,6 +95,22 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	}
 
 	/**
+	 * Varaudutaan viestintapalvelun klusterointiin. Ei tarvitse tietoturvaa
+	 * https:n lisäksi. Kutsuja antaa datat ja kutsuja saa kirjeen.
+	 */
+	@POST
+	@Consumes("application/json")
+	@Produces("application/octet-stream")
+	@Path("/sync/pdf")
+	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+	public InputStream syncPdf(
+			@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final KoekutsukirjeBatch input)
+			throws IOException, DocumentException {
+		return new ByteArrayInputStream(koekutsukirjeBuilder.printPDF(input));
+	}
+
+	/**
 	 * Koekutsukirje PDF async
 	 * 
 	 * @param input
@@ -105,6 +121,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	 */
 	@POST
 	@Consumes("application/json")
+	@PreAuthorize("isAuthenticated()")
 	@Produces("text/plain")
 	@Path("/async/pdf")
 	@ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
@@ -136,6 +153,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 					byte[] pdf = koekutsukirjeBuilder.printPDF(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("koekutsukirje.pdf"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",

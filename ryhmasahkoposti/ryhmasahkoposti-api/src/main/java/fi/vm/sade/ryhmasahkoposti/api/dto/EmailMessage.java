@@ -15,11 +15,9 @@ public class EmailMessage {
 	private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class.getName()); 
 
 	private String callingProcess = "";
-	private String ownerEmail;
-	private String senderEmail; // from
-	private String replyToAddress;
-	private String senderOid;
-	private String senderOidType;	
+	private String from;		// Email FROM
+	private String replyTo;		// Email REPLYTO
+	private String senderOid;	// The one who is doing the actual sending
 	private String subject;
 	private String body;
 	private String footer;
@@ -30,145 +28,87 @@ public class EmailMessage {
 
 	public EmailMessage() {}
 
-	public EmailMessage(String callingProcess, String ownerEmail, String senderEmail, String senderOid, String senderOidType, String subject, String body) {
-		this.callingProcess = callingProcess; 
-		this.ownerEmail = ownerEmail;
-		this.senderEmail = senderEmail;
-		this.senderOid = senderOid; 		
-		this.senderOidType = senderOidType; 		
+	public EmailMessage(String callingProcess, String from, String replyTo, String subject, String body) {
+		this.callingProcess = callingProcess; 		
+		this.from = from;
+		this.replyTo = replyTo;
 		this.subject = subject;
 		this.body = body;
 	}
 	
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setBody(java.lang.String)
-     */
 	public void setBody(String body) {
 		if (body != null) {
 			String lc = body.toLowerCase();
-			isHtml = lc.contains("<br/>") || lc.contains("<p>");
+			isHtml = lc.contains("<br/>") || lc.contains("<p>")  || lc.contains("</tr>") || lc.contains("</div>");
 		}
 		this.body = body;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getCallingProcess()
-     */
 	public String getCallingProcess() {
 		return callingProcess;
 	}
 
-	public String getReplyToAddress() {
-		return replyToAddress;
+	public String getFrom() {
+		return from;
 	}
 
-	public void setReplyToAddress(String replyToAddress) {
-		this.replyToAddress = replyToAddress;
+	public void setFrom(String from) {
+		this.from = from;
 	}
 
-	
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getBody()
-     */
+	public String getReplyTo() {
+		return replyTo;
+	}
+
+	public void setReplyTo(String replyTo) {
+		this.replyTo = replyTo;
+	}
+
 	public String getBody() {
 		return body;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getFooter()
-     */
 	public String getFooter() {
 		return footer;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setFooter(java.lang.String)
-     */
     public void setFooter(String languageCode) {
 		this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
 		this.body = this.body + "\n" + this.footer; // Catenate the footer here to body.		
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setSubject(java.lang.String)
-     */
 	public void setSubject(String subject) {
 		this.subject = subject;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getSubject()
-     */
 	public String getSubject() {
 		return subject;
 	}
 	
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getSenderEmail()
-     */
-	public String getSenderEmail() {
-		return senderEmail;
-	}
-		
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getSenderOid()
-     */
 	public String getSenderOid() {
 		return senderOid;
 	}
-
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getSenderOidType()
-     */
-	public String getSenderOidType() {
-		return senderOidType;
+	
+	public void setSenderOid(String senderOid) {
+		this.senderOid = senderOid;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setOwnerEmail(java.lang.String)
-     */
-	public void setOwnerEmail(String ownerEmail) {
-		this.ownerEmail = ownerEmail;
-	}
-
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getOwnerEmail()
-     */
-	public String getOwnerEmail() {
-		return ownerEmail;
-	}
-
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#isHtml()
-     */
 	public boolean isHtml() {
 		return isHtml;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setHtml(boolean)
-     */
 	public void setHtml(boolean isHtml) {
 		this.isHtml = isHtml;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getCharset()
-     */
 	public String getCharset() {
 		return charset;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setCharset(java.lang.String)
-     */
 	public void setCharset(String charset) {
 		this.charset = charset;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#addEmailAttachement(fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment)
-     */
 	public void addEmailAttachement(EmailAttachment attachment) {
 		if (this.attachments == null) {
 			this.attachments = new ArrayList<EmailAttachment>();
@@ -176,56 +116,30 @@ public class EmailMessage {
 		this.attachments.add(attachment);
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setAttachments(java.util.List)
-     */
 	public void setAttachments(List<EmailAttachment> attachments) {
 		this.attachments = attachments;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getAttachments()
-     */
 	public List<? extends EmailAttachment> getAttachments() {
 		return attachments;
 	}
 	
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#addAttachInfo(fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse)
-     */
 	public void addAttachInfo(AttachmentResponse attachInfo) {
 		if (this.attachInfo == null) {
 			this.attachInfo = new LinkedList<AttachmentResponse>();
 		}
 		this.attachInfo.add(attachInfo);
 	}
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#getAttachInfo()
-     */
+
 	public List<AttachmentResponse> getAttachInfo() {
 		return attachInfo;
 	}
 
-	/* (non-Javadoc)
-     * @see fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageInterface#setAttachInfo(java.util.List)
-     */
 	public void setAttachInfo(List<AttachmentResponse> attachInfo) {
 		this.attachInfo = attachInfo;
 	}
     public void setCallingProcess(String callingProcess) {
 		this.callingProcess = callingProcess;
-	}
-
-	public void setSenderEmail(String senderEmail) {
-		this.senderEmail = senderEmail;
-	}
-
-	public void setSenderOid(String senderOid) {
-		this.senderOid = senderOid;
-	}
-
-	public void setSenderOidType(String senderOidType) {
-		this.senderOidType = senderOidType;
 	}
 
 	private String generateFooter(String emailFooter, String lang) {
@@ -265,11 +179,12 @@ public class EmailMessage {
 
 	@Override
 	public String toString() {
-		return "EmailMessage [callingProcess=" + callingProcess
-				+ ", ownerEmail=" + ownerEmail + ", senderEmail=" + senderEmail
-				+ ", senderOid=" + senderOid + ", senderOidType="
-				+ senderOidType + ", subject=" + subject + ", body=" + body
-				+ ", footer=" + footer + ", isHtml=" + isHtml + ", charset="
-				+ charset + ", attachments=" + attachments + "]";
+		return "EmailMessage [callingProcess=" + callingProcess + ", from="
+				+ from + ", replyTo=" + replyTo + ", senderOid=" + senderOid
+				+ ", subject=" + subject + ", body=" + body + ", footer="
+				+ footer + ", isHtml=" + isHtml + ", charset=" + charset
+				+ ", attachments=" + attachments + ", attachInfo=" + attachInfo
+				+ "]";
 	}
+
 }

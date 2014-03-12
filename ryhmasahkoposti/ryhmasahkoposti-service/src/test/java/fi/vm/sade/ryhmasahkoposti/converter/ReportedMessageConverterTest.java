@@ -38,7 +38,6 @@ public class ReportedMessageConverterTest {
         ReportedMessage reportedMessage = new ReportedMessageConverter(henkiloRoute).convert(emailMessage);
 
 		assertNotNull(reportedMessage);
-		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid());
-		assertEquals(emailMessage.getSenderEmail(), reportedMessage.getSenderEmail());
+		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 
 	}
 }

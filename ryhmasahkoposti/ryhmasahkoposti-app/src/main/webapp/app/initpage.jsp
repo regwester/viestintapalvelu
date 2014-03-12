@@ -9,27 +9,23 @@
 						{oid: '1234567890ABCD<%=i%>',
 						oidType: 'henkilo',
 						email: 'ville.vastaanottaja@gmail.com',
+						languageCode: 'FI'},										
+					<%}%>
+						{oid: '1234567890ABCD',
+						oidType: 'henkilo',
+						email: 'ville.vastaanottaja@gmail.com',
 						languageCode: 'FI'},
 										
-					<%}%>
-							{oid: '1234567890ABCD',
-							oidType: 'henkilo',
-							email: 'ville.vastaanottaja@gmail.com',
-							languageCode: 'FI'},
-										
-							{oid: 'ABCD0987654321',
-							oidType: 'henkilo',
-							email: 'torspo.uolevi@gmail.com',
-							languageCode: 'FI'}	
+						{oid: 'ABCD0987654321',
+						oidType: 'henkilo',
+						email: 'torspo.uolevi@gmail.com',
+						languageCode: 'FI'}	
 					],		
 					email: {callingProcess: 'Osoitetietojarjestelma',
-							ownerEmail: 'oph_tiedotus@oph.fi',
-							senderEmail: 'Mikko.Mallikas@oph.fi',
-							senderOid: '11223344556677',
-							senderOidType: 'henkilo',
-							subject: 'Testi viesti',
-							body: 'Testi bodya ja sporttia.',
-							attachInfo: []
+						from: 'oph_tiedotus@oph.fi',
+						replyTo: 'Mikko.Mallikas@oph.fi',
+						subject: 'Testi viesti',
+						body: 'Testi bodya ja sporttia.'
 					}
 			}
 		</textarea>

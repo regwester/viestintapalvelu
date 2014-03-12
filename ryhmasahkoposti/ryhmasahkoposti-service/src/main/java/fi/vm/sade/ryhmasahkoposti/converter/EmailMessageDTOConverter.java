@@ -51,11 +51,11 @@ public class EmailMessageDTOConverter {
 		
 		emailMessageDTO.setMessageID(reportedMessage.getId());
 		emailMessageDTO.setSubject(reportedMessage.getSubject());
-		emailMessageDTO.setSenderEmail(reportedMessage.getSenderEmail());
+		emailMessageDTO.setFrom(reportedMessage.getSenderEmail());
 		emailMessageDTO.setStartTime(reportedMessage.getSendingStarted());
 		emailMessageDTO.setEndTime(reportedMessage.getSendingEnded());
 		emailMessageDTO.setCallingProcess(reportedMessage.getProcess());
-		emailMessageDTO.setReplyToAddress(reportedMessage.getReplyToEmail());
+		emailMessageDTO.setReplyTo(reportedMessage.getReplyToEmail());
 		emailMessageDTO.setBody(reportedMessage.getMessage());
 		
 		return emailMessageDTO;

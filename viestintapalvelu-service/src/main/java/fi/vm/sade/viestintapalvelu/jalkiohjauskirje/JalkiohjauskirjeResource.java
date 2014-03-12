@@ -6,6 +6,7 @@ import static org.joda.time.DateTime.now;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Set;
@@ -24,6 +25,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -143,6 +145,19 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 		return createResponse(request, documentId);
 	}
 
+	@POST
+	@Consumes("application/json")
+	@Produces("application/octet-stream")
+	@Path("/sync/zip")
+	@ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
+	@ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
+	public InputStream syncZip(
+			@ApiParam(value = "Muodostettavien jälkiohjauskirjeiden tiedot (1-n)", required = true) JalkiohjauskirjeBatch input,
+			@Context HttpServletRequest request) throws IOException,
+			DocumentException, NoSuchAlgorithmException {
+		return new ByteArrayInputStream(jalkiohjauskirjeBuilder.printZIP(input));
+	}
+
 	/**
 	 * Jalkihohjauskirje ZIP async
 	 * 
@@ -156,6 +171,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 	@POST
 	@Consumes("application/json")
 	@Produces("text/plain")
+	@PreAuthorize("isAuthenticated()")
 	@Path("/async/zip")
 	@ApiOperation(value = ApiZIPAsync, notes = ApiZIPAsync
 			+ ". Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. "
@@ -174,6 +190,7 @@ public class JalkiohjauskirjeResource extends AsynchronousResource {
 					byte[] zip = jalkiohjauskirjeBuilder.printZIP(input);
 					dokumenttiResource
 							.tallenna(
+									null,
 									filenamePrefixWithUsernameAndTimestamp("jalkiohjauskirje.zip"),
 									now().plusDays(1).toDate().getTime(),
 									Arrays.asList("viestintapalvelu",

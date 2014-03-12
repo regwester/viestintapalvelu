@@ -86,11 +86,11 @@ public class ReportedMessageDTOConverter {
 	private static void convert(ReportedMessageDTO reportedMessageDTO, ReportedMessage reportedMessage) {
 		reportedMessageDTO.setMessageID(reportedMessage.getId());
 		reportedMessageDTO.setSubject(reportedMessage.getSubject());
-		reportedMessageDTO.setSenderEmail(reportedMessage.getSenderEmail());
+		reportedMessageDTO.setFrom(reportedMessage.getSenderEmail());
 		reportedMessageDTO.setStartTime(reportedMessage.getSendingStarted());
 		reportedMessageDTO.setEndTime(reportedMessage.getSendingEnded());
 		reportedMessageDTO.setCallingProcess(reportedMessage.getProcess());
-		reportedMessageDTO.setReplyToAddress(reportedMessage.getReplyToEmail());
+		reportedMessageDTO.setReplyTo(reportedMessage.getReplyToEmail());
 		reportedMessageDTO.setBody(reportedMessage.getMessage());
 	}
 

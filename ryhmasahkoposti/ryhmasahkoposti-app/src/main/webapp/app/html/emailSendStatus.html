@@ -5,29 +5,31 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls">
-	            	<h2>Viesti</h2>
+	            	<h2>{{'sendstatus.header.viesti' | i18n}}</h2>
 		    </div>		
 		</div>
 		
 		<hr></hr>
 		            
-		<div class="alert alert-block alert-info">		
-		    Sovellus siirtyy automaattisesti seuraavalle sivulle, kun kaikki lähetettävät viestit on käsitelty. <br>
-		    Voit siirtyä yhteenvetosivulle 'Siirry tilastoihin' -napilla. Tällöin näet tämänhetken lähetystilanteen.<br>
-		    Voit siirtyä myös muualle sovelluksessa. Sähköpostien lähetys ei keskeydy vaan ne tullaan käsittelemään kaikki.
+		<div class="alert alert-block alert-info">
+			{{'sendstatus.message.1' | i18n}} <br>
+			{{'sendstatus.message.2' | i18n}} <br>
+			{{'sendstatus.message.3' | i18n}}
 		</div>						            
 		            
 		<div class="control-group">			
 		    <label class="control-label"></label>		    
 		    <div class="controls">
 			    <span ng-show="!SendingStatusDTO.numberOfReciepients">
-		    		Viestiä lähetetään.<br>
+		    		{{'sendstatus.status.1' | i18n}}<br> <br>
 			    </span>
 			    <span ng-show="SendingStatusDTO.numberOfReciepients">
-		    		Viestiä lähetetään. Yhteensä {{SendingStatusDTO.numberOfReciepients}} viestiä. <br>
-			    </span>		    
-		    	Siirretty: {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
-		    	Epäonnistuneet: {{SendingStatusDTO.numberOfFailedSendings}}
+		    		{{'sendstatus.status.1' | i18n}}<br>
+		    		{{'sendstatus.status.2.1' | i18n}} {{SendingStatusDTO.numberOfReciepients}} {{'sendstatus.status.2.2' | i18n}}<br>
+			    </span>			    
+			    		    
+		    	{{'sendstatus.statistics.ok' | i18n}} {{SendingStatusDTO.numberOfSuccesfulSendings}} <br>
+		    	{{'sendstatus.statistics.error' | i18n}} {{SendingStatusDTO.numberOfFailedSendings}}
 		    </div>		
 
 		</div>
@@ -44,7 +46,7 @@
 		<div class="control-group">		
 		    <label class="control-label"></label>
 		    <div class="controls pagination-centered"> 		    
-				<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">Siirry tilastoihin</button>
+				<button ng-click="statisticsEmail()" class="inline-operation btn btn-small">{{'sendstatus.button.next' | i18n}}</button>
 		    </div>		
 		</div>
 		    	 

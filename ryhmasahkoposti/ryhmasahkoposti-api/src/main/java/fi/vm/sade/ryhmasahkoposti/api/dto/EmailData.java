@@ -44,6 +44,11 @@ public class EmailData {
 	public void setEmailFooter(String languageCode) {
 		this.email.setFooter(languageCode);
 	}
+
+	public void setSenderOid(String senderOid) {
+		this.email.setSenderOid(senderOid);
+	}
+	
 	
 	@Override
 	public String toString() {

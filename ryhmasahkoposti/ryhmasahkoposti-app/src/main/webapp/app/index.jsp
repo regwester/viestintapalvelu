@@ -14,7 +14,8 @@
 	</div>
    	
     <!-- libs -->
-    <script type="text/javascript" src="./lib/jquery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery/jquery-1.10.2.min.js"></script>    
+    <script type="text/javascript" src="./lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script>
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js"></script>
 
     <script type="text/javascript" src="./lib/angular/angular.js"></script> 
@@ -35,7 +36,7 @@
 		if (emailData != null) {
 			// Sanitize data:
 			emailData = Jsoup.clean(emailData, Whitelist.relaxed());
-		System.out.println(emailData);
+			//System.out.println(emailData);
 		} else {
 			// no emaildata found.
 			emailData = "";
@@ -43,8 +44,11 @@
 	%>
 
     <!-- app js-->
+    <script src="./js/emailLocalization.js"></script>
+    
 	<script type="text/javascript">
-		var email = angular.module('viestintapalvelu', ['ngRoute', 'ngResource']);
+			
+		var email = angular.module('viestintapalvelu', ['localization', 'ngRoute', 'ngResource']);
 		
 		email.config(['$routeProvider',  function ($routeProvider) {
 				$routeProvider.when('/email', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
@@ -54,15 +58,34 @@
 			    $routeProvider.otherwise({redirectTo: '/email'});
 		}]);
 		
-		email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location', 
+				
+		email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location',  
 		                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
 		
 			$rootScope.emailsendid = "";
 		
-			$scope.emaildata = "";
+			// Create empty email to get the attachInfo[] to the object
+			$scope.email = 
+					{callingProcess: '',
+					from: '',
+					replyTo: '',
+					subject: '',
+					body: '',
+					attachInfo: []
+			};
 			
-			
+			$scope.emaildata = "";												
 			$scope.emaildata = <%= emailData %>;
+			
+			// Copy the received email values to the empty email 
+			$scope.email.callingProcess	= $scope.emaildata.email.callingProcess;
+			$scope.email.from			= $scope.emaildata.email.from;
+			$scope.email.replyTo		= $scope.emaildata.email.replyTo;
+			$scope.email.subject		= $scope.emaildata.email.subject;	
+			$scope.email.body			= $scope.emaildata.email.body;
+			
+			// Copy to emaildata.email the original sended values WITH the empty attachInfo[]
+			$scope.emaildata.email = $scope.email; 
 			
 			$scope.showTo  = $scope.emaildata.recipient.length <= 30;
 			$scope.showCnt = $scope.emaildata.recipient.length >  30;
@@ -132,8 +155,10 @@
     <script src="./js/emailSendStatus.js"></script>
     <script src="./js/emailService.js"></script>
     <script src="./js/emailResponse.js"></script>
+    
     <!-- css -->
-    <link rel="stylesheet" href="./css/bootstrap-combined.css"/>
+    <link rel="stylesheet" href="./css/bootstrap.css"/>
     <link rel="stylesheet" href="./css/virkailija.css"/>
+    <link rel="stylesheet" href="./css/other.css"/>
     
 </body>
