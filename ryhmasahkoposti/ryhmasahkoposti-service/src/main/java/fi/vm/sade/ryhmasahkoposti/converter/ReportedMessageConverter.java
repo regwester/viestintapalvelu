@@ -27,8 +27,8 @@ public class ReportedMessageConverter {
 		reportedMessage.setSubject(emailMessage.getSubject());
 		reportedMessage.setProcess(emailMessage.getCallingProcess());
 		reportedMessage.setSenderOid(getCurrentUserOid());
-		reportedMessage.setSenderEmail(emailMessage.getSenderEmail());
-		reportedMessage.setReplyToEmail(emailMessage.getOwnerEmail());
+		reportedMessage.setSenderEmail(emailMessage.getFrom());
+		reportedMessage.setReplyToEmail(emailMessage.getReplyTo());
 		reportedMessage.setSubject(emailMessage.getSubject());
 		reportedMessage.setMessage(emailMessage.getBody());
 		if (emailMessage.isHtml()) {
