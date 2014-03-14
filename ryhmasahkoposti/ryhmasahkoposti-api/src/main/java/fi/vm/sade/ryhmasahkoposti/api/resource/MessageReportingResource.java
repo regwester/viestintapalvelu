@@ -79,13 +79,33 @@ public interface MessageReportingResource {
 	 * @param page Sivu, jolle halutaan siirtyä katselemaan vastaanottajia
 	 * @param sortedBy Kenttä, minkä mukaan lajitellaan
 	 * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
-	 * @return
+	 * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot
 	 */
 	@Secured(SecurityConstants.READ)
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGE_VIEW_WITH_PAGING)
     @GET
-    public ReportedMessageDTO getReportedMessage(@PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
+    public ReportedMessageDTO getReportedMessageAndRecipients(@PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
+        @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
+        @QueryParam(RestConstants.PARAM_PAGE) Integer page, @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
+        @QueryParam(RestConstants.PARAM_ORDER) String order);
+
+	/**
+     * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui
+     * 
+     * @param messageID Ryhmäsähköpostin tunnus
+     * @param nbrOfRows Palautettavien vastaanottajien lukumäärä
+     * @param page Sivu, jolle halutaan siirtyä katselemaan vastaanottajia
+     * @param sortedBy Kenttä, minkä mukaan lajitellaan
+     * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
+     * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot, joille lähetys epäonnistui
+     */
+    @Secured(SecurityConstants.READ)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(RestConstants.PATH_REPORT_MESSAGE_FAILED_VIEW_WITH_PAGING)
+    @GET
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(
+        @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
         @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
         @QueryParam(RestConstants.PARAM_PAGE) Integer page, @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @QueryParam(RestConstants.PARAM_ORDER) String order);

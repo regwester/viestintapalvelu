@@ -26,14 +26,13 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
     }
 
     @Override
-	public List<ReportedMessage> getReportedMessages(PagingAndSortingDTO pagingAndSorting) {
-		return reportedMessageDAO.findAll(pagingAndSorting);
-	}
-
-    @Override
 	public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
-	    PagingAndSortingDTO pagingAndsorting) {
-		return reportedMessageDAO.findBySearchCriteria(query, pagingAndsorting);
+	    PagingAndSortingDTO pagingAndSorting) {
+        if (query.getReportedRecipientQueryDTO() != null) {
+            return reportedMessageDAO.findBySearchCriteria(query, pagingAndSorting);
+        }
+        
+        return reportedMessageDAO.findAll(query, pagingAndSorting);
 	}
 
 	@Override

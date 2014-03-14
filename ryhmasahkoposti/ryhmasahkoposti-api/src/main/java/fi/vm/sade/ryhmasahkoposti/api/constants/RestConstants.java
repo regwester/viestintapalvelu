@@ -6,6 +6,7 @@ public interface RestConstants {
 	public static final String PATH_REPORT_MESSAGES_SEARCH = "search/{searchArgument}";
 	public static final String PATH_REPORT_MESSAGE_VIEW = "view/{messageID}";
 	public static final String PATH_REPORT_MESSAGE_VIEW_WITH_PAGING = "vwp/{messageID}";
+    public static final String PATH_REPORT_MESSAGE_FAILED_VIEW_WITH_PAGING = "failed/{messageID}";
 
 	public static final String PARAM_SEARCH_ARGUMENT = "searchArgument";
 	public static final String PARAM_MESSAGE_ID = "messageID";

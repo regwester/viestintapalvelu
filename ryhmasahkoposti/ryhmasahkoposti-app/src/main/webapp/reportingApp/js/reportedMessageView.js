@@ -2,12 +2,13 @@
 
 reportingApp.controller('ReportedMessageViewController', 
 	function ReportedMessageViewController($scope, $routeParams, $location, 
-		GetReportedMessagesBySearchArgument, ReportedMessage) {
+		GetReportedMessagesBySearchArgument, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccesful) {
 		$scope.pageSize = 10;
 		$scope.currentPage = 1;
 		$scope.sortedBy = '';
 		$scope.order = 'asc';
 		$scope.descending = false;
+		$scope.showSendingUnsuccesfulClicked = false;
 		
 		// Takaisinpainike painettu
 		$scope.back = function() {
@@ -16,16 +17,23 @@ reportingApp.controller('ReportedMessageViewController',
 		
 		// Haetaan raportoitava viesti
 		$scope.fetch = function() {
-			$scope.reportedMessageDTO = ReportedMessage.get({messageID: $routeParams.messageID, 
+			$scope.reportedMessageDTO = ReportedMessageAndRecipients.get({messageID: $routeParams.messageID, 
 				nbrofrows: $scope.pageSize,	page: $scope.currentPage});	
 		};
 
 		// Haetaan raportoitava viesti lajiteltuna otsikkosarakkeen mukaan
 		$scope.fetchWithSort = function() {
-			$scope.reportedMessageDTO = ReportedMessage.get({messageID: $routeParams.messageID, 
+			$scope.reportedMessageDTO = ReportedMessageAndRecipients.get({messageID: $routeParams.messageID, 
 				nbrofrows: $scope.pageSize,	page: $scope.currentPage, sortedby: $scope.sortedBy, order: $scope.order});	
 		};
 
+		// Painettiin katso lähetys epäonnistunut painiketta
+		$scope.showSendingUnsuccesful = function() {
+			$scope.showSendingUnsuccesfulClicked = true;
+			$scope.reportedMessageDTO = ReportedMessageAndRecipientsSendingUnsuccesful.get({messageID: $routeParams.messageID, 
+				nbrofrows: $scope.pageSize,	page: $scope.currentPage});				
+		};
+		
 		// Sivuvalintaa painettu
 		$scope.selectPage = function(page) {
 			$scope.currentPage = page;

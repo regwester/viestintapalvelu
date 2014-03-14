@@ -35,6 +35,21 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
 	}
 
 	@Override
+	public List<ReportedRecipient> findByMessageIdAndSendingUnsuccesful(Long messageID, 
+	    PagingAndSortingDTO pagingAndSorting) {
+        QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
+        
+        BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
+        whereExpression = whereExpression.and(reportedRecipient.sendingSuccesful.eq("0"));
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        
+        JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(
+            pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
+        
+        return findByMessageIdQuery.list(reportedRecipient);
+    }
+
+	@Override
 	public ReportedRecipient findByRecipientID(Long recipientID) {
 		return read(recipientID);
 	}
@@ -81,7 +96,7 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
 		return query.getSingleResult();
 	}
 
-	@Override
+	   @Override
 	public List<ReportedRecipient> findUnhandled() {
 		EntityManager em = getEntityManager();
 		

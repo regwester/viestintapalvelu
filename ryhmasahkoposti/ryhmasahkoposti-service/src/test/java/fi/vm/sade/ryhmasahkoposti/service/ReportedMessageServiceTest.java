@@ -74,12 +74,15 @@ public class ReportedMessageServiceTest {
 		List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
 		reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 		
-		when(mockedReportedMessageDAO.findAll(any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
+		when(mockedReportedMessageDAO.findAll(any(ReportedMessageQueryDTO.class), 
+		    any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
+		
+		ReportedMessageQueryDTO query = new ReportedMessageQueryDTO();
 		
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
         
-		reportedMessages = reportedMessageService.getReportedMessages(pagingAndSorting);
+		reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
 		
 		assertNotNull(reportedMessages);
 		assertNotEquals(0, reportedMessages.size());

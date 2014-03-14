@@ -38,9 +38,16 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
 	}
 
     @Override
-    public ReportedMessageDTO getReportedMessage(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, 
+    public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, 
         String order) {
         PagingAndSortingDTO pagingAndSorting = PagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        return groupEmailReportingService.getReportedMessage(messageID, pagingAndSorting);
+        return groupEmailReportingService.getReportedMessageAndRecipients(messageID, pagingAndSorting);
     }
+    
+    @Override
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, Integer nbrOfRows, 
+        Integer page, String sortedBy, String order) {
+        PagingAndSortingDTO pagingAndSorting = PagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
+        return groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccesful(messageID, pagingAndSorting);
+    }    
 }

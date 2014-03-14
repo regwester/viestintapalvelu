@@ -20,7 +20,7 @@ public abstract class AbstractRouteBuilder extends SpringRouteBuilder {
 
     @Autowired
     protected ObjectMapperProvider mapperProvider;
-
+    
     /**
      * Palauttaa reittimäärityksen haluttun palveluun 
      * 

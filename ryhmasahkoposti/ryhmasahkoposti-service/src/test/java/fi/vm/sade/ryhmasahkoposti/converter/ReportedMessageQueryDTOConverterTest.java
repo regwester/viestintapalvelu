@@ -5,21 +5,27 @@ import static org.junit.Assert.assertNotNull;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.powermock.core.classloader.annotations.PrepareForTest;
+import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute;
 
-@RunWith(SpringJUnit4ClassRunner.class)
+@RunWith(PowerMockRunner.class)
+@PrepareForTest(ReportedMessageQueryDTOConverterTest.class)
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageQueryDTOConverterTest {
-
+    @Mock
+    HenkiloRoute henkiloRoute;
+    
 	@Test
 	public void testEmailInSearchArgument() {
 		String searchArgument = "testi.osoite@sposti.fi";
 		
-		ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert(searchArgument);
+		@SuppressWarnings("static-access")
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(henkiloRoute).convert(searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
@@ -30,7 +36,8 @@ public class ReportedMessageQueryDTOConverterTest {
 	public void testOidInSearchArgument() {
 		String searchArgument = "1.2.246.562.24.42645159413";
 		
-		ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert(searchArgument);
+        @SuppressWarnings("static-access")
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(henkiloRoute).convert(searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
@@ -41,7 +48,8 @@ public class ReportedMessageQueryDTOConverterTest {
 	public void testSocialSecurityIdInSearchArgument() {
 		String searchArgument = "100970-965W";
 		
-		ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert(searchArgument);
+        @SuppressWarnings("static-access")
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(henkiloRoute).convert(searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());

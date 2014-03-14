@@ -25,7 +25,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, Long> implements ReportedMessageDAO {
     
 	@Override
-    public List<ReportedMessage> findAll(PagingAndSortingDTO pagingAndSorting) {
+    public List<ReportedMessage> findAll(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
 	    QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
 	    
 	    OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
@@ -70,16 +70,6 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 		    pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
 		
 		return findBySearchCriteria.list(reportedMessage);
-	}
-
-	@Override
-	public List<ReportedMessage> findReportedMessagesBySendersOids(List<String> senderOids) {
-		QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
-		
-		BooleanExpression whereExpression = reportedMessage.senderOid.in(senderOids);		
-		List<ReportedMessage> reportedMessages = from(reportedMessage).where(whereExpression).list(reportedMessage);
-			
-		return reportedMessages;
 	}
 
 	@Override

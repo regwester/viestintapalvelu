@@ -14,14 +14,6 @@ public interface ReportedMessageService {
      */
     public Long getNumberOfReportedMessages();
     
-    /**
-     * Hakee käyttäjän ja käyttäjän käyttöoikeusryhmien kaikki raportoitavat viestit
-     * 
-     * @param pagingAndSorting Lajittelutekijät 
-     * @return Lista raportoitavia viestejä {@link ReportedMessage} 
-     */ 
-    public List<ReportedMessage> getReportedMessages(PagingAndSortingDTO pagingAndSorting);
-
 	/**
 	 * Hakee raportoitavan viestin viestin avaimella
 	 * 

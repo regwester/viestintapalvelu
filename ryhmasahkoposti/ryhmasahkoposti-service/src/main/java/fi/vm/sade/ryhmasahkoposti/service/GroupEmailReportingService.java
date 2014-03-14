@@ -70,7 +70,17 @@ public interface GroupEmailReportingService {
 	 * @param pagingAndSorting Sivutus ja lajittelutiedot
 	 * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
 	 */
-    public ReportedMessageDTO getReportedMessage(Long messageID, PagingAndSortingDTO pagingAndSorting);
+    public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
+
+    /**
+     * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja vastaanottajat, joille lähetys epäonnistui   
+     * 
+     * @param messageID Viestintunnus 
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
+     */
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, 
+        PagingAndSortingDTO pagingAndSorting);
 
 	/**
 	 * Hakee lähetyksen tuloksen

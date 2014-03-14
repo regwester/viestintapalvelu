@@ -307,7 +307,8 @@ public class GroupEmailReportingServiceTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 		
-		when(mockedReportedMessageService.getReportedMessages(any(PagingAndSortingDTO.class))).thenReturn(mockedReportedMessages);
+		when(mockedReportedMessageService.getReportedMessages(any(ReportedMessageQueryDTO.class), 
+		    any(PagingAndSortingDTO.class))).thenReturn(mockedReportedMessages);
 		
 		SendingStatusDTO sendingStatus = RaportointipalveluTestData.getSendingStatusDTO();
 		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatus);

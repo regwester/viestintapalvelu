@@ -44,6 +44,12 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 	}
 
 	@Override
+    public List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccesful(Long messageID, 
+        PagingAndSortingDTO pagingAndSorting) {
+        return reportedRecipientDAO.findByMessageIdAndSendingUnsuccesful(messageID, pagingAndSorting);
+    }
+
+	@Override
 	public List<ReportedRecipient> getReportedRecipients() {
 		// TODO Auto-generated method stub
 		return null;

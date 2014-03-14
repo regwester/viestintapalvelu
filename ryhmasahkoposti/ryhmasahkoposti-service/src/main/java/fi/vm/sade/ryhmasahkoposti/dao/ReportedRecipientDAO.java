@@ -23,6 +23,16 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
 	 */
 	public List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
+    /**
+     * Hakee vastaanottajien tiedot viestintunnuksella ja tila lähetys epäonnistui. Palauttaa halutun määrän lajiteltuna.
+     * 
+     * @param messageID Viestintunnus
+     * @param pagingAndSorting Sivutus- ja lajittelutiedot
+     * @return Lista raportoitavien vastaanottajien tietoja, joille lähetys on epäonnistunut
+     */	
+	public List<ReportedRecipient> findByMessageIdAndSendingUnsuccesful(Long messageID, 
+	    PagingAndSortingDTO pagingAndSorting);
+	        
 	/**
 	 * Hakee vastaanottajan tiedot vastaanottajantunnisteella
 	 * 
