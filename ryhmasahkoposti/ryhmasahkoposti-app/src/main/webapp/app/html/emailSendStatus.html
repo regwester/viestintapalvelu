@@ -36,10 +36,16 @@
 
 		<div class="control-group">		
 		    <label class="control-label"></label>
-			<div class="progress" ng-show="percentage">
+ 			<div class="progress" ng-show="percentage">			
+ 																	 
+				<!-- Proper way but does not work in IE9, OK in Crome and Firefox		
 				<div class="bar" style="width: {{percentage(SendingStatusDTO.numberOfSuccesfulSendings,
 															SendingStatusDTO.numberOfFailedSendings,
-															SendingStatusDTO.numberOfReciepients) }}%;"></div>
+															SendingStatusDTO.numberOfReciepients) }}%;"></div> -->		
+																												
+				<div class="bar" ng-style="percentage(SendingStatusDTO.numberOfSuccesfulSendings,
+														SendingStatusDTO.numberOfFailedSendings,
+														SendingStatusDTO.numberOfReciepients)"></div>
 			</div>
 		</div>
 

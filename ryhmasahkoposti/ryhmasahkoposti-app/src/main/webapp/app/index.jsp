@@ -58,8 +58,7 @@
 			    $routeProvider.otherwise({redirectTo: '/email'});
 		}]);
 		
-				
-		email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location',  
+        email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location',  
 		                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
 		
 			$rootScope.emailsendid = "";
@@ -116,6 +115,7 @@
 			
 			$scope.files = [];
 		    $scope.percentage = 0;
+		    $scope.percentage2 = { width: 0 + '%' }; // For IE9
 			
 			// Upload -->	
 		    $scope.upload = function () {
@@ -129,7 +129,8 @@
 		    });
 		
 		    $rootScope.$on('uploadProgress', function (e, call) {
-		        $scope.percentage = call;
+		        $scope.percentage = call;		        
+			    $scope.percentage2 = { width: call + '%' }; // For IE9		        
 		        $scope.$apply();
 		    });
 		    

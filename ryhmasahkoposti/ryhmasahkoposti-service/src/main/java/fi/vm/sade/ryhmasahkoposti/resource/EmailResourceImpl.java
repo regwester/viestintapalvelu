@@ -109,11 +109,6 @@ public class EmailResourceImpl implements EmailResource {
 	    // Footer is moved to the end of the body here
 	    emailData.setEmailFooter(languageCode);
 	    
-	    // TODO: getCurrentUser
-	    // TODO: 
-	    // TODO: 
-	    emailData.setSenderOid("senderOid"); // CAS.getCurrentUser()
-	    
 		String sendId = "";
 		try {
 			sendId = Long.toString( sendDbService.addSendingGroupEmail(emailData));

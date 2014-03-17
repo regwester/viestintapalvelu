@@ -110,12 +110,13 @@
     	<div class="control-group">	
 			<label class="control-label">{{'email.label.liite.vaihe.2' | i18n}}</label>    			
 		    <div class="controls">
-				<span>
+				<span>				
 					<button type="submit" class="inline-operation btn btn-small" ng-click="upload()">{{'email.button.liite.liita' | i18n}}</button>				
 				</span>
 				<br>
 				<div class="progress" ng-show="percentage">
-				    <div class="bar" style="width: {{percentage}}%;"></div>
+				    <!-- <div class="bar" style="width: {{percentage}}%;"></div>  -->
+				    <div class="bar" ng-style="percentage2"></div>				    
 				</div>								
 			</div>
 		</div>
