@@ -79,10 +79,10 @@
     <div class="results" ng-if="reportedMessageDTO.emailRecipients.length > 0">
         <table>
             <tr>
-                <th class="clickable-header-cell" ng-click="sort('searchName')" ng-class="clickHeader('searchName')">{{'reportedmessageview.otsikko.nimi' | i18n}}</th>
-                <th class="clickable-header-cell" ng-click="sort('recipientOid')" ng-class="clickHeader('recipientOid')">{{'reportedmessageview.otsikko.tunnus' | i18n}}</th>
-                <th class="clickable-header-cell" ng-click="sort('recipientEmail')" ng-class="clickHeader('recipientEmail')">{{'reportedmessageview.otsikko.sposti' | i18n}}</th>
-                <th>{{'reportedmessageview.otsikko.tila' | i18n}}</th>
+                <th class="span4 clickable-header-cell" ng-click="sort('searchName')" ng-class="clickHeader('searchName')">{{'reportedmessageview.otsikko.nimi' | i18n}}</th>
+                <th class="span2 clickable-header-cell" ng-click="sort('recipientOid')" ng-class="clickHeader('recipientOid')">{{'reportedmessageview.otsikko.tunnus' | i18n}}</th>
+                <th class="span3 clickable-header-cell" ng-click="sort('recipientEmail')" ng-class="clickHeader('recipientEmail')">{{'reportedmessageview.otsikko.sposti' | i18n}}</th>
+                <th class="span2">{{'reportedmessageview.otsikko.tila' | i18n}}</th>
             </tr>
             <tr ng-repeat="emailRecipient in reportedMessageDTO.emailRecipients">
                 <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>

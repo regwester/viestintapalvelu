@@ -3,7 +3,7 @@
 reportingApp.controller('ReportedMessageListController',
 	function ReportedMessageListController($scope, $location, GetReportedMessages, GetReportedMessagesBySearchArgument, 
 		SharedVariables) {
-		$scope.pageSize = 5;
+		$scope.pageSize = 10;
 		$scope.currentPage = 1;
 		$scope.sortedBy = '';
 		$scope.order = 'asc';

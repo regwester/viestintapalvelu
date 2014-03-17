@@ -20,17 +20,17 @@
 	
 	<div class="row-fluid" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
 		<div class="span3">
-			{{reportedMessages.length}} &nbsp {{'reportedmessagelist.otsikko.raporttia' | i18n}}
+			{{reportedMessagesDTO.numberOfReportedMessages}} &nbsp {{'reportedmessagelist.otsikko.raporttia' | i18n}}
 		</div>
 	</div>
 	
     <div class="results" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
         <table>
             <tr>
-                <th class="clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
-                <th class="clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
-                <th class="clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
-                <th>{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
+                <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
+                <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
+                <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
+                <th class="span4">{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
             </tr>
             <tr ng-repeat="reportedMessage in reportedMessagesDTO.reportedMessages">
                 <td><a href="#/reportMessages/view/{{reportedMessage.messageID}}">{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
