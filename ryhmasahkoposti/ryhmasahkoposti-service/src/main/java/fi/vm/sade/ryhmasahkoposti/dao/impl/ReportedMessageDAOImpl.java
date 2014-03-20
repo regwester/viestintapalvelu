@@ -27,10 +27,17 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 	@Override
     public List<ReportedMessage> findAll(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
 	    QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
-	    
+	    	    	    
+	    JPAQuery findAllReportedMessagesQuery = null;
+	    BooleanExpression whereExpression = null;
 	    OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 	    
-	    JPAQuery findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy);
+	    if (query.getSenderOids() != null && query.getSenderOids().size() > 0) {
+            whereExpression = reportedMessage.senderOid.in(query.getSenderOids());
+            findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
+        } else {
+            findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy);
+        }    
 	    
 	    if (pagingAndSorting.getNumberOfRows() != 0) {
     	    findAllReportedMessagesQuery.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
@@ -47,24 +54,10 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 		QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 		QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
 		
-		BooleanExpression whereExpression = null;
-		
-		if (reportedRecipientQuery.getRecipientOid() != null) {
-			whereExpression = reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid());
-		}
-		
-		if (reportedRecipientQuery.getRecipientEmail() != null) {
-			whereExpression = reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail());
-		}
-		
-		if (reportedRecipientQuery.getRecipientSocialSecurityID() != null) {
-		}
-
-		if (reportedRecipientQuery.getRecipientName() != null) {
-			whereExpression = reportedRecipient.searchName.containsIgnoreCase(reportedRecipientQuery.getRecipientName());
-		}
-		
+		BooleanExpression whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery,
+            reportedRecipient, reportedMessage);		
 		OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+		
 		JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(
 		    reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression).orderBy(orderBy).limit(
 		    pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
@@ -72,7 +65,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 		return findBySearchCriteria.list(reportedMessage);
 	}
 
-	@Override
+    @Override
 	public Long findNumberOfReportedMessage() {
 		EntityManager em = getEntityManager();
 		
@@ -117,4 +110,52 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
        return QReportedMessage.reportedMessage.sendingStarted.asc();
 	}
+
+    protected BooleanExpression whereExpressionForSearchCriteria(ReportedMessageQueryDTO query,
+        ReportedRecipientQueryDTO reportedRecipientQuery, QReportedRecipient reportedRecipient,
+        QReportedMessage reportedMessage) {
+        BooleanExpression whereExpression = null;
+    	
+        if (query.getSenderOids() != null && query.getSenderOids().size() > 0) {
+            whereExpression = reportedMessage.senderOid.in(query.getSenderOids());
+        }		
+    	
+    	if (reportedRecipientQuery.getRecipientOid() != null) {
+    	    if (whereExpression == null) {
+    	        whereExpression = reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid());
+    	    } else {
+    	        whereExpression.and(reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid()));   
+    	    }
+    	}
+    	
+    	if (reportedRecipientQuery.getRecipientEmail() != null) {
+    	    if (whereExpression != null) {
+    	        whereExpression.and(reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail()));
+    	    } else {
+    	        whereExpression = reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail());
+    	    }
+    	}
+    	
+    	if (reportedRecipientQuery.getRecipientSocialSecurityID() != null) {
+            if (whereExpression != null) {
+    		    whereExpression.and(reportedRecipient.socialSecurityID.eq(
+    		        reportedRecipientQuery.getRecipientSocialSecurityID()));
+            } else {
+                whereExpression = reportedRecipient.socialSecurityID.eq(
+                    reportedRecipientQuery.getRecipientSocialSecurityID());
+            }
+    	}
+    
+    	if (reportedRecipientQuery.getRecipientName() != null) {
+    	    if (whereExpression != null) {
+    			whereExpression.and(reportedRecipient.searchName.containsIgnoreCase(
+    			    reportedRecipientQuery.getRecipientName()));
+    	    } else {
+                whereExpression = reportedRecipient.searchName.containsIgnoreCase(
+                    reportedRecipientQuery.getRecipientName());		        
+    	    }
+    	}
+    	
+        return whereExpression;
+    }
 }
