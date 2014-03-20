@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.common;
+package fi.vm.sade.ryhmasahkoposti.externalinterface.common;
 
 import org.codehaus.jackson.map.DeserializationConfig;
 import org.codehaus.jackson.map.ObjectMapper;

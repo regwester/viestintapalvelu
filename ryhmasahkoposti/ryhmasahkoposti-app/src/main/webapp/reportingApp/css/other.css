@@ -91,7 +91,11 @@
     background-position: left center;
     background-repeat: no-repeat;
     text-align: right;
-    width: 85px;
+    z-index: 1;
+}
+
+.bbutton:hover {
+	text-decoration: none;
 }
 
 .sbutton {
@@ -111,33 +115,30 @@
     text-align: left;
 }
 
-#container {
+.table_container {
 	display: table;
 	width: auto;
 }
 
-#row {
+.table_row {
 	display: table-row;
 	width: auto;
 }
 
-#left {
+.table_left {
 	float: left;
 	display: table-column;
 	width: 150px;
 }
 
-#middle {
+.table_middle {
 	float: left;
 	display: table-column;
 }
 
-#right {
+.table_right {
 	float: left;
 	display: table-column;
-}
-
-.rinnakkaiset {
 }
 
 .laatikko {
@@ -153,6 +154,10 @@
     width: inherit;
 }
 
+.modal-body {
+    max-height: none;
+    overflow-y: visible;
+}
 
 .results .modal-header h1 {
     margin: 0;
@@ -162,4 +167,79 @@
    padding: 0;
    border-top: 0;
    border-bottom: 0;
+}
+
+.selectlist,
+.treelist {
+    list-style-type: none;
+    padding: 0 0 0 24px; }
+.selectlist.collapsible,
+.treelist.collapsible {
+    margin-left: 0px;
+    padding: 0 0 0 32px; }
+.selectlist li,
+.treelist li {
+    margin: 0.3em 0;
+    position: relative;
+    list-style: none outside none; }
+
+.treelist i {
+    cursor: pointer;
+}
+
+.organisaatio.auki {
+    color: gray;
+}
+
+.organisaatio.kiinni {
+    color:black;
+}
+
+.organisaatio.eilapsia {
+    color: lightgray;
+}
+
+label, .label {
+    line-height: 2em;
+    display: inline !important;
+    color: inherit !important;
+    background-color: inherit !important;
+    font-weight: inherit !important;
+    text-shadow: none !important;
+    font-size: inherit !important;
+}
+
+a, .clickable-header-cell {
+    cursor: pointer;
+}
+
+.sort-true {
+	background-image: url(../img/desc.gif);
+    background-position: right center;
+    background-repeat: no-repeat;
+    text-align: left;
+}
+
+.sort-false {
+	background-image: url(../img/asc.gif);
+    background-position: right center;
+    background-repeat: no-repeat;
+    text-align: left;
+}
+
+.datepicker {
+    background: url("../img/calendar.png") no-repeat scroll 0 0;
+    background-position: 95% 50%;
+}
+
+.control-label.left {
+	text-align: left;
+}
+
+.yhteistieto .span6 {
+    margin-left: 0;
+}
+
+ul.normal-margin {
+    margin: 13px 13px 13px 13px;
 }

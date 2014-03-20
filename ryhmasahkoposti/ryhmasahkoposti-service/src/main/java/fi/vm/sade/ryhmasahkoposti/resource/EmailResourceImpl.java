@@ -18,7 +18,9 @@ import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
+import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
@@ -45,7 +47,7 @@ public class EmailResourceImpl implements EmailResource {
 
     @SuppressWarnings("unchecked")
     @Override
-    public AttachmentResponse addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
+    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
         throws IOException, URISyntaxException, ServletException {
 
 		log.log(Level.INFO, "Adding attachment "+request.getMethod());
@@ -74,7 +76,8 @@ public class EmailResourceImpl implements EmailResource {
             response.getWriter().append("Not a multipart request");
         }
 		log.log(Level.INFO, "Added attachment: " + result);
-        return result;
+		JSONObject json = new JSONObject(result.toMap());
+		return json.toString();
     }
 
     @Override
@@ -103,16 +106,10 @@ public class EmailResourceImpl implements EmailResource {
 
 	@Override
     public EmailSendId sendGroupEmail(EmailData emailData) {
-
 		// Setting footer with the first ones language code
 	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
 	    // Footer is moved to the end of the body here
 	    emailData.setEmailFooter(languageCode);
-	    
-	    // TODO: getCurrentUser
-	    // TODO: 
-	    // TODO: 
-	    emailData.setSenderOid("senderOid"); // CAS.getCurrentUser()
 	    
 		String sendId = "";
 		try {

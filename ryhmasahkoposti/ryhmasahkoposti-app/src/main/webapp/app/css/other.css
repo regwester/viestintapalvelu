@@ -1,0 +1,18 @@
+@CHARSET "ISO-8859-1";
+/*
+If you use class="controls" without input or texarea
+the text will appear a little bit too high. With the
+border we push it down to the same horizontal level 
+as the label
+*/
+.pushDown {
+	border-style: solid;
+	border-top: thick double #ffffff;
+	border-bottom: thick double #ffffff;
+	border-left: thick double #ffffff;
+	border-right: thick double #ffffff;
+}
+.fontstack {
+	font-family:"Helvetica Neue",Helvetica,Arial,sans-serif;
+}
+

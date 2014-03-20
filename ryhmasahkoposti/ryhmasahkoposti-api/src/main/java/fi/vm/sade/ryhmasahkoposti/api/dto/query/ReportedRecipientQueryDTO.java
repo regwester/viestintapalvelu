@@ -1,6 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto.query;
 
-public class EmailRecipientQueryDTO {
+public class ReportedRecipientQueryDTO {
 	private String recipientOid;
 	private String recipientSocialSecurityID;
 	private String recipientEmail;

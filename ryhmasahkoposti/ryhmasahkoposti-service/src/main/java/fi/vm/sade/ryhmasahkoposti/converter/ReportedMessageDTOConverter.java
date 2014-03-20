@@ -32,15 +32,16 @@ public class ReportedMessageDTOConverter {
 	}
 
 	public static List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages, 
-		Map<Long, Long> nbrOfSendingFaileds) {
+		Map<Long, SendingStatusDTO> sendingStatuses) {
 		List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
 		
 		for (ReportedMessage reportedMessage : reportedMessages) {
 			ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();			
 			
-			Long numberOfFailed = nbrOfSendingFaileds.get(reportedMessage.getId());
 			convert(reportedMessageDTO, reportedMessage);
-			setStatusReport(reportedMessageDTO, numberOfFailed);
+			SendingStatusDTO sendingStatus = sendingStatuses.get(reportedMessage.getId());
+			reportedMessageDTO.setSendingStatus(sendingStatus);
+			setStatusReport(reportedMessageDTO, sendingStatus.getNumberOfFailedSendings());
 			
 			reportedMessageDTOs.add(reportedMessageDTO);
 		}
@@ -53,7 +54,11 @@ public class ReportedMessageDTOConverter {
 		ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
 		
 		convert(reportedMessageDTO, reportedMessage);
-		reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedMessage));
+		
+		List<ReportedRecipient> reportedRecipients = 
+		    new ArrayList<ReportedRecipient>(reportedMessage.getReportedRecipients());
+		reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedRecipients));
+		
 		reportedMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
 		reportedMessageDTO.setSendingStatus(sendingStatusDTO);
 		
@@ -62,6 +67,21 @@ public class ReportedMessageDTOConverter {
 				
 		return reportedMessageDTO;
 	}
+
+   public static ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients, 
+        List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
+        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
+        
+        convert(reportedMessageDTO, reportedMessage);
+        reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedRecipients));
+        reportedMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
+        reportedMessageDTO.setSendingStatus(sendingStatusDTO);
+        
+        setSendingReport(reportedMessageDTO, sendingStatusDTO);
+        setStatusReport(reportedMessageDTO, sendingStatusDTO.getNumberOfFailedSendings());
+                
+        return reportedMessageDTO;
+    }
 
 	private static void convert(ReportedMessageDTO reportedMessageDTO, ReportedMessage reportedMessage) {
 		reportedMessageDTO.setMessageID(reportedMessage.getId());
@@ -74,16 +94,17 @@ public class ReportedMessageDTOConverter {
 		reportedMessageDTO.setBody(reportedMessage.getMessage());
 	}
 
-	private static List<EmailRecipientDTO> convertEmailRecipientDTO(ReportedMessage reportedMessage) {
+	private static List<EmailRecipientDTO> convertEmailRecipientDTO(List<ReportedRecipient> reportedRecipients) {
 		List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
 		
-		for (ReportedRecipient reportedRecipient : reportedMessage.getReportedRecipients()) {
+		for (ReportedRecipient reportedRecipient : reportedRecipients) {
 			EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
 			
-			emailRecipientDTO.setRecipientID(reportedRecipient.getId());
+			emailRecipientDTO.setRecipientID(reportedRecipient.getId());			
 			emailRecipientDTO.setSendSuccessfull(reportedRecipient.getSendingSuccesful());
 			emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
 			emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
+			setRecipientName(emailRecipientDTO, reportedRecipient);
 			
 			recipients.add(emailRecipientDTO);
 		}
@@ -140,5 +161,19 @@ public class ReportedMessageDTOConverter {
 		}
 		  
 		return;
+	}
+	
+	private static void setRecipientName(EmailRecipientDTO emailRecipient, ReportedRecipient reportedRecipient) {
+	    int position = reportedRecipient.getSearchName().indexOf(",");
+	    
+	    if (position == -1) {
+	        emailRecipient.setLastName(reportedRecipient.getSearchName());
+	        emailRecipient.setFirstName("");
+	        
+	        return;
+	    }
+	    
+	    emailRecipient.setLastName(reportedRecipient.getSearchName().substring(0, position));
+        emailRecipient.setFirstName(reportedRecipient.getSearchName().substring(++position));
 	}
 }

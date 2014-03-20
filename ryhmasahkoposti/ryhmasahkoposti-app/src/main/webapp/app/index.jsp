@@ -58,14 +58,33 @@
 			    $routeProvider.otherwise({redirectTo: '/email'});
 		}]);
 		
-				
-		email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location',  
+        email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location',  
 		                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
 		
 			$rootScope.emailsendid = "";
 		
+			// Create empty email to get the attachInfo[] to the object
+			$scope.email = 
+					{callingProcess: '',
+					from: '',
+					replyTo: '',
+					subject: '',
+					body: '',
+					attachInfo: []
+			};
+			
 			$scope.emaildata = "";												
 			$scope.emaildata = <%= emailData %>;
+			
+			// Copy the received email values to the empty email 
+			$scope.email.callingProcess	= $scope.emaildata.email.callingProcess;
+			$scope.email.from			= $scope.emaildata.email.from;
+			$scope.email.replyTo		= $scope.emaildata.email.replyTo;
+			$scope.email.subject		= $scope.emaildata.email.subject;	
+			$scope.email.body			= $scope.emaildata.email.body;
+			
+			// Copy to emaildata.email the original sended values WITH the empty attachInfo[]
+			$scope.emaildata.email = $scope.email; 
 			
 			$scope.showTo  = $scope.emaildata.recipient.length <= 30;
 			$scope.showCnt = $scope.emaildata.recipient.length >  30;
@@ -96,6 +115,7 @@
 			
 			$scope.files = [];
 		    $scope.percentage = 0;
+		    $scope.percentage2 = { width: 0 + '%' }; // For IE9
 			
 			// Upload -->	
 		    $scope.upload = function () {
@@ -109,7 +129,8 @@
 		    });
 		
 		    $rootScope.$on('uploadProgress', function (e, call) {
-		        $scope.percentage = call;
+		        $scope.percentage = call;		        
+			    $scope.percentage2 = { width: call + '%' }; // For IE9		        
 		        $scope.$apply();
 		    });
 		    
@@ -137,7 +158,8 @@
     <script src="./js/emailResponse.js"></script>
     
     <!-- css -->
-    <link rel="stylesheet" href="./css/bootstrap-combined.css"/>
+    <link rel="stylesheet" href="./css/bootstrap.css"/>
     <link rel="stylesheet" href="./css/virkailija.css"/>
+    <link rel="stylesheet" href="./css/other.css"/>
     
 </body>

@@ -18,10 +18,10 @@
 				    	<td>{{'response.statistics.time' | i18n}}</td>
 				    	<td>
 							<span ng-show="!ReportedMessageDTO.endTime">
-								{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{'response.statistics.time.endtime' | i18n}}
+								{{ReportedMessageDTO.startTime | date:'dd.M.yyyy H:mm'}} - {{'response.statistics.time.endtime' | i18n}}
 							</span>							
 							<span ng-show="ReportedMessageDTO.endTime">	 			
-			    				{{ReportedMessageDTO.startTime | date:'yyyy-MM-dd HH:mm'}} - {{ReportedMessageDTO.endTime | date:'HH:mm'}}
+			    				{{ReportedMessageDTO.startTime | date:'dd.M.yyyy H:mm'}} - {{ReportedMessageDTO.endTime | date:'H:mm'}}
 							</span>
 						</td>	
 				  	</tr>											  	
@@ -86,19 +86,22 @@
     	 
 		<div class="control-group">		
 		    <label class="control-label">{{'response.label.liitteet' | i18n}}</label>
-			<div class="controls" border="0" ng-repeat="att in ReportedMessageDTO.attachments">								    		 
- 					{{att.name}}
+		
+		    <div class="controls pushDown">		    
+				<div border="0" ng-repeat="att in ReportedMessageDTO.attachments">								    		 
+	 					{{att.name}}
+				</div>
 			</div>	
 		</div>
     	 		
 		<div class="control-group">		
 		    <label class="control-label">{{'response.label.vastaanottajat' | i18n}}</label>
 
-		    <div class="controls" ng-hide="showTo">
+		    <div class="controls pushDown" ng-hide="showTo">
  		    	<input type="text" size="40" ng-model="recipCnt"  disabled/>
 		    </div>		
 
-		    <div class="controls" ng-hide="showCnt">		    
+		    <div class="controls pushDown" ng-hide="showCnt">		    
 		 		<div border="0" ng-repeat="recip in ReportedMessageDTO.emailRecipients">								    		 
 	  					{{recip.email}}
 				</div>	

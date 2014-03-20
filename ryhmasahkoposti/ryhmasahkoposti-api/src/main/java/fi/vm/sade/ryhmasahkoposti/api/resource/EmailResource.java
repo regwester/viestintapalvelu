@@ -47,10 +47,10 @@ public interface EmailResource {
 	
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
-    @Produces("application/json")
+    @Produces("text/plain")
     @Path("addAttachment")
     @Secured({SecurityConstants.SEND})
-    public AttachmentResponse addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
+    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
     											throws IOException, URISyntaxException, ServletException ;
 
 	/**

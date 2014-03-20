@@ -8,7 +8,9 @@ import org.apache.commons.fileupload.FileItem;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
@@ -47,25 +49,38 @@ public interface GroupEmailReportingService {
 	/**
 	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
 	 * 
-	 * @return Lista raportoitavia viestejä
+	 * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
+	 * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
 	 */
-	public List<ReportedMessageDTO> getReportedMessages();
+	public ReportedMessagesDTO getReportedMessages(PagingAndSortingDTO pagingAndSorting);
 
 	/**
 	 * Hakee hakuparametrin mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
 	 * 
 	 * @param searchArgument Hakuparametri
-	 * @return Lista raportoitavia ryhmäsähköpostiviestejä
+	 * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
+	 * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
 	 */
-	public List<ReportedMessageDTO> getReportedMessages(String searchArgument);
+	public ReportedMessagesDTO getReportedMessages(String searchArgument, PagingAndSortingDTO pagingAndSorting);
 
 	/**
 	 * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
 	 * 
 	 * @param messageID Viestintunnus 
+	 * @param pagingAndSorting Sivutus ja lajittelutiedot
 	 * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
 	 */
-	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID);
+    public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
+
+    /**
+     * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja vastaanottajat, joille lähetys epäonnistui   
+     * 
+     * @param messageID Viestintunnus 
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
+     */
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, 
+        PagingAndSortingDTO pagingAndSorting);
 
 	/**
 	 * Hakee lähetyksen tuloksen

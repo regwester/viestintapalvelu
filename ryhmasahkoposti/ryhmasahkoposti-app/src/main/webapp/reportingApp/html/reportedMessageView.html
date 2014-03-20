@@ -1,62 +1,66 @@
 <div class="container">
 	<div class="row-fluid">
 		<div class="span2">
-			<button type="button" ng-click="back()" class="btn"><span class="bbutton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;takaisin</span></button>
+			<button type="button" ng-click="back()" class="btn">
+			     <span class="bbutton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{'reportedmessageview.button.takaisin' | i18n}}</span>
+			</button>
 		</div>
 		<div class="span10">
-	    	<h1>L&auml;hetysraportti</h1>
+	    	<h1>{{'reportedmessageview.otsikko.lahetysraportti' | i18n}}</h1>
 	    </div>
 	</div>
 
-	<div class="row-fluid" ng-if="reportedMessage.sendingStatus.numberOfFailedSendings > 0">
+	<div class="row-fluid" ng-if="reportedMessageDTO.sendingStatus.numberOfFailedSendings > 0">
     	<div class="span9">
-			<img style="margin-right:10px;" src="../img/alert-icon28x29.png">L&auml;hetys ep&auml;onnistui vastaanottajalle.
+			<img style="margin-right:10px;" src="../img/alert-icon28x29.png">
+			{{'reportedmessageview.text.lahetys_epaonnistui' | i18n}}&nbsp;{{reportedMessageDTO.sendingStatus.numberOfFailedSendings}}&nbsp;{{'reportedmessageview.text.vastaanottajalle' | i18n}}
+			<a href ng-click="showSendingUnsuccesful()">Katso</a>
     	</div>
 	</div>
 		
 	<div class="row-fluid">
-		<div class="span2">Prosessi</div>
-		<div class="span10">{{reportedMessage.callingProcess}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.prosessi' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.callingProcess}}</div>
 	</div>	
 
 	<div class="row-fluid">
-		<div class="span2">L&auml;hettaja</div>
-		<div class="span10">{{reportedMessage.senderEmail}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.lahettaja' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.senderEmail}}</div>
 	</div>	
 
 	<div class="row-fluid">
-		<div class="span2">Vastausosoite</div>
-		<div class="span10">{{reportedMessage.replyToAddress}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.vastausosoite' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.replyToAddress}}</div>
 	</div>	
 
 	<div class="row-fluid">
-		<div class="span2">L&auml;hetystunnus</div>
-		<div class="span10">{{reportedMessage.messageID}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.lahetystunnus' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.messageID}}</div>
 	</div>
 
 	<div class="row-fluid">
-		<div class="span2">L&auml;hetysajankohta</div>
-		<div class="span10">{{reportedMessage.startTime | date:'dd.MM.yyyy hh:m'}}&nbsp;-&nbsp;{{reportedMessage.endTime | date:'dd.MM.yyyy hh:mm'}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.ajankohta' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.startTime | date:'dd.MM.yyyy hh:m'}}&nbsp;-&nbsp;{{reportedMessageDTO.endTime | date:'dd.MM.yyyy hh:mm'}}</div>
 	</div>
 
 	<div class="row-fluid">
-		<div class="span2">L&auml;hetysraportti</div>
-		<div class="span10">{{reportedMessage.sendingReport}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.raportti' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.sendingReport}}</div>
 	</div>
 	
 	<div class="row-fluid">
-		<div class="span2">Aihe</div>
-		<div class="span10">{{reportedMessage.subject}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.aihe' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.subject}}</div>
 	</div>
 	
 	<div class="row-fluid">
-		<div class="span2">Sisalt&ouml;</div>
-		<div class="span10">{{reportedMessage.body}}</div>
+		<div class="span2">{{'reportedmessageview.otsikko.sisalto' | i18n}}</div>
+		<div class="span10">{{reportedMessageDTO.body}}</div>
 	</div>
 	
-	<div ng-repeat="attachment in reportedMessage.attachments">
+	<div ng-repeat="attachment in reportedMessageDTO.attachments">
 		<div class="row-fluid">
-			<div class="span2" ng-if="$index == 0">Liitetiedostot</div>
+			<div class="span2" ng-if="$index == 0">{{'reportedmessageview.otsikko.liitetiedostot' | i18n}}</div>
 			<div class="span10">{{attachment.name}}</div>
 		</div>
 	</div>
@@ -68,25 +72,34 @@
 	
 	<div class="row-fluid">
 		<div class="span3">
-			{{reportedMessage.emailRecipients.length}} &nbsp vastaanottajaa
+			{{reportedMessageDTO.sendingStatus.numberOfReciepients}} &nbsp {{'reportedmessageview.text.vastaanottajaa' | i18n}}
 		</div>
 	</div>
 	
-    <div class="results" ng-if="reportedMessage.emailRecipients.length > 0">
-        <div pagination-page-list></div>
-        <table pagination-paginated-element model="model">
+    <div class="results" ng-if="reportedMessageDTO.emailRecipients.length > 0">
+        <table>
             <tr>
-                <th ng-click="lajittele('nimi')" ng-class="">Nimi</th>
-                <th>Tunnus</th>
-                <th>S&auml;hk&ouml;postiosoite</th>
-                <th>Tila</th>
+                <th class="span4 clickable-header-cell" ng-click="sort('searchName')" ng-class="clickHeader('searchName')">{{'reportedmessageview.otsikko.nimi' | i18n}}</th>
+                <th class="span2 clickable-header-cell" ng-click="sort('recipientOid')" ng-class="clickHeader('recipientOid')">{{'reportedmessageview.otsikko.tunnus' | i18n}}</th>
+                <th class="span3 clickable-header-cell" ng-click="sort('recipientEmail')" ng-class="clickHeader('recipientEmail')">{{'reportedmessageview.otsikko.sposti' | i18n}}</th>
+                <th class="span2">{{'reportedmessageview.otsikko.tila' | i18n}}</th>
             </tr>
-            <tr ng-repeat="emailRecipient in reportedMessage.emailRecipients">
+            <tr ng-repeat="emailRecipient in reportedMessageDTO.emailRecipients">
                 <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
                 <td>{{emailRecipient.oid}}</td>
                 <td>{{emailRecipient.email}}</td>
-                <td>{{emailRecipient.statusReport}}</td>
+                <td ng-if="emailRecipient.sendSuccessfull == '1'">
+                    {{'reportedmessageview.text.lahetys_vastaanottajalle_onnistui' | i18n}}
+                </td>
+                <td ng-if="emailRecipient.sendSuccessfull != '1'">
+                    <img style="margin-right:10px;" src="../img/alert-icon28x29.png">
+                    {{'reportedmessageview.text.lahetys_vastaanottajalle_epaonnistui' | i18n}}
+                </td>
             </tr>
         </table>
+    </div>
+    
+    <div ng-if="reportedMessageDTO.emailRecipients.length > 0">
+        <pagination total-items="reportedMessageDTO.sendingStatus.numberOfReciepients" items-per-page="pageSize" page="currentPage" on-select-page="selectPage(page)" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
     </div>
 </div>

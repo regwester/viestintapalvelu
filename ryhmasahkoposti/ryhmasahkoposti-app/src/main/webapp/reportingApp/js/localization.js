@@ -1,11 +1,11 @@
 'use strict';
 
-angular.module('reportingApp.filters', []).
-    filter('i18n', ['$rootScope', '$locale', '$window'], function($rootScope, $locale, $window) {
+angular.module('localization', []).
+    filter('i18n', ['$rootScope', '$locale', '$window', function($rootScope, $locale, $window) {
         var language = $window.navigator.userLanguage || $window.navigator.language;
 
         if (language) {
-            language.substring(0, 2).toUpperCase()();
+            language.substring(0, 2).toUpperCase();
 
             if (language != "FI" && language != "SV") {
                 language = "FI";
@@ -26,4 +26,4 @@ angular.module('reportingApp.filters', []).
         return function(text) {
             return jQuery.i18n.prop(text);
         };
-    });
+    }]);

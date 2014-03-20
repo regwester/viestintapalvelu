@@ -1,5 +1,8 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class AttachmentResponse {
 
     private String uuid;
@@ -31,6 +34,16 @@ public class AttachmentResponse {
     public void setFileSize(int fileSize) {
         this.fileSize = fileSize;
     }
+    
+    public Map<String, String> toMap() {
+        Map<String, String> result = new HashMap<String, String>();
+        result.put("uuid", this.uuid);
+        result.put("fileName", fileName);
+        result.put("contentType", contentType);
+        result.put("fileSize", ""+fileSize);
+        return result;
+    }
+    
     @Override
     public String toString() {
         return "AttachmentResponse [uuid=" + uuid + ", fileName=" + fileName

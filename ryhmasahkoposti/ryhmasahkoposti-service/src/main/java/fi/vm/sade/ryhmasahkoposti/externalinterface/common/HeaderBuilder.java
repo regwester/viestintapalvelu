@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.route;
+package fi.vm.sade.ryhmasahkoposti.externalinterface.common;
 
 import java.util.HashMap;
 import java.util.Map;
