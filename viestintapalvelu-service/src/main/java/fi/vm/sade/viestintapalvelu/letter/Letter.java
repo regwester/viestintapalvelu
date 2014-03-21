@@ -8,14 +8,14 @@ import org.apache.cxf.common.util.StringUtils;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.vm.sade.viestintapalvelu.address.ExtendedAddressLabel;
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
 @ApiModel(value = "Kirjemallipohjaan sisällytettävät kirjekohtaiset tiedot")
 public class Letter {
 	public Letter() {
 	}
 
-	public Letter(ExtendedAddressLabel addressLabel, String languageCode,
+	public Letter(AddressLabel addressLabel, String languageCode,
 			String hakukohde, String letterBodyText,
 			List<Map<String, String>> customLetterContents) {
 		this.addressLabel = addressLabel;
@@ -27,7 +27,7 @@ public class Letter {
 	}
 
 	@ApiModelProperty(value = "Osoitetiedot", required = true)
-	private ExtendedAddressLabel addressLabel;
+	private AddressLabel addressLabel;
 
 	@ApiModelProperty(value = "Kirjepohjan tunniste")
 	private String templateId;
@@ -54,7 +54,7 @@ public class Letter {
 			+ "muuttujansa selvyyden vuoksi (ainakin) niille kentille, jotka ovat pakollisia.")
 	private List<Map<String, String>> customLetterContents;
 
-	public ExtendedAddressLabel getAddressLabel() {
+	public AddressLabel getAddressLabel() {
 		return addressLabel;
 	}
 
