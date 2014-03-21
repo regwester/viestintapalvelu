@@ -2,6 +2,9 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import fi.vm.sade.generic.model.BaseEntity;
@@ -26,6 +29,10 @@ import fi.vm.sade.generic.model.BaseEntity;
 public class TemplateContent extends BaseEntity {
 
 	private static final long serialVersionUID = 1L;
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="kirjepohja_id")
+	private Template template;
 	
 	@Column(name="jarjestys")
 	private int order;

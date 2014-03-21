@@ -1,9 +1,13 @@
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
+import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -31,6 +35,22 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Entity()
 public class Template extends BaseEntity {
 	
+	public Set<TemplateContent> getContents() {
+		return contents;
+	}
+
+	public void setContents(Set<TemplateContent> contents) {
+		this.contents = contents;
+	}
+
+	public Set<Replacement> getReplacements() {
+		return replacements;
+	}
+
+	public void setReplacements(Set<Replacement> replacements) {
+		this.replacements = replacements;
+	}
+
 	private static final long serialVersionUID = 4178735997933155683L;
 
 	@Column(name="aikaleima", nullable=false)
@@ -50,6 +70,13 @@ public class Template extends BaseEntity {
 	@Column(name="oid_organisaatio", nullable=true)
 	private String organizationOid;
 
+	
+	@OneToMany(mappedBy="template", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Set<TemplateContent> contents;
+	
+	@OneToMany(mappedBy="template", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+	private Set<Replacement> replacements;
+	
 	public Date getTimestamp() {
 		return timestamp;
 	}

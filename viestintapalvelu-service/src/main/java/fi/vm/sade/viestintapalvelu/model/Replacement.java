@@ -2,6 +2,9 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 import com.wordnik.swagger.annotations.ApiModel;
@@ -11,6 +14,10 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Table(name="korvauskentat")
 @Entity()
 public class Replacement extends BaseEntity {
+	
+	@ManyToOne(fetch=FetchType.EAGER)
+	@JoinColumn(name="kirjepohja_id")
+	private Template template;
 	
 	@Column(name="nimi")
 	private String name = null;
