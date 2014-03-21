@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
@@ -14,7 +15,8 @@ public class ReportedAttachmentConverter {
 	public static ReportedAttachment convert(FileItem fileItem) throws IOException {
 		ReportedAttachment liite = new ReportedAttachment();
 		
-		liite.setAttachmentName(fileItem.getName());
+		String filename = fileItem.getName();
+		liite.setAttachmentName(FilenameUtils.getName(filename));
 		liite.setContentType(fileItem.getContentType());
 		
 //		byte[] zippedAttachment = ZipUtil.zip(fileItem.getName(), fileItem.get());
