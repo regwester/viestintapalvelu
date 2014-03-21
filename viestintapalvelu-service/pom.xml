@@ -544,15 +544,15 @@
 			<scope>provided</scope>
 		</dependency>
 		<dependency>
-	<groupId>org.hibernate</groupId>
-	<artifactId>hibernate-entitymanager</artifactId>
-	<version>4.1.0.Final</version>
-</dependency>
-           <dependency>
-            <groupId>postgresql</groupId>
-            <artifactId>postgresql</artifactId>
-            <version>${postgresql.version}</version>
-        </dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>com.mysema.querydsl</groupId>
 			<artifactId>querydsl-apt</artifactId>
@@ -579,11 +579,11 @@
 			<artifactId>flyway-core</artifactId>
 			<version>2.1.1</version>
 		</dependency>
-                <dependency>
-            <groupId>org.springframework</groupId>
-            <artifactId>spring-orm</artifactId>
-            <version>${spring.version}</version>
-        </dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 	</dependencies>
 
 
@@ -655,51 +655,51 @@
 				</configuration>
 			</plugin>
 			<plugin>
-	            <groupId>com.googlecode.flyway</groupId>
-	            <artifactId>flyway-maven-plugin</artifactId>
-	            <version>2.0.3</version>
-	            <configuration>
-	                <schemas>
-	                    <schema>kirjeet</schema>
-	                </schemas>
-	                <driver>org.postgresql.Driver</driver>
-	                <url>jdbc:postgresql://127.0.0.1:5432/viestinta</url>
-	                <user>oph</user>
-	                <password>oph</password>
-	            </configuration>
-	        </plugin>
-	        	        <plugin>
-                <groupId>de.smartics.maven.plugin</groupId>
-                <artifactId>hibernate4-maven-plugin</artifactId>
-                <version>0.2.0</version>
-                <executions>
-				    <execution>
-				      <id>export</id>
-				      <phase>compile</phase>
-				      <goals>
-				        <goal>hbm2ddl</goal>
-				      </goals>
-				    </execution>
-				  </executions>
-                <configuration>
-                    <unitName>viestinta</unitName>
-                    <createOutputFile>${project.build.directory}/hibernate3/sql/schema.ddl</createOutputFile>
-                    <dropOutputFile>${project.build.directory}/hibernate3/sql/drop.ddl</dropOutputFile>
-                </configuration>
-                <dependencies>
-                    <dependency>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-core</artifactId>
-                        <version>${hibernate.version}</version>
-                    </dependency>
-                    <dependency>
-                        <groupId>org.hibernate</groupId>
-                        <artifactId>hibernate-ehcache</artifactId>
-                        <version>${hibernate.version}</version>
-                    </dependency>
-                </dependencies>
-            </plugin>
-	        
+				<groupId>com.googlecode.flyway</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>2.0.3</version>
+				<configuration>
+					<schemas>
+						<schema>kirjeet</schema>
+					</schemas>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://127.0.0.1:5432/viestinta</url>
+					<user>oph</user>
+					<password>oph</password>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>de.smartics.maven.plugin</groupId>
+				<artifactId>hibernate4-maven-plugin</artifactId>
+				<version>0.2.0</version>
+				<executions>
+					<execution>
+						<id>export</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>hbm2ddl</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<unitName>viestinta</unitName>
+					<createOutputFile>${project.build.directory}/hibernate3/sql/schema.ddl</createOutputFile>
+					<dropOutputFile>${project.build.directory}/hibernate3/sql/drop.ddl</dropOutputFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-core</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-ehcache</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -734,8 +734,21 @@
 					</configuration>
 				</plugin>
 			</plugins>
-			
+
 		</pluginManagement>
 	</build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>smartics</id>
+			<url>http://www.smartics.eu/nexus/content/groups/public-group</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 </project>
 
