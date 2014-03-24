@@ -8,7 +8,7 @@
 		<groupId>fi.vm.sade.viestintapalvelu</groupId>
 		<artifactId>viestintapalvelu</artifactId>
 		<version>8.0-SNAPSHOT</version>
-		<relativePath>..</relativePath>
+		<relativePath>../pom.xml</relativePath>
 	</parent>
 
 
@@ -27,6 +27,19 @@
 		<xdocreport.version>1.0.1</xdocreport.version>
 		<xdocreport100.version>1.0.0</xdocreport100.version>
 		<itext.version>2.1.7</itext.version>
+
+		<authentication-domain.version>8.0</authentication-domain.version>
+		<commonsfileupload.version>1.2.2</commonsfileupload.version>
+		<cxf.version>2.7.8</cxf.version>
+		<javax.persistence>2.0.0</javax.persistence>
+		<log4j.version>1.2.17</log4j.version>
+		<mockito.version>1.9.5</mockito.version>
+		<querydsl.version>2.6.0</querydsl.version>
+		<spring.version>3.1.3.RELEASE</spring.version>
+		<commonsio.version>1.3.2</commonsio.version>
+		<commonscodec.version>1.2</commonscodec.version>
+		<mail.version>1.4.7</mail.version>
+
 	</properties>
 
 	<repositories>
@@ -370,11 +383,11 @@
 			<artifactId>jcl-over-slf4j</artifactId>
 			<version>${slf4j.version}</version>
 		</dependency>
-<dependency>  
-            <groupId>javassist</groupId>  
-            <artifactId>javassist</artifactId>  
-            <version>3.12.1.GA</version>  
-        </dependency>  
+		<dependency>
+			<groupId>javassist</groupId>
+			<artifactId>javassist</artifactId>
+			<version>3.12.1.GA</version>
+		</dependency>
 		<dependency>
 			<groupId>org.slf4j</groupId>
 			<artifactId>jul-to-slf4j</artifactId>
@@ -486,9 +499,9 @@
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-jersey-jaxrs_2.10</artifactId>
 			<version>${swagger.version}</version>
-				<exclusions>
-					<exclusion>
-						<artifactId>javassist</artifactId>
+			<exclusions>
+				<exclusion>
+					<artifactId>javassist</artifactId>
 					<groupId>javassist</groupId>
 				</exclusion>
 			</exclusions>
@@ -521,9 +534,58 @@
 			<artifactId>jgroups</artifactId>
 			<version>2.10.0.GA</version>
 		</dependency>
-	
+
+
+		<!-- JPA and QSDL -->
+		<dependency>
+			<groupId>javax.persistence</groupId>
+			<artifactId>com.springsource.javax.persistence</artifactId>
+			<version>${javax.persistence}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-entitymanager</artifactId>
+			<version>4.1.0.Final</version>
+		</dependency>
+		<dependency>
+			<groupId>postgresql</groupId>
+			<artifactId>postgresql</artifactId>
+			<version>${postgresql.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-apt</artifactId>
+			<version>${querydsl.version}</version>
+			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-jpa</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-codegen</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.mysema.querydsl</groupId>
+			<artifactId>querydsl-core</artifactId>
+			<version>${querydsl.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>com.googlecode.flyway</groupId>
+			<artifactId>flyway-core</artifactId>
+			<version>2.1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>org.springframework</groupId>
+			<artifactId>spring-orm</artifactId>
+			<version>${spring.version}</version>
+		</dependency>
 	</dependencies>
-	
+
 
 	<build>
 		<finalName>viestintapalvelu</finalName>
@@ -592,6 +654,52 @@
 					<path>/viestintapalvelu</path>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>com.googlecode.flyway</groupId>
+				<artifactId>flyway-maven-plugin</artifactId>
+				<version>2.0.3</version>
+				<configuration>
+					<schemas>
+						<schema>kirjeet</schema>
+					</schemas>
+					<driver>org.postgresql.Driver</driver>
+					<url>jdbc:postgresql://127.0.0.1:5432/viestinta</url>
+					<user>oph</user>
+					<password>oph</password>
+				</configuration>
+			</plugin>
+			<plugin>
+				<groupId>de.smartics.maven.plugin</groupId>
+				<artifactId>hibernate4-maven-plugin</artifactId>
+				<version>0.2.0</version>
+				<executions>
+					<execution>
+						<id>export</id>
+						<phase>compile</phase>
+						<goals>
+							<goal>hbm2ddl</goal>
+						</goals>
+					</execution>
+				</executions>
+				<configuration>
+					<unitName>viestinta</unitName>
+					<createOutputFile>${project.build.directory}/hibernate3/sql/schema.ddl</createOutputFile>
+					<dropOutputFile>${project.build.directory}/hibernate3/sql/drop.ddl</dropOutputFile>
+				</configuration>
+				<dependencies>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-core</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
+					<dependency>
+						<groupId>org.hibernate</groupId>
+						<artifactId>hibernate-ehcache</artifactId>
+						<version>${hibernate.version}</version>
+					</dependency>
+				</dependencies>
+			</plugin>
+
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -626,7 +734,21 @@
 					</configuration>
 				</plugin>
 			</plugins>
+
 		</pluginManagement>
 	</build>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>smartics</id>
+			<url>http://www.smartics.eu/nexus/content/groups/public-group</url>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+		</pluginRepository>
+	</pluginRepositories>
+
 </project>
 
