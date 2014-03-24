@@ -61,8 +61,11 @@
             #if($columns.valinnanTulos)
             <th>Valinnan tulos</th>
             #end
+            #if($columns.varasija)
+            <td>Varasija</td>
+            #end
             #if($columns.selite)
-            <th>Varasija</th>
+            <th>Selite</th>
             #end
         </tr>
         #foreach( $haku in $tulokset )
@@ -76,6 +79,9 @@
             #end
             #if($columns.valinnanTulos)
             <td>$haku.valinnanTulos</td>
+            #end
+            #if($columns.varasija)
+            <td>$haku.varasija</td>
             #end
             #if($columns.selite)
             <td>$haku.selite</td>
