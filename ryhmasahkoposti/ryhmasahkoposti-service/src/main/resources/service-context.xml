@@ -23,7 +23,7 @@
 	
 	<!-- Application and common properties -->
     <context:property-placeholder 
-    	location="classpath:ryhmasahkoposti.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkoposti.properties" 
+    	location="classpath:ryhmasahkoposti.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkoposti.properties, file:///${user.home:''}/oph-configuration/override.properties" 
     	ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <!-- Authentication and security -->
