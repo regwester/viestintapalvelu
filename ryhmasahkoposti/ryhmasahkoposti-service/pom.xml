@@ -366,6 +366,10 @@
 		
 		<!-- JGroups -->
 		<dependency>
+		    <groupId>net.sf.ehcache</groupId>
+		    <artifactId>ehcache-core</artifactId>
+		</dependency>
+		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-jgroupsreplication</artifactId>
            </dependency>
