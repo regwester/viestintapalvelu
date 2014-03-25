@@ -11,6 +11,8 @@ public class Urls {
     public static final String HYVAKSYMISKIRJE_RESOURCE_PATH = "hyvaksymiskirje";
     public static final String JALKIOHJAUSKIRJE_RESOURCE_PATH = "jalkiohjauskirje";
     public static final String KOEKUTSUKIRJE_RESOURCE_PATH = "koekutsukirje";
+    public static final String LETTER_PATH = "letter";
+    public static final String TEMPLATE_RESOURCE_PATH = "template";
 
     public static RestServer localhost() {
         return new Localhost();

@@ -11,7 +11,7 @@
 
 	<!-- Application and common properties -->
     <context:property-placeholder 
-    	location="classpath:ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties" 
+    	location="classpath:ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
     	ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <!-- Spring service and persistence configuration --> 
