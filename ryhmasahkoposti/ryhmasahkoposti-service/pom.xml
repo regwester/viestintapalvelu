@@ -204,6 +204,10 @@
 					<artifactId>commons-logging</artifactId>
 					<groupId>commons-logging</groupId>
 				</exclusion>
+				<exclusion>
+                    <artifactId>geronimo-servlet_2.5_spec</artifactId>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                </exclusion>
             </exclusions>
 		</dependency>
 		<dependency>
@@ -361,6 +365,10 @@
 		</dependency>
 		
 		<!-- JGroups -->
+		<dependency>
+		    <groupId>net.sf.ehcache</groupId>
+		    <artifactId>ehcache-core</artifactId>
+		</dependency>
 		<dependency>
 			<groupId>net.sf.ehcache</groupId>
 			<artifactId>ehcache-jgroupsreplication</artifactId>

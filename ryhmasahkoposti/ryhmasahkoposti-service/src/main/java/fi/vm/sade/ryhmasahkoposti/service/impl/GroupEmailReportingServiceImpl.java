@@ -8,7 +8,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -41,6 +44,7 @@ import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
 @Service
 @Transactional(readOnly=true)
 public class GroupEmailReportingServiceImpl implements GroupEmailReportingService {
+    private static Logger LOGGER = LoggerFactory.getLogger(GroupEmailReportingServiceImpl.class);
 	private ReportedMessageService reportedMessageService;
 	private ReportedRecipientService reportedRecipientService;
 	private ReportedAttachmentService reportedAttachmentService;
@@ -59,6 +63,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Long addSendingGroupEmail(EmailData emailData) throws IOException {
+	    LOGGER.info("addSendingGroupEmail called");
+	    
 		ReportedMessage reportedMessage = ReportedMessageConverter.convert(emailData.getEmail());
 			
 		ReportedMessage savedReportedMessage = 
@@ -75,8 +81,10 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		return savedReportedMessage.getId();
 	}
 
-	@Override
+    @Override
 	public EmailMessageDTO getMessage(Long messageID) {
+	    LOGGER.info("getMessage(" + messageID + ") called");
+
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 		List<ReportedAttachment> reportedAttachments = 
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
@@ -85,6 +93,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
 	@Override
 	public ReportedMessageDTO getReportedMessage(Long messageID) {
+        LOGGER.info("getReportedMessage(" + messageID + ") called");
+	    
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 				
 		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
@@ -101,6 +111,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	
 	@Override
     public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessageAndRecipients(" + messageID + ") called");
+
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
         
         List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(
@@ -121,6 +133,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
     public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, 
         PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessageAndRecipientsSendingUnsuccesful(" + messageID + ") called");
+
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
         
         List<ReportedRecipient> reportedRecipients = 
@@ -140,6 +154,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     
 	@Override
 	public ReportedMessagesDTO getReportedMessages(PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessages() called");
+
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
 	    ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert();
@@ -163,6 +179,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
 	@Override
 	public ReportedMessagesDTO getReportedMessages(String searchArgument, PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessages(" + searchArgument + ") called");
+
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 	       
 		ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert(searchArgument);
@@ -185,7 +203,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 
 	@Override
-	public SendingStatusDTO getSendingStatus(Long messageID) {	
+	public SendingStatusDTO getSendingStatus(Long messageID) {
+        LOGGER.info("getSendingStatus(" + messageID + ") called");
+
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 				
 		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
@@ -197,6 +217,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	
 	@Override
 	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
+        LOGGER.info("getUnhandledMessageRecipients(" + listSize + ") called");
+
 		List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
 		return EmailRecipientDTOConverter.convert(reportedRecipients);
 	}
@@ -204,6 +226,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
+        LOGGER.info("recipientHandledFailure(" + recipient.getRecipientID() + ") called");
+
 		ReportedRecipient reportedRecipient = 
 			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
 		reportedRecipient.setFailureReason(result);
@@ -215,7 +239,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
-		ReportedRecipient reportedRecipient = 
+        LOGGER.info("recipientHandledSuccess(" + recipient.getRecipientID() + ") called");
+
+	    ReportedRecipient reportedRecipient = 
 			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
 		reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_SUCCESFUL);
 		reportedRecipient.setSendingEnded(new Date());
@@ -228,6 +254,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public Long saveAttachment(FileItem fileItem) throws IOException {
+        LOGGER.info("saveAttachment(" + fileItem.getName() + ") called");
+
 		ReportedAttachment reportedAttachment = ReportedAttachmentConverter.convert(fileItem);
 		return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
 	}
@@ -235,7 +263,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean startSending(EmailRecipientDTO recipient) {
-		ReportedRecipient reportedRecipient = 
+        LOGGER.info("startSending(" + recipient.getEmail() + ") called");
+
+	    ReportedRecipient reportedRecipient = 
 			reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
 
 		if (reportedRecipient.getSendingStarted() != null) {
@@ -247,4 +277,5 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		
 		return true;
 	}
+
 }
