@@ -2,8 +2,8 @@ angular.module('app').controller(
 		'LetterController', 
 		['$scope', 'Generator', 'Printer', function ($scope, Generator, Printer) {
     $scope.letters = [];
-    $scope.count = 0
-    $scope.select_min = 0 // Min count of letters selectable from UI drop-down list
+    $scope.count = 0;
+    $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
     $scope.select_max = 100;  // Max count
     $scope.tinymceModel='<p>Onneksi olkoon,</p>'
         +'<p>'
@@ -33,8 +33,10 @@ angular.module('app').controller(
         +'<br/>';
     function generateLetters(count) {
         $scope.letters = $scope.letters.concat(Generator.generateObjects(count, function (data) {
-            var postoffice = data.any('postoffice')
-            var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'))
+        var tulokset = generateTulokset(data.any('hakutoive-lukumaara'));
+        var postoffice = data.any('postoffice');
+        var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'));
+            
             return {
                 "addressLabel": {
                     "firstName": data.any('firstname'),
@@ -49,27 +51,43 @@ angular.module('app').controller(
                     "countryCode": country[1]
                 },
                 "languageCode": data.prioritize('FI', 0.80).prioritize('SE', 0.60).otherwise(data.any('language')),
-                "hakukohde" : data.any('hakukohteenNimi'),
-                "letterBodyText" : $scope.tinymceModel
-            }
-        }))
+                "templateReplacements": {"tulokset" : tulokset },
+                           
+                //"letterBodyText" : $scope.tinymceModel
+            };
+        }));
     }
 
-	
+	function generateTulokset(count) {
+	return Generator.generateObjects(count, function (data) {
+	    return {
+	        "organisaationNimi": data.any('organisaationNimi'),
+	        "oppilaitoksenNimi": data.any('oppilaitoksenNimi'),
+	        "hakukohteenNimi": data.any('hakukohteenNimi'),
+	        "hyvaksytyt": data.any('hyvaksytyt'),
+	        "kaikkiHakeneet": data.any('kaikkiHakeneet'),
+	        "alinHyvaksyttyPistemaara": data.any('alinHyvaksyttyPistemaara'),
+	        "omatPisteet": data.any('pisteetvajaa'),
+	        "paasyJaSoveltuvuuskoe": data.any('koe'),
+	        "valinnanTulos": data.any('valinnanTulos'),
+	        "selite": data.any('valinnanTulos')
+	    };
+	});
+	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters);
-    }
+    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"});
+    };
     
     $scope.updateGenerated = function () {
         if ($scope.count > $scope.letters.length) {
-            generateLetters($scope.count - $scope.letters.length)
+            generateLetters($scope.count - $scope.letters.length);
         } else if ($scope.count < $scope.letters.length) {
-            $scope.letters.splice($scope.count, $scope.letters.length)
+            $scope.letters.splice($scope.count, $scope.letters.length);
         }
-    }
+    };
     $scope.getCount = function () {
-    	return $scope.count ? $scope.count : 0
-    }
+    	return $scope.count ? $scope.count : 0;
+    };
 
 }]);
 

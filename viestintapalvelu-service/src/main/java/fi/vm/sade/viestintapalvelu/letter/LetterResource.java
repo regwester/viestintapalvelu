@@ -47,138 +47,137 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 // properly
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
 public class LetterResource extends AsynchronousResource {
-	private final Logger LOG = LoggerFactory
-			.getLogger(LetterResource.class);
+    private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
 
-	@Autowired
-	private DownloadCache downloadCache;
-	@Autowired
-	private LetterBuilder letterBuilder;
-	@Autowired
-	private DokumenttiResource dokumenttiResource;
-	@Autowired
-	private ExecutorService executor;
+    @Autowired
+    private DownloadCache downloadCache;
+    @Autowired
+    private LetterBuilder letterBuilder;
+    @Autowired
+    private DokumenttiResource dokumenttiResource;
+    @Autowired
+    private ExecutorService executor;
 
-	private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; synkroninen";
-	private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; asynkroninen";
-	private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+    private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; synkroninen";
+    private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; asynkroninen";
+    private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
 
-	
-	@GET
-	//@Consumes("application/json")
-	@Produces("text/plain")
-	@Path("/isAlive")
-	//@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-	//@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-	public String isAlive() {
-		return "alive";
-	}
-	/**
-	 * Koekutsukirje PDF sync
-	 * 
-	 * @param input
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 * @throws DocumentException
-	 */
-	@POST
-	@Consumes("application/json")
-	@Produces("text/plain")
-	@Path("/pdf")
-	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-	public Response pdf(
-			@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input,
-			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
-		String documentId;
-		try {
-			byte[] pdf = letterBuilder.printPDF(input);
-			documentId = downloadCache.addDocument(new Download(
-					"application/pdf;charset=utf-8", "letter.pdf", pdf));
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error("Koekutsukirje PDF failed: {}", e.getMessage());
-			return createFailureResponse(request);
-		}
-		return createResponse(request, documentId);
-	}
+    @GET
+    // @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/isAlive")
+    // @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    // @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public String isAlive() {
+        return "alive";
+    }
 
-	/**
-	 * Varaudutaan viestintapalvelun klusterointiin. Ei tarvitse tietoturvaa
-	 * https:n lisäksi. Kutsuja antaa datat ja kutsuja saa kirjeen.
-	 */
-	@POST
-	@Consumes("application/json")
-	@Produces("application/octet-stream")
-	@Path("/sync/pdf")
-	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-	public InputStream syncPdf(
-			@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
-			throws IOException, DocumentException {
-		return new ByteArrayInputStream(letterBuilder.printPDF(input));
-	}
+    /**
+     * Koekutsukirje PDF sync
+     * 
+     * @param input
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/pdf")
+    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public Response pdf(
+            @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input,
+            @Context HttpServletRequest request) throws IOException,
+            DocumentException {
+        String documentId;
+        try {
+            byte[] pdf = letterBuilder.printPDF(input);
+            documentId = downloadCache.addDocument(new Download(
+                    "application/pdf;charset=utf-8", "letter.pdf", pdf));
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Koekutsukirje PDF failed: {}", e.getMessage());
+            return createFailureResponse(request);
+        }
+        return createResponse(request, documentId);
+    }
 
-	/**
-	 * Koekutsukirje PDF async
-	 * 
-	 * @param input
-	 * @param request
-	 * @return
-	 * @throws IOException
-	 * @throws DocumentException
-	 */
-	@POST
-	@Consumes("application/json")
-	@PreAuthorize("isAuthenticated()")
-	@Produces("text/plain")
-	@Path("/async/pdf")
-	@ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
-			+ AsyncResponseLogicDocumentation)
-	public Response asyncPdf(
-			@ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input,
-			@Context final HttpServletRequest request) throws IOException,
-			DocumentException {
-		if (input == null || input.getLetters().isEmpty()) {
-			LOG.error("Batch was empty! {}", input);
-			return Response.serverError().entity("Batch was empty!").build();
-		}
-		LOG.info("Creating koekutsukirjeet for {} people", input.getLetters()
-				.size());
-		final Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		try {
-			LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}",
-					new Object[] { auth.getName(), auth.getPrincipal() });
+    /**
+     * Varaudutaan viestintapalvelun klusterointiin. Ei tarvitse tietoturvaa
+     * https:n lisäksi. Kutsuja antaa datat ja kutsuja saa kirjeen.
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("application/octet-stream")
+    @Path("/sync/pdf")
+    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public InputStream syncPdf(
+            @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
+            throws IOException, DocumentException {
+        return new ByteArrayInputStream(letterBuilder.printPDF(input));
+    }
 
-		} catch (Exception e) {
-			LOG.error("No authentication!!!");
-		}
-		final String documentId = globalRandomId();
-		executor.execute(new Runnable() {
-			public void run() {
-				SecurityContextHolder.getContext().setAuthentication(auth);
-				try {
-					byte[] pdf = letterBuilder.printPDF(input);
-					dokumenttiResource
-							.tallenna(
-									null,
-									filenamePrefixWithUsernameAndTimestamp("letter.pdf"),
-									now().plusDays(1).toDate().getTime(),
-									Arrays.asList("viestintapalvelu",
-											"koekutsukirje", "pdf"),
-									"application/pdf;charset=utf-8",
-									new ByteArrayInputStream(pdf));
-				} catch (Exception e) {
-					e.printStackTrace();
-					LOG.error("Koekutsukirje PDF async failed: {}",
-							e.getMessage());
-				}
-			}
-		});
-		return createResponse(request, documentId);
-	}
+    /**
+     * Koekutsukirje PDF async
+     * 
+     * @param input
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     */
+    @POST
+    @Consumes("application/json")
+    @PreAuthorize("isAuthenticated()")
+    @Produces("text/plain")
+    @Path("/async/pdf")
+    @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
+            + AsyncResponseLogicDocumentation)
+    public Response asyncPdf(
+            @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input,
+            @Context final HttpServletRequest request) throws IOException,
+            DocumentException {
+        if (input == null || input.getLetters().isEmpty()) {
+            LOG.error("Batch was empty! {}", input);
+            return Response.serverError().entity("Batch was empty!").build();
+        }
+        LOG.info("Creating koekutsukirjeet for {} people", input.getLetters()
+                .size());
+        final Authentication auth = SecurityContextHolder.getContext()
+                .getAuthentication();
+        try {
+            LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}",
+                    new Object[] { auth.getName(), auth.getPrincipal() });
+
+        } catch (Exception e) {
+            LOG.error("No authentication!!!");
+        }
+        final String documentId = globalRandomId();
+        executor.execute(new Runnable() {
+            public void run() {
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                try {
+                    byte[] pdf = letterBuilder.printPDF(input);
+                    dokumenttiResource
+                            .tallenna(
+                                    null,
+                                    filenamePrefixWithUsernameAndTimestamp("letter.pdf"),
+                                    now().plusDays(1).toDate().getTime(),
+                                    Arrays.asList("viestintapalvelu",
+                                            "koekutsukirje", "pdf"),
+                                    "application/pdf;charset=utf-8",
+                                    new ByteArrayInputStream(pdf));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOG.error("Koekutsukirje PDF async failed: {}",
+                            e.getMessage());
+                }
+            }
+        });
+        return createResponse(request, documentId);
+    }
 
 }

@@ -1,17 +1,5 @@
 <div>
 <h3>Testikäyttöliittymän testivaihe</h3>
-<p>Toiminnallisuus: valitse tulostettavien koekutsukirjeiden lukumäärä (1-100) valintalistasta. 
-   Koekutsukirjeet generoidaan  kun PDF-painiketta on painettu.</p>
-<p>Huom! Tämän käyttöliittymän logiikka on seuraava: 
-<ul>
- <li> Aina kun klikataan valintalistasta lisää tulostettavia kirjeitä nuoli ylöspäin-näppäimellä,
-      generoidaan muistiin (client-päässä) kirje käyttäen sillä hetkellä editorissa olevaa sisältöä! </li>
- <li> Kun valitaan tulostettavien kirjeiden lukumäärää pienemmäksi, poistetaan (client-päässä) generoitujen kirjeiden
-      jonosta viimeisin, joten muutokset editorin sisältöön eivät luonnollisesti vaikuta tässä vaiheessa.
- <li> Alussa on kirjeiden lista tyhjä. Muokkaa siis ensin kirjepohjaa ja lisää sitten tulostettavien kirjeiden määrää.</li>
- <li> Jos valitset tulostettavien määräksi nolla, tyhjenee valmiiksi alustettujen kirjeiden lista ja PDF-painike disabloituu. </li>
-</ul>
-
 
 <div ng-controller='LetterController'>
 
@@ -70,7 +58,7 @@
                         </th>
                         <th></th>
                     </tr>
-                    <tr ng-repeat="haku in kirje.tulokset">
+                    <tr ng-repeat="haku in kirje.templateReplacements.tulokset">
                         <td>
                             <input class="input-xlarge input-pile" type="text" ng-model="haku.organisaationNimi"
                                    placeholder="Organisaatio">
