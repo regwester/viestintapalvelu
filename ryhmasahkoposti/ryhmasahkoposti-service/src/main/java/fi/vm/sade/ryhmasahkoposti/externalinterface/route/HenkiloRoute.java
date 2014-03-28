@@ -21,9 +21,8 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.common.AbstractRouteBuilder;
 public class HenkiloRoute extends AbstractRouteBuilder {
 	private static Logger LOGGER = LoggerFactory.getLogger(HenkiloRoute.class);
     private static String ROUTE_GET_PERSON = "direct:getPerson";
-    private static String ROUTE_GET_CURRENT_USER = "direct:getCurrentUser";
 
-	@Value("${ryhmasahkopostipalvelu.authenticationService.rest.url}")
+	@Value("${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}")
 	private String henkiloURI;
     
 	/**
@@ -40,9 +39,6 @@ public class HenkiloRoute extends AbstractRouteBuilder {
         
         // Henkilöhaku OID:lla. Palauttaa Henkilo-luokan ilmentymän
         getRouteDefinition(ROUTE_GET_PERSON, henkiloURI, Exchange.HTTP_PATH, simple("${in.headers.oid}"), henkiloType);
-        
-        // Nykyisen käyttäjän tietojen haku. Palauttaa Henkilö-luokan ilmentymän.
-        getRouteDefinition(ROUTE_GET_CURRENT_USER, henkiloURI, Exchange.HTTP_PATH, simple("current"), henkiloType);
 	}
 	
 	/**
@@ -55,17 +51,5 @@ public class HenkiloRoute extends AbstractRouteBuilder {
 	    LOGGER.info("[HenkiloRoute.getHenkilo(" + oid + ")]");
 		ProducerTemplate camelTemplate = getCamelTemplate();
 		return camelTemplate.requestBodyAndHeader(ROUTE_GET_PERSON, "", "oid", oid, Henkilo.class);
-	}
-
-	/**
-     * Hakee henkilön organisaation henkilötiedot henkilöpalvelusta
-     * 
-     * @param oid Henkilön OID-tunnus
-     * @return Lista organisaation kenkilötietoja
-     */
-    public Henkilo getCurrenUser() {
-        LOGGER.info("[HenkiloRoute.getCurrentUser()]");
-        ProducerTemplate camelTemplate = getCamelTemplate();
-        return camelTemplate.requestBodyAndHeader(ROUTE_GET_CURRENT_USER, "", "", "", Henkilo.class); 
 	}
 }

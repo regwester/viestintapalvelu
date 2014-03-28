@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.List;
 import java.util.Map;
 
 import org.apache.cxf.common.util.StringUtils;
@@ -9,79 +8,96 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.model.Template;
 
 @ApiModel(value = "Kirjemallipohjaan sisällytettävät kirjekohtaiset tiedot")
 public class Letter {
-	public Letter() {
-	}
 
-	public Letter(AddressLabel addressLabel, String languageCode,
-			String hakukohde, String letterBodyText,
-			List<Map<String, String>> customLetterContents) {
-		this.addressLabel = addressLabel;
-		this.languageCode = StringUtils.isEmpty(languageCode) ? "FI"
-				: languageCode;
-		this.hakukohde = hakukohde;
-		this.letterBodyText = letterBodyText;
-		this.customLetterContents = customLetterContents;
-	}
+    @ApiModelProperty(value = "Osoitetiedot", required = true)
+    private AddressLabel addressLabel;
 
-	@ApiModelProperty(value = "Osoitetiedot", required = true)
-	private AddressLabel addressLabel;
+    @ApiModelProperty(value = "Kirjepohjan tunniste")
+    private Template template;
 
-	@ApiModelProperty(value = "Kirjepohjan tunniste")
-	private String templateId;
+    @ApiModelProperty(value = "Kirjepohjan tunniste")
+    private String templateName;
 
-	@ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
-	private String languageCode;
+    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
+    private String languageCode;
 
-	@ApiModelProperty(value = "Kirjeen leipäteksti, käyttäjältä HTML-muodossa, ajetaan palvelussa JSoup.clean-filtterin läpi", required = true, notes = "Tämä kenttä on turhaan jokaisen kirjeen osa. Olisi hyvä siirtää osaksi luokkaa <code>KoekutsukirjeBatch<code>")
-	private String letterBodyText;
+    @ApiModelProperty(value = "Kirjeen yleiset personointikentät", required = false, notes = "")
+    private Map<String, Object> templateReplacements;
 
-	@ApiModelProperty(value = "Tieto hakukohteesta, johon kirje liittyy.", required = false)
-	private String hakukohde;
+    public Letter() {
+    }
 
-	@ApiModelProperty(value = "Tieto koulutuksen tarjoajasta, johon tämä kije liittyy..", required = false)
-	private String tarjoaja;
+    public Letter(AddressLabel addressLabel, Template template,
+            Map<String, Object> customLetterContents) {
+        this.addressLabel = addressLabel;
+        this.languageCode = StringUtils.isEmpty(languageCode) ? "FI"
+                : languageCode;
+        this.templateReplacements = customLetterContents;
+    }
 
-	@ApiModelProperty(value = "Kirjeen yleiset personointikentät", required = false, notes = "Placeholder toistaiseksi. Voidaan välittää avain-arvo-pareina mahdollisia lisätietoja, "
-			+ "joita voidaan käyttää mahdollisesti jatkossa esimerkiksi _hakukohteen_ tai "
-			+ "_kokeen_ tietojen täyttämiseksi koekutsukirjeeseen. Tässä vaiheessa (20140124, versio 8?), kun virkailijat saavat "
-			+ "kirjoittaa koko kirjeen editorilla, ei ole vielä tiedossa mitä mahdollisia lisäkenttiä seuraaviin versioihin tulee / "
-			+ "mitä mahdollisesti halutaan tähänkin versioon kuitenkinmukaan. "
-			+ "Tällä ratkaisulla ei tarvita uusia muuttujia tähän luokkaan toistaiseksi, vaan voidaan pikaisesti toteuttaa muutokset "
-			+ "hakemalla tästä Mapista halutut arvot, jos sellaisia tarvitaan. Jatkossa on ehkä syytä lisätä tähän luokkaan omat "
-			+ "muuttujansa selvyyden vuoksi (ainakin) niille kentille, jotka ovat pakollisia.")
-	private List<Map<String, String>> customLetterContents;
+    public Letter(AddressLabel addressLabel, String templateName,
+            String languageCode, Map<String, Object> replacements) {
+        this.addressLabel = addressLabel;
+        this.languageCode = StringUtils.isEmpty(languageCode) ? "FI"
+                : languageCode;
+        this.templateReplacements = replacements;
+        this.templateName = templateName;
+    }
 
-	public AddressLabel getAddressLabel() {
-		return addressLabel;
-	}
+    public AddressLabel getAddressLabel() {
+        return addressLabel;
+    }
 
-	public String getLetterBodyText() {
-		return letterBodyText;
-	}
+    public Map<String, Object> getCustomLetterContents() {
+        return this.templateReplacements;
+    }
 
-	public String getHakukohde() {
-		return hakukohde;
-	}
+    public String getLanguageCode() {
+        return languageCode;
+    }
 
-	public String getTarjoaja() {
-		return tarjoaja;
-	}
+    public Template getTemplate() {
+        return template;
+    }
 
-	public List<Map<String, String>> getCustomLetterContents() {
-		return customLetterContents;
-	}
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
 
-	public String getLanguageCode() {
-		return languageCode;
-	}
+    public String getTemplateName() {
+        return templateName;
+    }
 
-	@Override
-	public String toString() {
-		return "Koekutsukirje [" + "addressLabel=" + addressLabel
-				+ ", languageCode=" + languageCode + ", hakukohde=" + hakukohde
-				+ ", letterBodyText=" + letterBodyText + "]";
-	}
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+
+    public Map<String, Object> getTemplateReplacements() {
+        return templateReplacements;
+    }
+
+    public void setTemplateReplacements(Map<String, Object> templateReplacements) {
+        this.templateReplacements = templateReplacements;
+    }
+
+    public void setAddressLabel(AddressLabel addressLabel) {
+        this.addressLabel = addressLabel;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+    @Override
+    public String toString() {
+        return "Letter [addressLabel=" + addressLabel + ", template="
+                + template + ", templateName=" + templateName
+                + ", languageCode=" + languageCode + ", templateReplacements="
+                + templateReplacements + "]";
+    }
+
 }

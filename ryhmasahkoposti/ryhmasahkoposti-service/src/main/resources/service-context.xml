@@ -30,6 +30,7 @@
     <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
         <property name="properties">
             <util:properties local-override="true">
+                <prop key="cas_mode">front</prop>
                 <prop key="cas_key">ryhmasahkoposti</prop>
                 <prop key="cas_service">${cas.service.ryhmasahkoposti}</prop>
                 <prop key="cas_callback_url">${cas.callback.ryhmasahkoposti}</prop>
@@ -47,14 +48,57 @@
 
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
         accessDecisionManager="accessDecisionManager" xmlns="http://camel.apache.org/schema/spring-security"/>    
+
+    <!-- External interface OmattiedotResource -->
+    <jaxrs:client id="omattiedotpalveluClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource" address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
+        </jaxrs:providers>
+    </jaxrs:client>
+
+    <!-- External interface HenkiloResource -->
+    <jaxrs:client id="henkilopalveluClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource" address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}" inheritHeaders="true">
+        <jaxrs:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
+        </jaxrs:providers>
+    </jaxrs:client>
+
+    <!-- External interface OrganisaatioResource -->
+    <jaxrs:client id="organisaatiopalveluClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource" address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}">
+        <jaxrs:properties value-type="boolean">
+            <entry key="org.apache.cxf.message.Message.MAINTAIN_SESSION" value="true"/>
+        </jaxrs:properties>
+        <jaxrs:outInterceptors>
+            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+                <property name="webCasUrl" value="${web.url.cas}"/>
+                <property name="targetService" value="${cas.service.organisaatio-service}/j_spring_cas_security_check"/>
+                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.organisaatiopalvelu}"/>
+                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.organisaatiopalvelu}"/>
+            </bean>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
+        </jaxrs:providers>
+    </jaxrs:client>
     
 	<!-- Apache Camel routing context -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
+        <routeBuilder ref="omattiedotRoute"/>
 		<routeBuilder ref="henkiloRoute"/>
 		<routeBuilder ref="organisaatioRoute"/>
 	</camelContext>
 
 	<!-- Routes to external services -->
+    <bean id="omattiedotRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute"/>
 	<bean id="henkiloRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute"/>
     <bean id="organisaatioRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.OrganisaatioRoute"/>
 	

@@ -45,12 +45,15 @@ public class DocumentBuilder {
         return output.toByteArray();
     }
 
+    public byte[] applyTextTemplate(byte[] template, Map<String,Object> data) throws IOException {
+        StringWriter writer = new StringWriter();
+        templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(template)));
+        return writer.toString().getBytes();
+    }
+    
     public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws IOException {
         byte[] template = readTemplate(templateName);
-        StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(
-                new ByteArrayInputStream(template)));
-        return writer.toString().getBytes();
+        return applyTextTemplate(template, data);
     }
 
     public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {

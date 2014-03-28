@@ -15,7 +15,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -24,7 +24,7 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageConverterTest {
     @Mock
-    HenkiloRoute henkiloRoute;
+    OmattiedotRoute omattiedotRoute;
 
 	@Test
 	public void testReportedMessageConversion() throws IOException {
@@ -32,10 +32,10 @@ public class ReportedMessageConverterTest {
         Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(emailMessage.getSenderOid());
         
-        when(henkiloRoute.getCurrenUser()).thenReturn(henkilo);
+        when(omattiedotRoute.getCurrenUser()).thenReturn(henkilo);
         
 		@SuppressWarnings("static-access")
-        ReportedMessage reportedMessage = new ReportedMessageConverter(henkiloRoute).convert(emailMessage);
+        ReportedMessage reportedMessage = new ReportedMessageConverter(omattiedotRoute).convert(emailMessage);
 
 		assertNotNull(reportedMessage);
 		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 
