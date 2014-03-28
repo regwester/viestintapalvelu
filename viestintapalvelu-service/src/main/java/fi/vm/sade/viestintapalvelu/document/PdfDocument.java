@@ -4,19 +4,21 @@ import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.util.List;
 
 public class PdfDocument {
     private AddressLabel addressLabel;
     private byte[] frontPage;
     private byte[] attachment;
-
+    private List<byte[]> contents;
+    
     public PdfDocument(AddressLabel addressLabel, byte[] frontPage,
                        byte[] attachment) {
         this.addressLabel = addressLabel;
         this.frontPage = frontPage;
         this.attachment = attachment;
     }
-
+    
     public AddressLabel getAddressLabel() {
         return addressLabel;
     }

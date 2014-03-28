@@ -19,107 +19,105 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 /*
  * CREATE TABLE kirjeet.kirjepohja (
-    id bigint NOT NULL,
-    version bigint NOT NULL,
-    nimi character varying(255),
-    tyylit character varying(3000),
-    kielikoodi character varying (5),
-    aikaleima timestamp without time zone,
-    oid_tallentaja character varying(255),
-    oid_organisaatio character varying(255)
-);
+ id bigint NOT NULL,
+ version bigint NOT NULL,
+ nimi character varying(255),
+ tyylit character varying(3000),
+ kielikoodi character varying (5),
+ aikaleima timestamp without time zone,
+ oid_tallentaja character varying(255),
+ oid_organisaatio character varying(255)
+ );
  */
 
 @ApiModel(value = "Kirjetemplate")
-@Table(name="kirjepohja")
+@Table(name = "kirjepohja")
 @Entity()
 public class Template extends BaseEntity {
-	
-	public Set<TemplateContent> getContents() {
-		return contents;
-	}
 
-	public void setContents(Set<TemplateContent> contents) {
-		this.contents = contents;
-	}
+    public Set<TemplateContent> getContents() {
+        return contents;
+    }
 
-	public Set<Replacement> getReplacements() {
-		return replacements;
-	}
+    public void setContents(Set<TemplateContent> contents) {
+        this.contents = contents;
+    }
 
-	public void setReplacements(Set<Replacement> replacements) {
-		this.replacements = replacements;
-	}
+    public Set<Replacement> getReplacements() {
+        return replacements;
+    }
 
-	private static final long serialVersionUID = 4178735997933155683L;
+    public void setReplacements(Set<Replacement> replacements) {
+        this.replacements = replacements;
+    }
 
-	@Column(name="aikaleima", nullable=false)
-	@Temporal(TemporalType.TIMESTAMP)
-	private Date timestamp;
+    private static final long serialVersionUID = 4178735997933155683L;
 
-	@Column(name="nimi", nullable=false)
-	private String name;
+    @Column(name = "aikaleima", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
 
-	@ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
-	@Column(name="kielikoodi", nullable=false)
-	private String language;
-	
-	@Column(name="oid_tallentaja", nullable=true)
-	private String storingOid;
-	
-	@Column(name="oid_organisaatio", nullable=true)
-	private String organizationOid;
+    @Column(name = "nimi", nullable = false)
+    private String name;
 
-	
-	@OneToMany(mappedBy="template", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	private Set<TemplateContent> contents;
-	
-	@OneToMany(mappedBy="template", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-	private Set<Replacement> replacements;
-	
-	public Date getTimestamp() {
-		return timestamp;
-	}
+    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
+    @Column(name = "kielikoodi", nullable = false)
+    private String language;
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
+    @Column(name = "oid_tallentaja", nullable = true)
+    private String storingOid;
 
-	public String getName() {
-		return name;
-	}
+    @Column(name = "oid_organisaatio", nullable = true)
+    private String organizationOid;
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<TemplateContent> contents;
 
-	public String getLanguage() {
-		return language;
-	}
+    @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private Set<Replacement> replacements;
 
-	public void setLanguage(String language) {
-		this.language = language;
-	}
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-	public String getStoringOid() {
-		return storingOid;
-	}
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public void setStoringOid(String storingOid) {
-		this.storingOid = storingOid;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getOrganizationOid() {
-		return organizationOid;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setOrganizationOid(String organizationOid) {
-		this.organizationOid = organizationOid;
-	}
+    public String getLanguage() {
+        return language;
+    }
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
-	
-	
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public String getStoringOid() {
+        return storingOid;
+    }
+
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
+
+    public String getOrganizationOid() {
+        return organizationOid;
+    }
+
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
 }

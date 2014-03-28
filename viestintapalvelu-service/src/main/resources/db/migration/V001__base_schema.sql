@@ -1,4 +1,3 @@
-
 CREATE SEQUENCE kirjeet.kirje_sequence
     START WITH 1
     INCREMENT BY 1

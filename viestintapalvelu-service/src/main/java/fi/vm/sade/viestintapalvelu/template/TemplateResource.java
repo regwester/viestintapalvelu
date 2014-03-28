@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -28,73 +27,73 @@ import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.dao.impl.TemplateDAOImpl;
 import fi.vm.sade.viestintapalvelu.model.Template;
 
 @Component
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {
-	
-	@Autowired
-	private TemplateDAO templateDAO;
-	
-	@GET
-	//@Consumes("application/json")
-	//@PreAuthorize("isAuthenticated()")
-	@Transactional
-	@Produces("application/json")
-	@Path("/get")
-	public Template template(@ApiParam(value = "Template tunnisteet", required = true) String nimi,
-			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
 
-		Template result = new Template();
-		String templateName = Utils.resolveTemplateName(Constants.LETTER_TEMPLATE, "FI");
-		BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(templateName)));
-		StringBuilder sb = new StringBuilder();
-		
-		String line = buff.readLine();
-		while (line != null) {
-			sb.append(line);
-			line = buff.readLine();
-		}
-		TemplateContent content = new TemplateContent();
-		content.setName(templateName);
-		content.setContent(sb.toString());
-		List<TemplateContent> contents = new ArrayList<TemplateContent>();
-		contents.add(content);
-		//result.set(contents);
-		
-		Replacement replacement = new Replacement();
-		replacement.setName("$letterBodyText");
-		ArrayList<Replacement> rList = new ArrayList<Replacement>();
-		rList.add(replacement);
-		//result.setReplacements(rList);
-		
-		
-		return result;
-	}
+    @Autowired
+    private TemplateDAO templateDAO;
 
-	@POST
-	@Consumes("application/json")
-	//@PreAuthorize("isAuthenticated()")
-	@Produces("application/json")
-	@Path("/template")
-	public Template store(@ApiParam(value = "Template tunnisteet", required = true) Template template,
-			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
+    @GET
+    // @Consumes("application/json")
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/get")
+    public Template template(
+            @ApiParam(value = "Template tunnisteet", required = true) String nimi,
+            @Context HttpServletRequest request) throws IOException,
+            DocumentException {
 
-		/*
-		fi.vm.sade.viestintapalvelu.model.Template model = new fi.vm.sade.viestintapalvelu.model.Template();
-		//TemplateDAO templateDAO = new TemplateDAOImpl();
-		model.setName("test");
-		model.setTimestamp(new Date());
-		
-		templateDAO.insert(model);
-		 */
-		
-		throw new DocumentException("not implemented");
-	}
+        Template result = new Template();
+        String templateName = Utils.resolveTemplateName(
+                Constants.LETTER_TEMPLATE, "FI");
+        BufferedReader buff = new BufferedReader(new InputStreamReader(
+                getClass().getResourceAsStream(templateName)));
+        StringBuilder sb = new StringBuilder();
+
+        String line = buff.readLine();
+        while (line != null) {
+            sb.append(line);
+            line = buff.readLine();
+        }
+        TemplateContent content = new TemplateContent();
+        content.setName(templateName);
+        content.setContent(sb.toString());
+
+        List<TemplateContent> contents = new ArrayList<TemplateContent>();
+        contents.add(content);
+
+        Replacement replacement = new Replacement();
+        replacement.setName("$letterBodyText");
+        ArrayList<Replacement> rList = new ArrayList<Replacement>();
+        rList.add(replacement);
+        return result;
+    }
+
+    @POST
+    @Consumes("application/json")
+    // @PreAuthorize("isAuthenticated()")
+    @Produces("application/json")
+    @Path("/template")
+    public Template store(
+            @ApiParam(value = "Template tunnisteet", required = true) Template template,
+            @Context HttpServletRequest request) throws IOException,
+            DocumentException {
+
+        /*
+         * fi.vm.sade.viestintapalvelu.model.Template model = new
+         * fi.vm.sade.viestintapalvelu.model.Template(); //TemplateDAO
+         * templateDAO = new TemplateDAOImpl(); model.setName("test");
+         * model.setTimestamp(new Date());
+         * 
+         * templateDAO.insert(model);
+         */
+
+        throw new DocumentException("not implemented");
+    }
 
 }
