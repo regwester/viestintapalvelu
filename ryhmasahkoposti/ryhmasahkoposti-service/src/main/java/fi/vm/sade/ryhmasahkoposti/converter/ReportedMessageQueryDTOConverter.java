@@ -8,19 +8,19 @@ import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.generic.common.HetuUtils;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute;
-import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute;
 import fi.vm.sade.ryhmasahkoposti.validation.EmailAddressValidator;
+import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedMessageQueryDTOConverter {
-    private static HenkiloRoute henkiloRoute;
+    private static OmattiedotRoute omattiedotRoute;
     
     @Autowired
-    public ReportedMessageQueryDTOConverter(HenkiloRoute henkiloRoute) {
-        ReportedMessageQueryDTOConverter.henkiloRoute = henkiloRoute;
+    public ReportedMessageQueryDTOConverter(OmattiedotRoute omattiedotRoute) {
+        ReportedMessageQueryDTOConverter.omattiedotRoute = omattiedotRoute;
     }
     
     public static ReportedMessageQueryDTO convert() {
@@ -64,7 +64,7 @@ public class ReportedMessageQueryDTOConverter {
 	private static List<String> getSenderOidList() {
 	    List<String> senderOidList = new ArrayList<String>();
 	    
-	    Henkilo henkilo = henkiloRoute.getCurrenUser();
+	    Henkilo henkilo = omattiedotRoute.getCurrenUser();
 	    senderOidList.add(henkilo.getOidHenkilo());
 	    
 	    return senderOidList;

@@ -11,21 +11,21 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ReportedMessageQueryDTOConverterTest.class)
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageQueryDTOConverterTest {
     @Mock
-    HenkiloRoute henkiloRoute;
+    OmattiedotRoute omattiedotRoute;
     
 	@Test
 	public void testEmailInSearchArgument() {
 		String searchArgument = "testi.osoite@sposti.fi";
 		
 		@SuppressWarnings("static-access")
-        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(henkiloRoute).convert(searchArgument);
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(omattiedotRoute).convert(searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
@@ -37,7 +37,7 @@ public class ReportedMessageQueryDTOConverterTest {
 		String searchArgument = "1.2.246.562.24.42645159413";
 		
         @SuppressWarnings("static-access")
-        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(henkiloRoute).convert(searchArgument);
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(omattiedotRoute).convert(searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
@@ -49,7 +49,7 @@ public class ReportedMessageQueryDTOConverterTest {
 		String searchArgument = "100970-965W";
 		
         @SuppressWarnings("static-access")
-        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(henkiloRoute).convert(searchArgument);
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTOConverter(omattiedotRoute).convert(searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
