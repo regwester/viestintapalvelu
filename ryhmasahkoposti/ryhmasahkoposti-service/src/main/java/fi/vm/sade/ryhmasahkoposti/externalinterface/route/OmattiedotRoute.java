@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.externalinterface.route;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ProducerTemplate;
 import org.codehaus.jackson.type.TypeReference;
 import org.slf4j.Logger;
@@ -48,7 +49,15 @@ public class OmattiedotRoute extends AbstractRouteBuilder {
      */
     public Henkilo getCurrenUser() {
         LOGGER.info("[OmattiedotRoute.getCurrentUser()]");
-        ProducerTemplate camelTemplate = getCamelTemplate();
-        return camelTemplate.requestBodyAndHeader(ROUTE_GET_CURRENT_USER, "", "", "", Henkilo.class); 
+        Henkilo henkilo = null;
+        try {
+            ProducerTemplate camelTemplate = getCamelTemplate();
+            henkilo = camelTemplate.requestBodyAndHeader(ROUTE_GET_CURRENT_USER, "", "", "", Henkilo.class);
+        } catch (Exception e) {
+           LOGGER.error("Liittymä virhe authetication-service");
+           throw new RuntimeException("Omattiedot haku epäonnistui", e);
+        } 
+        
+        return henkilo;
 	}
 }
