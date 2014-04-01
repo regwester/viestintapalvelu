@@ -48,34 +48,36 @@ public class TemplateResource extends AsynchronousResource {
     @Transactional
     @Produces("application/json")
     @Path("/get")
-    public Template template(
-            @ApiParam(value = "Template tunnisteet", required = true) String nimi,
-            @Context HttpServletRequest request) throws IOException,
+    public Template template(@Context HttpServletRequest request) throws IOException,
             DocumentException {
 
         Template result = new Template();
-        String templateName = Utils.resolveTemplateName(
-                Constants.LETTER_TEMPLATE, "FI");
-        BufferedReader buff = new BufferedReader(new InputStreamReader(
-                getClass().getResourceAsStream(templateName)));
-        StringBuilder sb = new StringBuilder();
-
-        String line = buff.readLine();
-        while (line != null) {
-            sb.append(line);
-            line = buff.readLine();
-        }
-        TemplateContent content = new TemplateContent();
-        content.setName(templateName);
-        content.setContent(sb.toString());
-
+        String[] fileNames = request.getParameterValues("templateFile");
+        String language = request.getParameter("lang");
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
-        contents.add(content);
-
+         System.out.println(fileNames);
+        for (String file : fileNames) {
+            String templateName = Utils.resolveTemplateName("/"+file+"_{LANG}.html", language);
+            BufferedReader buff = new BufferedReader(new InputStreamReader(
+                    getClass().getResourceAsStream(templateName)));
+            StringBuilder sb = new StringBuilder();
+    
+            String line = buff.readLine();
+            while (line != null) {
+                sb.append(line);
+                line = buff.readLine();
+            }
+            TemplateContent content = new TemplateContent();
+            content.setName(templateName);
+            content.setContent(sb.toString());
+            contents.add(content);
+        }
+        result.setContents(contents);
         Replacement replacement = new Replacement();
         replacement.setName("$letterBodyText");
         ArrayList<Replacement> rList = new ArrayList<Replacement>();
         rList.add(replacement);
+        result.setReplacements(rList);
         return result;
     }
 
