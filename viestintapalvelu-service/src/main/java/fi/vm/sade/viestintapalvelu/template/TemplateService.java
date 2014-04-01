@@ -78,12 +78,12 @@ public class TemplateService {
     
     public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
-        model.setId(template.getId());
+        //model.setId(template.getId());
         model.setName(template.getName());
         model.setTimestamp(template.getTimestamp());
         model.setStyles(template.getStyles());
-        model.setContents(parseContentModels(template.getContents()));
-        model.setReplacements(parseReplacementModels(template.getReplacements()));
+        model.setContents(parseContentModels(template.getContents(), model));
+        model.setReplacements(parseReplacementModels(template.getReplacements(), model));
         storeTemplate(model);
     
     }
@@ -137,32 +137,34 @@ public class TemplateService {
         return result;
     }
 
-    private Set<TemplateContent> parseContentModels(List<fi.vm.sade.viestintapalvelu.template.TemplateContent> contents) {
+    private Set<TemplateContent> parseContentModels(List<fi.vm.sade.viestintapalvelu.template.TemplateContent> contents, Template template) {
         Set<TemplateContent> result = new HashSet<TemplateContent>();
         
         for (fi.vm.sade.viestintapalvelu.template.TemplateContent tc : contents) {
             TemplateContent model = new TemplateContent ();
             model.setContent(tc.getContent());
-            model.setId(tc.getId());
+            //model.setId(tc.getId());
             model.setName(tc.getName());
             model.setOrder(tc.getOrder());
             model.setStoringOid(tc.getStoringOid());
             model.setTimestamp(tc.getTimestamp());
+            model.setTemplate(template);
             result.add(model);
         }
         return result;
     }
     
-    private Set<Replacement> parseReplacementModels(List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements) {
+    private Set<Replacement> parseReplacementModels(List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements, Template template) {
         Set<Replacement> result = new HashSet<Replacement>();
         for (fi.vm.sade.viestintapalvelu.template.Replacement r : replacements) {
             Replacement model = new Replacement();
             model.setDefaultValue(r.getDefaultValue());
-            model.setId(r.getId());
+           // model.setId(r.getId());
             model.setMandatory(r.isMandatory());
             model.setName(r.getName());
             model.setStoringOid(r.getStoringOid());
             model.setTimestamp(r.getTimestamp());
+            model.setTemplate(template);
             result.add(model);
         }
         

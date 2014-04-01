@@ -74,7 +74,7 @@ angular.module('app').controller(
 	});
 	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, 92);
+    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, 145);
     };
     
     $scope.updateGenerated = function () {
