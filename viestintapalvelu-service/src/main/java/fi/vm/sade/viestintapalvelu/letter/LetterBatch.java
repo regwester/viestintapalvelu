@@ -6,13 +6,27 @@ import java.util.Map;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.template.Template;
+
 @ApiModel(value = "Kerralla muodostettavien koekutsukirjeiden joukko")
 public class LetterBatch {
     @ApiModelProperty(value = "Kerralla muodostettavien koekutsukirjeiden joukko, (1-n)", required = true)
     private List<Letter> letters;
 
+    @ApiModelProperty(value = "Kirjepohja")
+    private Template template;
+
+    @ApiModelProperty(value = "Kirjepohjan tunniste")
+    private Long templateId;
+
     @ApiModelProperty(value = "Kirjeen yleiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
+
+    @ApiModelProperty(value = "Kirjepohjan tunniste")
+    private String templateName;
+
+    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
+    private String languageCode;
 
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -37,6 +51,34 @@ public class LetterBatch {
         return letters;
     }
 
+    public Template getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
+    
     @Override
     public String toString() {
         return "LetterBatch [letters=" + letters + ", templateReplacements="

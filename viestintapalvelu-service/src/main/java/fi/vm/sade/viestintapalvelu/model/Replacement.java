@@ -1,19 +1,25 @@
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 import com.wordnik.swagger.annotations.ApiModel;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
-@Table(name = "korvauskentat")
+@Table(name = "korvauskentat", schema="kirjeet")
 @Entity()
 public class Replacement extends BaseEntity {
+
+    private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kirjepohja_id")
@@ -28,6 +34,13 @@ public class Replacement extends BaseEntity {
     @Column(name = "pakollinen")
     private boolean mandatory = false;
 
+    @Column(name = "aikaleima", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
+    
+    @Column(name = "oid_tallentaja", nullable = true)
+    private String storingOid;
+    
     public String getName() {
         return name;
     }
@@ -52,6 +65,33 @@ public class Replacement extends BaseEntity {
         this.mandatory = mandatory;
     }
 
+    public Template getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getStoringOid() {
+        return storingOid;
+    }
+
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
+
+    
+
+    
     @Override
     public String toString() {
         return "Replacement [name=" + name + ", defaultValue=" + defaultValue

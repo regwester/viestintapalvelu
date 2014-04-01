@@ -31,8 +31,8 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 
 @ApiModel(value = "Kirjetemplate")
-@Table(name = "kirjepohja")
-@Entity()
+@Table(name = "kirjepohja", schema="kirjeet")
+@Entity(name = "Template")
 public class Template extends BaseEntity {
 
     public Set<TemplateContent> getContents() {
@@ -63,6 +63,18 @@ public class Template extends BaseEntity {
     @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
     @Column(name = "kielikoodi", nullable = false)
     private String language;
+
+    @ApiModelProperty(value = "CSS styles")
+    @Column(name = "tyylit", nullable = false)
+    private String styles;
+    
+    public String getStyles() {
+        return styles;
+    }
+
+    public void setStyles(String styles) {
+        this.styles = styles;
+    }
 
     @Column(name = "oid_tallentaja", nullable = true)
     private String storingOid;

@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -27,7 +28,8 @@ import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.dao.impl.TemplateDAOImpl;
+import fi.vm.sade.viestintapalvelu.template.Template;
 
 @Component
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
@@ -36,6 +38,9 @@ public class TemplateResource extends AsynchronousResource {
 
     @Autowired
     private TemplateDAO templateDAO;
+    
+    @Autowired 
+    private TemplateService templateService;
 
     @GET
     // @Consumes("application/json")
@@ -74,26 +79,32 @@ public class TemplateResource extends AsynchronousResource {
         return result;
     }
 
+    @GET
+    // @Consumes("application/json")
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getById")
+    public Template templateByID(@Context HttpServletRequest request) throws IOException,
+            DocumentException {
+        
+       String templateId = request.getParameter("templateId");
+       Long id = Long.parseLong(templateId);
+       
+       return templateService.findById(id);
+    }
+
+    
     @POST
     @Consumes("application/json")
     // @PreAuthorize("isAuthenticated()")
     @Produces("application/json")
-    @Path("/template")
-    public Template store(
-            @ApiParam(value = "Template tunnisteet", required = true) Template template,
-            @Context HttpServletRequest request) throws IOException,
+    @Path("/store")
+    public Template store(Template template) throws IOException,
             DocumentException {
 
-        /*
-         * fi.vm.sade.viestintapalvelu.model.Template model = new
-         * fi.vm.sade.viestintapalvelu.model.Template(); //TemplateDAO
-         * templateDAO = new TemplateDAOImpl(); model.setName("test");
-         * model.setTimestamp(new Date());
-         * 
-         * templateDAO.insert(model);
-         */
-
-        throw new DocumentException("not implemented");
-    }
+        templateService.storeTemplateDTO(template);
+        return new Template();
+   }
 
 }

@@ -1,28 +1,47 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.util.Date;
 import java.util.List;
 
 import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Kirjetemplate")
-public class Template {
+public class Template{
+
+    private static final long serialVersionUID = 4178735997933155683L;
 
     private long id;
-    private long version;
+    
+    private Date timestamp;
+
     private String name;
-    private List<TemplateContent> content;
 
-    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
-    private String languageCode;
-    private List<Replacement> replacements;
+    private String language;
 
-    public long getId() {
-        return id;
+    private String styles;
+    
+    public String getStyles() {
+        return styles;
     }
 
-    public void setId(long id) {
-        this.id = id;
+    public void setStyles(String styles) {
+        this.styles = styles;
+    }
+
+    private String storingOid;
+
+    private String organizationOid;
+
+    private List<TemplateContent> contents;
+
+    private List<Replacement> replacements;
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getName() {
@@ -33,20 +52,40 @@ public class Template {
         this.name = name;
     }
 
-    public List<TemplateContent> getContent() {
-        return content;
+    public String getLanguage() {
+        return language;
     }
 
-    public void setContent(List<TemplateContent> content) {
-        this.content = content;
+    public void setLanguage(String language) {
+        this.language = language;
     }
 
-    public String getLanguageCode() {
-        return languageCode;
+    public String getStoringOid() {
+        return storingOid;
     }
 
-    public void setLanguageCode(String languageCode) {
-        this.languageCode = languageCode;
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
+
+    public String getOrganizationOid() {
+        return organizationOid;
+    }
+
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
+    public List<TemplateContent> getContents() {
+        return contents;
+    }
+
+    public void setContents(List<TemplateContent> contents) {
+        this.contents = contents;
     }
 
     public List<Replacement> getReplacements() {
@@ -57,19 +96,20 @@ public class Template {
         this.replacements = replacements;
     }
 
-    public long getVersion() {
-        return version;
+    public long getId() {
+        return id;
     }
 
-    public void setVersion(long version) {
-        this.version = version;
+    public void setId(long id) {
+        this.id = id;
     }
 
     @Override
     public String toString() {
-        return "Template [id=" + id + ", name=" + name + ", content=" + content
-                + ", languageCode=" + languageCode + ", replacements="
-                + replacements + "]";
+        return "Template [id=" + id + ", timestamp=" + timestamp + ", name="
+                + name + ", language=" + language + ", styles=" + styles
+                + ", storingOid=" + storingOid + ", organizationOid="
+                + organizationOid + ", contents=" + contents
+                + ", replacements=" + replacements + "]";
     }
-
 }

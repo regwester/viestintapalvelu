@@ -1,11 +1,17 @@
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
@@ -24,7 +30,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  )
  */
 
-@Table(name = "sisalto")
+@Table(name = "sisalto", schema="kirjeet")
 @Entity()
 public class TemplateContent extends BaseEntity implements
         Comparable<TemplateContent> {
@@ -37,10 +43,43 @@ public class TemplateContent extends BaseEntity implements
 
     @Column(name = "jarjestys")
     private int order;
+    
     @Column(name = "nimi")
     private String name;
+    
     @Column(name = "sisalto")
     private String content;
+
+    @Column(name = "aikaleima", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
+
+    @Column(name = "oid_tallentaja", nullable = true)
+    private String storingOid;
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
+
+    public String getStoringOid() {
+        return storingOid;
+    }
+
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
 
     public int getOrder() {
         return order;

@@ -27,8 +27,8 @@ import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
+import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
@@ -49,22 +49,25 @@ public class LetterBuilder {
     public byte[] printPDF(LetterBatch batch) throws IOException,
             DocumentException {
 
+        Template template = batch.getTemplate();
+        if (template == null) {
+            long templateId = batch.getTemplateId();
+            template = templateService.findById(templateId);
+        }
+        if (template == null) {
+            // still null ??  
+            throw new IOException("could not locate template resource.");
+        }
+        
         List<PdfDocument> source = new ArrayList<PdfDocument>();
         for (Letter letter : batch.getLetters()) {
             letter.getTemplateReplacements();
-            Template template = letter.getTemplate();
-            if (template == null) {
-                template = templateService.getTemplateFromFiles(
-                        letter.getLanguageCode(), Constants.LETTER_TEMPLATE,
-                        Constants.LIITE_TEMPLATE);
-            }
+            
             if (template != null) {
                 System.out.println("template: " + template);
-                Set<TemplateContent> contents = template.getContents();
-                List<TemplateContent> cList = new ArrayList<TemplateContent>(
-                        contents);
-                Collections.sort(cList);
-                for (TemplateContent tc : cList) {
+                List<TemplateContent> contents = template.getContents();
+                Collections.sort(contents);
+                for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(tc.getContent().getBytes(),
                             letter.getAddressLabel(),
                             letter.getTemplateReplacements(),
