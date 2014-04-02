@@ -50,12 +50,12 @@ public class TemplateContent extends BaseEntity implements
     @Column(name = "sisalto")
     private String content;
 
+    @Column(name = "tyyppi")
+    private String contentType;
+        
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-
-    @Column(name = "oid_tallentaja", nullable = true)
-    private String storingOid;
 
     public Template getTemplate() {
         return template;
@@ -71,14 +71,6 @@ public class TemplateContent extends BaseEntity implements
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
-    }
-
-    public String getStoringOid() {
-        return storingOid;
-    }
-
-    public void setStoringOid(String storingOid) {
-        this.storingOid = storingOid;
     }
 
     public int getOrder() {
@@ -104,14 +96,23 @@ public class TemplateContent extends BaseEntity implements
     public void setContent(String content) {
         this.content = content;
     }
+    
+    public String getContentType() {
+		return contentType;
+	}
 
-    @Override
-    public String toString() {
-        return "TemplateContent [order=" + order + ", name=" + name
-                + ", content=" + content + ", contentType=]";
-    }
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}    
+	
+	@Override
+	public String toString() {
+		return "TemplateContent [template=" + template + ", order=" + order
+				+ ", name=" + name + ", content=" + content + ", contentType="
+				+ contentType + ", timestamp=" + timestamp + "]";
+	}
 
-    @Override
+	@Override
     public int compareTo(TemplateContent o) {
         Integer ord = new Integer(order);
         return ord.compareTo(o.order);

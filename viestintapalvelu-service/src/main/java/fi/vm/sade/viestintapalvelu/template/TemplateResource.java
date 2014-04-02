@@ -52,14 +52,12 @@ public class TemplateResource extends AsynchronousResource {
             DocumentException {
 
         Template result = new Template();
-        String[] fileNames = request.getParameterValues("templateFile");
+        String[] fileNames = request.getParameter("templateFile").split(",");
         String language = request.getParameter("lang");
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
-         System.out.println(fileNames);
         for (String file : fileNames) {
             String templateName = Utils.resolveTemplateName("/"+file+"_{LANG}.html", language);
-            BufferedReader buff = new BufferedReader(new InputStreamReader(
-                    getClass().getResourceAsStream(templateName)));
+            BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(templateName)));
             StringBuilder sb = new StringBuilder();
     
             String line = buff.readLine();

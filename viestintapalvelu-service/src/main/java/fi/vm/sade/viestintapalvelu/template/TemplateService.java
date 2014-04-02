@@ -57,8 +57,7 @@ public class TemplateService {
                 content.setOrder(i++);
                 content.setTimestamp(new Date());
                 content.setTemplate(result);
-                contents.add(content);
-                
+                contents.add(content);                
             }
         }
         result.setContents(contents);
@@ -80,12 +79,12 @@ public class TemplateService {
         Template model = new Template();
         //model.setId(template.getId());
         model.setName(template.getName());
-        model.setTimestamp(template.getTimestamp());
+        model.setTimestamp(new Date()); //template.getTimestamp());
         model.setStyles(template.getStyles());
+        model.setLanguage(template.getLanguage());
         model.setContents(parseContentModels(template.getContents(), model));
         model.setReplacements(parseReplacementModels(template.getReplacements(), model));
         storeTemplate(model);
-    
     }
     
     public fi.vm.sade.viestintapalvelu.template.Template findById(long id) {
@@ -113,7 +112,6 @@ public class TemplateService {
             dto.setId(tc.getId());
             dto.setName(tc.getName());
             dto.setOrder(tc.getOrder());
-            dto.setStoringOid(tc.getStoringOid());
             dto.setTimestamp(tc.getTimestamp());
             result.add(dto);
         }
@@ -129,7 +127,6 @@ public class TemplateService {
             dto.setId(r.getId());
             dto.setMandatory(r.isMandatory());
             dto.setName(r.getName());
-            dto.setStoringOid(r.getStoringOid());
             dto.setTimestamp(r.getTimestamp());
             result.add(dto);
         }
@@ -146,8 +143,7 @@ public class TemplateService {
             //model.setId(tc.getId());
             model.setName(tc.getName());
             model.setOrder(tc.getOrder());
-            model.setStoringOid(tc.getStoringOid());
-            model.setTimestamp(tc.getTimestamp());
+            model.setTimestamp(new Date()); //tc.getTimestamp());
             model.setTemplate(template);
             result.add(model);
         }
@@ -162,12 +158,10 @@ public class TemplateService {
            // model.setId(r.getId());
             model.setMandatory(r.isMandatory());
             model.setName(r.getName());
-            model.setStoringOid(r.getStoringOid());
-            model.setTimestamp(r.getTimestamp());
+            model.setTimestamp(new Date()); //r.getTimestamp());
             model.setTemplate(template);
             result.add(model);
-        }
-        
+        }        
         return result;
     }
 

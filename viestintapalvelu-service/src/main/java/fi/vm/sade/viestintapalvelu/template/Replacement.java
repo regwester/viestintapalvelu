@@ -12,8 +12,6 @@ public class Replacement {
 
         private Date timestamp;
         
-        private String storingOid;
-        
         private long id;
         
         public String getName() {
@@ -48,14 +46,6 @@ public class Replacement {
             this.timestamp = timestamp;
         }
 
-        public String getStoringOid() {
-            return storingOid;
-        }
-
-        public void setStoringOid(String storingOid) {
-            this.storingOid = storingOid;
-        }
-
         public long getId() {
             return id;
         }
@@ -64,13 +54,12 @@ public class Replacement {
             this.id = id;
         }
 
-        @Override
-        public String toString() {
-            return "Replacement [name=" + name
-                    + ", defaultValue=" + defaultValue + ", mandatory="
-                    + mandatory + ", timestamp=" + timestamp + ", storingOid="
-                    + storingOid + ", id=" + id + "]";
-        }
+		@Override
+		public String toString() {
+			return "Replacement [name=" + name + ", defaultValue="
+					+ defaultValue + ", mandatory=" + mandatory
+					+ ", timestamp=" + timestamp + ", id=" + id + "]";
+		}
 
     }
 

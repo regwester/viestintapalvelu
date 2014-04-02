@@ -38,9 +38,6 @@ public class Replacement extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
     
-    @Column(name = "oid_tallentaja", nullable = true)
-    private String storingOid;
-    
     public String getName() {
         return name;
     }
@@ -81,21 +78,11 @@ public class Replacement extends BaseEntity {
         this.timestamp = timestamp;
     }
 
-    public String getStoringOid() {
-        return storingOid;
-    }
-
-    public void setStoringOid(String storingOid) {
-        this.storingOid = storingOid;
-    }
-
-    
-
-    
-    @Override
-    public String toString() {
-        return "Replacement [name=" + name + ", defaultValue=" + defaultValue
-                + ", mandatory=" + mandatory + "]";
-    }
+	@Override
+	public String toString() {
+		return "Replacement [template=" + template + ", name=" + name
+				+ ", defaultValue=" + defaultValue + ", mandatory=" + mandatory
+				+ ", timestamp=" + timestamp + "]";
+	}
 
 }

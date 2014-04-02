@@ -35,6 +35,8 @@ public class Template{
     private List<TemplateContent> contents;
 
     private List<Replacement> replacements;
+    
+	private String templateVersio;    
 
     public Date getTimestamp() {
         return timestamp;
@@ -103,13 +105,27 @@ public class Template{
     public void setId(long id) {
         this.id = id;
     }
+    
+	/**
+	 * Method getTemplateVersio returns the version of the template.
+	 * 
+	 * @return	String
+	 */
+	public String getTemplateVersio() {
+		return templateVersio;
+	}
+	public void setTemplateVersio(String templateVersio) {
+		this.templateVersio = templateVersio;
+	}
 
-    @Override
-    public String toString() {
-        return "Template [id=" + id + ", timestamp=" + timestamp + ", name="
-                + name + ", language=" + language + ", styles=" + styles
-                + ", storingOid=" + storingOid + ", organizationOid="
-                + organizationOid + ", contents=" + contents
-                + ", replacements=" + replacements + "]";
-    }
+	@Override
+	public String toString() {
+		return "Template [id=" + id + ", timestamp=" + timestamp + ", name="
+				+ name + ", language=" + language + ", styles=" + styles
+				+ ", storingOid=" + storingOid + ", organizationOid="
+				+ organizationOid + ", contents=" + contents
+				+ ", replacements=" + replacements + ", templateVersio="
+				+ templateVersio + "]";
+	}
+
 }
