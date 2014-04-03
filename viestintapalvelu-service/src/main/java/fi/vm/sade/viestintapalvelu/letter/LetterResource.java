@@ -39,6 +39,7 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.template.Template;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -180,4 +181,18 @@ public class LetterResource extends AsynchronousResource {
         return createResponse(request, documentId);
     }
 
+    
+    @POST
+    @Consumes("application/json")
+//  @PreAuthorize("isAuthenticated()")
+//  @Produces("application/json")
+    @Produces("text/plain")
+    
+    @Path("/sendStore")
+    public String store(LetterBatch letterBatch) throws IOException, DocumentException {
+
+        //letterService.storeLetterDTO(letterBatch);
+        return new fi.vm.sade.viestintapalvelu.model.LetterBatch().toString();
+   }
+    
 }

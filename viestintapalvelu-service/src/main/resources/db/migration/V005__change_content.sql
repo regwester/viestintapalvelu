@@ -12,7 +12,7 @@ CREATE TABLE kirjeet.lahetyskorvauskentat
   kirjelahetys_id bigint,
   nimi character varying(255),
   oletus_arvo character varying(3000),
-  aikaleima time with time zone,
+  aikaleima timestamp without time zone,
   pakollinen boolean,
   CONSTRAINT lahetyskorvauskentat_pk PRIMARY KEY (id),
   CONSTRAINT lahetyskorvauskentat_kirjelahetys_id_fkey FOREIGN KEY (kirjelahetys_id)
@@ -35,7 +35,7 @@ CREATE TABLE kirjeet.vastaanottaja
   id bigint NOT NULL,
   version bigint,
   kirjelahetys_id bigint,
-  aikaleima time with time zone,
+  aikaleima timestamp without time zone,
   CONSTRAINT vastaanottaja_pk PRIMARY KEY (id),
   CONSTRAINT vastaanottaja_kirjelahetys_id_fkey FOREIGN KEY (kirjelahetys_id)
       REFERENCES kirjeet.kirjelahetys (id) MATCH SIMPLE
@@ -60,7 +60,7 @@ CREATE TABLE kirjeet.vastaanottajakorvauskentat
   nimi character varying(255),
   oletus_arvo character varying(3000),
   pakollinen boolean,
-  aikaleimia time with time zone,
+  aikaleima timestamp without time zone,
   CONSTRAINT vastaanottajakorvauskentat_pk PRIMARY KEY (id),
   CONSTRAINT vastaanottajakorvauskentat_vastaanottaja_id_fkey FOREIGN KEY (vastaanottaja_id)
       REFERENCES kirjeet.vastaanottaja (id) MATCH SIMPLE
