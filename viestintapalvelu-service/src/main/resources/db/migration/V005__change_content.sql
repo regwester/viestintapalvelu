@@ -1,4 +1,5 @@
 ALTER TABLE kirjeet.kirjelahetys add CONSTRAINT kirjelahetys_pk PRIMARY KEY (id);
+ALTER TABLE kirjeet.kirjelahetys add COLUMN kielikoodi character varying(5);
 
 
 -- Table: kirjeet.lahetyskorvauskentat

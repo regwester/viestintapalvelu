@@ -17,16 +17,18 @@ import javax.persistence.TemporalType;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
+ *
+  CREATE TABLE kirjeet.kirjelahetys ( <br/>
+  id bigint NOT NULL, <br/>
+  version bigint NOT NULL, <br/>
+  template_id bigint NOT NULL, <br/>
+  aikaleima timestamp without time zone, <br/>
+  oid_tallentaja character varying(255), <br/>
+  oid_organisaatio character varying(255), <br/>
+  CONSTRAINT kirjelahetys_pk PRIMARY KEY (id) <br/>
+ *
  * @author migar1
  *
-  CREATE TABLE kirjeet.kirjelahetys (
-  id bigint NOT NULL,
-  version bigint NOT NULL,
-  template_id bigint NOT NULL,
-  aikaleima timestamp without time zone,
-  oid_tallentaja character varying(255),
-  oid_organisaatio character varying(255),
-  CONSTRAINT kirjelahetys_pk PRIMARY KEY (id)
  */
 
 @Table(name = "kirjelahetys", schema="kirjeet")
@@ -41,6 +43,9 @@ public class LetterBatch extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
 	
+    @Column(name = "kielikoodi", nullable = false)
+    private String language;
+    
     @Column(name = "oid_tallentaja", nullable = true)
     private String storingOid;
 
@@ -68,6 +73,14 @@ public class LetterBatch extends BaseEntity {
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+
+	public String getLanguage() {
+		return language;
+	}
+
+	public void setLanguage(String language) {
+		this.language = language;
 	}
 
 	public String getStoringOid() {

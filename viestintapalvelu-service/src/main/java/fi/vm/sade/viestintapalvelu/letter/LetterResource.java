@@ -40,6 +40,7 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -59,6 +60,9 @@ public class LetterResource extends AsynchronousResource {
     @Autowired
     private ExecutorService executor;
 
+    @Autowired 
+    private LetterService letterService;
+    
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
@@ -183,16 +187,19 @@ public class LetterResource extends AsynchronousResource {
 
     
     @POST
+//    @GET
     @Consumes("application/json")
 //  @PreAuthorize("isAuthenticated()")
-//  @Produces("application/json")
-    @Produces("text/plain")
+    @Produces("application/json")
+//    @Produces("text/plain")
     
     @Path("/sendStore")
-    public String store(LetterBatch letterBatch) throws IOException, DocumentException {
+    public fi.vm.sade.viestintapalvelu.model.LetterBatch store(LetterBatch letterBatch) throws IOException, DocumentException {
+//    public String store() throws IOException, DocumentException {
 
-        //letterService.storeLetterDTO(letterBatch);
-        return new fi.vm.sade.viestintapalvelu.model.LetterBatch().toString();
+        
+//        return new fi.vm.sade.viestintapalvelu.letter.LetterBatch().toString();
+        return letterService.storeLetterDTO(letterBatch);
    }
     
 }
