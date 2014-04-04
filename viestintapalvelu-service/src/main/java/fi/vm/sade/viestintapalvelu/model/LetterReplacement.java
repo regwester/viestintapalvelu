@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 import com.wordnik.swagger.annotations.ApiModel;
 
 import fi.vm.sade.generic.model.BaseEntity;
@@ -40,6 +42,7 @@ public class LetterReplacement extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kirjelahetys_id")
+    @JsonBackReference
     private LetterBatch letterBatch;
 
     @Column(name = "nimi")

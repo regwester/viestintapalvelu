@@ -23,6 +23,10 @@ public class Letter {
     public Letter() {
     }
 
+    public Letter(AddressLabel addressLabel,  Map<String, Object> customLetterContents) {
+        this.addressLabel = addressLabel;
+        this.templateReplacements = customLetterContents;
+    }
     public Letter(AddressLabel addressLabel, Template template,
             Map<String, Object> customLetterContents) {
         this.addressLabel = addressLabel;

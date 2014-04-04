@@ -14,6 +14,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonManagedReference;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -53,9 +55,11 @@ public class LetterBatch extends BaseEntity {
     private String organizationOid;
     
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
  
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
     

@@ -11,6 +11,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 import com.wordnik.swagger.annotations.ApiModel;
 
 import fi.vm.sade.generic.model.BaseEntity;
@@ -41,6 +43,7 @@ public class LetterReceiverReplacement extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "vastaanottaja_id")
+    @JsonBackReference
     private LetterReceivers letterReceivers;
 
     @Column(name = "nimi")

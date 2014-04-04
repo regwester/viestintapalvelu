@@ -14,6 +14,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+import org.codehaus.jackson.annotate.JsonManagedReference;
+
 import com.wordnik.swagger.annotations.ApiModel;
 
 import fi.vm.sade.generic.model.BaseEntity;
@@ -41,6 +44,7 @@ public class LetterReceivers extends BaseEntity {
 
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kirjelahetys_id")
+    @JsonBackReference
     private LetterBatch letterBatch;
 
     @Column(name = "aikaleima", nullable = false)
@@ -48,6 +52,7 @@ public class LetterReceivers extends BaseEntity {
     private Date timestamp;
         
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
      
   
