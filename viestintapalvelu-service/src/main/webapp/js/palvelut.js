@@ -143,9 +143,9 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
-        function letterPDF(letters, replacements) {
+        function letterPDF(letters, replacements, templateId) {
             print(letter + 'pdf', {
-                "letters": letters, "templateReplacements" : replacements});
+                "letters": letters, "templateReplacements" : replacements, "templateId" : templateId});
         }
         
         function ipostZIP(letters) {

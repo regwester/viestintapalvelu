@@ -11,19 +11,39 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 import com.wordnik.swagger.annotations.ApiModel;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
-@Table(name = "korvauskentat", schema="kirjeet")
-@Entity()
-public class Replacement extends BaseEntity {
+/**
+ * @author migar1
+ *
+CREATE TABLE kirjeet.lahetyskorvauskentat(
+  id bigint NOT NULL,
+  version bigint,
+  kirjelahetys_id bigint,
+  nimi character varying(255),
+  oletus_arvo character varying(3000),
+  aikaleima time with time zone,
+  pakollinen boolean,
+  CONSTRAINT lahetyskorvauskentat_pk PRIMARY KEY (id),
+  CONSTRAINT lahetyskorvauskentat_kirjelahetys_id_fkey FOREIGN KEY (kirjelahetys_id)
+      REFERENCES kirjeet.kirjelahetys (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
+ */
 
+@Table(name = "lahetyskorvauskentat", schema="kirjeet")
+@Entity()
+public class LetterReplacement extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "kirjepohja_id")
-    private Template template;
+    @JoinColumn(name = "kirjelahetys_id")
+    @JsonBackReference
+    private LetterBatch letterBatch;
 
     @Column(name = "nimi")
     private String name = null;
@@ -37,8 +57,17 @@ public class Replacement extends BaseEntity {
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
+        
     
-    public String getName() {
+    public LetterBatch getLetterBatch() {
+		return letterBatch;
+	}
+
+	public void setLetterBatch(LetterBatch letterBatch) {
+		this.letterBatch = letterBatch;
+	}
+
+	public String getName() {
         return name;
     }
 
@@ -62,14 +91,6 @@ public class Replacement extends BaseEntity {
         this.mandatory = mandatory;
     }
 
-    public Template getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
-
     public Date getTimestamp() {
         return timestamp;
     }
@@ -78,11 +99,5 @@ public class Replacement extends BaseEntity {
         this.timestamp = timestamp;
     }
 
-	@Override
-	public String toString() {
-		return "Replacement [template=" + template + ", name=" + name
-				+ ", defaultValue=" + defaultValue + ", mandatory=" + mandatory
-				+ ", timestamp=" + timestamp + "]";
-	}
 
 }

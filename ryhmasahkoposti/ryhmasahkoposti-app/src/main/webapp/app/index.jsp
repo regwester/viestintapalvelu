@@ -1,5 +1,8 @@
 <%@ page import="org.jsoup.*" %>
 <%@ page import="org.jsoup.safety.*" %>
+<%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
+
+<%@ page import="org.jsoup.nodes.Entities.EscapeMode" %>
 <!DOCTYPE html>
 <html id="ng-app" ng-app="viestintapalvelu">
 
@@ -36,6 +39,7 @@
 		if (emailData != null) {
 			// Sanitize data:
 			emailData = Jsoup.clean(emailData, Whitelist.relaxed());
+			emailData = StringEscapeUtils.unescapeHtml(emailData);
 			//System.out.println(emailData);
 		} else {
 			// no emaildata found.

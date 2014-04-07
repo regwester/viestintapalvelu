@@ -11,19 +11,40 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.codehaus.jackson.annotate.JsonBackReference;
+
 import com.wordnik.swagger.annotations.ApiModel;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
-@Table(name = "korvauskentat", schema="kirjeet")
-@Entity()
-public class Replacement extends BaseEntity {
+/**
+ * @author migar1
+ *
+ *CREATE TABLE kirjeet.vastaanottajakorvauskentat(
+  id bigint NOT NULL,
+  version bigint,
+  vastaanottaja_id bigint,
+  nimi character varying(255),
+  oletus_arvo character varying(3000),
+  pakollinen boolean,
+  aikaleimia time with time zone,
+  CONSTRAINT vastaanottajakorvauskentat_pk PRIMARY KEY (id),
+  CONSTRAINT vastaanottajakorvauskentat_vastaanottaja_id_fkey FOREIGN KEY (vastaanottaja_id)
+      REFERENCES kirjeet.vastaanottaja (id) MATCH SIMPLE
+      ON UPDATE NO ACTION ON DELETE NO ACTION
+)
 
+ */
+
+@Table(name = "vastaanottajakorvauskentat", schema="kirjeet")
+@Entity()
+public class LetterReceiverReplacement extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "kirjepohja_id")
-    private Template template;
+    @JoinColumn(name = "vastaanottaja_id")
+    @JsonBackReference
+    private LetterReceivers letterReceivers;
 
     @Column(name = "nimi")
     private String name = null;
@@ -37,8 +58,17 @@ public class Replacement extends BaseEntity {
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-    
-    public String getName() {
+            
+
+	public LetterReceivers getLetterReceivers() {
+		return letterReceivers;
+	}
+
+	public void setLetterReceivers(LetterReceivers letterReceivers) {
+		this.letterReceivers = letterReceivers;
+	}
+
+	public String getName() {
         return name;
     }
 
@@ -62,14 +92,6 @@ public class Replacement extends BaseEntity {
         this.mandatory = mandatory;
     }
 
-    public Template getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
-    }
-
     public Date getTimestamp() {
         return timestamp;
     }
@@ -80,9 +102,9 @@ public class Replacement extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "Replacement [template=" + template + ", name=" + name
-				+ ", defaultValue=" + defaultValue + ", mandatory=" + mandatory
-				+ ", timestamp=" + timestamp + "]";
+		return "LetterReceiverReplacement [letterReceivers=" + letterReceivers
+				+ ", name=" + name + ", defaultValue=" + defaultValue
+				+ ", mandatory=" + mandatory + ", timestamp=" + timestamp + "]";
 	}
 
 }

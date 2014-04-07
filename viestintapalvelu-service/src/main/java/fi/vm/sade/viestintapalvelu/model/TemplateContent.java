@@ -1,11 +1,17 @@
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
@@ -24,7 +30,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  )
  */
 
-@Table(name = "sisalto")
+@Table(name = "sisalto", schema="kirjeet")
 @Entity()
 public class TemplateContent extends BaseEntity implements
         Comparable<TemplateContent> {
@@ -37,10 +43,35 @@ public class TemplateContent extends BaseEntity implements
 
     @Column(name = "jarjestys")
     private int order;
+    
     @Column(name = "nimi")
     private String name;
+    
     @Column(name = "sisalto")
     private String content;
+
+    @Column(name = "tyyppi")
+    private String contentType;
+        
+    @Column(name = "aikaleima", nullable = false)
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date timestamp;
+
+    public Template getTemplate() {
+        return template;
+    }
+
+    public void setTemplate(Template template) {
+        this.template = template;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
     public int getOrder() {
         return order;
@@ -65,14 +96,23 @@ public class TemplateContent extends BaseEntity implements
     public void setContent(String content) {
         this.content = content;
     }
+    
+    public String getContentType() {
+		return contentType;
+	}
 
-    @Override
-    public String toString() {
-        return "TemplateContent [order=" + order + ", name=" + name
-                + ", content=" + content + ", contentType=]";
-    }
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}    
+	
+	@Override
+	public String toString() {
+		return "TemplateContent [template=" + template + ", order=" + order
+				+ ", name=" + name + ", content=" + content + ", contentType="
+				+ contentType + ", timestamp=" + timestamp + "]";
+	}
 
-    @Override
+	@Override
     public int compareTo(TemplateContent o) {
         Integer ord = new Integer(order);
         return ord.compareTo(o.order);
