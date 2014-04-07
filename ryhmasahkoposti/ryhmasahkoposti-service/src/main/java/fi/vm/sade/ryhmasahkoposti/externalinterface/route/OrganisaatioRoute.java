@@ -1,23 +1,34 @@
 package fi.vm.sade.ryhmasahkoposti.externalinterface.route;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ProducerTemplate;
-import org.codehaus.jackson.type.TypeReference;
+import org.apache.camel.spring.SpringRouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.AbstractRouteBuilder;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationComponent;
 
+/**
+ * Camel ja CXF reititys organisaatiopalveluun
+ *  
+ * @author vehei1
+ *
+ */
 @Component
-public class OrganisaatioRoute extends AbstractRouteBuilder {
+public class OrganisaatioRoute extends SpringRouteBuilder {
     private static Logger LOGGER = LoggerFactory.getLogger(OrganisaatioRoute.class);
-    private static String ROUTE_GET_ORGANISATION = "direct:getOrganisation"; 
+    private static String ROUTE_GET_ORGANISATION = "direct:getOrganisation";
+    private GetOrganizationComponent getOrganizationComponent; 
 
-    @Value("${ryhmasahkopostipalvelu.organisaatioService.rest.url}")
-    private String organisaatioURI;
+    /**
+     * Muodostin organisaation hakukomponentin asettamiseksi
+     * 
+     * @param getOrganizationComponent Organisaation hakukomponentti
+     */
+    @Autowired
+    public OrganisaatioRoute(GetOrganizationComponent getOrganizationComponent) {
+        this.getOrganizationComponent = getOrganizationComponent;
+    }
     
     /**
      * Muodostaa organisaatiotietojen hakuun liittyvät reitit organisaatiopalveluun
@@ -25,24 +36,7 @@ public class OrganisaatioRoute extends AbstractRouteBuilder {
      */
     @Override
     public void configure() throws Exception {
-        // Poistetaan turhat tyhjät URL:sta
-        organisaatioURI = trim(organisaatioURI);
-
-        // Henkilöhaku henkilöpalveluunn OID:lla ja saadaan paluuarvona Henkilo-luokan ilmentymä
-        TypeReference<OrganisaatioRDTO> organisaatioType = new TypeReference<OrganisaatioRDTO>() {};
-        getRouteDefinition(ROUTE_GET_ORGANISATION, organisaatioURI, 
-            Exchange.HTTP_PATH, simple("${in.headers.oid}"), organisaatioType);
-    }
-    
-    /**
-     * Hakee organissaation tiedot organisaatiopalvelusta
-     * 
-     * @param oid Organisaation OID-tunnus
-     * @return Organisaation tiedot
-     */
-    public OrganisaatioRDTO getOrganisaatio(String oid) {
-        LOGGER.info("[OrganisaatioRoute.getOrganisaatio(" + oid + ")]");
-        ProducerTemplate camelTemplate = getCamelTemplate();
-        return camelTemplate.requestBodyAndHeader(ROUTE_GET_ORGANISATION, "", "oid", oid, OrganisaatioRDTO.class);
+        LOGGER.info("Configure route to OrganisaatioResource");
+        from(ROUTE_GET_ORGANISATION).bean(getOrganizationComponent);
     }
 }

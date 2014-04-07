@@ -13,7 +13,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
 @Component
 public class EmailMessageDTOConverter {
-	public static List<EmailMessageDTO> convert(List<ReportedMessage> reportedMessages) {
+	public List<EmailMessageDTO> convert(List<ReportedMessage> reportedMessages) {
 		List<EmailMessageDTO> emailMessageDTOs = new ArrayList<EmailMessageDTO>();
 		
 		for (ReportedMessage reportedMessage : reportedMessages) {
@@ -24,14 +24,14 @@ public class EmailMessageDTOConverter {
 		return emailMessageDTOs;
 	}
 
-	public static EmailMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments) {
+	public EmailMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments) {
 		EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(reportedMessage);
 		emailMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
 		
 		return emailMessageDTO;
 	}
 
-	private static List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
+	private List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
 		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
 		
 		for (ReportedAttachment reportedAttachment : reportedAttachments) {
@@ -46,7 +46,7 @@ public class EmailMessageDTOConverter {
 		return attachments;
 	}
 
-	private static EmailMessageDTO convertToEmailMessageDTO(ReportedMessage reportedMessage) {
+	private EmailMessageDTO convertToEmailMessageDTO(ReportedMessage reportedMessage) {
 		EmailMessageDTO emailMessageDTO = new EmailMessageDTO();
 		
 		emailMessageDTO.setMessageID(reportedMessage.getId());

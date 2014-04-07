@@ -6,7 +6,6 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.codehaus.jackson.map.annotate.JsonView;
-import org.springframework.security.access.prepost.PreAuthorize;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.JsonViews;
@@ -17,7 +16,6 @@ import fi.vm.sade.authentication.model.JsonViews;
  * @author vehei1
  *
  */
-@PreAuthorize("isAuthenticated()")
 @Path("omattiedot")
 public interface OmattiedotResource {
     

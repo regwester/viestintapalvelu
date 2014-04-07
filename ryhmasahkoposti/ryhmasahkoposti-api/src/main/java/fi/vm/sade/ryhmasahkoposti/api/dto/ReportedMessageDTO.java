@@ -3,12 +3,21 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 import java.util.List;
 
 public class ReportedMessageDTO extends EmailMessageDTO {
+    private String senderName;
 	private List<EmailRecipientDTO> emailRecipients;
 	private SendingStatusDTO sendingStatus;
 	private String statusReport;
 	private String sendingReport;
 
-	public List<EmailRecipientDTO> getEmailRecipients() {
+	public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public List<EmailRecipientDTO> getEmailRecipients() {
 		return emailRecipients;
 	}
 	

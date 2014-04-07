@@ -9,19 +9,19 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
 @Component
 public class ReportedMessageConverter {
-    private static OmattiedotRoute omattiedotRoute;
+    private GetCurrentUserComponent getCurrentUserComponent;
     
     @Autowired
-    public ReportedMessageConverter(OmattiedotRoute omattiedotRoute) {
-        ReportedMessageConverter.omattiedotRoute = omattiedotRoute;
+    public ReportedMessageConverter(GetCurrentUserComponent getCurrentUserComponent) {
+        this.getCurrentUserComponent = getCurrentUserComponent;
     }
     
-	public static ReportedMessage convert(EmailMessage emailMessage) throws IOException {
+	public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
 		ReportedMessage reportedMessage = new ReportedMessage();
 		
 		reportedMessage.setSubject(emailMessage.getSubject());
@@ -43,8 +43,8 @@ public class ReportedMessageConverter {
 		return reportedMessage;
 	}
 	
-	private static String getCurrentUserOid() {
-	    Henkilo henkilo = omattiedotRoute.getCurrenUser();
+	private String getCurrentUserOid() {
+	    Henkilo henkilo = getCurrentUserComponent.getCurrentUser();
 	    return henkilo.getOidHenkilo();
 	}
 }

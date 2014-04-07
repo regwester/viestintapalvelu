@@ -32,7 +32,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/test-bundle-context.xml")
+@ContextConfiguration("/test-dao-context.xml")
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
 	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)

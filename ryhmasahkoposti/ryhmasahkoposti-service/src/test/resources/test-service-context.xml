@@ -11,14 +11,18 @@
     <context:annotation-config/>
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti" />
 
-	<!-- Apache Camel routing context -->
+    <!-- Apache Camel routing context -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <routeBuilder ref="omattiedotRoute"/>
         <routeBuilder ref="henkiloRoute"/>
+        <routeBuilder ref="organisaatioRoute"/>
     </camelContext>
 
-    <!-- Route to HenkiloService -->
+    <!-- Routes to external services -->
+    <bean id="omattiedotRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute"/>
     <bean id="henkiloRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute"/>
-	
+    <bean id="organisaatioRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.OrganisaatioRoute"/>
+    	
 	<!-- Resourcebundle for localizing -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
   		<property name="basenames">

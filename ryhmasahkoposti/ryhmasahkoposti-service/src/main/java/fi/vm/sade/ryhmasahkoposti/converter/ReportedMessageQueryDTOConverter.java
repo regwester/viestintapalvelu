@@ -10,26 +10,26 @@ import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.generic.common.HetuUtils;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.validation.EmailAddressValidator;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedMessageQueryDTOConverter {
-    private static OmattiedotRoute omattiedotRoute;
+    private GetCurrentUserComponent getCurrentUserComponent;
     
     @Autowired
-    public ReportedMessageQueryDTOConverter(OmattiedotRoute omattiedotRoute) {
-        ReportedMessageQueryDTOConverter.omattiedotRoute = omattiedotRoute;
+    public ReportedMessageQueryDTOConverter(GetCurrentUserComponent getCurrentUserComponent) {
+        this.getCurrentUserComponent = getCurrentUserComponent;
     }
     
-    public static ReportedMessageQueryDTO convert() {
+    public ReportedMessageQueryDTO convert() {
         ReportedMessageQueryDTO reportedMessageQueryDTO = new ReportedMessageQueryDTO();
-        
+        getSenderOidList();
         return reportedMessageQueryDTO;
     }
     
-	public static ReportedMessageQueryDTO convert(String searchArgument) {
+	public ReportedMessageQueryDTO convert(String searchArgument) {
 		ReportedMessageQueryDTO reportedMessageQueryDTO = new ReportedMessageQueryDTO();
 		ReportedRecipientQueryDTO reportedRecipientQueryDTO = new ReportedRecipientQueryDTO();
 				
@@ -61,10 +61,10 @@ public class ReportedMessageQueryDTOConverter {
 		return reportedMessageQueryDTO;
 	}
 	
-	private static List<String> getSenderOidList() {
+	private List<String> getSenderOidList() {
 	    List<String> senderOidList = new ArrayList<String>();
 	    
-	    Henkilo henkilo = omattiedotRoute.getCurrenUser();
+	    Henkilo henkilo = getCurrentUserComponent.getCurrentUser();
 	    senderOidList.add(henkilo.getOidHenkilo());
 	    
 	    return senderOidList;

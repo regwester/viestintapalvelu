@@ -11,7 +11,6 @@ import org.apache.commons.fileupload.FileItem;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,11 +25,11 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -49,15 +48,33 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	private ReportedRecipientService reportedRecipientService;
 	private ReportedAttachmentService reportedAttachmentService;
 	private ReportedMessageAttachmentService reportedMessageAttachmentService;
+	private ReportedMessageConverter reportedMessageConverter;
+	private ReportedRecipientConverter reportedRecipientConverter;
+	private ReportedAttachmentConverter reportedAttachmentConverter;
+	private EmailMessageDTOConverter emailMessageDTOConverter;
+	private EmailRecipientDTOConverter emailRecipientDTOConverter;
+	private ReportedMessageDTOConverter reportedMessageDTOConverter;
+	private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
 
 	@Autowired
 	public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
 		ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService, 
-		ReportedMessageAttachmentService reportedMessageAttachmentService) {
+		ReportedMessageAttachmentService reportedMessageAttachmentService, 
+		ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
+		ReportedAttachmentConverter reportedAttachmentConverter, EmailMessageDTOConverter emailMessageDTOConverter, 
+		EmailRecipientDTOConverter emailRecipientDTOConverter, ReportedMessageDTOConverter reportedMessageDTOConverter, 
+		ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter) {
 		this.reportedMessageService = reportedMessageService;
 		this.reportedRecipientService = reportedRecipientService;
 		this.reportedAttachmentService = reportedAttachmentService;
 		this.reportedMessageAttachmentService = reportedMessageAttachmentService;
+		this.reportedMessageConverter = reportedMessageConverter;
+		this.reportedRecipientConverter = reportedRecipientConverter;
+		this.reportedAttachmentConverter = reportedAttachmentConverter;
+		this.emailMessageDTOConverter = emailMessageDTOConverter;
+		this.emailRecipientDTOConverter = emailRecipientDTOConverter;
+		this.reportedMessageDTOConverter = reportedMessageDTOConverter;
+		this.reportedMessageQueryDTOConverter = reportedMessageQueryDTOConverter;
 	}
 	
 	@Override
@@ -65,7 +82,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	public Long addSendingGroupEmail(EmailData emailData) throws IOException {
 	    LOGGER.info("addSendingGroupEmail called");
 	    
-		ReportedMessage reportedMessage = ReportedMessageConverter.convert(emailData.getEmail());
+		ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail());
 			
 		ReportedMessage savedReportedMessage = 
 			reportedMessageService.saveReportedMessage(reportedMessage);
@@ -74,7 +91,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 			emailData.getEmail().getAttachInfo());		
 		reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
 	
-		Set<ReportedRecipient> reportedRecipients = ReportedRecipientConverter.convert(
+		Set<ReportedRecipient> reportedRecipients = reportedRecipientConverter.convert(
 			savedReportedMessage, emailData.getRecipient());
 		reportedRecipientService.saveReportedRecipients(reportedRecipients);		
 		
@@ -88,7 +105,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 		List<ReportedAttachment> reportedAttachments = 
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
-		return EmailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
+		return emailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 	}
 
 	@Override
@@ -103,7 +120,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 			reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 		
 		ReportedMessageDTO reportedMessageDTO = 
-			ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatus);
+			reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatus);
 		reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 		
 		return reportedMessageDTO;
@@ -123,7 +140,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedAttachment> reportedAttachments = 
             reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
         
-        ReportedMessageDTO reportedMessageDTO = ReportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
             reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
         
@@ -145,7 +162,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedAttachment> reportedAttachments = 
             reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
         
-        ReportedMessageDTO reportedMessageDTO = ReportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
             reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
         
@@ -158,7 +175,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
-	    ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert();
+	    ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert();
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
 		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
 		
@@ -169,7 +186,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		}
 		
 		List<ReportedMessageDTO> listOfReportedMessageDTO = 
-		    ReportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+		    reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
 		
 		reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
 		reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
@@ -183,7 +200,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 	       
-		ReportedMessageQueryDTO query = ReportedMessageQueryDTOConverter.convert(searchArgument);
+		ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(searchArgument);
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
 		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
 		
@@ -194,7 +211,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         }
         
         List<ReportedMessageDTO> listOfReportedMessageDTO = 
-            ReportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+            reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
         
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
         reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
@@ -220,7 +237,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         LOGGER.info("getUnhandledMessageRecipients(" + listSize + ") called");
 
 		List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
-		return EmailRecipientDTOConverter.convert(reportedRecipients);
+		return emailRecipientDTOConverter.convert(reportedRecipients);
 	}
 
 	@Override
@@ -256,7 +273,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	public Long saveAttachment(FileItem fileItem) throws IOException {
         LOGGER.info("saveAttachment(" + fileItem.getName() + ") called");
 
-		ReportedAttachment reportedAttachment = ReportedAttachmentConverter.convert(fileItem);
+		ReportedAttachment reportedAttachment = reportedAttachmentConverter.convert(fileItem);
 		return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
 	}
 	

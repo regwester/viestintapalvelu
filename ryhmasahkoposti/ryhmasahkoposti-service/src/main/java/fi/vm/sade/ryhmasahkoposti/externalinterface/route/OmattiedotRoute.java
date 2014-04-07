@@ -1,28 +1,34 @@
 package fi.vm.sade.ryhmasahkoposti.externalinterface.route;
 
-import org.apache.camel.ProducerTemplate;
-import org.codehaus.jackson.type.TypeReference;
+import org.apache.camel.spring.SpringRouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.AbstractRouteBuilder;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
 
 /**
- * Luokka Camel-reitin luomiseksi autentikaatiopalveluun omien tietojen hakemiseksi
+ * Luokka Camel- ja CXF-reitin luomiseksi autentikaatiopalveluun omien tietojen hakemiseksi
  * 
  * @author vehei1
  *
  */
 @Component
-public class OmattiedotRoute extends AbstractRouteBuilder {
+public class OmattiedotRoute extends SpringRouteBuilder {
 	private static Logger LOGGER = LoggerFactory.getLogger(OmattiedotRoute.class);
     private static String ROUTE_GET_CURRENT_USER = "direct:getCurrentUser";
-
-	@Value("${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}")
-	private String omattiedotURI;
+    private GetCurrentUserComponent getCurrentUserComponent;
+    
+    /**
+     * Muodostin omat tiedot komponentin asettamiseksi
+     * 
+     * @param getCurrentUserComponent Hae omat tiedot komponentti
+     */
+    @Autowired
+    public OmattiedotRoute(GetCurrentUserComponent getCurrentUserComponent) {
+        this.getCurrentUserComponent = getCurrentUserComponent;
+    }
     
 	/**
 	 * Muodostaa omien tietojen hakuun liittyvät reitit autentikointipalveluun
@@ -30,25 +36,7 @@ public class OmattiedotRoute extends AbstractRouteBuilder {
 	 */
 	@Override
 	public void configure() throws Exception {
-		// Poistetaan turhat tyhjät URL:sta
-		omattiedotURI = trim(omattiedotURI);
-
-		// Palautettavat tyyppiviittaukset
-        TypeReference<Henkilo> henkiloType = new TypeReference<Henkilo>() {};
-        
-        // Nykyisen käyttäjän tietojen haku. Palauttaa Henkilö-luokan ilmentymän.
-        getRouteDefinition(ROUTE_GET_CURRENT_USER, omattiedotURI, henkiloType);
-	}
-	
-
-	/**
-     * Hakee käyttäjän henkilötiedot 
-     * 
-     * @return Käyttäjän henkilötiedot
-     */
-    public Henkilo getCurrenUser() {
-        LOGGER.info("[OmattiedotRoute.getCurrentUser()]");
-        ProducerTemplate camelTemplate = getCamelTemplate();
-        return camelTemplate.requestBodyAndHeader(ROUTE_GET_CURRENT_USER, "", "", "", Henkilo.class); 
+	    LOGGER.info("Configure route to OmatTiedotResource");
+	    from(ROUTE_GET_CURRENT_USER).bean(getCurrentUserComponent);
 	}
 }

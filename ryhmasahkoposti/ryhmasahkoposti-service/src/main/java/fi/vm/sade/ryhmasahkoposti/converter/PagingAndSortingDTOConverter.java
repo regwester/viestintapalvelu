@@ -7,7 +7,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 @Component
 public class PagingAndSortingDTOConverter {
 
-    public static PagingAndSortingDTO convert(Integer nbrOfRows, Integer page, String sortedBy, String order) {
+    public PagingAndSortingDTO convert(Integer nbrOfRows, Integer page, String sortedBy, String order) {
         PagingAndSortingDTO pagingAndSorting = new PagingAndSortingDTO();
         
         if (nbrOfRows != null) {
@@ -21,7 +21,7 @@ public class PagingAndSortingDTOConverter {
         return pagingAndSorting;
     }
     
-    public static PagingAndSortingDTO convert(String sortedBy, String order) {
+    public PagingAndSortingDTO convert(String sortedBy, String order) {
         PagingAndSortingDTO pagingAndSorting = new PagingAndSortingDTO();
         
         pagingAndSorting.setFromIndex(0);

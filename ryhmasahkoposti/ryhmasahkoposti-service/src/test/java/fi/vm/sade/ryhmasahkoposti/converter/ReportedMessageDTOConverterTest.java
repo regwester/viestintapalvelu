@@ -11,15 +11,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.powermock.api.mockito.PowerMockito;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
@@ -28,9 +33,19 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MessageUtil.class)
 public class ReportedMessageDTOConverterTest {
+    @Mock
+    private GetPersonComponent mockedGetPersonComponent;
+    private ReportedMessageDTOConverter reportedMessageDTOConverter;
+    
+    @Before
+    public void setup() {
+        this.reportedMessageDTOConverter = new ReportedMessageDTOConverter(mockedGetPersonComponent);
+    }
 
 	@Test
 	public void testConvertListOfReportedMessage() {
+	    when(mockedGetPersonComponent.getPerson(any(String.class))).thenReturn(RaportointipalveluTestData.getHenkilo());
+	    
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -44,7 +59,7 @@ public class ReportedMessageDTOConverterTest {
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		mockedReportedMessages.add(reportedMessage);
 		
-		List<ReportedMessageDTO> reportedMessageDTOs = ReportedMessageDTOConverter.convert(mockedReportedMessages);
+		List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(mockedReportedMessages);
 		
 		assertNotNull(reportedMessageDTOs);
 		assertTrue(reportedMessageDTOs.size() == 1);
@@ -55,6 +70,8 @@ public class ReportedMessageDTOConverterTest {
 		PowerMockito.mockStatic(MessageUtil.class);
 		PowerMockito.when(MessageUtil.getMessage(
 			"ryhmasahkoposti.lahetys_epaonnistui", new Object[]{new Long(2)})).thenReturn("2 lahetystä epäonnistui");
+
+        when(mockedGetPersonComponent.getPerson(any(String.class))).thenReturn(RaportointipalveluTestData.getHenkilo());
 		
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -74,7 +91,7 @@ public class ReportedMessageDTOConverterTest {
 		sendingStatuses.put(new Long(1), sendingStatusDTO);
 		
 		List<ReportedMessageDTO> reportedMessageDTOs = 
-			ReportedMessageDTOConverter.convert(mockedReportedMessages, sendingStatuses);
+			reportedMessageDTOConverter.convert(mockedReportedMessages, sendingStatuses);
 		
 		assertNotNull(reportedMessageDTOs);
 		assertTrue(reportedMessageDTOs.size() == 1);
@@ -88,6 +105,8 @@ public class ReportedMessageDTOConverterTest {
 		PowerMockito.when(MessageUtil.getMessage(
 			"ryhmasahkoposti.lahetys_epaonnistui", new Object[]{new Long(2)})).thenReturn("2 lahetystä epäonnistui");
 
+	    when(mockedGetPersonComponent.getPerson(any(String.class))).thenReturn(RaportointipalveluTestData.getHenkilo());
+		
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		
 		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
@@ -100,7 +119,7 @@ public class ReportedMessageDTOConverterTest {
 		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
 				
 		ReportedMessageDTO reportedMessageDTO = 
-			ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatusDTO);
+			reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatusDTO);
 		
 		assertNotNull(reportedMessageDTO);
 		assertEquals(reportedMessage.getId(), reportedMessageDTO.getMessageID());

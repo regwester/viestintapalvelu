@@ -4,22 +4,31 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 @Component
 public class ReportedMessageDTOConverter {
+    private GetPersonComponent getPersonComponent;
+    
+    @Autowired
+    public ReportedMessageDTOConverter(GetPersonComponent getPersonComponent) {
+        this.getPersonComponent = getPersonComponent;
+    }
 	
-	public static List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages) {
+	public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages) {
 		List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
 		
 		for (ReportedMessage reportedMessage : reportedMessages) {
@@ -31,7 +40,7 @@ public class ReportedMessageDTOConverter {
 		return reportedMessageDTOs;
 	}
 
-	public static List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages, 
+	public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages, 
 		Map<Long, SendingStatusDTO> sendingStatuses) {
 		List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
 		
@@ -49,7 +58,7 @@ public class ReportedMessageDTOConverter {
 		return reportedMessageDTOs;
 	}
 	
-	public static ReportedMessageDTO convert(ReportedMessage reportedMessage, 
+	public ReportedMessageDTO convert(ReportedMessage reportedMessage, 
 		List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
 		ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
 		
@@ -68,7 +77,7 @@ public class ReportedMessageDTOConverter {
 		return reportedMessageDTO;
 	}
 
-   public static ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients, 
+   public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients, 
         List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
         ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
         
@@ -83,9 +92,10 @@ public class ReportedMessageDTOConverter {
         return reportedMessageDTO;
     }
 
-	private static void convert(ReportedMessageDTO reportedMessageDTO, ReportedMessage reportedMessage) {
+	private void convert(ReportedMessageDTO reportedMessageDTO, ReportedMessage reportedMessage) {
 		reportedMessageDTO.setMessageID(reportedMessage.getId());
 		reportedMessageDTO.setSubject(reportedMessage.getSubject());
+		reportedMessageDTO.setSenderName(getSenderName(reportedMessage.getSenderOid()));
 		reportedMessageDTO.setFrom(reportedMessage.getSenderEmail());
 		reportedMessageDTO.setStartTime(reportedMessage.getSendingStarted());
 		reportedMessageDTO.setEndTime(reportedMessage.getSendingEnded());
@@ -94,7 +104,7 @@ public class ReportedMessageDTOConverter {
 		reportedMessageDTO.setBody(reportedMessage.getMessage());
 	}
 
-	private static List<EmailRecipientDTO> convertEmailRecipientDTO(List<ReportedRecipient> reportedRecipients) {
+	private List<EmailRecipientDTO> convertEmailRecipientDTO(List<ReportedRecipient> reportedRecipients) {
 		List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
 		
 		for (ReportedRecipient reportedRecipient : reportedRecipients) {
@@ -112,7 +122,7 @@ public class ReportedMessageDTOConverter {
 		return recipients;
 	}
 
-	private static List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
+	private List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
 		List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
 		
 		for (ReportedAttachment reportedAttachment : reportedAttachments) {
@@ -127,7 +137,12 @@ public class ReportedMessageDTOConverter {
 		return attachments;
 	}
 
-	private static void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
+	private String getSenderName(String oid) {
+	    Henkilo henkilo = getPersonComponent.getPerson(oid);
+	    return henkilo.getSukunimi() + "," + henkilo.getEtunimet();
+	}
+	
+	private void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
 		Long numberOfSuccesfulSendings = new Long(0);
 		if (sendingStatusDTO.getNumberOfSuccesfulSendings() != null) {
 			numberOfSuccesfulSendings = sendingStatusDTO.getNumberOfSuccesfulSendings();
@@ -143,7 +158,7 @@ public class ReportedMessageDTOConverter {
 			MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", parameters));
 	}
 
-	private static void setStatusReport(ReportedMessageDTO reportedMessageDTO, Long numberOfFailed) {
+	private void setStatusReport(ReportedMessageDTO reportedMessageDTO, Long numberOfFailed) {
 		if (numberOfFailed != null && numberOfFailed.compareTo(new Long(0)) > 0) {
 			Object[] parameters = {numberOfFailed};
 			reportedMessageDTO.setStatusReport(
@@ -163,7 +178,7 @@ public class ReportedMessageDTOConverter {
 		return;
 	}
 	
-	private static void setRecipientName(EmailRecipientDTO emailRecipient, ReportedRecipient reportedRecipient) {
+	private void setRecipientName(EmailRecipientDTO emailRecipient, ReportedRecipient reportedRecipient) {
 	    int position = reportedRecipient.getSearchName().indexOf(",");
 	    
 	    if (position == -1) {
