@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,8 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OrganisaatioRoute;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -24,25 +25,29 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @PrepareForTest(ReportedRecipientConverter.class)
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedRecipientConverterTest {
+    private ReportedRecipientConverter reportedRecipientConverter;
     @Mock
-    HenkiloRoute henkiloRoute;
+    GetPersonComponent getPersonComponent;
     @Mock
-    OrganisaatioRoute organisaatioRoute;
+    GetOrganizationComponent getOrganizationComponent;
 
+    @Before
+    public void setup() {
+        this.reportedRecipientConverter = new ReportedRecipientConverter(getPersonComponent, getOrganizationComponent);
+    }
+    
     @Test
 	public void testReportedRecipientIsPerson() {
         Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
-	    when(henkiloRoute.getHenkilo(any(String.class))).thenReturn(henkilo);
+	    when(getPersonComponent.getPerson(any(String.class))).thenReturn(henkilo);
 	    
 	    OrganisaatioRDTO organisaatio = RaportointipalveluTestData.getOrganisaatioRDTO();
-	    when(organisaatioRoute.getOrganisaatio(any(String.class))).thenReturn(organisaatio);	    
+	    when(getOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);	    
 	    
 		EmailRecipient emailRecipient = RaportointipalveluTestData.getEmailRecipient();
 		emailRecipient.setEmail("testMuodostaRaportoitavaVastaanottaja@sposti.fi");
 
-		@SuppressWarnings("static-access")
-        ReportedRecipient reportedRecipient = 
-		    new ReportedRecipientConverter(henkiloRoute, organisaatioRoute).convert(emailRecipient);
+        ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(emailRecipient);
 		
 		assertNotNull(reportedRecipient);
 		assertNotNull(reportedRecipient.getRecipientOid());

@@ -11,7 +11,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 @Component
 public class EmailRecipientDTOConverter {
 
-	public static EmailRecipientDTO convert(ReportedRecipient reportedRecipient) {
+	public EmailRecipientDTO convert(ReportedRecipient reportedRecipient) {
 		EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
 		
 		emailRecipientDTO.setRecipientID(reportedRecipient.getId());
@@ -25,7 +25,7 @@ public class EmailRecipientDTOConverter {
 		return emailRecipientDTO;
 	}
 
-	public static List<EmailRecipientDTO> convert(List<ReportedRecipient> reportedRecipients) {
+	public List<EmailRecipientDTO> convert(List<ReportedRecipient> reportedRecipients) {
 		List<EmailRecipientDTO> emailRecipientDTOs = new ArrayList<EmailRecipientDTO>();
 
 		for (ReportedRecipient reportedRecipient : reportedRecipients) {

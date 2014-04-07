@@ -1,58 +1,72 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-public class TemplateContent {
+import java.util.Date;
 
-    private long id;
-    private int order;
-    private String name;
-    private String content;
-    private String contentType;
+public class TemplateContent implements Comparable<TemplateContent> {
 
-    public long getId() {
-        return id;
-    }
+        private int order;
+        
+        private String name;
+        
+        private String content;
 
-    public void setId(long id) {
-        this.id = id;
-    }
+        private Date timestamp;
 
-    public int getOrder() {
-        return order;
-    }
+        private Long id;
 
-    public void setOrder(int order) {
-        this.order = order;
-    }
+        public Date getTimestamp() {
+            return timestamp;
+        }
 
-    public String getName() {
-        return name;
-    }
+        public void setTimestamp(Date timestamp) {
+            this.timestamp = timestamp;
+        }
 
-    public void setName(String name) {
-        this.name = name;
-    }
+        public int getOrder() {
+            return order;
+        }
 
-    public String getContent() {
-        return content;
-    }
+        public void setOrder(int order) {
+            this.order = order;
+        }
 
-    public void setContent(String content) {
-        this.content = content;
-    }
+        public String getName() {
+            return name;
+        }
 
-    public String getContentType() {
-        return contentType;
-    }
+        public void setName(String name) {
+            this.name = name;
+        }
 
-    public void setContentType(String contentType) {
-        this.contentType = contentType;
-    }
+        public String getContent() {
+            return content;
+        }
 
-    @Override
-    public String toString() {
-        return "TemplateContent [id=" + id + ", order=" + order + ", name="
-                + name + ", content=" + content + ", contentType="
-                + contentType + "]";
-    }
+        public void setContent(String content) {
+            this.content = content;
+        }
+
+
+        public Long getId() {
+            return id;
+        }
+
+        public void setId(Long id) {
+            this.id = id;
+        }
+
+
+        @Override
+		public String toString() {
+			return "TemplateContent [order=" + order + ", name=" + name
+					+ ", content=" + content + ", timestamp=" + timestamp
+					+ ", id=" + id + "]";
+		}
+
+		@Override
+        public int compareTo(TemplateContent o) {
+            Integer ord = new Integer(order);
+            return ord.compareTo(o.order);
+        }
 
 }

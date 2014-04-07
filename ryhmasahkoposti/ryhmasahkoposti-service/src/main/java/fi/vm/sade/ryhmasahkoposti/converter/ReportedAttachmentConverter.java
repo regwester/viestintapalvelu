@@ -12,7 +12,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 @Component
 public class ReportedAttachmentConverter {
 
-	public static ReportedAttachment convert(FileItem fileItem) throws IOException {
+	public ReportedAttachment convert(FileItem fileItem) throws IOException {
 		ReportedAttachment liite = new ReportedAttachment();
 		
 		String filename = fileItem.getName();

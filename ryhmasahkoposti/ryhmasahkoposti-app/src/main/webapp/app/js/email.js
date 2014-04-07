@@ -19,21 +19,16 @@ email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory'
 			recipient: [
 					{oid: '1234567890ABCD',
 					oidType: 'henkilo',
-					email: 'ville.vastaanottaja@gmail.com',
-					languageCode: 'FI'},
-								
-					{oid: 'ABCD0987654321',
-					oidType: 'henkilo',
-					email: 'torspo.uolevi@gmail.com',
+					email: 'email.vastaanottaja@gmail.com',
 					languageCode: 'FI'}	
 			],		
 			email: {callingProcess: 'Osoitetietojarjestelma',
 					ownerEmail: 'oph_tiedotus@oph.fi',
-					senderEmail: 'Mikko.Mallikas@oph.fi',
+					senderEmail: 'email.lahettaja@oph.fi',
 					senderOid: '11223344556677',
 					senderOidType: 'henkilo',
-					subject: 'Testi viesti',
-					body: 'Testi bodya ja sporttia.',
+					subject: 'Testi otsikko',
+					body: 'Testi bodya.',
 					attachInfo: []
 			}	
 		};

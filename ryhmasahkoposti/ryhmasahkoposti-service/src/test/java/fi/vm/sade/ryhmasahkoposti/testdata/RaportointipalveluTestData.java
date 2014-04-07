@@ -1,7 +1,9 @@
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.fileupload.FileItem;
@@ -12,9 +14,12 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -52,6 +57,23 @@ public class RaportointipalveluTestData {
 		emailMessage.setSubject("Koekutsu");
 		
 		return emailMessage;
+	}
+	
+	public static EmailMessageDTO getEmailMessageDTO() {
+	    EmailMessageDTO emailMessageDTO = new EmailMessageDTO();
+	    
+	    emailMessageDTO.setMessageID(new Long(1));
+        emailMessageDTO.setBody("Tämä on koekutsu");
+        emailMessageDTO.setCallingProcess("Hakuprosessi");
+        emailMessageDTO.setCharset("utf-8");
+        emailMessageDTO.setFooter("");
+        emailMessageDTO.setHtml(false);
+        emailMessageDTO.setReplyTo("vastaus.oppilaitos@sposti.fi");
+        emailMessageDTO.setFrom("lahettaja.oppilaitos@sposti.fi");
+        emailMessageDTO.setSenderOid("1.2.246.562.24.42645159413");
+        emailMessageDTO.setSubject("Koekutsu");
+	    
+	    return emailMessageDTO;
 	}
 	
 	public static EmailAttachment getEmailAttachment() {
@@ -135,6 +157,30 @@ public class RaportointipalveluTestData {
 		reportedMessage.setTimestamp(new Date());
 
 		return reportedMessage;
+	}
+
+    public static ReportedMessageDTO getReportedMessageDTO() {
+        ReportedMessageDTO reportedMessage = new ReportedMessageDTO();
+        
+        reportedMessage.setMessageID(new Long(1));
+        reportedMessage.setSubject("Koekutsu");
+        reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
+        reportedMessage.setSendingStatus(getSendingStatusDTO());
+        reportedMessage.setSendingReport("");
+        reportedMessage.setStatusReport("Lahetyksiä epäonnistui");
+
+        return reportedMessage;
+    }
+	
+	public static ReportedMessagesDTO getReportedMessagesDTO() {
+	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
+	    
+	    reportedMessagesDTO.setNumberOfReportedMessages(new Long(1));
+	    List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+	    reportedMessageDTOs.add(getReportedMessageDTO());
+	    reportedMessagesDTO.setReportedMessages(reportedMessageDTOs);
+	    
+	    return reportedMessagesDTO;
 	}
 	
 	public static ReportedMessageAttachment getReportedMessageAttachment() {		

@@ -6,6 +6,7 @@ import static org.mockito.Mockito.when;
 
 import java.io.IOException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -15,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -23,8 +24,15 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @PrepareForTest(ReportedMessageConverter.class)
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageConverterTest {
+    private ReportedMessageConverter reportedMessageConverter;
+    
     @Mock
-    OmattiedotRoute omattiedotRoute;
+    GetCurrentUserComponent mockedCurrentUserComponent;
+    
+    @Before
+    public void setup() {
+        this.reportedMessageConverter = new ReportedMessageConverter(mockedCurrentUserComponent);
+    }
 
 	@Test
 	public void testReportedMessageConversion() throws IOException {
@@ -32,10 +40,9 @@ public class ReportedMessageConverterTest {
         Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(emailMessage.getSenderOid());
         
-        when(omattiedotRoute.getCurrenUser()).thenReturn(henkilo);
+        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
         
-		@SuppressWarnings("static-access")
-        ReportedMessage reportedMessage = new ReportedMessageConverter(omattiedotRoute).convert(emailMessage);
+        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailMessage);
 
 		assertNotNull(reportedMessage);
 		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 

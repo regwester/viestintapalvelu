@@ -50,7 +50,6 @@ angular.module('app').controller(
                     "country": country[0],
                     "countryCode": country[1]
                 },
-                "languageCode": data.prioritize('FI', 0.80).prioritize('SE', 0.60).otherwise(data.any('language')),
                 "templateReplacements": {"tulokset" : tulokset },
                            
                 //"letterBodyText" : $scope.tinymceModel
@@ -75,7 +74,7 @@ angular.module('app').controller(
 	});
 	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"});
+    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, 8);
     };
     
     $scope.updateGenerated = function () {

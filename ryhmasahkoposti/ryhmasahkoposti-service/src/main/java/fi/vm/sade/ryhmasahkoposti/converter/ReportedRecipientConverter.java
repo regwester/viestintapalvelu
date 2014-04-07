@@ -11,24 +11,25 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.route.OrganisaatioRoute;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedRecipientConverter {
-    private static HenkiloRoute henkiloRoute;
-    private static OrganisaatioRoute organisaatioRoute;
+    private GetPersonComponent getPersonComponent;
+    private GetOrganizationComponent getOrganizationComponent;
     
     @Autowired
-    public ReportedRecipientConverter(HenkiloRoute henkiloRoute, OrganisaatioRoute organisaatioRoute) {
-        ReportedRecipientConverter.henkiloRoute = henkiloRoute;
-        ReportedRecipientConverter.organisaatioRoute = organisaatioRoute;
+    public ReportedRecipientConverter(GetPersonComponent getPersonComponent, 
+        GetOrganizationComponent getOrganizationComponent) {
+        this.getPersonComponent = getPersonComponent;
+        this.getOrganizationComponent = getOrganizationComponent;
     }
 
-	public static ReportedRecipient convert(EmailRecipient emailRecipient) {
+	public ReportedRecipient convert(EmailRecipient emailRecipient) {
 		ReportedRecipient reportedRecipient = new ReportedRecipient();
 		
 		reportedRecipient.setRecipientOid(emailRecipient.getOid());
@@ -48,7 +49,7 @@ public class ReportedRecipientConverter {
 		return reportedRecipient;
 	}
 
-	public static Set<ReportedRecipient> convert(ReportedMessage reportedMessage, 
+	public Set<ReportedRecipient> convert(ReportedMessage reportedMessage, 
 		List<EmailRecipient> emailRecipients) {
 		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
 		
@@ -61,7 +62,7 @@ public class ReportedRecipientConverter {
 		return reportedRecipients;
 	}
 	
-	private static void setDataFromExternalInterfaces(ReportedRecipient reportedRecipient) {
+	private void setDataFromExternalInterfaces(ReportedRecipient reportedRecipient) {
         reportedRecipient.setSearchName("");
         reportedRecipient.setSocialSecurityID("");
         
@@ -70,7 +71,7 @@ public class ReportedRecipientConverter {
         }
 	    
         if (OidValidator.isHenkiloOID(reportedRecipient.getRecipientOid())) {
-            Henkilo henkilo = henkiloRoute.getHenkilo(reportedRecipient.getRecipientOid());
+            Henkilo henkilo = getPersonComponent.getPerson(reportedRecipient.getRecipientOid());
             reportedRecipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
             reportedRecipient.setSocialSecurityID(henkilo.getHetu());
             
@@ -78,13 +79,13 @@ public class ReportedRecipientConverter {
         } 
         
         if (OidValidator.isOrganisaatioOID(reportedRecipient.getRecipientOid())) {
-            OrganisaatioRDTO organisaatio = organisaatioRoute.getOrganisaatio(reportedRecipient.getRecipientOid());
+            OrganisaatioRDTO organisaatio = getOrganizationComponent.getOrganization(reportedRecipient.getRecipientOid());
             String nameOfOrganisation = getNameOfOrganisation(organisaatio);
             reportedRecipient.setSearchName(nameOfOrganisation); 
         }
 	}
 	
-	private static String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
+	private String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
 	    String[] language = {"fi", "sv", "en"};
 	    
 	    for (int i = 0; language.length > i; i++) {

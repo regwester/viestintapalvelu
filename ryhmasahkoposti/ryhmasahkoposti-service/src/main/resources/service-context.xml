@@ -23,7 +23,7 @@
 	
 	<!-- Application and common properties -->
     <context:property-placeholder 
-    	location="classpath:ryhmasahkoposti.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkoposti.properties, file:///${user.home:''}/oph-configuration/override.properties" 
+    	location="classpath:ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties" 
     	ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <!-- Authentication and security -->
@@ -49,8 +49,8 @@
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
         accessDecisionManager="accessDecisionManager" xmlns="http://camel.apache.org/schema/spring-security"/>    
 
-    <!-- External interface OmattiedotResource -->
-    <jaxrs:client id="omattiedotpalveluClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource" address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+    <!-- External interface OmattiedotResource of HenkiloPalvelu-->
+    <jaxrs:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource" address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs:outInterceptors>
@@ -60,8 +60,8 @@
         </jaxrs:providers>
     </jaxrs:client>
 
-    <!-- External interface HenkiloResource -->
-    <jaxrs:client id="henkilopalveluClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource" address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}" inheritHeaders="true">
+    <!-- External interface HenkiloResource of HenkiloPalvelu -->
+    <jaxrs:client id="henkiloResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource" address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}" inheritHeaders="true">
         <jaxrs:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs:outInterceptors>
@@ -71,18 +71,10 @@
         </jaxrs:providers>
     </jaxrs:client>
 
-    <!-- External interface OrganisaatioResource -->
-    <jaxrs:client id="organisaatiopalveluClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource" address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}">
-        <jaxrs:properties value-type="boolean">
-            <entry key="org.apache.cxf.message.Message.MAINTAIN_SESSION" value="true"/>
-        </jaxrs:properties>
+    <!-- External interface OrganisaatioResource of OrganisaatioPalvelu -->
+    <jaxrs:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource" address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}" inheritHeaders="true">
         <jaxrs:outInterceptors>
-            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                <property name="webCasUrl" value="${web.url.cas}"/>
-                <property name="targetService" value="${cas.service.organisaatio-service}/j_spring_cas_security_check"/>
-                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.organisaatiopalvelu}"/>
-                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.organisaatiopalvelu}"/>
-            </bean>
+            <ref bean="ticketInterceptorRest"/>
         </jaxrs:outInterceptors>
         <jaxrs:providers>
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>

@@ -14,6 +14,6 @@
     <context:property-placeholder location="classpath:ryhmasahkopostipalvelu-test.properties"/>
 
     <!-- Spring service and persistence configuration -->
-    <import resource="/test-service-context.xml"/>
-    <import resource="/test-dao-context.xml"/>
+    <import resource="classpath:test-service-context.xml"/>
+    <import resource="classpath:test-dao-context.xml"/>
 </beans>
