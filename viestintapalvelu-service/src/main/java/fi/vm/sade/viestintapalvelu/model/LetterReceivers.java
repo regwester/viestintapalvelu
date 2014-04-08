@@ -10,6 +10,7 @@ import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -55,6 +56,9 @@ public class LetterReceivers extends BaseEntity {
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
      
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+//    private Set<LetterReceiverAddress> letterReceiverAddress;
+    private LetterReceiverAddress letterReceiverAddress;
   
     public LetterBatch getLetterBatch() {
 		return letterBatch;
@@ -79,6 +83,23 @@ public class LetterReceivers extends BaseEntity {
 	public void setLetterReceiverReplacement(
 			Set<LetterReceiverReplacement> letterReceiverReplacement) {
 		this.letterReceiverReplacement = letterReceiverReplacement;
+	}
+		
+
+//	public Set<LetterReceiverAddress> getLetterReceiverAddress() {
+//		return letterReceiverAddress;
+//	}
+//
+//	public void setLetterReceiverAddress(
+//			Set<LetterReceiverAddress> letterReceiverAddress) {
+//		this.letterReceiverAddress = letterReceiverAddress;
+//	}
+	public LetterReceiverAddress getLetterReceiverAddress() {
+		return letterReceiverAddress;
+	}
+
+	public void setLetterReceiverAddress(LetterReceiverAddress letterReceiverAddress) {
+		this.letterReceiverAddress = letterReceiverAddress;
 	}
 
 	@Override

@@ -26,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
@@ -187,19 +188,27 @@ public class LetterResource extends AsynchronousResource {
 
     
     @POST
-//    @GET
     @Consumes("application/json")
 //  @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")
-//    @Produces("text/plain")
-    
+    @Produces("application/json")    
     @Path("/sendStore")
     public fi.vm.sade.viestintapalvelu.model.LetterBatch store(LetterBatch letterBatch) throws IOException, DocumentException {
-//    public String store() throws IOException, DocumentException {
-
-        
-//        return new fi.vm.sade.viestintapalvelu.letter.LetterBatch().toString();
         return letterService.storeLetterDTO(letterBatch);
    }
+    
+    
+    @GET
+    // @Consumes("application/json")
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getById")
+    public LetterBatch templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
+        
+       String letterBatchId = request.getParameter("letterBatchId");
+       Long id = Long.parseLong(letterBatchId);
+       
+       return letterService.findById(id);
+    }
     
 }
