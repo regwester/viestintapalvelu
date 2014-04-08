@@ -24,10 +24,15 @@ public class ReportedMessageConverter {
 	public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
 		ReportedMessage reportedMessage = new ReportedMessage();
 		
+		Henkilo henkilo = getCurrentUserComponent.getCurrentUser();
+		String senderName = getPersonName(henkilo);
+		
 		reportedMessage.setSubject(emailMessage.getSubject());
 		reportedMessage.setProcess(emailMessage.getCallingProcess());
-		reportedMessage.setSenderOid(getCurrentUserOid());
+		reportedMessage.setSenderOid(henkilo.getOidHenkilo());
+        reportedMessage.setSenderName(senderName);
 		reportedMessage.setSenderEmail(emailMessage.getFrom());
+		reportedMessage.setSenderOrganizationOid("");
 		reportedMessage.setReplyToEmail(emailMessage.getReplyTo());
 		reportedMessage.setSubject(emailMessage.getSubject());
 		reportedMessage.setMessage(emailMessage.getBody());
@@ -43,8 +48,13 @@ public class ReportedMessageConverter {
 		return reportedMessage;
 	}
 	
-	private String getCurrentUserOid() {
-	    Henkilo henkilo = getCurrentUserComponent.getCurrentUser();
-	    return henkilo.getOidHenkilo();
+	private String getPersonName(Henkilo henkilo) {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append(henkilo.getSukunimi().trim());
+        sb.append(" ");
+        sb.append(henkilo.getKutsumanimi().trim());
+	    
+        return sb.toString();
 	}
 }

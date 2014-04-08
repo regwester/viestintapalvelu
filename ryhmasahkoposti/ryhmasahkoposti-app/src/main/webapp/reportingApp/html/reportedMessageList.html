@@ -25,15 +25,17 @@
 	</div>
 	
     <div class="results" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
-        <table>
+        <table class="table-striped table-hover">
             <tr>
                 <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
+                <th class="span3 clickable-header-cell" ng-click="sort('senderName')" ng-class="clickHeader('senderName')">{{'reportedmessagelist.otsikko.lahettajanNimi' | i18n}}</th>
                 <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
                 <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
                 <th class="span4">{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
             </tr>
-            <tr ng-repeat="reportedMessage in reportedMessagesDTO.reportedMessages">
-                <td><a href="#/reportMessages/view/{{reportedMessage.messageID}}">{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
+            <tr ng-repeat="reportedMessage in reportedMessagesDTO.reportedMessages" ng-click="showReportedMessage(reportedMessage)">
+                <td>{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
+                <td>{{reportedMessage.senderName}}</td>
                 <td>{{reportedMessage.callingProcess}}</td>
                 <td>{{reportedMessage.subject}}</td>
                 <td>

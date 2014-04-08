@@ -115,6 +115,7 @@ public class ReportedMessageDAOTest {
 
 		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedMessageQuery.setSearchArgument("Testi Oppilas");
         reportedRecipientQuery.setRecipientName("Testi Oppilas");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
 
@@ -128,6 +129,31 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
+    @Test
+    public void testReportedMessageFoundBySearchArgument() {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        ReportedRecipient reportedRecipient = 
+            RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
+        recipients.add(reportedRecipient);
+        reportedMessage.setReportedRecipients(recipients);
+        reportedMessageDAO.insert(reportedMessage);
+
+        ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedMessageQuery.setSearchArgument("Koekutsu");
+        reportedRecipientQuery.setRecipientName("Koekutsu");
+        reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
+
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
+        
+        List<ReportedMessage> searchedReportedMessages = 
+            reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
+
+        assertNotNull(searchedReportedMessages);
+        assertTrue(1 <= searchedReportedMessages.size());
+    }
     @Test
     public void testReportedMessageNotFoundBySearchCriteria() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();

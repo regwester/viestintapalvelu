@@ -111,6 +111,13 @@ reportingApp.controller('ReportedMessageListController',
 			}
 	    };
 	    
+	    /**
+	     * Näytetään listalta valittu raportoitava viesti
+	     */
+	    $scope.showReportedMessage = function(reportedMessage) {
+	    	$location.path("/reportMessages/view/" + reportedMessage.messageID);
+	    };
+	    
 	    // Alustetaan ensimmäinen sivu
 	    $scope.selectPage(1);
 });

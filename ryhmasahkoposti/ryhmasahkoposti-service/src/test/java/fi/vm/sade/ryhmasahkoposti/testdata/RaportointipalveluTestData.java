@@ -117,6 +117,7 @@ public class RaportointipalveluTestData {
 	    henkilo.setHetu("081181-9984");
 	    henkilo.setEtunimet("Etunimi");
 	    henkilo.setSukunimi("Sukunimi");
+	    henkilo.setKutsumanimi("Kutsumanimi");
 	    
 	    return henkilo;
 	}
@@ -145,7 +146,7 @@ public class RaportointipalveluTestData {
 	public static ReportedMessage getReportedMessage() {
 		ReportedMessage reportedMessage = new ReportedMessage();
 		
-		reportedMessage.setSubject("Kokekutsu");
+		reportedMessage.setSubject("Koekutsu");
 		reportedMessage.setProcess("Hakuprosessi");
 		reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
 		reportedMessage.setSenderEmail("testi.virkailija@sposti.fi");
