@@ -94,6 +94,22 @@ public class TemplateResource extends AsynchronousResource {
        return templateService.findById(id);
     }
 
+    @GET
+    // @Consumes("application/json")
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getByName")
+    public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {
+        
+       String templateName = request.getParameter("templateName");
+       String languageCode = request.getParameter("languageCode");
+       
+       return templateService.getTemplateByName(templateName, languageCode);
+    }
+
+    
+    
     
     @POST
     @Consumes("application/json")

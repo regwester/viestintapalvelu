@@ -7,8 +7,13 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
+
+import javax.mail.search.SearchTerm;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -195,4 +200,41 @@ public class TemplateService {
         return result;
     }
 
+
+    /**
+     * Method getTemplateByName
+     * 
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI
+     * 
+     * @param name
+     * @param language
+     * @return
+     */
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language)  {
+    	fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
+    	
+        Template template = templateDAO.findTemplateByName(name, language);
+    	searchTempl.setId(template.getId());
+    	searchTempl.setName(template.getName());
+    	searchTempl.setStyles(template.getStyles());
+    	searchTempl.setLanguage(template.getLanguage());
+    	searchTempl.setTimestamp(template.getTimestamp());
+    	searchTempl.setStoringOid(template.getStoringOid());
+    	searchTempl.setOrganizationOid(template.getOrganizationOid());
+    	searchTempl.setTemplateVersio(template.getVersionro());
+    	
+    	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacement = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();    	
+    	for (Replacement rep : template.getReplacements()) {
+    		fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
+    		repl.setId(rep.getId());
+    		repl.setName(rep.getName());;
+    		repl.setDefaultValue(rep.getDefaultValue());;
+    		repl.setMandatory(rep.isMandatory());
+    		repl.setTimestamp(rep.getTimestamp());
+    		replacement.add(repl);
+		}
+    	searchTempl.setReplacements(replacement);
+    	
+    	return searchTempl;
+    }
 }
