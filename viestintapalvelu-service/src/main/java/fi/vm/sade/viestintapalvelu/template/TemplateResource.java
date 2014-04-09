@@ -104,8 +104,14 @@ public class TemplateResource extends AsynchronousResource {
         
        String templateName = request.getParameter("templateName");
        String languageCode = request.getParameter("languageCode");
+       String content 	   = request.getParameter("content");		// If missing => content included
+       if (content==null) {
+    	   content = "YES";
+       } else {
+    	   content = content.toUpperCase();
+       }
        
-       return templateService.getTemplateByName(templateName, languageCode);
+       return templateService.getTemplateByName(templateName, languageCode, content);
     }
 
     

@@ -34,9 +34,9 @@ public class LetterService {
     private LetterBatchDAO letterBatchDAO;
 
     
-    /* ---------- */
-    /* - Strore - */
-    /* ---------- */
+    /* --------- */
+    /* - Store - */
+    /* --------- */
 	public LetterBatch storeLetterDTO(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
 		
 		// kirjeet.kirjelahetys
