@@ -52,12 +52,17 @@ public class TemplateResource extends AsynchronousResource {
         Template result = new Template();
         String[] fileNames = request.getParameter("templateFile").split(",");
         String language = request.getParameter("lang");
+        String styleFile = request.getParameter("styleFile");
+        if (styleFile != null) {
+            result.setStyles(getStyle(styleFile));
+        }
+
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         for (String file : fileNames) {
             String templateName = Utils.resolveTemplateName("/"+file+"_{LANG}.html", language);
             BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(templateName)));
             StringBuilder sb = new StringBuilder();
-    
+
             String line = buff.readLine();
             while (line != null) {
                 sb.append(line);
@@ -77,6 +82,17 @@ public class TemplateResource extends AsynchronousResource {
         return result;
     }
 
+    private String getStyle(String styleFile) throws IOException {
+        BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/"+styleFile+".css")));
+        StringBuilder sb = new StringBuilder();
+        String line = buf.readLine();
+        while (line != null) {
+            sb.append(line);
+            line = buf.readLine();
+        }
+        return sb.toString();
+    }
+    
     @GET
     // @Consumes("application/json")
     // @PreAuthorize("isAuthenticated()")

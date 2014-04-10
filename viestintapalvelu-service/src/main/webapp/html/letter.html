@@ -7,7 +7,6 @@
 	<select ng-model="template" ng-options="c.name group by c.lang for c in templates" ng-change="templateChanged()"></select>
   Currently selected: {{ {selected_template:template}  }}
 <br/>
-{{ {replacements:replacements}  }}
 <br/>
  	<textarea ui-tinymce ng-model="tinymceModel"></textarea>
 	
@@ -101,5 +100,11 @@
             </td> -->
         </tr>
     </table>
+    
+    
+    {{ {replacements:replacements}  }}
 </div>
+
+
+
     
