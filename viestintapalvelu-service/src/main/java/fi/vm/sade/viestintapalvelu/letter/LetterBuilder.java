@@ -42,6 +42,9 @@ public class LetterBuilder {
     @Autowired
     private TemplateService templateService;
 
+    @Autowired 
+    private LetterService letterService;
+    
     @Inject
     public LetterBuilder(DocumentBuilder documentBuilder) {
         this.documentBuilder = documentBuilder;
@@ -52,6 +55,9 @@ public class LetterBuilder {
             DocumentException {
 
        Template template = batch.getTemplate();
+       
+batch.setTemplateName("letter");
+batch.setLanguageCode("FI");
        
        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
     	   template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
@@ -66,6 +72,9 @@ public class LetterBuilder {
             // still null ??  
             throw new IOException("could not locate template resource.");
         }
+        
+        // Write LetterBatch to DB
+        fi.vm.sade.viestintapalvelu.model.LetterBatch lb = letterService.createLetter(batch);
         
 		Map<String, Object> templReplacements = new HashMap<String, Object>();        	
         for (Replacement templRepl : template.getReplacements()) {

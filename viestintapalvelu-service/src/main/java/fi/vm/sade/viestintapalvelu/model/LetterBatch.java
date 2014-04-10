@@ -143,11 +143,12 @@ public class LetterBatch extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "LetterBatch [templateId=" + templateId + ", timestamp="
-				+ timestamp + ", storingOid=" + storingOid
-				+ ", organizationOid=" + organizationOid
-				+ ", letterReplacements=" + letterReplacements
-				+ ", letterReceivers=" + letterReceivers + "]";
+		return "LetterBatch [templateId=" + templateId + ", templateName="
+				+ templateName + ", fetchTarget=" + fetchTarget
+				+ ", timestamp=" + timestamp + ", language=" + language
+				+ ", storingOid=" + storingOid + ", organizationOid="
+				+ organizationOid + ", letterReplacements="
+				+ letterReplacements + ", letterReceivers=" + letterReceivers
+				+ "]";
 	}
-
 }

@@ -195,7 +195,8 @@ public class LetterResource extends AsynchronousResource {
        
        return letterService.findById(id);
     }
-
+    
+    // FOR TESTING
     @POST
     @Consumes("application/json")
 //  @PreAuthorize("isAuthenticated()")
