@@ -5,9 +5,21 @@ angular.module('app').controller(
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
     $scope.select_max = 100;  // Max count
-    Template.success(function (data) {
+    Template.getNames().success(function (data) {
     	$scope.templates = data;
     });
+    $scope.replacements = [];
+    
+    $scope.templateChanged = function() {
+    	Template.getByName($scope.template).success(function (data) {
+    		$scope.replacements = data;
+    		var r = data.replacements[0];
+    		if (r.name = "$letterBodyText") {
+    			$scope.tinymceModel = r.defaultValue;
+    		}
+    	});
+    };
+    
     
     $scope.tinymceModel='<p>Onneksi olkoon,</p>'
         +'<p>'

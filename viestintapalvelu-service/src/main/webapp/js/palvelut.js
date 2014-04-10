@@ -113,8 +113,21 @@ angular.module('app').factory('Hakutoive', ['$http', function ($http) {
 
 angular.module('app').factory('Template', ['$http', '$window', function ($http, $window) {
 	var template = 'api/v1/template/';
-
-	return $http.get(template+'getNames');
+	
+	return function () {
+        function getNames() {
+		    return $http.get(template+'getNames');
+        }
+        
+        function getByName(t) {
+		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
+        }
+        
+        return {
+            getNames: getNames,
+            getByName: getByName
+        }
+	}()
 }]);
 
 
