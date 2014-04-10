@@ -1,0 +1,21 @@
+<div ng-controller='TemplateController'>
+
+    <table class="table">
+        <tr>
+            <th>Mallit tiedostonimi</th>
+            <th>Kieli</th>
+            <th></th>
+        </tr>
+        <tr>
+            <td>
+                <input class="input-xlarge" type="text" ng-model="files" placeholder="Mallit tiedostonimi">
+            </td>
+            <td>
+                <input class="input-medium" type="text" ng-model="language" placeholder="Kieli">
+            </td>
+            <td class="inline-operation">
+                <button class="btn btn-small" ng-click="import()">Import</button>
+            </td>
+        </tr>
+    </table>
+</div>
