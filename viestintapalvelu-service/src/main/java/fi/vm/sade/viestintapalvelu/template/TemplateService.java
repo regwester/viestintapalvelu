@@ -202,7 +202,10 @@ public class TemplateService {
         return result;
     }
 
-
+    
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language)  {
+       return getTemplateByName(name, language, true);
+    } 
     /**
      * Method getTemplateByName, includes content
      * 
@@ -221,7 +224,7 @@ public class TemplateService {
      *  
      * @return
      */
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, String content)  {
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content)  {
     	fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
     	
         Template template = templateDAO.findTemplateByName(name, language);
@@ -248,7 +251,7 @@ public class TemplateService {
     	searchTempl.setReplacements(replacement);
     	
     	// Content    	
-    	if ("YES".equals(content)) {    	
+    	if (content) {    	
 	    	List<fi.vm.sade.viestintapalvelu.template.TemplateContent> templateContent = new LinkedList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
 	    	for (TemplateContent co : template.getContents()) {
 	    		fi.vm.sade.viestintapalvelu.template.TemplateContent cont = new fi.vm.sade.viestintapalvelu.template.TemplateContent();

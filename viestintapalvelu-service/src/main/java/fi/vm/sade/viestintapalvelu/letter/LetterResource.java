@@ -187,15 +187,17 @@ public class LetterResource extends AsynchronousResource {
     }
 
     
-    @POST
-    @Consumes("application/json")
-//  @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")    
-    @Path("/sendStore")
-    public fi.vm.sade.viestintapalvelu.model.LetterBatch store(LetterBatch letterBatch) throws IOException, DocumentException {
-        return letterService.storeLetterDTO(letterBatch);
-   }
     
+//    // FOR TESTING
+//    @POST
+//    @Consumes("application/json")
+////  @PreAuthorize("isAuthenticated()")
+//    @Produces("application/json")    
+//    @Path("/sendStore")
+//    public fi.vm.sade.viestintapalvelu.model.LetterBatch store(LetterBatch letterBatch) throws IOException, DocumentException {
+//        return letterService.storeLetterDTO(letterBatch);
+//   }
+//    
     
     @GET
     // @Consumes("application/json")
@@ -210,5 +212,17 @@ public class LetterResource extends AsynchronousResource {
        
        return letterService.findById(id);
     }
+    
+    
+    @POST
+    @Consumes("application/json")
+//  @PreAuthorize("isAuthenticated()")
+    @Produces("application/json")    
+    @Path("/createLetter")
+    public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) throws IOException, DocumentException {
+        return letterService.createLetter(letterBatch);
+   }
+    
+    
     
 }

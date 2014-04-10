@@ -41,6 +41,12 @@ public class LetterBatch extends BaseEntity {
 	@Column(name = "template_id")
     private Long templateId;
 	
+	@Column(name = "template_name")
+    private String templateName;
+	
+	@Column(name = "hakukohde")
+    private String fetchTarget;
+	
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
@@ -69,6 +75,22 @@ public class LetterBatch extends BaseEntity {
 
 	public void setTemplateId(Long templateId) {
 		this.templateId = templateId;
+	}
+
+	public String getTemplateName() {
+		return templateName;
+	}
+
+	public void setTemplateName(String templateName) {
+		this.templateName = templateName;
+	}
+
+	public String getFetchTarget() {
+		return fetchTarget;
+	}
+
+	public void setFetchTarget(String fetchTarget) {
+		this.fetchTarget = fetchTarget;
 	}
 
 	public Date getTimestamp() {
