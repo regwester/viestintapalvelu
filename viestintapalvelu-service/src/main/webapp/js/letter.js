@@ -1,10 +1,14 @@
 angular.module('app').controller(
 		'LetterController', 
-		['$scope', 'Generator', 'Printer', function ($scope, Generator, Printer) {
+		['$scope', 'Generator', 'Printer', 'Template', function ($scope, Generator, Printer, Template) {
     $scope.letters = [];
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
     $scope.select_max = 100;  // Max count
+    Template.success(function (data) {
+    	$scope.templates = data;
+    });
+    
     $scope.tinymceModel='<p>Onneksi olkoon,</p>'
         +'<p>'
         +'    sinut on hyväksytty opiskelemaan yllämainittuun koulutukseen. Tarkistamme valintaan vaikuttaneet'
@@ -74,7 +78,7 @@ angular.module('app').controller(
 	});
 	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, 8);
+    	Printer.letterPDF($scope.letters, {"letterBodyText" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang);
     };
     
     $scope.updateGenerated = function () {

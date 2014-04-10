@@ -1,7 +1,11 @@
 <div>
 <h3>Testikäyttöliittymän testivaihe</h3>
 
+
 <div ng-controller='LetterController'>
+
+	<select ng-model="template" ng-options="c.name group by c.lang for c in templates"></select>
+  Currently selected: {{ {selected_template:template}  }}
 
  	<textarea ui-tinymce ng-model="tinymceModel"></textarea>
 	

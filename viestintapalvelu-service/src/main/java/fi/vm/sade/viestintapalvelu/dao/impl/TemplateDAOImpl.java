@@ -1,6 +1,10 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -28,5 +32,27 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
 		return templ;
 	}
     
+	public List<String> getAvailableTemplates() {
+	    
+	    EntityManager em = getEntityManager();
+	    Query q = em.createQuery("SELECT DISTINCT name, language from Template");
+        @SuppressWarnings("unchecked")
+        List<Object[]> qResult = (List<Object[]>) q.getResultList();
+        List<String> result = new ArrayList<String>();
+        for (Object[] o : qResult) {
+            StringBuilder current = new StringBuilder();
+            for (Object ob : o) {
+                if (ob != null) {
+                    if (current.length() > 0) {
+                        current.append("::");
+                    }
+                    current.append(ob.toString());
+                }
+            }
+            result.add(current.toString());
+            
+        }
+	    return result;
+	}
 	
 }

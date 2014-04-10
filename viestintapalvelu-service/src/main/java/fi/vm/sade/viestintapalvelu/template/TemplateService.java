@@ -11,10 +11,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import javax.mail.search.SearchTerm;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -76,6 +72,10 @@ public class TemplateService {
         return result;
     }
 
+    public List<String> getTemplateNamesList() {
+        return templateDAO.getAvailableTemplates();
+    }
+    
     public void storeTemplate(Template template) {
         templateDAO.insert(template);
     }

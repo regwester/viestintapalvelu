@@ -33,18 +33,6 @@ public class LetterService {
     @Autowired
     private LetterBatchDAO letterBatchDAO;
 
-    
-    
-    /* --------- */
-    /* - Store - */
-    /* --------- */
-//	public LetterBatch storeLetterDTO(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
-//    
-//    
-//    
-//		return new LetterBatch();
-//	}
-    
     /* ---------------------- */
     /* - Create LetterBatch - */
     /* ---------------------- */
@@ -70,7 +58,6 @@ public class LetterService {
 		return storeLetterBatch(letterB);
 	}
 
-
 	/*
 	 *  kirjeet.lahetyskorvauskentat
 	 */
@@ -87,9 +74,7 @@ public class LetterService {
 			repl.setDefaultValue(replVals[i].toString());
 //			repl.setMandatory();
 //TODO: tähän tietyt kentät Mandatory true esim. title body ...			
-			
-			
-			
+
 			repl.setTimestamp(new Date());
 			repl.setLetterBatch(letterB);	
 			replacements.add(repl);
@@ -155,7 +140,6 @@ public class LetterService {
 		return letterBatchDAO.insert(letterB);
 	}
 
-	
     /* ------------ */
     /* - findById - */
     /* ------------ */
@@ -214,8 +198,6 @@ public class LetterService {
         	
         	letters.add(letter);
         }
-		
-		
 		return letters;
 	}
 
