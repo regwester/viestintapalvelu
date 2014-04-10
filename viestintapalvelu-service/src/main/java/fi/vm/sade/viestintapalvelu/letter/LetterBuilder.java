@@ -77,7 +77,6 @@ public class LetterBuilder {
             letter.getTemplateReplacements();
             
             if (template != null) {
-                System.out.println("template: " + template);
                 List<TemplateContent> contents = template.getContents();
                 Collections.sort(contents);
                 for (TemplateContent tc : contents) {
@@ -136,11 +135,6 @@ public class LetterBuilder {
                 new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         data.put("osoite", decorator);
         data.put("tyylit", styles);
-        
-        for (String key: data.keySet()) {
-            System.out.println(key +"::"+data.get(key));
-        }
-        
         return data;
     }
 
