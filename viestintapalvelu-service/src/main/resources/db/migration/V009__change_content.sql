@@ -1,0 +1,1 @@
+ALTER TABLE kirjeet.kirjelahetys ALTER COLUMN template_id DROP NOT NULL;
