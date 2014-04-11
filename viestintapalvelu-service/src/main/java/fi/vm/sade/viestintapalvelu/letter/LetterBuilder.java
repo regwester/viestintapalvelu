@@ -56,8 +56,8 @@ public class LetterBuilder {
 
        Template template = batch.getTemplate();
        
-batch.setTemplateName("letter");
-batch.setLanguageCode("FI");
+//batch.setTemplateName("letter");
+//batch.setLanguageCode("FI");
        
        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
     	   template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
