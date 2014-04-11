@@ -58,6 +58,7 @@ public class TemplateResource extends AsynchronousResource {
         }
 
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
+        int order = 1;
         for (String file : fileNames) {
             String templateName = Utils.resolveTemplateName("/"+file+"_{LANG}.html", language);
             BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(templateName)));
@@ -71,7 +72,9 @@ public class TemplateResource extends AsynchronousResource {
             TemplateContent content = new TemplateContent();
             content.setName(templateName);
             content.setContent(sb.toString());
+            content.setOrder(order);
             contents.add(content);
+            order++;
         }
         result.setContents(contents);
         Replacement replacement = new Replacement();
