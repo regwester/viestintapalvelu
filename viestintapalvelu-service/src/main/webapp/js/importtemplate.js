@@ -19,10 +19,7 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
 			
 		// create url
 		// add template
-    	for (var int = 0; int < $scope.filenames.length; int++) {
-    		var filename = $scope.filenames[int];
-    		url += "templateFile=" + filename + "&";
-    	}
+		url += "templateFile=" + $scope.filenames + "&";
     	
     	// add style
     	if ($scope.styleFile) {

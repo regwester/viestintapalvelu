@@ -10,6 +10,7 @@
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
             <property name="hibernate.jdbc.batch_size" value="20" />
+            <property name="hibernate.default_schema" value="kirjeet" />
         </properties>
     </persistence-unit>
 </persistence>
