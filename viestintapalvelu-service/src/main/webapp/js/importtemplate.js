@@ -1,6 +1,7 @@
 angular.module('app').controller('TemplateController', ['$scope', '$http', '$window', function ($scope, $http, $window) {
     var templateUrl = "api/v1/template/";
 
+    // get template  
 	$scope.import = function () {
 		var url = templateUrl + "get?";
 		
@@ -17,10 +18,18 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
 			$scope.language = "FI";
 			
 		// create url
+		// add template
     	for (var int = 0; int < $scope.filenames.length; int++) {
     		var filename = $scope.filenames[int];
     		url += "templateFile=" + filename + "&";
     	}
+    	
+    	// add style
+    	if ($scope.styleFile) {
+    		url += "styleFile=" + $scope.styleFile + "&"; 
+    	}
+    	
+    	// add language
     	url += "lang=" + $scope.language;
     	
     	// get template
@@ -32,25 +41,37 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
       $http.get(url).
      	success(function (data) {
         	console.dir(data);
-        	
-        	// store template
-        	var url = templateUrl + "store";
-        	storeTemplate(url, data);
-     	}).
+        	$scope.templateData=data;
+        	$scope.showTemplateData=true;
+      	}).
      	error(function (data) {
-     		// This is test-ui so we use a popup for failure-indication against guidelines (for production code)
      		$window.alert("Import epäonnistui");
      	})
 	}    
     
+	// store function
+	$scope.store = function () {
+		var url = templateUrl + "store";
+		
+		console.dir($scope.templateData);
+		
+    	// store template
+    	storeTemplate(url, $scope.templateData);
+    }
+	
 	// store template
 	function storeTemplate(url, params) {
 	      $http.post(url, params).
 	     	success(function (data) {
 	        	console.dir(data);
+	     		$window.alert("Tallenna on onnistunut");
+	     		$scope.templateData=null;
+	     	  	$scope.showTemplateData=false;
+	     	  	$scope.files=null;
+	     	  	$scope.styleFile=null;
+	     	  	$scope.language=null;
 	     	}).
 	     	error(function (data) {
-	     		// This is test-ui so we use a popup for failure-indication against guidelines (for production code)
 	     		$window.alert("Tallentamiseen epäonnistui");
 	     	})
 		}    
