@@ -61,6 +61,7 @@ public class LetterBuilder {
        
        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
     	   template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
+    	   batch.setTemplateId(template.getId());	// Search was by name ==> update also to template Id
        }
         
         if (template == null && batch.getTemplateId() != null) {
