@@ -14,7 +14,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource;
  *
  */
 @Component
-public class GetPersonComponent {
+public class PersonComponent {
     @Resource
     private HenkiloResource henkiloResourceClient;
     

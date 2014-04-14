@@ -8,7 +8,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>OPH - Viestintäpalvelu</title>
+    <title>OPH - Viestintï¿½palvelu</title>
 </head>
 
 <body>
@@ -71,6 +71,7 @@
 			$scope.email = 
 					{callingProcess: '',
 					from: '',
+                    organizationOid: '',
 					replyTo: '',
 					subject: '',
 					body: '',
@@ -82,10 +83,11 @@
 			
 			// Copy the received email values to the empty email 
 			$scope.email.callingProcess	= $scope.emaildata.email.callingProcess;
-			$scope.email.from			= $scope.emaildata.email.from;
-			$scope.email.replyTo		= $scope.emaildata.email.replyTo;
-			$scope.email.subject		= $scope.emaildata.email.subject;	
-			$scope.email.body			= $scope.emaildata.email.body;
+			$scope.email.from = $scope.emaildata.email.from;
+            $scope.email.organizationOid = $scope.emaildata.email.organizationOid;
+			$scope.email.replyTo = $scope.emaildata.email.replyTo;
+			$scope.email.subject = $scope.emaildata.email.subject;	
+			$scope.email.body = $scope.emaildata.email.body;
 			
 			// Copy to emaildata.email the original sended values WITH the empty attachInfo[]
 			$scope.emaildata.email = $scope.email; 
@@ -101,7 +103,7 @@
 		    			$location.path("/status");                        
 		            },
 		            function(error) {
-		                alert("Virhe: Ei valtuuksia lähettää. \nSisäänkirjautuminen puuttuu/puutteellinen.");
+		                alert("Virhe: Ei valtuuksia lï¿½hettï¿½ï¿½. \nSisï¿½ï¿½nkirjautuminen puuttuu/puutteellinen.");
 		            },
 		            function(update) {
 		                alert("Notification " + update);

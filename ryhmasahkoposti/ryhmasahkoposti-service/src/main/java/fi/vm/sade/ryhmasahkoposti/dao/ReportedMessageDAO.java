@@ -15,13 +15,13 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
  */
 public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
     /**
-     * Hakee halutun määrän raportoitavia viestejä halutussa järjestyksessä
+     * Hakee halutun määrän käyttäjän organisaation raportoitavia viestejä halutussa järjestyksessä
      *  
-     * @param query Hakuparametrit
+     * @param organizationOid Organisaation oid-tunnus
      * @param pagingAndSorting Palautettavien tietojen sivutus ja järjestystiedot
      * @return Lista raportoitavia viestejä
      */
-    public List<ReportedMessage> findAll(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting);
+    public List<ReportedMessage> findByOrganizationOid(String organizationOid, PagingAndSortingDTO pagingAndSorting);
 	
     /**
 	 * Hakee hakuparametrien mukaiset raportoitavat viestit

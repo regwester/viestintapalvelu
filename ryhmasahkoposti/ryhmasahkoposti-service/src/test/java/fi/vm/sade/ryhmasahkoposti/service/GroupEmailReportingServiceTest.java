@@ -50,9 +50,9 @@ import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
@@ -78,8 +78,6 @@ public class GroupEmailReportingServiceTest {
 	@Mock
 	private ReportedMessageAttachmentService mockedReportedMessageAttachmentService;
 	@Mock
-	private GetCurrentUserComponent mockedGetCurrentUserComponent;
-	@Mock
 	private ReportedMessageConverter mockedReportedMessageConverter;
 	@Mock
 	private ReportedRecipientConverter mockedReportedRecipientConverter;
@@ -92,7 +90,9 @@ public class GroupEmailReportingServiceTest {
 	@Mock
 	private ReportedMessageDTOConverter mockedReportedMessageDTOConverter;
 	@Mock
-	private ReportedMessageQueryDTOConverter mockedReportedMessageQueryDTOConverter;
+	private CurrentUserComponent mockedCurrentUserComponent;
+	@Mock
+	private OrganizationComponent mockedOrganizationComponent;
 	
 	@Before
 	public void setup() {	    
@@ -100,7 +100,7 @@ public class GroupEmailReportingServiceTest {
 		    mockedReportedRecipientService,	mockedReportedAttachmentService, mockedReportedMessageAttachmentService, 
 		    mockedReportedMessageConverter, mockedReportedRecipientConverter, mockedReportedAttachmentConverter, 
 		    mockedEmailMessageDTOConverter, mockedEmailRecipientDTOConverter, mockedReportedMessageDTOConverter, 
-		    mockedReportedMessageQueryDTOConverter);	
+		    mockedCurrentUserComponent, mockedOrganizationComponent);	
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -324,9 +324,7 @@ public class GroupEmailReportingServiceTest {
 	
     @SuppressWarnings("unchecked")
     @Test
-	public void testGetReportedMessages() {
-        when(mockedReportedMessageQueryDTOConverter.convert()).thenReturn(new ReportedMessageQueryDTO());
-        
+	public void testGetReportedMessagesByOrganizationOid() {       
 	    PowerMockito.mockStatic(MessageUtil.class);
         PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", 
             new Object[] {new Long(2)})).thenReturn("Lahetyksiä epäonnistui");
@@ -347,7 +345,7 @@ public class GroupEmailReportingServiceTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 		
-		when(mockedReportedMessageService.getReportedMessages(any(ReportedMessageQueryDTO.class), 
+		when(mockedReportedMessageService.getReportedMessages(any(String.class), 
 		    any(PagingAndSortingDTO.class))).thenReturn(mockedReportedMessages);
 		
 		SendingStatusDTO sendingStatus = RaportointipalveluTestData.getSendingStatusDTO();
@@ -357,7 +355,8 @@ public class GroupEmailReportingServiceTest {
 		mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
 		when(mockedReportedMessageDTOConverter.convert(any(List.class), any(Map.class))).thenReturn(mockedReportedMessageDTOs);
 
-		ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessages(pagingAndSorting);
+		ReportedMessagesDTO reportedMessagesDTO = 
+		    groupEmailReportingService.getReportedMessagesByOrganizationOid("1.2.246.562.10.00000000001", pagingAndSorting);
 		
 		assertNotNull(reportedMessagesDTO);
 		assertTrue(reportedMessagesDTO.getReportedMessages().size() == 1);
@@ -368,6 +367,8 @@ public class GroupEmailReportingServiceTest {
 	@SuppressWarnings("unchecked")
     @Test
 	public void testGetReportedMessagesBySearchArgument() {
+	    ReportedMessageQueryDTO query = RaportointipalveluTestData.getReportedMessageQueryDTO();
+	    
         PowerMockito.mockStatic(MessageUtil.class);
         when(MessageUtil.getMessage(any(String.class))).thenReturn("lahetys kesken");
 
@@ -398,7 +399,7 @@ public class GroupEmailReportingServiceTest {
         when(mockedReportedMessageDTOConverter.convert(any(List.class), any(Map.class))).thenReturn(mockedReportedMessageDTOs);
 
 		ReportedMessagesDTO reportedMessagesDTO = 
-			groupEmailReportingService.getReportedMessages("testi.vastaanottaja@sposti.fi", pagingAndSorting);
+			groupEmailReportingService.getReportedMessages(query, pagingAndSorting);
 		
 		assertNotNull(reportedMessagesDTO);
 		assertTrue(reportedMessagesDTO.getReportedMessages().size() == 1);

@@ -26,19 +26,15 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, Long> implements ReportedMessageDAO {
     
 	@Override
-    public List<ReportedMessage> findAll(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
+    public List<ReportedMessage> findByOrganizationOid(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
 	    QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
 	    	    	    
 	    JPAQuery findAllReportedMessagesQuery = null;
 	    BooleanExpression whereExpression = null;
 	    OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 	    
-	    if (query.getSenderOids() != null && query.getSenderOids().size() > 0) {
-            whereExpression = reportedMessage.senderOid.in(query.getSenderOids());
-            findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
-        } else {
-            findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy);
-        }    
+        whereExpression = reportedMessage.senderOrganizationOid.in(organizationOid);
+        findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
 	    
 	    if (pagingAndSorting.getNumberOfRows() != 0) {
     	    findAllReportedMessagesQuery.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
@@ -125,8 +121,8 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         QReportedMessage reportedMessage) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
     	
-        if (query.getSenderOids() != null && query.getSenderOids().size() > 0) {
-            booleanBuilder.and(reportedMessage.senderOid.in(query.getSenderOids()));
+        if (query.getOrganizationOid() != null) {
+            booleanBuilder.and(reportedMessage.senderOrganizationOid.in(query.getOrganizationOid()));
         }		
     	
     	if (reportedRecipientQuery.getRecipientOid() != null) {

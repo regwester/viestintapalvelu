@@ -16,7 +16,7 @@ import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -27,7 +27,7 @@ public class ReportedMessageConverterTest {
     private ReportedMessageConverter reportedMessageConverter;
     
     @Mock
-    GetCurrentUserComponent mockedCurrentUserComponent;
+    CurrentUserComponent mockedCurrentUserComponent;
     
     @Before
     public void setup() {

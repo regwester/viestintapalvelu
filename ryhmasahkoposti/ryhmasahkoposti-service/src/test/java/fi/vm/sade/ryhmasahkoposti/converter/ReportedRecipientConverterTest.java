@@ -16,8 +16,8 @@ import org.springframework.test.context.ContextConfiguration;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -27,22 +27,22 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 public class ReportedRecipientConverterTest {
     private ReportedRecipientConverter reportedRecipientConverter;
     @Mock
-    GetPersonComponent getPersonComponent;
+    PersonComponent personComponent;
     @Mock
-    GetOrganizationComponent getOrganizationComponent;
+    OrganizationComponent organizationComponent;
 
     @Before
     public void setup() {
-        this.reportedRecipientConverter = new ReportedRecipientConverter(getPersonComponent, getOrganizationComponent);
+        this.reportedRecipientConverter = new ReportedRecipientConverter(personComponent, organizationComponent);
     }
     
     @Test
 	public void testReportedRecipientIsPerson() {
         Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
-	    when(getPersonComponent.getPerson(any(String.class))).thenReturn(henkilo);
+	    when(personComponent.getPerson(any(String.class))).thenReturn(henkilo);
 	    
 	    OrganisaatioRDTO organisaatio = RaportointipalveluTestData.getOrganisaatioRDTO();
-	    when(getOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);	    
+	    when(organizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);	    
 	    
 		EmailRecipient emailRecipient = RaportointipalveluTestData.getEmailRecipient();
 		emailRecipient.setEmail("testMuodostaRaportoitavaVastaanottaja@sposti.fi");

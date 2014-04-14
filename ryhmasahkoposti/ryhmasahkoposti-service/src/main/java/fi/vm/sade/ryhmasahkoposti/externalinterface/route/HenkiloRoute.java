@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
 
 /**
  * Luokka Camel- ja CXF-reitin luomiseksi henkilöpalveluun henkilötietojen hakemiseksi
@@ -18,16 +18,16 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent
 public class HenkiloRoute extends SpringRouteBuilder {
 	private static Logger LOGGER = LoggerFactory.getLogger(HenkiloRoute.class);
     private static String ROUTE_GET_PERSON = "direct:getPerson";
-    private GetPersonComponent getPersonComponent;
+    private PersonComponent personComponent;
     
     /**
      * Muodostin henkilöhakukomponentti asettamista varten
      * 
-     * @param getPersonComponent Hae henkilön tiedot komponentti
+     * @param personComponent Hae henkilön tiedot komponentti
      */
     @Autowired
-    public HenkiloRoute(GetPersonComponent getPersonComponent) {
-        this.getPersonComponent = getPersonComponent;
+    public HenkiloRoute(PersonComponent personComponent) {
+        this.personComponent = personComponent;
     }
     
 	/**
@@ -37,6 +37,6 @@ public class HenkiloRoute extends SpringRouteBuilder {
 	@Override
 	public void configure() throws Exception {
 	    LOGGER.info("Configure route to HenkiloResource");
-	    from(ROUTE_GET_PERSON).bean(getPersonComponent);
+	    from(ROUTE_GET_PERSON).bean(personComponent);
 	}
 }

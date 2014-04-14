@@ -21,6 +21,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
@@ -182,6 +183,15 @@ public class RaportointipalveluTestData {
 	    reportedMessagesDTO.setReportedMessages(reportedMessageDTOs);
 	    
 	    return reportedMessagesDTO;
+	}
+
+	public static ReportedMessageQueryDTO getReportedMessageQueryDTO() {
+	    ReportedMessageQueryDTO query = new ReportedMessageQueryDTO();
+	    
+	    query.setOrganizationOid("1.2.246.562.10.00000000001");
+	    query.setSearchArgument("testi.vastaanottaja@sposti.fi");
+	    
+	    return query;
 	}
 	
 	public static ReportedMessageAttachment getReportedMessageAttachment() {		

@@ -11,22 +11,21 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedRecipientConverter {
-    private GetPersonComponent getPersonComponent;
-    private GetOrganizationComponent getOrganizationComponent;
+    private PersonComponent personComponent;
+    private OrganizationComponent organizationComponent;
     
     @Autowired
-    public ReportedRecipientConverter(GetPersonComponent getPersonComponent, 
-        GetOrganizationComponent getOrganizationComponent) {
-        this.getPersonComponent = getPersonComponent;
-        this.getOrganizationComponent = getOrganizationComponent;
+    public ReportedRecipientConverter(PersonComponent personComponent, OrganizationComponent organizationComponent) {
+        this.personComponent = personComponent;
+        this.organizationComponent = organizationComponent;
     }
 
 	public ReportedRecipient convert(EmailRecipient emailRecipient) {
@@ -71,7 +70,7 @@ public class ReportedRecipientConverter {
         }
 	    
         if (OidValidator.isHenkiloOID(reportedRecipient.getRecipientOid())) {
-            Henkilo henkilo = getPersonComponent.getPerson(reportedRecipient.getRecipientOid());
+            Henkilo henkilo = personComponent.getPerson(reportedRecipient.getRecipientOid());
             reportedRecipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
             reportedRecipient.setSocialSecurityID(henkilo.getHetu());
             
@@ -79,22 +78,9 @@ public class ReportedRecipientConverter {
         } 
         
         if (OidValidator.isOrganisaatioOID(reportedRecipient.getRecipientOid())) {
-            OrganisaatioRDTO organisaatio = getOrganizationComponent.getOrganization(reportedRecipient.getRecipientOid());
-            String nameOfOrganisation = getNameOfOrganisation(organisaatio);
+            OrganisaatioRDTO organisaatio = organizationComponent.getOrganization(reportedRecipient.getRecipientOid());
+            String nameOfOrganisation = organizationComponent.getNameOfOrganisation(organisaatio);
             reportedRecipient.setSearchName(nameOfOrganisation); 
         }
-	}
-	
-	private String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-	    String[] language = {"fi", "sv", "en"};
-	    
-	    for (int i = 0; language.length > i; i++) {
-	        String nameOfOrganisation = organisaatio.getNimi().get(language[i]);
-	        if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
-	            return nameOfOrganisation;
-	        }
-	    }
-	    
-	    return "";
 	}
 }

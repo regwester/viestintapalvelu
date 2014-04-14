@@ -1,13 +1,14 @@
 'use strict';
 
 reportingApp.controller('ReportedMessageListController',
-	function ReportedMessageListController($scope, $location, GetReportedMessages, GetReportedMessagesBySearchArgument, 
-		SharedVariables) {
+	function ReportedMessageListController($scope, $location, GetReportedMessagesByOrganization,
+		GetReportedMessagesBySearchArgument, SharedVariables) {
 		$scope.pageSize = 10;
 		$scope.currentPage = 1;
 		$scope.sortedBy = '';
 		$scope.order = 'asc';
 		$scope.descending = false;
+		$scope.form = {organization: '', searchArgument: ''};
 
 		/**
 		 * Haetaan raportoitavat viestit
@@ -15,12 +16,14 @@ reportingApp.controller('ReportedMessageListController',
 		$scope.fetch = function() {
 			// Hakutekijää ei ole annettu. Listalle haetut sanomat.
 			if (SharedVariables.getSearchArgumentValue() == '') {
-			    $scope.reportedMessagesDTO = GetReportedMessages.get({nbrofrows: $scope.pageSize, page: $scope.currentPage});
-			// Hakutekijä annettu. Poimitaan hakutekijä kontrolloreiden yhteisistä tiedoista ja suoritetaan haku.
+			    $scope.reportedMessagesDTO = GetReportedMessagesByOrganization.get({
+			    	orgOid: $scope.form.organization.oid, nbrofrows: $scope.pageSize, page: $scope.currentPage});
+			// Hakutekijä annettu. Poimitaan hakutekijä kontrollereiden yhteisistä tiedoista ja suoritetaan haku.
 			} else {
-				$scope.searchArgument = SharedVariables.getSearchArgumentValue();
+				$scope.form.organization = SharedVariables.getSelectedOrganizationValue();
+				$scope.form.searchArgument = SharedVariables.getSearchArgumentValue();
 		    	$scope.reportedMessagesDTO = GetReportedMessagesBySearchArgument.get(
-		    		{searchArgument: SharedVariables.getSearchArgumentValue(), 
+		    		{orgOid: $scope.form.organization.oid, searchArgument: $scope.form.searchArgument, 
 		    		nbrofrows: $scope.pageSize,	page: $scope.currentPage});
 			}
 		};
@@ -31,25 +34,28 @@ reportingApp.controller('ReportedMessageListController',
 	    $scope.fetchWithSorting = function() {
 			// Hakutekijää ei ole annettu. Haetaan kaikki lajiteltuna.
 			if (SharedVariables.getSearchArgumentValue() == '') {
-			    $scope.reportedMessagesDTO = GetReportedMessages.get({nbrofrows: $scope.pageSize, page: $scope.currentPage, 
-			    	sortedby: $scope.sortedBy, order: $scope.order});
+			    $scope.reportedMessagesDTO = GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid, 
+			    	nbrofrows: $scope.pageSize, page: $scope.currentPage, sortedby: $scope.sortedBy, order: $scope.order});
 			// Hakutekijä annettu. Poimitaan hakutekijä kontrolloreiden yhteisistä tiedoista ja suoritetaan haku.
 			} else {
-				$scope.searchArgument = SharedVariables.getSearchArgumentValue();
+				$scope.form.organization = SharedVariables.getSelectedOrganizationValue();
+				$scope.form.searchArgument = SharedVariables.getSearchArgumentValue();
 		    	$scope.reportedMessagesDTO = GetReportedMessagesBySearchArgument.get(
-		    		{searchArgument: SharedVariables.getSearchArgumentValue(), 
-		    		sortedby: $scope.sortedBy, order: $scope.order});
+		    		{orgOid: $scope.form.organization.oid, searchArgument: $scope.form.searchArgument, 
+		    		nbrofrows: $scope.pageSize, page: $scope.currentPage, sortedby: $scope.sortedBy, order: $scope.order});
 			}	    	
 	    };
 	    
 		/**
 		 * Hae-painiketta painettu
 		 */
-	    $scope.search = function(searchArgument) {
-	    	// Viedään hakutekijä yhteisiin tietoihin ja suoritetaan haku
-	    	SharedVariables.setSearchArgumentValue(searchArgument);
-	    	$scope.reportedMessagesDTO = GetReportedMessagesBySearchArgument.get({searchArgument: searchArgument, 
-	    		nbrofrows: $scope.pageSize,	page: $scope.currentPage});
+	    $scope.search = function() {
+	    	// Viedään tiedot yhteisiin tietoihin 
+	    	SharedVariables.setSearchArgumentValue($scope.form.searchArgument);
+	    	SharedVariables.setSelectedOrganizationValue($scope.form.organization);
+	    	// Suoritetaan haku
+	    	$scope.reportedMessagesDTO = GetReportedMessagesBySearchArgument.get({orgOid: $scope.form.organization.oid,
+	    		searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pageSize,	page: $scope.currentPage});
 	    	// Näytettäväksi sivuksi ensimmäinen sivu.
 	    	$scope.currentPage = 1;
 	    };
@@ -110,6 +116,19 @@ reportingApp.controller('ReportedMessageListController',
 				$scope.fetch();
 			}
 	    };
+
+	    /**
+	     * Organisaatio valittu vetovalikosta
+	     */
+	    $scope.selectOrganization = function() {
+	    	// Viedään organisaatio yhteisiin tietoihin 
+	    	SharedVariables.setSelectedOrganizationValue($scope.form.organization);
+	    	// Suoritetaan haku
+	    	$scope.reportedMessagesDTO = GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid,
+	    		nbrofrows: $scope.pageSize, page: $scope.currentPage});
+	    	// Näytettäväksi sivuksi ensimmäinen sivu.
+	    	$scope.currentPage = 1;
+	    };	    
 	    
 	    /**
 	     * Näytetään listalta valittu raportoitava viesti

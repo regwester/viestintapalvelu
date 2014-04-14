@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -15,10 +16,13 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
@@ -29,8 +33,9 @@ import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
@@ -54,7 +59,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	private EmailMessageDTOConverter emailMessageDTOConverter;
 	private EmailRecipientDTOConverter emailRecipientDTOConverter;
 	private ReportedMessageDTOConverter reportedMessageDTOConverter;
-	private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
+	private CurrentUserComponent currentUserComponent;
+	private OrganizationComponent organizationComponent;
 
 	@Autowired
 	public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
@@ -63,7 +69,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
 		ReportedAttachmentConverter reportedAttachmentConverter, EmailMessageDTOConverter emailMessageDTOConverter, 
 		EmailRecipientDTOConverter emailRecipientDTOConverter, ReportedMessageDTOConverter reportedMessageDTOConverter, 
-		ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter) {
+		CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent) {
 		this.reportedMessageService = reportedMessageService;
 		this.reportedRecipientService = reportedRecipientService;
 		this.reportedAttachmentService = reportedAttachmentService;
@@ -74,7 +80,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		this.emailMessageDTOConverter = emailMessageDTOConverter;
 		this.emailRecipientDTOConverter = emailRecipientDTOConverter;
 		this.reportedMessageDTOConverter = reportedMessageDTOConverter;
-		this.reportedMessageQueryDTOConverter = reportedMessageQueryDTOConverter;
+		this.currentUserComponent = currentUserComponent;
+		this.organizationComponent = organizationComponent;
 	}
 	
 	@Override
@@ -108,7 +115,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		return emailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
 	}
 
-	@Override
+    @Override
 	public ReportedMessageDTO getReportedMessage(Long messageID) {
         LOGGER.info("getReportedMessage(" + messageID + ") called");
 	    
@@ -170,13 +177,13 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     }
     
 	@Override
-	public ReportedMessagesDTO getReportedMessages(PagingAndSortingDTO pagingAndSorting) {
-        LOGGER.info("getReportedMessages() called");
+	public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, 
+	    PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessagesByOrganizationOid(String, PagingAndSortingDTO) called");
 
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
-	    ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert();
-		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
+		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid, pagingAndSorting);
 		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
 		
 		Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
@@ -195,12 +202,11 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 
 	@Override
-	public ReportedMessagesDTO getReportedMessages(String searchArgument, PagingAndSortingDTO pagingAndSorting) {
-        LOGGER.info("getReportedMessages(" + searchArgument + ") called");
-
+	public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO query, 
+	    PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) called");
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 	       
-		ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(searchArgument);
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
 		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
 		
@@ -241,6 +247,27 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 
 	@Override
+	public List<OrganizationDTO> getUserOrganizations() {
+        List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
+        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        
+        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+            OrganizationDTO organization = new OrganizationDTO();
+            
+            OrganisaatioRDTO organisaatioRDTO = 
+                organizationComponent.getOrganization(organisaatioHenkilo.getOrganisaatioOid());
+            String organizationName = organizationComponent.getNameOfOrganisation(organisaatioRDTO);
+            
+            organization.setOid(organisaatioRDTO.getOid());
+            organization.setName(organizationName);
+            
+            organizations.add(organization);            
+        }
+        
+        return organizations;
+    }
+
+    @Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
         LOGGER.info("recipientHandledFailure(" + recipient.getRecipientID() + ") called");
@@ -253,6 +280,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 		reportedRecipientService.updateReportedRecipient(reportedRecipient);
 		return true;
 	}
+    
 	@Override
 	@Transactional(propagation=Propagation.REQUIRED)
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {

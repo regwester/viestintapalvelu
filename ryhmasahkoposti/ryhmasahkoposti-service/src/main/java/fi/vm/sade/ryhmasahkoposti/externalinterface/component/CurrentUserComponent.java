@@ -1,10 +1,13 @@
 package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
+import java.util.List;
+
 import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource;
 
 /**
@@ -14,7 +17,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource;
  *
  */
 @Component
-public class GetCurrentUserComponent {
+public class CurrentUserComponent {
     @Resource
     private OmattiedotResource omattiedotResourceClient;
     
@@ -25,5 +28,14 @@ public class GetCurrentUserComponent {
      */
     public Henkilo getCurrentUser() {
         return omattiedotResourceClient.currentHenkiloTiedot();
+    }
+
+    /**
+     * Hakee kirjaantuneen käyttäjän organisaattioiden tiedot
+     * 
+     * @return Lista henkilön organisaattiotietoja
+     */
+    public List<OrganisaatioHenkilo> getCurrentUserOrganizations() {
+        return omattiedotResourceClient.currentHenkiloOrganisaatioHenkiloTiedot();
     }
 }
