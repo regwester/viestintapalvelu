@@ -57,7 +57,6 @@ public class LetterReceivers extends BaseEntity {
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
      
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-//    private Set<LetterReceiverAddress> letterReceiverAddress;
     private LetterReceiverAddress letterReceiverAddress;
   
     public LetterBatch getLetterBatch() {
@@ -85,15 +84,6 @@ public class LetterReceivers extends BaseEntity {
 		this.letterReceiverReplacement = letterReceiverReplacement;
 	}
 		
-
-//	public Set<LetterReceiverAddress> getLetterReceiverAddress() {
-//		return letterReceiverAddress;
-//	}
-//
-//	public void setLetterReceiverAddress(
-//			Set<LetterReceiverAddress> letterReceiverAddress) {
-//		this.letterReceiverAddress = letterReceiverAddress;
-//	}
 	public LetterReceiverAddress getLetterReceiverAddress() {
 		return letterReceiverAddress;
 	}
@@ -106,6 +96,8 @@ public class LetterReceivers extends BaseEntity {
 	public String toString() {
 		return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp="
 				+ timestamp + ", letterReceiverReplacement="
-				+ letterReceiverReplacement + "]";
-	}    
+				+ letterReceiverReplacement + ", letterReceiverAddress="
+				+ letterReceiverAddress + "]";
+	}
+
 }

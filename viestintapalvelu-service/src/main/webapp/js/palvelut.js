@@ -111,6 +111,26 @@ angular.module('app').factory('Hakutoive', ['$http', function ($http) {
     return $http.get('generator/hakutoive.json')
 }])
 
+angular.module('app').factory('Template', ['$http', '$window', function ($http, $window) {
+	var template = 'api/v1/template/';
+	
+	return function () {
+        function getNames() {
+		    return $http.get(template+'getNames');
+        }
+        
+        function getByName(t) {
+		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
+        }
+        
+        return {
+            getNames: getNames,
+            getByName: getByName
+        }
+	}()
+}]);
+
+
 angular.module('app').factory('Printer', ['$http', '$window', function ($http, $window) {
     var addressLabel = 'api/v1/addresslabel/';
     var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
@@ -143,9 +163,9 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
-        function letterPDF(letters, replacements, templateId) {
+        function letterPDF(letters, replacements, tName, tLang) {
             print(letter + 'pdf', {
-                "letters": letters, "templateReplacements" : replacements, "templateId" : templateId});
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang});
         }
         
         function ipostZIP(letters) {

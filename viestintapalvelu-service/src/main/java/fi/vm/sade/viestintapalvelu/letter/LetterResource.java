@@ -40,14 +40,14 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.template.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Component
 @Path(Urls.LETTER_PATH)
+
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
 // properly
+
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
 public class LetterResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
@@ -69,11 +69,8 @@ public class LetterResource extends AsynchronousResource {
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
 
     @GET
-    // @Consumes("application/json")
     @Produces("text/plain")
     @Path("/isAlive")
-    // @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-    // @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public String isAlive() {
         return "alive";
     }
@@ -186,19 +183,7 @@ public class LetterResource extends AsynchronousResource {
         return createResponse(request, documentId);
     }
 
-    
-    @POST
-    @Consumes("application/json")
-//  @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")    
-    @Path("/sendStore")
-    public fi.vm.sade.viestintapalvelu.model.LetterBatch store(LetterBatch letterBatch) throws IOException, DocumentException {
-        return letterService.storeLetterDTO(letterBatch);
-   }
-    
-    
     @GET
-    // @Consumes("application/json")
     // @PreAuthorize("isAuthenticated()")
     @Transactional
     @Produces("application/json")
@@ -211,4 +196,13 @@ public class LetterResource extends AsynchronousResource {
        return letterService.findById(id);
     }
     
+    // FOR TESTING
+    @POST
+    @Consumes("application/json")
+//  @PreAuthorize("isAuthenticated()")
+    @Produces("application/json")    
+    @Path("/createLetter")
+    public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) throws IOException, DocumentException {
+        return letterService.createLetter(letterBatch);
+   }
 }

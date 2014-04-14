@@ -34,6 +34,7 @@ public class LetterBatch {
 
     private String organizationOid;
     
+    private String fetchTarget;
     
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -89,8 +90,7 @@ public class LetterBatch {
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
-    
-   
+       
 	public String getStoringOid() {
 		return storingOid;
 	}
@@ -106,6 +106,14 @@ public class LetterBatch {
 	public void setOrganizationOid(String organizationOid) {
 		this.organizationOid = organizationOid;
 	}
+	
+	public String getFetchTarget() {
+		return fetchTarget;
+	}
+
+	public void setFetchTarget(String fetchTarget) {
+		this.fetchTarget = fetchTarget;
+	}
 
 	@Override
 	public String toString() {
@@ -113,7 +121,8 @@ public class LetterBatch {
 				+ ", templateId=" + templateId + ", templateReplacements="
 				+ templateReplacements + ", templateName=" + templateName
 				+ ", languageCode=" + languageCode + ", storingOid="
-				+ storingOid + ", organizationOid=" + organizationOid + "]";
+				+ storingOid + ", organizationOid=" + organizationOid
+				+ ", fetchTarget=" + fetchTarget + "]";
 	}
-    
+
 }

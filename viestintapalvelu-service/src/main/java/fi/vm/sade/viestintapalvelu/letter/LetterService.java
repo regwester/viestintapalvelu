@@ -33,18 +33,20 @@ public class LetterService {
     @Autowired
     private LetterBatchDAO letterBatchDAO;
 
-    
-    /* ---------- */
-    /* - Strore - */
-    /* ---------- */
-	public LetterBatch storeLetterDTO(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
-		
+    /* ---------------------- */
+    /* - Create LetterBatch - */
+    /* ---------------------- */
+	public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {		
 		// kirjeet.kirjelahetys
 		LetterBatch letterB = new LetterBatch();
 		letterB.setTemplateId(letterBatch.getTemplateId());
+		letterB.setTemplateName(letterBatch.getTemplateName());
+		letterB.setFetchTarget(letterBatch.getFetchTarget());
 		letterB.setTimestamp(new Date());
 		letterB.setLanguage(letterBatch.getLanguageCode());
-		letterB.setStoringOid(letterBatch.getStoringOid());
+
+// TODO Storing oid from getCurrentUser()		
+//		letterB.setStoringOid(letterBatch.getStoringOid());
 		letterB.setOrganizationOid(letterBatch.getOrganizationOid());
 		
 		// kirjeet.lahetyskorvauskentat
@@ -55,7 +57,6 @@ public class LetterService {
 		
 		return storeLetterBatch(letterB);
 	}
-
 
 	/*
 	 *  kirjeet.lahetyskorvauskentat
@@ -73,9 +74,7 @@ public class LetterService {
 			repl.setDefaultValue(replVals[i].toString());
 //			repl.setMandatory();
 //TODO: tähän tietyt kentät Mandatory true esim. title body ...			
-			
-			
-			
+
 			repl.setTimestamp(new Date());
 			repl.setLetterBatch(letterB);	
 			replacements.add(repl);
@@ -141,7 +140,6 @@ public class LetterService {
 		return letterBatchDAO.insert(letterB);
 	}
 
-	
     /* ------------ */
     /* - findById - */
     /* ------------ */
@@ -154,7 +152,9 @@ public class LetterService {
         
 		// kirjeet.kirjelahetys
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
-        result.setTemplateId(searchResult.getTemplateId());
+        result.setTemplateId(searchResult.getTemplateId());       
+        result.setTemplateName(searchResult.getTemplateName());
+        result.setFetchTarget(searchResult.getFetchTarget());                
         result.setLanguageCode(searchResult.getLanguage());
         result.setStoringOid(searchResult.getStoringOid());
         result.setOrganizationOid(searchResult.getOrganizationOid());
@@ -198,8 +198,6 @@ public class LetterService {
         	
         	letters.add(letter);
         }
-		
-		
 		return letters;
 	}
 
