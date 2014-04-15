@@ -8,7 +8,7 @@
 
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>OPH - Viestint�palvelu</title>
+    <title>OPH - Viestint&aumlpalvelu</title>
 </head>
 
 <body>
