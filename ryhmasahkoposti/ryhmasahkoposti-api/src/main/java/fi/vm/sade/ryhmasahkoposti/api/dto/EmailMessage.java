@@ -18,6 +18,7 @@ public class EmailMessage {
 	private String from;		// Email FROM
 	private String replyTo;		// Email REPLYTO
 	private String senderOid;	// The one who is doing the actual sending
+	private String organizationOid;
 	private String subject;
 	private String body;
 	private String footer;
@@ -93,7 +94,15 @@ public class EmailMessage {
 		this.senderOid = senderOid;
 	}
 
-	public boolean isHtml() {
+	public String getOrganizationOid() {
+        return organizationOid;
+    }
+
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
+
+    public boolean isHtml() {
 		return isHtml;
 	}
 

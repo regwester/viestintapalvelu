@@ -12,7 +12,7 @@ import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ReportedMessageQueryDTOConverterTest.class)
@@ -20,18 +20,19 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComp
 public class ReportedMessageQueryDTOConverterTest {
     private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
     @Mock
-    GetCurrentUserComponent mockedGetCurrentUserComponent;
+    CurrentUserComponent mockedCurrentUserComponent;
     
     @Before
     public void setup() {
-        this.reportedMessageQueryDTOConverter = new ReportedMessageQueryDTOConverter(mockedGetCurrentUserComponent);
+        this.reportedMessageQueryDTOConverter = new ReportedMessageQueryDTOConverter(mockedCurrentUserComponent);
     }
     
 	@Test
 	public void testEmailInSearchArgument() {
+	    String oid = "1.2.246.562.10.00000000001";
 		String searchArgument = "testi.osoite@sposti.fi";
 		
-        ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(searchArgument);
+        ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(oid, searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
@@ -40,9 +41,10 @@ public class ReportedMessageQueryDTOConverterTest {
 	
 	@Test
 	public void testOidInSearchArgument() {
+        String oid = "1.2.246.562.10.00000000001";
 		String searchArgument = "1.2.246.562.24.42645159413";
 		
-        ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(searchArgument);
+        ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(oid, searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());
@@ -51,9 +53,10 @@ public class ReportedMessageQueryDTOConverterTest {
 
 	@Test
 	public void testSocialSecurityIdInSearchArgument() {
+        String oid = "1.2.246.562.10.00000000001";
 		String searchArgument = "100970-965W";
 		
-        ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(searchArgument);
+        ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(oid, searchArgument);
 		
 		assertNotNull(query);
 		assertNotNull(query.getReportedRecipientQueryDTO());

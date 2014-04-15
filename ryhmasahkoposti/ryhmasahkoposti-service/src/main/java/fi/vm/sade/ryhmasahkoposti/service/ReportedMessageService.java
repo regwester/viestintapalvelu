@@ -23,19 +23,23 @@ public interface ReportedMessageService {
 	public ReportedMessage getReportedMessage(Long id);
 
 	/**
-	 * Hakee annettujen parametrien mukaiset ryhmäsähköpostin raportoitavat viestit
+	 * Hakee annettujen parametrien mukaiset raportoitavat viestit
 	 * 
 	 * @param query Hakuparametrit
+	 * @param Sivutus ja lajittelutiedot
 	 * @return Lists raportoitavia viestejä {@link ReportedMessage}
 	 */
 	public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
 	    PagingAndSortingDTO pagingAndSorting);
 	
 	/**
-	 * Päivittä raportoitavan viestin tietoja tietokantaan
-	 * @param reportedMessage Päivittetävä raportoitava viesti
+	 * Hakee käyttäjän organisaation lähettämät raportoitavat viestit
+	 *  
+	 * @param organizationOid Organisaation oid-tunnus
+	 * @param pagingAndSorting Sivutus ja lajittelutiedot
+	 * @return
 	 */
-	public void updateReportedMessage(ReportedMessage reportedMessage);
+	public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting);
 	
 	/**
 	 * Tallentaa raportoitvan ryhmäsähköpostin viestin
@@ -44,4 +48,10 @@ public interface ReportedMessageService {
 	 * @return Tallennetu raportoitava viesti
 	 */
 	public ReportedMessage saveReportedMessage(ReportedMessage reportedMessage);
+
+    /**
+	 * Päivittä raportoitavan viestin tietoja tietokantaan
+	 * @param reportedMessage Päivittetävä raportoitava viesti
+	 */
+	public void updateReportedMessage(ReportedMessage reportedMessage);
 }

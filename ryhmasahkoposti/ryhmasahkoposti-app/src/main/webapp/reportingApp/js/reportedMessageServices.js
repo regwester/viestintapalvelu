@@ -10,17 +10,17 @@ reportingApp.factory('ReportedMessageAndRecipientsSendingUnsuccesful', function(
 	return $resource("/ryhmasahkoposti-service/reportMessages/failed/:messageID", {messageID: '@messageID'});
 });
 
-// Hakee REST-rajapinnan avulla kaikki raportoitavat viestit
-reportingApp.factory('GetReportedMessages', function($resource) {
-    return $resource("/ryhmasahkoposti-service/reportMessages/list", {}, {
-    	get: {method: "GET", isArray: false}
-    });	
-});
-
 // Hakee REST-rajapinnan avulla hakuparametrin mukaiset raportoitavat viestit 
 reportingApp.factory('GetReportedMessagesBySearchArgument', function($resource) {
-	return $resource("/ryhmasahkoposti-service/reportMessages/search/:searchArgument", {}, {
-		get: {method: "GET", params: {searchArgument: '@searchArgument'}, isArray: false}
+	return $resource("/ryhmasahkoposti-service/reportMessages/search", {}, {
+		get: {method: "GET", isArray: false}
+    });
+});
+
+//Hakee REST-rajapinnan avulla organisaation raportoitavat viestit 
+reportingApp.factory('GetReportedMessagesByOrganization', function($resource) {
+	return $resource("/ryhmasahkoposti-service/reportMessages/list", {}, {
+		get: {method: "GET", isArray: false}
     });
 });
 

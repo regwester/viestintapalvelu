@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
@@ -71,6 +72,10 @@ public class TemplateService {
         return result;
     }
 
+    public List<String> getTemplateNamesList() {
+        return templateDAO.getAvailableTemplates();
+    }
+    
     public void storeTemplate(Template template) {
         templateDAO.insert(template);
     }
@@ -82,6 +87,8 @@ public class TemplateService {
         model.setTimestamp(new Date()); //template.getTimestamp());
         model.setStyles(template.getStyles());
         model.setLanguage(template.getLanguage());
+        model.setStoringOid(template.getStoringOid());
+        model.setOrganizationOid(template.getOrganizationOid());        
         model.setContents(parseContentModels(template.getContents(), model));
         model.setReplacements(parseReplacementModels(template.getReplacements(), model));
         storeTemplate(model);
@@ -195,4 +202,69 @@ public class TemplateService {
         return result;
     }
 
+    
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language)  {
+       return getTemplateByName(name, language, true);
+    } 
+    /**
+     * Method getTemplateByName, includes content
+     * 
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI&content=YES
+     * 			
+     * 			==> content included
+     * 
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI&content=NO
+	 *
+     * 			==> not content 
+     * 
+     * @param name		a String, e.g. 'letter'
+     * @param language	a String, e.g. 'FI', 'SV', 'EN'
+     * @param content	a String, e.g. 'YES','NO' or missing (='YES')
+     *  
+     * @return
+     */
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content)  {
+    	fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
+    	
+        Template template = templateDAO.findTemplateByName(name, language);
+    	searchTempl.setId(template.getId());
+    	searchTempl.setName(template.getName());
+    	searchTempl.setStyles(template.getStyles());
+    	searchTempl.setLanguage(template.getLanguage());
+    	searchTempl.setTimestamp(template.getTimestamp());
+    	searchTempl.setStoringOid(template.getStoringOid());
+    	searchTempl.setOrganizationOid(template.getOrganizationOid());
+    	searchTempl.setTemplateVersio(template.getVersionro());
+    	
+    	// Replacement
+    	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacement = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();    	
+    	for (Replacement rep : template.getReplacements()) {
+    		fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
+    		repl.setId(rep.getId());
+    		repl.setName(rep.getName());;
+    		repl.setDefaultValue(rep.getDefaultValue());;
+    		repl.setMandatory(rep.isMandatory());
+    		repl.setTimestamp(rep.getTimestamp());
+    		replacement.add(repl);
+		}
+    	searchTempl.setReplacements(replacement);
+    	
+    	// Content    	
+    	if (content) {    	
+	    	List<fi.vm.sade.viestintapalvelu.template.TemplateContent> templateContent = new LinkedList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
+	    	for (TemplateContent co : template.getContents()) {
+	    		fi.vm.sade.viestintapalvelu.template.TemplateContent cont = new fi.vm.sade.viestintapalvelu.template.TemplateContent();
+				cont.setId(co.getId());
+				cont.setName(co.getName());
+				cont.setContent(co.getContent());
+				cont.setOrder(co.getOrder());
+				cont.setTimestamp(co.getTimestamp());
+				templateContent.add(cont);			
+			}
+	    	searchTempl.setContents(templateContent);
+    	}
+    	
+    	return searchTempl;
+    }
 }

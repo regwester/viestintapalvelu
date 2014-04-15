@@ -213,6 +213,11 @@ a, .clickable-header-cell {
     cursor: pointer;
 }
 
+.clickable-table-row tbody tr:hover>td, .clickable-table-row tbody tr:hover>th {
+    background-color:#f5f5f5;
+    cursor: pointer;
+}
+
 .sort-true {
 	background-image: url(../img/desc.gif);
     background-position: right center;

@@ -4,30 +4,21 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetPersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 @Component
 public class ReportedMessageDTOConverter {
-    private GetPersonComponent getPersonComponent;
-    
-    @Autowired
-    public ReportedMessageDTOConverter(GetPersonComponent getPersonComponent) {
-        this.getPersonComponent = getPersonComponent;
-    }
-	
+
 	public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages) {
 		List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
 		
@@ -95,7 +86,7 @@ public class ReportedMessageDTOConverter {
 	private void convert(ReportedMessageDTO reportedMessageDTO, ReportedMessage reportedMessage) {
 		reportedMessageDTO.setMessageID(reportedMessage.getId());
 		reportedMessageDTO.setSubject(reportedMessage.getSubject());
-		reportedMessageDTO.setSenderName(getSenderName(reportedMessage.getSenderOid()));
+		reportedMessageDTO.setSenderName(reportedMessage.getSenderName());
 		reportedMessageDTO.setFrom(reportedMessage.getSenderEmail());
 		reportedMessageDTO.setStartTime(reportedMessage.getSendingStarted());
 		reportedMessageDTO.setEndTime(reportedMessage.getSendingEnded());
@@ -137,11 +128,6 @@ public class ReportedMessageDTOConverter {
 		return attachments;
 	}
 
-	private String getSenderName(String oid) {
-	    Henkilo henkilo = getPersonComponent.getPerson(oid);
-	    return henkilo.getSukunimi() + "," + henkilo.getEtunimet();
-	}
-	
 	private void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
 		Long numberOfSuccesfulSendings = new Long(0);
 		if (sendingStatusDTO.getNumberOfSuccesfulSendings() != null) {

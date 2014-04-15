@@ -70,19 +70,17 @@ public class ReportedMessageServiceTest {
 	}
 
 	@Test
-	public void testGetReportedMessages() throws IOException {
+	public void testGetReportedMessagesByOrganizationOid() throws IOException {
 		List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
 		reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 		
-		when(mockedReportedMessageDAO.findAll(any(ReportedMessageQueryDTO.class), 
+		when(mockedReportedMessageDAO.findByOrganizationOid(any(String.class), 
 		    any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
-		
-		ReportedMessageQueryDTO query = new ReportedMessageQueryDTO();
-		
+				
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
         
-		reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
+		reportedMessages = reportedMessageService.getReportedMessages("1.2.246.562.10.00000000001", pagingAndSorting);
 		
 		assertNotNull(reportedMessages);
 		assertNotEquals(0, reportedMessages.size());

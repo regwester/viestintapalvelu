@@ -7,7 +7,7 @@ reportingApp.config(function ($routeProvider) {
 		when('/reportMessages/list', {
             controller: 'ReportedMessageListController',
             templateUrl:'/ryhmasahkoposti-app/reportingApp/html/reportedMessageList.html'
-        }).when('/reportMessages/search/:searchArgument', {
+        }).when('/reportMessages/search', {
             controller: 'ReportedMessageListController',
             templateUrl:'/ryhmasahkoposti-app/reportingApp/html/reportedMessageList.html'
         }).when('/reportMessages/view/:messageID', {

@@ -21,6 +21,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
@@ -117,6 +118,7 @@ public class RaportointipalveluTestData {
 	    henkilo.setHetu("081181-9984");
 	    henkilo.setEtunimet("Etunimi");
 	    henkilo.setSukunimi("Sukunimi");
+	    henkilo.setKutsumanimi("Kutsumanimi");
 	    
 	    return henkilo;
 	}
@@ -145,7 +147,7 @@ public class RaportointipalveluTestData {
 	public static ReportedMessage getReportedMessage() {
 		ReportedMessage reportedMessage = new ReportedMessage();
 		
-		reportedMessage.setSubject("Kokekutsu");
+		reportedMessage.setSubject("Koekutsu");
 		reportedMessage.setProcess("Hakuprosessi");
 		reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
 		reportedMessage.setSenderEmail("testi.virkailija@sposti.fi");
@@ -181,6 +183,15 @@ public class RaportointipalveluTestData {
 	    reportedMessagesDTO.setReportedMessages(reportedMessageDTOs);
 	    
 	    return reportedMessagesDTO;
+	}
+
+	public static ReportedMessageQueryDTO getReportedMessageQueryDTO() {
+	    ReportedMessageQueryDTO query = new ReportedMessageQueryDTO();
+	    
+	    query.setOrganizationOid("1.2.246.562.10.00000000001");
+	    query.setSearchArgument("testi.vastaanottaja@sposti.fi");
+	    
+	    return query;
 	}
 	
 	public static ReportedMessageAttachment getReportedMessageAttachment() {		

@@ -25,8 +25,14 @@ public class ReportedMessage extends BaseEntity {
 	@Column(name="lahettajan_oid", nullable=true)
 	private String senderOid;
 
+	@Column(name="lahettajan_nimi", nullable=true)
+	private String senderName;
+
 	@Column(name="lahettajan_sahkopostiosoite", nullable=false)
 	private String senderEmail;
+
+    @Column(name="lahettajan_organisaatio_oid", nullable=true)
+    private String senderOrganizationOid;
 
 	@Column(name="vastaus_sahkopostiosoite", nullable=true)
 	private String replyToEmail;
@@ -75,7 +81,15 @@ public class ReportedMessage extends BaseEntity {
 		this.senderOid = senderOid;
 	}
 
-	public String getSenderEmail() {
+	public String getSenderName() {
+        return senderName;
+    }
+
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
+
+    public String getSenderEmail() {
 		return senderEmail;
 	}
 
@@ -83,7 +97,15 @@ public class ReportedMessage extends BaseEntity {
 		this.senderEmail = senderEmail;
 	}
 
-	public String getReplyToEmail() {
+	public String getSenderOrganizationOid() {
+        return senderOrganizationOid;
+    }
+
+    public void setSenderOrganizationOid(String senderOrganizationOid) {
+        this.senderOrganizationOid = senderOrganizationOid;
+    }
+
+    public String getReplyToEmail() {
 		return replyToEmail;
 	}
 

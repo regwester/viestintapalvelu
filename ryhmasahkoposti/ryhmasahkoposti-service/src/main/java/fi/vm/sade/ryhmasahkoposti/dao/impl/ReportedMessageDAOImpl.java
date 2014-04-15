@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
@@ -25,19 +26,15 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, Long> implements ReportedMessageDAO {
     
 	@Override
-    public List<ReportedMessage> findAll(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
+    public List<ReportedMessage> findByOrganizationOid(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
 	    QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
 	    	    	    
 	    JPAQuery findAllReportedMessagesQuery = null;
 	    BooleanExpression whereExpression = null;
 	    OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 	    
-	    if (query.getSenderOids() != null && query.getSenderOids().size() > 0) {
-            whereExpression = reportedMessage.senderOid.in(query.getSenderOids());
-            findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
-        } else {
-            findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy);
-        }    
+        whereExpression = reportedMessage.senderOrganizationOid.in(organizationOid);
+        findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
 	    
 	    if (pagingAndSorting.getNumberOfRows() != 0) {
     	    findAllReportedMessagesQuery.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
@@ -54,7 +51,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 		QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 		QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
 		
-		BooleanExpression whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery,
+		BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery,
             reportedRecipient, reportedMessage);		
 		OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 		
@@ -91,6 +88,14 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 	        
 	        return QReportedMessage.reportedMessage.sendingStarted.desc();
 	    }
+
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("senderName")) {
+            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+                return QReportedMessage.reportedMessage.senderName.asc();
+            }
+            
+            return QReportedMessage.reportedMessage.sendingStarted.desc();
+        }
 	    
 	    if (pagingAndSorting.getSortedBy().equalsIgnoreCase("process")) {
             if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
@@ -111,51 +116,35 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
        return QReportedMessage.reportedMessage.sendingStarted.asc();
 	}
 
-    protected BooleanExpression whereExpressionForSearchCriteria(ReportedMessageQueryDTO query,
+    protected BooleanBuilder whereExpressionForSearchCriteria(ReportedMessageQueryDTO query,
         ReportedRecipientQueryDTO reportedRecipientQuery, QReportedRecipient reportedRecipient,
         QReportedMessage reportedMessage) {
-        BooleanExpression whereExpression = null;
+        BooleanBuilder booleanBuilder = new BooleanBuilder();
     	
-        if (query.getSenderOids() != null && query.getSenderOids().size() > 0) {
-            whereExpression = reportedMessage.senderOid.in(query.getSenderOids());
+        if (query.getOrganizationOid() != null) {
+            booleanBuilder.and(reportedMessage.senderOrganizationOid.in(query.getOrganizationOid()));
         }		
     	
     	if (reportedRecipientQuery.getRecipientOid() != null) {
-    	    if (whereExpression == null) {
-    	        whereExpression = reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid());
-    	    } else {
-    	        whereExpression.and(reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid()));   
-    	    }
+   	        booleanBuilder.and(reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid()));   
     	}
     	
     	if (reportedRecipientQuery.getRecipientEmail() != null) {
-    	    if (whereExpression != null) {
-    	        whereExpression.and(reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail()));
-    	    } else {
-    	        whereExpression = reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail());
-    	    }
+   	        booleanBuilder.and(reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail()));
     	}
     	
     	if (reportedRecipientQuery.getRecipientSocialSecurityID() != null) {
-            if (whereExpression != null) {
-    		    whereExpression.and(reportedRecipient.socialSecurityID.eq(
-    		        reportedRecipientQuery.getRecipientSocialSecurityID()));
-            } else {
-                whereExpression = reportedRecipient.socialSecurityID.eq(
-                    reportedRecipientQuery.getRecipientSocialSecurityID());
-            }
+   		    booleanBuilder.and(reportedRecipient.socialSecurityID.eq(
+   		        reportedRecipientQuery.getRecipientSocialSecurityID()));
     	}
     
-    	if (reportedRecipientQuery.getRecipientName() != null) {
-    	    if (whereExpression != null) {
-    			whereExpression.and(reportedRecipient.searchName.containsIgnoreCase(
-    			    reportedRecipientQuery.getRecipientName()));
-    	    } else {
-                whereExpression = reportedRecipient.searchName.containsIgnoreCase(
-                    reportedRecipientQuery.getRecipientName());		        
-    	    }
+    	if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
+   			booleanBuilder.and(reportedRecipient.searchName.containsIgnoreCase(reportedRecipientQuery.getRecipientName()));    	    
+    	    booleanBuilder.or(reportedMessage.process.containsIgnoreCase(query.getSearchArgument()));
+    	    booleanBuilder.or(reportedMessage.subject.containsIgnoreCase(query.getSearchArgument()));
+    	    booleanBuilder.or(reportedMessage.message.containsIgnoreCase(query.getSearchArgument()));
     	}
     	
-        return whereExpression;
+        return booleanBuilder;
     }
 }

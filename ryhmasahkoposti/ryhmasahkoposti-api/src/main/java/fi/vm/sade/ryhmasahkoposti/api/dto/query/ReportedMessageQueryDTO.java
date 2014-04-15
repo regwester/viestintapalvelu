@@ -1,10 +1,9 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto.query;
 
-import java.util.List;
 
 public class ReportedMessageQueryDTO {
 	private String searchArgument;
-	private List<String> senderOids;
+	private String organizationOid;
 	private ReportedRecipientQueryDTO reportedRecipientQuery;
 	
 	public String getSearchArgument() {
@@ -15,12 +14,12 @@ public class ReportedMessageQueryDTO {
 		this.searchArgument = searchArgument;
 	}
 
-	public List<String> getSenderOids() {
-        return senderOids;
+	public String getOrganizationOid() {
+        return organizationOid;
     }
 
-    public void setSenderOids(List<String> senderOids) {
-        this.senderOids = senderOids;
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
     }
 
     public ReportedRecipientQueryDTO getReportedRecipientQueryDTO() {

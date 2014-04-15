@@ -24,26 +24,28 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Path(RestConstants.PATH_REPORT_MESSAGES)
 public interface MessageReportingResource {
-	/**
-	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä lähettämät ryhmäshköpostiviestit
-	 * 
-	 * @param nbrOfRows Haettavien ryhmäsähköpostiviestien lukumäärä
-	 * @param page Sivu, jolle halutaan siirtyä katselemaan viestejä
-	 * @param sortedBy Sarake, minkä mukaan lajittelu suoritetaan
-	 * @param order Lajittelujärjestys
-	 * @return Tiedot raportoitavista ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
-	 */
-	@Secured(SecurityConstants.READ)
-	@Produces(MediaType.APPLICATION_JSON)
-	@Path(RestConstants.PATH_REPORT_MESSAGES_LIST)
-	@GET
-	public ReportedMessagesDTO getReportedMessages(@QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
-        @QueryParam(RestConstants.PARAM_PAGE) Integer page,@QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
-        @QueryParam(RestConstants.PARAM_ORDER) String order);
-
+    /**
+     * Hakee käyttäjän ja hänen käyttäjäryhmänsä lähettämät ryhmäshköpostiviestit
+     * 
+     * @param organizationOid Organisaation oid-tunnus
+     * @param nbrOfRows Haettavien ryhmäsähköpostiviestien lukumäärä
+     * @param page Sivu, jolle halutaan siirtyä katselemaan viestejä
+     * @param sortedBy Sarake, minkä mukaan lajittelu suoritetaan
+     * @param order Lajittelujärjestys
+     * @return Tiedot raportoitavista ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
+     */
+    @Secured(SecurityConstants.READ)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(RestConstants.PATH_REPORT_MESSAGES_LIST)
+    @GET
+    public ReportedMessagesDTO getReportedMessages(@QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid,
+        @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, @QueryParam(RestConstants.PARAM_PAGE) Integer page,
+        @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, @QueryParam(RestConstants.PARAM_ORDER) String order);
+	
 	/**
 	 * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen käyttäjäryhmänsä lähettämistä ryhmäshköpostiviesteistä
 	 * 
+	 * @param organizationOid Organisaation oid-tunnus
 	 * @param hakuKentta Käyttäjän antama hakuparametri
      * @param nbrOfRows Haettavien ryhmäsähköpostiviestien lukumäärä
      * @param page Sivu, jolle halutaan siirtyä katselemaan viestejä
@@ -55,7 +57,8 @@ public interface MessageReportingResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGES_SEARCH)
 	@GET
-	public ReportedMessagesDTO getReportedMessages(@PathParam(RestConstants.PARAM_SEARCH_ARGUMENT) String searchArgument, 
+	public ReportedMessagesDTO getReportedMessages(@QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid,  
+	    @QueryParam(RestConstants.PARAM_SEARCH_ARGUMENT) String searchArgument, 
 	    @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, @QueryParam(RestConstants.PARAM_PAGE) Integer page, 
 	    @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, @QueryParam(RestConstants.PARAM_ORDER) String order);
 	

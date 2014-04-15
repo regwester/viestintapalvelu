@@ -26,6 +26,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
@@ -39,14 +40,14 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.template.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Component
 @Path(Urls.LETTER_PATH)
+
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
 // properly
+
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
 public class LetterResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
@@ -68,11 +69,8 @@ public class LetterResource extends AsynchronousResource {
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
 
     @GET
-    // @Consumes("application/json")
     @Produces("text/plain")
     @Path("/isAlive")
-    // @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-    // @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public String isAlive() {
         return "alive";
     }
@@ -185,21 +183,26 @@ public class LetterResource extends AsynchronousResource {
         return createResponse(request, documentId);
     }
 
+    @GET
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getById")
+    public LetterBatch templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
+        
+       String letterBatchId = request.getParameter("letterBatchId");
+       Long id = Long.parseLong(letterBatchId);
+       
+       return letterService.findById(id);
+    }
     
+    // FOR TESTING
     @POST
-//    @GET
     @Consumes("application/json")
 //  @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")
-//    @Produces("text/plain")
-    
-    @Path("/sendStore")
-    public fi.vm.sade.viestintapalvelu.model.LetterBatch store(LetterBatch letterBatch) throws IOException, DocumentException {
-//    public String store() throws IOException, DocumentException {
-
-        
-//        return new fi.vm.sade.viestintapalvelu.letter.LetterBatch().toString();
-        return letterService.storeLetterDTO(letterBatch);
+    @Produces("application/json")    
+    @Path("/createLetter")
+    public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) throws IOException, DocumentException {
+        return letterService.createLetter(letterBatch);
    }
-    
 }

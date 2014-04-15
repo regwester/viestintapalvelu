@@ -10,17 +10,17 @@ import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.generic.common.HetuUtils;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetCurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.validation.EmailAddressValidator;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedMessageQueryDTOConverter {
-    private GetCurrentUserComponent getCurrentUserComponent;
+    private CurrentUserComponent currentUserComponent;
     
     @Autowired
-    public ReportedMessageQueryDTOConverter(GetCurrentUserComponent getCurrentUserComponent) {
-        this.getCurrentUserComponent = getCurrentUserComponent;
+    public ReportedMessageQueryDTOConverter(CurrentUserComponent currentUserComponent) {
+        this.currentUserComponent = currentUserComponent;
     }
     
     public ReportedMessageQueryDTO convert() {
@@ -29,10 +29,12 @@ public class ReportedMessageQueryDTOConverter {
         return reportedMessageQueryDTO;
     }
     
-	public ReportedMessageQueryDTO convert(String searchArgument) {
+	public ReportedMessageQueryDTO convert(String organizationOid, String searchArgument) {
 		ReportedMessageQueryDTO reportedMessageQueryDTO = new ReportedMessageQueryDTO();
 		ReportedRecipientQueryDTO reportedRecipientQueryDTO = new ReportedRecipientQueryDTO();
-				
+						
+		reportedMessageQueryDTO.setOrganizationOid(organizationOid);
+		
 		if (HetuUtils.isHetuValid(searchArgument)) {
 			reportedRecipientQueryDTO.setRecipientSocialSecurityID(searchArgument.trim());
 			reportedMessageQueryDTO.setReportedRecipientQueryDTO(reportedRecipientQueryDTO);
@@ -64,7 +66,7 @@ public class ReportedMessageQueryDTOConverter {
 	private List<String> getSenderOidList() {
 	    List<String> senderOidList = new ArrayList<String>();
 	    
-	    Henkilo henkilo = getCurrentUserComponent.getCurrentUser();
+	    Henkilo henkilo = currentUserComponent.getCurrentUser();
 	    senderOidList.add(henkilo.getOidHenkilo());
 	    
 	    return senderOidList;

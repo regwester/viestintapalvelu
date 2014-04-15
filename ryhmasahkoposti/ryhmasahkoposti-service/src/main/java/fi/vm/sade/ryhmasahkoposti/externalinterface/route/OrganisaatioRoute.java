@@ -6,7 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 
 /**
  * Camel ja CXF reititys organisaatiopalveluun
@@ -18,7 +18,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.GetOrganizationCom
 public class OrganisaatioRoute extends SpringRouteBuilder {
     private static Logger LOGGER = LoggerFactory.getLogger(OrganisaatioRoute.class);
     private static String ROUTE_GET_ORGANISATION = "direct:getOrganisation";
-    private GetOrganizationComponent getOrganizationComponent; 
+    private OrganizationComponent getOrganizationComponent; 
 
     /**
      * Muodostin organisaation hakukomponentin asettamiseksi
@@ -26,7 +26,7 @@ public class OrganisaatioRoute extends SpringRouteBuilder {
      * @param getOrganizationComponent Organisaation hakukomponentti
      */
     @Autowired
-    public OrganisaatioRoute(GetOrganizationComponent getOrganizationComponent) {
+    public OrganisaatioRoute(OrganizationComponent getOrganizationComponent) {
         this.getOrganizationComponent = getOrganizationComponent;
     }
     

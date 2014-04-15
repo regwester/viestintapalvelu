@@ -8,17 +8,18 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
@@ -44,15 +45,25 @@ public interface EmailResource {
      * @throws URISyntaxException
      * @throws ServletException
      */
-	
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("text/plain")
     @Path("addAttachment")
     @Secured({SecurityConstants.SEND})
-    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
-    											throws IOException, URISyntaxException, ServletException ;
-
+    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
+        throws IOException, URISyntaxException, ServletException ;
+    
+    /**
+     * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle
+     * 
+     * @return OK-vastaus
+     */
+    @GET
+    @Produces("application/json")
+    @Path("initGroupEmail")
+    @Secured({SecurityConstants.SEND})    
+    public Response initGroupEmail();
+    
 	/**
 	 * Lähettää sähköpostin
 	 * 
