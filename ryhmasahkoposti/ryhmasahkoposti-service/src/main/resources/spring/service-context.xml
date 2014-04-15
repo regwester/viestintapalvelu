@@ -23,7 +23,7 @@
 	
 	<!-- Application and common properties -->
     <context:property-placeholder 
-    	location="classpath:ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties" 
+    	location="classpath:/properties/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties" 
     	ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <!-- Authentication and security -->
@@ -96,7 +96,7 @@
 	
 	<!-- Resourcebundle for localizing -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
-  		<property name="basenames" value="messages"/>
+  		<property name="basename" value="properties/messages"/>
 	</bean>
 	
 	<bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"></bean>
