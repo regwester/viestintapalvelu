@@ -12,6 +12,7 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -77,6 +78,12 @@ public class EmailResourceImpl implements EmailResource {
 		log.log(Level.INFO, "Added attachment: " + result);
 		JSONObject json = new JSONObject(result.toMap());
 		return json.toString();
+    }
+
+    @Override
+    public Response initGroupEmail() {
+        Response response = Response.ok("ok").build();
+        return response;
     }
 
     @Override

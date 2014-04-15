@@ -62,9 +62,8 @@
 			    $routeProvider.otherwise({redirectTo: '/email'});
 		}]);
 		
-        email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailFactory' ,'uploadManager', '$location',  
-		                                     function($scope, $rootScope, GroupEmailFactory, uploadManager, $location) { 	
-		
+        email.controller('EmailController', ['$scope', '$rootScope', 'GroupEmailInitFactory', 'GroupEmailFactory' ,'uploadManager', '$location',  
+            function($scope, $rootScope, GroupEmailInitFactory, GroupEmailFactory, uploadManager, $location) { 	
 			$rootScope.emailsendid = "";
 		
 			// Create empty email to get the attachInfo[] to the object
@@ -118,6 +117,9 @@
 				$rootScope.callingProcess = $scope.emaildata.email.callingProcess;			
 			};
 					
+			$scope.init = function() {
+			    $scope.initResponse = GroupEmailInitFactory.initGroupEmail();
+			};			
 			
 			$scope.files = [];
 		    $scope.percentage = 0;
@@ -154,7 +156,8 @@
 		//        alert("Poista " + id);
 			    $scope.emaildata.email.attachInfo.splice(id, 1);
 		    };
-			    	    
+			
+            $scope.init();    	    
 		}]);
 	</script>
 	<!--  script src="./js/email.js"></script>-->
