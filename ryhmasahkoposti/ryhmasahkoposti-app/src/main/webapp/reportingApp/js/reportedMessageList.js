@@ -68,7 +68,7 @@ reportingApp.controller('ReportedMessageListController',
 	    	SharedVariables.setSearchArgumentValue('');
 	        $scope.searchArgument = '';
 	        // Haetaan kaikkitiedot
-	        $scope.reportedMessagesDTO = $scope.selectPage(1);
+	        $scope.selectPage(1);
 	    };
 
 		/**
