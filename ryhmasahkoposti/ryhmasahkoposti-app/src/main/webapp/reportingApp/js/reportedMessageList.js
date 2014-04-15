@@ -66,7 +66,7 @@ reportingApp.controller('ReportedMessageListController',
 	    $scope.clean = function() {
 	    	// Tyhjennetään hakutekijä yhteisissä tiedoissa ja näytöllä
 	    	SharedVariables.setSearchArgumentValue('');
-	        $scope.searchArgument = '';
+	        $scope.form.searchArgument = '';
 	        // Haetaan kaikkitiedot
 	        $scope.selectPage(1);
 	    };
