@@ -17,5 +17,4 @@
     <!-- Spring service and persistence configuration --> 
     <import resource="classpath:/spring/service-context.xml"/>
     <import resource="classpath:/spring/dao-context.xml"/>
-    <import resource="classpath:/spring/rest-context.xml"/>
 </beans>
