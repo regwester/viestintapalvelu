@@ -63,14 +63,32 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 	}
 
     @Override
-	public Long findNumberOfReportedMessage() {
+	public Long findNumberOfReportedMessage(String organizationOid) {
 		EntityManager em = getEntityManager();
 		
-		String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a";
+		String findNumberOfReportedMessages = 
+		    "SELECT COUNT(*) FROM ReportedMessage a WHERE a.senderOrganizationOid = :organizationOid";
 		TypedQuery<Long> query = em.createQuery(findNumberOfReportedMessages, Long.class);
+		query.setParameter("organizationOid", organizationOid);
 		
 		return query.getSingleResult();
 	}
+    
+    @Override
+    public Long findNumberOfReportedMessage(ReportedMessageQueryDTO query) {
+        ReportedRecipientQueryDTO reportedRecipientQuery = query.getReportedRecipientQueryDTO();
+        
+        QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
+        QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
+        
+        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery,
+            reportedRecipient, reportedMessage);        
+        
+        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(
+            reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression);
+        
+        return findBySearchCriteria.count();        
+    }
 	
 	protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);

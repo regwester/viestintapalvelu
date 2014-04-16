@@ -20,7 +20,10 @@ public class Letter {
 
     @ApiModelProperty(value = "Kirjeen vastaanottajakohtaiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
-
+    
+//    private LetterContent letterReceiverLetter;
+    
+    
     public Letter() {
     }
 

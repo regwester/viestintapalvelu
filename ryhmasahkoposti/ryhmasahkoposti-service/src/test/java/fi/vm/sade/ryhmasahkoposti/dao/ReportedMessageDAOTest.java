@@ -89,6 +89,7 @@ public class ReportedMessageDAOTest {
 		reportedMessageDAO.insert(reportedMessage);
 
 		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+		reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedRecipientQuery.setRecipientOid("1.2.246.562.24.34397748041");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
@@ -114,6 +115,7 @@ public class ReportedMessageDAOTest {
 		reportedMessageDAO.insert(reportedMessage);
 
 		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+		reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedMessageQuery.setSearchArgument("Testi Oppilas");
         reportedRecipientQuery.setRecipientName("Testi Oppilas");
@@ -140,6 +142,7 @@ public class ReportedMessageDAOTest {
         reportedMessageDAO.insert(reportedMessage);
 
         ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedMessageQuery.setSearchArgument("Koekutsu");
         reportedRecipientQuery.setRecipientName("Koekutsu");
@@ -165,6 +168,7 @@ public class ReportedMessageDAOTest {
 		reportedMessageDAO.insert(reportedMessage);
 
 		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+		reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedRecipientQuery.setRecipientEmail("ei.loydy@sposti.fi");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
@@ -201,13 +205,33 @@ public class ReportedMessageDAOTest {
 	}
 	
 	@Test
-	public void testNumberOfRecordsMatches() {
+	public void testNumberOfRecordsMatchesBySearchingOid() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessageDAO.insert(reportedMessage);
 		
-		Long lkm = reportedMessageDAO.findNumberOfReportedMessage();
+		Long lkm = reportedMessageDAO.findNumberOfReportedMessage("1.2.246.562.10.00000000001");
 		
 		assertNotNull(lkm);
 		assertNotEquals(new Long(0), lkm);
-	}	
+	}
+	
+    @Test
+    public void testNumberOfRecordsMatchesBySearchingArgument() {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        reportedMessageDAO.insert(reportedMessage);
+        
+        ReportedMessageQueryDTO query = new ReportedMessageQueryDTO();
+        
+        ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedRecipientQuery.setRecipientName("Koekutsu");
+        
+        query.setReportedRecipientQueryDTO(reportedRecipientQuery);
+        query.setSearchArgument("Koekutsu");
+        query.setOrganizationOid("1.2.246.562.10.00000000001");
+        
+        Long lkm = reportedMessageDAO.findNumberOfReportedMessage(query);
+        
+        assertNotNull(lkm);
+        assertNotEquals(new Long(0), lkm);
+    }   	
 }
