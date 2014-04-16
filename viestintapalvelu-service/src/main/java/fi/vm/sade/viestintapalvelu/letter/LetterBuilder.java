@@ -61,7 +61,8 @@ public class LetterBuilder {
             LetterBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = buildPDF(subBatch);
             Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
-            byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.IPOST_TEMPLATE, context);
+            context.put("filename", batch.getTemplateName()+".pdf");
+            byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
             Map<String, byte[]> documents = new HashMap<String, byte[]>();
             documents.put(batch.getTemplateName()+".pdf", pdf.toByteArray());
             documents.put(batch.getTemplateName()+".xml", ipostXml);
@@ -235,7 +236,7 @@ public class LetterBuilder {
     private String cleanHtmlFromApi(String string) {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
-        
+    
 	public static byte[] zip(String attachmentName, byte[] attachment) throws IOException {
 		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(attachment.length);
 		
