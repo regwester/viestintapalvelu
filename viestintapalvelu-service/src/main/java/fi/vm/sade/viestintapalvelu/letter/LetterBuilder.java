@@ -10,7 +10,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 import java.util.zip.Deflater;
 
 import javax.inject.Inject;
@@ -23,14 +22,11 @@ import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.ZipUtil;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
@@ -96,8 +92,9 @@ public class LetterBuilder {
                             batch.getTemplateReplacements(),		// LetterBatch, (last) sent replacements that might have overwritten the template values
                             letter.getTemplateReplacements());		// Letter, e.g student results, addressLabel, ...
                     
-                    source.add(new PdfDocument(letter.getAddressLabel(), page,
-                            null));
+                    PdfDocument dfDocument = new PdfDocument(letter.getAddressLabel(), page, null);
+                    source.add(dfDocument);                    
+//                    source.add(new PdfDocument(letter.getAddressLabel(), page, null));
                 }
             }
         }
@@ -105,6 +102,9 @@ public class LetterBuilder {
 //        byte[] docu = documentBuilder.merge(source).toByteArray(); 
 //        byte[] zippedDocu = zip("joku nimi", docu);
 //        return docu;
+        
+//        // Write LetterBatch to DB
+//        fi.vm.sade.viestintapalvelu.model.LetterBatch lb = letterService.createLetter(batch);
         
         return documentBuilder.merge(source).toByteArray();
     }
