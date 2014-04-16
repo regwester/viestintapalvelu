@@ -9,6 +9,7 @@ import java.util.Map;
 import org.apache.commons.fileupload.FileItem;
 
 import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
@@ -126,6 +127,7 @@ public class RaportointipalveluTestData {
 	public static OrganisaatioRDTO getOrganisaatioRDTO() {
 	    OrganisaatioRDTO organisaatio = new OrganisaatioRDTO();
 	    
+	    organisaatio.setOid("1.2.246.562.10.00000000001");
 	    Map<String, String> nimet = new HashMap<String, String>();
 	    nimet.put("fi", "Oppilaitos");
 	    organisaatio.setNimi(nimet);
@@ -150,6 +152,7 @@ public class RaportointipalveluTestData {
 		reportedMessage.setSubject("Koekutsu");
 		reportedMessage.setProcess("Hakuprosessi");
 		reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
+		reportedMessage.setSenderOrganizationOid("1.2.246.562.10.00000000001");
 		reportedMessage.setSenderEmail("testi.virkailija@sposti.fi");
 		reportedMessage.setReplyToEmail("testi.virkailija@sposti.fi");
 		reportedMessage.setMessage("Tämä on koekutsu");
@@ -167,6 +170,7 @@ public class RaportointipalveluTestData {
         reportedMessage.setMessageID(new Long(1));
         reportedMessage.setSubject("Koekutsu");
         reportedMessage.setSenderOid("1.2.246.562.24.42645159413");
+        reportedMessage.setOrganizationOid("1.2.246.562.10.00000000001");
         reportedMessage.setSendingStatus(getSendingStatusDTO());
         reportedMessage.setSendingReport("");
         reportedMessage.setStatusReport("Lahetyksiä epäonnistui");
@@ -263,4 +267,14 @@ public class RaportointipalveluTestData {
 		
 		return sendingStatusDTO;
 	}
+
+    public static List<OrganisaatioHenkilo> getHenkilonOrganisaatiot() {
+        List<OrganisaatioHenkilo> henkilonOrganisaatiot = new ArrayList<OrganisaatioHenkilo>();
+        
+        OrganisaatioHenkilo organisaatioHenkilo = new OrganisaatioHenkilo();
+        organisaatioHenkilo.setOrganisaatioOid("1.2.246.562.10.00000000001");
+        henkilonOrganisaatiot.add(organisaatioHenkilo);
+        
+        return henkilonOrganisaatiot;
+    }
 }

@@ -8,12 +8,21 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
 public interface ReportedMessageService {  
     /**
-     * Hakee raportoitavien ryhmäsähköpostien lukumäärän
+     * Hakee hakuparameterejä vastaavien raportoitavien ryhmäsähköpostien lukumäärän
      * 
+     * @param query Hakuparametrit
      * @return Raportoitavien ryhmäsähköpostien lukumäärän
      */
-    public Long getNumberOfReportedMessages();
+    public Long getNumberOfReportedMessages(ReportedMessageQueryDTO query);
     
+	/**
+     * Hakee raportoitavien ryhmäsähköpostien lukumäärän
+     * 
+     * @param organizationOid Organisaation oid-tunnus
+     * @return Raportoitavien ryhmäsähköpostien lukumäärän
+     */
+    public Long getNumberOfReportedMessages(String organizationOid);
+
 	/**
 	 * Hakee raportoitavan viestin viestin avaimella
 	 * 
@@ -21,7 +30,7 @@ public interface ReportedMessageService {
 	 * @return Raportoitavan viestin tiedot {@link ReportedMessage}
 	 */
 	public ReportedMessage getReportedMessage(Long id);
-
+	
 	/**
 	 * Hakee annettujen parametrien mukaiset raportoitavat viestit
 	 * 
@@ -40,8 +49,8 @@ public interface ReportedMessageService {
 	 * @return
 	 */
 	public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting);
-	
-	/**
+
+    /**
 	 * Tallentaa raportoitvan ryhmäsähköpostin viestin
 	 * 
 	 * @param reportedMessage Ryhmäsähköpostin raportoitavaviesti
@@ -50,7 +59,7 @@ public interface ReportedMessageService {
 	public ReportedMessage saveReportedMessage(ReportedMessage reportedMessage);
 
     /**
-	 * Päivittä raportoitavan viestin tietoja tietokantaan
+	 * Päivittää raportoitavan viestin tietoja tietokantaan
 	 * @param reportedMessage Päivittetävä raportoitava viesti
 	 */
 	public void updateReportedMessage(ReportedMessage reportedMessage);

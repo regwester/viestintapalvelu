@@ -21,10 +21,15 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
 	}
 
 	@Override
-    public Long getNumberOfReportedMessages() {
-        return reportedMessageDAO.findNumberOfReportedMessage();
+    public Long getNumberOfReportedMessages(String organizationOid) {
+        return reportedMessageDAO.findNumberOfReportedMessage(organizationOid);
     }
 
+    @Override
+    public Long getNumberOfReportedMessages(ReportedMessageQueryDTO query) {
+        return reportedMessageDAO.findNumberOfReportedMessage(query);
+    }
+	
 	@Override
 	public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
 	    return reportedMessageDAO.findByOrganizationOid(organizationOid, pagingAndSorting);
