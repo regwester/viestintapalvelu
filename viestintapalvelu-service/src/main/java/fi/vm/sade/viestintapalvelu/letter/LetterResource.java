@@ -7,6 +7,7 @@ import static org.joda.time.DateTime.now;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
@@ -42,6 +43,7 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -66,10 +68,15 @@ public class LetterResource extends AsynchronousResource {
     @Autowired 
     private LetterService letterService;
     
-    private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; synkroninen";
-    private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; asynkroninen";
+    private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
+    private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
 
+    private final static String ApiZIPSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet Itellan ZIP-muodossa; synkroninen.";
+    private final static String ApiZIPAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet Itellan ZIP-muodossa; asynkroninen";
+    private final static String ZIPResponse400 = "BAD_REQUEST; ZIP-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+
+    
     @GET
     @Produces("text/plain")
     @Path("/isAlive")
@@ -224,4 +231,100 @@ public class LetterResource extends AsynchronousResource {
     public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) throws IOException, DocumentException {
         return letterService.createLetter(letterBatch);
    }
+    
+    /**
+     * Kirjeiden itella ZIP sync
+     * 
+     * @param input
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     * @throws NoSuchAlgorithmException
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/zip")
+    @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
+    @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
+    public Response zip(
+            @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) LetterBatch input,
+            @Context HttpServletRequest request) throws IOException,
+            DocumentException, NoSuchAlgorithmException {
+        String documentId;
+        try {
+            byte[] zip = letterBuilder.printZIP(input);
+            documentId = downloadCache.addDocument(new Download(
+                    "application/zip", input.getTemplateName()+".zip", zip));
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Letter ZIP failed: {}", e.getMessage());
+            return createFailureResponse(request);
+        }
+        return createResponse(request, documentId);
+    }
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/octet-stream")
+    @Path("/sync/zip")
+    @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
+    @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
+    public InputStream syncZip(
+            @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) LetterBatch input,
+            @Context HttpServletRequest request) throws IOException,
+            DocumentException, NoSuchAlgorithmException {
+        return new ByteArrayInputStream(letterBuilder.printZIP(input));
+    }
+
+    /**
+     * Jalkihohjauskirje ZIP async
+     * 
+     * @param input
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     * @throws NoSuchAlgorithmException
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @PreAuthorize("isAuthenticated()")
+    @Path("/async/zip")
+    @ApiOperation(value = ApiZIPAsync, notes = ApiZIPAsync
+            + ". Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. "
+            + AsyncResponseLogicDocumentation)
+    public Response asynczip(
+            @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final LetterBatch input,
+            @Context final HttpServletRequest request) throws IOException,
+            DocumentException, NoSuchAlgorithmException {
+        final Authentication auth = SecurityContextHolder.getContext()
+                .getAuthentication();
+        final String documentId = globalRandomId();
+        executor.execute(new Runnable() {
+            public void run() {
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                try {
+                    byte[] zip = letterBuilder.printZIP(input);
+                    dokumenttiResource
+                            .tallenna(
+                                    null,
+                                    filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()+".zip"),
+                                    now().plusDays(1).toDate().getTime(),
+                                    Arrays.asList("viestintapalvelu",
+                                            input.getTemplateName(), "zip"),
+                                    "application/zip",
+                                    new ByteArrayInputStream(zip));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOG.error("letter ZIP async failed: {}",
+                            e.getMessage());
+                }
+            }
+        });
+        return createResponse(request, documentId);
+    }
+    
 }

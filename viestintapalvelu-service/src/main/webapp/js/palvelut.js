@@ -168,6 +168,11 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang});
         }
         
+        function letterZIP(letters, replacements, tName, tLang) {
+            print(letter + 'zip', {
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang});
+        }
+        
         function ipostZIP(letters) {
             print(jalkiohjauskirje + 'zip', {
                 "letters": letters});
@@ -191,8 +196,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             koekutsukirjePDF: koekutsukirjePDF,
             osoitetarratPDF: osoitetarratPDF,
             osoitetarratXLS: osoitetarratXLS,
-            letterPDF: letterPDF
-            
+            letterPDF: letterPDF,
+            letterZIP: letterZIP
         }
     }()
 }])

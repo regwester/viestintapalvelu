@@ -16,6 +16,7 @@
 
     <div class="run-action btn-group">
         <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1">PDF</button>
+        <button class="btn" ng-click="generateZIP()" ng-disabled="getCount() < 1">ZIP</button>
     </div>
     
     <h4>Alla on raakana HTML-koodina ylläolevan editorin sisältö</h4>
@@ -95,9 +96,6 @@
                     </tr>
                 </table>
             </td>
- <!--            <td class="inline-operation">
-                <button ng-click="removeHyvaksymiskirje($index)" class="inline-operation btn btn-small">Poista</button>
-            </td> -->
         </tr>
     </table>
     

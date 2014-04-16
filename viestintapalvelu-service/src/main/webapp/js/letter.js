@@ -82,6 +82,10 @@ angular.module('app').controller(
     	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang);
     };
     
+    $scope.generateZIP = function () {
+    	Printer.letterZIP($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang);
+    };
+    
     $scope.updateGenerated = function () {
         if ($scope.count > $scope.letters.length) {
             generateLetters($scope.count - $scope.letters.length);

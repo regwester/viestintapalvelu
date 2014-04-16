@@ -1,13 +1,13 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
-import javax.persistence.Column;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 @ApiModel(value = "Kerralla muodostettavien koekutsukirjeiden joukko")
@@ -33,9 +33,9 @@ public class LetterBatch {
     private String storingOid;
 
     private String organizationOid;
-    
+
     private String fetchTarget;
-    
+
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
     }
@@ -79,9 +79,9 @@ public class LetterBatch {
         return languageCode;
     }
 
-	public void setLanguageCode(String languageCode) {
-		this.languageCode = languageCode;
-	}
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
 
     public String getTemplateName() {
         return templateName;
@@ -90,39 +90,68 @@ public class LetterBatch {
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
     }
-       
-	public String getStoringOid() {
-		return storingOid;
-	}
 
-	public void setStoringOid(String storingOid) {
-		this.storingOid = storingOid;
-	}
+    public String getStoringOid() {
+        return storingOid;
+    }
 
-	public String getOrganizationOid() {
-		return organizationOid;
-	}
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
 
-	public void setOrganizationOid(String organizationOid) {
-		this.organizationOid = organizationOid;
-	}
-	
-	public String getFetchTarget() {
-		return fetchTarget;
-	}
+    public String getOrganizationOid() {
+        return organizationOid;
+    }
 
-	public void setFetchTarget(String fetchTarget) {
-		this.fetchTarget = fetchTarget;
-	}
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
 
-	@Override
-	public String toString() {
-		return "LetterBatch [letters=" + letters + ", template=" + template
-				+ ", templateId=" + templateId + ", templateReplacements="
-				+ templateReplacements + ", templateName=" + templateName
-				+ ", languageCode=" + languageCode + ", storingOid="
-				+ storingOid + ", organizationOid=" + organizationOid
-				+ ", fetchTarget=" + fetchTarget + "]";
-	}
+    public String getFetchTarget() {
+        return fetchTarget;
+    }
+
+    public void setFetchTarget(String fetchTarget) {
+        this.fetchTarget = fetchTarget;
+    }
+
+    public List<LetterBatch> split(int limit) {
+        List<LetterBatch> batches = new ArrayList<LetterBatch>();
+        split(letters, batches, limit);
+        return batches;
+    }
+
+    private LetterBatch createSubBatch(List<Letter> lettersOfSubBatch) {
+        LetterBatch result = new LetterBatch(lettersOfSubBatch);
+        result.setLanguageCode(languageCode);
+        result.setFetchTarget(fetchTarget);
+        result.setOrganizationOid(organizationOid);
+        result.setStoringOid(storingOid);
+        result.setTemplate(template);
+        result.setTemplateId(templateId);
+        result.setTemplateName(templateName);
+        result.setTemplateReplacements(templateReplacements);
+        return result;
+    }
+
+    private void split(List<Letter> remaining, List<LetterBatch> batches,
+            int limit) {
+        if (limit >= remaining.size()) {
+            batches.add(createSubBatch(remaining));
+        } else {
+            batches.add(createSubBatch(new ArrayList<Letter>(remaining.subList(0, limit))));
+            split(remaining.subList(limit, remaining.size()), batches, limit);
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "LetterBatch [letters=" + letters + ", template=" + template
+                + ", templateId=" + templateId + ", templateReplacements="
+                + templateReplacements + ", templateName=" + templateName
+                + ", languageCode=" + languageCode + ", storingOid="
+                + storingOid + ", organizationOid=" + organizationOid
+                + ", fetchTarget=" + fetchTarget + "]";
+    }
 
 }
