@@ -32,6 +32,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
@@ -39,6 +41,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
@@ -446,5 +449,21 @@ public class GroupEmailReportingServiceTest {
 		assertTrue(reportedMessageDTO.getMessageID().equals(new Long(1)));
 		assertNotNull(reportedMessageDTO.getStatusReport());
 		assertNotNull(reportedMessageDTO.getSendingReport());
+	}
+	
+	@Test
+	public void testGetUserOrganization() {
+	    List<OrganisaatioHenkilo> henkilonOrganisaatiot = RaportointipalveluTestData.getHenkilonOrganisaatiot();
+	    when(mockedCurrentUserComponent.getCurrentUserOrganizations()).thenReturn(henkilonOrganisaatiot);	    
+	    when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(
+	        RaportointipalveluTestData.getOrganisaatioRDTO());
+	    when(mockedOrganizationComponent.getNameOfOrganisation(any(OrganisaatioRDTO.class))).thenReturn("OPH");
+	    
+	    List<OrganizationDTO> organizationDTOs = groupEmailReportingService.getUserOrganizations();
+	    
+	    assertNotNull(organizationDTOs);
+	    assertTrue(organizationDTOs.size() == 1);
+	    assertTrue(organizationDTOs.get(0).getOid().equals("1.2.246.562.10.00000000001"));
+	    assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
 	}
 }

@@ -184,7 +184,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid, pagingAndSorting);
-		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
+		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(organizationOid);
 		
 		Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
 		for (ReportedMessage reportedMessage : reportedMessages) {
@@ -202,13 +202,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	}
 
 	@Override
-	public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO query, 
-	    PagingAndSortingDTO pagingAndSorting) {
+	public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
         LOGGER.info("getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) called");
 	    ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 	       
 		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
-		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages();
+		Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(query);
 		
         Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
         for (ReportedMessage reportedMessage : reportedMessages) {

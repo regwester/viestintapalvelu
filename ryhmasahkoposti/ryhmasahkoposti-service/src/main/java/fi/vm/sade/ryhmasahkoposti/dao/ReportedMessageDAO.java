@@ -36,7 +36,16 @@ public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
 	/**
 	 * Hakee raportoitujen ryhmäsähköpostien lukumäärän
 	 * 
+	 * @param  organizationOid Organisaation oid-tunnus
 	 * @return Raportoitujen ryhmäsähköpostien lukumäärä
 	 */
-	public Long findNumberOfReportedMessage();
+	public Long findNumberOfReportedMessage(String organizationOid);
+
+	   /**
+     * Hakee hakuparametrien mukaiset raportoitujen ryhmäsähköpostien lukumäärän
+     * 
+     * @param query Hakuparametrit
+     * @return Raportoitujen ryhmäsähköpostien lukumäärä
+     */
+    public Long findNumberOfReportedMessage(ReportedMessageQueryDTO query);
 }
