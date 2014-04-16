@@ -209,18 +209,18 @@ public class TemplateService {
     /**
      * Method getTemplateByName, includes content
      * 
-     * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI
      * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI&content=YES
      * 			
      * 			==> content included
      * 
      * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI&content=NO
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getByName?templateName=letter&languageCode=FI
 	 *
      * 			==> not content 
      * 
      * @param name		a String, e.g. 'letter'
      * @param language	a String, e.g. 'FI', 'SV', 'EN'
-     * @param content	a String, e.g. 'YES','NO' or missing (='YES')
+     * @param content	a String, e.g. 'YES','NO' or missing (='NO')
      *  
      * @return
      */
@@ -267,4 +267,5 @@ public class TemplateService {
     	
     	return searchTempl;
     }
+    
 }

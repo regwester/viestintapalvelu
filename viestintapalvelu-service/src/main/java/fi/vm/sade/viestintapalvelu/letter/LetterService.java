@@ -51,7 +51,7 @@ public class LetterService {
 		
 		// kirjeet.lahetyskorvauskentat
 		letterB.setLetterReplacements(parseLetterReplacementsModels(letterBatch, letterB));
-		
+
 		// kirjeet.vastaanottaja
         letterB.setLetterReceivers(parseLetterReceiversModels(letterBatch, letterB));
 		
@@ -189,16 +189,83 @@ public class LetterService {
     		// kirjeet.vastaanottajakorvauskentat
     		Map<String, Object> replacements = new HashMap<String, Object>();        	
             for (LetterReceiverReplacement letterRepl : letterRec.getLetterReceiverReplacement()) {
-            	replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());        	
+            	replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());
+            	
+            	// not implemented totally.
+            	
             }
         	letter.setTemplateReplacements(replacements);
         
     		// kirjeet.vastaanottajaosoite
-        	// Not implemented
+        	fi.vm.sade.viestintapalvelu.address.AddressLabel addr = new fi.vm.sade.viestintapalvelu.address.AddressLabel(
+        			letterRec.getLetterReceiverAddress().getFirstName(),
+        			letterRec.getLetterReceiverAddress().getLastName(),
+        			letterRec.getLetterReceiverAddress().getAddressline(),
+        			letterRec.getLetterReceiverAddress().getAddressline2(),
+        			letterRec.getLetterReceiverAddress().getAddressline3(),
+        			letterRec.getLetterReceiverAddress().getPostalCode(),
+        			letterRec.getLetterReceiverAddress().getCity(),
+        			letterRec.getLetterReceiverAddress().getRegion(),
+        			letterRec.getLetterReceiverAddress().getCountry(),
+        			letterRec.getLetterReceiverAddress().getCountryCode());
+        	letter.setAddressLabel(addr);
+        	
         	
         	letters.add(letter);
         }
 		return letters;
 	}
+	
+	
+    /* ------------------------------- */
+    /* - findLetterBatchByNameOrgTag - */
+    /* ------------------------------- */
+	public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName, String organizationOid, String tag) {		
+        fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
+		
+		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
+        if (letterBatch != null) {
+        
+			// kirjeet.kirjelahetys
+	        result.setTemplateId(letterBatch.getTemplateId());       
+	        result.setTemplateName(letterBatch.getTemplateName());
+	        result.setFetchTarget(letterBatch.getFetchTarget());                
+	        result.setLanguageCode(letterBatch.getLanguage());
+	        result.setStoringOid(letterBatch.getStoringOid());
+	        result.setOrganizationOid(letterBatch.getOrganizationOid());
+	        
+			// kirjeet.lahetyskorvauskentat        
+	    	result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));	    	
+        }
+        
+    	return result;
+    }
+    
+
+    /* ------------------------------- */
+    /* - findReplacementByNameOrgTag - */
+    /* ------------------------------- */
+	public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String organizationOid, String tag) {		
+
+    	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();		
+		
+		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
+        if (letterBatch != null) {
+        
+			// kirjeet.lahetyskorvauskentat        
+	        for (LetterReplacement letterRepl : letterBatch.getLetterReplacements()) {
+	        	fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
+	        	repl.setId(letterRepl.getId());
+	        	repl.setName(letterRepl.getName());
+	        	repl.setDefaultValue(letterRepl.getDefaultValue());
+	        	repl.setMandatory(letterRepl.isMandatory());
+	        	repl.setTimestamp(letterRepl.getTimestamp());
+	        	
+	        	replacements.add(repl);        	
+	        }
+        }        
+    	return replacements;
+    }
+    
 
 }
