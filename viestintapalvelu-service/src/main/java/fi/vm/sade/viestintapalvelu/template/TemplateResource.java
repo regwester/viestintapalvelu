@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -26,19 +27,19 @@ import com.wordnik.swagger.annotations.Api;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Component
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {
 
-    @Autowired
-    private TemplateDAO templateDAO;
     
     @Autowired 
     private TemplateService templateService;
+    
+    @Autowired 
+    private LetterService letterService;
 
     @GET
     // @Consumes("application/json")
@@ -142,7 +143,7 @@ public class TemplateResource extends AsynchronousResource {
         
        String templateName = request.getParameter("templateName");
        String languageCode = request.getParameter("languageCode");
-       String content 	   = request.getParameter("content");		// If missing => content included
+       String content 	   = request.getParameter("content");		// If missing => content excluded
        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
        return templateService.getTemplateByName(templateName, languageCode, getContent);
     }
@@ -152,11 +153,93 @@ public class TemplateResource extends AsynchronousResource {
     // @PreAuthorize("isAuthenticated()")
     @Produces("application/json")
     @Path("/store")
-    public Template store(Template template) throws IOException,
-            DocumentException {
-
+    public Template store(Template template) throws IOException, DocumentException {
         templateService.storeTemplateDTO(template);
         return new Template();
-   }
+    }
+    
+    
+    /**
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getTempHistory?templateName=hyvaksymiskirje&languageCode=FI&content=YES&oid=123456789&tag=par
+     * 
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     */
+    @GET
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getTempHistory")
+    public TemplateBundle getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+    	TemplateBundle bundle = new TemplateBundle();
+    	
+        String templateName = request.getParameter("templateName");
+        String languageCode = request.getParameter("languageCode");
+        String content 	   = request.getParameter("content");		// If missing => content excluded
+        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
+        
+        bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
+    	
+		String oid = request.getParameter("oid");
+		String tag = request.getParameter("tag");
+		if (tag==null) {
+    	   tag="";
+		}		
+		
+		bundle.setLatestOrganisationReplacements( 		letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );		
+		bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag) );
+		
+		return bundle;
+    }
 
+    
+    /**
+     * http://localhost:8080/viestintapalvelu/api/v1/template/getHistory?templateName=hyvaksymiskirje&languageCode=FI&oid=123456789&tag=11111
+     * 
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     */
+    @GET
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getHistory")
+    public List<Map<String, Object>> getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+    	List<Map<String, Object>> history = new LinkedList<Map<String, Object>>();
+    	
+        String templateName = request.getParameter("templateName");
+        String languageCode = request.getParameter("languageCode");
+//        String content 	   = request.getParameter("content");		// If missing => content excluded
+//        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
+        boolean getContent = false;
+        
+        // OPH default template
+        Template template = templateService.getTemplateByName(templateName, languageCode, getContent);
+        
+        Map<String, Object> templateRepl = new HashMap<String, Object>();
+        templateRepl.put("default", template.getReplacements());
+        history.add(templateRepl);
+        
+        String oid = request.getParameter("oid");
+		String tag = request.getParameter("tag");
+		if (tag==null) {
+    	   tag="";
+		}
+		
+		// Latest LetterBatch replacements for that OrganisationOid
+        Map<String, Object> organisationRepl = new HashMap<String, Object>();
+        organisationRepl.put("organisationOid", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
+        history.add(organisationRepl);
+
+		// Latest LetterBatch replacements for that OrganisationOid
+        Map<String, Object> tagRepl = new HashMap<String, Object>();
+        tagRepl.put("organisationOidTag", letterService.findReplacementByNameOrgTag(templateName, oid, tag)  );
+        history.add(tagRepl);
+				
+		return history;
+    }
 }

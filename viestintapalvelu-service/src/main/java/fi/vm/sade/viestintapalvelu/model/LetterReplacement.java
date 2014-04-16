@@ -99,5 +99,11 @@ public class LetterReplacement extends BaseEntity {
         this.timestamp = timestamp;
     }
 
+	@Override
+	public String toString() {
+		return "LetterReplacement [name="+ name + ", defaultValue=" + defaultValue + ", mandatory="
+				+ mandatory + ", timestamp=" + timestamp + "]";
+	}
+
 
 }

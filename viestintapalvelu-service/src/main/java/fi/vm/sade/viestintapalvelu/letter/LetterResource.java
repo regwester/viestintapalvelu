@@ -8,6 +8,8 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -195,6 +197,23 @@ public class LetterResource extends AsynchronousResource {
        
        return letterService.findById(id);
     }
+    
+    @GET
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")
+    @Path("/getByNameOrgTag")
+    public LetterBatch templateByNameOidTag(@Context HttpServletRequest request) throws IOException, DocumentException {
+        
+       String name = request.getParameter("name");
+       String oid = request.getParameter("oid");
+       String tag = request.getParameter("tag");
+       if ((tag==null) || ("".equals(tag))) {
+    	   tag="%%";
+       }
+       return letterService.findLetterBatchByNameOrgTag(name, oid, tag);
+    }
+
     
     // FOR TESTING
     @POST

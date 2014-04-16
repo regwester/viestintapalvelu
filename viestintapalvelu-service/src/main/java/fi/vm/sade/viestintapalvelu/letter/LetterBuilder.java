@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -9,7 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
+import java.util.zip.Deflater;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -21,13 +22,11 @@ import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
@@ -55,9 +54,6 @@ public class LetterBuilder {
             DocumentException {
 
        Template template = batch.getTemplate();
-       
-//batch.setTemplateName("letter");
-//batch.setLanguageCode("FI");
        
        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
     	   template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
@@ -92,15 +88,24 @@ public class LetterBuilder {
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(template, tc.getContent().getBytes(),
                             letter.getAddressLabel(),
-                            templReplacements,						// Template, e.g. LIITE
-                            batch.getTemplateReplacements(),		// LetterBatch, e.g. column names, ...
-                            letter.getTemplateReplacements());		// Letter, e.g student names, address, ...
+                            templReplacements,						// Template, basic replacement
+                            batch.getTemplateReplacements(),		// LetterBatch, (last) sent replacements that might have overwritten the template values
+                            letter.getTemplateReplacements());		// Letter, e.g student results, addressLabel, ...
                     
-                    source.add(new PdfDocument(letter.getAddressLabel(), page,
-                            null));
+                    PdfDocument dfDocument = new PdfDocument(letter.getAddressLabel(), page, null);
+                    source.add(dfDocument);                    
+//                    source.add(new PdfDocument(letter.getAddressLabel(), page, null));
                 }
             }
         }
+        
+//        byte[] docu = documentBuilder.merge(source).toByteArray(); 
+//        byte[] zippedDocu = zip("joku nimi", docu);
+//        return docu;
+        
+//        // Write LetterBatch to DB
+//        fi.vm.sade.viestintapalvelu.model.LetterBatch lb = letterService.createLetter(batch);
+        
         return documentBuilder.merge(source).toByteArray();
     }
 
@@ -112,7 +117,6 @@ public class LetterBuilder {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(template, new HtmlAddressLabelDecorator(addressLabel), 
-//        													replacements, patchReplacements);
         													templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
@@ -151,4 +155,23 @@ public class LetterBuilder {
     private String cleanHtmlFromApi(String string) {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
+    
+	public static byte[] zip(String attachmentName, byte[] attachment) throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(attachment.length);
+		
+		Deflater deflater = new Deflater();  
+		deflater.setInput(attachment);  
+		deflater.finish(); 
+
+		byte[] buffer = new byte[1024];   
+		
+		while (!deflater.finished()) {  
+			int count = deflater.deflate(buffer);  
+			outputStream.write(buffer, 0, count);   
+		}  
+		
+		outputStream.close();    
+		return outputStream.toByteArray();  
+    }
+    
 }
