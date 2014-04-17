@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +9,7 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.Deflater;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
@@ -129,12 +133,61 @@ public class LetterService {
 	    		
 	    		rec.setLetterReceiverAddress(lra);
 			}
-    		
+
+    		// kirjeet.vastaanottajakirje
+    		if (letter.getLetterContent() != null) {
+    			LetterReceiverLetter lrl = new LetterReceiverLetter();
+    			lrl.setTimestamp(new Date());
+
+    			boolean zippaa = true;
+    			
+    			if (zippaa) { // ZIP
+	    			try {
+						lrl.setLetter( zip( letter.getLetterContent().getContent()) );
+		    			lrl.setContentType("application/zip"); 									// application/zip
+		    			lrl.setOriginalContentType(letter.getLetterContent().getContentType());	// application/pdf
+
+	    			} catch (IOException e) {
+		    			lrl.setLetter(letter.getLetterContent().getContent());
+		    			lrl.setContentType(letter.getLetterContent().getContentType()); 		// application/pdf
+		    			lrl.setOriginalContentType(letter.getLetterContent().getContentType());	// application/pdf
+					}
+					
+				} else { // Not zipped
+	    			lrl.setLetter(letter.getLetterContent().getContent());
+	    			lrl.setContentType(letter.getLetterContent().getContentType()); 		// application/pdf
+	    			lrl.setOriginalContentType(letter.getLetterContent().getContentType());	// application/pdf
+				}
+    			
+	    		lrl.setLetterReceivers(rec);    
+	    		
+	    		rec.setLetterReceiverLetter(lrl);
+    		}
+
     		//    		
         	receivers.add(rec);
         }
 		return receivers;
 	}
+	
+	private static byte[] zip(byte[] content) throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
+		
+		Deflater deflater = new Deflater();  
+		deflater.setInput(content);  
+		deflater.finish(); 
+
+		byte[] buffer = new byte[1024];   
+		
+		while (!deflater.finished()) {  
+			int count = deflater.deflate(buffer);  
+			outputStream.write(buffer, 0, count);   
+		}  
+		
+		outputStream.close();    
+		return outputStream.toByteArray();  
+    }
+    
 
 	private LetterBatch storeLetterBatch(LetterBatch letterB) {
 		return letterBatchDAO.insert(letterB);
