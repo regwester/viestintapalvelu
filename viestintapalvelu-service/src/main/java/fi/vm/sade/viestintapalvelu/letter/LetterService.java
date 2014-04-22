@@ -58,28 +58,120 @@ public class LetterService {
 		return storeLetterBatch(letterB);
 	}
 
-	/*
-	 *  kirjeet.lahetyskorvauskentat
-	 */
-	private Set<LetterReplacement> parseLetterReplacementsModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
-		Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
+	/* ------------ */
+    /* - findById - */
+    /* ------------ */
+    public fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id) {
+    	LetterBatch searchResult = null;
+    	List<LetterBatch> letterBatch = letterBatchDAO.findBy("id", id);
+        if (letterBatch != null && !letterBatch.isEmpty()) {
+            searchResult = letterBatch.get(0);
+        }
+        
+		// kirjeet.kirjelahetys
+        fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
+        result.setTemplateId(searchResult.getTemplateId());       
+        result.setTemplateName(searchResult.getTemplateName());
+        result.setFetchTarget(searchResult.getFetchTarget());                
+        result.setLanguageCode(searchResult.getLanguage());
+        result.setStoringOid(searchResult.getStoringOid());
+        result.setOrganizationOid(searchResult.getOrganizationOid());
+        
+		// kirjeet.lahetyskorvauskentat        
+    	result.setTemplateReplacements(parseReplDTOs(searchResult.getLetterReplacements()));
+    	
+		// kirjeet.vastaanottaja
+//    	result.setLetters(parseLetterDTOs(searchResult.getLetterReceivers()));    	
+//		Not implemented
+    	
+    	return result;
+    }
 
-		Object replKeys[] = letterBatch.getTemplateReplacements().keySet().toArray();
-		Object replVals[] = letterBatch.getTemplateReplacements().values().toArray();
+	/* ------------------------------- */
+    /* - findLetterBatchByNameOrgTag - */
+    /* ------------------------------- */
+	public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName, String organizationOid, String tag) {		
+        fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
 		
-		for (int i = 0; i < replVals.length; i++) {
-			fi.vm.sade.viestintapalvelu.model.LetterReplacement repl = new fi.vm.sade.viestintapalvelu.model.LetterReplacement();
-			
-			repl.setName(replKeys[i].toString());
-			repl.setDefaultValue(replVals[i].toString());
-//			repl.setMandatory();
-//TODO: tähän tietyt kentät Mandatory true esim. title body ...			
+		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
+        if (letterBatch != null) {
+        
+			// kirjeet.kirjelahetys
+	        result.setTemplateId(letterBatch.getTemplateId());       
+	        result.setTemplateName(letterBatch.getTemplateName());
+	        result.setFetchTarget(letterBatch.getFetchTarget());                
+	        result.setLanguageCode(letterBatch.getLanguage());
+	        result.setStoringOid(letterBatch.getStoringOid());
+	        result.setOrganizationOid(letterBatch.getOrganizationOid());
+	        
+			// kirjeet.lahetyskorvauskentat        
+	    	result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));	    	
+        }
+        
+    	return result;
+    }
 
-			repl.setTimestamp(new Date());
-			repl.setLetterBatch(letterB);	
-			replacements.add(repl);
-		}
-		return replacements;
+	/* ------------------------------- */
+    /* - findReplacementByNameOrgTag - */
+    /* ------------------------------- */
+	public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String organizationOid, String tag) {		
+
+    	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();		
+		
+		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
+        if (letterBatch != null) {
+        
+			// kirjeet.lahetyskorvauskentat        
+	        for (LetterReplacement letterRepl : letterBatch.getLetterReplacements()) {
+	        	fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
+	        	repl.setId(letterRepl.getId());
+	        	repl.setName(letterRepl.getName());
+	        	repl.setDefaultValue(letterRepl.getDefaultValue());
+	        	repl.setMandatory(letterRepl.isMandatory());
+	        	repl.setTimestamp(letterRepl.getTimestamp());
+	        	
+	        	replacements.add(repl);        	
+	        }
+        }        
+    	return replacements;
+    }
+
+    private List<Letter> parseLetterDTOs(Set<LetterReceivers> letterReceivers) {
+		List<Letter> letters = new LinkedList<Letter>();
+				
+        for (LetterReceivers letterRec : letterReceivers) {
+        	Letter letter = new Letter();
+        
+        	// Should fetch by receiver...
+        	
+    		// kirjeet.vastaanottajakorvauskentat
+    		Map<String, Object> replacements = new HashMap<String, Object>();        	
+            for (LetterReceiverReplacement letterRepl : letterRec.getLetterReceiverReplacement()) {
+            	replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());
+            	
+            	// not implemented totally.
+            	
+            }
+        	letter.setTemplateReplacements(replacements);
+        
+    		// kirjeet.vastaanottajaosoite
+        	fi.vm.sade.viestintapalvelu.address.AddressLabel addr = new fi.vm.sade.viestintapalvelu.address.AddressLabel(
+        			letterRec.getLetterReceiverAddress().getFirstName(),
+        			letterRec.getLetterReceiverAddress().getLastName(),
+        			letterRec.getLetterReceiverAddress().getAddressline(),
+        			letterRec.getLetterReceiverAddress().getAddressline2(),
+        			letterRec.getLetterReceiverAddress().getAddressline3(),
+        			letterRec.getLetterReceiverAddress().getPostalCode(),
+        			letterRec.getLetterReceiverAddress().getCity(),
+        			letterRec.getLetterReceiverAddress().getRegion(),
+        			letterRec.getLetterReceiverAddress().getCountry(),
+        			letterRec.getLetterReceiverAddress().getCountryCode());
+        	letter.setAddressLabel(addr);
+        	
+        	
+        	letters.add(letter);
+        }
+		return letters;
 	}
 
 	/*
@@ -135,41 +227,33 @@ public class LetterService {
         }
 		return receivers;
 	}
+	
+	/*
+	 *  kirjeet.lahetyskorvauskentat
+	 */
+	private Set<LetterReplacement> parseLetterReplacementsModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
+		Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
 
-	private LetterBatch storeLetterBatch(LetterBatch letterB) {
-		return letterBatchDAO.insert(letterB);
+		Object replKeys[] = letterBatch.getTemplateReplacements().keySet().toArray();
+		Object replVals[] = letterBatch.getTemplateReplacements().values().toArray();
+		
+		for (int i = 0; i < replVals.length; i++) {
+			fi.vm.sade.viestintapalvelu.model.LetterReplacement repl = new fi.vm.sade.viestintapalvelu.model.LetterReplacement();
+			
+			repl.setName(replKeys[i].toString());
+			repl.setDefaultValue(replVals[i].toString());
+//			repl.setMandatory();
+//TODO: tähän tietyt kentät Mandatory true esim. title body ...			
+
+			repl.setTimestamp(new Date());
+			repl.setLetterBatch(letterB);	
+			replacements.add(repl);
+		}
+		return replacements;
 	}
-
-    /* ------------ */
-    /* - findById - */
-    /* ------------ */
-    public fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id) {
-    	LetterBatch searchResult = null;
-    	List<LetterBatch> letterBatch = letterBatchDAO.findBy("id", id);
-        if (letterBatch != null && !letterBatch.isEmpty()) {
-            searchResult = letterBatch.get(0);
-        }
-        
-		// kirjeet.kirjelahetys
-        fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
-        result.setTemplateId(searchResult.getTemplateId());       
-        result.setTemplateName(searchResult.getTemplateName());
-        result.setFetchTarget(searchResult.getFetchTarget());                
-        result.setLanguageCode(searchResult.getLanguage());
-        result.setStoringOid(searchResult.getStoringOid());
-        result.setOrganizationOid(searchResult.getOrganizationOid());
-        
-		// kirjeet.lahetyskorvauskentat        
-    	result.setTemplateReplacements(parseReplDTOs(searchResult.getLetterReplacements()));
-    	
-		// kirjeet.vastaanottaja
-//    	result.setLetters(parseLetterDTOs(searchResult.getLetterReceivers()));    	
-//		Not implemented
-    	
-    	return result;
-    }
-
-	private Map<String, Object> parseReplDTOs(Set<LetterReplacement> letterReplacements) {	 
+	
+	
+    private Map<String, Object> parseReplDTOs(Set<LetterReplacement> letterReplacements) {	 
 		Map<String, Object> replacements = new HashMap<String, Object>();
 		
         for (LetterReplacement letterRepl : letterReplacements) {
@@ -177,95 +261,11 @@ public class LetterService {
         }
 		return replacements;
 	}
-	
-	private List<Letter> parseLetterDTOs(Set<LetterReceivers> letterReceivers) {
-		List<Letter> letters = new LinkedList<Letter>();
-				
-        for (LetterReceivers letterRec : letterReceivers) {
-        	Letter letter = new Letter();
-        
-        	// Should fetch by receiver...
-        	
-    		// kirjeet.vastaanottajakorvauskentat
-    		Map<String, Object> replacements = new HashMap<String, Object>();        	
-            for (LetterReceiverReplacement letterRepl : letterRec.getLetterReceiverReplacement()) {
-            	replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());
-            	
-            	// not implemented totally.
-            	
-            }
-        	letter.setTemplateReplacements(replacements);
-        
-    		// kirjeet.vastaanottajaosoite
-        	fi.vm.sade.viestintapalvelu.address.AddressLabel addr = new fi.vm.sade.viestintapalvelu.address.AddressLabel(
-        			letterRec.getLetterReceiverAddress().getFirstName(),
-        			letterRec.getLetterReceiverAddress().getLastName(),
-        			letterRec.getLetterReceiverAddress().getAddressline(),
-        			letterRec.getLetterReceiverAddress().getAddressline2(),
-        			letterRec.getLetterReceiverAddress().getAddressline3(),
-        			letterRec.getLetterReceiverAddress().getPostalCode(),
-        			letterRec.getLetterReceiverAddress().getCity(),
-        			letterRec.getLetterReceiverAddress().getRegion(),
-        			letterRec.getLetterReceiverAddress().getCountry(),
-        			letterRec.getLetterReceiverAddress().getCountryCode());
-        	letter.setAddressLabel(addr);
-        	
-        	
-        	letters.add(letter);
-        }
-		return letters;
-	}
-	
-	
-    /* ------------------------------- */
-    /* - findLetterBatchByNameOrgTag - */
-    /* ------------------------------- */
-	public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName, String organizationOid, String tag) {		
-        fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
-		
-		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
-        if (letterBatch != null) {
-        
-			// kirjeet.kirjelahetys
-	        result.setTemplateId(letterBatch.getTemplateId());       
-	        result.setTemplateName(letterBatch.getTemplateName());
-	        result.setFetchTarget(letterBatch.getFetchTarget());                
-	        result.setLanguageCode(letterBatch.getLanguage());
-	        result.setStoringOid(letterBatch.getStoringOid());
-	        result.setOrganizationOid(letterBatch.getOrganizationOid());
-	        
-			// kirjeet.lahetyskorvauskentat        
-	    	result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));	    	
-        }
-        
-    	return result;
-    }
     
 
-    /* ------------------------------- */
-    /* - findReplacementByNameOrgTag - */
-    /* ------------------------------- */
-	public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String organizationOid, String tag) {		
-
-    	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();		
-		
-		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
-        if (letterBatch != null) {
-        
-			// kirjeet.lahetyskorvauskentat        
-	        for (LetterReplacement letterRepl : letterBatch.getLetterReplacements()) {
-	        	fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
-	        	repl.setId(letterRepl.getId());
-	        	repl.setName(letterRepl.getName());
-	        	repl.setDefaultValue(letterRepl.getDefaultValue());
-	        	repl.setMandatory(letterRepl.isMandatory());
-	        	repl.setTimestamp(letterRepl.getTimestamp());
-	        	
-	        	replacements.add(repl);        	
-	        }
-        }        
-    	return replacements;
-    }
+    private LetterBatch storeLetterBatch(LetterBatch letterB) {
+		return letterBatchDAO.insert(letterB);
+	}
     
 
 }

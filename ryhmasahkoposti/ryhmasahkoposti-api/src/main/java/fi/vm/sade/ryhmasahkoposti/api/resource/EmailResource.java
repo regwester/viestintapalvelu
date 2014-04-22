@@ -52,6 +52,11 @@ public interface EmailResource {
     @Secured({SecurityConstants.SEND})
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
         throws IOException, URISyntaxException, ServletException ;
+
+    @GET
+    @Produces("application/json")
+    @Path("getEmailData")    
+    public EmailData getEmailDataAsJSON();
     
     /**
      * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle

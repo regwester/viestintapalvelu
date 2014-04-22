@@ -53,7 +53,7 @@
 
 		<!-- Henkilöpalvelu -->
 		<dependency>
-			<groupId>fi.vm.sade.auth</groupId>
+			<groupId>fi.vm.sade.authentication</groupId>
 			<artifactId>authentication-domain</artifactId>
 			<version>${authentication-domain.version}</version>
 		</dependency>

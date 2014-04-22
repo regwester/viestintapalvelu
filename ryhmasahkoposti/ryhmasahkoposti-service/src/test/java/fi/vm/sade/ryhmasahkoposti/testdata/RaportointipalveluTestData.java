@@ -41,7 +41,26 @@ public class RaportointipalveluTestData {
     }
 
     public static EmailData getEmailData() {
-		EmailData emailData = new EmailData();		
+		EmailData emailData = new EmailData();
+		emailData.setSenderOid("lahettajan oid");
+		
+		EmailMessage emailMessage = new EmailMessage();
+		emailMessage.setBody("s-postiviestin sisalto");
+		emailMessage.setCallingProcess("kutsuvaprosessi esim. valinta");
+		emailMessage.setCharset("koodisto");
+		emailMessage.setFrom("lahettajan s-postiosoite");
+		emailMessage.setHtml(false);
+		emailMessage.setOrganizationOid("lahettajan organisaation oid-tunnus");
+		emailMessage.setReplyTo("vastaus s-postiosoite");
+		emailMessage.setSenderOid("lahettajan oid-tunnus");
+		emailMessage.setSubject("s-postin aihe");
+		
+		EmailRecipient emailRecipient = new EmailRecipient();
+		emailRecipient.setEmail("vastaanottajan s-postiosoite");
+		emailRecipient.setLanguageCode("vastaanottajan kielikoodi");
+		emailRecipient.setOid("vastaanottajan oid-tunnus");
+		emailRecipient.setOidType("arvoksi tyhja");
+		
 		return emailData;
 	}
 	

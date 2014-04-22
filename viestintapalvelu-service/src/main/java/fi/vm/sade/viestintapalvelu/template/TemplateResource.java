@@ -16,30 +16,39 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
 
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Component
+@PreAuthorize("isAuthenticated()")
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
-public class TemplateResource extends AsynchronousResource {
-
-    
+public class TemplateResource extends AsynchronousResource {  
     @Autowired 
     private TemplateService templateService;
     
     @Autowired 
     private LetterService letterService;
+    
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
 
     @GET
     // @Consumes("application/json")
@@ -149,11 +158,13 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @POST
-    @Consumes("application/json")
-    // @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")
     @Path("/store")
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Secured("")
     public Template store(Template template) throws IOException, DocumentException {
+        Henkilo henkilo = currentUserComponent.getCurrentUser();
+        template.setStoringOid(henkilo.getOidHenkilo());
         templateService.storeTemplateDTO(template);
         return new Template();
     }
@@ -168,11 +179,20 @@ public class TemplateResource extends AsynchronousResource {
      * @throws DocumentException
      */
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getTempHistory")
-    public TemplateBundle getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+    @Produces("application/json")
+    @Secured("")
+    @Transactional
+    public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = checkUserRights(oid); 
+        
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+
     	TemplateBundle bundle = new TemplateBundle();
     	
         String templateName = request.getParameter("templateName");
@@ -182,7 +202,6 @@ public class TemplateResource extends AsynchronousResource {
         
         bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
     	
-		String oid = request.getParameter("oid");
 		String tag = request.getParameter("tag");
 		if (tag==null) {
     	   tag="";
@@ -191,7 +210,7 @@ public class TemplateResource extends AsynchronousResource {
 		bundle.setLatestOrganisationReplacements( 		letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );		
 		bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag) );
 		
-		return bundle;
+		return Response.ok(bundle).build();
     }
 
     
@@ -204,11 +223,20 @@ public class TemplateResource extends AsynchronousResource {
      * @throws DocumentException
      */
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getHistory")
-    public List<Map<String, Object>> getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+    @Produces("application/json")
+    @Secured("")
+    @Transactional
+    public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = checkUserRights(oid); 
+        
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+
     	List<Map<String, Object>> history = new LinkedList<Map<String, Object>>();
     	
         String templateName = request.getParameter("templateName");
@@ -216,15 +244,14 @@ public class TemplateResource extends AsynchronousResource {
 //        String content 	   = request.getParameter("content");		// If missing => content excluded
 //        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
         boolean getContent = false;
-        
+               
         // OPH default template
         Template template = templateService.getTemplateByName(templateName, languageCode, getContent);
         
         Map<String, Object> templateRepl = new HashMap<String, Object>();
         templateRepl.put("default", template.getReplacements());
-        history.add(templateRepl);
-        
-        String oid = request.getParameter("oid");
+        history.add(templateRepl);       
+                        
 		String tag = request.getParameter("tag");
 		if (tag==null) {
     	   tag="";
@@ -239,7 +266,20 @@ public class TemplateResource extends AsynchronousResource {
         Map<String, Object> tagRepl = new HashMap<String, Object>();
         tagRepl.put("organisationOidTag", letterService.findReplacementByNameOrgTag(templateName, oid, tag)  );
         history.add(tagRepl);
-				
-		return history;
+		
+        return Response.ok(history).build();
     }
+
+    private Response checkUserRights(String oid) {
+        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        
+        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+            if (oid.equals(organisaatioHenkilo.getOrganisaatioOid())) {
+                return Response.status(Status.OK).build();
+            }
+        }
+        
+        return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
+    }
+    
 }

@@ -9,8 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -43,7 +41,6 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.JalkiohjauskirjeBatch;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -224,11 +221,11 @@ public class LetterResource extends AsynchronousResource {
     
     // FOR TESTING
     @POST
-    @Consumes("application/json")
-//  @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")    
     @Path("/createLetter")
-    public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) throws IOException, DocumentException {
+    @Consumes("application/json")
+    @Produces("application/json")
+    public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) 
+        throws IOException, DocumentException {
         return letterService.createLetter(letterBatch);
    }
     
