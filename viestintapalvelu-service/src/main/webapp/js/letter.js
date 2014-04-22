@@ -13,13 +13,14 @@ angular.module('app').controller(
     $scope.templateChanged = function() {
     	Template.getByName($scope.template).success(function (data) {
     		$scope.replacements = data;
-    		var r = data.replacements[0];
-    		if (r.name = "sisalto") {
-    			$scope.tinymceModel = r.defaultValue;
+    		for (i in data.replacements) {
+    			var r = data.replacements[i];
+    			if (r.name == "sisalto") {
+    				$scope.tinymceModel = r.defaultValue;
+    			}
     		}
     	});
     };
-    
     
     $scope.tinymceModel='';
     function generateLetters(count) {

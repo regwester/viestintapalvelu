@@ -25,8 +25,10 @@ import fi.vm.sade.generic.model.BaseEntity;
   id bigint NOT NULL,
   version bigint,
   vastaanottaja_id bigint,
-  kirje text,
   aikaleima time without time zone,
+  kirje bytea,
+  sisaltotyyppi character varying(255),
+  alkuperainensisaltotyyppi character varying(255),
   CONSTRAINT vastaanottajakirje_pk PRIMARY KEY (id),
   CONSTRAINT vastaanottajakirje_vastaanottaja_id_fkey FOREIGN KEY (vastaanottaja_id)
       REFERENCES kirjeet.vastaanottaja (id) MATCH SIMPLE
@@ -45,27 +47,50 @@ public class LetterReceiverLetter extends BaseEntity {
     @JsonBackReference
     private LetterReceivers letterReceivers;
 
-    @Column(name = "kirje")
-    private String letter = null;
-            
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;    
+    private Date timestamp;        
+    
+    @Column(name = "kirje")
+	private byte[] letter;    
+            
+    @Column(name = "sisaltotyyppi")
+    private String contentType = "";
 
-	public String getLetter() {
-		return letter;
-	}
+    @Column(name = "alkuperainensisaltotyyppi")
+    private String originalContentType = "";
 
-	public void setLetter(String letter) {
-		this.letter = letter;
-	}
 
-	public Date getTimestamp() {
+    public Date getTimestamp() {
 		return timestamp;
 	}
 
 	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
+	}
+	
+	public byte[] getLetter() {
+		return letter;
+	}
+
+	public void setLetter(byte[] letter) {
+		this.letter = letter;
+	}
+
+	public String getContentType() {
+		return contentType;
+	}
+
+	public void setContentType(String contentType) {
+		this.contentType = contentType;
+	}
+
+	public String getOriginalContentType() {
+		return originalContentType;
+	}
+
+	public void setOriginalContentType(String originalContentType) {
+		this.originalContentType = originalContentType;
 	}
 
 	public LetterReceivers getLetterReceivers() {

@@ -21,7 +21,7 @@ public class Letter {
     @ApiModelProperty(value = "Kirjeen vastaanottajakohtaiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
     
-//    private LetterContent letterReceiverLetter;
+    private LetterContent letterContent;
     
     
     public Letter() {
@@ -62,6 +62,10 @@ public class Letter {
     public void setAddressLabel(AddressLabel addressLabel) {
         this.addressLabel = addressLabel;
     }
+        
+    public LetterContent getLetterContent() {
+		return letterContent;
+	}
 
     public String getLanguageCode() {
         return languageCode;
@@ -71,7 +75,11 @@ public class Letter {
         this.languageCode = languageCode;
     }
 
-    @Override
+	public void setLetterContent(LetterContent letterContent) {
+		this.letterContent = letterContent;
+	}
+
+	@Override
     public String toString() {
         return "Letter [addressLabel=" + addressLabel + ", templateReplacements="
                 + templateReplacements + "]";

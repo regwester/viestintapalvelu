@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.Deflater;
@@ -81,15 +82,13 @@ public class LetterBuilder {
 
         Template template = batch.getTemplate();
 
-        if (template == null && batch.getTemplateName() != null
-                && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(
-                    batch.getTemplateName(), batch.getLanguageCode());
-            batch.setTemplateId(template.getId()); // Search was by name ==>
-                                                   // update also to template Id
+        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
+            template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
+            
+            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
         }
 
-        if (template == null && batch.getTemplateId() != null) {
+        if (template == null && batch.getTemplateId() != null) { // If not found by name (is this possible ?)
             long templateId = batch.getTemplateId();
             template = templateService.findById(templateId);
         }
@@ -98,93 +97,76 @@ public class LetterBuilder {
             // still null ??
             throw new IOException("could not locate template resource.");
         }
-
-        // Write LetterBatch to DB
-        fi.vm.sade.viestintapalvelu.model.LetterBatch lb = letterService
-                .createLetter(batch);
-
-        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        
+		Map<String, Object> templReplacements = new HashMap<String, Object>();        	
         for (Replacement templRepl : template.getReplacements()) {
-            templReplacements.put(templRepl.getName(),
-                    templRepl.getDefaultValue());
+            templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
         }
 
         List<PdfDocument> source = new ArrayList<PdfDocument>();
-        for (Letter letter : batch.getLetters()) {
-            letter.getTemplateReplacements();
-            // By default use LetterBatch tempalate
-            Template letterTemplate = template;
-            Map<String, Object> letterTemplReplacements = templReplacements;
 
-            // If user specific language is defined use recipient specific
-            // template language
-            if (letter.getLanguageCode() != null
-                    && !letter.getLanguageCode().equalsIgnoreCase(
-                            template.getLanguage())) {
-                Template temp = templateService.getTemplateByName(
-                        letterTemplate.getName(), letter.getLanguageCode());
-                if (temp != null) {
-                    letterTemplate = temp;
-                    letterTemplReplacements = new HashMap<String, Object>();
-                    for (Replacement templRepl : letterTemplate
-                            .getReplacements()) {
-                        letterTemplReplacements.put(templRepl.getName(),
-                                templRepl.getDefaultValue());
-                    }
-                }
-            }
-
-            if (letterTemplate != null) {
-                List<TemplateContent> contents = letterTemplate.getContents();
+		// For updating letters content with the generated PdfDocument
+		List<Letter> updateLetters = new LinkedList<Letter>();
+		
+		for (Letter letter : batch.getLetters()) {
+//			letter.getTemplateReplacements();   ???????????? 
+			// By default use LetterBatch template
+			Template letterTemplate = template;
+			Map<String, Object> letterTemplReplacements = templReplacements;
+			
+			// If user specific language is defined use recipient specific template language
+			if (letter.getLanguageCode() != null && !letter.getLanguageCode().equalsIgnoreCase(template.getLanguage())) {
+				Template temp = templateService.getTemplateByName(letterTemplate.getName(), letter.getLanguageCode());
+				if (temp != null) {
+				    letterTemplate = temp;
+				    letterTemplReplacements = new HashMap<String, Object>();
+				    for (Replacement templRepl : letterTemplate.getReplacements()) {
+				        letterTemplReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
+				    }
+				}
+			}
+			
+			// Write one pdf docu to letter for db write,
+			List<PdfDocument> oneLetterDocu = new ArrayList<PdfDocument>();
+			
+			if (letterTemplate != null) {
+				List<TemplateContent> contents = letterTemplate.getContents();
+	                
                 Collections.sort(contents);
                 for (TemplateContent tc : contents) {
-                    byte[] page = createPagePdf(letterTemplate, tc.getContent()
-                            .getBytes(), letter.getAddressLabel(),
-                            letterTemplReplacements, // Template, basic
-                                                     // replacement
-                            batch.getTemplateReplacements(), // LetterBatch,
-                                                             // (last) sent
-                                                             // replacements
-                                                             // that might have
-                                                             // overwritten the
-                                                             // template values
-                            letter.getTemplateReplacements()); // Letter, e.g
-                                                               // student
-                                                               // results,
-                                                               // addressLabel,
-                                                               // ...
+                    byte[] page = createPagePdf(letterTemplate, tc.getContent().getBytes(), letter.getAddressLabel(),
+                            letterTemplReplacements, // Template, basic replacement
+                            batch.getTemplateReplacements(), // LetterBatch, (last) sent replacements
+                                                             // that might have overwritten the template values
+                            letter.getTemplateReplacements()); // Letter, e.g student results, addressLabel, ...
 
                     PdfDocument dfDocument = new PdfDocument(letter.getAddressLabel(), page, null);
                     source.add(dfDocument);                    
-//                    source.add(new PdfDocument(letter.getAddressLabel(), page, null));
+                    
+                    oneLetterDocu.add(dfDocument);                    
                 }
             }
+            letter.setLetterContent(new LetterContent(documentBuilder.merge(oneLetterDocu).toByteArray(),  "application/pdf", new Date()));
+            updateLetters.add(letter);            
         }
-//        byte[] docu = documentBuilder.merge(source).toByteArray(); 
-//        byte[] zippedDocu = zip("joku nimi", docu);
-//        return docu;
-        
-//        // Write LetterBatch to DB
-//        fi.vm.sade.viestintapalvelu.model.LetterBatch lb = letterService.createLetter(batch);
-        
-//        // Write LetterBatch to DB
-//        fi.vm.sade.viestintapalvelu.model.LetterBatch lb = letterService.createLetter(batch);
+                
+        // Write LetterBatch to DB
+        batch.setLetters(updateLetters); // Contains now the generated PdfDocuments
+        letterService.createLetter(batch);
         
         return documentBuilder.merge(source);
     }
     
-    private byte[] createPagePdf(Template template, byte[] pageContent,
-            AddressLabel addressLabel, Map<String, Object> templReplacements,
+    private byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, 
+    		Map<String, Object> templReplacements,
             Map<String, Object> letterBatchReplacements,
-            Map<String, Object> letterReplacements)
-            throws FileNotFoundException, IOException, DocumentException {
+            Map<String, Object> letterReplacements) throws FileNotFoundException, IOException, DocumentException {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(template,
                 new HtmlAddressLabelDecorator(addressLabel), templReplacements,
                 letterBatchReplacements, letterReplacements);
-        byte[] xhtml = documentBuilder.applyTextTemplate(pageContent,
-                dataContext);
+        byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
@@ -197,8 +179,7 @@ public class LetterBuilder {
             if (replacements != null) {
                 for (String key : replacements.keySet()) {
                     if (replacements.get(key) instanceof String) {
-                        data.put(
-                                key,
+                        data.put(key,
                                 cleanHtmlFromApi((String) replacements.get(key)));
                     } else {
                         data.put(key, replacements.get(key));
@@ -237,21 +218,24 @@ public class LetterBuilder {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
     
-	public static byte[] zip(String attachmentName, byte[] attachment) throws IOException {
-		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(attachment.length);
-		
-		Deflater deflater = new Deflater();  
-		deflater.setInput(attachment);  
-		deflater.finish(); 
-
-		byte[] buffer = new byte[1024];   
-		
-		while (!deflater.finished()) {  
-			int count = deflater.deflate(buffer);  
-			outputStream.write(buffer, 0, count);   
-		}  
-		
-		outputStream.close();    
-		return outputStream.toByteArray();  
-    }
+//<<<<<<< HEAD
+//	public static byte[] zip(String attachmentName, byte[] attachment) throws IOException {
+//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(attachment.length);
+//		
+//		Deflater deflater = new Deflater();  
+//		deflater.setInput(attachment);  
+//		deflater.finish(); 
+//
+//		byte[] buffer = new byte[1024];   
+//		
+//		while (!deflater.finished()) {  
+//			int count = deflater.deflate(buffer);  
+//			outputStream.write(buffer, 0, count);   
+//		}  
+//		
+//		outputStream.close();    
+//		return outputStream.toByteArray();  
+//    }
+//=======
+//>>>>>>> PDF file is written to db.
 }

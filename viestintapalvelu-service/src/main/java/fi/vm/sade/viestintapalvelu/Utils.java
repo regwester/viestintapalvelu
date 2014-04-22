@@ -14,7 +14,7 @@ public final class Utils {
 
     public static String resolveTemplateName(String template, String languageCode) {
         languageCode = languageCode == null || "".equals(languageCode) ? "FI" : languageCode;
-        languageCode = "SE".equalsIgnoreCase(languageCode) || "FI".equalsIgnoreCase(languageCode) ? languageCode : "EN";
+        languageCode = "SV".equalsIgnoreCase(languageCode) || "SE".equalsIgnoreCase(languageCode) || "FI".equalsIgnoreCase(languageCode) ? languageCode : "EN";
         return template.replace("{LANG}", languageCode.toUpperCase());
     }
 
