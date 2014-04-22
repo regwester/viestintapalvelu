@@ -44,21 +44,9 @@ angular.module('app').controller(
                 },
                 "templateReplacements": {"tulokset" : tulokset,
                 "koulu": tulokset[0]['organisaationNimi'],
-                "koulutus": tulokset[0]['hakukohteenNimi'],
-                "addressLabel": {
-                    "firstName": data.any('firstname'),
-                    "lastName": data.any('lastname'),
-                    "addressline": data.any('street') + ' ' + data.any('housenumber'),
-                    "addressline2": "",
-                    "addressline3": "",
-                    "postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
-                    "region": "",
-                    "city": postoffice.substring(postoffice.indexOf(' ') + 1),
-                    "country": country[0],
-                    "countryCode": country[1]}
+                "koulutus": tulokset[0]['hakukohteenNimi']
                 },
                            
-                //"letterBodyText" : $scope.tinymceModel
             };
         }));
     }

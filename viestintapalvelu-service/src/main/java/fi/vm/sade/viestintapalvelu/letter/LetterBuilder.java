@@ -164,14 +164,14 @@ public class LetterBuilder {
 
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(template,
-                new HtmlAddressLabelDecorator(addressLabel), templReplacements,
+                addressLabel, templReplacements,
                 letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
     private Map<String, Object> createDataContext(Template template,
-            AddressLabelDecorator decorator,
+            AddressLabel addressLabel,
             Map<String, Object>... replacementsList) {
 
         Map<String, Object> data = new HashMap<String, Object>();
@@ -194,7 +194,8 @@ public class LetterBuilder {
         }
         data.put("letterDate",
                 new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-        data.put("osoite", decorator);
+        data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
+        data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
         data.put("tyylit", styles);
         return data;
     }
