@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -19,6 +20,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,14 +38,17 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 
 @Component
 @Path(Urls.LETTER_PATH)
+@PreAuthorize("isAuthenticated()")
 
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it
@@ -52,7 +57,8 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
 public class LetterResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
-
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
     @Autowired
     private DownloadCache downloadCache;
     @Autowired
@@ -94,6 +100,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/pdf")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public Response pdf(
@@ -121,6 +128,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("application/octet-stream")
     @Path("/sync/pdf")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public InputStream syncPdf(
@@ -140,9 +148,9 @@ public class LetterResource extends AsynchronousResource {
      */
     @POST
     @Consumes("application/json")
-    @PreAuthorize("isAuthenticated()")
     @Produces("text/plain")
     @Path("/async/pdf")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
             + AsyncResponseLogicDocumentation)
     public Response asyncPdf(
@@ -190,12 +198,11 @@ public class LetterResource extends AsynchronousResource {
     }
 
     @GET
-    // @PreAuthorize("isAuthenticated()")
     @Transactional
     @Produces("application/json")
     @Path("/getById")
-    public LetterBatch templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
-        
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
+    public LetterBatch templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String letterBatchId = request.getParameter("letterBatchId");
        Long id = Long.parseLong(letterBatchId);
        
@@ -203,19 +210,27 @@ public class LetterResource extends AsynchronousResource {
     }
     
     @GET
-    // @PreAuthorize("isAuthenticated()")
     @Transactional
     @Produces("application/json")
     @Path("/getByNameOrgTag")
-    public LetterBatch templateByNameOidTag(@Context HttpServletRequest request) throws IOException, DocumentException {
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
+    public Response templateByNameOidTag(@Context HttpServletRequest request) throws IOException, DocumentException {
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = checkUserRights(oid); 
         
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+       
        String name = request.getParameter("name");
-       String oid = request.getParameter("oid");
        String tag = request.getParameter("tag");
        if ((tag==null) || ("".equals(tag))) {
     	   tag="%%";
        }
-       return letterService.findLetterBatchByNameOrgTag(name, oid, tag);
+       
+       return Response.ok(letterService.findLetterBatchByNameOrgTag(name, oid, tag)).build();
     }
 
     
@@ -243,6 +258,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/zip")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
     @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
     public Response zip(
@@ -266,6 +282,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("application/octet-stream")
     @Path("/sync/zip")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
     @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
     public InputStream syncZip(
@@ -288,8 +305,8 @@ public class LetterResource extends AsynchronousResource {
     @POST
     @Consumes("application/json")
     @Produces("text/plain")
-    @PreAuthorize("isAuthenticated()")
     @Path("/async/zip")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     @ApiOperation(value = ApiZIPAsync, notes = ApiZIPAsync
             + ". Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. "
             + AsyncResponseLogicDocumentation)
@@ -323,5 +340,16 @@ public class LetterResource extends AsynchronousResource {
         });
         return createResponse(request, documentId);
     }
-    
+
+    private Response checkUserRights(String oid) {
+        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        
+        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+            if (oid.equals(organisaatioHenkilo.getOrganisaatioOid())) {
+                return Response.status(Status.OK).build();
+            }
+        }
+        
+        return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
+    }
 }

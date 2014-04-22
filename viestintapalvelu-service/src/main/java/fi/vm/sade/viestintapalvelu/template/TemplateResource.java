@@ -20,7 +20,6 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
@@ -51,11 +49,10 @@ public class TemplateResource extends AsynchronousResource {
     private CurrentUserComponent currentUserComponent;
 
     @GET
-    // @Consumes("application/json")
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/get")
+    @Produces("application/json")
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
+    @Transactional
     public Template template(@Context HttpServletRequest request) throws IOException,
             DocumentException {
 
@@ -95,26 +92,12 @@ public class TemplateResource extends AsynchronousResource {
         return result;
     }
 
-    private String getStyle(String styleFile) throws IOException {
-        BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/"+styleFile+".css")));
-        StringBuilder sb = new StringBuilder();
-        String line = buf.readLine();
-        while (line != null) {
-            sb.append(line);
-            line = buf.readLine();
-        }
-        return sb.toString();
-    }
-    
     @GET
-    // @Consumes("application/json")
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getById")
-    public Template templateByID(@Context HttpServletRequest request) throws IOException,
-            DocumentException {
-        
+    @Produces("application/json")
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
+    @Transactional
+    public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {        
        String templateId = request.getParameter("templateId");
        Long id = Long.parseLong(templateId);
        
@@ -122,10 +105,10 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getNames")
+    @Produces("application/json")
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
+    @Transactional
     public List<Map<String,String>> templateNames(@Context HttpServletRequest request) throws IOException, DocumentException {
        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
        List<String> serviceResult = templateService.getTemplateNamesList();
@@ -144,12 +127,11 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getByName")
-    public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {
-        
+    @Produces("application/json")
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
+    @Transactional
+    public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String templateName = request.getParameter("templateName");
        String languageCode = request.getParameter("languageCode");
        String content 	   = request.getParameter("content");		// If missing => content excluded
@@ -161,10 +143,8 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/store")
     @Consumes("application/json")
     @Produces("application/json")
-    @Secured("")
+//    @Secured("ROLE_APP_ASIAKIRJA_CREATE")
     public Template store(Template template) throws IOException, DocumentException {
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        template.setStoringOid(henkilo.getOidHenkilo());
         templateService.storeTemplateDTO(template);
         return new Template();
     }
@@ -181,7 +161,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getTempHistory")
     @Produces("application/json")
-    @Secured("")
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
     @Transactional
     public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
@@ -207,8 +187,8 @@ public class TemplateResource extends AsynchronousResource {
     	   tag="";
 		}		
 		
-		bundle.setLatestOrganisationReplacements( 		letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );		
-		bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag) );
+		bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, oid, "%%"));		
+		bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag));
 		
 		return Response.ok(bundle).build();
     }
@@ -225,7 +205,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getHistory")
     @Produces("application/json")
-    @Secured("")
+//    @Secured("ROLE_APP_ASIAKIRJA_READ")
     @Transactional
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
@@ -280,6 +260,17 @@ public class TemplateResource extends AsynchronousResource {
         }
         
         return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
+    }
+
+    private String getStyle(String styleFile) throws IOException {
+        BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/"+styleFile+".css")));
+        StringBuilder sb = new StringBuilder();
+        String line = buf.readLine();
+        while (line != null) {
+            sb.append(line);
+            line = buf.readLine();
+        }
+        return sb.toString();
     }
     
 }
