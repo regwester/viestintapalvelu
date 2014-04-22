@@ -12,7 +12,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
@@ -29,6 +31,8 @@ import fi.vm.sade.viestintapalvelu.template.Replacement;
 @Service
 @Transactional
 public class LetterService {
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
 
     @Autowired
     private LetterBatchDAO letterBatchDAO;
@@ -36,7 +40,9 @@ public class LetterService {
     /* ---------------------- */
     /* - Create LetterBatch - */
     /* ---------------------- */
-	public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {		
+	public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+	    Henkilo henkilo = currentUserComponent.getCurrentUser();
+	    
 		// kirjeet.kirjelahetys
 		LetterBatch letterB = new LetterBatch();
 		letterB.setTemplateId(letterBatch.getTemplateId());
@@ -44,9 +50,7 @@ public class LetterService {
 		letterB.setFetchTarget(letterBatch.getFetchTarget());
 		letterB.setTimestamp(new Date());
 		letterB.setLanguage(letterBatch.getLanguageCode());
-
-// TODO Storing oid from getCurrentUser()		
-//		letterB.setStoringOid(letterBatch.getStoringOid());
+		letterB.setStoringOid(henkilo.getOidHenkilo());
 		letterB.setOrganizationOid(letterBatch.getOrganizationOid());
 		
 		// kirjeet.lahetyskorvauskentat

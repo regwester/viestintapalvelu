@@ -17,8 +17,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Replacement;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
@@ -26,6 +28,8 @@ import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 @Service
 @Transactional
 public class TemplateService {
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
 
     @Autowired
     private TemplateDAO templateDAO;
@@ -77,17 +81,19 @@ public class TemplateService {
     }
     
     public void storeTemplate(Template template) {
+        Henkilo henkilo = currentUserComponent.getCurrentUser();
+        template.setStoringOid(henkilo.getOidHenkilo());
+        
         templateDAO.insert(template);
     }
     
-    public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
+    public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {        
         Template model = new Template();
         //model.setId(template.getId());
         model.setName(template.getName());
         model.setTimestamp(new Date()); //template.getTimestamp());
         model.setStyles(template.getStyles());
         model.setLanguage(template.getLanguage());
-        model.setStoringOid(template.getStoringOid());
         model.setOrganizationOid(template.getOrganizationOid());        
         model.setContents(parseContentModels(template.getContents(), model));
         model.setReplacements(parseReplacementModels(template.getReplacements(), model));
