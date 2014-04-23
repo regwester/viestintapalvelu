@@ -182,13 +182,16 @@ public class TemplateResource extends AsynchronousResource {
         
         bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
     	
-		String tag = request.getParameter("tag");
-		if (tag==null) {
-    	   tag="";
-		}		
-		
-		bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, oid, "%%"));		
-		bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag));
+        
+        if ((oid!=null) && ("".equals(oid)) ) {			
+			String tag = request.getParameter("tag");
+			if (tag==null) {
+	    	   tag="";
+			}		
+			
+			bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, oid, "%%"));		
+			bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag));
+		}
 		
 		return Response.ok(bundle).build();
     }
