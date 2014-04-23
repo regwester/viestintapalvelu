@@ -219,24 +219,4 @@ public class LetterBuilder {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
     
-//<<<<<<< HEAD
-//	public static byte[] zip(String attachmentName, byte[] attachment) throws IOException {
-//		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(attachment.length);
-//		
-//		Deflater deflater = new Deflater();  
-//		deflater.setInput(attachment);  
-//		deflater.finish(); 
-//
-//		byte[] buffer = new byte[1024];   
-//		
-//		while (!deflater.finished()) {  
-//			int count = deflater.deflate(buffer);  
-//			outputStream.write(buffer, 0, count);   
-//		}  
-//		
-//		outputStream.close();    
-//		return outputStream.toByteArray();  
-//    }
-//=======
-//>>>>>>> PDF file is written to db.
 }

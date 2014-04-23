@@ -15,6 +15,9 @@ public class LetterContent {
     private String contentType = "";
     private Date timestamp;    
     
+    
+	public LetterContent() {}
+
 	public LetterContent(byte[] content, String contentType, Date timestamp) {
 		super();
 		this.content = content;
