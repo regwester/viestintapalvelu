@@ -342,6 +342,10 @@ public class LetterResource extends AsynchronousResource {
     }
 
     private Response checkUserRights(String oid) {
+        if (oid == null) {
+            return Response.status(Status.OK).build();
+        }
+        
         List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
         
         for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
