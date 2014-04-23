@@ -183,14 +183,14 @@ public class TemplateResource extends AsynchronousResource {
         bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
     	
         
-        if ((oid!=null) && ("".equals(oid)) ) {			
-			String tag = request.getParameter("tag");
-			if (tag==null) {
-	    	   tag="";
-			}		
+        if ((oid!=null) && !("".equals(oid)) ) {			
+
+        	bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, oid, "%%"));	
 			
-			bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, oid, "%%"));		
-			bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag));
+			String tag = request.getParameter("tag");
+	        if ((tag!=null) && !("".equals(tag)) ) {
+	        	bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag));
+	        }
 		}
 		
 		return Response.ok(bundle).build();
@@ -235,21 +235,24 @@ public class TemplateResource extends AsynchronousResource {
         templateRepl.put("default", template.getReplacements());
         history.add(templateRepl);       
                         
-		String tag = request.getParameter("tag");
-		if (tag==null) {
-    	   tag="";
-		}
-		
-		// Latest LetterBatch replacements for that OrganisationOid
-        Map<String, Object> organisationRepl = new HashMap<String, Object>();
-        organisationRepl.put("organisationOid", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
-        history.add(organisationRepl);
-
-		// Latest LetterBatch replacements for that OrganisationOid
-        Map<String, Object> tagRepl = new HashMap<String, Object>();
-        tagRepl.put("organisationOidTag", letterService.findReplacementByNameOrgTag(templateName, oid, tag)  );
-        history.add(tagRepl);
-		
+        
+        if ((oid!=null) && !("".equals(oid)) ) {			
+			
+			// Latest LetterBatch replacements for that OrganisationOid
+	        Map<String, Object> organisationRepl = new HashMap<String, Object>();
+	        organisationRepl.put("organisationOid", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
+	        history.add(organisationRepl);
+	
+			String tag = request.getParameter("tag");
+	        if ((tag!=null) && !("".equals(tag)) ) {
+	        	
+				// Latest LetterBatch replacements for that OrganisationOid
+		        Map<String, Object> tagRepl = new HashMap<String, Object>();
+		        tagRepl.put("organisationOidTag", letterService.findReplacementByNameOrgTag(templateName, oid, tag)  );
+		        history.add(tagRepl);
+	        }
+        }
+	     
         return Response.ok(history).build();
     }
 

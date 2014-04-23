@@ -29,7 +29,12 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 		query.setFirstResult(0);	// LIMIT 1
 		query.setMaxResults(1);  	//
 			
-		LetterBatch letterBatch = query.getSingleResult();
+		LetterBatch letterBatch = new LetterBatch();
+		try {
+			letterBatch = query.getSingleResult();
+		} catch (Exception e) {
+			letterBatch = null;
+		}
 		
 		return letterBatch;
 	}
