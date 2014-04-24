@@ -233,11 +233,59 @@ public class LetterService {
 	    		rec.setLetterReceiverAddress(lra);
 			}
     		
+    		// kirjeet.vastaanottajakirje
+    		if (letter.getLetterContent() != null) {
+    			LetterReceiverLetter lrl = new LetterReceiverLetter();
+    			lrl.setTimestamp(new Date());
+
+    			boolean zippaa = true;
+    			
+    			if (zippaa) { // ZIP
+	    			try {
+						lrl.setLetter( zip( letter.getLetterContent().getContent()) );
+		    			lrl.setContentType("application/zip"); 									// application/zip
+		    			lrl.setOriginalContentType(letter.getLetterContent().getContentType());	// application/pdf
+
+	    			} catch (IOException e) {
+		    			lrl.setLetter(letter.getLetterContent().getContent());
+		    			lrl.setContentType(letter.getLetterContent().getContentType()); 		// application/pdf
+		    			lrl.setOriginalContentType(letter.getLetterContent().getContentType());	// application/pdf
+					}
+					
+				} else { // Not zipped
+	    			lrl.setLetter(letter.getLetterContent().getContent());
+	    			lrl.setContentType(letter.getLetterContent().getContentType()); 		// application/pdf
+	    			lrl.setOriginalContentType(letter.getLetterContent().getContentType());	// application/pdf
+				}
+    			
+	    		lrl.setLetterReceivers(rec);    
+	    		
+	    		rec.setLetterReceiverLetter(lrl);
+    		}
+    		
     		//    		
         	receivers.add(rec);
         }
 		return receivers;
 	}
+	
+	private static byte[] zip(byte[] content) throws IOException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
+		
+		Deflater deflater = new Deflater();  
+		deflater.setInput(content);  
+		deflater.finish(); 
+
+		byte[] buffer = new byte[1024];   
+		
+		while (!deflater.finished()) {  
+			int count = deflater.deflate(buffer);  
+			outputStream.write(buffer, 0, count);   
+		}  
+		
+		outputStream.close();    
+		return outputStream.toByteArray();  
+    }
 	
 	/*
 	 *  kirjeet.lahetyskorvauskentat
