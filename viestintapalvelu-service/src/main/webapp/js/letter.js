@@ -9,6 +9,8 @@ angular.module('app').controller(
     	$scope.templates = data;
     });
     $scope.replacements = [];
+    $scope.historyList=[];
+    $scope.oid = "1.2.246.562.10.00000000001";
     
     $scope.templateChanged = function() {
     	Template.getByName($scope.template).success(function (data) {
@@ -19,7 +21,21 @@ angular.module('app').controller(
     				$scope.tinymceModel = r.defaultValue;
     			}
     		}
+    		
     	});
+
+    	Template.getHistory($scope.template, $scope.oid, $scope.tag).success(function (data) {
+    		$scope.historyList = data;
+    	});
+    };
+    
+    $scope.historyChanged = function() {
+    	for (i in $scope.history.templateReplacements) {
+			var r = $scope.history.templateReplacements[i];
+			if (r.name == "sisalto") {
+				$scope.tinymceModel = r.defaultValue;
+			}
+    	}
     };
     
     $scope.tinymceModel='';
@@ -68,11 +84,11 @@ angular.module('app').controller(
 	});
 	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang);
+    	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.tag);
     };
     
     $scope.generateZIP = function () {
-    	Printer.letterZIP($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang);
+    	Printer.letterZIP($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.tag);
     };
     
     $scope.updateGenerated = function () {

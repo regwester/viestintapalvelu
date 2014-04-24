@@ -123,11 +123,20 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
         }
         
+        function getHistory(t, oid, tag){
+        	if (tag != null && tag != "") {
+		    	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&tag="+tag);
+        	} else {
+        	 	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid);
+        	}
+        }
+        
         return {
             getNames: getNames,
-            getByName: getByName
-        }
-	}()
+            getByName: getByName,
+            getHistory: getHistory
+        };
+	}();
 }]);
 
 
@@ -163,14 +172,14 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
-        function letterPDF(letters, replacements, tName, tLang) {
+        function letterPDF(letters, replacements, tName, tLang, oid, tag) {
             print(letter + 'pdf', {
-                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang});
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "tag": tag});
         }
         
-        function letterZIP(letters, replacements, tName, tLang) {
+        function letterZIP(letters, replacements, tName, tLang, oid, tag) {
             print(letter + 'zip', {
-                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang});
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "tag": tag});
         }
         
         function ipostZIP(letters) {
