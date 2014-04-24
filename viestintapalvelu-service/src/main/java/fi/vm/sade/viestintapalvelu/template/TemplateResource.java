@@ -51,7 +51,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/get")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public Template template(@Context HttpServletRequest request) throws IOException,
             DocumentException {
@@ -95,7 +95,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getById")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {        
        String templateId = request.getParameter("templateId");
@@ -107,7 +107,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getNames")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public List<Map<String,String>> templateNames(@Context HttpServletRequest request) throws IOException, DocumentException {
        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
@@ -129,7 +129,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getByName")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String templateName = request.getParameter("templateName");
@@ -143,7 +143,7 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/store")
     @Consumes("application/json")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     public Template store(Template template) throws IOException, DocumentException {
         templateService.storeTemplateDTO(template);
         return new Template();
@@ -161,7 +161,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getTempHistory")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
@@ -205,7 +205,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Path("/getHistory")
     @Produces("application/json")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization

@@ -100,7 +100,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/pdf")
-//    @Secured("ROLE_APP_LETTER_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public Response pdf(
@@ -128,7 +128,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("application/octet-stream")
     @Path("/sync/pdf")
-//    @Secured("ROLE_APP_LETTER_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public InputStream syncPdf(
@@ -150,7 +150,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/async/pdf")
-//    @Secured("ROLE_APP_LETTER_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
             + AsyncResponseLogicDocumentation)
     public Response asyncPdf(
@@ -201,7 +201,7 @@ public class LetterResource extends AsynchronousResource {
     @Transactional
     @Produces("application/json")
     @Path("/getById")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     public LetterBatch templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String letterBatchId = request.getParameter("letterBatchId");
        Long id = Long.parseLong(letterBatchId);
@@ -213,7 +213,7 @@ public class LetterResource extends AsynchronousResource {
     @Transactional
     @Produces("application/json")
     @Path("/getByNameOrgTag")
-//    @Secured("ROLE_APP_TEMPLATE_READ")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     public Response templateByNameOidTag(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
@@ -258,7 +258,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/zip")
-//    @Secured("ROLE_APP_LETTER_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
     @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
     public Response zip(
@@ -282,7 +282,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("application/octet-stream")
     @Path("/sync/zip")
-//    @Secured("ROLE_APP_LETTER_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
     @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
     public InputStream syncZip(
@@ -306,7 +306,7 @@ public class LetterResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("text/plain")
     @Path("/async/zip")
-//    @Secured("ROLE_APP_LETTER_CREATE")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiZIPAsync, notes = ApiZIPAsync
             + ". Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. "
             + AsyncResponseLogicDocumentation)
