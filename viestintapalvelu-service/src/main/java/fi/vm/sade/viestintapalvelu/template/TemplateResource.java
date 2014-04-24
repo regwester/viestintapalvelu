@@ -232,24 +232,34 @@ public class TemplateResource extends AsynchronousResource {
         Template template = templateService.getTemplateByName(templateName, languageCode, getContent);
         
         Map<String, Object> templateRepl = new HashMap<String, Object>();
-        templateRepl.put("default", template.getReplacements());
+        templateRepl.put("name", "default");
+        templateRepl.put("templateReplacements", template.getReplacements());
         history.add(templateRepl);       
                         
-        
         if ((oid!=null) && !("".equals(oid)) ) {			
 			
 			// Latest LetterBatch replacements for that OrganisationOid
-	        Map<String, Object> organisationRepl = new HashMap<String, Object>();
-	        organisationRepl.put("organisationOid", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
-	        history.add(organisationRepl);
+	       
+            List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, oid, "%%");
+            if (templateReplacements != null && !templateReplacements.isEmpty()) {
+                Map<String, Object> organisationRepl = new HashMap<String, Object>();
+                organisationRepl.put("name", "organizationLatest");
+                organisationRepl.put("templateReplacements", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
+                history.add(organisationRepl);
+            }
 	
 			String tag = request.getParameter("tag");
 	        if ((tag!=null) && !("".equals(tag)) ) {
 	        	
+	            templateReplacements = letterService.findReplacementByNameOrgTag(templateName, oid, tag);
+	            if (templateReplacements != null && !templateReplacements.isEmpty()) {
+	                Map<String, Object> tagRepl = new HashMap<String, Object>();
+	                tagRepl.put("name", "organizationLatestByTag");
+	                tagRepl.put("templateReplacements", templateRepl);
+	                history.add(tagRepl);
+	            }
 				// Latest LetterBatch replacements for that OrganisationOid
-		        Map<String, Object> tagRepl = new HashMap<String, Object>();
-		        tagRepl.put("organisationOidTag", letterService.findReplacementByNameOrgTag(templateName, oid, tag)  );
-		        history.add(tagRepl);
+		        
 	        }
         }
 	     
