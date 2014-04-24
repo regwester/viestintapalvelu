@@ -10,9 +10,9 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
-@ApiModel(value = "Kerralla muodostettavien koekutsukirjeiden joukko")
+@ApiModel(value = "Kerralla muodostettavien kirjeiden joukko")
 public class LetterBatch {
-    @ApiModelProperty(value = "Kerralla muodostettavien koekutsukirjeiden joukko, (1-n)", required = true)
+    @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
     private List<Letter> letters;
 
     @ApiModelProperty(value = "Kirjepohja")
@@ -30,11 +30,17 @@ public class LetterBatch {
     @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
     private String languageCode;
 
+    // käyttäjän oid
     private String storingOid;
 
+    @ApiModelProperty(value = "Organisaatio id")
     private String organizationOid;
 
+    @ApiModelProperty(value = "Hakukohde id")
     private String fetchTarget;
+    
+    @ApiModelProperty(value = "Vapaa teksti tunniste")
+    private String tag;
 
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -115,6 +121,14 @@ public class LetterBatch {
         this.fetchTarget = fetchTarget;
     }
 
+    public String getTag() {
+        return tag;
+    }
+
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    
     public List<LetterBatch> split(int limit) {
         List<LetterBatch> batches = new ArrayList<LetterBatch>();
         split(letters, batches, limit);
@@ -131,6 +145,7 @@ public class LetterBatch {
         result.setTemplateId(templateId);
         result.setTemplateName(templateName);
         result.setTemplateReplacements(templateReplacements);
+        result.setTag(tag);
         return result;
     }
 
@@ -151,7 +166,8 @@ public class LetterBatch {
                 + templateReplacements + ", templateName=" + templateName
                 + ", languageCode=" + languageCode + ", storingOid="
                 + storingOid + ", organizationOid=" + organizationOid
-                + ", fetchTarget=" + fetchTarget + "]";
+                + ", fetchTarget=" + fetchTarget + ", tag=" + tag + "]";
     }
+
 
 }

@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
@@ -11,7 +10,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.zip.Deflater;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -23,7 +21,6 @@ import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -80,6 +77,8 @@ public class LetterBuilder {
 
     private MergedPdfDocument buildPDF(LetterBatch batch) throws IOException, DocumentException {
 
+        System.out.println(batch);
+        
         Template template = batch.getTemplate();
 
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {

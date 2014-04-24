@@ -27,6 +27,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
 
+import fi.vm.sade.authentication.model.Kansalaisuus;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
@@ -183,13 +184,13 @@ public class TemplateResource extends AsynchronousResource {
         bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
     	
         
-        if ((oid!=null) && !("".equals(oid)) ) {			
-
-        	bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, oid, "%%"));	
+        if ((oid!=null) && !("".equals(oid)) ) {
+            
+        	bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null));	
 			
 			String tag = request.getParameter("tag");
 	        if ((tag!=null) && !("".equals(tag)) ) {
-	        	bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag));
+	        	bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, tag));
 	        }
 		}
 		
@@ -236,26 +237,26 @@ public class TemplateResource extends AsynchronousResource {
         templateRepl.put("templateReplacements", template.getReplacements());
         history.add(templateRepl);       
                         
-        if ((oid!=null) && !("".equals(oid)) ) {			
-			
-			// Latest LetterBatch replacements for that OrganisationOid
-	       
-            List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, oid, "%%");
+        if ((oid!=null) && !("".equals(oid)) ) {
+            // Latest LetterBatch replacements for that OrganisationOid
+	       System.out.println("hop");
+            List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null);
+            System.out.println(templateReplacements);
+            
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
                 Map<String, Object> organisationRepl = new HashMap<String, Object>();
                 organisationRepl.put("name", "organizationLatest");
-                organisationRepl.put("templateReplacements", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
+                organisationRepl.put("templateReplacements", templateReplacements);
                 history.add(organisationRepl);
             }
 	
 			String tag = request.getParameter("tag");
 	        if ((tag!=null) && !("".equals(tag)) ) {
-	        	
-	            templateReplacements = letterService.findReplacementByNameOrgTag(templateName, oid, tag);
+	        	templateReplacements = letterService.findReplacementByNameOrgTag(templateName,languageCode, oid, tag);
 	            if (templateReplacements != null && !templateReplacements.isEmpty()) {
 	                Map<String, Object> tagRepl = new HashMap<String, Object>();
 	                tagRepl.put("name", "organizationLatestByTag");
-	                tagRepl.put("templateReplacements", templateRepl);
+	                tagRepl.put("templateReplacements", templateReplacements);
 	                history.add(tagRepl);
 	            }
 				// Latest LetterBatch replacements for that OrganisationOid

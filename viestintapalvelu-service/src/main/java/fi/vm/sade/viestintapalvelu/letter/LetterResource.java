@@ -227,12 +227,15 @@ public class LetterResource extends AsynchronousResource {
         }
        
        String name = request.getParameter("name");
+       String language = request.getParameter("language");
+       
        String tag = request.getParameter("tag");
+       
        if ((tag==null) || ("".equals(tag))) {
     	   tag="%%";
        }
        
-       return Response.ok(letterService.findLetterBatchByNameOrgTag(name, oid, tag)).build();
+       return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid, tag)).build();
     }
 
     

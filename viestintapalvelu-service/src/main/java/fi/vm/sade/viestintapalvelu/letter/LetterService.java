@@ -59,6 +59,7 @@ public class LetterService {
 		letterB.setLanguage(letterBatch.getLanguageCode());
 		letterB.setStoringOid(henkilo.getOidHenkilo());
 		letterB.setOrganizationOid(letterBatch.getOrganizationOid());
+		letterB.setTag(letterBatch.getTag());
 		
 		// kirjeet.lahetyskorvauskentat
 		letterB.setLetterReplacements(parseLetterReplacementsModels(letterBatch, letterB));
@@ -87,7 +88,7 @@ public class LetterService {
         result.setLanguageCode(searchResult.getLanguage());
         result.setStoringOid(searchResult.getStoringOid());
         result.setOrganizationOid(searchResult.getOrganizationOid());
-        
+        result.setTag(searchResult.getTag());
 		// kirjeet.lahetyskorvauskentat        
     	result.setTemplateReplacements(parseReplDTOs(searchResult.getLetterReplacements()));
     	
@@ -101,20 +102,21 @@ public class LetterService {
 	/* ------------------------------- */
     /* - findLetterBatchByNameOrgTag - */
     /* ------------------------------- */
-	public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName, String organizationOid, String tag) {		
+	public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName, String languageCode, String organizationOid, String tag) {		
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
 		
-		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
+		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag);
         if (letterBatch != null) {
         
 			// kirjeet.kirjelahetys
-	        result.setTemplateId(letterBatch.getTemplateId());       
+	        result.setTemplateId(letterBatch.getTemplateId());
 	        result.setTemplateName(letterBatch.getTemplateName());
-	        result.setFetchTarget(letterBatch.getFetchTarget());                
-	        result.setLanguageCode(letterBatch.getLanguage());
+	        result.setFetchTarget(letterBatch.getFetchTarget());
+	        result.setTag(letterBatch.getTag());
+            result.setLanguageCode(letterBatch.getLanguage());
 	        result.setStoringOid(letterBatch.getStoringOid());
 	        result.setOrganizationOid(letterBatch.getOrganizationOid());
-	        
+	        result.setTag(letterBatch.getTag());
 			// kirjeet.lahetyskorvauskentat        
 	    	result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));	    	
         }
@@ -125,14 +127,19 @@ public class LetterService {
 	/* ------------------------------- */
     /* - findReplacementByNameOrgTag - */
     /* ------------------------------- */
-	public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String organizationOid, String tag) {		
+	public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String languageCode, String organizationOid, String tag) {		
 
     	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();		
-		
-		LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, organizationOid, tag);
+    	LetterBatch letterBatch = null;
+    	if (tag == null) {
+            letterBatch = letterBatchDAO.findLetterBatchByNameOrg(templateName, languageCode, organizationOid);
+    	} else {
+            letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag);
+    	}
+		System.out.println(letterBatch);
         if (letterBatch != null) {
         
-			// kirjeet.lahetyskorvauskentat        
+			// kirjeet.lahetyskorvauskentat
 	        for (LetterReplacement letterRepl : letterBatch.getLetterReplacements()) {
 	        	fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
 	        	repl.setId(letterRepl.getId());
@@ -141,7 +148,7 @@ public class LetterService {
 	        	repl.setMandatory(letterRepl.isMandatory());
 	        	repl.setTimestamp(letterRepl.getTimestamp());
 	        	
-	        	replacements.add(repl);        	
+	        	replacements.add(repl);
 	        }
         }        
     	return replacements;

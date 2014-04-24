@@ -5,5 +5,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;;
 
 public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 
-	public LetterBatch findLetterBatchByNameOrgTag(String templateName, String organizationOid, String tag);
+	public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid, String tag);
+	
+	public LetterBatch findLetterBatchByNameOrg(String templateName, String language, String organizationOid);
+
 }
