@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -7,6 +9,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -15,14 +20,13 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
-import fi.vm.sade.viestintapalvelu.template.Replacement;
 
 /**
  * @author migar1
@@ -36,6 +40,9 @@ public class LetterService {
 
     @Autowired
     private LetterBatchDAO letterBatchDAO;
+
+    @Autowired
+    private LetterReceiverLetterDAO letterReceiverLetterDAO;
 
     /* ---------------------- */
     /* - Create LetterBatch - */
@@ -269,7 +276,61 @@ public class LetterService {
 
     private LetterBatch storeLetterBatch(LetterBatch letterB) {
 		return letterBatchDAO.insert(letterB);
+    }
+    
+	
+    /* ------------- */
+    /* - getLetter - */
+    /* ------------- */
+	public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id) {
+
+		
+    	List<LetterReceiverLetter> letterReceiverLetter = letterReceiverLetterDAO.findBy("id", id);		
+				
+		fi.vm.sade.viestintapalvelu.letter.LetterContent content = new fi.vm.sade.viestintapalvelu.letter.LetterContent();
+		
+		if (letterReceiverLetter!= null && !letterReceiverLetter.isEmpty()) {
+			LetterReceiverLetter lb = letterReceiverLetter.get(0);
+			
+			content.setContentType(lb.getOriginalContentType());				
+			content.setTimestamp(lb.getTimestamp());
+
+			if ("application/zip".equals(lb.getContentType())) {
+				try {
+					content.setContent(unZip(lb.getLetter()));
+					
+				} catch (IOException e) {
+					content.setContent(lb.getLetter());
+					content.setContentType(lb.getContentType());				
+				} catch (DataFormatException e) {
+					content.setContent(lb.getLetter());
+					content.setContentType(lb.getContentType());				
+				}
+			} else {
+				content.setContent(lb.getLetter());
+			}		
+			
+		}
+		
+		return content;
 	}
     
+
+	private static byte[] unZip(byte[] content) throws IOException, DataFormatException {
+		ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
+		
+		Inflater inflater = new Inflater();   
+		inflater.setInput(content);  
+		   
+		byte[] buffer = new byte[1024];  
+		   
+		while (!inflater.finished()) {  
+			int count = inflater.inflate(buffer);
+			outputStream.write(buffer, 0, count);
+		}
+		
+		outputStream.close();  
+		return outputStream.toByteArray();  	
+	}
 
 }

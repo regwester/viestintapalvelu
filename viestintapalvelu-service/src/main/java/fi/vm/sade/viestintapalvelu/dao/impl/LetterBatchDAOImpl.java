@@ -8,6 +8,7 @@ import org.springframework.stereotype.Repository;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
@@ -28,9 +29,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 		query.setFirstResult(0);	// LIMIT 1
 		query.setMaxResults(1);  	//
 			
-		LetterBatch letterBatch = query.getSingleResult();
+		LetterBatch letterBatch = new LetterBatch();
+		try {
+			letterBatch = query.getSingleResult();
+		} catch (Exception e) {
+			letterBatch = null;
+		}
 		
 		return letterBatch;
 	}
-    	
 }

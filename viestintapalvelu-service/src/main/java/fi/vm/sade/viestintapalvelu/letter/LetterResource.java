@@ -5,6 +5,8 @@ import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
 
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -243,6 +245,31 @@ public class LetterResource extends AsynchronousResource {
         throws IOException, DocumentException {
         return letterService.createLetter(letterBatch);
    }
+
+    // FOR TESTING
+    // If you know the id in database table 'vastaanottajakirje'
+    @GET
+    // @PreAuthorize("isAuthenticated()")
+    @Transactional
+    @Produces("application/json")    
+    @Path("/getLetter")
+    public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(@Context HttpServletRequest request) throws IOException, DocumentException {
+        
+       String letterId = request.getParameter("id");
+       Long id = Long.parseLong(letterId);
+       
+       fi.vm.sade.viestintapalvelu.letter.LetterContent content =  letterService.getLetter(id);
+
+       File letters = new File("\\TESTI.PDF");
+       FileOutputStream fos;
+       fos = new FileOutputStream(letters);
+       fos.write(content.getContent());
+       fos.flush();
+       fos.close();        
+       
+       return content;
+    }
+    
     
     /**
      * Kirjeiden itella ZIP sync
