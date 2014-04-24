@@ -260,12 +260,14 @@ public class LetterResource extends AsynchronousResource {
        
        fi.vm.sade.viestintapalvelu.letter.LetterContent content =  letterService.getLetter(id);
 
-       File letters = new File("\\TESTI.PDF");
-       FileOutputStream fos;
-       fos = new FileOutputStream(letters);
-       fos.write(content.getContent());
-       fos.flush();
-       fos.close();        
+       if ((content.getContent()!=null) && (content.getContent().length != 0)) {
+	       File letters = new File("\\TESTI.PDF");
+	       FileOutputStream fos;
+	       fos = new FileOutputStream(letters);
+	       fos.write(content.getContent());
+	       fos.flush();
+	       fos.close();        		
+       }
        
        return content;
     }
