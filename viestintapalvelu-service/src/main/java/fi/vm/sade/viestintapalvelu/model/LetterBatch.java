@@ -47,6 +47,9 @@ public class LetterBatch extends BaseEntity {
 	@Column(name = "hakukohde")
     private String fetchTarget;
 	
+	@Column(name = "tunniste")
+    private String tag;
+    
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
@@ -140,7 +143,14 @@ public class LetterBatch extends BaseEntity {
 	public void setLetterReceivers(Set<LetterReceivers> letterReceivers) {
 		this.letterReceivers = letterReceivers;
 	}
-
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
+    
+    public String getTag() {
+        return tag;
+    }
+    
 	@Override
 	public String toString() {
 		return "LetterBatch [templateId=" + templateId + ", templateName="

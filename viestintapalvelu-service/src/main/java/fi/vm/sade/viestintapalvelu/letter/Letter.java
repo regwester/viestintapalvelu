@@ -2,8 +2,6 @@ package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.Map;
 
-import org.apache.cxf.common.util.StringUtils;
-
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -16,11 +14,14 @@ public class Letter {
     @ApiModelProperty(value = "Osoitetiedot", required = true)
     private AddressLabel addressLabel;
 
+    @ApiModelProperty(value = "Kirjepohjan vastaanottaja kielikoodi. Mikäli annettua kielikoodia vastaava kirjepohja löytyy, käytetään sitä."
+            + " kielikoodi ISO 639-1")
+    private String languageCode;
 
-    @ApiModelProperty(value = "Kirjeen yleiset personointikentät", required = false, notes = "")
+    @ApiModelProperty(value = "Kirjeen vastaanottajakohtaiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
     
-//    private LetterContent letterReceiverLetter;
+    private LetterContent letterContent;
     
     
     public Letter() {
@@ -61,8 +62,24 @@ public class Letter {
     public void setAddressLabel(AddressLabel addressLabel) {
         this.addressLabel = addressLabel;
     }
+        
+    public LetterContent getLetterContent() {
+		return letterContent;
+	}
 
-    @Override
+    public String getLanguageCode() {
+        return languageCode;
+    }
+
+    public void setLanguageCode(String languageCode) {
+        this.languageCode = languageCode;
+    }
+
+	public void setLetterContent(LetterContent letterContent) {
+		this.letterContent = letterContent;
+	}
+
+	@Override
     public String toString() {
         return "Letter [addressLabel=" + addressLabel + ", templateReplacements="
                 + templateReplacements + "]";

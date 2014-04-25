@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -26,6 +27,7 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
@@ -78,6 +80,36 @@ public class EmailResourceImpl implements EmailResource {
 		log.log(Level.INFO, "Added attachment: " + result);
 		JSONObject json = new JSONObject(result.toMap());
 		return json.toString();
+    }
+
+    @Override
+    public EmailData getEmailDataAsJSON() {
+        EmailData emailData = new EmailData();
+        emailData.setSenderOid("lahettajan oid");
+        
+        EmailMessage emailMessage = new EmailMessage();
+        emailMessage.setBody("s-postiviestin sisalto");
+        emailMessage.setCallingProcess("kutsuvaprosessi esim. valinta");
+        emailMessage.setCharset("koodisto");
+        emailMessage.setFrom("lahettajan s-postiosoite");
+        emailMessage.setHtml(false);
+        emailMessage.setOrganizationOid("lahettajan organisaation oid-tunnus");
+        emailMessage.setReplyTo("vastaus s-postiosoite");
+        emailMessage.setSenderOid("lahettajan oid-tunnus");
+        emailMessage.setSubject("s-postin aihe");
+        
+        List<EmailRecipient> emailRecipients = new LinkedList<EmailRecipient>();
+        EmailRecipient emailRecipient = new EmailRecipient();
+        emailRecipient.setEmail("vastaanottajan s-postiosoite");
+        emailRecipient.setLanguageCode("vastaanottajan kielikoodi");
+        emailRecipient.setOid("vastaanottajan oid-tunnus");
+        emailRecipient.setOidType("arvoksi tyhja");
+        emailRecipients.add(emailRecipient);
+        
+        emailData.setEmail(emailMessage);
+        emailData.setRecipient(emailRecipients);
+        
+        return emailData;
     }
 
     @Override

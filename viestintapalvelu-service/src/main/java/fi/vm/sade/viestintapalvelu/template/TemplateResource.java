@@ -16,37 +16,44 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
 
+import fi.vm.sade.authentication.model.Kansalaisuus;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Component
+@PreAuthorize("isAuthenticated()")
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
-public class TemplateResource extends AsynchronousResource {
-
-    
+public class TemplateResource extends AsynchronousResource {  
     @Autowired 
     private TemplateService templateService;
     
     @Autowired 
     private LetterService letterService;
+    
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
 
     @GET
-    // @Consumes("application/json")
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/get")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
     public Template template(@Context HttpServletRequest request) throws IOException,
             DocumentException {
 
@@ -86,26 +93,12 @@ public class TemplateResource extends AsynchronousResource {
         return result;
     }
 
-    private String getStyle(String styleFile) throws IOException {
-        BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/"+styleFile+".css")));
-        StringBuilder sb = new StringBuilder();
-        String line = buf.readLine();
-        while (line != null) {
-            sb.append(line);
-            line = buf.readLine();
-        }
-        return sb.toString();
-    }
-    
     @GET
-    // @Consumes("application/json")
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getById")
-    public Template templateByID(@Context HttpServletRequest request) throws IOException,
-            DocumentException {
-        
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {        
        String templateId = request.getParameter("templateId");
        Long id = Long.parseLong(templateId);
        
@@ -113,10 +106,10 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getNames")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
     public List<Map<String,String>> templateNames(@Context HttpServletRequest request) throws IOException, DocumentException {
        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
        List<String> serviceResult = templateService.getTemplateNamesList();
@@ -135,12 +128,11 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getByName")
-    public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {
-        
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String templateName = request.getParameter("templateName");
        String languageCode = request.getParameter("languageCode");
        String content 	   = request.getParameter("content");		// If missing => content excluded
@@ -149,10 +141,10 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @POST
-    @Consumes("application/json")
-    // @PreAuthorize("isAuthenticated()")
-    @Produces("application/json")
     @Path("/store")
+    @Consumes("application/json")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     public Template store(Template template) throws IOException, DocumentException {
         templateService.storeTemplateDTO(template);
         return new Template();
@@ -168,11 +160,20 @@ public class TemplateResource extends AsynchronousResource {
      * @throws DocumentException
      */
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getTempHistory")
-    public TemplateBundle getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = checkUserRights(oid); 
+        
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+
     	TemplateBundle bundle = new TemplateBundle();
     	
         String templateName = request.getParameter("templateName");
@@ -182,16 +183,18 @@ public class TemplateResource extends AsynchronousResource {
         
         bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
     	
-		String oid = request.getParameter("oid");
-		String tag = request.getParameter("tag");
-		if (tag==null) {
-    	   tag="";
-		}		
+        
+        if ((oid!=null) && !("".equals(oid)) ) {
+            
+        	bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null));	
+			
+			String tag = request.getParameter("tag");
+	        if ((tag!=null) && !("".equals(tag)) ) {
+	        	bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, tag));
+	        }
+		}
 		
-		bundle.setLatestOrganisationReplacements( 		letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );		
-		bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, oid, tag) );
-		
-		return bundle;
+		return Response.ok(bundle).build();
     }
 
     
@@ -204,11 +207,20 @@ public class TemplateResource extends AsynchronousResource {
      * @throws DocumentException
      */
     @GET
-    // @PreAuthorize("isAuthenticated()")
-    @Transactional
-    @Produces("application/json")
     @Path("/getHistory")
-    public List<Map<String, Object>> getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = checkUserRights(oid); 
+        
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+
     	List<Map<String, Object>> history = new LinkedList<Map<String, Object>>();
     	
         String templateName = request.getParameter("templateName");
@@ -216,30 +228,70 @@ public class TemplateResource extends AsynchronousResource {
 //        String content 	   = request.getParameter("content");		// If missing => content excluded
 //        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
         boolean getContent = false;
-        
+               
         // OPH default template
         Template template = templateService.getTemplateByName(templateName, languageCode, getContent);
         
         Map<String, Object> templateRepl = new HashMap<String, Object>();
-        templateRepl.put("default", template.getReplacements());
-        history.add(templateRepl);
-        
-        String oid = request.getParameter("oid");
-		String tag = request.getParameter("tag");
-		if (tag==null) {
-    	   tag="";
-		}
-		
-		// Latest LetterBatch replacements for that OrganisationOid
-        Map<String, Object> organisationRepl = new HashMap<String, Object>();
-        organisationRepl.put("organisationOid", letterService.findReplacementByNameOrgTag(templateName, oid, "%%") );
-        history.add(organisationRepl);
-
-		// Latest LetterBatch replacements for that OrganisationOid
-        Map<String, Object> tagRepl = new HashMap<String, Object>();
-        tagRepl.put("organisationOidTag", letterService.findReplacementByNameOrgTag(templateName, oid, tag)  );
-        history.add(tagRepl);
-				
-		return history;
+        templateRepl.put("name", "default");
+        templateRepl.put("templateReplacements", template.getReplacements());
+        history.add(templateRepl);       
+                        
+        if ((oid!=null) && !("".equals(oid)) ) {
+            // Latest LetterBatch replacements for that OrganisationOid
+	       System.out.println("hop");
+            List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null);
+            System.out.println(templateReplacements);
+            
+            if (templateReplacements != null && !templateReplacements.isEmpty()) {
+                Map<String, Object> organisationRepl = new HashMap<String, Object>();
+                organisationRepl.put("name", "organizationLatest");
+                organisationRepl.put("templateReplacements", templateReplacements);
+                history.add(organisationRepl);
+            }
+	
+			String tag = request.getParameter("tag");
+	        if ((tag!=null) && !("".equals(tag)) ) {
+	        	templateReplacements = letterService.findReplacementByNameOrgTag(templateName,languageCode, oid, tag);
+	            if (templateReplacements != null && !templateReplacements.isEmpty()) {
+	                Map<String, Object> tagRepl = new HashMap<String, Object>();
+	                tagRepl.put("name", "organizationLatestByTag");
+	                tagRepl.put("templateReplacements", templateReplacements);
+	                history.add(tagRepl);
+	            }
+				// Latest LetterBatch replacements for that OrganisationOid
+		        
+	        }
+        }
+	     
+        return Response.ok(history).build();
     }
+
+    private Response checkUserRights(String oid) {
+        if (oid == null) {
+            return Response.status(Status.OK).build();
+        }
+        
+        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        
+        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+            if (oid.equals(organisaatioHenkilo.getOrganisaatioOid())) {
+                return Response.status(Status.OK).build();
+            }
+        }
+        
+        return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
+    }
+
+    private String getStyle(String styleFile) throws IOException {
+        BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream("/"+styleFile+".css")));
+        StringBuilder sb = new StringBuilder();
+        String line = buf.readLine();
+        while (line != null) {
+            sb.append(line);
+            line = buf.readLine();
+        }
+        return sb.toString();
+    }
+    
 }

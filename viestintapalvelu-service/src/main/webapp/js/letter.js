@@ -9,17 +9,34 @@ angular.module('app').controller(
     	$scope.templates = data;
     });
     $scope.replacements = [];
+    $scope.historyList=[];
+    $scope.oid = "1.2.246.562.10.00000000001";
     
     $scope.templateChanged = function() {
     	Template.getByName($scope.template).success(function (data) {
     		$scope.replacements = data;
-    		var r = data.replacements[0];
-    		if (r.name = "sisalto") {
-    			$scope.tinymceModel = r.defaultValue;
+    		for (i in data.replacements) {
+    			var r = data.replacements[i];
+    			if (r.name == "sisalto") {
+    				$scope.tinymceModel = r.defaultValue;
+    			}
     		}
+    		
+    	});
+
+    	Template.getHistory($scope.template, $scope.oid, $scope.tag).success(function (data) {
+    		$scope.historyList = data;
     	});
     };
     
+    $scope.historyChanged = function() {
+    	for (i in $scope.history.templateReplacements) {
+			var r = $scope.history.templateReplacements[i];
+			if (r.name == "sisalto") {
+				$scope.tinymceModel = r.defaultValue;
+			}
+    	}
+    };
     
     $scope.tinymceModel='';
     function generateLetters(count) {
@@ -43,21 +60,9 @@ angular.module('app').controller(
                 },
                 "templateReplacements": {"tulokset" : tulokset,
                 "koulu": tulokset[0]['organisaationNimi'],
-                "koulutus": tulokset[0]['hakukohteenNimi'],
-                "addressLabel": {
-                    "firstName": data.any('firstname'),
-                    "lastName": data.any('lastname'),
-                    "addressline": data.any('street') + ' ' + data.any('housenumber'),
-                    "addressline2": "",
-                    "addressline3": "",
-                    "postalCode": postoffice.substring(0, postoffice.indexOf(' ')),
-                    "region": "",
-                    "city": postoffice.substring(postoffice.indexOf(' ') + 1),
-                    "country": country[0],
-                    "countryCode": country[1]}
+                "koulutus": tulokset[0]['hakukohteenNimi']
                 },
                            
-                //"letterBodyText" : $scope.tinymceModel
             };
         }));
     }
@@ -79,7 +84,11 @@ angular.module('app').controller(
 	});
 	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang);
+    	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.tag);
+    };
+    
+    $scope.generateZIP = function () {
+    	Printer.letterZIP($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.tag);
     };
     
     $scope.updateGenerated = function () {

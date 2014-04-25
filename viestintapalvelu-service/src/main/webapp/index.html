@@ -22,12 +22,12 @@
 <script src="js/shared/directives/richTextarea.js"></script>
 
 <script src="js/main.js"></script>
+<script src="js/letter.js"></script>
 <script src="js/palvelut.js"></script>
 <script src="js/addresslabels.js"></script>
 <script src="js/jalkiohjauskirje.js"></script>
 <script src="js/hyvaksymiskirje.js"></script>
 <script src="js/koekutsukirje.js"></script>
-<script src="js/letter.js"></script>
 <script src="js/importtemplate.js"></script>
 
 
@@ -40,23 +40,22 @@
 	<div hdiv style="width:400px;height:20px;border:1px solid blue;margin:1cm 1cm 1cm 1cm">
 	<center><a href="swagger/index.html">API-dokumentaatio</a> on toteutettu Swaggerilla.</center>
 	</div> 
-	<div class="navbar"
-		ng-init="showContent('osoitetarrat')">
+	<div class="navbar" ng-init="showContent('letter')">
 		<div class="navbar-inner">
 			<a class="brand" href="#">OPH</a>
 			<ul class="nav">
-				<li class="active">
+				<li>
 					<a href="#osoitetarrat" ng-click="showContent('osoitetarrat')" data-toggle="tab">Osoitetarrat</a></li>
 				<li>
 					<a href="#jalkiohjauskirje" ng-click="showContent('jalkiohjauskirje')" data-toggle="tab">Jälkiohjauskirje</a></li>
 				<li>
 					<a href="#hyvaksymiskirje" ng-click="showContent('hyvaksymiskirje')"  data-toggle="tab">Hyväksymiskirje</a></li>
 				<li>
-					<a href="#koekutsukirje" ng-click="showContent('koekutsukirje')"         data-toggle="tab">Koekutsukirje</a></li>
-				<li >
+					<a href="#koekutsukirje" ng-click="showContent('koekutsukirje')" data-toggle="tab">Koekutsukirje</a></li>
+				<li  class="active">
 					<a href="#letter" ng-click="showContent('letter')" data-toggle="tab">Letter</a></li>
 				<li>
-					<a href="#importtemplate" ng-click="showContent('importtemplate')"         data-toggle="tab">Import malleja</a></li>
+					<a href="#importtemplate" ng-click="showContent('importtemplate')" data-toggle="tab">Import malleja</a></li>
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -64,7 +63,7 @@
 			<div class="tab-pane" id="jalkiohjauskirje"></div>
 			<div class="tab-pane" id="hyvaksymiskirje"></div>
 			<div class="tab-pane" id="koekutsukirje"></div>
-			<div class="tab-pane" id="letter"></div>
+			<div class="tab-pane active" id="letter"></div>
 			<div class="tab-pane" id="importtemplate"></div>
 		</div>
 	</div>

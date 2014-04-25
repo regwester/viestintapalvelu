@@ -11,6 +11,12 @@ public class Constants {
     public static final String KOEKUTSUKIRJE_TEMPLATE = "/koekutsukirje_{LANG}.html";
     public static final String LETTER_TEMPLATE = "/letter_{LANG}.html";
     public static final String IPOST_TEMPLATE = "/ipost.xml";
+    public static final String LETTER_IPOST_TEMPLATE = "/letter_ipost.xml";
     public static final Charset UTF_8 = Charset.forName("UTF-8");
     public static final Boolean IPOST_TEST = Boolean.FALSE;
+    
+    // Käyttöoikeudet
+    public static final String ASIAKIRJAPALVELU_READ = "ROLE_APP_ASIAKIRJAPALVELU_READ";
+    public static final String ASIAKIRJAPALVELU_CREATE_TEMPLATE = "ROLE_APP_ASIAKIRJAPALVELU_CREATE_TEMPLATE";
+    public static final String ASIAKIRJAPALVELU_CREATE_LETTER = "ROLE_APP_ASIAKIRJAPALVELU_CREATE_LETTER";
 }

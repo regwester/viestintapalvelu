@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.Template;
 
 @Repository
@@ -26,8 +27,13 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
 		query.setParameter("language", language);		
 		query.setFirstResult(0);	// LIMIT 1
 		query.setMaxResults(1);  	//
-			
-		Template templ = query.getSingleResult();
+					
+		Template templ = new Template();
+		try {
+			templ = query.getSingleResult();
+		} catch (Exception e) {
+			templ = null;
+		}		
 		
 		return templ;
 	}

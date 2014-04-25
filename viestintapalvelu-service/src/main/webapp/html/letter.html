@@ -1,13 +1,14 @@
-<div>
-<h3>Testikäyttöliittymän testivaihe1</h3>
-
-
 <div ng-controller='LetterController'>
+<h3>Testikäyttöliittymän testivaihe1</h3>
+<div>
 
 	<select ng-model="template" ng-options="c.name group by c.lang for c in templates" ng-change="templateChanged()"></select>
   Currently selected: {{ {selected_template:template}  }}
 <br/>
+	<select ng-model="history" ng-options="h.name for h in historyList" ng-change="historyChanged()"></select>
 <br/>
+	Tunniste: <input ng-model="tag" />
+<br/><br/>
  	<textarea ui-tinymce ng-model="tinymceModel"></textarea>
 	
 
@@ -16,6 +17,7 @@
 
     <div class="run-action btn-group">
         <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1">PDF</button>
+        <button class="btn" ng-click="generateZIP()" ng-disabled="getCount() < 1">ZIP</button>
     </div>
     
     <h4>Alla on raakana HTML-koodina ylläolevan editorin sisältö</h4>
@@ -95,16 +97,10 @@
                     </tr>
                 </table>
             </td>
- <!--            <td class="inline-operation">
-                <button ng-click="removeHyvaksymiskirje($index)" class="inline-operation btn btn-small">Poista</button>
-            </td> -->
         </tr>
     </table>
     
     
     {{ {replacements:replacements}  }}
 </div>
-
-
-
-    
+</div>
