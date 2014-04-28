@@ -54,6 +54,7 @@ public class LetterService {
 		LetterBatch letterB = new LetterBatch();
 		letterB.setTemplateId(letterBatch.getTemplateId());
 		letterB.setTemplateName(letterBatch.getTemplateName());
+		letterB.setApplicationPeriod(letterBatch.getApplicationPeriod());
 		letterB.setFetchTarget(letterBatch.getFetchTarget());
 		letterB.setTimestamp(new Date());
 		letterB.setLanguage(letterBatch.getLanguageCode());
@@ -83,7 +84,8 @@ public class LetterService {
 		// kirjeet.kirjelahetys
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
         result.setTemplateId(searchResult.getTemplateId());       
-        result.setTemplateName(searchResult.getTemplateName());
+        result.setTemplateName(searchResult.getTemplateName());        
+        result.setApplicationPeriod(searchResult.getApplicationPeriod());        
         result.setFetchTarget(searchResult.getFetchTarget());                
         result.setLanguageCode(searchResult.getLanguage());
         result.setStoringOid(searchResult.getStoringOid());
@@ -110,13 +112,15 @@ public class LetterService {
         
 			// kirjeet.kirjelahetys
 	        result.setTemplateId(letterBatch.getTemplateId());
-	        result.setTemplateName(letterBatch.getTemplateName());
+	        result.setTemplateName(letterBatch.getTemplateName());	        
+	        result.setApplicationPeriod(letterBatch.getApplicationPeriod());        	        	        
 	        result.setFetchTarget(letterBatch.getFetchTarget());
 	        result.setTag(letterBatch.getTag());
             result.setLanguageCode(letterBatch.getLanguage());
 	        result.setStoringOid(letterBatch.getStoringOid());
 	        result.setOrganizationOid(letterBatch.getOrganizationOid());
 	        result.setTag(letterBatch.getTag());
+	        
 			// kirjeet.lahetyskorvauskentat        
 	    	result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));	    	
         }

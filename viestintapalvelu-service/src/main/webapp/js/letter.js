@@ -11,6 +11,7 @@ angular.module('app').controller(
     $scope.replacements = [];
     $scope.historyList=[];
     $scope.oid = "1.2.246.562.10.00000000001";
+    $scope.applicationPeriod = "K2014";
     
     $scope.templateChanged = function() {
     	Template.getByName($scope.template).success(function (data) {
@@ -24,7 +25,7 @@ angular.module('app').controller(
     		
     	});
 
-    	Template.getHistory($scope.template, $scope.oid, $scope.tag).success(function (data) {
+    	Template.getHistory($scope.template, $scope.oid, $scope.appProcess, $scope.tag).success(function (data) {
     		$scope.historyList = data;
     	});
     };
@@ -84,11 +85,11 @@ angular.module('app').controller(
 	});
 	}
     $scope.generatePDF = function () {
-    	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.tag);
+    	Printer.letterPDF($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
     };
     
     $scope.generateZIP = function () {
-    	Printer.letterZIP($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.tag);
+    	Printer.letterZIP($scope.letters, {"sisalto" : $scope.tinymceModel, "hakukohde" : "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
     };
     
     $scope.updateGenerated = function () {

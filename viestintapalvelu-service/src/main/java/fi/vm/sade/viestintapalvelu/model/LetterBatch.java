@@ -21,12 +21,17 @@ import fi.vm.sade.generic.model.BaseEntity;
 /**
  *
   CREATE TABLE kirjeet.kirjelahetys ( <br/>
-  id bigint NOT NULL, <br/>
-  version bigint NOT NULL, <br/>
-  template_id bigint NOT NULL, <br/>
-  aikaleima timestamp without time zone, <br/>
-  oid_tallentaja character varying(255), <br/>
-  oid_organisaatio character varying(255), <br/>
+  id bigint NOT NULL,<br/>
+  version bigint NOT NULL,<br/>
+  template_id bigint NOT NULL,<br/>
+  aikaleima timestamp without time zone,<br/>
+  oid_tallentaja character varying(255),<br/>
+  oid_organisaatio character varying(255),<br/>
+  kielikoodi character varying(5),<br/>
+  template_name character varying(255),<br/>
+  hakukohde character varying(255),<br/>
+  tunniste character varying(255),<br/>
+  haku character varying(255),<br/>
   CONSTRAINT kirjelahetys_pk PRIMARY KEY (id) <br/>
  *
  * @author migar1
@@ -43,6 +48,9 @@ public class LetterBatch extends BaseEntity {
 	
 	@Column(name = "template_name")
     private String templateName;
+	
+	@Column(name = "haku")
+	private String applicationPeriod;
 	
 	@Column(name = "hakukohde")
     private String fetchTarget;
@@ -86,6 +94,14 @@ public class LetterBatch extends BaseEntity {
 
 	public void setTemplateName(String templateName) {
 		this.templateName = templateName;
+	}
+
+	public String getApplicationPeriod() {
+		return applicationPeriod;
+	}
+
+	public void setApplicationPeriod(String applicationPeriod) {
+		this.applicationPeriod = applicationPeriod;
 	}
 
 	public String getFetchTarget() {
@@ -153,8 +169,10 @@ public class LetterBatch extends BaseEntity {
     
 	@Override
 	public String toString() {
-		return "LetterBatch [templateId=" + templateId + ", templateName="
-				+ templateName + ", fetchTarget=" + fetchTarget
+		return "LetterBatch [templateId=" + templateId 
+				+ ", templateName=" + templateName 
+				+ ", applicationPeriod=" + applicationPeriod
+				+ ", fetchTarget=" + fetchTarget
 				+ ", timestamp=" + timestamp + ", language=" + language
 				+ ", storingOid=" + storingOid + ", organizationOid="
 				+ organizationOid + "]";
