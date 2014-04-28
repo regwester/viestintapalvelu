@@ -172,14 +172,15 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
-        function letterPDF(letters, replacements, tName, tLang, oid, tag) {
-            print(letter + 'pdf', {
-                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "tag": tag});
+
+        function letterPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+        	print(letter + 'pdf', {
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
         
-        function letterZIP(letters, replacements, tName, tLang, oid, tag) {
+        function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
             print(letter + 'zip', {
-                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "tag": tag});
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
         
         function ipostZIP(letters) {
@@ -195,7 +196,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             	error(function (data) {
             		// This is test-ui so we use a popup for failure-indication against guidelines (for production code)
             		$window.alert("Tulostiedoston luonti epäonnistui");
-            	})
+            	});
         }
 
         return {
