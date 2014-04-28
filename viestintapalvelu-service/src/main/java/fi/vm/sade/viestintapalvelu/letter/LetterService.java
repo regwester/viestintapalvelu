@@ -3,7 +3,6 @@ package fi.vm.sade.viestintapalvelu.letter;
 import java.util.List;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.template.Replacement;
 
 public interface LetterService {
 
