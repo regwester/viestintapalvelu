@@ -27,7 +27,6 @@ import org.springframework.transaction.annotation.Transactional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
 
-import fi.vm.sade.authentication.model.Kansalaisuus;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;

@@ -20,6 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
+
+import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
@@ -31,8 +33,6 @@ import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
-
-import fi.vm.sade.viestintapalvelu.Constants;
 
 @Service
 @Singleton

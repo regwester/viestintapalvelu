@@ -75,7 +75,9 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.koekutsukirje"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.letter"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.letter.impl"/>    
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.template"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.template.impl"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.model" />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao" />
