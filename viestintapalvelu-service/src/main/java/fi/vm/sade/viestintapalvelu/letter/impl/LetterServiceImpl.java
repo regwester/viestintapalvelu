@@ -44,9 +44,9 @@ public class LetterServiceImpl implements LetterService {
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
         CurrentUserComponent currentUserComponent) {
-        this.letterBatchDAO = letterBatchDAO;
-        this.letterReceiverLetterDAO = letterReceiverLetterDAO;
-        this.currentUserComponent = currentUserComponent;
+    	this.letterBatchDAO = letterBatchDAO;
+    	this.letterReceiverLetterDAO = letterReceiverLetterDAO;
+    	this.currentUserComponent = currentUserComponent;
     }
 
     /* ---------------------- */
