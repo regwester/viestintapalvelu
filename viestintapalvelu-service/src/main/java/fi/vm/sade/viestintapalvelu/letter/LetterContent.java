@@ -5,14 +5,21 @@ package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.Date;
 
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 /**
  * @author migar1
  *
  */
 public class LetterContent {
 
-	private byte[] content;
+    @ApiModelProperty(value = "Lähetetyn kirjeen sisältö")
+    private byte[] content;
+    
+    @ApiModelProperty(value = "Lähetetyn kirjeen tyyppi (application/pdf, application/zip)")
     private String contentType = "";
+    
+	@ApiModelProperty(value = "Aikaleima")
     private Date timestamp;    
     
     

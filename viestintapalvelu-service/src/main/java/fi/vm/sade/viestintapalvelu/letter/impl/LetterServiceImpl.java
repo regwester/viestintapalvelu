@@ -84,6 +84,8 @@ public class LetterServiceImpl implements LetterService {
         List<LetterBatch> letterBatch = letterBatchDAO.findBy("id", id);
         if (letterBatch != null && !letterBatch.isEmpty()) {
             searchResult = letterBatch.get(0);
+        } else {
+        	return null;
         }
 
         // kirjeet.kirjelahetys

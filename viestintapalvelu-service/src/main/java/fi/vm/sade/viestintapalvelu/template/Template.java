@@ -4,38 +4,41 @@ import java.util.Date;
 import java.util.List;
 
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Kirjetemplate")
+@ApiModel(value = "Template", description = "Kirjepohje, perustiedot (nimi / tyyli / kielikoodi")
 public class Template{
 
     private static final long serialVersionUID = 4178735997933155683L;
 
-    private long id;
+	@ApiModelProperty(value = "ID")
+	private long id;
     
-    private Date timestamp;
-
+	@ApiModelProperty(value = "Nimi")
     private String name;
 
+	@ApiModelProperty(value = "Aikaleima")
+    private Date timestamp;
+
+	@ApiModelProperty(value = "Kielikoodi")
     private String language;
 
+	@ApiModelProperty(value = "Tyyli")
     private String styles;
     
-    public String getStyles() {
-        return styles;
-    }
-
-    public void setStyles(String styles) {
-        this.styles = styles;
-    }
-
+	@ApiModelProperty(value = "Tallentajan Oid")
     private String storingOid;
 
+	@ApiModelProperty(value = "Organisaation Oid")
     private String organizationOid;
 
+	@ApiModelProperty(value = "Kirjepohjan sisältö. 1 per sivu")
     private List<TemplateContent> contents;
 
+	@ApiModelProperty(value = "Kirjepohjan korvauskentät")
     private List<Replacement> replacements;
     
+	@ApiModelProperty(value = "Kirjepohjan versio")
 	private String templateVersio;    
 
     public Date getTimestamp() {
@@ -60,6 +63,14 @@ public class Template{
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+    
+    public String getStyles() {
+        return styles;
+    }
+
+    public void setStyles(String styles) {
+        this.styles = styles;
     }
 
     public String getStoringOid() {
