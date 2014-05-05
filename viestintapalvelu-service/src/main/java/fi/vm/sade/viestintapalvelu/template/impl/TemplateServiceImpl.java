@@ -253,7 +253,7 @@ public class TemplateServiceImpl implements TemplateService {
         Template template = templateDAO.findTemplateByName(name, language);
     	searchTempl.setId(template.getId());
     	searchTempl.setName(template.getName());
-    	searchTempl.setStyles(template.getStyles());
+    	//searchTempl.setStyles(template.getStyles());
     	searchTempl.setLanguage(template.getLanguage());
     	searchTempl.setTimestamp(template.getTimestamp());
     	searchTempl.setStoringOid(template.getStoringOid());
@@ -274,7 +274,10 @@ public class TemplateServiceImpl implements TemplateService {
     	searchTempl.setReplacements(replacement);
     	
     	// Content    	
-    	if (content) {    	
+    	if (content) { 
+    	    // include style only with content
+    	    searchTempl.setStyles(template.getStyles());
+            
 	    	List<fi.vm.sade.viestintapalvelu.template.TemplateContent> templateContent = new LinkedList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
 	    	for (TemplateContent co : template.getContents()) {
 	    		fi.vm.sade.viestintapalvelu.template.TemplateContent cont = new fi.vm.sade.viestintapalvelu.template.TemplateContent();
