@@ -2,16 +2,18 @@ package fi.vm.sade.viestintapalvelu.service;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
@@ -35,6 +37,8 @@ import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
     DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
 public class TemplateServiceTest {
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
     @Mock
     private TemplateDAO mockedTemplateDAO;
     @Mock
@@ -46,17 +50,15 @@ public class TemplateServiceTest {
         this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent);
     }
     
-    public void testGetTemplateFromFiles() {
-        fail("Not yet implemented");
-    }
-
-
-    public void testGetTemplateNamesList() {
-        fail("Not yet implemented");
-    }
-
+    @Test
     public void testStoreTemplateDTO() {
-        fail("Not yet implemented");
+        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
+        mockedTemplateDAO.insert(DocumentProviderTestData.getTemplate(new Long(1)));
+        
+        fi.vm.sade.viestintapalvelu.template.Template template = DocumentProviderTestData.getTemplate();
+        templateService.storeTemplateDTO(template);
+        
+        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(new Long(1)));
     }
 
     @Test
@@ -73,11 +75,6 @@ public class TemplateServiceTest {
         assertTrue(templateFindByID.getId() == 1);
         assertNotNull(templateFindByID.getContents().size() == 1);
         assertNotNull(templateFindByID.getReplacements().size() == 1);
-    }
-
-
-    public void testTemplate() {
-        fail("Not yet implemented");
     }
 
     @Test

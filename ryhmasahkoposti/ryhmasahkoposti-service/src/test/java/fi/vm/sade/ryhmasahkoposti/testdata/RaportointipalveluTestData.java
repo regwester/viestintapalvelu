@@ -18,6 +18,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
@@ -154,6 +155,15 @@ public class RaportointipalveluTestData {
 	    return organisaatio;
 	}
 
+	public static OrganizationDTO getOrganizationDTO() {
+	    OrganizationDTO organizationDTO = new OrganizationDTO();
+	    
+	    organizationDTO.setName("OPH");
+	    organizationDTO.setOid("1.2.246.562.10.00000000001");
+	    
+	    return organizationDTO;
+	}
+	
 	public static PagingAndSortingDTO getPagingAndSortingDTO() {
 	    PagingAndSortingDTO pagingAndSorting = new PagingAndSortingDTO();
 	    

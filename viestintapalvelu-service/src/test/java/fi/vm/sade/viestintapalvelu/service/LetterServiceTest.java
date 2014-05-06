@@ -22,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -47,21 +48,29 @@ public class LetterServiceTest {
             mockedCurrentUserComponent);
     }
     
-
-    public void testLetterServiceImpl() {
-        fail("Not yet implemented");
-    }
-
-
+    @Test
     public void testCreateLetter() {
+        fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch();
+        
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
-        when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenReturn(any(LetterBatch.class));
+        when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenReturn(
+            DocumentProviderTestData.getLetterBatch(new Long(1)));
+        
+        LetterBatch createdLetterBatch = letterService.createLetter(letterBatch);
+        
+        assertNotNull(createdLetterBatch);
+        assertTrue(createdLetterBatch.getId() > 0);
+        assertNotNull(createdLetterBatch.getLetterReceivers());
+        assertTrue(createdLetterBatch.getLetterReceivers().size() > 0);
+        assertNotNull(createdLetterBatch.getLetterReplacements());
+        assertTrue(createdLetterBatch.getLetterReplacements().size() > 0);
+        assertNotNull(createdLetterBatch.getTemplateId());
     }
 
     @Test
     public void testFindById() {
         List<LetterBatch> mockedLetterBatchList = new ArrayList<LetterBatch>();
-        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch());
+        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(new Long(1)));
         when(mockedLetterBatchDAO.findBy(any(String.class), any(Object.class))).thenReturn(mockedLetterBatchList);
         
         fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatchFindById = letterService.findById(new Long(1));
@@ -82,7 +91,7 @@ public class LetterServiceTest {
 
 
     public void testGetLetter() {
-        fail("Not yet implemented");
+        LetterContent letterContent = letterService.getLetter(new Long(1));
     }
 
 }
