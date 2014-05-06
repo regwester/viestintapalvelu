@@ -15,17 +15,17 @@
 	<div id="application-wrapper">
 	    <div id="angularbox" ng-view=""></div>
 	</div>
-   	
+
     <!-- libs -->
-    <script type="text/javascript" src="./lib/jquery/jquery-1.10.2.min.js"></script>    
-    <script type="text/javascript" src="./lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script>
+    <script type="text/javascript" src="./lib/jquery/jquery-1.10.2.min.js"></script>
+    <script type="text/javascript" src="./lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script> 
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js"></script>
 
     <script type="text/javascript" src="./lib/angular/angular.js"></script> 
     <script type="text/javascript" src="./lib/angular/angular-resource.js"></script>
     <script type="text/javascript" src="./lib/angular/angular-route.js"></script>
     <script type="text/javascript" src="./lib/angular/angular-animate.js"></script>
-    
+     
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js"></script>
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js"></script>
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js"></script>
@@ -33,7 +33,9 @@
     <!--Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
 
-
+	<script type="text/javascript" src="./lib/tinymce/tinymce.min.js"></script>
+	<script type="text/javascript" src="./lib/tinymce/ui-angular-tinymce.js"></script>
+	
 	<%
 		String emailData = request.getParameter("emailData");
 		if (emailData != null) {
@@ -52,7 +54,7 @@
     
 	<script type="text/javascript">
 			
-		var email = angular.module('viestintapalvelu', ['localization', 'ngRoute', 'ngResource']);
+		var email = angular.module('viestintapalvelu', ['localization', 'ngRoute', 'ngResource', 'ui.tinymce']);
 		
 		email.config(['$routeProvider',  function ($routeProvider) {
 				$routeProvider.when('/email', {templateUrl: '/ryhmasahkoposti-app/app/html/email.html', controller: 'EmailController'});
@@ -66,6 +68,11 @@
             function($scope, $rootScope, GroupEmailInitFactory, GroupEmailFactory, uploadManager, $location) { 	
 			$rootScope.emailsendid = "";
 		
+			$scope.tinymceOptions = {
+			        height: 400,
+			        width: 600
+			};
+			
 			// Create empty email to get the attachInfo[] to the object
 			$scope.email = 
 					{callingProcess: '',
@@ -160,7 +167,6 @@
             $scope.init();    	    
 		}]);
 	</script>
-	<!--  script src="./js/email.js"></script>-->
     <script src="./js/emailCancel.js"></script>
     <script src="./js/emailSendStatus.js"></script>
     <script src="./js/emailService.js"></script>

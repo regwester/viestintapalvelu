@@ -119,13 +119,18 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 		    return $http.get(template+'getNames');
         }
         
+        function getExamples() {
+		    return $http.get(template+'getAvailableExamples');
+        }
+        
+        
         function getByName(t) {
 		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
         }
         
-        function getHistory(t, oid, tag){
+        function getHistory(t, oid, applicationPeriod, tag){
         	if (tag != null && tag != "") {
-		    	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&tag="+tag);
+        		return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&applicationPeriod="+applicationPeriod+"&tag="+tag);
         	} else {
         	 	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid);
         	}
@@ -133,6 +138,7 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         
         return {
             getNames: getNames,
+            getExamples: getExamples,
             getByName: getByName,
             getHistory: getHistory
         };
@@ -172,14 +178,15 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
-        function letterPDF(letters, replacements, tName, tLang, oid, tag) {
-            print(letter + 'pdf', {
-                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "tag": tag});
+
+        function letterPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+        	print(letter + 'pdf', {
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
         
-        function letterZIP(letters, replacements, tName, tLang, oid, tag) {
+        function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
             print(letter + 'zip', {
-                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "tag": tag});
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
         
         function ipostZIP(letters) {
@@ -195,7 +202,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             	error(function (data) {
             		// This is test-ui so we use a popup for failure-indication against guidelines (for production code)
             		$window.alert("Tulostiedoston luonti epäonnistui");
-            	})
+            	});
         }
 
         return {

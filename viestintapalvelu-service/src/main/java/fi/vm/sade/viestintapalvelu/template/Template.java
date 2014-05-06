@@ -11,22 +11,14 @@ public class Template{
     private static final long serialVersionUID = 4178735997933155683L;
 
     private long id;
-    
+
     private Date timestamp;
 
     private String name;
 
     private String language;
-
-    private String styles;
     
-    public String getStyles() {
-        return styles;
-    }
-
-    public void setStyles(String styles) {
-        this.styles = styles;
-    }
+    private String styles;
 
     private String storingOid;
 
@@ -35,78 +27,46 @@ public class Template{
     private List<TemplateContent> contents;
 
     private List<Replacement> replacements;
+
+    private String templateVersio;
     
-	private String templateVersio;    
+	public List<TemplateContent> getContents() {
+        return contents;
+    }    
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public long getId() {
+        return id;
     }
 
     public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-
-    public String getStoringOid() {
-        return storingOid;
-    }
-
-    public void setStoringOid(String storingOid) {
-        this.storingOid = storingOid;
+    public String getName() {
+        return name;
     }
 
     public String getOrganizationOid() {
         return organizationOid;
     }
 
-    public void setOrganizationOid(String organizationOid) {
-        this.organizationOid = organizationOid;
+    public List<Replacement> getReplacements() {
+        return replacements;
     }
 
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
 
-    public List<TemplateContent> getContents() {
-        return contents;
+    public String getStoringOid() {
+        return storingOid;
     }
 
-    public void setContents(List<TemplateContent> contents) {
-        this.contents = contents;
+    public String getStyles() {
+        return styles;
     }
 
-    public List<Replacement> getReplacements() {
-        return replacements;
-    }
-
-    public void setReplacements(List<Replacement> replacements) {
-        this.replacements = replacements;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-    
-	/**
+    /**
 	 * Method getTemplateVersio returns the version of the template.
 	 * 
 	 * @return	String
@@ -114,9 +74,49 @@ public class Template{
 	public String getTemplateVersio() {
 		return templateVersio;
 	}
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setContents(List<TemplateContent> contents) {
+        this.contents = contents;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
+
+    public void setReplacements(List<Replacement> replacements) {
+        this.replacements = replacements;
+    }
+
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
+
+    public void setStyles(String styles) {
+        this.styles = styles;
+    }
+    
 	public void setTemplateVersio(String templateVersio) {
 		this.templateVersio = templateVersio;
 	}
+	public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
 	@Override
 	public String toString() {

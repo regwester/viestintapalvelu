@@ -4,6 +4,12 @@ var emailResp = angular.module('viestintapalvelu');
 emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailResultFactory', 'EmailSendStatusFactory', '$location', 
                                                  function($scope, $rootScope, EmailResultFactory, EmailSendStatusFactory, $location) { 	
 	
+	$scope.tinymceOptions = {
+	        readonly : 1,
+	        height: 400,
+	        width: 600
+	};
+	 
 	$scope.emailsendid = $rootScope.emailsendid;
 	
 	$scope.ReportedMessageDTO = EmailResultFactory.sendResult($scope.emailsendid.id).$promise.then(	

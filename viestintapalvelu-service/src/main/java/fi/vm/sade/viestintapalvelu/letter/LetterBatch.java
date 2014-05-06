@@ -24,24 +24,27 @@ public class LetterBatch {
     @ApiModelProperty(value = "Kirjeen yleiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
 
-    @ApiModelProperty(value = "Kirjepohjan tunniste")
+    @ApiModelProperty(value = "Kirjepohjan tunniste/nimi")
     private String templateName;
 
     @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
     private String languageCode;
 
-    // käyttäjän oid
+	@ApiModelProperty(value = "Tallentajan Oid")
     private String storingOid;
 
-    @ApiModelProperty(value = "Organisaatio id")
+    @ApiModelProperty(value = "Organisaatio Oid")
     private String organizationOid;
+
+    @ApiModelProperty(value = "Haku")
+    private String applicationPeriod;
 
     @ApiModelProperty(value = "Hakukohde id")
     private String fetchTarget;
     
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
-
+    
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
     }
@@ -111,9 +114,17 @@ public class LetterBatch {
 
     public void setOrganizationOid(String organizationOid) {
         this.organizationOid = organizationOid;
-    }
+    }    
 
-    public String getFetchTarget() {
+	public String getApplicationPeriod() {
+		return applicationPeriod;
+	}
+
+	public void setApplicationPeriod(String applicationPeriod) {
+		this.applicationPeriod = applicationPeriod;
+	}
+
+	public String getFetchTarget() {
         return fetchTarget;
     }
 
@@ -138,6 +149,7 @@ public class LetterBatch {
     private LetterBatch createSubBatch(List<Letter> lettersOfSubBatch) {
         LetterBatch result = new LetterBatch(lettersOfSubBatch);
         result.setLanguageCode(languageCode);
+        result.setApplicationPeriod(applicationPeriod);
         result.setFetchTarget(fetchTarget);
         result.setOrganizationOid(organizationOid);
         result.setStoringOid(storingOid);
@@ -166,7 +178,9 @@ public class LetterBatch {
                 + templateReplacements + ", templateName=" + templateName
                 + ", languageCode=" + languageCode + ", storingOid="
                 + storingOid + ", organizationOid=" + organizationOid
-                + ", fetchTarget=" + fetchTarget + ", tag=" + tag + "]";
+                + ", applicationPeriod=" + applicationPeriod 
+                + ", fetchTarget=" + fetchTarget 
+                + ", tag=" + tag + "]";
     }
 
 
