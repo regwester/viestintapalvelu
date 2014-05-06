@@ -196,7 +196,7 @@ public class DocumentProviderTestData {
         
         letterReplacement.setLetterBatch(letterBatch);
         letterReplacement.setMandatory(false);
-        letterReplacement.setName("Nimi");
+        letterReplacement.setName("test-replacement-name");
         letterReplacement.setTimestamp(new Date());
         letterReplacement.setVersion(new Long(0));
         

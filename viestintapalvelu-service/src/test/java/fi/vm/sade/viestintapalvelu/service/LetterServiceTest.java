@@ -1,8 +1,10 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +28,8 @@ import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -79,19 +83,57 @@ public class LetterServiceTest {
         assertNotNull(letterBatchFindById.getTemplateId());
     }
 
-
+    @Test
     public void testFindLetterBatchByNameOrgTag() {
-        fail("Not yet implemented");
+        when(mockedLetterBatchDAO.findLetterBatchByNameOrgTag(any(String.class), eq("FI"), any(String.class), 
+            any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
+        
+        fi.vm.sade.viestintapalvelu.letter.LetterBatch foundLetterBatch = 
+            letterService.findLetterBatchByNameOrgTag("test-template", "FI", "1.2.246.562.10.00000000001", "test-tag");
+        
+        assertNotNull(foundLetterBatch);
+        assertTrue(foundLetterBatch.getTemplateId() == 1);
+        assertTrue(foundLetterBatch.getTemplateName().equals("test-templateName"));
+        assertTrue(foundLetterBatch.getLetters() == null);
+        assertNotNull(foundLetterBatch.getTemplateReplacements());
+        assertTrue(foundLetterBatch.getTemplateReplacements().size() > 0);
     }
 
-
+    @Test
     public void testFindReplacementByNameOrgTag() {
-        fail("Not yet implemented");
+        when(mockedLetterBatchDAO.findLetterBatchByNameOrg(any(String.class), eq("FI"), 
+            any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
+        
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = 
+            letterService.findReplacementByNameOrgTag("test-templateName", "FI", "1.2.246.562.10.00000000001", null);
+        
+        assertNotNull(replacements);
+        assertTrue(replacements.size() > 0);
+        assertTrue(replacements.get(0).getName().equals("test-replacement-name"));
+        assertTrue(!replacements.get(0).isMandatory());
+        assertTrue(replacements.get(0).getDefaultValue().isEmpty());
     }
 
-
+    @Test
     public void testGetLetter() {
+        List<LetterBatch> mockedLetterBatchList = new ArrayList<LetterBatch>();
+        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(new Long(1)));
+        
+        List<LetterReceivers> mockedLetterReceiversList = 
+            new ArrayList<LetterReceivers>(mockedLetterBatchList.get(0).getLetterReceivers());
+        
+        List<LetterReceiverLetter> mockedLetterReceiverLetterList = new ArrayList<LetterReceiverLetter>();
+        mockedLetterReceiverLetterList.add(mockedLetterReceiversList.get(0).getLetterReceiverLetter());
+        
+        when(mockedLetterReceiverLetterDAO.findBy(any(String.class), any(Object.class))).thenReturn(
+            mockedLetterReceiverLetterList);
+        
         LetterContent letterContent = letterService.getLetter(new Long(1));
+        
+        assertNotNull(letterContent);
+        assertTrue(letterContent.getContentType().equalsIgnoreCase("application/msword"));
+        assertNotNull(letterContent.getContent());
+        assertTrue(new String(letterContent.getContent()).equalsIgnoreCase("letter"));
     }
 
 }
