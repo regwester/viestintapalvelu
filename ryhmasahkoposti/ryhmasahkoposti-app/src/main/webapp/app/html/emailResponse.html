@@ -78,7 +78,7 @@
 		<div class="control-group">		
 		    <label class="control-label">{{'response.label.viesti' | i18n}}</label>
 		    <div class="controls">
- 		    	<textarea rows="10" cols="120" ng-model="ReportedMessageDTO.body" disabled/>
+                 <textarea readonly="readonly" ui-tinymce="tinymceOptions" ng-model="ReportedMessageDTO.body"></textarea>
 		    </div>		
 		</div>
     	 

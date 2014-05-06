@@ -1,5 +1,4 @@
 <div ng-controller="EmailController">
-
     <form novalidate="novalidate" class="form-horizontal">
     
         <div class="control-group">     
@@ -48,7 +47,7 @@
         <div class="control-group">     
             <label class="control-label">{{'email.label.viesti' | i18n}}</label>
             <div class="controls">
-                <textarea rows="10" cols="120" ng-model="emaildata.email.body"/>
+                 <textarea ui-tinymce="tinymceOptions" ng-model="emaildata.email.body"></textarea>
             </div>      
         </div>
 
