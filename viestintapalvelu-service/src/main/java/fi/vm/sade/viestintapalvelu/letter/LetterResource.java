@@ -20,6 +20,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -80,6 +81,12 @@ public class LetterResource extends AsynchronousResource {
     private final static String ApiZIPSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet Itellan ZIP-muodossa; synkroninen.";
     private final static String ApiZIPAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet Itellan ZIP-muodossa; asynkroninen";
     private final static String ZIPResponse400 = "BAD_REQUEST; ZIP-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+
+    private final static String TemplateByID = "Palauttaa letter pohjan id:n perusteella.";
+    private final static String TemplateByID400 = "Pohjan palautus id:n perusteella epäonnistui.";
+    
+    private final static String TemplateByNameOrgTag = "Palauttaa letter pohjan nimen, organisaation ja tunnisteen perusteella.";
+    private final static String TemplateByNameOrgTag400 = "Pohjan palautus pohjan nimen, organisaation ja tunnisteen perusteella epäonnistui.";
 
     
     @GET
@@ -204,20 +211,34 @@ public class LetterResource extends AsynchronousResource {
     @Produces("application/json")
     @Path("/getById")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
-    public LetterBatch templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {       
+    
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = LetterBatch.class)	// SWAGGER
+    @ApiResponses(@ApiResponse(code = 400, message = TemplateByID400))						// SWAGGER
+    
+    public Response templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String letterBatchId = request.getParameter("letterBatchId");
        Long id = Long.parseLong(letterBatchId);
        
-       return letterService.findById(id);
-    }
+       LetterBatch lb = letterService.findById(id);
+       if (lb==null || lb.getTemplateId() == null || lb.getTemplateId() == 0 ) {
+    	   return Response.status(Status.NOT_FOUND).entity("Template by id " + id + " not found.").build();
+       } else {
+    	   return Response.ok(lb).build();
+       }       
+    }    
     
     @GET
     @Transactional
     @Produces("application/json")
     @Path("/getByNameOrgTag")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    
+    @ApiOperation(value = TemplateByNameOrgTag, notes = TemplateByNameOrgTag, response = LetterBatch.class)	// SWAGGER
+    @ApiResponses(@ApiResponse(code = 400, message = TemplateByNameOrgTag400))								// SWAGGER
+    
     public Response templateByNameOidTag(@Context HttpServletRequest request) throws IOException, DocumentException {
-        // Pick up the organization oid from request and check urer's rights to organization
+    	
+        // Pick up the organization oid from request and check user's rights to organization
         String oid = request.getParameter("oid");
         Response response = checkUserRights(oid); 
         
@@ -230,7 +251,7 @@ public class LetterResource extends AsynchronousResource {
        String language = request.getParameter("language");
        
        String tag = request.getParameter("tag");
-       
+
        if ((tag==null) || ("".equals(tag))) {
     	   tag="%%";
        }

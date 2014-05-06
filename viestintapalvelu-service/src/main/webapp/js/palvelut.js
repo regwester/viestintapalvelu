@@ -123,9 +123,9 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
         }
         
-        function getHistory(t, oid, tag){
+        function getHistory(t, oid, applicationPeriod, tag){
         	if (tag != null && tag != "") {
-		    	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&tag="+tag);
+        		return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&applicationPeriod="+applicationPeriod+"&tag="+tag);
         	} else {
         	 	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid);
         	}

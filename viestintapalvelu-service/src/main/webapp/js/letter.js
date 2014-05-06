@@ -24,8 +24,7 @@ angular.module('app').controller(
     		}
     		
     	});
-
-    	Template.getHistory($scope.template, $scope.oid, $scope.appProcess, $scope.tag).success(function (data) {
+    	Template.getHistory($scope.template, $scope.oid, $scope.applicationPeriod, $scope.tag).success(function (data) {
     		$scope.historyList = data;
     	});
     };

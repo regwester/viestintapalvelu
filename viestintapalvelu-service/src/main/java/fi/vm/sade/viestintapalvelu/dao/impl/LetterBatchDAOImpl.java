@@ -5,6 +5,8 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.Query;
+
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;

@@ -24,16 +24,16 @@ public class LetterBatch {
     @ApiModelProperty(value = "Kirjeen yleiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
 
-    @ApiModelProperty(value = "Kirjepohjan tunniste")
+    @ApiModelProperty(value = "Kirjepohjan tunniste/nimi")
     private String templateName;
 
     @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
     private String languageCode;
 
-    // käyttäjän oid
+	@ApiModelProperty(value = "Tallentajan Oid")
     private String storingOid;
 
-    @ApiModelProperty(value = "Organisaatio id")
+    @ApiModelProperty(value = "Organisaatio Oid")
     private String organizationOid;
 
     @ApiModelProperty(value = "Haku")

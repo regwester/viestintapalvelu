@@ -26,12 +26,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiImplicitParam;
+import com.wordnik.swagger.annotations.ApiImplicitParams;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Component
@@ -47,7 +53,25 @@ public class TemplateResource extends AsynchronousResource {
     
     @Autowired
     private CurrentUserComponent currentUserComponent;
-
+        
+    private final static String GetHistory = "Palauttaa kirjepohjan historian";
+    private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
+    		+ "Kukin sisältää MAPin nimen (name) ja listan korvauskenttiä (templateReplacements) <br>"
+    		+ " - default: pohjan korvauskentät <br>"
+    		+ " - organizationLatest: organisaatiokohtaiset viimeiset pohjan korvauskentät<br> "
+    		+ " - organizationLatestByTag: edelliseen tarkennettuna tunnisteeella ";
+    private final static String GetHistory200 = "Hakijalla ei ole valtuuksia hakea kirjepohjia.";
+    
+    private final static String TemplateNames = "Palauttaa valittavissaolevien kirjepohjien nimet.";    
+    private final static String TemplateNames2 = "Palauttaa listan MAPeja. Esim: <br>"
+    												+ "{ <br>"
+													+ "'name': 'jalkiohjauskirje', <br>"
+													+ "'lang': 'FI' <br>"
+													+ "}";
+    
+    
+    private final static String ApitemplateByName = "Palauttaa kirjepohjan nimen perusteella.";    
+    
     @GET
     @Path("/get")
     @Produces("application/json")
@@ -109,6 +133,11 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
+    
+    @ApiOperation(value = TemplateNames, notes = TemplateNames2)	// SWAGGER
+//  @ApiResponses({@ApiResponse(code = 200, message = getHistory200)
+//  })
+    
     public List<Map<String,String>> templateNames(@Context HttpServletRequest request) throws IOException, DocumentException {
        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
        List<String> serviceResult = templateService.getTemplateNamesList();
@@ -131,6 +160,15 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
+    
+    // SWAGGER
+    @ApiOperation(value = ApitemplateByName, notes = ApitemplateByName, response=Template.class)
+    @ApiImplicitParams({												
+    	@ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)",	required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query")
+    })   
+    
     public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String templateName = request.getParameter("templateName");
        String languageCode = request.getParameter("languageCode");
@@ -210,6 +248,18 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
+    
+    // SWAGGER
+    @ApiOperation(value = GetHistory, notes = GetHistory2, response = fi.vm.sade.viestintapalvelu.template.Replacement.class)
+    @ApiResponses({@ApiResponse(code = 200, message = GetHistory200)
+    })	        
+    @ApiImplicitParams({												
+    	@ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)",	required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "oid", value = "Organisaation Oid", required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "tag", value = "Vapaa teksti tunniste", required = false, dataType = "string", paramType = "query"),
+    })   
+    
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
@@ -238,7 +288,7 @@ public class TemplateResource extends AsynchronousResource {
                         
         if ((oid!=null) && !("".equals(oid)) ) {
             // Latest LetterBatch replacements for that OrganisationOid
-	       System.out.println("hop");
+//	       System.out.println("hop");
             List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null);
             System.out.println(templateReplacements);
             
@@ -249,6 +299,7 @@ public class TemplateResource extends AsynchronousResource {
                 history.add(organisationRepl);
             }
 	
+			// Latest LetterBatch replacements for that OrganisationOid with a tag
 			String tag = request.getParameter("tag");
 	        if ((tag!=null) && !("".equals(tag)) ) {
 	        	templateReplacements = letterService.findReplacementByNameOrgTag(templateName,languageCode, oid, tag);
@@ -257,9 +308,7 @@ public class TemplateResource extends AsynchronousResource {
 	                tagRepl.put("name", "organizationLatestByTag");
 	                tagRepl.put("templateReplacements", templateReplacements);
 	                history.add(tagRepl);
-	            }
-				// Latest LetterBatch replacements for that OrganisationOid
-		        
+	            }		        
 	        }
         }
 	     

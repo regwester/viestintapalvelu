@@ -2,71 +2,80 @@ package fi.vm.sade.viestintapalvelu.template;
 
 import java.util.Date;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+@ApiModel(value = "TemplateContent", description = "Kirjeen sisältö")
 public class TemplateContent implements Comparable<TemplateContent> {
 
-        private int order;
-        
-        private String name;
-        
-        private String content;
+	@ApiModelProperty(value = "ID")
+	private Long id;
 
-        private Date timestamp;
+	@ApiModelProperty(value = "Nimi")
+    private String name;
 
-        private Long id;
+	@ApiModelProperty(value = "Järjestys")
+	private int order;
+    
+	@ApiModelProperty(value = "Sisältö")
+    private String content;
 
-        public Date getTimestamp() {
-            return timestamp;
-        }
+	@ApiModelProperty(value = "Aikaleima")
+    private Date timestamp;
 
-        public void setTimestamp(Date timestamp) {
-            this.timestamp = timestamp;
-        }
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-        public int getOrder() {
-            return order;
-        }
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
-        public void setOrder(int order) {
-            this.order = order;
-        }
+    public int getOrder() {
+        return order;
+    }
 
-        public String getName() {
-            return name;
-        }
+    public void setOrder(int order) {
+        this.order = order;
+    }
 
-        public void setName(String name) {
-            this.name = name;
-        }
+    public String getName() {
+        return name;
+    }
 
-        public String getContent() {
-            return content;
-        }
+    public void setName(String name) {
+        this.name = name;
+    }
 
-        public void setContent(String content) {
-            this.content = content;
-        }
+    public String getContent() {
+        return content;
+    }
 
-
-        public Long getId() {
-            return id;
-        }
-
-        public void setId(Long id) {
-            this.id = id;
-        }
+    public void setContent(String content) {
+        this.content = content;
+    }
 
 
-        @Override
-		public String toString() {
-			return "TemplateContent [order=" + order + ", name=" + name
-					+ ", content=" + content + ", timestamp=" + timestamp
-					+ ", id=" + id + "]";
-		}
+    public Long getId() {
+        return id;
+    }
 
-		@Override
-        public int compareTo(TemplateContent o) {
-            Integer ord = new Integer(order);
-            return ord.compareTo(o.order);
-        }
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+
+    @Override
+	public String toString() {
+		return "TemplateContent [order=" + order + ", name=" + name
+				+ ", content=" + content + ", timestamp=" + timestamp
+				+ ", id=" + id + "]";
+	}
+
+	@Override
+    public int compareTo(TemplateContent o) {
+        Integer ord = new Integer(order);
+        return ord.compareTo(o.order);
+    }
 
 }
