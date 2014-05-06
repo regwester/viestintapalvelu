@@ -119,6 +119,11 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 		    return $http.get(template+'getNames');
         }
         
+        function getExamples() {
+		    return $http.get(template+'getAvailableExamples');
+        }
+        
+        
         function getByName(t) {
 		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
         }
@@ -133,6 +138,7 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         
         return {
             getNames: getNames,
+            getExamples: getExamples,
             getByName: getByName,
             getHistory: getHistory
         };

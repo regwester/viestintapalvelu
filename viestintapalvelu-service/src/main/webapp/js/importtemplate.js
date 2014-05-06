@@ -1,6 +1,17 @@
-angular.module('app').controller('TemplateController', ['$scope', '$http', '$window', function ($scope, $http, $window) {
+angular.module('app').controller('TemplateController', ['$scope', '$http', '$window', 'Template', function ($scope, $http, $window, Template) {
     var templateUrl = "api/v1/template/";
 
+    Template.getExamples().success(function (data) {
+    	$scope.templates = data;
+    });
+    
+    $scope.templateChanged = function() {
+    	$scope.templateData=$scope.template.content;
+    	$scope.showTemplateData=true;
+    };
+
+    
+    
     // get template  
 	$scope.import = function () {
 		var url = templateUrl + "get?";
@@ -42,7 +53,7 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
         	$scope.showTemplateData=true;
       	}).
      	error(function (data) {
-     		$window.alert("Import epäonnistui");
+     		$window.alert("Tuonti epäonnistui");
      	})
 	}    
     
@@ -61,7 +72,7 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
 	      $http.post(url, params).
 	     	success(function (data) {
 	        	console.dir(data);
-	     		$window.alert("Tallenna on onnistunut");
+	     		$window.alert("Tallentaminen onnistui");
 	     		$scope.templateData=null;
 	     	  	$scope.showTemplateData=false;
 	     	  	$scope.files=null;
@@ -69,7 +80,7 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
 	     	  	$scope.language=null;
 	     	}).
 	     	error(function (data) {
-	     		$window.alert("Tallentamiseen epäonnistui");
+	     		$window.alert("Tallentaminen epäonnistui");
 	     	})
 		}    
 }]);

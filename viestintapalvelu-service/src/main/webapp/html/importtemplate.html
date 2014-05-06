@@ -2,12 +2,16 @@
 
     <table class="table">
         <tr>
-            <th>Mallit tiedostonimi <i>(esim: tiedosto1,tiedosto2 jne.)</i></th>
+            <th>Valitse esimerkki pohjista:</th>
+            <th>Tai luo tiedostonimien pohjalta: <i>(esim: tiedosto1,tiedosto2 jne.)</i></th>
             <th>Tyylit tiedostonimi</th>
             <th>Kieli <i>(oletus: FI)</i></th>
             <th></th>
         </tr>
         <tr>
+            <td>
+            	<select ng-model="template" ng-options="c.name for c in templates" ng-change="templateChanged()"></select>
+            </td>
             <td>
                 <input class="input-xlarge" type="text" ng-model="files" placeholder="Mallit tiedostonimi">
             </td>

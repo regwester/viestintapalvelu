@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -129,6 +130,36 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
+    @Path("/getAvailableExamples")
+    @Produces("application/json")
+    @Transactional
+    
+    public List<Map<String, String>> templateExamples(@Context HttpServletRequest request) throws IOException, DocumentException {
+        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+       
+       String[] templates = {"/hyvaksymiskirje_FI.json", "/hyvaksymiskirje_SV.json", "/jalkiohjauskirje_FI.json", "/jalkiohjauskirje_SV.json"};
+       
+       for (String template : templates) {
+           Map<String, String> current = new HashMap<String, String>();
+           BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(template)));
+           StringBuilder sb = new StringBuilder();
+
+           String line = buff.readLine();
+           while (line != null) {
+               sb.append(line);
+               line = buff.readLine();
+           }
+           current.put("name", template);
+           current.put("content", sb.toString());
+           res.add(current);
+       }
+       
+       return res;
+    }
+
+    
+    
+    @GET
     @Path("/getNames")
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
@@ -237,7 +268,6 @@ public class TemplateResource extends AsynchronousResource {
     
     /**
      * http://localhost:8080/viestintapalvelu/api/v1/template/getHistory?templateName=hyvaksymiskirje&languageCode=FI&oid=123456789&tag=11111
-     * 
      * @param request
      * @return
      * @throws IOException
@@ -287,8 +317,6 @@ public class TemplateResource extends AsynchronousResource {
         history.add(templateRepl);       
                         
         if ((oid!=null) && !("".equals(oid)) ) {
-            // Latest LetterBatch replacements for that OrganisationOid
-//	       System.out.println("hop");
             List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null);
             System.out.println(templateReplacements);
             
