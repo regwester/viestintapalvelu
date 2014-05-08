@@ -30,7 +30,8 @@
         </tr>
         <tr ng-show="showTemplateData">
 		    <td colspan="3">
-	         	<textarea class="span12" name="templateData" rows="10" style="height: 300px;">{{templateData}}</textarea>
+		    
+	         	<textarea class="span12" ng-model="templateData"  rows="10" style="height: 300px;"></textarea>
          	</td>
             <td class="inline-operation">
                 <button ng-click="store()" class="inline-operation btn btn-small">Save</button>
