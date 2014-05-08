@@ -137,7 +137,8 @@ public class TemplateResource extends AsynchronousResource {
     public List<Map<String, String>> templateExamples(@Context HttpServletRequest request) throws IOException, DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
        
-       String[] templates = {"/hyvaksymiskirje_FI.json", "/hyvaksymiskirje_SV.json", "/jalkiohjauskirje_FI.json", "/jalkiohjauskirje_SV.json"};
+       String[] templates = {"/hyvaksymiskirje_FI.json", "/hyvaksymiskirje_SV.json", "/jalkiohjauskirje_FI.json", "/jalkiohjauskirje_SV.json",
+    		   				"/koekutsukirje_FI.json", "/koekutsukirje_SV.json", "/koekutsukirje_EN.json"};
        
        for (String template : templates) {
            Map<String, String> current = new HashMap<String, String>();
