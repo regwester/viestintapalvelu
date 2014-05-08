@@ -4,120 +4,69 @@ import java.util.Date;
 import java.util.List;
 
 import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
 
-@ApiModel(value = "Template", description = "Kirjepohje, perustiedot (nimi / tyyli / kielikoodi")
+@ApiModel(value = "Kirjetemplate")
 public class Template{
 
     private static final long serialVersionUID = 4178735997933155683L;
 
-	@ApiModelProperty(value = "ID")
-	private long id;
-    
-	@ApiModelProperty(value = "Nimi")
-    private String name;
+    private long id;
 
-	@ApiModelProperty(value = "Aikaleima")
     private Date timestamp;
 
-	@ApiModelProperty(value = "Kielikoodi")
-    private String language;
+    private String name;
 
-	@ApiModelProperty(value = "Tyyli")
-    private String styles;
+    private String language;
     
-	@ApiModelProperty(value = "Tallentajan Oid")
+    private String styles;
+
     private String storingOid;
 
-	@ApiModelProperty(value = "Organisaation Oid")
     private String organizationOid;
 
-	@ApiModelProperty(value = "Kirjepohjan sisältö. 1 per sivu")
     private List<TemplateContent> contents;
 
-	@ApiModelProperty(value = "Kirjepohjan korvauskentät")
     private List<Replacement> replacements;
+
+    private String templateVersio;
     
-	@ApiModelProperty(value = "Kirjepohjan versio")
-	private String templateVersio;    
+	public List<TemplateContent> getContents() {
+        return contents;
+    }    
 
-    public Date getTimestamp() {
-        return timestamp;
-    }
-
-    public void setTimestamp(Date timestamp) {
-        this.timestamp = timestamp;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
+    public long getId() {
+        return id;
     }
 
     public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
-        this.language = language;
-    }
-    
-    public String getStyles() {
-        return styles;
-    }
-
-    public void setStyles(String styles) {
-        this.styles = styles;
-    }
-
-    public String getStoringOid() {
-        return storingOid;
-    }
-
-    public void setStoringOid(String storingOid) {
-        this.storingOid = storingOid;
+    public String getName() {
+        return name;
     }
 
     public String getOrganizationOid() {
         return organizationOid;
     }
 
-    public void setOrganizationOid(String organizationOid) {
-        this.organizationOid = organizationOid;
+    public List<Replacement> getReplacements() {
+        return replacements;
     }
 
     public static long getSerialversionuid() {
         return serialVersionUID;
     }
 
-    public List<TemplateContent> getContents() {
-        return contents;
+    public String getStoringOid() {
+        return storingOid;
     }
 
-    public void setContents(List<TemplateContent> contents) {
-        this.contents = contents;
+    public String getStyles() {
+        return styles;
     }
 
-    public List<Replacement> getReplacements() {
-        return replacements;
-    }
-
-    public void setReplacements(List<Replacement> replacements) {
-        this.replacements = replacements;
-    }
-
-    public long getId() {
-        return id;
-    }
-
-    public void setId(long id) {
-        this.id = id;
-    }
-    
-	/**
+    /**
 	 * Method getTemplateVersio returns the version of the template.
 	 * 
 	 * @return	String
@@ -125,9 +74,49 @@ public class Template{
 	public String getTemplateVersio() {
 		return templateVersio;
 	}
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setContents(List<TemplateContent> contents) {
+        this.contents = contents;
+    }
+
+    public void setId(long id) {
+        this.id = id;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
+
+    public void setReplacements(List<Replacement> replacements) {
+        this.replacements = replacements;
+    }
+
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
+
+    public void setStyles(String styles) {
+        this.styles = styles;
+    }
+    
 	public void setTemplateVersio(String templateVersio) {
 		this.templateVersio = templateVersio;
 	}
+	public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
 	@Override
 	public String toString() {
