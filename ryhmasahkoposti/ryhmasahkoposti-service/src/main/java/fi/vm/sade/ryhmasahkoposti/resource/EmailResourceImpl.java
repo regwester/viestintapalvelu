@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -14,6 +13,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
@@ -24,15 +24,16 @@ import org.codehaus.jettison.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
+import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
@@ -83,36 +84,6 @@ public class EmailResourceImpl implements EmailResource {
     }
 
     @Override
-    public EmailData getEmailDataAsJSON() {
-        EmailData emailData = new EmailData();
-        emailData.setSenderOid("lahettajan oid");
-        
-        EmailMessage emailMessage = new EmailMessage();
-        emailMessage.setBody("s-postiviestin sisalto");
-        emailMessage.setCallingProcess("kutsuvaprosessi esim. valinta");
-        emailMessage.setCharset("koodisto");
-        emailMessage.setFrom("lahettajan s-postiosoite");
-        emailMessage.setHtml(false);
-        emailMessage.setOrganizationOid("lahettajan organisaation oid-tunnus");
-        emailMessage.setReplyTo("vastaus s-postiosoite");
-        emailMessage.setSenderOid("lahettajan oid-tunnus");
-        emailMessage.setSubject("s-postin aihe");
-        
-        List<EmailRecipient> emailRecipients = new LinkedList<EmailRecipient>();
-        EmailRecipient emailRecipient = new EmailRecipient();
-        emailRecipient.setEmail("vastaanottajan s-postiosoite");
-        emailRecipient.setLanguageCode("vastaanottajan kielikoodi");
-        emailRecipient.setOid("vastaanottajan oid-tunnus");
-        emailRecipient.setOidType("arvoksi tyhja");
-        emailRecipients.add(emailRecipient);
-        
-        emailData.setEmail(emailMessage);
-        emailData.setRecipient(emailRecipients);
-        
-        return emailData;
-    }
-
-    @Override
     public Response initGroupEmail() {
         Response response = Response.ok("ok").build();
         return response;
@@ -136,14 +107,20 @@ public class EmailResourceImpl implements EmailResource {
     }
     
 	@Override
-    public SendingStatusDTO sendEmailStatus(String sendId) {
+    public Response sendEmailStatus(String sendId) {
 		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
+		try {
+            SendingStatusDTO sendingStatusDTO = sendDbService.getSendingStatus(Long.valueOf(sendId));
+            return Response.ok(sendingStatusDTO).build();
+        } catch (Exception e) {
+            log.log(Level.SEVERE, e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+        }
 
-		return sendDbService.getSendingStatus(Long.valueOf(sendId));
     }
 
 	@Override
-    public EmailSendId sendGroupEmail(EmailData emailData) {
+    public Response sendGroupEmail(EmailData emailData) {
 		// Setting footer with the first ones language code
 	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
 	    // Footer is moved to the end of the body here
@@ -151,20 +128,28 @@ public class EmailResourceImpl implements EmailResource {
 	    
 		String sendId = "";
 		try {
-			sendId = Long.toString( sendDbService.addSendingGroupEmail(emailData));
+			sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
 			log.log(Level.INFO, "DB index is " + sendId);
-			
-		} catch (IOException e) {	
+			return Response.ok(new EmailSendId(sendId)).build();
+		} catch (ExternalInterfaceException e) {
+            log.log(Level.SEVERE, "Problems in getting data from external interfaces, "+ e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+		} catch (Exception e) {	
 			log.log(Level.SEVERE, "Problems in writing send data info to DB, "+ e.getMessage());
+			return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
 		}
-		return new EmailSendId(sendId);
     }
     
 	@Override
-    public ReportedMessageDTO sendResult(String sendId) {
+    public Response sendResult(String sendId) {
 		log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
-
-		return sendDbService.getReportedMessage(Long.valueOf(sendId));
+		try {
+            ReportedMessageDTO reportedMessageDTO = sendDbService.getReportedMessage(Long.valueOf(sendId));
+            return Response.ok(reportedMessageDTO).build();
+        } catch (Exception e) {
+            log.log(Level.SEVERE, "Problems in getting group email data from DB, "+ e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+        }
     }
 
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {

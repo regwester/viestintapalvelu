@@ -7,6 +7,8 @@ import static org.mockito.Mockito.*;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,6 +27,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.resource.MessageReportingResource;
 import fi.vm.sade.ryhmasahkoposti.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
@@ -61,8 +64,9 @@ public class MessageReportingResourceTest {
         when(mockedGroupEmailReportingService.getReportedMessagesByOrganizationOid(
             "1.2.246.562.10.00000000001", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
         
-        ReportedMessagesDTO searchedReportedMessagesDTO = 
+        Response response = 
             messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc");
+        ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
         
         assertNotNull(searchedReportedMessagesDTO);
         assertNotNull(searchedReportedMessagesDTO.getReportedMessages());
@@ -90,9 +94,10 @@ public class MessageReportingResourceTest {
         when(mockedGroupEmailReportingService.getReportedMessages(
             mockedReportedMessageQueryDTO, mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
         
-        ReportedMessagesDTO searchedReportedMessagesDTO = 
+        Response response = 
             messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", "testi.vastaanottaja@sposti.fi", 
             10, 1, "sendingStarted", "asc");
+        ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
         
         assertNotNull(searchedReportedMessagesDTO);
         assertNotNull(searchedReportedMessagesDTO.getReportedMessages());

@@ -2,9 +2,12 @@ package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource;
 
 /**
@@ -15,6 +18,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource;
  */
 @Component
 public class PersonComponent {
+    private static Logger LOGGER = LoggerFactory.getLogger(PersonComponent.class);
     @Resource
     private HenkiloResource henkiloResourceClient;
     
@@ -25,6 +29,11 @@ public class PersonComponent {
      * @return Henkilön tiedot
      */
     public Henkilo getPerson(String oid) {
-        return henkiloResourceClient.findByOid(oid);
+        try {
+            return henkiloResourceClient.findByOid(oid);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new ExternalInterfaceException("error.msg.gettingPersonDataFailed", e);
+        }
     }
 }
