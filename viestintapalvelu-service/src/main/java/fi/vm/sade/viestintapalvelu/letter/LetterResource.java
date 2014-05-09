@@ -147,7 +147,7 @@ public class LetterResource extends AsynchronousResource {
     }
 
     /**
-     * Koekutsukirje PDF async
+     * Kirje PDF async
      * 
      * @param input
      * @param request
@@ -163,7 +163,7 @@ public class LetterResource extends AsynchronousResource {
     @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
             + AsyncResponseLogicDocumentation)
     public Response asyncPdf(
-            @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input,
+            @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final LetterBatch input,
             @Context final HttpServletRequest request) throws IOException,
             DocumentException {
         if (input == null || input.getLetters().isEmpty()) {
