@@ -149,7 +149,6 @@ public class LetterServiceImpl implements LetterService {
         } else {
             letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag);
         }
-        System.out.println(letterBatch);
         if (letterBatch != null) {
 
             // kirjeet.lahetyskorvauskentat

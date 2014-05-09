@@ -49,7 +49,7 @@ angular.module('app').controller('TemplateController', ['$scope', '$http', '$win
       $http.get(url).
      	success(function (data) {
         	console.dir(data);
-        	$scope.templateData=data;
+        	$scope.templateData=JSON.stringify(data);
         	$scope.showTemplateData=true;
       	}).
      	error(function (data) {
