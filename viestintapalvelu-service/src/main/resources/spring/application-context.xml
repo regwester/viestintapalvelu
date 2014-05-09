@@ -45,6 +45,15 @@
         </jaxrs:providers>
     </jaxrs:client>
 
+    <jaxrs:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+        <jaxrs:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
+
     <jaxrs:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
@@ -56,9 +65,11 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <routeBuilder ref="omattiedotRoute"/>
+        <routeBuilder ref="organisaatioRoute"/>
     </camelContext>
 
-    <bean id="omattiedotRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OmattiedotRoute"/> 
+    <bean id="omattiedotRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OmattiedotRoute"/>
+    <bean id="organisaatioRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OrganisaatioRoute"/> 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
 

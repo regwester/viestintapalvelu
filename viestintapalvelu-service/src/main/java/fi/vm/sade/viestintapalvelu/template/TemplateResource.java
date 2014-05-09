@@ -1,7 +1,6 @@
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -38,7 +37,7 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Component
@@ -47,13 +46,13 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService;
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {  
     @Autowired 
-    private TemplateService templateService;
-    
+    private TemplateService templateService;   
     @Autowired 
     private LetterService letterService;
-    
     @Autowired
     private CurrentUserComponent currentUserComponent;
+    @Autowired
+    private OrganizationComponent organizationComponent;
         
     private final static String GetHistory = "Palauttaa kirjepohjan historian";
     private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
@@ -349,10 +348,11 @@ public class TemplateResource extends AsynchronousResource {
             return Response.status(Status.OK).build();
         }
         
+        List<String> organizationParents = organizationComponent.getOrganizationParents(oid);        
         List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
         
         for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
-            if (oid.equals(organisaatioHenkilo.getOrganisaatioOid())) {
+            if (organizationParents.contains(organisaatioHenkilo.getOrganisaatioOid())) {
                 return Response.status(Status.OK).build();
             }
         }
