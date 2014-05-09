@@ -145,13 +145,13 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 	}();
 }]);
 
-
 angular.module('app').factory('Printer', ['$http', '$window', function ($http, $window) {
     var addressLabel = 'api/v1/addresslabel/';
     var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
     var hyvaksymiskirje = 'api/v1/hyvaksymiskirje/';
     var koekutsukirje = 'api/v1/koekutsukirje/';
     var letter = 'api/v1/letter/';
+    var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
 
     return function () {
@@ -194,6 +194,10 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
+        function printPDF(sources, filename) {
+            print(printurl + 'pdf', {"documentName": filename, "sources": sources});
+        }
+        
         function print(url, batch) {
             $http.post(url, batch).
             	success(function (data) {
@@ -213,7 +217,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             osoitetarratPDF: osoitetarratPDF,
             osoitetarratXLS: osoitetarratXLS,
             letterPDF: letterPDF,
-            letterZIP: letterZIP
+            letterZIP: letterZIP,
+            printPDF: printPDF
         }
     }()
 }])

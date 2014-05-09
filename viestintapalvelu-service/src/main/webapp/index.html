@@ -29,7 +29,7 @@
 <script src="js/hyvaksymiskirje.js"></script>
 <script src="js/koekutsukirje.js"></script>
 <script src="js/importtemplate.js"></script>
-
+<script src="js/print.js"></script>
 
 <link href="css/twitter-bootstrap/2.3.1/bootstrap-combined.min.css"	rel="stylesheet">
 <link href="css/viestintapalvelu.css" rel="stylesheet" >
@@ -55,7 +55,9 @@
 				<li  class="active">
 					<a href="#letter" ng-click="showContent('letter')" data-toggle="tab">Letter</a></li>
 				<li>
-					<a href="#importtemplate" ng-click="showContent('importtemplate')" data-toggle="tab">Import malleja</a></li>
+					<a href="#importtemplate" ng-click="showContent('importtemplate')" data-toggle="tab">Mallien tuonti</a></li>
+				<li>
+					<a href="#print" ng-click="showContent('print')" data-toggle="tab">Print</a></li>
 			</ul>
 		</div>
 		<div class="tab-content">
@@ -65,6 +67,7 @@
 			<div class="tab-pane" id="koekutsukirje"></div>
 			<div class="tab-pane active" id="letter"></div>
 			<div class="tab-pane" id="importtemplate"></div>
+			<div class="tab-pane" id="print"></div>
 		</div>
 	</div>
 </body>
