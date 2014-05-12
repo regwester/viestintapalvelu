@@ -2,9 +2,12 @@ package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource;
 
 /**
@@ -15,6 +18,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource;
  */
 @Component
 public class OrganizationComponent {
+    private static Logger LOGGER = LoggerFactory.getLogger(OrganizationComponent.class);
     @Resource
     private OrganisaatioResource organisaatioResourceClient;
     
@@ -25,7 +29,12 @@ public class OrganizationComponent {
      * @return Organisaation tiedot
      */
     public OrganisaatioRDTO getOrganization(String oid) {
-        return organisaatioResourceClient.getOrganisaatioByOID(oid);
+        try {
+            return organisaatioResourceClient.getOrganisaatioByOID(oid);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new ExternalInterfaceException("error.msg.gettingOrganizationDataFailed", e);
+        }
     }
     
     /**
@@ -36,6 +45,10 @@ public class OrganizationComponent {
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
         String[] language = {"fi", "sv", "en"};
+        
+        if (organisaatio.getNimi() == null) {
+            return "";
+        }
         
         for (int i = 0; language.length > i; i++) {
             String nameOfOrganisation = organisaatio.getNimi().get(language[i]);

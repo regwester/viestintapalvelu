@@ -1,8 +1,8 @@
 
 var emailStatus = angular.module('viestintapalvelu');
 
-emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'EmailSendStatusFactory', '$location', '$timeout', 
-                                                     function($scope, $rootScope, EmailSendStatusFactory, $location, $timeout) { 	
+emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'EmailSendStatusFactory', '$location', '$timeout', 'ErrorDialog', 
+                                                     function($scope, $rootScope, EmailSendStatusFactory, $location, $timeout, ErrorDialog) { 	
 
 	$scope.emailsendid = $rootScope.emailsendid;
 	
@@ -13,7 +13,7 @@ emailStatus.controller('EmailSendStatusController', ['$scope', '$rootScope', 'Em
             	$scope.SendingStatusDTO = value; 
 			},	            
             function(error) {
-                alert("Error (sendEmailStatus)" + error);
+                ErrorDialog.showError(error);
             },
             function(update) {
                 alert("Notification " + update);

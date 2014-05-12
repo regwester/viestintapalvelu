@@ -23,9 +23,6 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 
 /**
  * REST-rajapinta ryhmäsähköpostin käsittelyä varten
@@ -53,11 +50,6 @@ public interface EmailResource {
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
         throws IOException, URISyntaxException, ServletException ;
 
-    @GET
-    @Produces("application/json")
-    @Path("getEmailData")    
-    public EmailData getEmailDataAsJSON();
-    
     /**
      * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle
      * 
@@ -106,7 +98,7 @@ public interface EmailResource {
     @Produces("application/json")
     @Path("sendEmailStatus")
     @Secured({SecurityConstants.SEND})
-	public SendingStatusDTO sendEmailStatus(String sendId);
+	public Response sendEmailStatus(String sendId);
 
     /**
      * Lähettää ryhmäsähköpostin 
@@ -119,7 +111,7 @@ public interface EmailResource {
     @Produces("application/json")   
     @Path("sendGroupEmail")
     @Secured({SecurityConstants.SEND})
-	public EmailSendId sendGroupEmail(EmailData emailData);
+	public Response sendGroupEmail(EmailData emailData);
 
     /**
      * Pyytää tiedot raportoittavista ryhmäsähköposteista
@@ -132,5 +124,5 @@ public interface EmailResource {
     @Produces("application/json")
     @Path("sendResult")
     @Secured({SecurityConstants.SEND})
-	public ReportedMessageDTO sendResult(String sendId);
+	public Response sendResult(String sendId);
 }

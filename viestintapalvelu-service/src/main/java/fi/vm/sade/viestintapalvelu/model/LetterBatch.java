@@ -71,6 +71,10 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
     
+	@Column(name = "ipost")
+    private boolean ipost = false;
+	
+    
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
@@ -165,8 +169,16 @@ public class LetterBatch extends BaseEntity {
     
     public String getTag() {
         return tag;
-    }
-    
+    }    
+
+	public boolean isIpost() {
+		return ipost;
+	}
+
+	public void setIpost(boolean ipost) {
+		this.ipost = ipost;
+	}
+
 	@Override
 	public String toString() {
 		return "LetterBatch [templateId=" + templateId 

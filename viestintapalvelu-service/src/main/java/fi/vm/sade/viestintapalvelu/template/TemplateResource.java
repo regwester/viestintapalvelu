@@ -1,7 +1,6 @@
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.BufferedReader;
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -18,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -33,13 +31,11 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -47,13 +43,11 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService;
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {  
     @Autowired 
-    private TemplateService templateService;
-    
+    private TemplateService templateService;   
     @Autowired 
     private LetterService letterService;
-    
     @Autowired
-    private CurrentUserComponent currentUserComponent;
+    private UserRightsValidator userRightsValidator;
         
     private final static String GetHistory = "Palauttaa kirjepohjan historian";
     private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
@@ -219,6 +213,54 @@ public class TemplateResource extends AsynchronousResource {
         return new Template();
     }
     
+
+    @POST
+    @Path("/storeDraft")
+    @Consumes("application/json")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+    public Draft storeDraft(Draft draft) throws IOException, DocumentException {
+        templateService.storeDraftDTO(draft);
+        return new Draft();
+    }
+    
+    
+    @GET
+    @Path("/getDraft")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    public Response getDraft(@Context HttpServletRequest request) throws IOException, DocumentException { 
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
+                
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+    	
+        String templateName = request.getParameter("templateName");
+        String languageCode = request.getParameter("languageCode");
+//        String organizationOid = request.getParameter("oid");
+        String applicationPeriod = request.getParameter("applicationPeriod");
+        String fetchTarget = request.getParameter("fetchTarget");
+        String tag = request.getParameter("tag");
+        
+        if (applicationPeriod==null) { 
+        	applicationPeriod=""; 
+        }
+        if (fetchTarget==null) { 
+        	fetchTarget=""; 
+        }
+        if (tag==null) { 
+        	tag=""; 
+        }
+
+        Draft draft = new Draft();
+        draft = templateService.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
+        return Response.ok(draft).build();        
+    }
     
     /**
      * http://localhost:8080/viestintapalvelu/api/v1/template/getTempHistory?templateName=hyvaksymiskirje&languageCode=FI&content=YES&oid=123456789&tag=par
@@ -236,7 +278,7 @@ public class TemplateResource extends AsynchronousResource {
     public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
-        Response response = checkUserRights(oid); 
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
         
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
@@ -294,7 +336,7 @@ public class TemplateResource extends AsynchronousResource {
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
-        Response response = checkUserRights(oid); 
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
         
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
@@ -342,22 +384,6 @@ public class TemplateResource extends AsynchronousResource {
         }
 	     
         return Response.ok(history).build();
-    }
-
-    private Response checkUserRights(String oid) {
-        if (oid == null) {
-            return Response.status(Status.OK).build();
-        }
-        
-        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
-        
-        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
-            if (oid.equals(organisaatioHenkilo.getOrganisaatioOid())) {
-                return Response.status(Status.OK).build();
-            }
-        }
-        
-        return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
     }
 
     private String getStyle(String styleFile) throws IOException {

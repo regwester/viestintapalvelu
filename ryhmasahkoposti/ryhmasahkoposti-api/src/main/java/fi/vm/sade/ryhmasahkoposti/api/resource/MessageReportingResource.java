@@ -6,6 +6,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -38,7 +39,7 @@ public interface MessageReportingResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGES_LIST)
     @GET
-    public ReportedMessagesDTO getReportedMessages(@QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid,
+    public Response getReportedMessages(@QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid,
         @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, @QueryParam(RestConstants.PARAM_PAGE) Integer page,
         @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, @QueryParam(RestConstants.PARAM_ORDER) String order);
 	
@@ -57,7 +58,7 @@ public interface MessageReportingResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGES_SEARCH)
 	@GET
-	public ReportedMessagesDTO getReportedMessages(@QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid,  
+	public Response getReportedMessages(@QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid,  
 	    @QueryParam(RestConstants.PARAM_SEARCH_ARGUMENT) String searchArgument, 
 	    @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, @QueryParam(RestConstants.PARAM_PAGE) Integer page, 
 	    @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, @QueryParam(RestConstants.PARAM_ORDER) String order);
@@ -72,7 +73,7 @@ public interface MessageReportingResource {
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGE_VIEW)
 	@GET	
-	public ReportedMessageDTO getReportedMessage(@PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID);
+	public Response getReportedMessage(@PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID);
 	
 	/**
 	 * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa tietyn määrän vastaanottajien tietoja
@@ -88,7 +89,7 @@ public interface MessageReportingResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGE_VIEW_WITH_PAGING)
     @GET
-    public ReportedMessageDTO getReportedMessageAndRecipients(@PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
+    public Response getReportedMessageAndRecipients(@PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
         @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
         @QueryParam(RestConstants.PARAM_PAGE) Integer page, @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @QueryParam(RestConstants.PARAM_ORDER) String order);
@@ -107,7 +108,7 @@ public interface MessageReportingResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGE_FAILED_VIEW_WITH_PAGING)
     @GET
-    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(
+    public Response getReportedMessageAndRecipientsSendingUnsuccesful(
         @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
         @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
         @QueryParam(RestConstants.PARAM_PAGE) Integer page, @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 

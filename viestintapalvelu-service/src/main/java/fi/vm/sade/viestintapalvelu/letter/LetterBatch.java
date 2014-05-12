@@ -4,10 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.Column;
+
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 @ApiModel(value = "Kerralla muodostettavien kirjeiden joukko")
@@ -44,6 +45,10 @@ public class LetterBatch {
     
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
+    
+    @ApiModelProperty(value = "ipost = TRUE jos lähetetty IPostin kautta, muuten FALSE")
+    private boolean ipost = false;
+
     
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -140,7 +145,15 @@ public class LetterBatch {
         this.tag = tag;
     }
     
-    public List<LetterBatch> split(int limit) {
+	public boolean isIpost() {
+		return ipost;
+	}
+
+	public void setIpost(boolean ipost) {
+		this.ipost = ipost;
+	}
+
+	public List<LetterBatch> split(int limit) {
         List<LetterBatch> batches = new ArrayList<LetterBatch>();
         split(letters, batches, limit);
         return batches;
@@ -158,6 +171,7 @@ public class LetterBatch {
         result.setTemplateName(templateName);
         result.setTemplateReplacements(templateReplacements);
         result.setTag(tag);
+        result.setIpost(ipost);        
         return result;
     }
 

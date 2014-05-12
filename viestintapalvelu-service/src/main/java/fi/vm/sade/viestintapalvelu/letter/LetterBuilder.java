@@ -77,8 +77,6 @@ public class LetterBuilder {
 
     private MergedPdfDocument buildPDF(LetterBatch batch) throws IOException, DocumentException {
 
-        System.out.println(batch);
-        
         Template template = batch.getTemplate();
 
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
