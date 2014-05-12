@@ -6,9 +6,11 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,8 +21,11 @@ import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.model.Draft;
+import fi.vm.sade.viestintapalvelu.model.DraftReplacement;
 import fi.vm.sade.viestintapalvelu.model.Replacement;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
@@ -31,11 +36,13 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 public class TemplateServiceImpl implements TemplateService {
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
+    private DraftDAO draftDAO;
 
     @Autowired
-    public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent) {
+    public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO) {
         this.templateDAO = templateDAO;
         this.currentUserComponent = currentUserComponent;
+        this.draftDAO = draftDAO;
     }
     
     /* (non-Javadoc)
@@ -119,6 +126,48 @@ public class TemplateServiceImpl implements TemplateService {
         storeTemplate(model);
     }
     
+	@Override
+	public void storeDraftDTO(fi.vm.sade.viestintapalvelu.template.Draft draft) {
+		Draft model = new Draft();
+		model.setTemplateName(draft.getTemplateName());
+		model.setTemplateLanguage(draft.getLanguageCode());
+		
+		model.setStoringOid(currentUserComponent.getCurrentUser().getOidHenkilo());
+		
+		model.setOrganizationOid( (draft.getOrganizationOid()==null) ? "" : draft.getOrganizationOid() );
+		model.setApplicationPeriod( (draft.getApplicationPeriod()==null) ? "" : draft.getApplicationPeriod());	// Haku
+		model.setFetchTarget((draft.getFetchTarget()==null) ? "" : draft.getFetchTarget());						// Hakukohde id
+		model.setTag((draft.getTag()==null) ? "" : draft.getTag());												// Vapaa teksti tunniste
+		model.setTimestamp(new Date());
+		model.setReplacements(parseDraftReplacementsModels(draft, model));
+		
+        draftDAO.insert(model);
+	}
+        
+    /*
+     * kirjeet.luonnoskorvauskentat
+     */
+    private Set<DraftReplacement> parseDraftReplacementsModels(fi.vm.sade.viestintapalvelu.template.Draft draft, Draft draftB) {
+        Set<DraftReplacement> replacements = new HashSet<DraftReplacement>();
+
+        Object replKeys[] = draft.getReplacements().keySet().toArray();
+        Object replVals[] = draft.getReplacements().values().toArray();
+
+        for (int i = 0; i < replVals.length; i++) {
+            fi.vm.sade.viestintapalvelu.model.DraftReplacement repl = new fi.vm.sade.viestintapalvelu.model.DraftReplacement();
+
+            repl.setName(replKeys[i].toString());
+            repl.setDefaultValue(replVals[i].toString());
+
+            repl.setTimestamp(new Date());
+            repl.setDraft(draftB);
+            replacements.add(repl);
+        }
+        return replacements;
+    }
+	
+	
+    
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
      */
@@ -201,8 +250,6 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
-    
-    
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#template(java.lang.String, java.lang.String)
      */
@@ -293,5 +340,54 @@ public class TemplateServiceImpl implements TemplateService {
     	
     	return searchTempl;
     }
-    
+
+    /* ------------------------- */
+    /* - findDraftByNameOrgTag - */
+    /* ------------------------- */
+    /**
+     * Method findDraftByNameOrgTag
+     * 
+     * @param templateName
+     * @param templateLanguage
+     * @param organizationOid
+     * @param applicationPeriod
+     * @param fetchTarget
+     * @param tag
+     * @return	Draft
+     */
+    @Override
+    public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName,String templateLanguage, String organizationOid, 
+    																		String applicationPeriod, String fetchTarget, String tag) {
+
+    	fi.vm.sade.viestintapalvelu.template.Draft result = new fi.vm.sade.viestintapalvelu.template.Draft();
+
+        Draft draft = draftDAO.findDraftByNameOrgTag(templateName, templateLanguage, organizationOid, applicationPeriod, fetchTarget, tag);
+        if (draft != null) {
+            // kirjeet.luonnos
+            result.setDraftId(draft.getId());
+            result.setTemplateName(draft.getTemplateName());
+            result.setLanguageCode(draft.getTemplateLanguage());
+            result.setStoringOid(draft.getStoringOid());
+            result.setOrganizationOid(draft.getOrganizationOid());
+            
+            result.setApplicationPeriod(draft.getApplicationPeriod());
+            result.setFetchTarget(draft.getFetchTarget());
+            result.setTag(draft.getTag());
+            
+            // kirjeet.luonnoskorvauskentat
+            result.setReplacements(parseDraftReplDTOs(draft.getReplacements()));
+        }
+
+        return result;
+    }
+
+    private Map<String, Object> parseDraftReplDTOs(Set<DraftReplacement> draftReplacements) {
+        Map<String, Object> replacements = new HashMap<String, Object>();
+
+        for (DraftReplacement draftRepl : draftReplacements) {
+            replacements.put(draftRepl.getName(), draftRepl.getDefaultValue());
+        }
+        return replacements;
+    }
+  
 }

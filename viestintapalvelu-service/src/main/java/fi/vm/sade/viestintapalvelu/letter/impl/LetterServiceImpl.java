@@ -65,7 +65,8 @@ public class LetterServiceImpl implements LetterService {
         letterB.setLanguage(letterBatch.getLanguageCode());
         letterB.setStoringOid(henkilo.getOidHenkilo());
         letterB.setOrganizationOid(letterBatch.getOrganizationOid());
-        letterB.setTag(letterBatch.getTag());
+        letterB.setTag(letterBatch.getTag());        
+        letterB.setIpost(letterBatch.isIpost());
 
         // kirjeet.lahetyskorvauskentat
         letterB.setLetterReplacements(parseLetterReplacementsModels(letterBatch, letterB));
@@ -323,8 +324,7 @@ public class LetterServiceImpl implements LetterService {
     /*
      * kirjeet.lahetyskorvauskentat
      */
-    private Set<LetterReplacement> parseLetterReplacementsModels(
-        fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
+    private Set<LetterReplacement> parseLetterReplacementsModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
         Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
 
         Object replKeys[] = letterBatch.getTemplateReplacements().keySet().toArray();
