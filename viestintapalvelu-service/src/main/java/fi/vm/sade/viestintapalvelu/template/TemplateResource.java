@@ -233,8 +233,8 @@ public class TemplateResource extends AsynchronousResource {
     public Response getDraft(@Context HttpServletRequest request) throws IOException, DocumentException { 
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
-        Response response = checkUserRights(oid); 
-        
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
+                
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
             return response;
