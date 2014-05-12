@@ -11,7 +11,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
@@ -20,7 +19,6 @@ import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -41,13 +39,12 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -61,8 +58,6 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserCompon
 public class LetterResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
     @Autowired
-    private CurrentUserComponent currentUserComponent;
-    @Autowired
     private DownloadCache downloadCache;
     @Autowired
     private LetterBuilder letterBuilder;
@@ -70,9 +65,10 @@ public class LetterResource extends AsynchronousResource {
     private DokumenttiResource dokumenttiResource;
     @Autowired
     private ExecutorService executor;
-
     @Autowired 
     private LetterService letterService;
+    @Autowired
+    private UserRightsValidator userRightsValidator;
     
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
@@ -240,7 +236,7 @@ public class LetterResource extends AsynchronousResource {
     	
         // Pick up the organization oid from request and check user's rights to organization
         String oid = request.getParameter("oid");
-        Response response = checkUserRights(oid); 
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
         
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
@@ -392,21 +388,5 @@ public class LetterResource extends AsynchronousResource {
             }
         });
         return createResponse(request, documentId);
-    }
-
-    private Response checkUserRights(String oid) {
-        if (oid == null) {
-            return Response.status(Status.OK).build();
-        }
-        
-        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
-        
-        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
-            if (oid.equals(organisaatioHenkilo.getOrganisaatioOid())) {
-                return Response.status(Status.OK).build();
-            }
-        }
-        
-        return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
     }
 }
