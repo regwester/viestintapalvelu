@@ -24,6 +24,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Template;
@@ -43,11 +44,13 @@ public class TemplateServiceTest {
     private TemplateDAO mockedTemplateDAO;
     @Mock
     private CurrentUserComponent mockedCurrentUserComponent;
+    @Mock
+    private DraftDAO mockedDraftDAO;
     private TemplateService templateService;
 
     @Before
     public void setup() {
-        this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent);
+        this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent, mockedDraftDAO);
     }
     
     @Test
