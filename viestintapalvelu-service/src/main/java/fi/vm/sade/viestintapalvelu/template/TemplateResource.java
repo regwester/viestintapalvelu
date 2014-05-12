@@ -17,7 +17,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -32,13 +31,11 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -50,9 +47,7 @@ public class TemplateResource extends AsynchronousResource {
     @Autowired 
     private LetterService letterService;
     @Autowired
-    private CurrentUserComponent currentUserComponent;
-    @Autowired
-    private OrganizationComponent organizationComponent;
+    private UserRightsValidator userRightsValidator;
         
     private final static String GetHistory = "Palauttaa kirjepohjan historian";
     private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
@@ -235,7 +230,7 @@ public class TemplateResource extends AsynchronousResource {
     public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
-        Response response = checkUserRights(oid); 
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
         
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
@@ -293,7 +288,7 @@ public class TemplateResource extends AsynchronousResource {
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
-        Response response = checkUserRights(oid); 
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
         
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
@@ -341,23 +336,6 @@ public class TemplateResource extends AsynchronousResource {
         }
 	     
         return Response.ok(history).build();
-    }
-
-    private Response checkUserRights(String oid) {
-        if (oid == null) {
-            return Response.status(Status.OK).build();
-        }
-        
-        List<String> organizationParents = organizationComponent.getOrganizationParents(oid);        
-        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
-        
-        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
-            if (organizationParents.contains(organisaatioHenkilo.getOrganisaatioOid())) {
-                return Response.status(Status.OK).build();
-            }
-        }
-        
-        return Response.status(Status.FORBIDDEN).entity("User is not authorized to the organization " + oid).build();
     }
 
     private String getStyle(String styleFile) throws IOException {

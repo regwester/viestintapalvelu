@@ -37,19 +37,23 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.model" />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao.impl" />      
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao.impl" />
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.validator" />      
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
     
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />
     <mockito:mock id="omattiedotResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource"/>
+    <mockito:mock id="organisaatioResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource"/>
     
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <routeBuilder ref="omattiedotRoute"/>
+        <routeBuilder ref="organisaatioRoute"/>
     </camelContext>
 
     <bean id="omattiedotRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OmattiedotRoute"/>
+    <bean id="organisaatioRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OrganisaatioRoute"/>
     
     <!-- HyperSQL datasource -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">   
