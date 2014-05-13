@@ -17,6 +17,11 @@ public interface TemplateService {
 
     public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template);
 
+    public void storeDraftDTO(fi.vm.sade.viestintapalvelu.template.Draft draft);
+
+    public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName,String templateLanguage, String organizationOid, 
+			String applicationPeriod, String fetchTarget, String tag);    
+    
     public fi.vm.sade.viestintapalvelu.template.Template findById(long id);
 
     public Template template(String name, String languageCode) throws IOException, DocumentException;

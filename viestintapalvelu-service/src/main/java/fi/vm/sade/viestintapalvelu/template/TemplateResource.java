@@ -213,6 +213,54 @@ public class TemplateResource extends AsynchronousResource {
         return new Template();
     }
     
+
+    @POST
+    @Path("/storeDraft")
+    @Consumes("application/json")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+    public Draft storeDraft(Draft draft) throws IOException, DocumentException {
+        templateService.storeDraftDTO(draft);
+        return new Draft();
+    }
+    
+    
+    @GET
+    @Path("/getDraft")
+    @Produces("application/json")
+//    @Secured(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    public Response getDraft(@Context HttpServletRequest request) throws IOException, DocumentException { 
+        // Pick up the organization oid from request and check urer's rights to organization
+        String oid = request.getParameter("oid");
+        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
+                
+        // User isn't authorized to the organization
+        if (response.getStatus() != 200) {
+            return response;
+        }
+    	
+        String templateName = request.getParameter("templateName");
+        String languageCode = request.getParameter("languageCode");
+//        String organizationOid = request.getParameter("oid");
+        String applicationPeriod = request.getParameter("applicationPeriod");
+        String fetchTarget = request.getParameter("fetchTarget");
+        String tag = request.getParameter("tag");
+        
+        if (applicationPeriod==null) { 
+        	applicationPeriod=""; 
+        }
+        if (fetchTarget==null) { 
+        	fetchTarget=""; 
+        }
+        if (tag==null) { 
+        	tag=""; 
+        }
+
+        Draft draft = new Draft();
+        draft = templateService.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
+        return Response.ok(draft).build();        
+    }
     
     /**
      * http://localhost:8080/viestintapalvelu/api/v1/template/getTempHistory?templateName=hyvaksymiskirje&languageCode=FI&content=YES&oid=123456789&tag=par
