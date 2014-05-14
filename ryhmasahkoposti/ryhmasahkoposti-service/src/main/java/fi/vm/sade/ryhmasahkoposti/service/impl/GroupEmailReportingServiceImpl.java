@@ -89,10 +89,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 	public Long addSendingGroupEmail(EmailData emailData) throws IOException {
 	    LOGGER.info("addSendingGroupEmail called");
 	    
-		ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail());
-			
-		ReportedMessage savedReportedMessage = 
-			reportedMessageService.saveReportedMessage(reportedMessage);
+		ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail());			
+		ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
 	
 		List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
 			emailData.getEmail().getAttachInfo());		

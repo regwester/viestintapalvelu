@@ -99,11 +99,29 @@
   		<property name="basename" value="properties/messages"/>
 	</bean>
 	
+	<!-- Email sending and scheduling -->
 	<bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"></bean>
 	<task:scheduler id="emailScheduler" pool-size="10" />
 	
 	<task:scheduled-tasks scheduler="emailScheduler">
 		<task:scheduled ref="emailServiceImpl" method="handleEmailQueue" cron="${ryhmasahkoposti.sender.cron}"/>
 	</task:scheduled-tasks>
+
+	<!-- Swagger API listing resource -->
+	<bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
 	
+	<!-- Swagger writers -->
+	<bean id="swaggerResourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
+	<bean id="swaggerApiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
+
+    <!-- Swagger configuration -->	
+	<bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+        <property name="resourcePackage" value="fi.vm.sade.ryhmasahkoposti.api.resource"/>
+        <property name="version" value="1.0"/>
+        <property name="basePath" value="/ryhmasahkoposti/api/rest"/>
+        <property name="title" value="Ryhmasahkoposti resources"/>
+        <property name="description" value="Ryhmasahkoposti offered REST resources"/>
+        <property name="contact" value="Yllapito 2"/>
+        <property name="scan" value="true"/>
+    </bean>
 </beans>

@@ -44,7 +44,7 @@
         <servlet-name>Jersey REST Service</servlet-name>
         <url-pattern>/*</url-pattern>
     </servlet-mapping>
-        
+    
    <resource-ref>
         <description>PostgreSQL Viestinnan Datasource </description>
         <res-ref-name>jdbc/viestinta</res-ref-name>
