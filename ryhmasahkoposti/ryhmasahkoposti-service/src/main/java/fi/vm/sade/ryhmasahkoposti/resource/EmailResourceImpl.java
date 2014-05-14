@@ -2,7 +2,6 @@ package fi.vm.sade.ryhmasahkoposti.resource;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -27,8 +26,6 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
@@ -90,22 +87,20 @@ public class EmailResourceImpl implements EmailResource {
     }
 
     @Override
-    public EmailResponse sendEmail(EmailMessage input) {
-		EmailResponse response = emailService.sendEmail(input); 
-		return response;
+    public Response sendGroupEmail(EmailData emailData) {
+        try {
+            String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
+            log.log(Level.INFO, "DB index is " + sendId);
+            return Response.ok(new EmailSendId(sendId)).build();
+        } catch (ExternalInterfaceException e) {
+            log.log(Level.SEVERE, "Problems in getting data from external interfaces, "+ e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        } catch (Exception e) { 
+            log.log(Level.SEVERE, "Problems in writing send data info to DB, "+ e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+        }
     }
 	
-
-	@Override
-    public List<EmailResponse> sendEmails(List<EmailMessage> input) {
-        List<EmailResponse> responses = new ArrayList<EmailResponse>();     
-        for (EmailMessage email : input) {          
-            EmailResponse resp = emailService.sendEmail(email);
-            responses.add(resp);            
-        }
-        return responses;   
-    }
-    
 	@Override
     public Response sendEmailStatus(String sendId) {
 		log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
@@ -120,15 +115,14 @@ public class EmailResourceImpl implements EmailResource {
     }
 
 	@Override
-    public Response sendGroupEmail(EmailData emailData) {
+    public Response sendGroupEmailWithFooter(EmailData emailData) {
 		// Setting footer with the first ones language code
 	    String languageCode = emailData.getRecipient().get(0).getLanguageCode();
 	    // Footer is moved to the end of the body here
 	    emailData.setEmailFooter(languageCode);
 	    
-		String sendId = "";
 		try {
-			sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
+		    String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
 			log.log(Level.INFO, "DB index is " + sendId);
 			return Response.ok(new EmailSendId(sendId)).build();
 		} catch (ExternalInterfaceException e) {
