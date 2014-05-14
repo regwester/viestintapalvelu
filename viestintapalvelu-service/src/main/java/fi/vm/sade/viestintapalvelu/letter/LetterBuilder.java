@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -193,10 +194,42 @@ public class LetterBuilder {
                 new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
+        
+        // liite specific handling
+        if (data.containsKey("tulokset")) {
+            List<Map<String, String>> tulokset = (List<Map<String, String>>)data.get("tulokset");
+            Map<String, Boolean> columns = distinctColumns(tulokset);
+            data.put("tulokset", normalizeColumns(columns, tulokset));
+            data.put("columns", columns);
+        }
+        
         data.put("tyylit", styles);
         return data;
     }
 
+    
+    private List<Map<String, String>> normalizeColumns(Map<String, Boolean> columns, List<Map<String, String>> tulokset) {
+        for (Map<String, String> row : tulokset) {
+            for (String column : columns.keySet()) {
+                if (!row.containsKey(column) || row.get(column) == null) {
+                    row.put(column, "");
+                }
+                row.put(column, StringEscapeUtils.escapeHtml(row.get(column)));
+            }
+        }
+        return tulokset;
+    }
+    
+    private Map<String, Boolean> distinctColumns(List<Map<String, String>> tulokset) {
+        Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
+        for (Map<String, String> haku : tulokset) {
+            for (String column : haku.keySet()) {
+                printedColumns.put(column, true);
+            }
+        }
+        return printedColumns;
+    }
+    
     private Map<String, Object> createIPostDataContext(final List<DocumentMetadata> documentMetadataList) {
         Map<String, Object> data = new HashMap<String, Object>();
         List<Map<String, Object>> metadataList = new ArrayList<Map<String, Object>>();
