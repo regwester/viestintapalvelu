@@ -26,7 +26,6 @@ import com.wordnik.swagger.annotations.ApiResponses;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
@@ -89,7 +88,7 @@ public interface EmailResource {
         notes="Lähetettävä sähköposti ei sisällä alaviitettä", response=EmailSendId.class)
     @ApiResponses({@ApiResponse(code=500, 
         message="Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
-	public Response sendGroupEmail(@ApiParam(value="Lähettetävän sähköpostin ja vastaanottajien tiedot", required=true) 
+	public Response sendEmail(@ApiParam(value="Lähettetävän sähköpostin ja vastaanottajien tiedot", required=true) 
 	    EmailData emailData);
 
     /**

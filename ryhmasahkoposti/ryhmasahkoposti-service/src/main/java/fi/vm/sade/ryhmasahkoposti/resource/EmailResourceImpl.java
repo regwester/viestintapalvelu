@@ -87,7 +87,7 @@ public class EmailResourceImpl implements EmailResource {
     }
 
     @Override
-    public Response sendGroupEmail(EmailData emailData) {
+    public Response sendEmail(EmailData emailData) {
         try {
             String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
             log.log(Level.INFO, "DB index is " + sendId);
