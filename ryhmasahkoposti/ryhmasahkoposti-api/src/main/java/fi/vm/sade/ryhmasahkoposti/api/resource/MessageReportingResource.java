@@ -30,7 +30,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
  */
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Path(RestConstants.PATH_REPORT_MESSAGES)
-@Api(value = "reportMessages", description = "Ryhmäsähköpostin raportointi")
+@Api(value = "reportMessages", description = "Ryhm&auml;s&auml;hk&ouml;postin raportointi")
 public interface MessageReportingResource {
     /**
      * Hakee käyttäjän ja hänen organisaationsa lähettämät ryhmäshköpostiviestit
@@ -49,7 +49,7 @@ public interface MessageReportingResource {
     @ApiOperation(value = "Hakee käyttäjän ja hänen organisaationsa lähettämät ryhmäshköpostiviestit", 
         notes = "Hakee halutun määrän käyttäjän ja hänen organisaantionsa lähettämiä ryhmäshköpostiviestit. Haku voidaan"
             + "aloittaa tietystä kohtaa ja ne voidaan hakea lajiteltuna nousevasti tai laskevasti tietyn sarakkeen mukaan.", 
-        response = ReportedMessagesDTO.class, responseContainer="List")
+        response = ReportedMessagesDTO.class, responseContainer = "List")
     @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai ilmoitus liittymävirheestä")})
     public Response getReportedMessages(@ApiParam(value="Organisaation oid-tunnus", required=false) 
         @QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid, 
@@ -81,7 +81,7 @@ public interface MessageReportingResource {
         notes = "Hakee halutun määrän  hakuparametrin mukaisia käyttäjän ja hänen organisaantionsa lähettämiä "
             + "ryhmäshköpostiviestejä. Haku voidaan aloittaa tietystä kohtaa ja ne voidaan hakea lajiteltuna nousevasti "
             + "tai laskevasti tietyn sarakkeen mukaan.", 
-        response = ReportedMessagesDTO.class, responseContainer="List")
+        response = ReportedMessagesDTO.class, responseContainer = "List")
     @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai ilmoitus liittymävirheestä")})
 	public Response getReportedMessages(@ApiParam(value="Organisaation oid-tunnus", required=false) 
 	    @QueryParam(RestConstants.PARAM_ORGANIZATION_OID) String organizationOid, 
@@ -108,8 +108,8 @@ public interface MessageReportingResource {
 	@GET
     @ApiOperation(value = "Hakee halutun ryhmäsähköpostiviestin tiedot", 
         notes = "Hakee avainta vastaavaa ryhmäsähköpostiviestin tiedot.", response = ReportedMessageDTO.class)
-	@ApiResponses(value={@ApiResponse(code=500, message = "Internal service error")})
-	public Response getReportedMessage(@ApiParam(value="Ryhmäsähköpostiviestin avain", required=true) 
+	@ApiResponses(value = {@ApiResponse(code = 500, message = "Internal service error")})
+	public Response getReportedMessage(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) 
 	    @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID);
 	
 	/**
@@ -129,8 +129,8 @@ public interface MessageReportingResource {
     @ApiOperation(value = "Hakee halutun ryhmäsähköpostiviestin ja viestin vastaanottajien tiedot", 
         notes = "Hakee avainta vastaavaa ryhmäsähköpostiviestin ja vastaanottajien tiedot. Palauttaa halutun määrän "
             + "vastaanottajia lajiteltuna halutun sarakkeen mukaisesti", response = ReportedMessageDTO.class)
-    @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai liittymävirhe")})
-    public Response getReportedMessageAndRecipients(@ApiParam(value="Ryhmäsähköpostiviestin avain", required=true) 
+    @ApiResponses(value={@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
+    public Response getReportedMessageAndRecipients(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) 
         @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
         @ApiParam(value="Haettavien rivien lukumäärä", required=true)
         @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
@@ -159,7 +159,7 @@ public interface MessageReportingResource {
         notes = "Hakee avainta vastaavaa ryhmäsähköpostiviestin ja vastaanottajien tiedot, joille lähetys epäonnistui. "
             + "Palauttaa halutun määrän vastaanottajia lajiteltuna halutun sarakkeen mukaisesti", 
         response = ReportedMessageDTO.class)
-    @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai liittymävirhe")})
+    @ApiResponses(value={@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
     public Response getReportedMessageAndRecipientsSendingUnsuccesful(
         @ApiParam(value="Ryhmäsähköpostiviestin avain", required=true)
         @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
