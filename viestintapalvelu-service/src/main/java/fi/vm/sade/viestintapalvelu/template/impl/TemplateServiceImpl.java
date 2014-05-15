@@ -50,6 +50,14 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public Template getTemplateFromFiles(String languageCode, String... names) throws IOException {
+    	return getTemplateFromFiles(languageCode, null, names);
+    }
+    
+    	/* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateFromFiles(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public Template getTemplateFromFiles(String languageCode, String type, String... names) throws IOException {
         Template result = new Template();
         Set<TemplateContent> contents = new HashSet<TemplateContent>();
         result.setLanguage(languageCode);
@@ -57,9 +65,11 @@ public class TemplateServiceImpl implements TemplateService {
         result.setOrganizationOid("oid_org");
         result.setStoringOid("storingOid");
         result.setTimestamp(new Date());
+        result.setType(type);
+        
         int i = 1;
         for (String name : names) {
-            String templateName = Utils.resolveTemplateName(name, languageCode);
+            String templateName = Utils.resolveTemplateName(name, languageCode, type);
             if (templateName != null) {
                 BufferedReader buff = new BufferedReader(new InputStreamReader(
                         getClass().getResourceAsStream(templateName)));
@@ -123,6 +133,7 @@ public class TemplateServiceImpl implements TemplateService {
         model.setOrganizationOid(template.getOrganizationOid());        
         model.setContents(parseContentModels(template.getContents(), model));
         model.setReplacements(parseReplacementModels(template.getReplacements(), model));
+        model.setType(template.getType());
         storeTemplate(model);
     }
     
@@ -185,6 +196,7 @@ public class TemplateServiceImpl implements TemplateService {
         result.setStyles(searchResult.getStyles());
         result.setContents(parseContentDTOs(searchResult.getContents()));
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
+        result.setType(searchResult.getType());
         return result;
     }
     
@@ -249,16 +261,25 @@ public class TemplateServiceImpl implements TemplateService {
         }        
         return result;
     }
-
+    
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#template(java.lang.String, java.lang.String)
      */
     @Override
     public Template template(String name, String languageCode)
             throws IOException, DocumentException {
+    	return template(name, languageCode, null);
+    }
+    
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#template(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public Template template(String name, String languageCode, String type)
+            throws IOException, DocumentException {
 
         Template result = new Template();
-        String templateName = Utils.resolveTemplateName(name, languageCode);
+        String templateName = Utils.resolveTemplateName(name, languageCode, type);
         BufferedReader buff = new BufferedReader(new InputStreamReader(
                 getClass().getResourceAsStream(templateName)));
         StringBuilder sb = new StringBuilder();
@@ -282,23 +303,41 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
-    
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String)
      */
     @Override
     public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language)  {
-       return getTemplateByName(name, language, true);
+       return getTemplateByName(name, language, true, null);
     } 
+    
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String, java.lang.String)
+     */
+    @Override
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, String type)  {
+       return getTemplateByName(name, language, true, type);
+    } 
+    
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String, boolean)
      */
     @Override
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content)  {
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content){
+    	return getTemplateByName(name, language, content, null);
+    }
+    
+    
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String, boolean, java.lang.String)
+     */
+    @Override
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content, String type)  {
     	fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
-    	
-        Template template = templateDAO.findTemplateByName(name, language);
-    	searchTempl.setId(template.getId());
+
+        Template template = templateDAO.findTemplateByName(name, language, type);
+
+        searchTempl.setId(template.getId());
     	searchTempl.setName(template.getName());
     	//searchTempl.setStyles(template.getStyles());
     	searchTempl.setLanguage(template.getLanguage());
@@ -306,6 +345,7 @@ public class TemplateServiceImpl implements TemplateService {
     	searchTempl.setStoringOid(template.getStoringOid());
     	searchTempl.setOrganizationOid(template.getOrganizationOid());
     	searchTempl.setTemplateVersio(template.getVersionro());
+    	searchTempl.setType(template.getType());
     	
     	// Replacement
     	List<fi.vm.sade.viestintapalvelu.template.Replacement> replacement = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();    	

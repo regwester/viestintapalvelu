@@ -18,6 +18,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -82,11 +83,19 @@ public class TemplateResource extends AsynchronousResource {
         if (styleFile != null) {
             result.setStyles(getStyle(styleFile));
         }
+        
+        // Read type if provided
+        String type = request.getParameter("type");
+        if (type != null) {
+        	if (StringUtils.equalsIgnoreCase(type, "email")) 
+        		type = "doc";
+        	type = type.toLowerCase();
+        }
 
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         int order = 1;
         for (String file : fileNames) {
-            String templateName = Utils.resolveTemplateName("/"+file+"_{LANG}.html", language);
+            String templateName = Utils.resolveTemplateName("/"+file+"_{LANG}{TYPE}.html", language, type);
             BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(templateName)));
             StringBuilder sb = new StringBuilder();
 
@@ -192,15 +201,17 @@ public class TemplateResource extends AsynchronousResource {
     @ApiImplicitParams({												
     	@ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)",	required = true, dataType = "string", paramType = "query"),
     	@ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
-    	@ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query")
-    })   
+    	@ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query"),
+      	@ApiImplicitParam(name = "type", value = "Kirjepohja tyyppi (doc, email)", required = false, dataType = "string", paramType = "query")
+     })   
     
     public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {       
        String templateName = request.getParameter("templateName");
        String languageCode = request.getParameter("languageCode");
        String content 	   = request.getParameter("content");		// If missing => content excluded
+       String type 		   = request.getParameter("type");
        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
-       return templateService.getTemplateByName(templateName, languageCode, getContent);
+       return templateService.getTemplateByName(templateName, languageCode, getContent, type);
     }
 
     @POST
