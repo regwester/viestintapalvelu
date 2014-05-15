@@ -35,6 +35,9 @@
             #if($columns.valinnanTulos)
             <th>Antagningsresultat</th>
             #end
+            #if($columns.varasija)
+            <td>Reservplats</td>
+            #end
             #if($columns.hylkaysperuste)
             <th>Underkänd på grund av</th>
             #end
@@ -51,8 +54,11 @@
             #if($columns.valinnanTulos)
             <td>$haku.valinnanTulos</td>
             #end
+            #if($columns.varasija)
+            <td>$haku.varasija</td>
+            #end
             #if($columns.hylkaysperuste)
-            <td>$haku.selite</td>
+            <td>$haku.hylkaysperuste</td>
             #end
         </tr>
         #end
