@@ -42,6 +42,7 @@ public class TemplateDAOTest {
         assertEquals(storedTemplate.getName(), template.getName());
         assertTrue(template.getContents().size() == 1);
         assertTrue(template.getReplacements().size() == 1);
+        assertEquals(template.getType(), "DOC");
     }
 
     @Test
