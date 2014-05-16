@@ -214,7 +214,7 @@ public class LetterBuilder {
                 if (!row.containsKey(column) || row.get(column) == null) {
                     row.put(column, "");
                 }
-                row.put(column, StringEscapeUtils.escapeHtml(row.get(column)));
+                row.put(column, cleanHtmlFromApi(row.get(column)));
             }
         }
         return tulokset;
@@ -248,5 +248,4 @@ public class LetterBuilder {
     private String cleanHtmlFromApi(String string) {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
-    
 }
