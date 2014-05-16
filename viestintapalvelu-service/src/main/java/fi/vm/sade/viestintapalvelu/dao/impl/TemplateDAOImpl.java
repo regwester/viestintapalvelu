@@ -11,20 +11,35 @@ import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.Template;
 
 @Repository
 public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implements TemplateDAO {
-
+	
+	/**
+	 * Find template by name
+	 */
 	public Template findTemplateByName(String name, String language) {
+		return findTemplateByName(name, language, null);
+	}
+
+	
+	/**
+	 * Find template by name
+	 */
+	public Template findTemplateByName(String name, String language, String type) {
 		EntityManager em = getEntityManager();
 		
 		String findTemplate = "SELECT a FROM Template a WHERE a.name = :name AND a.language = :language ORDER BY a.timestamp DESC";		 
-				
+		if (type != null) 
+			findTemplate = "SELECT a FROM Template a WHERE a.name = :name AND a.language = :language AND a.type = :type ORDER BY a.timestamp DESC";
+		
 		TypedQuery<Template> query = em.createQuery(findTemplate, Template.class);
 		query.setParameter("name", name);
 		query.setParameter("language", language);		
+		if (type != null) 
+			query.setParameter("type", type);		
+		
 		query.setFirstResult(0);	// LIMIT 1
 		query.setMaxResults(1);  	//
 					

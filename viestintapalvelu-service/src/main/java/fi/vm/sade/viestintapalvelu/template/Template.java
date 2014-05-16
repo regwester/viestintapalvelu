@@ -30,6 +30,8 @@ public class Template{
 
     private String templateVersio;
     
+    private String type;
+    
 	public List<TemplateContent> getContents() {
         return contents;
     }    
@@ -118,6 +120,14 @@ public class Template{
         this.timestamp = timestamp;
     }
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
 	@Override
 	public String toString() {
 		return "Template [id=" + id + ", timestamp=" + timestamp + ", name="
@@ -125,7 +135,6 @@ public class Template{
 				+ ", storingOid=" + storingOid + ", organizationOid="
 				+ organizationOid + ", contents=" + contents
 				+ ", replacements=" + replacements + ", templateVersio="
-				+ templateVersio + "]";
+				+ templateVersio + ", type=" + type + "]";
 	}
-
 }

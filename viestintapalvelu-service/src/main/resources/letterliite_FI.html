@@ -47,7 +47,7 @@
     <b>$addressLabel.firstName $addressLabel.lastName</b>
 
     <p>
-        <b>TILANTEESI SYKSYN 2013 YHTEISHAUSSA</b>
+        TILANTEESI KEVÄÄN 2014 YHTEISHAUSSA
     </p>
 
     <table>
@@ -64,8 +64,8 @@
             #if($columns.varasija)
             <td>Varasija</td>
             #end
-            #if($columns.selite)
-            <th>Selite</th>
+            #if($columns.hylkaysperuste)
+            <th>Hylkäysperuste</th>
             #end
         </tr>
         #foreach( $haku in $tulokset )
@@ -83,8 +83,8 @@
             #if($columns.varasija)
             <td>$haku.varasija</td>
             #end
-            #if($columns.selite)
-            <td>$haku.selite</td>
+            #if($columns.hylkaysperuste)
+            <td>$haku.hylkaysperuste</td>
             #end
         </tr>
         #end
@@ -99,73 +99,84 @@
     </p>
 
     <p>
-        <b>Hyväksytyt ja hakeneet:</b> Kyseiseen koulutukseen hyväksyttyjen ja kaikkien hakeneiden määrä.
+        <b>Hyväksytyt ja hakeneet:</b> Kyseiseen koulutukseen hyväksyttyjen määrä suhteessa hakijoiden määrään.
     </p>
 
     <p>
-        <b>Omat pisteesi ja alin hyväksytty pistemäärä:</b> Kokonaispistemäärä koostuu useasta eri osasta.
-        Pisteyttävät tekijät löydät Opintopolusta, ks. etusivulla linkki Uudet valintaperusteet ammatillisiin
-        perustutkintoihin. Alin hyväksytty pistemäärä on alin pistemäärä, jolla koulutukseen on hyväksytty.
-        Pistemäärä ei yksin vaikuta valinnan tulokseen, sillä esimerkiksi hylätty kielikoetulos voi estää
-        valinnan pisteistä huolimatta. Jos olet hakenut koulutukseen ulkomaisella todistuksella tai
-        ilman päättötodistusta, sinulla ei ole pisteitä.
+        <b>Omat pisteesi ja alin hyväksytty pistemäärä:</b> Kokonaispistemäärä koostuu useasta eri osasta. 
+		Tietoa perusteista ja pisteytettävistä tekijöistä löydät Opintopolusta, Lukio- ja Ammatillinen 
+		koulutus -otsikoiden alta.  Alin hyväksytty pistemäärä on alin pistemäärä, jolla koulutukseen on 
+		hyväksytty. Pistemäärä ei yksin vaikuta valinnan tulokseen, sillä esimerkiksi hylätty kielikoetulos 
+		voi estää valinnan pisteistä huolimatta. Jos olet hakenut koulutukseen ulkomaisella todistuksella 
+		tai ilman päättötodistusta, olet hakenut harkintaan perustuvassa valinnassa eikä sinulle ole annettu 
+		valintapisteitä.
     </p>
 
     <p>
-        <b>Pääsy- ja soveltuvuuskokeen tulos:</b> Jos hakemaasi koulutukseen on järjestetty pääsy- ja soveltuvuuskoe,
-        johon olet osallistunut, tässä on ilmoitettu kokeesta saamasi pistemäärä. Jos et ole osallistunut kokeeseen tai
-        tuloksesi on hylätty (0 pistettä), et voi tulla valituksi koulutukseen. Jos olet hakenut koulutukseen
-        ulkomaisella
-        todistuksella
-        tai ilman päättötodistusta, olet hakenut harkintaan perustuvassa valinnassa eikä koetulos näy taulukossa.
-        Lisätietoja
-        tuloksista saat suoraan siitä oppilaitoksesta, jonka järjestämään kokeeseen osallistuit.
+        <b>Pääsy- ja soveltuvuuskokeen tulos:</b> Jos hakemaasi koulutukseen on järjestetty pääsy- ja 
+		soveltuvuuskoe, johon olet osallistunut, tässä on ilmoitettu kokeesta saamasi pistemäärä. Jos 
+		et ole osallistunut kokeeseen tai tuloksesi on hylätty (0 pistettä), et voi tulla valituksi 
+		koulutukseen. Jos olet hakenut koulutukseen ulkomaisella todistuksella tai ilman päättötodistusta, 
+		olet hakenut harkintaan perustuvassa valinnassa eikä koetulos näy taulukossa. Lisätietoja 
+		tuloksista saat suoraan siitä oppilaitoksesta, jonka järjestämään kokeeseen osallistuit.
     </p>
 
     <p>
-        <b>Valinnan tulos:</b> Valinnan tulos voi olla hyväksytty, harkinnanvaraisesti hyväksytty, varasijalla, hylätty
-        tai
-        peruuntunut.
+        <b>Valinnan tulos:</b> Valinnan tulos voi olla hyväksytty, harkinnanvaraisesti hyväksytty, 
+		varasijalla, hylätty tai peruuntunut. Valinnan tulos on hylätty jos olet saanut hylätyn 
+		pääsykoetuloksen/kielikoetuloksen tai et ole osallistunut pääsykokeeseen/kielikokeeseen kutsusta 
+		huolimatta. Valinnan tulos on peruuntunut, jos sinut on hyväksytty johonkin ylempään hakutoiveeseen.
     </p>
 
     <p>
-        <b>Varasija:</b> Jos valintatietosi on varasijalla, tässä sarakkeessa näkyy varasijanumerosi. Jos olet hylätty
-        tai hakutoiveesi on peruuntunut, et voi olla varasijalla.
+        <b>Varasija:</b> Jos valintatietosi on varasijalla, tässä sarakkeessa näkyy varasijanumerosi. 
+		Jos valinnan tuloksesi on hylätty tai peruuntunut, et voi olla varasijalla. 
     </p>
 
     <p>
-        <b>Tasapistetilanteet:</b> Ammatilliseen koulutukseen hakeneet asetetaan tasapistetilanteessa
-        paremmuusjärjestykseen
-        seuraavin perustein:
+        <b>Tasapistetilanteet:</b> Ammatilliseen koulutukseen hakeneet asetetaan tasapistetilanteessa 
+		järjestykseen seuraavin perustein:
     </p>
     <ol>
         <li>hakutoivejärjestys</li>
         <li>mahdollisesta pääsy- tai soveltuvuuskokeesta saatava pistemäärä</li>
         <li>yleinen koulumenestys</li>
-        <li>painotettavat arvosanat (vain peruskoulupohjaiseen koulutukseen haettaessa)</li>
+        <li>painotettavat arvosanat (painotettavat arvosanat koskevat vain pk-pohjaista koulutusta)</li>
     </ol>
     <p>
         Tämän jälkeen tasapisteisiin päätyneet hakijat otetaan sattumanvaraisessa järjestyksessä.
     </p>
 
     <p>
-        <b>Harkintaan perustuva valinta:</b> Koulutuksen järjestäjä voi erityisen syyn perusteella valita hakijan
-        opiskelijaksi
-        pistemäärästä riippumatta. Koulutuksen järjestäjä käsittelee harkintaan perustuvan valinnan hakemukset ja tekee
-        asiasta
-        päätöksen. Mahdollisia pääsy- ja soveltuvuuskoetuloksia voidaan hyödyntää valinnassa, mutta niitä ei syötetä
-        valintajärjestelmään. Hakija, joka hakee harkintaan perustuvassa valinnassa sosiaalisista syistä tai
-        oppimisvaikeudesta
-        johtuen on mukana myös normaalissa pistelaskentaan perustuvassa valinnassa. Ulkomaisella todistuksella hakeva tai
-        hakija, jonka oppivelvollisuuden suorittaminen on keskeytynyt, hakee ja voi tulla valituksi ainoastaan
-        harkintaan perustuvassa valinnassa. Tuolloin valinnan tulos on joko harkinnanvaraisesti hyväksytty tai hylätty.
+        Lukiot valitsevat opiskelijat keskiarvon osoittamassa järjestyksessä. Mikäli useammalla hakijalla 
+		on sama keskiarvo, valinnan ratkaisee:
+    </p>
+    <ol>
+        <li>hakutoivejärjestys</li>
+        <li>keskiarvo, johon lasketaan asetuksessa (856/2006 muutosasetus 948/2007) mainittujen lukuaineiden 
+		lisäksi myös liikunnan, käsityön, kotitalouden, musiikin ja kuvataiteen arvosanat</li>
+    </ol>
+    <p>
+        Tämän jälkeen saman pistemäärän saaneet hakijat otetaan sattumanvaraisessa järjestyksessä eli arvotaan.
+    </p>
+	
+    <p>
+        <b>Harkintaan perustuva valinta:</b> Ammatillisessa koulutuksessa koulutuksen järjestäjä voi 
+		erityisen henkilöön liittyvän syyn perusteella valita hakijan opiskelijaksi pistemäärästä 
+		riippumatta. Koulutuksen järjestäjä käsittelee harkintaan perustuvan valinnan hakemukset ja 
+		tekee asiasta päätöksen. Mahdollisia pääsy- ja soveltuvuuskoetuloksia voidaan hyödyntää valinnassa, 
+		mutta niitä ei syötetä valintajärjestelmään. Hakija, joka hakee harkintaan perustuvassa valinnassa 
+		sosiaalisista syistä tai oppimisvaikeudesta johtuen on kuitenkin mukana myös normaalissa 
+		pistelaskentaan perustuvassa valinnassa. Ulkomaisella todistuksella hakeva tai hakija, jonka 
+		oppivelvollisuuden suorittaminen on keskeytynyt, voi tulla valituksi ainoastaan harkintaan 
+		perustuvassa valinnassa. Tuolloin valinnan tulos on joko harkinnanvaraisesti hyväksytty tai hylätty.
     </p>
 
     <p>
-        <b>Lisätietoja</b> saat Opintopolusta (opintopolku.fi), josta löydät myös oppilaitosten yhteystiedot. Mikäli
-        tarvitset
-        apua tuloskirjeen tulkitsemisessa tai valintaan liittyy epäselvyyksiä, jotka eivät selviä yhteydenotolla suoraan
-        oppilaitokseen, voit olla yhteydessä Opintopolun hakuneuvontaan (neuvonta@opintopolku.fi tai puh. 029 533 1010).
+        <b>Lisätietoja</b> saat Opintopolusta (opintopolku.fi). Mikäli tarvitset apua tuloskirjeen 
+		tulkitsemisessa tai valintaan liittyy epäselvyyksiä, jotka eivät selviä yhteydenotolla suoraan 
+		oppilaitokseen, voit olla yhteydessä Opintopolun hakuneuvontaan (neuvonta@opintopolku.fi tai 
+		puh. 029 533 1010). 
     </p>
 </div>
 

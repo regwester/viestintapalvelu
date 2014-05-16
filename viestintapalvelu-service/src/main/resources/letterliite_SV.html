@@ -12,56 +12,34 @@
 <div class="footer">
     <div class="heading"><b>REGIONFÖRVALTNINGSVERKENS ADRESSEN:</b></div>
     <div>
-        <div>Regionförvaltningsverket i Södra Finland</div>
-        <div>PB 110</div>
-        <div>00521 Helsingfors</div>
-    </div>
-    <div>
-        <div>Regionförvaltningsverket i Östra Finland</div>
-        <div>PB 50</div>
-        <div>50101 S:t Michel</div>
-    </div>
-    <div>
-        <div>Regionförvaltningsverket i Sydvästra Finland</div>
-        <div>PB 22</div>
-        <div>20801 Åbo</div>
-    </div>
-    <div>
         <div>Regionförvaltningsverket i Västra och Inre Finland</div>
         <div>PB 200</div>
         <div>65101 Vasa</div>
-    </div>
-    <div>
-        <div>Regionförvaltningsverket i Norra Finland</div>
-        <div>PB 293</div>
-        <div>90101 Uleåborg</div>
-    </div>
-    <div>
-        <div>Regionförvaltningsverket i Lappland</div>
-        <div>PB 8002</div>
-        <div>96101 Rovaniemi</div>
     </div>
 </div>
 
 <div class="liiteSisalto">
     <b>$addressLabel.firstName $addressLabel.lastName</b>
     <p>
-        <b>DIN SITUATION I GEMENSAM ANSÖKAN HÖSTEN 2013</b>
+        DIN SITUATION I VÅRENS GEMENSAMMA ANSÖKAN 2014
     </p>
 
     <table>
         <tr>
-            <th class="hakutoive">Dina ansökningsönskemål och prioritet</th>
+            <th class="hakutoive">Dina ansökningsmål samt prioritering</th>
             <th>Antagna / alla sökande</th>
             <th>Dina poäng / Lägsta godkända poängtal</th>
             #if($columns.paasyJaSoveltuvuuskoe)
-            <th>Resultat i inträdes- och lämplighetsprov</th>
+            <th>Resultat från inträdes- eller lämplighetsprov</th>
             #end
             #if($columns.valinnanTulos)
-            <th>Urvalsresultat</th>
+            <th>Antagningsresultat</th>
             #end
-            #if($columns.selite)
-            <th>Förklaring</th>
+            #if($columns.varasija)
+            <td>Reservplats</td>
+            #end
+            #if($columns.hylkaysperuste)
+            <th>Underkänd på grund av</th>
             #end
         </tr>
         #foreach( $haku in $tulokset )
@@ -76,8 +54,11 @@
             #if($columns.valinnanTulos)
             <td>$haku.valinnanTulos</td>
             #end
-            #if($columns.selite)
-            <td>$haku.selite</td>
+            #if($columns.varasija)
+            <td>$haku.varasija</td>
+            #end
+            #if($columns.hylkaysperuste)
+            <td>$haku.hylkaysperuste</td>
             #end
         </tr>
         #end
@@ -88,70 +69,81 @@
     </p>
 
     <p>
-        <b>Dina ansökningsönskemål:</b> Alla dina ansökningsönskemål i den ordning du placerat dem.
+        <b>Dina ansökningsönskemål:</b> Dina ansökningsönskemål i den ordning som du har angett i din ansökan.
     </p>
 
     <p>
-        <b>Antagna och sökande:</b> Antalet antagna till utbildningen och alla sökande sammanlagt.
+        <b>Antagna och alla sökande:</b> Antagna till i frågavarande utbildning samt det totala antalet sökande.
     </p>
 
     <p>
-        <b>Dina poäng och lägsta godkända poängtal:</b> Det sammanlagda poängtalet består av olika delar. 
-        Du hittar de faktorer som poängsätts i Studieinfo (studieinfo.fi/urvalsgrunder). Det lägsta 
-        godkända poängtalet är det lägsta poängtalet med vilket en sökande har blivit antagen till 
-        utbildningen. Urvalsresultatet påverkas inte endast av antalet poäng, eftersom till exempel 
-        ett underkänt resultat i språkprovet kan vara hinder för antagning oberoende av poängtalet.
+        <b>Dina egna poäng och lägsta godkända poäng:</b> Poängantalet består av flera olika delar. Uppgifter om 
+        antagningsgrunderna samt poängsättningen hittar du från Studieinfo, under rubrikerna Gymnasiet och 
+        Yrkesutbildning. Lägsta godkända poäng är det lägsta antalet poängantal, enligt vilken studerande har 
+        antagits till utbildningen. Poängantalet är inte den enda faktorn som inverkar på antagningsresultatet. 
+        Till exempel ett underkänt resultat från språkprovet kan hindra antagningen, helt oavsett poängantalet. 
+        Om du har Utbildning avlagd utomlands eller Ej fullgjort läroplikten (inget avgångsbetyg) som 
+        grundutbildning har du inga poäng.
     </p>
 
     <p>
-        <b>Resultat i inträdes- och lämplighetsprovet:</b> Om det ordnades ett inträdes- och 
-        lämplighetsprov till utbildningen till vilken du sökte och du har deltagit i provet, anges 
-        ditt poängtal i provet här. Om du inte har deltagit i provet eller ditt resultat har underkänts, 
-        kan du inte bli antagen till utbildningen. Om du har sökt till utbildningen med utländskt betyg 
-        eller utan avgångsbetyg, har du sökt via antagning enligt prövning och då syns ditt provresultat 
-        inte i tabellen. Du får ytterligare information om resultaten från läroanstalten som ordnade 
-        provet i vilket du deltog.
+        <b>Resultat från inträdes- eller lämplighetsprov:</b> Ditt poängresultat om du har sökt till en utbildning 
+        som det ordnas inträdes- och lämplighetsprov till och du har deltagit i provet. Du kan inte bli antagen 
+        till utbildningen om du inte har deltagit i provet eller om ditt resultat är underkänt (0 poäng). Om du 
+        har Utbildning avlagd utomlands eller Ej fullgjort läroplikten (inget avgångsbetyg) som grundutbildning, 
+        söker du via antagning på basis av utbildningsanordnarens prövning. Om du har kallats och deltagit i 
+        provet enligt prövning, syns ditt provresultat inte i tabellen. Tilläggsinformation om resultatet får du 
+        direkt från den läroanstalt som har ordnat provet du har deltagit i.
     </p>
 
     <p>
-        <b>Urvalsresultat:</b> Urvalsresultatet kan vara antagen, antagen enligt prövning, reservplats, 
-        underkänd eller annullerad.
+        <b>Antagningsresultat: </b> Antagningsresultatet kan vara godkänd, godkänd enligt prövning, på reservplats, 
+        underkänd eller annullerad. Annullerad betyder att du har blivit antagen till ett högre ansökningsmål.
     </p>
 
     <p>
-        <b>Förklaring:</b> I förklaringen motiveras urvalsresultatet. Du får ytterligare information 
-        från läroanstalten till vilken du sökte. 
+        <b>Reservplats:</b> Ditt ordningsnummer om din antagningsuppgift är på reservplats. Du inte vara på 
+        reservplats till en utbildning till vilken din antagningsuppgift är underkänd eller annullerad.  
     </p>
 
     <p>
-        <b>Lika många poäng:</b> Sökande till yrkesutbildning med samma poängtal placeras i ordning 
-        enligt följande grunder:
+        <b>Rangordning av sökande med samma poängtal:</b> Sökande till yrkesutbildning rangordnas enligt följande grunder:         
     </p>
     <ol>
-        <li>ordning för ansökningsönskemål</li>
-        <li>poängtal i eventuellt inträdes- eller lämplighetsprov</li>
+        <li>prioritering av ansökningsmål</li>
+        <li>poängantalet från eventuellt inträdes- eller lämplighetsprov</li>
         <li>allmän skolframgång</li>
-        <li>betonade vitsord</li>
+        <li>betonade vitsord (betonade vitsord gäller endast gr-baserad utbildning)</li>
     </ol>
     <p>
-        Efter detta antas sökande med samma poängtal i slumpmässig ordning.
+        Efter detta sker antagningen av studerande slumpmässigt.
+    </p>
+    
+    <p>
+        Gymnasierna antar de studerande i den ordning som anges av medeltalet av de i förordningen nämnda läroämnena. 
+        Om flera sökande har samma medeltal rangordnas de enligt följande grunder:
+    </p>
+    <ol>
+        <li>prioritering av ansökningsmål</li>
+        <li>medeltalet av de i förordningen (856/2006 ändring av förordning 948/2007) nämnda läroämnen samt gymnastik, slöjd, huslig ekonomi, musik och bildkonst.</li>
+    </ol>
+    <p>
+        Efter detta sker antagningen av studerande slumpmässigt.
     </p>
 
     <p>
-        <b>Antagning enligt prövning:</b> Utbildningsanordnaren kan av särskild orsak anta en sökande 
-        som studerande oberoende av poängtal. Utbildningsanordnaren behandlar ansökningarna i antagningen 
-        enligt prövning och fattar beslut i saken. Eventuella inträdes- och lämplighetsprov kan utnyttjas 
-        i urvalet, men de matas inte in i urvalssystemet. Sökande som av sociala skäl eller på grund av 
-        inlärningssvårigheter söker via antagning enligt prövning är också med i den normala antagningen 
-        på basis av poäng. Sökande som söker med utländskt betyg och sökande som saknar avgångsbetyg, 
-        söker enbart via antagning enligt prövning. Resultatet är då antagen enligt prövning eller underkänd.
+        <b>Antagning på basis av utbildningsanordnarens prövning: </b> Utbildningsanordnaren kan då det finns 
+        särskilda skäl anta studerande oberoende av poäng. Sökande som söker på basis av prövning på grund 
+        av inlärningssvårigheter eller sociala skäl deltar även i den normala antagningen som baserar sig 
+        på poäng. Sökande som har Utbildning avlagd utomlands eller Ej fullgjort läroplikten (inget avgångsbetyg) 
+        som sin grundutbildning kan endast bli antagna på basis av prövning. I detta fall är antagningsresultatet 
+        endera godkänd enligt prövning eller underkänd.
     </p>
 
     <p>
-        <b>Ytterligare information</b> finns i Studieinfo (studieinfo.fi), där du också hittar 
-        kontaktuppgifter till läroanstalterna. Om du behöver hjälp med att tolka resultatbrevet eller har 
-        frågor om antagningen som du inte får svar på genom att kontakta läroanstalten, kan du kontakta 
-        ansökningstjänsten på Studieinfo (info@studieinfo.fi eller tel. 029 533 1010).
+        <b>Tilläggsinfo</b> får du på adressen Studieinfo.fi. Om du behöver hjälp med att tolka brevet eller i
+         oklara frågor som gäller antagningen och som inte uppklarats via direkt kontakt till läroanstalten, kan 
+         du kontakta Studieinfos ansökningstjänst (info@studieinfo.fi eller tfn 029 533 1010).
     </p>
 </div>
 

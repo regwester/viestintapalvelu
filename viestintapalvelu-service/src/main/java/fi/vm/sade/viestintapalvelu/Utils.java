@@ -12,9 +12,33 @@ public final class Utils {
 
     private static final FastDateFormat THREAD_SAFE_DATE_FORMATTER = FastDateFormat.getInstance("dd.MM.yyyy_HH.mm");
 
+    /**
+     * Resolve template by name and language code
+     * 
+     * @param template
+     * @param languageCode
+     * @return template name
+     */
     public static String resolveTemplateName(String template, String languageCode) {
+    	return resolveTemplateName(template, languageCode, null);
+    }
+    
+    /**
+     * Resolve template by name, language code and type
+     * @param template
+     * @param languageCode
+     * @param type
+     * @return template name
+     */
+    public static String resolveTemplateName(String template, String languageCode, String type) {
         languageCode = languageCode == null || "".equals(languageCode) ? "FI" : languageCode;
         languageCode = "SV".equalsIgnoreCase(languageCode) || "SE".equalsIgnoreCase(languageCode) || "FI".equalsIgnoreCase(languageCode) ? languageCode : "EN";
+        
+        if (type != null)
+        	template = template.replace("{TYPE}", "_" + type);
+        else
+        	template = template.replace("{TYPE}", "");
+        
         return template.replace("{LANG}", languageCode.toUpperCase());
     }
 
