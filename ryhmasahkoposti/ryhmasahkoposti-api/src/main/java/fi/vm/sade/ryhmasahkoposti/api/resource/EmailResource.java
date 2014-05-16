@@ -37,7 +37,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
  */
 @Path("email")
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
-@Api(value = "/email", description = "Ryhmäsähköpostin lähettäminen")
+@Api(value = "/email", description = "Ryhm&auml;s&auml;hk&oumlpostin l&auml;hett&auml;minen")
 public interface EmailResource {
     /**
      * Lisää ryhmäshköpostin liitteen 
@@ -54,10 +54,10 @@ public interface EmailResource {
     @Produces("text/plain")
     @Path("addAttachment")
     @Secured({SecurityConstants.SEND})
-    @ApiOperation(value="Lisää käyttäjän valitsemat liitetiedostot tietokantaan", 
-        notes="Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä", 
-        response=String.class)
-    @ApiResponses({@ApiResponse(code=400, message="Not a multipart request")})
+    @ApiOperation(value = "Lisää käyttäjän valitsemat liitetiedostot tietokantaan", 
+        notes = "Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä",  
+        response = String.class)
+    @ApiResponses({@ApiResponse(code = 400, message = "Not a multipart request")})
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
         throws IOException, URISyntaxException, ServletException ;
 
@@ -70,7 +70,7 @@ public interface EmailResource {
     @Produces("application/json")
     @Path("initGroupEmail")
     @Secured({SecurityConstants.SEND})
-    @ApiOperation(value="Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle")
+    @ApiOperation(value = "Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle")
     public Response initGroupEmail();
     
 	/**
@@ -84,11 +84,11 @@ public interface EmailResource {
     @Produces("application/json")
     @Path("sendEmail")
     @Secured({SecurityConstants.SEND})
-    @ApiOperation(value="Lähettää ryhmäsähköpostin vastaanottajille", 
-        notes="Lähetettävä sähköposti ei sisällä alaviitettä", response=EmailSendId.class)
-    @ApiResponses({@ApiResponse(code=500, 
-        message="Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
-	public Response sendEmail(@ApiParam(value="Lähettetävän sähköpostin ja vastaanottajien tiedot", required=true) 
+    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", 
+        notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
+    @ApiResponses({@ApiResponse(code = 500, 
+        message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
+	public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) 
 	    EmailData emailData);
 
     /**
@@ -102,8 +102,8 @@ public interface EmailResource {
     @Produces("application/json")
     @Path("sendEmailStatus")
     @Secured({SecurityConstants.SEND})
-    @ApiOperation(value="Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response=SendingStatusDTO.class)
-	public Response sendEmailStatus(@ApiParam(value="Ryhmäsähköpostin avain", required=true) String sendId);
+    @ApiOperation(value = "Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response = SendingStatusDTO.class)
+	public Response sendEmailStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId);
 
     /**
      * Lähettää ryhmäsähköpostin. Lisää ryhmäsähköpostiviestiin alatunnisteen.
@@ -116,12 +116,12 @@ public interface EmailResource {
     @Produces("application/json")   
     @Path("sendGroupEmail")
     @Secured({SecurityConstants.SEND})
-    @ApiOperation(value="Lähettää ryhmäsähköpostin vastaanottajille alaviitteen kera", 
-        notes="Lisää käyttäjän kielen mukaisen alatunnisteen lähetettävään viestiin", response=EmailSendId.class)
-    @ApiResponses({@ApiResponse(code=500, 
-        message="Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
-	public Response sendGroupEmailWithFooter(@ApiParam(value="Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot", 
-	    required=true) EmailData emailData);
+    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille alaviitteen kera", 
+        notes = "Lisää käyttäjän kielen mukaisen alatunnisteen lähetettävään viestiin", response = EmailSendId.class)
+    @ApiResponses({@ApiResponse(code = 500, 
+        message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
+	public Response sendGroupEmailWithFooter(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot", 
+	    required = true) EmailData emailData);
 
     /**
      * Pyytää tiedot raportoittavista ryhmäsähköposteista
@@ -134,7 +134,7 @@ public interface EmailResource {
     @Produces("application/json")
     @Path("sendResult")
     @Secured({SecurityConstants.SEND})
-    @ApiOperation(value="Palauttaa lähetetyn ryhmäsähköpostin raportin", response=ReportedMessageDTO.class)
-    @ApiResponses({@ApiResponse(code=500, message="Internal service error tai liittymävirhe")})
-	public Response sendResult(@ApiParam(value="Ryhmäsähköpostiviestin avain", required=true) String sendId);
+    @ApiOperation(value = "Palauttaa lähetetyn ryhmäsähköpostin raportin", response = ReportedMessageDTO.class)
+    @ApiResponses({@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
+	public Response sendResult(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) String sendId);
 }

@@ -42,6 +42,22 @@ public class TemplateDAOTest {
         assertEquals(storedTemplate.getName(), template.getName());
         assertTrue(template.getContents().size() == 1);
         assertTrue(template.getReplacements().size() == 1);
+        assertEquals(template.getType(), "doc");
+    }
+
+    @Test
+    public void testFindTemplateByNameAndTypeFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        templateDAO.insert(storedTemplate);
+        
+        Template template = templateDAO.findTemplateByName("test_template", "FI", "doc");
+        
+        assertNotNull(template);
+        assertNotNull(template.getId());
+        assertEquals(storedTemplate.getName(), template.getName());
+        assertTrue(template.getContents().size() == 1);
+        assertTrue(template.getReplacements().size() == 1);
+        assertEquals(template.getType(), "doc");
     }
 
     @Test
@@ -65,4 +81,5 @@ public class TemplateDAOTest {
         assertTrue(availableTemplates.size() == 1);
         assertTrue(availableTemplates.get(0).indexOf("::") != -1);
     }
+
 }

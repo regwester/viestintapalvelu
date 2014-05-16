@@ -83,7 +83,7 @@ public class TemplateServiceTest {
     @Test
     public void testGetTemplateByName() {
         Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
-        when(mockedTemplateDAO.findTemplateByName(any(String.class), any(String.class))).thenReturn(mockedTemplate);
+        when(mockedTemplateDAO.findTemplateByName(any(String.class), any(String.class), any(String.class))).thenReturn(mockedTemplate);
         
         fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
             templateService.getTemplateByName("test_template", "FI", true);
@@ -92,6 +92,22 @@ public class TemplateServiceTest {
         assertTrue(templateFindByName.getId() == 1);
         assertNotNull(templateFindByName.getContents().size() == 1);
         assertNotNull(templateFindByName.getReplacements().size() == 1);
+    }
+
+    @Test
+    public void testGetTemplateByNameAndType() {
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
+        when(mockedTemplateDAO.findTemplateByName(any(String.class), any(String.class), any(String.class))).thenReturn(mockedTemplate);
+        
+        fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
+            templateService.getTemplateByName("test_template", "FI", true, "doc");
+        
+        assertNotNull(templateFindByName);
+        assertTrue(templateFindByName.getId() == 1);
+        assertNotNull(templateFindByName.getContents().size() == 1);
+        assertNotNull(templateFindByName.getReplacements().size() == 1);
+        assertTrue(templateFindByName.getType() != null);
+        assertTrue(templateFindByName.getType().equals("doc"));
     }
 
 }

@@ -26,7 +26,8 @@ import fi.vm.sade.generic.model.BaseEntity;
  kielikoodi character varying (5),
  aikaleima timestamp without time zone,
  oid_tallentaja character varying(255),
- oid_organisaatio character varying(255)
+ oid_organisaatio character varying(255),
+ tyyppi character varying (5)
  );
  */
 
@@ -70,7 +71,11 @@ public class Template extends BaseEntity {
     @ApiModelProperty(value = "CSS styles")
     @Column(name = "tyylit", nullable = false)
     private String styles;
-    
+
+    @ApiModelProperty(value = "Pohja tyyppi, default = 'DOC'")
+    @Column(name = "tyyppi", nullable = true)
+    private String type;
+
     public String getStyles() {
         return styles;
     }
@@ -143,4 +148,11 @@ public class Template extends BaseEntity {
         return serialVersionUID;
     }
 
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
 }
