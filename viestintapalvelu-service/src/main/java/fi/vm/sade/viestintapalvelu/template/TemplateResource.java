@@ -35,6 +35,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
@@ -64,9 +65,17 @@ public class TemplateResource extends AsynchronousResource {
 													+ "'name': 'jalkiohjauskirje', <br>"
 													+ "'lang': 'FI' <br>"
 													+ "}";
+        
+    private final static String ApitemplateByName = "Palauttaa kirjepohjan nimen perusteella."; 
+    private final static String TemplateByID = "Palauttaa kirjepohjan Id:n perusteella."; 
+    private final static String TemplateExamples = "Palauttaa saatavilla olevien kirjepohjien nimet ja sisällöt."; 
+    private final static String Store = "Rajapinnalla voi tallentaa kantaa kirjepohjan."; 
+    private final static String StoreDraft = "Rajapinnalla voi tallentaa kantaa kirjepohjaluonnoksen.";
     
+    private final static String GetDraft = "Rajapinnalla voi hakea kirjepohjien luonnoksia.";    
+    private final static String GetDraft2 = "Palauttaa kirjepohjan luonnoksen nimen kirjepohjan nimen, kielikoodin ja organisaatioOid:in perusteella. Tarkenteena voidaan antaa vielä haku, hakukohde ja tunniste.";    
+    private final static String GetDraft400 = "Kirjepohjan luonnoksen palautus epäonnistui.";
     
-    private final static String ApitemplateByName = "Palauttaa kirjepohjan nimen perusteella.";    
     
     @GET
     @Path("/get")
@@ -125,6 +134,9 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
+
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)	// SWAGGER
+    
     public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {        
        String templateId = request.getParameter("templateId");
        Long id = Long.parseLong(templateId);
@@ -136,6 +148,8 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/getAvailableExamples")
     @Produces("application/json")
     @Transactional
+    
+    @ApiOperation(value = TemplateExamples, notes = TemplateExamples)	// SWAGGER
     
     public List<Map<String, String>> templateExamples(@Context HttpServletRequest request) throws IOException, DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
@@ -170,8 +184,6 @@ public class TemplateResource extends AsynchronousResource {
     @Transactional
     
     @ApiOperation(value = TemplateNames, notes = TemplateNames2)	// SWAGGER
-//  @ApiResponses({@ApiResponse(code = 200, message = getHistory200)
-//  })
     
     public List<Map<String,String>> templateNames(@Context HttpServletRequest request) throws IOException, DocumentException {
        List<Map<String,String>> res = new ArrayList<Map<String,String>>();
@@ -219,6 +231,9 @@ public class TemplateResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+
+    @ApiOperation(value = Store, notes = Store)	// SWAGGER
+    
     public Template store(Template template) throws IOException, DocumentException {
         templateService.storeTemplateDTO(template);
         return new Template();
@@ -230,6 +245,9 @@ public class TemplateResource extends AsynchronousResource {
     @Consumes("application/json")
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+
+    @ApiOperation(value = StoreDraft, notes = StoreDraft)	// SWAGGER
+    
     public Draft storeDraft(Draft draft) throws IOException, DocumentException {
         templateService.storeDraftDTO(draft);
         return new Draft();
@@ -241,6 +259,10 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
 //    @Secured(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
+
+    @ApiOperation(value = GetDraft, notes = GetDraft2, response=Draft.class)	// SWAGGER
+    @ApiResponses(@ApiResponse(code = 400, message = GetDraft400))				// SWAGGER
+    
     public Response getDraft(@Context HttpServletRequest request) throws IOException, DocumentException { 
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
