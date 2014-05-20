@@ -79,7 +79,11 @@ angular.module('app').controller(
 	        "omatPisteet": data.any('pisteetvajaa'),
 	        "paasyJaSoveltuvuuskoe": data.any('koe'),
 	        "valinnanTulos": data.any('valinnanTulos'),
-	        "selite": data.any('valinnanTulos')
+	        
+	        "varasija": data.any('varasija'),	        
+//	        "selite": data.any('valinnanTulos')
+	        "hylkaysperuste": data.any('valinnanTulos')
+	        
 	    };
 	});
 	}
