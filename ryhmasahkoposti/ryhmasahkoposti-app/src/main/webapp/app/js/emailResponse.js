@@ -1,9 +1,15 @@
 
 var emailResp = angular.module('viestintapalvelu');
 
-emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailResultFactory', 'EmailSendStatusFactory', '$location', 
-                                                 function($scope, $rootScope, EmailResultFactory, EmailSendStatusFactory, $location) { 	
+emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailResultFactory', 'EmailSendStatusFactory', '$location', 'ErrorDialog', 
+                                                 function($scope, $rootScope, EmailResultFactory, EmailSendStatusFactory, $location, ErrorDialog) { 	
 	
+	$scope.tinymceOptions = {
+	        readonly : 1,
+	        height: 400,
+	        width: 600
+	};
+	 
 	$scope.emailsendid = $rootScope.emailsendid;
 	
 	$scope.ReportedMessageDTO = EmailResultFactory.sendResult($scope.emailsendid.id).$promise.then(	
@@ -16,7 +22,7 @@ emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailR
             	$scope.recipCnt = $scope.ReportedMessageDTO.emailRecipients.length + " vastaanottajaa";
 			},	            
             function(error) {
-                alert("Error (sendResult)" + error);
+                ErrorDialog.showError(error);
             },
             function(update) {
                 alert("Notification " + update);
@@ -28,13 +34,11 @@ emailResp.controller('EmailResponseController', ['$scope', '$rootScope', 'EmailR
             	$scope.SendingStatusDTO = value; 
 			},	            
             function(error) {
-                alert("Error (sendEmailStatus)" + error);
+                ErrorDialog.showError(error);
             },
             function(update) {
                 alert("Notification " + update);
             }
-    );
-	 
-	 		
+    );	 		
 }]);
 

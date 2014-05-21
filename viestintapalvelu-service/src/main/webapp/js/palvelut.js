@@ -111,11 +111,47 @@ angular.module('app').factory('Hakutoive', ['$http', function ($http) {
     return $http.get('generator/hakutoive.json')
 }])
 
+angular.module('app').factory('Template', ['$http', '$window', function ($http, $window) {
+	var template = 'api/v1/template/';
+	
+	return function () {
+        function getNames() {
+		    return $http.get(template+'getNames');
+        }
+        
+        function getExamples() {
+		    return $http.get(template+'getAvailableExamples');
+        }
+        
+        
+        function getByName(t) {
+		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
+        }
+        
+        function getHistory(t, oid, applicationPeriod, tag){
+        	if (tag != null && tag != "") {
+        		return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&applicationPeriod="+applicationPeriod+"&tag="+tag);
+        	} else {
+        	 	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid);
+        	}
+        }
+        
+        return {
+            getNames: getNames,
+            getExamples: getExamples,
+            getByName: getByName,
+            getHistory: getHistory
+        };
+	}();
+}]);
+
 angular.module('app').factory('Printer', ['$http', '$window', function ($http, $window) {
     var addressLabel = 'api/v1/addresslabel/';
     var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
     var hyvaksymiskirje = 'api/v1/hyvaksymiskirje/';
     var koekutsukirje = 'api/v1/koekutsukirje/';
+    var letter = 'api/v1/letter/';
+    var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
 
     return function () {
@@ -142,11 +178,26 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters});
         }
 
+
+        function letterPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+        	print(letter + 'pdf', {
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
+        }
+        
+        function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            print(letter + 'zip', {
+                "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
+        }
+        
         function ipostZIP(letters) {
             print(jalkiohjauskirje + 'zip', {
                 "letters": letters});
         }
 
+        function printPDF(sources, filename) {
+            print(printurl + 'pdf', {"documentName": filename, "sources": sources});
+        }
+        
         function print(url, batch) {
             $http.post(url, batch).
             	success(function (data) {
@@ -155,7 +206,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             	error(function (data) {
             		// This is test-ui so we use a popup for failure-indication against guidelines (for production code)
             		$window.alert("Tulostiedoston luonti epäonnistui");
-            	})
+            	});
         }
 
         return {
@@ -164,7 +215,10 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             hyvaksymiskirjePDF: hyvaksymiskirjePDF,
             koekutsukirjePDF: koekutsukirjePDF,
             osoitetarratPDF: osoitetarratPDF,
-            osoitetarratXLS: osoitetarratXLS
+            osoitetarratXLS: osoitetarratXLS,
+            letterPDF: letterPDF,
+            letterZIP: letterZIP,
+            printPDF: printPDF
         }
     }()
 }])

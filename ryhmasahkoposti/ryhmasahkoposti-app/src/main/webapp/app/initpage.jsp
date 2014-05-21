@@ -6,27 +6,27 @@
 		<textarea rows="30" cols="200" name="emailData">
 			{
 					recipient: [<%for (int i = 0; i < 2; i++) {%>
-						{oid: '1234567890ABCD<%=i%>',
-						oidType: 'henkilo',
+						{oid: '1.2.246.562.24.63926748289',
+						oidType: 'virkailija',
 						email: 'ville.vastaanottaja@gmail.com',
 						languageCode: 'FI'},										
 					<%}%>
-						{oid: '1234567890ABCD',
-						oidType: 'henkilo',
+						{oid: '1.2.246.562.24.21860986107',
+						oidType: 'virkailija',
 						email: 'ville.vastaanottaja@gmail.com',
 						languageCode: 'FI'},
 										
-						{oid: 'ABCD0987654321',
-						oidType: 'henkilo',
+						{oid: '1.2.246.562.24.98095750306',
+						oidType: 'virkailija',
 						email: 'torspo.uolevi@gmail.com',
 						languageCode: 'FI'}	
 					],		
 					email: {callingProcess: 'Osoitetietojarjestelma',
-							from: 'oph_tiedotus@oph.fi',
-							replyTo: 'Mikko.Mallikas@oph.fi',
-							subject: 'Testi viesti',
-							body: 'Testi bodya ja sporttia.',
-							attachInfo: []
+						from: 'oph_tiedotus@oph.fi',
+						organizationOid: '1.2.246.562.10.00000000001',
+						replyTo: 'Mikko.Mallikas@oph.fi',
+						subject: 'Testi viesti',
+						body: 'Testi bodya ja sporttia.'
 					}
 			}
 		</textarea>

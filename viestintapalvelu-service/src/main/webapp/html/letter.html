@@ -1,0 +1,114 @@
+<div ng-controller='LetterController'>
+<h3>Testikäyttöliittymän testivaihe1</h3>
+<div>
+
+	<select ng-model="template" ng-options="c.name group by c.lang for c in templates" ng-change="templateChanged()"></select>
+  Currently selected: {{ {selected_template:template}  }}
+<br/>
+	<select ng-model="history" ng-options="h.name for h in historyList" ng-change="historyChanged()"></select>
+<br/>
+
+<table  class="table" >
+	 <tr><td>
+		Tunniste: <input ng-model="tag" />
+	</td></tr>	  	  
+	 <tr><td>
+		Haku: <input ng-model="applicationPeriod" />
+	</td></tr>
+</table>	  
+<br/>
+ 	<textarea ui-tinymce ng-model="tinymceModel"></textarea>
+	
+
+    <input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi"
+           min="{{select_min}}" max="{{select_max}}" >
+
+    <div class="run-action btn-group">
+        <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1">PDF</button>
+        <button class="btn" ng-click="generateZIP()" ng-disabled="getCount() < 1">ZIP</button>
+    </div>
+    
+    <h4>Alla on raakana HTML-koodina ylläolevan editorin sisältö</h4>
+    <div>{{tinymceModel}}</div>
+    
+<br>
+<br>
+<hr>
+<table class="table" ng-hide="!letters.length">
+        <tr>
+            <th>Osoite</th>
+            <th>Hyväksytty</th>
+            <th>Hakukohteet</th>
+            <th></th>
+        </tr>
+        <tr ng-repeat="kirje in letters">
+            <td class="osoite">
+                <div>{{kirje.addressLabel.firstName}} {{kirje.addressLabel.lastName}}</div>
+                <div>{{kirje.addressLabel.addressline}}</div>
+                <div>{{kirje.addressLabel.addressline2}}</div>
+                <div>{{kirje.addressLabel.addressline3}}</div>
+                <div>{{kirje.addressLabel.postalCode}} {{kirje.addressLabel.city}}</div>
+                <div>{{kirje.addressLabel.region}}</div>
+                <div>{{kirje.addressLabel.country}} {{kirje.addressLabel.countryCode}}</div>
+                <div>(language: {{kirje.languageCode}})</div>
+            </td>
+            <td class="hyvaksytty">
+                <div>{{kirje.koulu}}</div>
+                <div>{{kirje.koulutus}}</div>
+            </td>
+            <td>
+                <table class="tulokset">
+                    <tr>
+                        <th>Kohde <a href="#" ng-click="addHakukohde($index)"><i class="icon-plus"></i></a></th>
+                        <th>Hakijat</th>
+                        <th>Pisteet</th>
+                        <th>Koe <a href="#" ng-click="toggleColumn($index, 'paasyJaSoveltuvuuskoe')"><i
+                                ng:class="{ 'icon-minus': ! isRemoved($index, 'paasyJaSoveltuvuuskoe'), 'icon-plus': isRemoved($index, 'paasyJaSoveltuvuuskoe') }"></i></a>
+                        </th>
+                        <th>Valinnantulos <a href="#" ng-click="toggleColumn($index, 'valinnanTulos')"><i
+                                ng:class="{ 'icon-minus': ! isRemoved($index, 'valinnanTulos'), 'icon-plus': isRemoved($index, 'valinnanTulos') }"></i></a>
+                        </th>
+                        <th>Selite <a href="#" ng-click="toggleColumn($index, 'selite')"><i
+                                ng:class="{ 'icon-minus': ! isRemoved($index, 'selite'), 'icon-plus': isRemoved($index, 'selite') }"></i></a>
+                        </th>
+                        <th></th>
+                    </tr>
+                    <tr ng-repeat="haku in kirje.templateReplacements.tulokset">
+                        <td>
+                            <input class="input-xlarge input-pile" type="text" ng-model="haku.organisaationNimi"
+                                   placeholder="Organisaatio">
+                            <input class="input-xlarge input-pile" type="text" ng-model="haku.oppilaitoksenNimi"
+                                   placeholder="Oppilaitos">
+                            <input class="input-xlarge" type="text" ng-model="haku.hakukohteenNimi"
+                                   placeholder="Hakukohde">
+                        </td>
+                        <td>
+                            <input class="input-small input-pile" type="text" ng-model="haku.hyvaksytyt"
+                                   placeholder="Hyväksytyt">
+                            <input class="input-small" type="text" ng-model="haku.kaikkiHakeneet"
+                                   placeholder="Hakeneet">
+                        </td>
+                        <td>
+                            <input class="input-small input-pile" type="text" ng-model="haku.omatPisteet"
+                                   placeholder="Pisteesi">
+                            <input class="input-small" type="text" ng-model="haku.alinHyvaksyttyPistemaara"
+                                   placeholder="Raja">
+                        </td>
+                        <td><input ng-disabled="isRemoved($parent.$index, 'paasyJaSoveltuvuuskoe')" class="input-small"
+                                   type="text" ng-model="haku.paasyJaSoveltuvuuskoe" placeholder="Koe pisteesi"></td>
+                        <td><input ng-disabled="isRemoved($parent.$index, 'valinnanTulos')" class="input-small"
+                                   type="text" ng-model="haku.valinnanTulos" placeholder="Tulos"></td>
+                        <td><input ng-disabled="isRemoved($parent.$index, 'selite')" class="input-small" type="text"
+                                   ng-model="haku.selite" placeholder="Selite"></td>
+                        <td><a href="#" ng-click="removeHakukohde($parent.$index, $index)"><i
+                                class="icon-trash"></i></a></td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+    
+    
+    {{ {replacements:replacements}  }}
+</div>
+</div>

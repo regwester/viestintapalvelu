@@ -21,7 +21,7 @@ limitations under the License.
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
 
     <Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
-		maxActive="250" maxIdle="30" maxWait="10000" 
+		maxActive="20" maxIdle="10" maxWait="-1" 
 		username="oph" password="oph" driverClassName="org.postgresql.Driver" 
 		url="jdbc:postgresql://localhost:5432/viestinta"/>
 </Context>

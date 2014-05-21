@@ -8,8 +8,12 @@ import org.apache.commons.fileupload.FileItem;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 /**
@@ -45,27 +49,43 @@ public interface GroupEmailReportingService {
 	public ReportedMessageDTO getReportedMessage(Long messageID);
 
 	/**
-	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
-	 * 
-	 * @return Lista raportoitavia viestejä
-	 */
-	public List<ReportedMessageDTO> getReportedMessages();
-
-	/**
-	 * Hakee hakuparametrin mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
-	 * 
-	 * @param searchArgument Hakuparametri
-	 * @return Lista raportoitavia ryhmäsähköpostiviestejä
-	 */
-	public List<ReportedMessageDTO> getReportedMessages(String searchArgument);
-
-	/**
 	 * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
 	 * 
 	 * @param messageID Viestintunnus 
+	 * @param pagingAndSorting Sivutus ja lajittelutiedot
 	 * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
 	 */
-	public ReportedMessageDTO getReportedMessageWithSendingReport(Long messageID);
+    public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
+
+	/**
+     * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja vastaanottajat, joille lähetys epäonnistui   
+     * 
+     * @param messageID Viestintunnus 
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
+     */
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, 
+        PagingAndSortingDTO pagingAndSorting);
+
+	/**
+	 * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
+	 * 
+	 * @param organizationOid Organisaation oid-tunnus
+	 * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
+	 * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
+	 */
+	public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, 
+	    PagingAndSortingDTO pagingAndSorting);
+
+    /**
+	 * Hakee hakuparametrien mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
+	 * 
+	 * @param reportedMessageQueryDTO Hakuparametrit
+	 * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
+	 * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
+	 */
+	public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO reportedMessageQueryDTO, 
+	    PagingAndSortingDTO pagingAndSorting);
 
 	/**
 	 * Hakee lähetyksen tuloksen
@@ -84,6 +104,13 @@ public interface GroupEmailReportingService {
 	public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
 	
 	/**
+	 * Palauttaa käyttäjän organisaatiotiedot
+	 * 
+	 * @return Lista käyttäjän organisaatioita
+	 */
+	public List<OrganizationDTO> getUserOrganizations();
+	
+	/**
 	 * Päivittää tiedon, että sähköpostin lähetys vastaanottajalle ei onnistunut
 	 *   
 	 * @param recipient Ryhmäsähköpostin vastaanottajan tiedot
@@ -100,7 +127,7 @@ public interface GroupEmailReportingService {
 	 * @return true, päivitys on tehty.
 	 */
 	public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
-	
+
 	/**
 	 * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
 	 * 
@@ -109,7 +136,7 @@ public interface GroupEmailReportingService {
 	 */
 	public Long saveAttachment(FileItem fileItem) throws IOException;
 
-	/**
+    /**
 	 * Merkitsee sähköpostin lähetyksen vastaanottajalle alkaneeksi
 	 * 
 	 * @param recipient Ryhmäsähköpostin vastaanottajan tiedot

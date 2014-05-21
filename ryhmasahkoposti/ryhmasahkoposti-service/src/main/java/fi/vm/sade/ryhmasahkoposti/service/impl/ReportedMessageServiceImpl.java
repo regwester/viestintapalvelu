@@ -5,7 +5,8 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
@@ -20,13 +21,24 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
 	}
 
 	@Override
-	public List<ReportedMessage> getReportedMessages() {
-		return reportedMessageDAO.findAll();
-	}
+    public Long getNumberOfReportedMessages(String organizationOid) {
+        return reportedMessageDAO.findNumberOfReportedMessage(organizationOid);
+    }
 
+    @Override
+    public Long getNumberOfReportedMessages(ReportedMessageQueryDTO query) {
+        return reportedMessageDAO.findNumberOfReportedMessage(query);
+    }
+	
 	@Override
-	public List<ReportedMessage> getReportedMessages(EmailMessageQueryDTO query) {
-		return reportedMessageDAO.findBySearchCriteria(query);
+	public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
+	    return reportedMessageDAO.findByOrganizationOid(organizationOid, pagingAndSorting);
+	}
+	
+    @Override
+	public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
+	    PagingAndSortingDTO pagingAndSorting) {
+        return reportedMessageDAO.findBySearchCriteria(query, pagingAndSorting);
 	}
 
 	@Override

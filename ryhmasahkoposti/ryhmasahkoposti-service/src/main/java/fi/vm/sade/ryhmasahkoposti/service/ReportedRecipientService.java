@@ -4,6 +4,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
@@ -37,14 +38,24 @@ public interface ReportedRecipientService {
 	public ReportedRecipient getReportedRecipient(Long id);
 
 	/**
-	 * Hakee raportoitavan viestin vastaanottajan tiedot viestin tunnuksella ja vastaanottajan sähköpostiosoitteella
+	 * Hakee raportoitavan viestin vastaanottajien tiedot viestin tunnuksella. Palauttaa halutun määrän vastaanottajia
 	 * 
 	 * @param messageID Raportoitavan viestin tunnus
-	 * @param recipientEmail Viestin vastaanottajan sähköpostiosoite
-	 * @return Raportoitavan viestin vastaanottajan tiedot {@link ReportedRecipient}
+	 * @param pagingAndSorting Sivitus ja lajittelutiedot
+	 * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
 	 */
-	public ReportedRecipient getReportedRecipient(Long messageID, String recipientEmail);
+	public List<ReportedRecipient> getReportedRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
+	/**
+     * Hakee raportoitavan viestin vastaanottajien tiedot viestin tunnuksella, joille lähetys on epäonnistunut
+     * 
+     * @param messageID Raportoitavan viestin tunnus
+     * @param pagingAndSorting Sivitus ja lajittelutiedot
+     * @return Lista raportoitavan viestin vastaanottajien tietoja, joille lähetys on epäonnistunut {@link ReportedRecipient}
+     */
+    public List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccesful(Long messageID, 
+        PagingAndSortingDTO pagingAndSorting);
+        
 	/**
 	 * Hakee kaikkien raportoittavien viestin vastaanottajien tiedot
 	 * 

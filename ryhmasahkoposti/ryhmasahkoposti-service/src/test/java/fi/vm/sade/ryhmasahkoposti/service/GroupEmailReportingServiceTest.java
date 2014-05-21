@@ -4,6 +4,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
 
@@ -12,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.fileupload.FileItem;
@@ -30,6 +32,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
@@ -37,10 +41,21 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
@@ -52,7 +67,7 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @ContextConfiguration("/test-bundle-context.xml")
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
 	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
-@PrepareForTest(MessageUtil.class)
+@PrepareForTest({MessageUtil.class, ReportedMessageConverter.class, ReportedRecipientConverter.class})
 public class GroupEmailReportingServiceTest {
 	private GroupEmailReportingService groupEmailReportingService;
 	@Mock
@@ -65,16 +80,37 @@ public class GroupEmailReportingServiceTest {
 	private ReportedAttachmentService mockedReportedAttachmentService;
 	@Mock
 	private ReportedMessageAttachmentService mockedReportedMessageAttachmentService;
+	@Mock
+	private ReportedMessageConverter mockedReportedMessageConverter;
+	@Mock
+	private ReportedRecipientConverter mockedReportedRecipientConverter;
+	@Mock
+	private ReportedAttachmentConverter mockedReportedAttachmentConverter;
+	@Mock
+	private EmailMessageDTOConverter mockedEmailMessageDTOConverter;
+	@Mock
+	private EmailRecipientDTOConverter mockedEmailRecipientDTOConverter;
+	@Mock
+	private ReportedMessageDTOConverter mockedReportedMessageDTOConverter;
+	@Mock
+	private CurrentUserComponent mockedCurrentUserComponent;
+	@Mock
+	private OrganizationComponent mockedOrganizationComponent;
 	
 	@Before
-	public void setup() {
-		groupEmailReportingService = new GroupEmailReportingServiceImpl(mockedReportedMessageService, mockedReportedRecipientService, 
-			mockedReportedAttachmentService, mockedReportedMessageAttachmentService);	
+	public void setup() {	    
+		groupEmailReportingService = new GroupEmailReportingServiceImpl(mockedReportedMessageService, 
+		    mockedReportedRecipientService,	mockedReportedAttachmentService, mockedReportedMessageAttachmentService, 
+		    mockedReportedMessageConverter, mockedReportedRecipientConverter, mockedReportedAttachmentConverter, 
+		    mockedEmailMessageDTOConverter, mockedEmailRecipientDTOConverter, mockedReportedMessageDTOConverter, 
+		    mockedCurrentUserComponent, mockedOrganizationComponent);	
 	}
 	
 	@SuppressWarnings("unchecked")
 	@Test
-	public void testSaveSendingEmail() throws IOException {				
+	public void testAddSendingGroupEmail() throws IOException {
+	    when(mockedReportedMessageConverter.convert(any(EmailMessage.class))).thenReturn(new ReportedMessage());
+	    
 		ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
 		savedReportedMessage.setId(new Long(2));
 		savedReportedMessage.setVersion(new Long(0));
@@ -94,7 +130,7 @@ public class GroupEmailReportingServiceTest {
 		    }})
 		.when(mockedReportedMessageAttachmentService).saveReportedMessageAttachments(
 			any(ReportedMessage.class), any(List.class));
-	
+				
 		doAnswer(new Answer<Object>() {
 		    public Object answer(InvocationOnMock invocation) {
 		        @SuppressWarnings("unused")
@@ -102,6 +138,9 @@ public class GroupEmailReportingServiceTest {
 		        return null;
 		    }})
 		.when(mockedReportedRecipientService).saveReportedRecipients(any(Set.class));
+
+		when(mockedReportedRecipientConverter.convert(any(ReportedMessage.class), 
+		    eq(new ArrayList<EmailRecipient>()))).thenReturn(new HashSet<ReportedRecipient>());
 		
 		EmailData emailData = RaportointipalveluTestData.getEmailData();
 		
@@ -126,7 +165,7 @@ public class GroupEmailReportingServiceTest {
 		
 		emailData.setEmail(emailMessage);
 		emailData.setRecipient(emailRecipients);
-		
+
 		Long messageID = groupEmailReportingService.addSendingGroupEmail(emailData);		
 		
 		assertNotNull(messageID);
@@ -194,8 +233,12 @@ public class GroupEmailReportingServiceTest {
 		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
 		reportedRecipient.setReportedMessage(reportedMessage);
 		reportedRecipients.add(reportedRecipient);
+		
+		List<EmailRecipientDTO> mockedEmailRecipientDTOs = new ArrayList<EmailRecipientDTO>();
+		mockedEmailRecipientDTOs.add(RaportointipalveluTestData.getEmailRecipientDTO());
 				
 		when(mockedReportedRecipientService.getUnhandledReportedRecipients(1)).thenReturn(reportedRecipients);
+		when(mockedEmailRecipientDTOConverter.convert(reportedRecipients)).thenReturn(mockedEmailRecipientDTOs);
 		
 		List<EmailRecipientDTO> emailRecipientDTOs = groupEmailReportingService.getUnhandledMessageRecipients(1);
 		
@@ -203,7 +246,8 @@ public class GroupEmailReportingServiceTest {
 		assertTrue(emailRecipientDTOs.size() == 1);
 	}
 	
-	@Test
+    @Test
+    @SuppressWarnings("unchecked")
 	public void testGetMessage() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -216,7 +260,15 @@ public class GroupEmailReportingServiceTest {
 		
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		
-		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);		
+		List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+		reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
+		
+		EmailMessageDTO mockedEmailMessageDTO = RaportointipalveluTestData.getEmailMessageDTO();
+		
+		when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
+		when(mockedEmailMessageDTOConverter.convert(any(ReportedMessage.class), any(List.class))).thenReturn(
+		    mockedEmailMessageDTO);
+		
 		EmailMessageDTO emailMessageDTO = groupEmailReportingService.getMessage(new Long(1));
 		
 		assertNotNull(emailMessageDTO);
@@ -273,10 +325,12 @@ public class GroupEmailReportingServiceTest {
 		assertNotNull(sendingStatus.getSendingEnded());
 	}
 	
-	@Test
-	public void testGetReportedMessages() {
-		PowerMockito.mockStatic(MessageUtil.class);
-		when(MessageUtil.getMessage(any(String.class))).thenReturn("lahetys kesken");
+    @SuppressWarnings("unchecked")
+    @Test
+	public void testGetReportedMessagesByOrganizationOid() {       
+	    PowerMockito.mockStatic(MessageUtil.class);
+        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", 
+            new Object[] {new Long(2)})).thenReturn("Lahetyksiä epäonnistui");
 		
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -291,20 +345,33 @@ public class GroupEmailReportingServiceTest {
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		mockedReportedMessages.add(reportedMessage);
 		
-		when(mockedReportedMessageService.getReportedMessages()).thenReturn(mockedReportedMessages);
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
 		
-		when(mockedReportedRecipientService.getNumberOfSendingFailed(any(Long.class))).thenReturn(new Long(0));
+		when(mockedReportedMessageService.getReportedMessages(any(String.class), 
+		    any(PagingAndSortingDTO.class))).thenReturn(mockedReportedMessages);
+		
+		SendingStatusDTO sendingStatus = RaportointipalveluTestData.getSendingStatusDTO();
+		when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatus);
+			
+		List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+		mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
+		when(mockedReportedMessageDTOConverter.convert(any(List.class), any(Map.class))).thenReturn(mockedReportedMessageDTOs);
 
-		List<ReportedMessageDTO> reportedMessageDTOs = groupEmailReportingService.getReportedMessages();
+		ReportedMessagesDTO reportedMessagesDTO = 
+		    groupEmailReportingService.getReportedMessagesByOrganizationOid("1.2.246.562.10.00000000001", pagingAndSorting);
 		
-		assertNotNull(reportedMessageDTOs);
-		assertTrue(reportedMessageDTOs.size() == 1);
-		assertNotNull(reportedMessageDTOs.get(0).getStatusReport());
-		assertTrue(reportedMessageDTOs.get(0).getStatusReport().equalsIgnoreCase("lahetys kesken"));
+		assertNotNull(reportedMessagesDTO);
+		assertTrue(reportedMessagesDTO.getReportedMessages().size() == 1);
+		assertNotNull(reportedMessagesDTO.getReportedMessages().get(0).getStatusReport());
+		assertTrue(reportedMessagesDTO.getReportedMessages().get(0).getStatusReport().equalsIgnoreCase("Lahetyksiä epäonnistui"));
 	}
 	
-	@Test
+	@SuppressWarnings("unchecked")
+    @Test
 	public void testGetReportedMessagesBySearchArgument() {
+	    ReportedMessageQueryDTO query = RaportointipalveluTestData.getReportedMessageQueryDTO();
+	    
         PowerMockito.mockStatic(MessageUtil.class);
         when(MessageUtil.getMessage(any(String.class))).thenReturn("lahetys kesken");
 
@@ -322,15 +389,23 @@ public class GroupEmailReportingServiceTest {
 		mockedReportedMessages.add(reportedMessage);
 		
 		when(mockedReportedMessageService.getReportedMessages(
-			any(EmailMessageQueryDTO.class))).thenReturn(mockedReportedMessages);
+			any(ReportedMessageQueryDTO.class), any(PagingAndSortingDTO.class))).thenReturn(mockedReportedMessages);
 
-		when(mockedReportedRecipientService.getNumberOfSendingFailed(any(Long.class))).thenReturn(new Long(0));
-	      
-		List<ReportedMessageDTO> reportedMessageDTOs = 
-			groupEmailReportingService.getReportedMessages("testi.vastaanottaja@sposti.fi");
+        SendingStatusDTO sendingStatus = RaportointipalveluTestData.getSendingStatusDTO();
+        when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatus);
+	    
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
+
+        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
+        when(mockedReportedMessageDTOConverter.convert(any(List.class), any(Map.class))).thenReturn(mockedReportedMessageDTOs);
+
+		ReportedMessagesDTO reportedMessagesDTO = 
+			groupEmailReportingService.getReportedMessages(query, pagingAndSorting);
 		
-		assertNotNull(reportedMessageDTOs);
-		assertTrue(reportedMessageDTOs.size() == 1);
+		assertNotNull(reportedMessagesDTO);
+		assertTrue(reportedMessagesDTO.getReportedMessages().size() == 1);
 	}
 	
 	@SuppressWarnings("unchecked")
@@ -363,6 +438,10 @@ public class GroupEmailReportingServiceTest {
 		when(mockedReportedAttachmentService.getReportedAttachments(any(Set.class))).thenReturn(
 			new ArrayList<ReportedAttachment>());
 		
+		ReportedMessageDTO mockedReportedMessageDTO = RaportointipalveluTestData.getReportedMessageDTO();
+		when(mockedReportedMessageDTOConverter.convert(any(ReportedMessage.class), any(List.class), 
+		    any(SendingStatusDTO.class))).thenReturn(mockedReportedMessageDTO);
+		
 		ReportedMessageDTO reportedMessageDTO = 
 			groupEmailReportingService.getReportedMessage(new Long(1));
 		
@@ -370,5 +449,21 @@ public class GroupEmailReportingServiceTest {
 		assertTrue(reportedMessageDTO.getMessageID().equals(new Long(1)));
 		assertNotNull(reportedMessageDTO.getStatusReport());
 		assertNotNull(reportedMessageDTO.getSendingReport());
+	}
+	
+	@Test
+	public void testGetUserOrganization() {
+	    List<OrganisaatioHenkilo> henkilonOrganisaatiot = RaportointipalveluTestData.getHenkilonOrganisaatiot();
+	    when(mockedCurrentUserComponent.getCurrentUserOrganizations()).thenReturn(henkilonOrganisaatiot);	    
+	    when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(
+	        RaportointipalveluTestData.getOrganisaatioRDTO());
+	    when(mockedOrganizationComponent.getNameOfOrganisation(any(OrganisaatioRDTO.class))).thenReturn("OPH");
+	    
+	    List<OrganizationDTO> organizationDTOs = groupEmailReportingService.getUserOrganizations();
+	    
+	    assertNotNull(organizationDTOs);
+	    assertTrue(organizationDTOs.size() == 1);
+	    assertTrue(organizationDTOs.get(0).getOid().equals("1.2.246.562.10.00000000001"));
+	    assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
 	}
 }

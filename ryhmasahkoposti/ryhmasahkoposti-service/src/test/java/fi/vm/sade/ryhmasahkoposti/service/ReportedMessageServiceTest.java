@@ -28,8 +28,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.EmailRecipientQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.impl.ReportedMessageServiceImpl;
@@ -69,13 +70,17 @@ public class ReportedMessageServiceTest {
 	}
 
 	@Test
-	public void testGetReportedMessages() throws IOException {
+	public void testGetReportedMessagesByOrganizationOid() throws IOException {
 		List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
 		reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 		
-		when(mockedReportedMessageDAO.findAll()).thenReturn(reportedMessages);
-		
-		reportedMessages = reportedMessageService.getReportedMessages();
+		when(mockedReportedMessageDAO.findByOrganizationOid(any(String.class), 
+		    any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
+				
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
+        
+		reportedMessages = reportedMessageService.getReportedMessages("1.2.246.562.10.00000000001", pagingAndSorting);
 		
 		assertNotNull(reportedMessages);
 		assertNotEquals(0, reportedMessages.size());
@@ -86,14 +91,19 @@ public class ReportedMessageServiceTest {
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		mockedReportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 					
-		EmailMessageQueryDTO emailMessageQuery = new EmailMessageQueryDTO();
-        EmailRecipientQueryDTO emailRecipientQuery = new EmailRecipientQueryDTO();
-        emailRecipientQuery.setRecipientEmail("vastaan.ottaja@sposti.fi");
-        emailMessageQuery.setEmailRecipientQueryDTO(emailRecipientQuery);
+		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
+        reportedRecipientQuery.setRecipientEmail("vastaan.ottaja@sposti.fi");
+        reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
 
-		when(mockedReportedMessageDAO.findBySearchCriteria(emailMessageQuery)).thenReturn(mockedReportedMessages);
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+        pagingAndSorting.setSortedBy("sendingStarted");
         
-		List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(emailMessageQuery);
+		when(mockedReportedMessageDAO.findBySearchCriteria(
+		    reportedMessageQuery, pagingAndSorting)).thenReturn(mockedReportedMessages);
+        
+		List<ReportedMessage> reportedMessages = 
+		    reportedMessageService.getReportedMessages(reportedMessageQuery, pagingAndSorting);
 		
 		assertNotNull(reportedMessages);
 		assertNotEquals(0, reportedMessages.size());		

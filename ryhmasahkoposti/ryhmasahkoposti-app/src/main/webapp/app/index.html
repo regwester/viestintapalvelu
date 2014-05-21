@@ -1,16 +1,7 @@
 <!DOCTYPE html>
 <html id="ng-app" ng-app="viestintapalvelu">
 
-<head>
-    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
-    <title>OPH - Viestintäpalvelu</title>
-</head>
-
-<body>
-	<div id="application-wrapper">
-	    <div id="angularbox" ng-view=""></div>
-	</div>
-   	
+<head>    
     <!-- libs -->
     <script type="text/javascript" src="./lib/jquery/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js"></script>
@@ -19,6 +10,7 @@
     <script type="text/javascript" src="./lib/angular/angular-resource.js"></script>
     <script type="text/javascript" src="./lib/angular/angular-route.js"></script>
     <script type="text/javascript" src="./lib/angular/angular-animate.js"></script>
+    <script type="text/javascript" src="../lib/ui-bootstrap/ui-bootstrap-tpls-0.8.0.min.js"></script>
     
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js"></script>
     <script type="text/javascript" src="./lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js"></script>
@@ -29,16 +21,29 @@
 
     <!-- app js-->
     <!-- <script src="./js/emailLocalization.js"></script> -->
-    <script src="./js/email.js"></script>
-    <script src="./js/emailCancel.js"></script>
-    <script src="./js/emailSendStatus.js"></script>
-    <script src="./js/emailService.js"></script>
-    <script src="./js/emailResponse.js"></script>
-
+    <script type="text/javascript" src="./js/email.js"></script>
+    <script type="text/javascript" src="./js/emailCancel.js"></script>
+    <script type="text/javascript" src="./js/emailSendStatus.js"></script>
+    <script type="text/javascript" src="./js/emailService.js"></script>
+    <script type="text/javascript" src="./js/emailResponse.js"></script>
+    <script type="text/javascript" src="./js/alert.js"></script>
+    <script type="text/javascript" src="./js/errorDialog.js"></script>
+    <script type="text/javascript" src="./js/errorDialogController.js"></script>
+           
     <!-- css -->
-    <link rel="stylesheet" href="./css/bootstrap-combined.css"/>
-    <link rel="stylesheet" href="./css/virkailija.css"/>
-    
+    <link type="text/css" rel="stylesheet" href="./css/bootstrap.css"/>
+    <link type="text/css" rel="stylesheet" href="./css/virkailija.css"/>
+    <link type="text/css" rel="stylesheet" href="./css/other.css"/>
+    <link type="text/css" rel="stylesheet" href="./css/dialogs.css"/>
+
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OPH - Viestintäpalvelu</title>
+</head>
+
+<body>
+	<div id="application-wrapper">
+	    <div id="angularbox" ng-view=""></div>
+	</div>
 </body>
 
 </html>

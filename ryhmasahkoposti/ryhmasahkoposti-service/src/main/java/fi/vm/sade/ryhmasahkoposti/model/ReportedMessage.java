@@ -25,19 +25,16 @@ public class ReportedMessage extends BaseEntity {
 	@Column(name="lahettajan_oid", nullable=true)
 	private String senderOid;
 
-	@Column(name="lahettajan_oid_tyyppi", nullable=true)
-	private String senderOidType;
+	@Column(name="lahettajan_nimi", nullable=true)
+	private String senderName;
 
 	@Column(name="lahettajan_sahkopostiosoite", nullable=false)
 	private String senderEmail;
 
-	@Column(name="vastauksensaajan_oid", nullable=true)
-	private String replyToOid;
+    @Column(name="lahettajan_organisaatio_oid", nullable=true)
+    private String senderOrganizationOid;
 
-	@Column(name="vastauksensaajan_oid_tyyppi", nullable=true)
-	private String replyToOidType;
-
-	@Column(name="vastauksensaajan_sahkopostiosoite", nullable=true)
+	@Column(name="vastaus_sahkopostiosoite", nullable=true)
 	private String replyToEmail;
 
 	@Column(name="aihe", nullable=false)
@@ -84,15 +81,15 @@ public class ReportedMessage extends BaseEntity {
 		this.senderOid = senderOid;
 	}
 
-	public String getSenderOidType() {
-		return senderOidType;
-	}
+	public String getSenderName() {
+        return senderName;
+    }
 
-	public void setSenderOidType(String senderOidType) {
-		this.senderOidType = senderOidType;
-	}
+    public void setSenderName(String senderName) {
+        this.senderName = senderName;
+    }
 
-	public String getSenderEmail() {
+    public String getSenderEmail() {
 		return senderEmail;
 	}
 
@@ -100,23 +97,15 @@ public class ReportedMessage extends BaseEntity {
 		this.senderEmail = senderEmail;
 	}
 
-	public String getReplyToOid() {
-		return replyToOid;
-	}
+	public String getSenderOrganizationOid() {
+        return senderOrganizationOid;
+    }
 
-	public void setReplyToOid(String replyToOid) {
-		this.replyToOid = replyToOid;
-	}
+    public void setSenderOrganizationOid(String senderOrganizationOid) {
+        this.senderOrganizationOid = senderOrganizationOid;
+    }
 
-	public String getReplyToOidType() {
-		return replyToOidType;
-	}
-
-	public void setReplyToOidType(String replyToOidType) {
-		this.replyToOidType = replyToOidType;
-	}
-
-	public String getReplyToEmail() {
+    public String getReplyToEmail() {
 		return replyToEmail;
 	}
 

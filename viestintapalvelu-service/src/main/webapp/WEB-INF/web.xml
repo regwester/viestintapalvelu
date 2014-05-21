@@ -2,6 +2,8 @@
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd"
          version="2.5">
+    
+    <distributable/>
 	<context-param>
         <param-name>contextConfigLocation</param-name>
         <param-value>classpath:spring/application-context.xml</param-value>
@@ -39,5 +41,12 @@
         <servlet-name>Jersey REST Service</servlet-name>
         <url-pattern>/api/v1/*</url-pattern>
     </servlet-mapping>
+
+   <resource-ref>
+        <description>PostgreSQL Viestinnan Datasource </description>
+        <res-ref-name>jdbc/viestinta</res-ref-name>
+        <res-type>javax.sql.DataSource</res-type>
+        <res-auth>Container</res-auth>
+    </resource-ref>
 
 </web-app>

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.powermock.api.mockito.PowerMockito;
@@ -28,6 +29,12 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(MessageUtil.class)
 public class ReportedMessageDTOConverterTest {
+    private ReportedMessageDTOConverter reportedMessageDTOConverter;
+    
+    @Before
+    public void setup() {
+        this.reportedMessageDTOConverter = new ReportedMessageDTOConverter();
+    }
 
 	@Test
 	public void testConvertListOfReportedMessage() {
@@ -44,7 +51,7 @@ public class ReportedMessageDTOConverterTest {
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		mockedReportedMessages.add(reportedMessage);
 		
-		List<ReportedMessageDTO> reportedMessageDTOs = ReportedMessageDTOConverter.convert(mockedReportedMessages);
+		List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(mockedReportedMessages);
 		
 		assertNotNull(reportedMessageDTOs);
 		assertTrue(reportedMessageDTOs.size() == 1);
@@ -54,8 +61,8 @@ public class ReportedMessageDTOConverterTest {
 	public void testConvertListOfReportedMessageAndNumberOfFailed() {
 		PowerMockito.mockStatic(MessageUtil.class);
 		PowerMockito.when(MessageUtil.getMessage(
-			"ryhmasahkoposti.lahetys_epaonnistui", new Object[]{new Long(1)})).thenReturn("1 lahetys epäonnistui");
-		
+			"ryhmasahkoposti.lahetys_epaonnistui", new Object[]{new Long(2)})).thenReturn("2 lahetystä epäonnistui");
+
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
@@ -69,11 +76,12 @@ public class ReportedMessageDTOConverterTest {
 		reportedMessage.setReportedRecipients(reportedRecipients);
 		mockedReportedMessages.add(reportedMessage);
 		
-		Map<Long, Long> mockedNbrOfFailed = new HashMap<Long, Long>();
-		mockedNbrOfFailed.put(new Long(1), new Long(1));
+		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
+		Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
+		sendingStatuses.put(new Long(1), sendingStatusDTO);
 		
 		List<ReportedMessageDTO> reportedMessageDTOs = 
-			ReportedMessageDTOConverter.convert(mockedReportedMessages, mockedNbrOfFailed);
+			reportedMessageDTOConverter.convert(mockedReportedMessages, sendingStatuses);
 		
 		assertNotNull(reportedMessageDTOs);
 		assertTrue(reportedMessageDTOs.size() == 1);
@@ -99,7 +107,7 @@ public class ReportedMessageDTOConverterTest {
 		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
 				
 		ReportedMessageDTO reportedMessageDTO = 
-			ReportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatusDTO);
+			reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatusDTO);
 		
 		assertNotNull(reportedMessageDTO);
 		assertEquals(reportedMessage.getId(), reportedMessageDTO.getMessageID());
