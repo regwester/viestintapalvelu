@@ -5,8 +5,6 @@ import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
 
 import java.io.ByteArrayInputStream;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
@@ -84,6 +82,7 @@ public class LetterResource extends AsynchronousResource {
     private final static String TemplateByNameOrgTag = "Palauttaa letter pohjan nimen, organisaation ja tunnisteen perusteella.";
     private final static String TemplateByNameOrgTag400 = "Pohjan palautus pohjan nimen, organisaation ja tunnisteen perusteella epäonnistui.";
 
+    private final static String GetLetter = "Palauttaa generoidun/lähetetyn/tallennetun kirjeen Id:n perusteella. Id taulusta 'vastaanottajakirje'";
     
     @GET
     @Produces("text/plain")
@@ -234,14 +233,14 @@ public class LetterResource extends AsynchronousResource {
     
     public Response templateByNameOidTag(@Context HttpServletRequest request) throws IOException, DocumentException {
     	
-        // Pick up the organization oid from request and check user's rights to organization
-        String oid = request.getParameter("oid");
-        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
+       // Pick up the organization oid from request and check user's rights to organization
+       String oid = request.getParameter("oid");
+       Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
         
-        // User isn't authorized to the organization
-        if (response.getStatus() != 200) {
-            return response;
-        }
+       // User isn't authorized to the organization
+       if (response.getStatus() != 200) {
+        	return response;
+       }
        
        String name = request.getParameter("name");
        String language = request.getParameter("language");
@@ -256,40 +255,19 @@ public class LetterResource extends AsynchronousResource {
     }
 
     
-    // FOR TESTING
-    @POST
-    @Path("/createLetter")
-    @Consumes("application/json")
-    @Produces("application/json")
-    public fi.vm.sade.viestintapalvelu.model.LetterBatch createLetter(LetterBatch letterBatch) 
-        throws IOException, DocumentException {
-        return letterService.createLetter(letterBatch);
-   }
-
-    // FOR TESTING
-    // If you know the id in database table 'vastaanottajakirje'
     @GET
     // @PreAuthorize("isAuthenticated()")
     @Transactional
     @Produces("application/json")    
     @Path("/getLetter")
-    public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(@Context HttpServletRequest request) throws IOException, DocumentException {
-        
+
+    @ApiOperation(value = GetLetter, notes = GetLetter, response = LetterContent.class)	// SWAGGER
+    
+    public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(@Context HttpServletRequest request) throws IOException, DocumentException {        
        String letterId = request.getParameter("id");
        Long id = Long.parseLong(letterId);
        
-       fi.vm.sade.viestintapalvelu.letter.LetterContent content =  letterService.getLetter(id);
-
-       if ((content.getContent()!=null) && (content.getContent().length != 0)) {
-	       File letters = new File("\\TESTI.PDF");
-	       FileOutputStream fos;
-	       fos = new FileOutputStream(letters);
-	       fos.write(content.getContent());
-	       fos.flush();
-	       fos.close();        		
-       }
-       
-       return content;
+       return letterService.getLetter(id);
     }
     
     
