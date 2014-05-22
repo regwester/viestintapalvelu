@@ -8,6 +8,7 @@
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment</class>
+        <class>fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement</class>
         
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
