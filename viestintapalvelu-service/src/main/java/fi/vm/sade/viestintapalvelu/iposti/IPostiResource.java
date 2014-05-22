@@ -30,14 +30,15 @@ public class IPostiResource {
     private IPostiUpload ipostiUpload;
     
     @GET
-    @Path("/uploadExisting")
+    @Path("/send")
     @Produces("application/json")
     public Map<String,String> uploadExisting(@Context HttpServletRequest request) {
+        
         return new HashMap<String, String>();
     }
     
     @POST
-    @Path("/upload")
+    @Path("/send")
     @Produces("application/json")
     public Map<String,String> upload(@Context HttpServletRequest request) {
         

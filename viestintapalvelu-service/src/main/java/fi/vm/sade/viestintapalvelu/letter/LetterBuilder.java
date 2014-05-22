@@ -59,6 +59,7 @@ public class LetterBuilder {
         for (int i = 0; i < subBatches.size(); i++) {
             LetterBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = buildPDF(subBatch);
+            mergeSubBatchToBatch(batch, subBatch);
             Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
             context.put("filename", batch.getTemplateName()+".pdf");
             byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
@@ -67,13 +68,32 @@ public class LetterBuilder {
             documents.put(batch.getTemplateName()+".xml", ipostXml);
             subZips.put(batch.getTemplateName()+"_"+ (i + 1) + ".zip", documentBuilder.zip(documents));
         }
-        return documentBuilder.zip(subZips);
+        byte[] resultZip = documentBuilder.zip(subZips);
+        batch.setiPostiData(resultZip);
+        letterService.createLetter(batch);
+        return resultZip;
     }
 
+    private void mergeSubBatchToBatch(LetterBatch batch, LetterBatch subBatch) {
+        List<Letter> subBatchLetters = subBatch.getLetters();
+        List<Letter> batchLetters = batch.getLetters();
+        batch.setTemplateId(subBatch.getTemplateId());
+        if (batchLetters == null) {
+            batchLetters = new ArrayList<Letter>();
+        }
+        if (subBatchLetters != null) {
+            batchLetters.addAll(subBatchLetters);
+        }
+        batch.setLetters(batchLetters);
+    }
+    
     public byte[] printPDF(LetterBatch batch) throws IOException,
             DocumentException {
 
-        return buildPDF(batch).toByteArray();
+        MergedPdfDocument resultPDF = buildPDF(batch);
+        // store batch to database
+        letterService.createLetter(batch);
+        return resultPDF.toByteArray();
     }
 
     private MergedPdfDocument buildPDF(LetterBatch batch) throws IOException, DocumentException {
@@ -150,7 +170,7 @@ public class LetterBuilder {
                 
         // Write LetterBatch to DB
         batch.setLetters(updateLetters); // Contains now the generated PdfDocuments
-        letterService.createLetter(batch);
+        //letterService.createLetter(batch);
         
         return documentBuilder.merge(source);
     }
