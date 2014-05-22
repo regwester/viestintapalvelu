@@ -23,6 +23,9 @@ public interface TemplateService {
 
 	public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName,String templateLanguage, String organizationOid, 
 			String applicationPeriod, String fetchTarget, String tag);    
+	
+    public List<fi.vm.sade.viestintapalvelu.template.Replacement> findDraftReplacement(String templateName, String languageCode,
+    		String oid, String applicationPeriod, String fetchTarget, String tag);
 
 	public fi.vm.sade.viestintapalvelu.template.Template findById(long id);
 

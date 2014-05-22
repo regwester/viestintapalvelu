@@ -266,8 +266,10 @@ public class TemplateResource extends AsynchronousResource {
     public Response getDraft(@Context HttpServletRequest request) throws IOException, DocumentException { 
         // Pick up the organization oid from request and check urer's rights to organization
         String oid = request.getParameter("oid");
-        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
-                
+        
+//        Response response = userRightsValidator.checkUserRightsToOrganization(oid); 
+        Response response = userRightsValidator.checkUserRightsToOrganization(null); 
+        
         // User isn't authorized to the organization
         if (response.getStatus() != 200) {
             return response;
@@ -275,7 +277,7 @@ public class TemplateResource extends AsynchronousResource {
     	
         String templateName = request.getParameter("templateName");
         String languageCode = request.getParameter("languageCode");
-//        String organizationOid = request.getParameter("oid");
+//        String oid = request.getParameter("oid");
         String applicationPeriod = request.getParameter("applicationPeriod");
         String fetchTarget = request.getParameter("fetchTarget");
         String tag = request.getParameter("tag");
@@ -394,7 +396,7 @@ public class TemplateResource extends AsynchronousResource {
                         
         if ((oid!=null) && !("".equals(oid)) ) {
             List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null);
-            System.out.println(templateReplacements);
+//            System.out.println(templateReplacements);
             
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
                 Map<String, Object> organisationRepl = new HashMap<String, Object>();
@@ -414,6 +416,16 @@ public class TemplateResource extends AsynchronousResource {
 	                history.add(tagRepl);
 	            }		        
 	        }
+	        
+	        // Drafts replacements
+	        // NOT IMPLEMENTED COMPLETELY 
+	        templateReplacements = templateService.findDraftReplacement(templateName, languageCode, oid, null /*applicationPeriod*/, null /*fetchTarget*/, tag);
+            if (templateReplacements != null && !templateReplacements.isEmpty()) {
+                Map<String, Object> draftRepl = new HashMap<String, Object>();
+                draftRepl.put("name", "draft");
+                draftRepl.put("templateReplacements", templateReplacements);
+                history.add(draftRepl);
+            }		        
         }
 	     
         return Response.ok(history).build();

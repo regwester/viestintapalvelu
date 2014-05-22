@@ -6,4 +6,6 @@ import fi.vm.sade.viestintapalvelu.model.Draft;
 public interface DraftDAO extends JpaDAO<Draft, Long> {
 	public Draft findDraftByNameOrgTag(	String templateName, String templateLanguage, String organizationOid, 
 										String applicationPeriod, String fetchTarget, String tag);
+	public Draft findDraftByNameOrgTag2(String templateName, String templateLanguage, String organizationOid, 
+			String applicationPeriod, String fetchTarget, String tag);
 }
