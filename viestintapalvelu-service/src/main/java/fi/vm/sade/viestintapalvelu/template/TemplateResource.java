@@ -154,10 +154,9 @@ public class TemplateResource extends AsynchronousResource {
     public List<Map<String, String>> templateExamples(@Context HttpServletRequest request) throws IOException, DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
        
-       String[] templates = {"/hyvaksymiskirje_II-aste_k2014_FI.json", "/hyvaksymiskirje_II-aste_k2014_SV.json",
-    		   				"/jalkiohjauskirje_II-aste_k2014_FI.json", "/jalkiohjauskirje_II-aste_k2014_SV.json",
+       String[] templates = {"/hyvaksymiskirje_FI.json", "/hyvaksymiskirje_SV.json",
+  							"/jalkiohjauskirje_FI.json", "/jalkiohjauskirje_SV.json"
 //    		   				"/koekutsukirje_FI.json", "/koekutsukirje_SV.json", "/koekutsukirje_EN.json", 
-//    		   				"/hyvaksymiskirje_II-aste_k2014_EN.json"
     		   };
        
        for (String template : templates) {
