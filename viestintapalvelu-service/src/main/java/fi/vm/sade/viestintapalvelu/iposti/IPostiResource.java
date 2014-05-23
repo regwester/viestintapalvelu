@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.iposti;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -20,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.model.IPosti;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -29,11 +31,32 @@ public class IPostiResource {
     @Autowired
     private IPostiUpload ipostiUpload;
     
+    @Autowired
+    private IPostiService iPostiService;
+    
+    @GET
+    @Path("/unSentItems")
+    @Produces("application/json")
+    public Map<String,String> unsentIPostiItems(@Context HttpServletRequest request) {
+        Map<String, String> result = new HashMap<String, String>();
+        
+        List<IPosti>  unsent = iPostiService.findUnsent();
+        for (IPosti ip : unsent) {
+            result.put("id", ""+ip.getId());
+            result.put("date", ""+ip.getCreateDate());
+        }
+        return result;
+    }
+    
     @GET
     @Path("/send")
     @Produces("application/json")
-    public Map<String,String> uploadExisting(@Context HttpServletRequest request) {
-        
+    public Map<String,String> uploadExisting(@Context HttpServletRequest request) throws Exception {
+        String id = request.getParameter("ipostiId");
+        IPosti iposti = iPostiService.findById(Long.parseLong(id));
+        ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
+        iposti.setSentDate(new Date());
+        iPostiService.update(iposti);
         return new HashMap<String, String>();
     }
     
