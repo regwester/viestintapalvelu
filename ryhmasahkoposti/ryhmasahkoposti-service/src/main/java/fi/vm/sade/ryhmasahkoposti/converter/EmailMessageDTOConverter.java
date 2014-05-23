@@ -58,6 +58,12 @@ public class EmailMessageDTOConverter {
 		emailMessageDTO.setReplyTo(reportedMessage.getReplyToEmail());
 		emailMessageDTO.setBody(reportedMessage.getMessage());
 		
+		if (reportedMessage.getHtmlMessage() != null && !reportedMessage.getHtmlMessage().isEmpty()) {
+		    emailMessageDTO.setHtml(true);
+		} else {
+		    emailMessageDTO.setHtml(false);
+		}
+		
 		return emailMessageDTO;
 	}
 }

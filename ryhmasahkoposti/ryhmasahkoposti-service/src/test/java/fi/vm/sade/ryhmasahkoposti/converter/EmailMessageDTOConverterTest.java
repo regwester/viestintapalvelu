@@ -39,6 +39,7 @@ public class EmailMessageDTOConverterTest {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
 		reportedMessage.setVersion(new Long(0));
+		reportedMessage.setHtmlMessage("");
 		
 		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
 		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
@@ -52,11 +53,13 @@ public class EmailMessageDTOConverterTest {
 		
 		assertNotNull(emailMessageDTOs);
 		assertTrue(emailMessageDTOs.size() == 1);
+		assertTrue(emailMessageDTOs.get(0).isHtml() == false);
 	}
 
 	@Test
 	public void testEmailMessageDTOConversionWithAttachments() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		reportedMessage.setHtmlMessage("html");
 		
 		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
 		reportedRecipients.add(RaportointipalveluTestData.getReportedRecipient());
@@ -70,6 +73,7 @@ public class EmailMessageDTOConverterTest {
 		assertNotNull(emailMessageDTO);
 		assertEquals(reportedMessage.getId(), emailMessageDTO.getMessageID());
 		assertEquals(reportedMessage.getMessage(), emailMessageDTO.getBody());
+		assertTrue(emailMessageDTO.isHtml());
 		assertTrue(emailMessageDTO.getAttachments().size() > 0);
 		assertNotNull(emailMessageDTO.getAttachments().get(0).getName());
 	}
