@@ -368,6 +368,8 @@ public class TemplateResource extends AsynchronousResource {
     	@ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
     	@ApiImplicitParam(name = "oid", value = "Organisaation Oid", required = true, dataType = "string", paramType = "query"),
     	@ApiImplicitParam(name = "tag", value = "Vapaa teksti tunniste", required = false, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "applicationPeriod", value = "Haku", required = true, dataType = "string", paramType = "query"),
+    	@ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query"),
     })   
     
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
@@ -387,7 +389,7 @@ public class TemplateResource extends AsynchronousResource {
 //        String content 	   = request.getParameter("content");		// If missing => content excluded
 //        boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
         boolean getContent = false;
-               
+        
         // OPH default template
         Template template = templateService.getTemplateByName(templateName, languageCode, getContent);
         
@@ -398,7 +400,6 @@ public class TemplateResource extends AsynchronousResource {
                         
         if ((oid!=null) && !("".equals(oid)) ) {
             List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, null);
-//            System.out.println(templateReplacements);
             
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
                 Map<String, Object> organisationRepl = new HashMap<String, Object>();
@@ -420,8 +421,10 @@ public class TemplateResource extends AsynchronousResource {
 	        }
 	        
 	        // Drafts replacements
-	        // NOT IMPLEMENTED COMPLETELY 
-	        templateReplacements = templateService.findDraftReplacement(templateName, languageCode, oid, null /*applicationPeriod*/, null /*fetchTarget*/, tag);
+	        String applicationPeriod = request.getParameter("applicationPeriod"); 	// = Haku
+	        String fetchTarget = request.getParameter("fetchTarget");				// = Hakukohde
+	        
+	        templateReplacements = templateService.findDraftReplacement(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
                 Map<String, Object> draftRepl = new HashMap<String, Object>();
                 draftRepl.put("name", "draft");
