@@ -50,7 +50,7 @@ public class DocumentBuilder {
         templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(template)));
         return writer.toString().getBytes();
     }
-    
+
     public byte[] applyTextTemplate(String templateName, Map<String, Object> data) throws IOException {
         byte[] template = readTemplate(templateName);
         return applyTextTemplate(template, data);
@@ -63,6 +63,22 @@ public class DocumentBuilder {
         }
         mergedPDFDocument.flush();
         return mergedPDFDocument;
+    }
+    
+    /**
+     * Merge xhtml file contents
+     * 
+     * @param input
+     * @return
+     * @throws DocumentException
+     * @throws IOException
+     */
+    public byte[] mergeByte(List<byte[]> inputs) throws DocumentException, IOException {
+
+	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+	for (byte[] input : inputs) 
+	    outputStream.write(input);
+	return outputStream.toByteArray();	
     }
 
     public byte[] zip(Map<String, byte[]> documents) throws IOException {
