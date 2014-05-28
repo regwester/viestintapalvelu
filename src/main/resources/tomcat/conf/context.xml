@@ -21,4 +21,9 @@
     <!-- Default set of monitored resources -->
     <WatchedResource>WEB-INF/web.xml</WatchedResource>
 
+	<Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
+              maxActive="250" maxIdle="30" maxWait="10000"
+              username="{{host_postgresql_viestinta_user}}" password="{{host_postgresql_viestinta_password}}" driverClassName="org.postgresql.Driver"
+              url="jdbc:postgresql://{{host_postgresql_viestinta}}:{{port_postgresql}}/viestinta"/>
+
 </Context>
