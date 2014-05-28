@@ -15,30 +15,32 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 /**
  *
+ * Model used to store default message replacements retrieved from the template
+ * 
  *
-CREATE TABLE raportoitavavastaanottajakorvauskentat (
+CREATE TABLE raportoitavaviestikorvauskentat (
  id bigint NOT NULL,
  version bigint NOT NULL,
- raportoitavavastaanottaja_id bigint NOT NULL,
+ raportoitavaviesti_id bigint NOT NULL,
  nimi character varying(255),
  oletus_arvo character varying(3000),
  aikaleima timestamp without time zone,
- CONSTRAINT raportoitavavastaanottajakorvauskentat_pk PRIMARY KEY (id),
- CONSTRAINT raportoitavavastaanottajakorvauskentat_raportoitavavastaanottaja_id_fkey FOREIGN KEY (raportoitavavastaanottaja_id)
-     REFERENCES raportoitavavastaanottaja (id) MATCH SIMPLE
+ CONSTRAINT raportoitavaviestikorvauskentat_pk PRIMARY KEY (id),
+ CONSTRAINT raportoitavaviestikorvauskentat_raportoitavaviesti_id_fkey FOREIGN KEY (raportoitavaviesti_id)
+     REFERENCES raportoitavaviesti (id) MATCH SIMPLE
      ON UPDATE NO ACTION ON DELETE NO ACTION
  );
  */
 
-@Table(name="raportoitavavastaanottajakorvauskentat")
+@Table(name="raportoitavaviestikorvauskentat")
 @Entity
-public class ReportedRecipientReplacement extends BaseEntity {
+public class ReportedMessageReplacement extends BaseEntity {
 
     private static final long serialVersionUID = -7834429548964811085L;
 
     @OneToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="raportoitavavastaanottaja_id")
-    private ReportedRecipient reportedRecipient;
+    @JoinColumn(name="raportoitavaviesti_id")
+    private ReportedMessage reportedMessage;
 
     @Column(name = "nimi")
     private String name = null;
@@ -51,17 +53,17 @@ public class ReportedRecipientReplacement extends BaseEntity {
     private Date timestamp;
 
     /**
-     * @return the reportedRecipient
+     * @return the reportedMessage
      */
-    public ReportedRecipient getReportedRecipient() {
-	return reportedRecipient;
+    public ReportedMessage getReportedMessage() {
+	return reportedMessage;
     }
 
     /**
-     * @param reportedRecipient the reportedRecipient to set
+     * @param reportedMessage the reportedMessage to set
      */
-    public void setReportedRecipient(ReportedRecipient reportedRecipient) {
-	this.reportedRecipient = reportedRecipient;
+    public void setReportedMessage(ReportedMessage reportedMessage) {
+	this.reportedMessage = reportedMessage;
     }
 
     /**
@@ -111,8 +113,8 @@ public class ReportedRecipientReplacement extends BaseEntity {
      */
     @Override
     public String toString() {
-	return "ReportedRecipientReplacement [reportedRecipient="
-		+ reportedRecipient + ", name=" + name + ", defaultValue="
+	return "ReportedMessageReplacement [reportedMessage="
+		+ reportedMessage + ", name=" + name + ", defaultValue="
 		+ defaultValue + ", timestamp=" + timestamp + "]";
     }
 }

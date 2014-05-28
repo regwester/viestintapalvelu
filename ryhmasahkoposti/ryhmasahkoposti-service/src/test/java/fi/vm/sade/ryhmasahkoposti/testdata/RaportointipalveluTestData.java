@@ -27,6 +27,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 
@@ -325,4 +326,24 @@ public class RaportointipalveluTestData {
 
 	return reportedRecipientReplacement;
     }
+    
+    
+    /**
+     * Get test {@link ReportedMessageReplacement}
+     * 
+     * @param reportedMessage
+     * @return Test object
+     */
+    public static ReportedMessageReplacement getReportedMessageReplacement(ReportedMessage reportedMessage) {
+
+	ReportedMessageReplacement reportedMessageReplacement = new ReportedMessageReplacement();
+
+	reportedMessageReplacement.setReportedMessage(reportedMessage);
+	reportedMessageReplacement.setName("test-replacement-key");
+	reportedMessageReplacement.setDefaultValue("default-value");
+	reportedMessageReplacement.setTimestamp(new Date());
+
+	return reportedMessageReplacement;
+    }
+
 }
