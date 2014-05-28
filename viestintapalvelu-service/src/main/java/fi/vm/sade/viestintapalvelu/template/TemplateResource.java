@@ -15,8 +15,8 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
@@ -464,7 +464,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Produces("application/json")
-    @Path("/getTemplateContent")
+    @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
     @ApiOperation(value = GetTemplateContent, notes = GetTemplateContent, response = String.class)
     @ApiResponses({@ApiResponse(code = 400, message = GetTemplateContent400)
     })	        
@@ -473,10 +473,12 @@ public class TemplateResource extends AsynchronousResource {
 	@ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
 	@ApiImplicitParam(name = "type", value = "kirjepohjan tyyppi", required = true, dataType = "string", paramType = "query"),
     })   
-    public String getTemplateContent(
-	    @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) @QueryParam("templateName") String templateName, 
-	    @QueryParam("languageCode") String languageCode, @QueryParam("type") String type) 
+    public Template getTemplateContent(
+	    @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) @PathParam("templateName") String templateName, 
+	    @PathParam("languageCode") String languageCode, @PathParam("type") String type) 
 		    throws IOException, DocumentException, NoSuchAlgorithmException {
-	return letterBuilder.getTemplateContent(templateName, languageCode, type);
+
+	// Return template content
+	return templateService.getTemplateByName(templateName, languageCode, true, type);
     }
 }

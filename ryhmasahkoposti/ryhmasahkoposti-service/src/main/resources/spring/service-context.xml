@@ -83,7 +83,7 @@
     </jaxrs:client>
 
     <!-- External interface LetterResource  -->
-    <jaxrs:client id="letterResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource" address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
+    <jaxrs:client id="templateResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource" address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
         <jaxrs:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs:outInterceptors>

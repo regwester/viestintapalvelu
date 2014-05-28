@@ -2,13 +2,15 @@ package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
 
 import java.io.IOException;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.POST;
+import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.dom4j.DocumentException;
 import org.springframework.transaction.annotation.Transactional;
+
+import fi.vm.sade.ryhmasahkoposti.dto.TemplateDTO;
 
 /**
  * Interface to template service
@@ -19,11 +21,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Path("/template")
 public interface TemplateResource {
 
-    @POST
+    @GET
     @Transactional
-    @Consumes("application/json")
     @Produces("application/json")
-    @Path("/getTemplateContent")
-    public String getTemplateContent(String templateName, String languageCode, String type) 
+    @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
+    public TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, 
+	    @PathParam("languageCode") String languageCode, @PathParam("type") String type) 
 	    throws IOException, DocumentException;
 }
