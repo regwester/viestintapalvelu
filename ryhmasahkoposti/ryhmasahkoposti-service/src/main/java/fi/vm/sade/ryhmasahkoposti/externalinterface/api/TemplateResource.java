@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import org.dom4j.DocumentException;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.dto.TemplateDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 
 /**
  * Interface to template service

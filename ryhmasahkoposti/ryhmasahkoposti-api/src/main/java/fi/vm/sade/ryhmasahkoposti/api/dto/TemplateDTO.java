@@ -1,4 +1,4 @@
-package fi.vm.sade.ryhmasahkoposti.dto;
+package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.Date;
 import java.util.Set;
