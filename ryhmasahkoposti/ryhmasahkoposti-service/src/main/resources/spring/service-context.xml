@@ -81,6 +81,17 @@
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
         </jaxrs:providers>
     </jaxrs:client>
+
+    <!-- External interface LetterResource  -->
+    <jaxrs:client id="letterResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource" address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
+        <jaxrs:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
+        </jaxrs:providers>
+    </jaxrs:client>
     
 	<!-- Apache Camel routing context -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
