@@ -54,17 +54,24 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
 public class LetterResource extends AsynchronousResource {
+    
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
+    
     @Autowired
     private DownloadCache downloadCache;
+    
     @Autowired
     private LetterBuilder letterBuilder;
+    
     @Autowired
     private DokumenttiResource dokumenttiResource;
+    
     @Autowired
     private ExecutorService executor;
+    
     @Autowired 
     private LetterService letterService;
+    
     @Autowired
     private UserRightsValidator userRightsValidator;
     
@@ -84,6 +91,8 @@ public class LetterResource extends AsynchronousResource {
 
     private final static String GetLetter = "Palauttaa generoidun/lähetetyn/tallennetun kirjeen Id:n perusteella. Id taulusta 'vastaanottajakirje'";
     
+    private final static String ApiEMAILSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet Email-muodossa; synkroninen.";
+
     @GET
     @Produces("text/plain")
     @Path("/isAlive")
@@ -318,6 +327,8 @@ public class LetterResource extends AsynchronousResource {
             DocumentException, NoSuchAlgorithmException {
         return new ByteArrayInputStream(letterBuilder.printZIP(input));
     }
+    
+    
 
     /**
      * Jalkihohjauskirje ZIP async
