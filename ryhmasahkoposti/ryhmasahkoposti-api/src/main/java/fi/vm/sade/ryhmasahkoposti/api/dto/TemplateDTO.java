@@ -59,6 +59,23 @@ public class TemplateDTO extends BaseDTO {
      */
     private Set<ReplacementDTO> replacements;
 
+
+    /**
+     * Type email
+     */
+    public static final String TYPE_EMAIL = "email";
+
+    /**
+     * Type document
+     */
+    public static final String TYPE_DOC = "doc";
+
+    /**
+     * Default template language code
+     */
+
+    public static final String DEFAULT_LANG_CODE = "FI";
+
     /**
      * @return the name
      */

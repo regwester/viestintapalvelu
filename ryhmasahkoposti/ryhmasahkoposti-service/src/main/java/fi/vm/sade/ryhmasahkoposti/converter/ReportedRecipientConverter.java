@@ -61,6 +61,13 @@ public class ReportedRecipientConverter {
 		return reportedRecipients;
 	}
 	
+	public ReportedRecipient convert(ReportedMessage reportedMessage, 
+		EmailRecipient emailRecipient) {
+	    ReportedRecipient reportedRecipient = convert(emailRecipient);
+	    reportedRecipient.setReportedMessage(reportedMessage);
+	    return reportedRecipient;
+	}
+	
 	private void setDataFromExternalInterfaces(ReportedRecipient reportedRecipient) {
         reportedRecipient.setSearchName("");
         reportedRecipient.setSocialSecurityID("");

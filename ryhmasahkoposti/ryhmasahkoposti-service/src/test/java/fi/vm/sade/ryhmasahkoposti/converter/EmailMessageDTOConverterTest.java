@@ -68,7 +68,7 @@ public class EmailMessageDTOConverterTest {
 		List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
 		reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
 				
-		EmailMessageDTO emailMessageDTO = emailMessageDTOConverter.convert(reportedMessage, reportedAttachments);
+		EmailMessageDTO emailMessageDTO = emailMessageDTOConverter.convert(reportedMessage, reportedAttachments, null);
 		
 		assertNotNull(emailMessageDTO);
 		assertEquals(reportedMessage.getId(), emailMessageDTO.getMessageID());

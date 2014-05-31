@@ -192,15 +192,27 @@ public class ReportedMessage extends BaseEntity {
      * @return the type
      */
     public String getType() {
-        return type;
+	return type;
     }
 
     /**
      * @param type the type to set
      */
     public void setType(String type) {
-        this.type = type;
+	this.type = type;
     }
+
+    /**
+     * Email content is created using template
+     */
+    public static final String TYPE_TEMPLATE  = "T";
+
+
+    /**
+     * Email content is in email body
+     */
+    public static final String TYPE_EMAIL  = "E";
+
 
     /* (non-Javadoc)
      * @see java.lang.Object#toString()

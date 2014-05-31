@@ -1,10 +1,13 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -13,13 +16,16 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 @Service
 public class EmailServiceImpl implements EmailService {
-    
+
     private static final Logger log = Logger
 	    .getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class
 		    .getName());
@@ -37,6 +43,8 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private EmailAVChecker emailAVChecker;
+
+    private TemplateBuilder templateBuilder = new TemplateBuilder();
 
     @Value("${ryhmasahkoposti.require.virus.check}")
     String virusChekcRequired;
@@ -106,9 +114,14 @@ public class EmailServiceImpl implements EmailService {
 		Long messageId = er.getEmailMessageID();
 		EmailMessageDTO message = messageCache.get(messageId);
 		if (message == null) {
-		    message = rrService.getMessage(messageId);
-		    messageCache.put(messageId, message);
+		    try {
+			message = rrService.getMessage(messageId);
+			messageCache.put(messageId, message);
+		    } catch (Exception e) {
+			log.log(Level.SEVERE, "Get message failed", e);
+		    }
 		}
+		
 		String result = "";
 		boolean success = false;
 		try {
@@ -120,7 +133,28 @@ public class EmailServiceImpl implements EmailService {
 			}
 		    }
 		    if (!checkForViruses || (message.isVirusChecked() && !message.isInfected())) {
-			success = emailSender.sendMail(message, er.getEmail());
+
+			// Build message by running replacements if a template message is used
+			if (StringUtils.equalsIgnoreCase(message.getType(), ReportedMessage.TYPE_TEMPLATE)) {
+			    log.info("Build message content using template for messageId=" + messageId);
+			    
+			    List<ReportedRecipientReplacementDTO> recipientReplacements = null;
+			    try {
+				recipientReplacements = rrService.getRecipientReplacements(er.getRecipientID());
+			    } catch (IOException e) {
+				log.severe("Getting recipient replacements failed for receipientId:" + er.getRecipientID());
+			    }
+			    
+			    String buildMessage = templateBuilder.buildTempleMessage(message.getBody(), 
+				    message.getMessageReplacements(), recipientReplacements);
+
+			    if (!StringUtils.isEmpty(buildMessage)) {
+				    message.setBody(buildMessage);
+				    success = emailSender.sendMail(message, er.getEmail());
+			    } else
+				result = "Template build error. messageId=" + messageId;
+			} else
+			    success = emailSender.sendMail(message, er.getEmail());
 		    } else {
 			result = "Virus check problem. File infected: " + message.isInfected();
 		    }

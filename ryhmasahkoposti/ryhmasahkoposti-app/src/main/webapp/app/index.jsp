@@ -96,6 +96,9 @@
 			$scope.email.subject = $scope.emaildata.email.subject;	
 			$scope.email.body = $scope.emaildata.email.body;
 			
+			$scope.email.templateName = $scope.emaildata.email.templateName;
+			$scope.email.languageCode = $scope.emaildata.email.languageCode;
+			
 			// Copy to emaildata.email the original sended values WITH the empty attachInfo[]
 			$scope.emaildata.email = $scope.email; 
 			
