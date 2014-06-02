@@ -6,7 +6,8 @@
 *.class
 
 # Package Files #
-*.jar
+# gradle-wrapper.jar is required
+#*.jar 
 *.war
 *.ear
 

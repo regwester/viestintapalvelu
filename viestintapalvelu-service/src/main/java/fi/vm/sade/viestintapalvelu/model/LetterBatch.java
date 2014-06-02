@@ -10,6 +10,7 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -71,10 +72,6 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
     
-	@Column(name = "ipost")
-    private boolean ipost = false;
-	
-    
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
@@ -83,8 +80,18 @@ public class LetterBatch extends BaseEntity {
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
-    
-	public Long getTemplateId() {
+    @OneToOne(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private IPosti iposti;
+
+    public IPosti getIposti() {
+        return iposti;
+    }
+
+    public void setIPosti(IPosti iposti) {
+        this.iposti = iposti;
+    }
+    public Long getTemplateId() {
 		return templateId;
 	}
 
@@ -171,15 +178,7 @@ public class LetterBatch extends BaseEntity {
         return tag;
     }    
 
-	public boolean isIpost() {
-		return ipost;
-	}
-
-	public void setIpost(boolean ipost) {
-		this.ipost = ipost;
-	}
-
-	@Override
+    @Override
 	public String toString() {
 		return "LetterBatch [templateId=" + templateId 
 				+ ", templateName=" + templateName 
@@ -189,6 +188,4 @@ public class LetterBatch extends BaseEntity {
 				+ ", storingOid=" + storingOid + ", organizationOid="
 				+ organizationOid + "]";
 	}
-
-	
 }

@@ -42,7 +42,7 @@ public class ReportedMessageConverterTest {
         
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
         
-        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailMessage);
+        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailMessage, null);
 
 		assertNotNull(reportedMessage);
 		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 

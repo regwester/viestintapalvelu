@@ -95,6 +95,8 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao" />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao.impl" />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu.validator"/>   
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.iposti"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.iposti.impl"/>
     
     <!-- Swagger -->
     <!-- Swagger API listing resource -->

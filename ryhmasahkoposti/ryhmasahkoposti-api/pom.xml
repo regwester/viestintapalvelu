@@ -64,6 +64,19 @@
 			<groupId>com.wordnik</groupId>
 			<artifactId>swagger-jaxrs_2.10</artifactId>
 		</dependency>
+		
+		 <dependency>
+            <groupId>fi.vm.sade.generic</groupId>
+            <artifactId>generic-common</artifactId>
+            <version>${generic.version}</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>validation-api</artifactId>
+                    <groupId>javax.validation</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        
 	</dependencies>
 
 	<build>
