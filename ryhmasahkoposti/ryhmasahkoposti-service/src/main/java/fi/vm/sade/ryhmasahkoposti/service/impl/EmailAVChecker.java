@@ -12,7 +12,6 @@ import javax.activation.DataHandler;
 import javax.mail.MessagingException;
 import javax.mail.internet.MimeMessage;
 
-import org.aspectj.weaver.tools.ISupportsMessageContext;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 

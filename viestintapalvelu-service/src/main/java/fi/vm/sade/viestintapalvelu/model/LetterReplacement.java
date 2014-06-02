@@ -13,8 +13,6 @@ import javax.persistence.TemporalType;
 
 import org.codehaus.jackson.annotate.JsonBackReference;
 
-import com.wordnik.swagger.annotations.ApiModel;
-
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**

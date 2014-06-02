@@ -76,10 +76,12 @@ angular.module('app').controller(
 	        "hyvaksytyt": data.any('hyvaksytyt'),
 	        "kaikkiHakeneet": data.any('kaikkiHakeneet'),
 	        "alinHyvaksyttyPistemaara": data.any('alinHyvaksyttyPistemaara'),
-	        "omatPisteet": data.any('pisteetvajaa'),
-	        "paasyJaSoveltuvuuskoe": data.any('koe'),
-	        "valinnanTulos": data.any('valinnanTulos'),
-	        "selite": data.any('valinnanTulos')
+	        "omatPisteet": data.any('pisteetvajaa'),  // Ei nivelkirjeessä
+	        "paasyJaSoveltuvuuskoe": data.any('koe'), // Ei nivelkirjeessä
+	        "valinnanTulos": data.any('valinnanTulos'),	        
+	        "varasija": data.any('varasija'),	        
+	        "hylkaysperuste": data.any('valinnanTulos') // Ei nivelkirjeessä
+	        
 	    };
 	});
 	}

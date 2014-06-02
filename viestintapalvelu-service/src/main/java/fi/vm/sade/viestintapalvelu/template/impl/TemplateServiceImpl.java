@@ -26,6 +26,7 @@ import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Draft;
 import fi.vm.sade.viestintapalvelu.model.DraftReplacement;
+import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
 import fi.vm.sade.viestintapalvelu.model.Replacement;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
@@ -388,20 +389,20 @@ public class TemplateServiceImpl implements TemplateService {
      * Method findDraftByNameOrgTag
      * 
      * @param templateName
-     * @param templateLanguage
-     * @param organizationOid
+     * @param languageCode
+     * @param oid
      * @param applicationPeriod
      * @param fetchTarget
      * @param tag
      * @return	Draft
      */
     @Override
-    public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName,String templateLanguage, String organizationOid, 
+    public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName,String languageCode, String oid, 
     																		String applicationPeriod, String fetchTarget, String tag) {
 
     	fi.vm.sade.viestintapalvelu.template.Draft result = new fi.vm.sade.viestintapalvelu.template.Draft();
 
-        Draft draft = draftDAO.findDraftByNameOrgTag(templateName, templateLanguage, organizationOid, applicationPeriod, fetchTarget, tag);
+        Draft draft = draftDAO.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
         if (draft != null) {
             // kirjeet.luonnos
             result.setDraftId(draft.getId());
@@ -430,4 +431,34 @@ public class TemplateServiceImpl implements TemplateService {
         return replacements;
     }
   
+    /* ------------------------ */
+    /* - findDraftReplacement - */
+    /* ------------------------ */
+    @Override
+    public List<fi.vm.sade.viestintapalvelu.template.Replacement> findDraftReplacement(String templateName, String languageCode,
+    		String oid, String applicationPeriod, String fetchTarget, String tag) {
+    	
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
+    	
+        Draft draft = draftDAO.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
+        
+        if (draft != null) {
+
+	        // kirjeet.luonnoskorvauskentat
+	        for (DraftReplacement draftRepl : draft.getReplacements()) {
+	            fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
+	            repl.setId(draftRepl.getId());
+	            repl.setName(draftRepl.getName());
+	            repl.setDefaultValue(draftRepl.getDefaultValue());
+	            repl.setMandatory(draftRepl.isMandatory());
+	            repl.setTimestamp(draftRepl.getTimestamp());
+	
+	            replacements.add(repl);
+	        }
+        }
+    	
+    	return replacements;
+    }
+
+    
 }
