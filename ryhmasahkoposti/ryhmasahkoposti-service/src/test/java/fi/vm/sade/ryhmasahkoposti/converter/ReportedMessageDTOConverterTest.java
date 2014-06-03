@@ -60,8 +60,7 @@ public class ReportedMessageDTOConverterTest {
 	@Test
 	public void testConvertListOfReportedMessageAndNumberOfFailed() {
 		PowerMockito.mockStatic(MessageUtil.class);
-		PowerMockito.when(MessageUtil.getMessage(
-			"ryhmasahkoposti.lahetys_epaonnistui", new Object[]{new Long(2)})).thenReturn("2 lahetystä epäonnistui");
+		PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_kesken")).thenReturn("Lähetys kesken");
 
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
