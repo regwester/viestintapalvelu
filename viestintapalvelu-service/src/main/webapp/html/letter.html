@@ -43,14 +43,34 @@
         </tr>
         <tr ng-repeat="kirje in letters">
             <td class="osoite">
-                <div>{{kirje.addressLabel.firstName}} {{kirje.addressLabel.lastName}}</div>
-                <div>{{kirje.addressLabel.addressline}}</div>
-                <div>{{kirje.addressLabel.addressline2}}</div>
-                <div>{{kirje.addressLabel.addressline3}}</div>
-                <div>{{kirje.addressLabel.postalCode}} {{kirje.addressLabel.city}}</div>
-                <div>{{kirje.addressLabel.region}}</div>
-                <div>{{kirje.addressLabel.country}} {{kirje.addressLabel.countryCode}}</div>
-                <div>(language: {{kirje.languageCode}})</div>
+            	<div class="controls controls-row">
+	            	<input class="input-small input-pile span1" type="text" ng-model="kirje.addressLabel.firstName"
+	                                   placeholder="{{kirje.addressLabel.firstName || 'First name'}}">
+	                <input class="input-small input-pile span2" type="text" ng-model="kirje.addressLabel.lastName"
+	                                   placeholder="{{kirje.addressLabel.lastName || 'Last name'}}">
+  				</div>
+                <input class="input-large input-pile" type="text" ng-model="kirje.addressLabel.addressline"
+                                   placeholder="{{kirje.addressLabel.addressline || 'Address1'}}">
+                <input class="input-large input-pile" type="text" ng-model="kirje.addressLabel.addressline2"
+                                   placeholder="{{kirje.addressLabel.addressline2 || 'Address2'}}">
+                <input class="input-large input-pile" type="text" ng-model="kirje.addressLabel.addressline3"
+                                   placeholder="{{kirje.addressLabel.addressline3 || 'Address3'}}">
+                <div class="controls controls-row">
+	                <input class="input-small input-pile span1" type="text" ng-model="kirje.addressLabel.postalCode"
+	                                   placeholder="{{kirje.addressLabel.postalCode || 'Postal code'}}">
+	                <input class="input-small input-pile span2" type="text" ng-model="kirje.addressLabel.city"
+	                                   placeholder="{{kirje.addressLabel.city || 'City'}}">
+                </div>
+               	<input class="input-small input-pile" type="text" ng-model="kirje.addressLabel.region"
+                                   placeholder="{{kirje.addressLabel.region || 'Region'}}">
+                <div class="controls controls-row">
+	                <input class="input-small input-pile span2" type="text" ng-model="kirje.addressLabel.country"
+	                                   placeholder="{{kirje.addressLabel.country || 'Country name'}}">
+	                <input class="input-small input-pile span1" type="text" ng-model="kirje.addressLabel.countryCode"
+	                                   placeholder="{{kirje.addressLabel.countryCode || 'Country code' }}">
+                </div>
+                <input class="input-normal input-pile" type="text" ng-model="kirje.languageCode"
+                                   placeholder="{{kirje.languageCode || 'Language code' }}">
             </td>
             <td class="hyvaksytty">
                 <div>{{kirje.koulu}}</div>
