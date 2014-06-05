@@ -16,6 +16,7 @@ import javax.inject.Singleton;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.omg.CORBA.Current;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -136,6 +137,8 @@ public class LetterBuilder {
         // For updating letters content with the generated PdfDocument
         List<Letter> updateLetters = new LinkedList<Letter>();
 
+        
+        // loop trough
         for (Letter letter : batch.getLetters()) {
             // letter.getTemplateReplacements(); ????????????
             // By default use LetterBatch template
@@ -160,12 +163,9 @@ public class LetterBuilder {
                 }
             }
 
-            // Write one pdf docu to letter for db write,
-            List<PdfDocument> oneLetterDocu = new ArrayList<PdfDocument>();
-
             if (letterTemplate != null) {
                 List<TemplateContent> contents = letterTemplate.getContents();
-
+                PdfDocument currentDocument = new PdfDocument(letter.getAddressLabel());
                 Collections.sort(contents);
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(letterTemplate, tc.getContent()
@@ -181,16 +181,11 @@ public class LetterBuilder {
                                                                // results,
                                                                // addressLabel,
                                                                // ...
-
-                    PdfDocument dfDocument = new PdfDocument(
-                            letter.getAddressLabel(), page, null);
-                    source.add(dfDocument);
-
-                    oneLetterDocu.add(dfDocument);
+                    currentDocument.addContent(page);
                 }
+                source.add(currentDocument);
+                letter.setLetterContent(new LetterContent(documentBuilder.merge(currentDocument).toByteArray(), "application/pdf", new Date()));
             }
-            letter.setLetterContent(new LetterContent(documentBuilder.merge(
-                    oneLetterDocu).toByteArray(), "application/pdf", new Date()));
             updateLetters.add(letter);
         }
 
