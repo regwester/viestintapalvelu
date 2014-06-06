@@ -37,7 +37,7 @@ public class IPostiUpload {
         channel.connect();
         ChannelSftp channelSftp = (ChannelSftp) channel;
         channelSftp.cd(directory);
-        
+
         channelSftp.put(new ByteArrayInputStream(zipBytes), filename+".temppi");
         channelSftp.rename(filename+".temppi", filename+".ok");
         channelSftp.exit();
