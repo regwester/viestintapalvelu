@@ -38,8 +38,8 @@ public class IPostiUpload {
         ChannelSftp channelSftp = (ChannelSftp) channel;
         channelSftp.cd(directory);
 
-        channelSftp.put(new ByteArrayInputStream(zipBytes), directory+filename+".temppi");
-        channelSftp.rename(directory+filename+".temppi", directory+filename+".ok");
+        channelSftp.put(new ByteArrayInputStream(zipBytes), filename+".temppi");
+        channelSftp.rename(filename+".temppi", filename+".ok");
         channelSftp.exit();
         session.disconnect();
         } catch (Exception ex) {
