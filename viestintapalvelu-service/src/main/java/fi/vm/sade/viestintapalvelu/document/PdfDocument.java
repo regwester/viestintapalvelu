@@ -1,16 +1,27 @@
 package fi.vm.sade.viestintapalvelu.document;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.util.List;
+import java.util.ArrayList;
+
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 
 public class PdfDocument {
     private AddressLabel addressLabel;
     private byte[] frontPage;
     private byte[] attachment;
-    private List<byte[]> contents;
+    private ArrayList<byte[]> contents = new ArrayList<byte[]>();
+    
+    public PdfDocument(AddressLabel addressLabel, byte[] ... contents) {
+        this(addressLabel);
+        for (byte[] c : contents) {
+            this.contents.add(c);
+        }
+    }
+    
+    public PdfDocument(AddressLabel addressLabel) {
+      this(addressLabel, null, null);
+    }
     
     public PdfDocument(AddressLabel addressLabel, byte[] frontPage,
                        byte[] attachment) {
@@ -23,8 +34,23 @@ public class PdfDocument {
         return addressLabel;
     }
 
+    public int getContentSize() {
+        return (contents != null) ? contents.size() : -1 ;
+    }
+    
+    public InputStream getContentStream(int index) {
+        return new ByteArrayInputStream(contents.get(index));
+    }
+    
+    public void addContent(byte[] content) {
+        contents.add(content);
+    }
+    
     public InputStream getFrontPage() {
-        return new ByteArrayInputStream(frontPage);
+        if (frontPage != null) {
+            return new ByteArrayInputStream(frontPage);
+        }
+        return null;
     }
 
     public InputStream getAttachment() {

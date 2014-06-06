@@ -3,7 +3,6 @@ package fi.vm.sade.viestintapalvelu.iposti;
 import java.io.ByteArrayInputStream;
 
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.stereotype.Service;
 
 import com.jcraft.jsch.Channel;
@@ -39,8 +38,8 @@ public class IPostiUpload {
         ChannelSftp channelSftp = (ChannelSftp) channel;
         channelSftp.cd(directory);
 
-        channelSftp.put(new ByteArrayInputStream(zipBytes), directory+"/"+filename);
-       
+        channelSftp.put(new ByteArrayInputStream(zipBytes), filename+".temppi");
+        channelSftp.rename(filename+".temppi", filename+".ok");
         channelSftp.exit();
         session.disconnect();
         } catch (Exception ex) {

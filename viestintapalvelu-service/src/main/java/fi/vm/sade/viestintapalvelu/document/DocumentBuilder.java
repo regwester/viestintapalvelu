@@ -56,6 +56,14 @@ public class DocumentBuilder {
         return applyTextTemplate(template, data);
     }
 
+    public MergedPdfDocument merge(PdfDocument pdfDocument) throws DocumentException, IOException {
+        MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
+        mergedPDFDocument.write(pdfDocument);
+        mergedPDFDocument.flush();
+        return mergedPDFDocument;
+    }
+
+    
     public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {
         MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
         for (PdfDocument pdfDocument : input) {

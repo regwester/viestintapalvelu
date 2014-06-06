@@ -33,9 +33,17 @@ public class MergedPdfDocument {
 
     public void write(PdfDocument pdfDocument) throws IOException {
         int startPage = currentPageNumber + 1;
-        int pages = write(pdfDocument.getFrontPage());
+        int pages = 0;
+        if (pdfDocument.getFrontPage() != null) {
+            pages += write(pdfDocument.getFrontPage());
+        }
         if (pdfDocument.getAttachment() != null) {
-        	pages += write(pdfDocument.getAttachment());
+            pages += write(pdfDocument.getAttachment());
+        }
+        if (pdfDocument.getContentSize() > 0) {
+            for (int i = 0 ; i < pdfDocument.getContentSize() ; i++) {
+                pages += write(pdfDocument.getContentStream(i));
+            }
         }
         documentMetadata.add(new DocumentMetadata(
                 pdfDocument.getAddressLabel(), startPage, pages));
