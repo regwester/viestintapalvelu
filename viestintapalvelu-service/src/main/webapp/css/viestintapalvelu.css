@@ -57,3 +57,7 @@ td.inline-operation {
 .osoite div {
     white-space: nowrap;
 }
+
+.tab-nav>ul {
+	display: none;
+}
