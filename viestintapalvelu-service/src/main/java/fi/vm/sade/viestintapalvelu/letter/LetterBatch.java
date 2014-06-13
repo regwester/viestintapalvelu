@@ -166,7 +166,7 @@ public class LetterBatch {
     private void split(List<Letter> remaining, List<LetterBatch> batches,
             int limit) {
         if (limit >= remaining.size()) {
-            batches.add(createSubBatch(remaining));
+            batches.add(createSubBatch(new ArrayList<Letter>(remaining)));
         } else {
             batches.add(createSubBatch(new ArrayList<Letter>(remaining.subList(0, limit))));
             split(remaining.subList(limit, remaining.size()), batches, limit);
