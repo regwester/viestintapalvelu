@@ -119,8 +119,6 @@ public class EmailResourceImpl implements EmailResource {
     	String languageCode = emailData.getRecipient().get(0).getLanguageCode();
     	// Footer is moved to the end of the body here
     	emailData.setEmailFooter(languageCode);
-    	//This doesn't seem to matter as the text is parsed to plain/text anyway
-    	//emailData.getEmail().setHtml(true);
     
     	try {
     	    String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));

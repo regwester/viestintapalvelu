@@ -27,7 +27,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 public class EmailSender {
     private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class
             .getName());
-    
+
     @Value("${ryhmasahkoposti.smtp.host}")
     String smtpHost;
     @Value("${ryhmasahkoposti.smtp.port}")
@@ -74,7 +74,7 @@ public class EmailSender {
             InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyTo(), false);
             msg.setReplyTo(replyToAddrs);
         }
-    
+
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();
         bodyPart.setContent(getContent(emailMessage), getContentType(emailMessage) + ";charset=" + emailMessage.getCharset());
@@ -84,7 +84,7 @@ public class EmailSender {
         if (emailMessage.getAttachments() != null) {
             insertAttachments(emailMessage, msgContent);
         }
-    
+
         if (emailMessage.isValid()) {
             msg.setContent(msgContent);
             msg.setHeader("Content-Transfer-Encoding", getContentTransferEncoding());
@@ -95,13 +95,6 @@ public class EmailSender {
     }
 
     private String getContent(EmailMessage emailMessage) {
-        if(emailMessage.isHtml()) {
-            String str = StringEscapeUtils.escapeHtml(emailMessage.getBody());
-            //for some reason escapeHtml doesn't escape line breaks or carriage return
-            str = str.replaceAll("\r", "");
-            str = str.replaceAll("\\n", "<br>"); 
-            return str;
-        }
         return emailMessage.getBody();
     }
     
@@ -120,13 +113,13 @@ public class EmailSender {
         for (EmailAttachment attachment : emailMessage.getAttachments()) {
             if ((attachment.getData() != null) && (attachment.getName() != null)) {
                 ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
-   
+
                 MimeBodyPart attachmentPart = new MimeBodyPart();
                 attachmentPart.setDataHandler(new DataHandler(ds));
                 attachmentPart.setFileName(attachment.getName());
                 attachmentPart.setHeader("Content-Type", attachment.getContentType());
                 multipart.addBodyPart(attachmentPart);
-                
+
             } else {
                 log.log(Level.SEVERE, "Failed to insert attachment - it is not valid " + attachment.getName());
                 emailMessage.setInvalid();
