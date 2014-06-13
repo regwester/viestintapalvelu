@@ -12,7 +12,7 @@
 
 	<groupId>fi.vm.sade.ryhmasahkoposti</groupId>
 	<artifactId>ryhmasahkoposti</artifactId>
-	<version>0.0.2-SNAPSHOT</version>
+	<version>9.6</version>
 	<packaging>pom</packaging>
 	<name>Ryhmasahkoposti :: Parent</name>
 
