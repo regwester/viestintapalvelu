@@ -118,7 +118,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         // Check email template is used
         String templateContent = null;
         TemplateDTO templateDTO = null;
-
+        
         if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
 
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
