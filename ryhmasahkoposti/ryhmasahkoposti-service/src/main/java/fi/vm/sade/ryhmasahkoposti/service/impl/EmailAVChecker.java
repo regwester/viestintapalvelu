@@ -84,7 +84,7 @@ public class EmailAVChecker {
 	private boolean isInfected(EmailSender sender, EmailMessageDTO message)
 			throws IOException, MessagingException {
 
-		MimeMessage msg = sender.createMessage(message, "noone@localhost.local");
+		MimeMessage msg = sender.createMail(message, "noone@localhost.local");
 		
 		// check attachments separately..
 		for (EmailAttachment attachment : message.getAttachments()) {
