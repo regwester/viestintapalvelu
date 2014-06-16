@@ -15,7 +15,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.wordnik.swagger.annotations.Api;
@@ -53,7 +52,7 @@ public interface EmailResource {
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("text/plain")
     @Path("addAttachment")
-    @Secured({SecurityConstants.SEND})
+    @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lisää käyttäjän valitsemat liitetiedostot tietokantaan", 
         notes = "Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä",  
         response = String.class)
@@ -69,7 +68,7 @@ public interface EmailResource {
     @GET
     @Produces("application/json")
     @Path("initGroupEmail")
-    @Secured({SecurityConstants.SEND})
+    @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle")
     public Response initGroupEmail();
     
@@ -83,7 +82,7 @@ public interface EmailResource {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("sendEmail")
-    @Secured({SecurityConstants.SEND})
+    @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", 
         notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
     @ApiResponses({@ApiResponse(code = 500, 
@@ -101,7 +100,7 @@ public interface EmailResource {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("sendEmailStatus")
-    @Secured({SecurityConstants.SEND})
+    @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response = SendingStatusDTO.class)
 	public Response sendEmailStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId);
 
@@ -115,7 +114,7 @@ public interface EmailResource {
     @Consumes("application/json")
     @Produces("application/json")   
     @Path("sendGroupEmail")
-    @Secured({SecurityConstants.SEND})
+    @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille alaviitteen kera", 
         notes = "Lisää käyttäjän kielen mukaisen alatunnisteen lähetettävään viestiin", response = EmailSendId.class)
     @ApiResponses({@ApiResponse(code = 500, 
@@ -133,7 +132,7 @@ public interface EmailResource {
     @Consumes("application/json")
     @Produces("application/json")
     @Path("sendResult")
-    @Secured({SecurityConstants.SEND})
+    @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa lähetetyn ryhmäsähköpostin raportin", response = ReportedMessageDTO.class)
     @ApiResponses({@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
 	public Response sendResult(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) String sendId);
