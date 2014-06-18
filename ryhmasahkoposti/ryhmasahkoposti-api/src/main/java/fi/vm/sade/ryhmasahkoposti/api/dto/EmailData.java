@@ -13,26 +13,26 @@ public class EmailData {
     private EmailMessage email = new EmailMessage();
 
     public EmailData() {
-	super();
+        super();
     }
 
     public EmailData(List<EmailRecipient> recipient, EmailMessage email) {
-	super();
-	this.recipient = recipient;
-	this.email = email;
+    	super();
+    	this.recipient = recipient;
+    	this.email = email;
     }
 
     public List<EmailRecipient> getRecipient() {
-	return recipient;
+        return recipient;
     }
     public void setRecipient(List<EmailRecipient> recipient) {
-	this.recipient = recipient;
+        this.recipient = recipient;
     }
     public EmailMessage getEmail() {
-	return email;
+        return email;
     }
     public void setEmail(EmailMessage email) {
-	this.email = email;
+        this.email = email;
     }
 
     /**
@@ -42,16 +42,16 @@ public class EmailData {
      * @param languageCode	a String, e.g. "FI"
      */
     public void setEmailFooter(String languageCode) {
-	this.email.setFooter(languageCode);
+        this.email.setFooter(languageCode);
     }
 
     public void setSenderOid(String senderOid) {
-	this.email.setSenderOid(senderOid);
+        this.email.setSenderOid(senderOid);
     }
 
 
     @Override
     public String toString() {
-	return "EmailData [recipient=" + recipient + ", email=" + email + "]";
+        return "EmailData [recipient=" + recipient + ", email=" + email + "]";
     }		
 }
