@@ -8,7 +8,6 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 
 import com.wordnik.swagger.annotations.Api;
@@ -42,7 +41,7 @@ public interface MessageReportingResource {
      * @param order Lajittelujärjestys
      * @return Tiedot raportoitavista ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
      */
-    @Secured(SecurityConstants.READ)
+    @PreAuthorize(SecurityConstants.READ)
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGES_LIST)
     @GET
@@ -73,7 +72,7 @@ public interface MessageReportingResource {
      * @param order Lajittelujärjestys
 	 * @return Tiedot raportoitavista ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
 	 */
-	@Secured(SecurityConstants.READ)
+	@PreAuthorize(SecurityConstants.READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGES_SEARCH)
 	@GET
@@ -102,7 +101,7 @@ public interface MessageReportingResource {
 	 * @param Ryhmäsähköpostiviestin tunnus
 	 * @return Raportoitavan ryhmäsähköpostin tiedot {@link ReportedMessageDTO}}
 	 */
-	@Secured(SecurityConstants.READ)
+	@PreAuthorize(SecurityConstants.READ)
 	@Produces(MediaType.APPLICATION_JSON)
 	@Path(RestConstants.PATH_REPORT_MESSAGE_VIEW)
 	@GET
@@ -122,7 +121,7 @@ public interface MessageReportingResource {
 	 * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
 	 * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot
 	 */
-	@Secured(SecurityConstants.READ)
+	@PreAuthorize(SecurityConstants.READ)
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGE_VIEW_WITH_PAGING)
     @GET
@@ -151,7 +150,7 @@ public interface MessageReportingResource {
      * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
      * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot, joille lähetys epäonnistui
      */
-    @Secured(SecurityConstants.READ)
+    @PreAuthorize(SecurityConstants.READ)
     @Produces(MediaType.APPLICATION_JSON)
     @Path(RestConstants.PATH_REPORT_MESSAGE_FAILED_VIEW_WITH_PAGING)
     @GET

@@ -1,0 +1,54 @@
+<div ng-controller="IPostiCtrl" ng-init="retrievePosts()">
+	<h3>IPosti testikäyttöliittymä</h3>
+	<!-- Listaa lähettämättömät IPostit -->
+	<p>Lähettämättömät IPostit <span><button ng-click="retrievePosts()">Päivitä</button></span></p>
+	<div ng-show="unsentItemsExist()">
+		<ul class="nav nav-pills nav-stacked">
+			<li ng-repeat="item in unsent" ng-click="selectPost($index)">
+				<a href="#">
+					<span class="iposti_id">Tunniste: {{item.id}}</span><br>
+					<span class="iposti_date">Päivämäärä: {{item.date}}</span>
+				</a>
+			</li>
+		</ul>
+	</div>
+	<div ng-hide="unsentItemsExist()">
+		<p>Ei lähettämättömiä IPosteja</p>
+	</div>
+	<!-- Tarkastele lähettämätöntä IPostia (lataa zip) -->
+	<!-- Tarkastele kirjelähetyksen tietoja -->
+	<div ng-if="selectedPost">
+		<p>Valittu IPosti:</p>
+		<span>Tunniste: {{selectedPost.id}}</span><br>
+		<span>Päivämäärä: {{selectedPost.date}}</span><br>
+		<button class="btn" ng-click="downloadPost()">Lataa</button>
+		<button class="btn" ng-click="sendPost()">Lähetä</button>
+		<button class="btn" ng-click="retrieveDetails()">Hae kirjelähetyksen tiedot</button>
+	</div>
+	<div ng-if="!selectedPost">
+		<p>Valitse tarkasteltava IPosti</p>
+	</div>
+	<br>
+	<br>
+	<div ng-if="showDetails">
+		<table>
+			<thead></thead>
+			<tbody>
+				<tr><td>Pohjan id</td><td>{{details.templateId}}</td></tr>
+				<tr><td>Pohjan tyyppi</td><td>{{details.templateName}}</td></tr>
+				<tr><td>Pohjan korvaussisältö</td><td>{{details.templateReplacements.sisalto}}</td></tr>
+				<tr><td>Kielikoodi</td><td>{{details.languageCode}}</td></tr>
+				<tr><td>TallennusOID</td><td>{{details.storingOid}}</td></tr>
+				<tr><td>OrganisaationOID</td><td>{{details.organizationOid}}</td></tr>
+				<tr><td>Hakuaika</td><td>{{details.applicationPeriod}}</td></tr>
+				<!--
+				<tr><td>fetchTarget</td><td>{{details.fetchTarget}}</td></tr>
+				<tr><td>tag</td><td>{{details.tag}}</td></tr>
+				<tr><td>letters</td><td>{{details.letters}}</td></tr>
+				<tr><td>template</td><td>{{details.template}}</td></tr>
+				<tr><td>IPostiData</td><td>{{details.iPostiData}}</td></tr>
+				 -->
+			</tbody>
+		</table>
+	</div>
+</div>

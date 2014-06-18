@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngResource', 'ui.tinymce']);
+var app = angular.module('app', ['ngResource', 'ui.tinymce', 'ui.bootstrap']);
 
 window.CONFIG = {};
 window.CONFIG.env = {};
@@ -18,17 +18,3 @@ app.config(function($sceProvider) {
 	
 	$sceProvider.enabled(true); // 
 });
-
-
-app.controller('TabsController', ['$scope', '$http', '$compile', function ($scope, $http, $compile) {
-    $scope.showContent = function (tabName) {
-    	var uri = 'html/' + tabName + '.html'; 
-        var tabContent = $("#" + tabName);
-        if (tabContent.is(':empty')) {
-            $http.get(uri).success(function (html) {
-                var tabPageScope = angular.element(tabContent).scope();
-                tabContent.html($compile(html)(tabPageScope));
-            })
-        }
-    }
-}])

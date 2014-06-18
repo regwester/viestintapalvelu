@@ -26,7 +26,8 @@ public class EmailMessage {
     private String charset = EmailConstants.UTF8;
     List<EmailAttachment> attachments = new LinkedList<EmailAttachment>(); 
     List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
-
+    private boolean isValid = true;
+    
     /**
      * Template name
      */
@@ -40,201 +41,213 @@ public class EmailMessage {
     public EmailMessage() {}
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String body) {
-	this.callingProcess = callingProcess; 		
-	this.from = from;
-	this.replyTo = replyTo;
-	this.subject = subject;
-	this.body = body;
+    	this.callingProcess = callingProcess; 		
+    	this.from = from;
+    	this.replyTo = replyTo;
+    	this.subject = subject;
+    	this.body = body;
     }
 
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, String languageCode) {
-	this.callingProcess = callingProcess; 		
-	this.from = from;
-	this.replyTo = replyTo;
-	this.subject = subject;
-	this.templateName = templateName;
-	this.languageCode = languageCode;
+    	this.callingProcess = callingProcess; 		
+    	this.from = from;
+    	this.replyTo = replyTo;
+    	this.subject = subject;
+    	this.templateName = templateName;
+    	this.languageCode = languageCode;
     }
 
 
     public void setBody(String body) {
-	if (body != null) {
-	    String lc = body.toLowerCase();
-	    isHtml = lc.contains("<br/>") || lc.contains("<p>")  || lc.contains("</tr>") || lc.contains("</div>");
-	}
-	this.body = body;
+    	if (body != null) {
+    	    String lc = body.toLowerCase();
+    	    isHtml = lc.contains("<br/>") || lc.contains("<p>")  || lc.contains("</tr>") || lc.contains("</div>");
+    	}
+    	this.body = body;
     }
 
     public String getCallingProcess() {
-	return callingProcess;
+        return callingProcess;
     }
 
     public String getFrom() {
-	return from;
+        return from;
     }
 
     public void setFrom(String from) {
-	this.from = from;
+        this.from = from;
     }
 
     public String getReplyTo() {
-	return replyTo;
+        return replyTo;
     }
 
     public void setReplyTo(String replyTo) {
-	this.replyTo = replyTo;
+        this.replyTo = replyTo;
     }
 
     public String getBody() {
-	return body;
+        return body;
     }
 
     public String getFooter() {
-	return footer;
+        return footer;
     }
 
     public void setFooter(String languageCode) {
-	this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
-	this.body = this.body + "\n" + this.footer; // Catenate the footer here to body.		
+    	this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
+    	addFooterToBody();
+    }
+
+    private void addFooterToBody() {
+        this.body = this.body + "\n" + this.footer;	
     }
 
     public void setSubject(String subject) {
-	this.subject = subject;
+        this.subject = subject;
     }
 
     public String getSubject() {
-	return subject;
+        return subject;
     }
 
     public String getSenderOid() {
-	return senderOid;
+        return senderOid;
     }
 
     public void setSenderOid(String senderOid) {
-	this.senderOid = senderOid;
+        this.senderOid = senderOid;
     }
 
     public String getOrganizationOid() {
-	return organizationOid;
+        return organizationOid;
     }
 
     public void setOrganizationOid(String organizationOid) {
-	this.organizationOid = organizationOid;
+        this.organizationOid = organizationOid;
     }
 
     public boolean isHtml() {
-	return isHtml;
+        return isHtml;
     }
 
     public void setHtml(boolean isHtml) {
-	this.isHtml = isHtml;
+        this.isHtml = isHtml;
     }
 
     public String getCharset() {
-	return charset;
+        return charset;
     }
 
     public void setCharset(String charset) {
-	this.charset = charset;
+        this.charset = charset;
     }
 
     public void addEmailAttachement(EmailAttachment attachment) {
-	if (this.attachments == null) {
-	    this.attachments = new ArrayList<EmailAttachment>();
-	}
-	this.attachments.add(attachment);
+    	if (this.attachments == null) {
+    	    this.attachments = new ArrayList<EmailAttachment>();
+    	}
+    	this.attachments.add(attachment);
     }
 
     public void setAttachments(List<EmailAttachment> attachments) {
-	this.attachments = attachments;
+        this.attachments = attachments;
     }
 
     public List<? extends EmailAttachment> getAttachments() {
-	return attachments;
+        return attachments;
     }
 
     public void addAttachInfo(AttachmentResponse attachInfo) {
-	if (this.attachInfo == null) {
-	    this.attachInfo = new LinkedList<AttachmentResponse>();
-	}
-	this.attachInfo.add(attachInfo);
+    	if (this.attachInfo == null) {
+    	    this.attachInfo = new LinkedList<AttachmentResponse>();
+    	}
+    	this.attachInfo.add(attachInfo);
     }
 
     public List<AttachmentResponse> getAttachInfo() {
-	return attachInfo;
+        return attachInfo;
     }
 
     public void setAttachInfo(List<AttachmentResponse> attachInfo) {
-	this.attachInfo = attachInfo;
+        this.attachInfo = attachInfo;
     }
     public void setCallingProcess(String callingProcess) {
-	this.callingProcess = callingProcess;
+        this.callingProcess = callingProcess;
     }
 
     /**
      * @return the templateName
      */
     public String getTemplateName() {
-	return templateName;
+        return templateName;
     }
 
     /**
      * @param templateName the templateName to set
      */
     public void setTemplateName(String templateName) {
-	this.templateName = templateName;
+        this.templateName = templateName;
     }
 
     /**
      * @return the languageCode
      */
     public String getLanguageCode() {
-	return languageCode;
+        return languageCode;
     }
 
     /**
      * @param languageCode the languageCode to set
      */
     public void setLanguageCode(String languageCode) {
-	this.languageCode = languageCode;
+        this.languageCode = languageCode;
     }
 
     private String generateFooter(String emailFooter, String lang) {
-	String footer = "";
-
-	if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
-	    lang = "FI";
-
-	} else { if ("SE".equalsIgnoreCase(lang)) {
-	    lang = "SE";
-
-	} else {
-	    lang = "EN";
-	}}        
-
-	String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
-
-	try {
-	    footer =  readFooter( footerFileName );
-
-	} catch (FileNotFoundException e) {
-	    log.log(Level.SEVERE, "Failed to find footer file:  " + footerFileName + ", " + e.getMessage());        	
-	} catch (IOException e) {
-	    log.log(Level.SEVERE, "Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());        	
-	}
-
-	return footer;
+    	String footer = "";
+    
+    	if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
+    	    lang = "FI";
+    
+    	} else { if ("SE".equalsIgnoreCase(lang)) {
+    	    lang = "SE";
+    
+    	} else {
+    	    lang = "EN";
+    	}}        
+    
+    	String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
+    
+    	try {
+    	    footer =  readFooter( footerFileName );
+    
+    	} catch (FileNotFoundException e) {
+    	    log.log(Level.SEVERE, "Failed to find footer file:  " + footerFileName + ", " + e.getMessage());        	
+    	} catch (IOException e) {
+    	    log.log(Level.SEVERE, "Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());        	
+    	}
+    
+    	return footer;
     }
 
     private String readFooter(String footer) throws FileNotFoundException, IOException {
-	InputStream in = getClass().getResourceAsStream(footer);
-	if (in == null) {
-	    throw new FileNotFoundException("Template " + footer + " not found");
-	}
-	return new String(IOUtils.toByteArray(in), "UTF-8");
+    	InputStream in = getClass().getResourceAsStream(footer);
+    	if (in == null) {
+    	    throw new FileNotFoundException("Template " + footer + " not found");
+    	}
+    	return new String(IOUtils.toByteArray(in), "UTF-8");
     }
-
+    
+    public boolean isValid() {
+        return this.isValid;
+    }
+    
+    public void setInvalid(){
+        this.isValid = false;
+    }
+    
     @Override
     public String toString() {
 	return "EmailMessage [callingProcess=" + callingProcess + ", from="

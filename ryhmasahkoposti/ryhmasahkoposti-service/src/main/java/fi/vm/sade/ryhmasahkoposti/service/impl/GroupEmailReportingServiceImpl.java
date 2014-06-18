@@ -57,7 +57,7 @@ import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 @Service
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class GroupEmailReportingServiceImpl implements GroupEmailReportingService {
     private static Logger LOGGER = LoggerFactory.getLogger(GroupEmailReportingServiceImpl.class);
     private ReportedMessageService reportedMessageService;
@@ -76,356 +76,358 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private ReportedMessageReplacementConverter reportedMessageReplacementConverter;
     private ReportedMessageReplacementService reportedMessageReplacementService;
     private ReportedRecipientReplacementConverter reportedRecipientReplacementConverter;
-    private ReportedRecipientReplacementService reportedRecipientReplacementService; 
+    private ReportedRecipientReplacementService reportedRecipientReplacementService;
 
     @Autowired
     public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
-	    ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService, 
-	    ReportedMessageAttachmentService reportedMessageAttachmentService, 
-	    ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
-	    ReportedAttachmentConverter reportedAttachmentConverter, EmailMessageDTOConverter emailMessageDTOConverter, 
-	    EmailRecipientDTOConverter emailRecipientDTOConverter, ReportedMessageDTOConverter reportedMessageDTOConverter, 
-	    CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent, TemplateComponent templateComponent, 
-	    ReportedMessageReplacementConverter reportedMessageReplacementConverter, ReportedMessageReplacementService reportedMessageReplacementService, 
-	    ReportedRecipientReplacementConverter reportedRecipientReplacementConverter, ReportedRecipientReplacementService reportedRecipientReplacementService) {
-	this.reportedMessageService = reportedMessageService;
-	this.reportedRecipientService = reportedRecipientService;
-	this.reportedAttachmentService = reportedAttachmentService;
-	this.reportedMessageAttachmentService = reportedMessageAttachmentService;
-	this.reportedMessageConverter = reportedMessageConverter;
-	this.reportedRecipientConverter = reportedRecipientConverter;
-	this.reportedAttachmentConverter = reportedAttachmentConverter;
-	this.emailMessageDTOConverter = emailMessageDTOConverter;
-	this.emailRecipientDTOConverter = emailRecipientDTOConverter;
-	this.reportedMessageDTOConverter = reportedMessageDTOConverter;
-	this.currentUserComponent = currentUserComponent;
-	this.organizationComponent = organizationComponent;
-	this.templateComponent = templateComponent;
-	this.reportedMessageReplacementConverter = reportedMessageReplacementConverter;
-	this.reportedMessageReplacementService = reportedMessageReplacementService;
-	this.reportedRecipientReplacementConverter = reportedRecipientReplacementConverter;
-	this.reportedRecipientReplacementService = reportedRecipientReplacementService;
+            ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
+            ReportedMessageAttachmentService reportedMessageAttachmentService,
+            ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
+            ReportedAttachmentConverter reportedAttachmentConverter, EmailMessageDTOConverter emailMessageDTOConverter,
+            EmailRecipientDTOConverter emailRecipientDTOConverter,
+            ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent,
+            OrganizationComponent organizationComponent, TemplateComponent templateComponent,
+            ReportedMessageReplacementConverter reportedMessageReplacementConverter,
+            ReportedMessageReplacementService reportedMessageReplacementService,
+            ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
+            ReportedRecipientReplacementService reportedRecipientReplacementService) {
+        this.reportedMessageService = reportedMessageService;
+        this.reportedRecipientService = reportedRecipientService;
+        this.reportedAttachmentService = reportedAttachmentService;
+        this.reportedMessageAttachmentService = reportedMessageAttachmentService;
+        this.reportedMessageConverter = reportedMessageConverter;
+        this.reportedRecipientConverter = reportedRecipientConverter;
+        this.reportedAttachmentConverter = reportedAttachmentConverter;
+        this.emailMessageDTOConverter = emailMessageDTOConverter;
+        this.emailRecipientDTOConverter = emailRecipientDTOConverter;
+        this.reportedMessageDTOConverter = reportedMessageDTOConverter;
+        this.currentUserComponent = currentUserComponent;
+        this.organizationComponent = organizationComponent;
+        this.templateComponent = templateComponent;
+        this.reportedMessageReplacementConverter = reportedMessageReplacementConverter;
+        this.reportedMessageReplacementService = reportedMessageReplacementService;
+        this.reportedRecipientReplacementConverter = reportedRecipientReplacementConverter;
+        this.reportedRecipientReplacementService = reportedRecipientReplacementService;
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Long addSendingGroupEmail(EmailData emailData) throws IOException {
-	LOGGER.info("addSendingGroupEmail called");
+        LOGGER.info("addSendingGroupEmail called");
 
-	// Check email template is used
-	String templateContent = null;
-	TemplateDTO templateDTO = null;
+        // Check email template is used
+        String templateContent = null;
+        TemplateDTO templateDTO = null;
+        
+        if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
 
-	if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
+            String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
+            if (!StringUtils.isEmpty(emailData.getEmail().getLanguageCode()))
+                languageCode = emailData.getEmail().getLanguageCode();
 
-	    String languageCode = TemplateDTO.DEFAULT_LANG_CODE; 
-	    if (!StringUtils.isEmpty(emailData.getEmail().getLanguageCode()))
-		languageCode = emailData.getEmail().getLanguageCode();
+            // Template is used
+            try {
+                templateDTO = templateComponent.getTemplateContent(emailData.getEmail().getTemplateName(),
+                        languageCode, TemplateDTO.TYPE_EMAIL);
+                LOGGER.debug("Loaded template:" + templateDTO);
+            } catch (Exception e) {
+                LOGGER.error("Failed to load template for templateName:" + emailData.getEmail().getTemplateName()
+                        + ", languageCode=" + emailData.getEmail().getLanguageCode(), e);
+            }
 
-	    // Template is used
-	    try {
-		templateDTO = templateComponent.getTemplateContent(emailData.getEmail().getTemplateName(), languageCode, TemplateDTO.TYPE_EMAIL);
-		LOGGER.debug("Loaded template:" + templateDTO);
-	    } catch (Exception e) {
-		LOGGER.error("Failed to load template for templateName:" + 
-			emailData.getEmail().getTemplateName() + ", languageCode=" + 
-			emailData.getEmail().getLanguageCode(), e);
-	    }
+            if (templateDTO != null) {
 
+                LOGGER.info("Template found, processing:" + templateDTO);
 
-	    if (templateDTO != null) {
+                // Convert template
+                TemplateBuilder templateBuilder = new TemplateBuilder();
+                templateContent = templateBuilder.buildTemplate(templateDTO);
 
-		LOGGER.info("Template found, processing:" + templateDTO);
+                LOGGER.debug("Template content:" + templateContent);
 
-		// Convert template
-		TemplateBuilder templateBuilder = new TemplateBuilder();
-		templateContent = templateBuilder.buildTemplate(templateDTO);
+            }
+        }
 
-		LOGGER.debug("Template content:" + templateContent);
+        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail(), templateContent);
+        ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
 
-	    }
-	}
+        if (templateDTO != null) {
 
+            // Convert message replacements
+            List<ReportedMessageReplacement> messageReplacements = reportedMessageReplacementConverter.convert(
+                    reportedMessage, templateDTO.getReplacements());
 
-	ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail(), templateContent);			
-	ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
+            // Save message replacements
+            for (ReportedMessageReplacement replacement : messageReplacements) {
+                reportedMessageReplacementService.saveReportedMessageReplacement(replacement);
+            }
+        }
 
-	if (templateDTO != null) {
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailData
+                .getEmail().getAttachInfo());
+        reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
 
-	    // Convert message replacements
-	    List<ReportedMessageReplacement> messageReplacements = reportedMessageReplacementConverter.convert(reportedMessage, templateDTO.getReplacements());
+        List<EmailRecipient> emailRecipients = emailData.getRecipient();
+        for (EmailRecipient emailRecipient : emailRecipients) {
 
-	    // Save message replacements
-	    for (ReportedMessageReplacement replacement : messageReplacements) {
-		reportedMessageReplacementService.saveReportedMessageReplacement(replacement);
-	    }
-	}
+            ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage,
+                    emailRecipient);
 
+            reportedRecipientService.saveReportedRecipient(reportedRecipient);
 
-	List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
-		emailData.getEmail().getAttachInfo());		
-	reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
+            // Save sender specific replacements (if any)
+            if (emailRecipient.getRecipientReplacements() != null) {
 
-	List<EmailRecipient> emailRecipients = emailData.getRecipient();
-	for (EmailRecipient emailRecipient : emailRecipients) {
+                List<ReportedRecipientReplacementDTO> emailRecipientReplacements = emailRecipient
+                        .getRecipientReplacements();
+                List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementConverter
+                        .convert(reportedRecipient, emailRecipientReplacements);
 
-	    ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(
-		    savedReportedMessage, emailRecipient);
+                reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
+            }
+        }
 
-	    reportedRecipientService.saveReportedRecipient(reportedRecipient);
-
-	    // Save sender specific replacements (if any)
-	    if (emailRecipient.getRecipientReplacements()  != null) {
-
-		List<ReportedRecipientReplacementDTO> emailRecipientReplacements = emailRecipient.getRecipientReplacements();
-		List<ReportedRecipientReplacement> reportedRecipientReplacements = 
-			reportedRecipientReplacementConverter.convert(reportedRecipient, emailRecipientReplacements);
-
-		reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
-	    }
-	}
-
-	return savedReportedMessage.getId();
+        return savedReportedMessage.getId();
     }
-    
-    
+
     @Override
     public List<ReportedRecipientReplacementDTO> getRecipientReplacements(long recipientId) throws IOException {
-	LOGGER.info("getRecipientReplacements(" + recipientId + ") called");
-	
-	ReportedRecipient recipient = reportedRecipientService.getReportedRecipient(recipientId);
-	
-	List<ReportedRecipientReplacement> recipientReplacements = 
-		reportedRecipientReplacementService.getReportedRecipientReplacements(recipient);
-	
-	if (recipientReplacements == null)
-	    return null;
-	
-	return reportedRecipientReplacementConverter.convertDTO(recipientReplacements);
+        LOGGER.info("getRecipientReplacements(" + recipientId + ") called");
+
+        ReportedRecipient recipient = reportedRecipientService.getReportedRecipient(recipientId);
+
+        List<ReportedRecipientReplacement> recipientReplacements = reportedRecipientReplacementService
+                .getReportedRecipientReplacements(recipient);
+
+        if (recipientReplacements == null)
+            return null;
+
+        return reportedRecipientReplacementConverter.convertDTO(recipientReplacements);
 
     }
-    
+
     @Override
     public EmailMessageDTO getMessage(Long messageID) {
-	LOGGER.info("getMessage(" + messageID + ") called");
+        LOGGER.info("getMessage(" + messageID + ") called");
 
-	ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-	List<ReportedAttachment> reportedAttachments = 
-		reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
-	
-	List<ReportedMessageReplacement> reportedMessageReplacements = null;
-	if (StringUtils.equals(ReportedMessage.TYPE_TEMPLATE, reportedMessage.getType())) {
-	    reportedMessageReplacements = reportedMessageReplacementService.getReportedMessageReplacements(reportedMessage);
-	}
-	
-	return emailMessageDTOConverter.convert(reportedMessage, reportedAttachments, reportedMessageReplacements);
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
+                .getReportedMessageAttachments());
+
+        List<ReportedMessageReplacement> reportedMessageReplacements = null;
+        if (StringUtils.equals(ReportedMessage.TYPE_TEMPLATE, reportedMessage.getType())) {
+            reportedMessageReplacements = reportedMessageReplacementService
+                    .getReportedMessageReplacements(reportedMessage);
+        }
+
+        return emailMessageDTOConverter.convert(reportedMessage, reportedAttachments, reportedMessageReplacements);
     }
 
     @Override
     public ReportedMessageDTO getReportedMessage(Long messageID) {
-	LOGGER.info("getReportedMessage(" + messageID + ") called");
+        LOGGER.info("getReportedMessage(" + messageID + ") called");
 
-	ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
-	SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
 
-	List<ReportedAttachment> reportedAttachments = 
-		reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
+                .getReportedMessageAttachments());
 
-	ReportedMessageDTO reportedMessageDTO = 
-		reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatus);
-	reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage,
+                reportedAttachments, sendingStatus);
+        reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 
-	return reportedMessageDTO;
+        return reportedMessageDTO;
     }
 
     @Override
     public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting) {
-	LOGGER.info("getReportedMessageAndRecipients(" + messageID + ") called");
+        LOGGER.info("getReportedMessageAndRecipients(" + messageID + ") called");
 
-	ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
-	List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(
-		messageID, pagingAndSorting);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(messageID,
+                pagingAndSorting);
 
-	SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
 
-	List<ReportedAttachment> reportedAttachments = 
-		reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
+                .getReportedMessageAttachments());
 
-	ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
-		reportedAttachments, sendingStatus);
-	reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage,
+                reportedRecipients, reportedAttachments, sendingStatus);
+        reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 
-	return reportedMessageDTO;
+        return reportedMessageDTO;
     }
 
     @Override
-    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, 
-	    PagingAndSortingDTO pagingAndSorting) {
-	LOGGER.info("getReportedMessageAndRecipientsSendingUnsuccesful(" + messageID + ") called");
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID,
+            PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessageAndRecipientsSendingUnsuccesful(" + messageID + ") called");
 
-	ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
-	List<ReportedRecipient> reportedRecipients = 
-		reportedRecipientService.getReportedRecipientsByStatusSendingUnsuccesful(messageID, pagingAndSorting);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService
+                .getReportedRecipientsByStatusSendingUnsuccesful(messageID, pagingAndSorting);
 
-	SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
 
-	List<ReportedAttachment> reportedAttachments = 
-		reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
+                .getReportedMessageAttachments());
 
-	ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, 
-		reportedAttachments, sendingStatus);
-	reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage,
+                reportedRecipients, reportedAttachments, sendingStatus);
+        reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 
-	return reportedMessageDTO;        
+        return reportedMessageDTO;
     }
 
     @Override
-    public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, 
-	    PagingAndSortingDTO pagingAndSorting) {
-	LOGGER.info("getReportedMessagesByOrganizationOid(String, PagingAndSortingDTO) called");
+    public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid,
+            PagingAndSortingDTO pagingAndSorting) {
+        LOGGER.info("getReportedMessagesByOrganizationOid(String, PagingAndSortingDTO) called");
 
-	ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
+        ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
-	List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid, pagingAndSorting);
-	Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(organizationOid);
+        List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid,
+                pagingAndSorting);
+        Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(organizationOid);
 
-	Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
-	for (ReportedMessage reportedMessage : reportedMessages) {
-	    SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
-	    sendingStatuses.put(reportedMessage.getId(), sendingStatus);
-	}
+        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
+        for (ReportedMessage reportedMessage : reportedMessages) {
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage
+                    .getId());
+            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
+        }
 
-	List<ReportedMessageDTO> listOfReportedMessageDTO = 
-		reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages,
+                sendingStatuses);
 
-	reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
-	reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
+        reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
+        reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
 
-	return reportedMessagesDTO;
+        return reportedMessagesDTO;
     }
 
     @Override
     public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
-	LOGGER.info("getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) called");
-	ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
+        LOGGER.info("getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) called");
+        ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
-	List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
-	Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(query);
+        List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
+        Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(query);
 
-	Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
-	for (ReportedMessage reportedMessage : reportedMessages) {
-	    SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
-	    sendingStatuses.put(reportedMessage.getId(), sendingStatus);
-	}
+        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
+        for (ReportedMessage reportedMessage : reportedMessages) {
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage
+                    .getId());
+            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
+        }
 
-	List<ReportedMessageDTO> listOfReportedMessageDTO = 
-		reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages,
+                sendingStatuses);
 
-	reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
-	reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
+        reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
+        reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
 
-	return reportedMessagesDTO;        
+        return reportedMessagesDTO;
     }
 
     @Override
     public SendingStatusDTO getSendingStatus(Long messageID) {
-	LOGGER.info("getSendingStatus(" + messageID + ") called");
+        LOGGER.info("getSendingStatus(" + messageID + ") called");
 
-	ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
-	SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
-	sendingStatus.setMessageID(messageID);
-	sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
+        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        sendingStatus.setMessageID(messageID);
+        sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
-	return sendingStatus;
+        return sendingStatus;
     }
 
     @Override
     public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize) {
-	LOGGER.info("getUnhandledMessageRecipients(" + listSize + ") called");
+        LOGGER.info("getUnhandledMessageRecipients(" + listSize + ") called");
 
-	List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
-	return emailRecipientDTOConverter.convert(reportedRecipients);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
+        return emailRecipientDTOConverter.convert(reportedRecipients);
     }
 
     @Override
     public List<OrganizationDTO> getUserOrganizations() {
-	List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
-	List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
+        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
-	for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
-	    OrganizationDTO organization = new OrganizationDTO();
+        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+            OrganizationDTO organization = new OrganizationDTO();
 
-	    OrganisaatioRDTO organisaatioRDTO = 
-		    organizationComponent.getOrganization(organisaatioHenkilo.getOrganisaatioOid());
-	    String organizationName = organizationComponent.getNameOfOrganisation(organisaatioRDTO);
+            OrganisaatioRDTO organisaatioRDTO = organizationComponent.getOrganization(organisaatioHenkilo
+                    .getOrganisaatioOid());
+            String organizationName = organizationComponent.getNameOfOrganisation(organisaatioRDTO);
 
-	    organization.setOid(organisaatioRDTO.getOid());
-	    organization.setName(organizationName);
+            organization.setOid(organisaatioRDTO.getOid());
+            organization.setName(organizationName);
 
-	    organizations.add(organization);            
-	}
+            organizations.add(organization);
+        }
 
-	return organizations;
+        return organizations;
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result) {
-	LOGGER.info("recipientHandledFailure(" + recipient.getRecipientID() + ") called");
+        LOGGER.info("recipientHandledFailure(" + recipient.getRecipientID() + ") called");
 
-	ReportedRecipient reportedRecipient = 
-		reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
-	reportedRecipient.setFailureReason(result);
-	reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_FAILED);
-	reportedRecipient.setSendingEnded(new Date());
-	reportedRecipientService.updateReportedRecipient(reportedRecipient);
-	return true;
+        ReportedRecipient reportedRecipient = reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
+        reportedRecipient.setFailureReason(result);
+        reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_FAILED);
+        reportedRecipient.setSendingEnded(new Date());
+        reportedRecipientService.updateReportedRecipient(reportedRecipient);
+        return true;
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result) {
-	LOGGER.info("recipientHandledSuccess(" + recipient.getRecipientID() + ") called");
+        LOGGER.info("recipientHandledSuccess(" + recipient.getRecipientID() + ") called");
 
-	ReportedRecipient reportedRecipient = 
-		reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
-	reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_SUCCESFUL);
-	reportedRecipient.setSendingEnded(new Date());
+        ReportedRecipient reportedRecipient = reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
+        reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_SUCCESFUL);
+        reportedRecipient.setSendingEnded(new Date());
 
-	reportedRecipientService.updateReportedRecipient(reportedRecipient);
+        reportedRecipientService.updateReportedRecipient(reportedRecipient);
 
-	return true;
+        return true;
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public Long saveAttachment(FileItem fileItem) throws IOException {
-	LOGGER.info("saveAttachment(" + fileItem.getName() + ") called");
+        LOGGER.info("saveAttachment(" + fileItem.getName() + ") called");
 
-	ReportedAttachment reportedAttachment = reportedAttachmentConverter.convert(fileItem);
-	return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
+        ReportedAttachment reportedAttachment = reportedAttachmentConverter.convert(fileItem);
+        return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
     }
 
     @Override
-    @Transactional(propagation=Propagation.REQUIRED)
+    @Transactional(propagation = Propagation.REQUIRED)
     public boolean startSending(EmailRecipientDTO recipient) {
-	LOGGER.info("startSending(" + recipient.getEmail() + ") called");
+        LOGGER.info("startSending(" + recipient.getEmail() + ") called");
 
-	ReportedRecipient reportedRecipient = 
-		reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
+        ReportedRecipient reportedRecipient = reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
 
-	if (reportedRecipient.getSendingStarted() != null) {
-	    return false;
-	}
+        if (reportedRecipient.getSendingStarted() != null) {
+            return false;
+        }
 
-	reportedRecipient.setSendingStarted(new Date());
-	reportedRecipientService.updateReportedRecipient(reportedRecipient);
+        reportedRecipient.setSendingStarted(new Date());
+        reportedRecipientService.updateReportedRecipient(reportedRecipient);
 
-	return true;
+        return true;
     }
 
 }

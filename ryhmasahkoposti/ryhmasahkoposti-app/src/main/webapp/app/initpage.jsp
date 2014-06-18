@@ -8,17 +8,17 @@
 					recipient: [<%for (int i = 0; i < 2; i++) {%>
 						{oid: '1.2.246.562.24.63926748289',
 						oidType: 'virkailija',
-						email: 'ville.vastaanottaja@gmail.com',
+						email: 'ville.vastaanottaja@example.com',
 						languageCode: 'FI'},										
 					<%}%>
 						{oid: '1.2.246.562.24.21860986107',
 						oidType: 'virkailija',
-						email: 'ville.vastaanottaja@gmail.com',
+						email: 'ville.vastaanottaja@example.com',
 						languageCode: 'FI'},
 										
 						{oid: '1.2.246.562.24.98095750306',
 						oidType: 'virkailija',
-						email: 'torspo.uolevi@gmail.com',
+						email: 'torspo.uolevi@example.com',
 						languageCode: 'FI'}	
 					],		
 					email: {callingProcess: 'Osoitetietojarjestelma',
@@ -26,7 +26,7 @@
 						organizationOid: '1.2.246.562.10.00000000001',
 						replyTo: 'Mikko.Mallikas@oph.fi',
 						subject: 'Testi viesti',
-						body: 'Testi bodya ja sporttia.'
+						body: 'Testi bodya ja sporttia. ההההההצצצצצצצוווווו'
 					}
 			}
 		</textarea>
