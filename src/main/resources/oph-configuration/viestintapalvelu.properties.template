@@ -12,6 +12,7 @@ auth.mode={{auth_mode}}
 env.loglevel={{env_loglevel}}
 host.cas={{host_cas}}
 host.ilb={{host_ilb}}
+host.ldap={{host_ldap}}
 host.virkailija={{host_virkailija}}
 server.name={{ansible_hostname}}
 
@@ -32,7 +33,12 @@ activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
 cas.callback.ryhmasahkoposti=http://${server.name}:8309/ryhmasahkoposti
 cas.callback.viestintapalvelu=http://${server.name}:8309/viestintapalvelu
+cas.group-role-attribute=cn
+cas.group-search-base=ou\=groups
+cas.group-search-filter=(uniqueMember\={0})
 cas.sendRenew=false
+cas.user-search-base=ou\=people
+cas.user-search-filter=(|(mail\={0})(uid\={0}))
 cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
 customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
