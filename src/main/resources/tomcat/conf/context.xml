@@ -25,7 +25,7 @@
               maxActive="{{ host_postgresql_viestinta_maxActive | default(250) }}" 
               maxIdle="{{ host_postgresql_viestinta_maxIdle | default(30) }}" 
               maxWait="{{ host_postgresql_viestinta_maxWait | default(10000) }}"
-              username="{{host_postgresql_viestinta_user}}" password="{{host_postgresql_viestinta_password}}" driverClassName="org.postgresql.Driver"
+              username="{{ host_postgresql_viestinta_user }}" password="{{ host_postgresql_viestinta_password }}" driverClassName="org.postgresql.Driver"
               url="jdbc:postgresql://{{host_postgresql_viestinta}}:{{port_postgresql}}/viestinta"/>
 
 </Context>
