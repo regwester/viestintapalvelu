@@ -42,6 +42,7 @@ cas.user-search-filter=(|(mail\={0})(uid\={0}))
 cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
 customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
+dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
 flyway.initOnMigrate=true
 koodi.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodiService
 koodisto.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodistoService
