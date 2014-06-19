@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -20,7 +21,6 @@ import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -30,9 +30,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
-import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 
@@ -55,6 +54,9 @@ public class IPostiResource {
     
     @Autowired
     private IPostiService iPostiService;
+    
+    @Autowired
+    private DocumentBuilder documentBuilder;
     
     //Descriptions
     private final static String ApiReadUnSentItems = "Palauttaa JSON-objektin lähettämättömistä IPosteista.; synkroninen";   
@@ -88,21 +90,42 @@ public class IPostiResource {
             item.put("id", ""+ip.getId());
             item.put("date", ""+ip.getCreateDate());
             item.put("templateId", String.valueOf(ip.getLetterBatch().getId()));
+            item.put("batchName", ip.getContentName());
             result.add(item);
         }
         return result;
     }
     
     @GET
-    @Path("/getById/{ipostiId}")
+    @Path("/getBatchById/{ipostiId}")
     //@Secured(Constants.IPOSTI_READ_DATA)
     @Produces("application/zip")
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
-    public Response unsentIPostiItem(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
+    public Response getBatchById(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
         try {
-            IPosti iposti = iPostiService.findById(id);
+            IPosti iposti = iPostiService.findBatchById(id);
             byte[] zip = iposti.getContent();
+            return Response.ok(zip).build();
+        } catch(Exception e) {
+            return Response.status(400).build();
+        }       
+    }
+    
+    @GET
+    @Path("/getIPostiById/{mailId}")
+    //@Secured(Constants.IPOSTI_READ_DATA)
+    @Produces("application/zip")
+    @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
+    @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
+    public Response getIPostiById(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request) throws Exception {
+        try {
+            Map<String, byte[]> batches = new LinkedHashMap<String, byte[]>();
+            List<IPosti> iposts = iPostiService.findMailById(id);
+            for (IPosti iposti : iposts) {
+                batches.put(iposti.getContentName(), iposti.getContent());
+            }
+            byte[] zip = documentBuilder.zip(batches);
             return Response.ok(zip).build();
         } catch(Exception e) {
             return Response.status(400).build();
@@ -116,7 +139,7 @@ public class IPostiResource {
     @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
     public Map<String,String> uploadExisting(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
-        IPosti iposti = iPostiService.findById(id);
+        IPosti iposti = iPostiService.findBatchById(id);
         ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
         iposti.setSentDate(new Date());
         iPostiService.update(iposti);
