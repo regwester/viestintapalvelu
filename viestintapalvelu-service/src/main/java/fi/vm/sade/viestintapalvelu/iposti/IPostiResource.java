@@ -30,6 +30,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
+import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
@@ -75,7 +76,7 @@ public class IPostiResource {
     
     @GET
     @Path("/unSentItems")
-    //@Secured(Constants.IPOSTI_READ_META_INFO)
+    @PreAuthorize(Constants.IPOSTI_READ)
     @Produces("application/json")
     @ApiOperation(value = ApiReadUnSentItems, notes = ApiReadUnSentItems)
     @ApiResponses(@ApiResponse(code = 400, message = UnSentItemsResponse400))
@@ -98,7 +99,7 @@ public class IPostiResource {
     
     @GET
     @Path("/getBatchById/{ipostiId}")
-    //@Secured(Constants.IPOSTI_READ_DATA)
+    @PreAuthorize(Constants.IPOSTI_READ)
     @Produces("application/zip")
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
@@ -114,7 +115,7 @@ public class IPostiResource {
     
     @GET
     @Path("/getIPostiById/{mailId}")
-    //@Secured(Constants.IPOSTI_READ_DATA)
+    @PreAuthorize(Constants.IPOSTI_READ)
     @Produces("application/zip")
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
@@ -134,7 +135,7 @@ public class IPostiResource {
     
     @GET
     @Path("/send/{ipostiId}")
-    //@Secured(Constants.IPOSTI_SEND)
+    @PreAuthorize(Constants.IPOSTI_SEND)
     @Produces("application/json")
     @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
@@ -148,7 +149,7 @@ public class IPostiResource {
     
     @POST
     @Path("/send")
-    //@Secured(Constants.IPOSTI_SEND)
+    @PreAuthorize(Constants.IPOSTI_SEND)
     @Produces("application/json")
     @ApiOperation(value = ApiSend, notes = ApiSend)
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
