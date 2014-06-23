@@ -11,7 +11,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import javax.inject.Inject;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
@@ -106,6 +105,34 @@ public class PDFPrinterResource extends AsynchronousResource {
     }
 
     /**
+     * Get PDF content
+     * 
+     * @param input
+     * @param request
+     * @return
+     * @throws IOException
+     * @throws DocumentException
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("application/pdf")
+    @Path("/pdf/content")
+    // @ApiOperation(value = "Muodostaa HTML-pohjaisesta asiakirja PDF-dokumentin ja palauttaa sen", notes = "")
+    // @ApiResponses(@ApiResponse(code = 400, message = "Document creation failed"))
+    public Response pdfContent(
+        @ApiParam(value = "Muodostettavien asiakirjojen tiedot (1-n)", required = true) DocumentSource input,
+        @Context HttpServletRequest request) throws IOException, DocumentException {
+        try {
+            byte[] pdf = buildDocument(input);
+            return Response.ok(pdf).build();
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("Getting PDF content failed: {}", e.getMessage());
+            return createFailureResponse(request);
+        }
+    }
+    
+    /**
      * PDF async
      * 
      * @param input
@@ -163,6 +190,20 @@ public class PDFPrinterResource extends AsynchronousResource {
             }
         });
         return createResponse(request, documentId);
+    }
+    
+    @GET
+    @Path("/getDocumentSource")
+    @Produces("application/json")
+    public Response getDocumentSource() {
+        DocumentSource ds = new DocumentSource();
+        
+        List<String> sources = new ArrayList<String>();
+        sources.add("documentsource text");
+        ds.setDocumentName("documentName");
+        ds.setSources(sources);
+        
+        return Response.ok(ds).build();
     }
 
     private byte[] buildDocument(DocumentSource input)

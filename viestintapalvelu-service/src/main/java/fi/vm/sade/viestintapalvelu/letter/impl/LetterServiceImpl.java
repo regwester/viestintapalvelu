@@ -21,7 +21,6 @@ import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -73,9 +72,12 @@ public class LetterServiceImpl implements LetterService {
 
         // kirjeet.vastaanottaja
         letterB.setLetterReceivers(parseLetterReceiversModels(letterBatch, letterB));
-
-        if (letterBatch.getiPostiData() != null) {
-            letterB.setIPosti(getIPosti(letterB, letterBatch.getiPostiData()));
+        
+        Map<String, byte[]> ipostiData = letterBatch.getiPostiData();
+        if (ipostiData != null) {
+            for(Map.Entry<String, byte[]> data: ipostiData.entrySet()){
+                letterB.addIPosti(createIPosti(letterB, data));
+            }
         }
         return storeLetterBatch(letterB);
     }
@@ -204,16 +206,19 @@ public class LetterServiceImpl implements LetterService {
         return content;
     }
 
-    private IPosti getIPosti(LetterBatch letterB, byte[] data) {
+    private IPosti createIPosti(LetterBatch letterB, Map.Entry<String, byte[]> data) {
         IPosti iPosti = new IPosti();
         iPosti.setLetterBatch(letterB);
-        iPosti.setContent(data);
+        iPosti.setContent(data.getValue());
+        iPosti.setContentName(data.getKey());
         iPosti.setContentType("application/zip");
         iPosti.setCreateDate(new Date());
         return iPosti;
     }
     
+    /*
     private List<Letter> parseLetterDTOs(Set<LetterReceivers> letterReceivers) {
+     
         List<Letter> letters = new LinkedList<Letter>();
 
         for (LetterReceivers letterRec : letterReceivers) {
@@ -246,7 +251,7 @@ public class LetterServiceImpl implements LetterService {
         }
         return letters;
     }
-
+    */
     /*
      * kirjeet.vastaanottaja
      */

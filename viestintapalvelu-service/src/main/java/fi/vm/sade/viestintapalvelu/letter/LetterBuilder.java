@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-import org.omg.CORBA.Current;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,27 +51,28 @@ public class LetterBuilder {
         this.documentBuilder = documentBuilder;
     }
 
-    public byte[] printZIP(LetterBatch batch) throws IOException,
-            DocumentException {
+    public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException {
         Map<String, byte[]> subZips = new HashMap<String, byte[]>();
         List<LetterBatch> subBatches = batch.split(Constants.IPOST_BATCH_LIMIT);
         for (int i = 0; i < subBatches.size(); i++) {
             LetterBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = buildPDF(subBatch);
             mergeSubBatchToBatch(batch, subBatch);
-            Map<String, Object> context = createIPostDataContext(pdf
-                    .getDocumentMetadata());
-            context.put("filename", batch.getTemplateName() + ".pdf");
-            byte[] ipostXml = documentBuilder.applyTextTemplate(
-                    Constants.LETTER_IPOST_TEMPLATE, context);
+            
+            Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
+            String templateName = batch.getTemplateName();
+            context.put("filename", templateName + ".pdf");
+            byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
+            
             Map<String, byte[]> documents = new HashMap<String, byte[]>();
-            documents.put(batch.getTemplateName() + ".pdf", pdf.toByteArray());
-            documents.put(batch.getTemplateName() + ".xml", ipostXml);
-            subZips.put(batch.getTemplateName() + "_" + (i + 1) + ".zip",
-                    documentBuilder.zip(documents));
+            documents.put(templateName + ".pdf", pdf.toByteArray());
+            documents.put(templateName + ".xml", ipostXml);
+            String zipName = templateName + "_" + batch.getLanguageCode() + "_" + (i + 1) + ".zip";
+            byte[] zip = documentBuilder.zip(documents);
+            subZips.put(zipName,zip);
+            batch.addIPostiData(zipName,zip);
         }
         byte[] resultZip = documentBuilder.zip(subZips);
-        batch.setiPostiData(resultZip);
         letterService.createLetter(batch);
         return resultZip;
     }

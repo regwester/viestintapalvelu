@@ -2,7 +2,9 @@ package fi.vm.sade.viestintapalvelu.model;
 
 
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.CascadeType;
@@ -10,7 +12,6 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -80,16 +81,16 @@ public class LetterBatch extends BaseEntity {
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
-    @OneToOne(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY)
     @JsonManagedReference
-    private IPosti iposti;
+    private List<IPosti> iposts = new ArrayList<IPosti>();
 
-    public IPosti getIposti() {
-        return iposti;
+    public List<IPosti> getIposti() {
+        return iposts;
     }
 
-    public void setIPosti(IPosti iposti) {
-        this.iposti = iposti;
+    public void addIPosti(IPosti iposti) {
+        iposts.add(iposti);
     }
     public Long getTemplateId() {
 		return templateId;
