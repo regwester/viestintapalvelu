@@ -12,22 +12,22 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EmailMessage {
-    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class); 
+    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class);
 
     private String callingProcess = "";
-    private String from;		// Email FROM
-    private String replyTo;		// Email REPLYTO
-    private String senderOid;	// The one who is doing the actual sending
+    private String from; // Email FROM
+    private String replyTo; // Email REPLYTO
+    private String senderOid; // The one who is doing the actual sending
     private String organizationOid;
     private String subject;
     private String body;
     private String footer;
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
-    List<EmailAttachment> attachments = new LinkedList<EmailAttachment>(); 
+    List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
     List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isValid = true;
-    
+
     /**
      * Template name
      */
@@ -38,7 +38,8 @@ public class EmailMessage {
      */
     private String languageCode;
 
-    public EmailMessage() {}
+    public EmailMessage() {
+    }
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String body) {
         this.callingProcess = callingProcess;
@@ -48,7 +49,6 @@ public class EmailMessage {
         this.body = body;
     }
 
-
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, String languageCode) {
         this.callingProcess = callingProcess;
         this.from = from;
@@ -57,7 +57,6 @@ public class EmailMessage {
         this.templateName = templateName;
         this.languageCode = languageCode;
     }
-
 
     public void setBody(String body) {
         this.body = body;
@@ -97,7 +96,7 @@ public class EmailMessage {
     }
 
     private void addFooterToBody() {
-        this.body = this.body + "\n" + this.footer;	
+        this.body = this.body + "\n" + this.footer;
     }
 
     public void setSubject(String subject) {
@@ -169,6 +168,7 @@ public class EmailMessage {
     public void setAttachInfo(List<AttachmentResponse> attachInfo) {
         this.attachInfo = attachInfo;
     }
+
     public void setCallingProcess(String callingProcess) {
         this.callingProcess = callingProcess;
     }
@@ -181,7 +181,8 @@ public class EmailMessage {
     }
 
     /**
-     * @param templateName the templateName to set
+     * @param templateName
+     *            the templateName to set
      */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
@@ -195,37 +196,38 @@ public class EmailMessage {
     }
 
     /**
-     * @param languageCode the languageCode to set
+     * @param languageCode
+     *            the languageCode to set
      */
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
 
     private String generateFooter(String emailFooter, String lang) {
-    	String footer = "";
-    
-    	if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
-    	    lang = "FI";
-    
-    	} else if ("SE".equalsIgnoreCase(lang) || "SV".equalsIgnoreCase(lang)) {
-    	    // should be SV 
-    	    lang = "SE";
-    	} else {
-    	    lang = "EN";
-    	}        
-    
-    	String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
-    
-    	try {
-    	    footer =  readFooter( footerFileName );
-    
-    	} catch (FileNotFoundException e) {
-    	    log.error("Failed to find footer file:  " + footerFileName + ", " + e.getMessage());	
-    	} catch (IOException e) {
-    	    log.error("Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());	
-    	}
-    
-    	return footer;
+        String footer = "";
+
+        if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
+            lang = "FI";
+
+        } else if ("SE".equalsIgnoreCase(lang) || "SV".equalsIgnoreCase(lang)) {
+            // should be SV
+            lang = "SE";
+        } else {
+            lang = "EN";
+        }
+
+        String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
+
+        try {
+            footer = readFooter(footerFileName);
+
+        } catch (FileNotFoundException e) {
+            log.error("Failed to find footer file:  " + footerFileName + ", " + e.getMessage());
+        } catch (IOException e) {
+            log.error("Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());
+        }
+
+        return footer;
     }
 
     private String readFooter(String footer) throws FileNotFoundException, IOException {
@@ -235,23 +237,20 @@ public class EmailMessage {
         }
         return new String(IOUtils.toByteArray(in), "UTF-8");
     }
-    
+
     public boolean isValid() {
         return this.isValid;
     }
-    
-    public void setInvalid(){
+
+    public void setInvalid() {
         this.isValid = false;
     }
-    
+
     @Override
     public String toString() {
-        return "EmailMessage [callingProcess=" + callingProcess + ", from="
-            + from + ", replyTo=" + replyTo + ", senderOid=" + senderOid
-            + ", subject=" + subject + ", body=" + body + ", footer="
-            + footer + ", isHtml=" + isHtml + ", charset=" + charset
-            + ", attachments=" + attachments + ", attachInfo=" + attachInfo
-            + "]";
+        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", replyTo=" + replyTo + ", senderOid=" + senderOid + ", subject="
+                + subject + ", body=" + body + ", footer=" + footer + ", isHtml=" + isHtml + ", charset=" + charset + ", attachments=" + attachments
+                + ", attachInfo=" + attachInfo + "]";
     }
 
 }
