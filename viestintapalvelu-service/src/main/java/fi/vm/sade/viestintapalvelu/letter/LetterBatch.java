@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -44,7 +45,7 @@ public class LetterBatch {
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
     
-    private byte[] iPostiData;
+    private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
     
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -185,11 +186,11 @@ public class LetterBatch {
                 + ", tag=" + tag + "]";
     }
 
-    public byte[] getiPostiData() {
+    public Map<String, byte[]> getIPostiData() {
         return iPostiData;
     }
 
-    public void setiPostiData(byte[] iPostiData) {
-        this.iPostiData = iPostiData;
+    public void addIPostiData(String name, byte[] content) {
+        iPostiData.put(name, content);
     }
 }

@@ -8,7 +8,9 @@ public interface IPostiService {
 
     public List<IPosti> findUnsent();
 
-    public IPosti findById(Long ipostiId);
+    public IPosti findBatchById(Long ipostiId);
+    
+    public List<IPosti> findMailById(Long mailId);
 
     void update(IPosti iposti);
 

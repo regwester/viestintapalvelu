@@ -25,6 +25,7 @@ import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
@@ -38,7 +39,7 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 public class EmailResourceImpl implements EmailResource {
     private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);	
 
-    @Autowired    
+    @Autowired
     private EmailService emailService;
 
     @Autowired
@@ -81,8 +82,8 @@ public class EmailResourceImpl implements EmailResource {
 
     @Override
     public Response initGroupEmail() {
-    	Response response = Response.ok("ok").build();
-    	return response;
+        Response response = Response.ok("ok").build();
+        return response;
     }
 
     @Override
@@ -130,6 +131,22 @@ public class EmailResourceImpl implements EmailResource {
     	    log.error("Problems in writing send data info to DB, "+ e.getMessage());
     	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
     	}
+
+    @Override
+    public Response sendPdfByEmail(EmailData emailData) {
+        try {
+            EmailAttachment emailAttachment = emailData.getEmail().getAttachments().get(0);
+            AttachmentResponse attachmentResponse = sendDbService.saveAttachment(emailAttachment);
+            emailData.getEmail().addAttachInfo(attachmentResponse);
+            String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));           
+            return Response.ok(new EmailSendId(sendId)).build();
+        } catch (ExternalInterfaceException e) {
+            log.error("Problems in getting data from external interfaces, " + e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            log.error("Problems in writing send data info to DB, " + e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+        }
     }
 
     @Override
@@ -145,19 +162,25 @@ public class EmailResourceImpl implements EmailResource {
     }
 
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {
-    	AttachmentResponse result = new AttachmentResponse();
-    
-    	if (!item.isFormField()) {
-    	    Long id = sendDbService.saveAttachment(item);
-    
-    	    String fileName = item.getName();
-    	    String contentType = item.getContentType();
-    	    byte[] data = item.get();
-    	    result.setFileName(fileName);
-    	    result.setContentType(contentType);
-    	    result.setFileSize(data.length);    
-    	    result.setUuid(id.toString());
-    	}
-    	return result;
+        AttachmentResponse result = new AttachmentResponse();
+
+        if (!item.isFormField()) {
+            Long id = sendDbService.saveAttachment(item);
+
+            String fileName = item.getName();
+            String contentType = item.getContentType();
+            byte[] data = item.get();
+            result.setFileName(fileName);
+            result.setContentType(contentType);
+            result.setFileSize(data.length);
+            result.setUuid(id.toString());
+        }
+        return result;
+    }
+
+    @Override
+    public Response getEmailData() {
+        EmailData emailData = new EmailData();        
+        return Response.ok(emailData).build();
     }
 }

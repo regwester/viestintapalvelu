@@ -20,4 +20,13 @@ public class IPostiDAOImpl extends AbstractJpaDAOImpl<IPosti, Long> implements I
         TypedQuery<IPosti> q = em.createQuery("SELECT p from IPosti p where p.sentDate is null", IPosti.class);
         return q.getResultList();
     }
+
+    @Override
+    public List<IPosti> findMailById(Long id) {
+        EntityManager em = getEntityManager();
+        TypedQuery<IPosti> query = em.createQuery("Select p from IPosti p where p.letterBatch.id = :value", IPosti.class);
+        query.setParameter("value", id);
+        return query.getResultList();
+    }
+
 }

@@ -34,37 +34,33 @@ public class EmailMessage {
     private String templateName;
 
     /**
-     * Laguange code
+     * Language code
      */
     private String languageCode;
 
     public EmailMessage() {}
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String body) {
-    	this.callingProcess = callingProcess; 		
-    	this.from = from;
-    	this.replyTo = replyTo;
-    	this.subject = subject;
-    	this.body = body;
+        this.callingProcess = callingProcess;
+        this.from = from;
+        this.replyTo = replyTo;
+        this.subject = subject;
+        this.body = body;
     }
 
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, String languageCode) {
-    	this.callingProcess = callingProcess; 		
-    	this.from = from;
-    	this.replyTo = replyTo;
-    	this.subject = subject;
-    	this.templateName = templateName;
-    	this.languageCode = languageCode;
+        this.callingProcess = callingProcess;
+        this.from = from;
+        this.replyTo = replyTo;
+        this.subject = subject;
+        this.templateName = templateName;
+        this.languageCode = languageCode;
     }
 
 
     public void setBody(String body) {
-    	if (body != null) {
-    	    String lc = body.toLowerCase();
-    	    isHtml = lc.contains("<br/>") || lc.contains("<p>")  || lc.contains("</tr>") || lc.contains("</div>");
-    	}
-    	this.body = body;
+        this.body = body;
     }
 
     public String getCallingProcess() {
@@ -96,8 +92,8 @@ public class EmailMessage {
     }
 
     public void setFooter(String languageCode) {
-    	this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
-    	addFooterToBody();
+        this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
+        addFooterToBody();
     }
 
     private void addFooterToBody() {
@@ -145,10 +141,10 @@ public class EmailMessage {
     }
 
     public void addEmailAttachement(EmailAttachment attachment) {
-    	if (this.attachments == null) {
-    	    this.attachments = new ArrayList<EmailAttachment>();
-    	}
-    	this.attachments.add(attachment);
+        if (this.attachments == null) {
+            this.attachments = new ArrayList<EmailAttachment>();
+        }
+        this.attachments.add(attachment);
     }
 
     public void setAttachments(List<EmailAttachment> attachments) {
@@ -160,10 +156,10 @@ public class EmailMessage {
     }
 
     public void addAttachInfo(AttachmentResponse attachInfo) {
-    	if (this.attachInfo == null) {
-    	    this.attachInfo = new LinkedList<AttachmentResponse>();
-    	}
-    	this.attachInfo.add(attachInfo);
+        if (this.attachInfo == null) {
+            this.attachInfo = new LinkedList<AttachmentResponse>();
+        }
+        this.attachInfo.add(attachInfo);
     }
 
     public List<AttachmentResponse> getAttachInfo() {
@@ -233,11 +229,11 @@ public class EmailMessage {
     }
 
     private String readFooter(String footer) throws FileNotFoundException, IOException {
-    	InputStream in = getClass().getResourceAsStream(footer);
-    	if (in == null) {
-    	    throw new FileNotFoundException("Template " + footer + " not found");
-    	}
-    	return new String(IOUtils.toByteArray(in), "UTF-8");
+        InputStream in = getClass().getResourceAsStream(footer);
+        if (in == null) {
+            throw new FileNotFoundException("Template " + footer + " not found");
+        }
+        return new String(IOUtils.toByteArray(in), "UTF-8");
     }
     
     public boolean isValid() {
@@ -250,12 +246,12 @@ public class EmailMessage {
     
     @Override
     public String toString() {
-	return "EmailMessage [callingProcess=" + callingProcess + ", from="
-		+ from + ", replyTo=" + replyTo + ", senderOid=" + senderOid
-		+ ", subject=" + subject + ", body=" + body + ", footer="
-		+ footer + ", isHtml=" + isHtml + ", charset=" + charset
-		+ ", attachments=" + attachments + ", attachInfo=" + attachInfo
-		+ "]";
+        return "EmailMessage [callingProcess=" + callingProcess + ", from="
+            + from + ", replyTo=" + replyTo + ", senderOid=" + senderOid
+            + ", subject=" + subject + ", body=" + body + ", footer="
+            + footer + ", isHtml=" + isHtml + ", charset=" + charset
+            + ", attachments=" + attachments + ", attachInfo=" + attachInfo
+            + "]";
     }
 
 }
