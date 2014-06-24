@@ -16,6 +16,10 @@ host.ldap={{host_ldap}}
 host.virkailija={{host_virkailija}}
 ldap.manager.password={{ldap_manager_password}}
 ldap.manager-password={{ldap_manager_password}}
+ryhmasahkoposti.app.username.to.henkilopalvelu={{ryhmasahkoposti_app_username_to_henkilopalvelu}}
+ryhmasahkoposti.app.password.to.henkilopalvelu={{ryhmasahkoposti_app_password_to_henkilopalvelu}}
+ryhmasahkoposti.app.username.to.organisaatiopalvelu={{ryhmasahkoposti_app_username_to_organisaatiopalvelu}}
+ryhmasahkoposti.app.password.to.organisaatiopalvelu={{ryhmasahkoposti_app_password_to_organisaatiopalvelu}}
 server.name={{ansible_hostname}}
 
 # Oletusarvoja
@@ -33,7 +37,7 @@ activeMq.targetDestination.learningopportunityprovider.public=fi.vm.sade.learnin
 activeMq.targetDestination.organisaatio=fi.vm.sade.organisaatio.service
 activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
-cas.callback.ryhmasahkoposti=http://${server.name}:8309/ryhmasahkoposti
+cas.callback.ryhmasahkoposti=http://${server.name}:8309/ryhmasahkoposti-service
 cas.callback.viestintapalvelu=http://${server.name}:8309/viestintapalvelu
 cas.group-role-attribute=cn
 cas.group-search-base=ou\=groups
@@ -41,7 +45,7 @@ cas.group-search-filter=(uniqueMember\={0})
 cas.sendRenew=false
 cas.user-search-base=ou\=people
 cas.user-search-filter=(|(mail\={0})(uid\={0}))
-cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti
+cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti-service
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
 customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
 dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
@@ -64,6 +68,10 @@ log4j.properties.file=${user.home.conf}/log4j.properties
 oid.rest.url.backend=${host.ilb}/oid-service/rest/oid
 oid.webservice.url.backend=${host.ilb}/services/oidService
 root.organisaatio.oid=1.2.246.562.10.00000000001
+ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://${host.virkailija}/authentication-service/resources
+ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
+ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
+ryhmasahkopostipalvelu.templateService.rest.url=http://${host.virkailija}/viestintapalvelu/api/v1
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
 web.url.cas=https\://${host.cas}/cas
