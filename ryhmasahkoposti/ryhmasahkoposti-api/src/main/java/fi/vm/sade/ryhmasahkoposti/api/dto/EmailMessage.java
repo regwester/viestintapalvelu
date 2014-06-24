@@ -6,13 +6,13 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailMessage {
-    private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class.getName()); 
+    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class); 
 
     private String callingProcess = "";
     private String from;		// Email FROM
@@ -224,9 +224,9 @@ public class EmailMessage {
     	    footer =  readFooter( footerFileName );
     
     	} catch (FileNotFoundException e) {
-    	    log.log(Level.SEVERE, "Failed to find footer file:  " + footerFileName + ", " + e.getMessage());        	
+    	    log.error("Failed to find footer file:  " + footerFileName + ", " + e.getMessage());	
     	} catch (IOException e) {
-    	    log.log(Level.SEVERE, "Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());        	
+    	    log.error("Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());	
     	}
     
     	return footer;
