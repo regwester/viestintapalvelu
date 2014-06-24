@@ -207,12 +207,12 @@ public class EmailMessage {
     	if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
     	    lang = "FI";
     
-    	} else { if ("SE".equalsIgnoreCase(lang)) {
+    	} else if ("SE".equalsIgnoreCase(lang) || "SV".equalsIgnoreCase(lang)) {
+    	    // should be SV 
     	    lang = "SE";
-    
     	} else {
     	    lang = "EN";
-    	}}        
+    	}        
     
     	String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
     

@@ -131,6 +131,7 @@ public class EmailResourceImpl implements EmailResource {
     	    log.error("Problems in writing send data info to DB, "+ e.getMessage());
     	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
     	}
+    }
 
     @Override
     public Response sendPdfByEmail(EmailData emailData) {
