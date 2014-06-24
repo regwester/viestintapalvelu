@@ -186,7 +186,7 @@ public class LetterBatch {
                 + ", tag=" + tag + "]";
     }
 
-    public Map<String, byte[]> getiPostiData() {
+    public Map<String, byte[]> getIPostiData() {
         return iPostiData;
     }
 
