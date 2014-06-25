@@ -16,6 +16,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.apache.commons.fileupload.*;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -90,8 +91,8 @@ public class IPostiResource {
             Map<String, String> item = new HashMap<String, String>();
             item.put("id", ""+ip.getId());
             item.put("date", ""+ip.getCreateDate());
-            item.put("templateId", String.valueOf(ip.getLetterBatch().getId()));
-            item.put("batchName", ip.getContentName());
+            item.put("ipostiId", String.valueOf(ip.getLetterBatch().getId()));
+            item.put("name", ip.getContentName());
             result.add(item);
         }
         return result;
@@ -130,25 +131,49 @@ public class IPostiResource {
             return Response.ok(zip).build();
         } catch(Exception e) {
             return Response.status(400).build();
-        }       
+        }
     }
     
     @GET
-    @Path("/send/{ipostiId}")
+    @Path("/sendBatch/{ipostiId}")
     @PreAuthorize(Constants.IPOSTI_SEND)
     @Produces("application/json")
     @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
-    public Map<String,String> uploadExisting(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
+    public Map<String,String> uploadExistingBatch(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
         IPosti iposti = iPostiService.findBatchById(id);
         ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
         iposti.setSentDate(new Date());
         iPostiService.update(iposti);
-        return new HashMap<String, String>();
+        return new HashMap<String, String>(); //what is this supposed to return?
     }
     
+    @GET
+    @Path("/sendMail/{mailId}")
+    @PreAuthorize(Constants.IPOSTI_SEND)
+    @Produces("application/json")
+    @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
+    @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
+    public Response uploadExistingMail(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request) throws Exception {
+        try {
+            List<IPosti> iposts = iPostiService.findMailById(id);
+            if(iposts != null) {
+                for (IPosti iposti : iposts) {
+                    ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
+                    iposti.setSentDate(new Date());
+                    iPostiService.update(iposti);
+                }
+                return Response.status(Status.OK).build();
+            }
+            return Response.status(Status.NOT_FOUND).build();
+        } catch(Exception e) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+    }
+    
+    /*
     @POST
-    @Path("/send")
+    @Path("/sendBatch")
     @PreAuthorize(Constants.IPOSTI_SEND)
     @Produces("application/json")
     @ApiOperation(value = ApiSend, notes = ApiSend)
@@ -182,4 +207,5 @@ public class IPostiResource {
         result.put("result", "OK");
         return result;
     }
+    */
 }

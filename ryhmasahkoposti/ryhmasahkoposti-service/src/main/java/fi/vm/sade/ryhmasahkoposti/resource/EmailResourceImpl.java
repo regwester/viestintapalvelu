@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
@@ -20,6 +18,8 @@ import org.apache.commons.fileupload.FileUploadException;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
 import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.codehaus.jettison.json.JSONObject;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -37,8 +37,7 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
 public class EmailResourceImpl implements EmailResource {
-    private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class
-        .getName());
+    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);	
 
     @Autowired
     private EmailService emailService;
@@ -48,37 +47,37 @@ public class EmailResourceImpl implements EmailResource {
 
     @SuppressWarnings("unchecked")
     @Override
-    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)
-        throws IOException, URISyntaxException, ServletException {
-
-        log.log(Level.INFO, "Adding attachment " + request.getMethod());
-
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-        AttachmentResponse result = null;
-
-        if (isMultipart) {
-            FileItemFactory factory = new DiskFileItemFactory();
-            ServletFileUpload upload = new ServletFileUpload(factory);
-
-            try {
-                List<FileItem> items = upload.parseRequest(request);
-                Iterator<FileItem> iterator = items.iterator();
-                while (iterator.hasNext()) {
-                    FileItem item = (FileItem) iterator.next();
-                    result = storeAttachment(item);
-                }
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else {
-            response.setStatus(400);
-            response.getWriter().append("Not a multipart request");
-        }
-        log.log(Level.INFO, "Added attachment: " + result);
-        JSONObject json = new JSONObject(result.toMap());
-        return json.toString();
+    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) 
+	    throws IOException, URISyntaxException, ServletException {
+    	
+        log.info("Adding attachment "+request.getMethod());
+    
+    	boolean isMultipart = ServletFileUpload.isMultipartContent(request);
+    	AttachmentResponse result = null;
+    
+    	if (isMultipart) {
+    	    FileItemFactory factory = new DiskFileItemFactory();
+    	    ServletFileUpload upload = new ServletFileUpload(factory);
+    
+    	    try {
+    		List<FileItem> items = upload.parseRequest(request);
+    		Iterator<FileItem> iterator = items.iterator();
+    		while (iterator.hasNext()) {
+    		    FileItem item = (FileItem) iterator.next();
+    		    result = storeAttachment(item);
+    		}
+    	    } catch (FileUploadException e) {
+    		e.printStackTrace();
+    	    } catch (Exception e) {
+    		e.printStackTrace();
+    	    }
+    	} else {
+    	    response.setStatus(400);
+    	    response.getWriter().append("Not a multipart request");
+    	}
+    	log.info("Added attachment: " + result);
+    	JSONObject json = new JSONObject(result.toMap());
+    	return json.toString();
     }
 
     @Override
@@ -89,50 +88,49 @@ public class EmailResourceImpl implements EmailResource {
 
     @Override
     public Response sendEmail(EmailData emailData) {
-        try {
-            String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
-            log.log(Level.INFO, "DB index is " + sendId);
-            return Response.ok(new EmailSendId(sendId)).build();
-        } catch (ExternalInterfaceException e) {
-            log.log(Level.SEVERE, "Problems in getting data from external interfaces, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Problems in writing send data info to DB, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
+    	try {
+    	    String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
+    	    log.info("DB index is " + sendId);
+    	    return Response.ok(new EmailSendId(sendId)).build();
+    	} catch (ExternalInterfaceException e) {
+    	    log.error("Problems in getting data from external interfaces, "+ e.getMessage());
+    	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    	} catch (Exception e) { 
+    	    log.error("Problems in writing send data info to DB, "+ e.getMessage());
+    	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+    	}
     }
 
     @Override
     public Response sendEmailStatus(String sendId) {
-        log.log(Level.INFO, "sendEmailStatus called with ID: " + sendId + ".");
-        try {
-            SendingStatusDTO sendingStatusDTO = sendDbService.getSendingStatus(Long.valueOf(sendId));
-            return Response.ok(sendingStatusDTO).build();
-        } catch (Exception e) {
-            log.log(Level.SEVERE, e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
-
+    	log.error("sendEmailStatus called with ID: " + sendId + ".");
+    	try {
+    	    SendingStatusDTO sendingStatusDTO = sendDbService.getSendingStatus(Long.valueOf(sendId));
+    	    return Response.ok(sendingStatusDTO).build();
+    	} catch (Exception e) {
+    	    log.error(e.getMessage());
+    	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+    	}
     }
 
     @Override
     public Response sendGroupEmailWithFooter(EmailData emailData) {
-        // Setting footer with the first ones language code
-        String languageCode = emailData.getRecipient().get(0).getLanguageCode();
-        // Footer is moved to the end of the body here
-        emailData.setEmailFooter(languageCode);
-
-        try {
-            String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
-            log.log(Level.INFO, "DB index is " + sendId);
-            return Response.ok(new EmailSendId(sendId)).build();
-        } catch (ExternalInterfaceException e) {
-            log.log(Level.SEVERE, "Problems in getting data from external interfaces, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Problems in writing send data info to DB, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
+    	// Setting footer with the first ones language code
+    	String languageCode = emailData.getRecipient().get(0).getLanguageCode();
+    	// Footer is moved to the end of the body here
+    	emailData.setEmailFooter(languageCode);
+    
+    	try {
+    	    String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));
+    	    log.info("DB index is " + sendId);
+    	    return Response.ok(new EmailSendId(sendId)).build();
+    	} catch (ExternalInterfaceException e) {
+    	    log.error("Problems in getting data from external interfaces, "+ e.getMessage());
+    	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+    	} catch (Exception e) {	
+    	    log.error("Problems in writing send data info to DB, "+ e.getMessage());
+    	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+    	}
     }
 
     @Override
@@ -144,24 +142,24 @@ public class EmailResourceImpl implements EmailResource {
             String sendId = Long.toString(sendDbService.addSendingGroupEmail(emailData));           
             return Response.ok(new EmailSendId(sendId)).build();
         } catch (ExternalInterfaceException e) {
-            log.log(Level.SEVERE, "Problems in getting data from external interfaces, " + e.getMessage());
+            log.error("Problems in getting data from external interfaces, " + e.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Problems in writing send data info to DB, " + e.getMessage());
+            log.error("Problems in writing send data info to DB, " + e.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
         }
     }
 
     @Override
     public Response sendResult(String sendId) {
-        log.log(Level.INFO, "sendResult called with ID: " + sendId + ".");
-        try {
-            ReportedMessageDTO reportedMessageDTO = sendDbService.getReportedMessage(Long.valueOf(sendId));
-            return Response.ok(reportedMessageDTO).build();
-        } catch (Exception e) {
-            log.log(Level.SEVERE, "Problems in getting group email data from DB, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
+    	log.info("sendResult called with ID: " + sendId + ".");
+    	try {
+    	    ReportedMessageDTO reportedMessageDTO = sendDbService.getReportedMessage(Long.valueOf(sendId));
+    	    return Response.ok(reportedMessageDTO).build();
+    	} catch (Exception e) {
+    	    log.error("Problems in getting group email data from DB, "+ e.getMessage());
+    	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+    	}
     }
 
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {
@@ -183,7 +181,9 @@ public class EmailResourceImpl implements EmailResource {
 
     @Override
     public Response getEmailData() {
-        EmailData emailData = new EmailData();        
+        EmailData emailData = new EmailData();
+        emailData.getEmail().setSubject("Testi");
+        emailData.getEmail().setBody("Testi");
         return Response.ok(emailData).build();
     }
 }

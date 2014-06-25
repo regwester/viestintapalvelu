@@ -73,7 +73,7 @@ public class LetterServiceImpl implements LetterService {
         // kirjeet.vastaanottaja
         letterB.setLetterReceivers(parseLetterReceiversModels(letterBatch, letterB));
         
-        Map<String, byte[]> ipostiData = letterBatch.getiPostiData();
+        Map<String, byte[]> ipostiData = letterBatch.getIPostiData();
         if (ipostiData != null) {
             for(Map.Entry<String, byte[]> data: ipostiData.entrySet()){
                 letterB.addIPosti(createIPosti(letterB, data));

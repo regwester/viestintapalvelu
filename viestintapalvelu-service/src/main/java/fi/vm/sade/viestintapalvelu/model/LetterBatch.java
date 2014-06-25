@@ -81,7 +81,7 @@ public class LetterBatch extends BaseEntity {
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<IPosti> iposts = new ArrayList<IPosti>();
 
@@ -92,6 +92,7 @@ public class LetterBatch extends BaseEntity {
     public void addIPosti(IPosti iposti) {
         iposts.add(iposti);
     }
+
     public Long getTemplateId() {
 		return templateId;
 	}

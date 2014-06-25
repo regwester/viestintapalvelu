@@ -109,14 +109,10 @@ public class LetterBuilder {
             template = templateService.getTemplateByName(
                     batch.getTemplateName(), batch.getLanguageCode());
 
-            batch.setTemplateId(template.getId()); // Search was by name ==>
-                                                   // update also to template Id
+            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
         }
 
-        if (template == null && batch.getTemplateId() != null) { // If not found
-                                                                 // by name (is
-                                                                 // this
-                                                                 // possible ?)
+        if (template == null && batch.getTemplateId() != null) { // If not found by name
             long templateId = batch.getTemplateId();
             template = templateService.findById(templateId);
         }
@@ -155,8 +151,7 @@ public class LetterBuilder {
                 if (temp != null) {
                     letterTemplate = temp;
                     letterTemplReplacements = new HashMap<String, Object>();
-                    for (Replacement templRepl : letterTemplate
-                            .getReplacements()) {
+                    for (Replacement templRepl : letterTemplate.getReplacements()) {
                         letterTemplReplacements.put(templRepl.getName(),
                                 templRepl.getDefaultValue());
                     }
@@ -170,17 +165,10 @@ public class LetterBuilder {
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(letterTemplate, tc.getContent()
                             .getBytes(), letter.getAddressLabel(),
-                            letterTemplReplacements, // Template, basic
-                                                     // replacement
-                            batch.getTemplateReplacements(), // LetterBatch,
-                                                             // (last) sent
-                                                             // replacements
+                            letterTemplReplacements, // Template, basic replacement
+                            batch.getTemplateReplacements(), // LetterBatch, (last) sent replacements
                             // that might have overwritten the template values
-                            letter.getTemplateReplacements()); // Letter, e.g
-                                                               // student
-                                                               // results,
-                                                               // addressLabel,
-                                                               // ...
+                            letter.getTemplateReplacements()); // Letter, e.g. student results, addressLabel, ...
                     currentDocument.addContent(page);
                 }
                 source.add(currentDocument);
@@ -190,8 +178,7 @@ public class LetterBuilder {
         }
 
         // Write LetterBatch to DB
-        batch.setLetters(updateLetters); // Contains now the generated
-                                         // PdfDocuments
+        batch.setLetters(updateLetters); // Contains now the generated PdfDocuments
         // letterService.createLetter(batch);
 
         return documentBuilder.merge(source);
