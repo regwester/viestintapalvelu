@@ -181,7 +181,9 @@ public class EmailResourceImpl implements EmailResource {
 
     @Override
     public Response getEmailData() {
-        EmailData emailData = new EmailData();        
+        EmailData emailData = new EmailData();
+        emailData.getEmail().setSubject("Testi");
+        emailData.getEmail().setBody("Testi");
         return Response.ok(emailData).build();
     }
 }
