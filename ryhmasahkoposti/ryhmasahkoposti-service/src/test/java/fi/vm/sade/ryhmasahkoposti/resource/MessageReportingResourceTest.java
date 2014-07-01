@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -105,5 +106,11 @@ public class MessageReportingResourceTest {
         assertTrue(searchedReportedMessagesDTO.getNumberOfReportedMessages() == 1);
         assertNotNull(searchedReportedMessagesDTO.getOrganizations());
         assertTrue(searchedReportedMessagesDTO.getOrganizations().size() == 1);
+    }
+    
+    @Test
+    public void testGetReportedMessagesSentByCurrentUserIsSuccessful() {
+    	Response response = messageReportingResource.getReportedMessagesSentByCurrentUser();
+    	assertEquals(response.getStatus(), Status.INTERNAL_SERVER_ERROR.getStatusCode()); // test mock implementation
     }
 }
