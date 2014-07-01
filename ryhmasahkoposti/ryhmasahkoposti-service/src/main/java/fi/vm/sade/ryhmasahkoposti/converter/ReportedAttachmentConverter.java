@@ -38,4 +38,14 @@ public class ReportedAttachmentConverter {
 	    
 	    return attachment;
 	}
+	
+	public EmailAttachment convert(ReportedAttachment ra) {
+	    EmailAttachment attachment = new EmailAttachment();
+	    
+	    attachment.setName(ra.getAttachmentName());
+	    attachment.setContentType(ra.getContentType());
+	    attachment.setData(ra.getAttachment());
+	    
+	    return attachment;
+	}
 }
