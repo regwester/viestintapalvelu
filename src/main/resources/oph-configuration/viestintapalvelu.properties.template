@@ -21,7 +21,19 @@ ryhmasahkoposti.app.username.to.henkilopalvelu={{ryhmasahkoposti_app_username_to
 ryhmasahkoposti.app.password.to.henkilopalvelu={{ryhmasahkoposti_app_password_to_henkilopalvelu}}
 ryhmasahkoposti.app.username.to.organisaatiopalvelu={{ryhmasahkoposti_app_username_to_organisaatiopalvelu}}
 ryhmasahkoposti.app.password.to.organisaatiopalvelu={{ryhmasahkoposti_app_password_to_organisaatiopalvelu}}
+ryhmasahkoposti.smtp.host={{ryhmasahkoposti_smtp_host}}
+ryhmasahkoposti.smtp.port={{ryhmasahkoposti_smtp_port}}
+ryhmasahkoposti.antivirus.host={{ryhmasahkoposti_antivirus_host}}
+ryhmasahkoposti.antivirus.port={{ryhmasahkoposti_antivirus_port}}
+ryhmasahkoposti.antivirus.timeout={{ryhmasahkoposti_antivirus_timeout}}
+ryhmasahkoposti.require.virus.check={{ryhmasahkoposti_require_virus_check}}
+
 server.name={{ansible_hostname}}
+viestintapalvelu.iposti.host={{viestintapalvelu_iposti_host}}
+viestintapalvelu.iposti.port={{viestintapalvelu_iposti_port}}
+viestintapalvelu.iposti.password={{viestintapalvelu_iposti_password}}
+viestintapalvelu.iposti.username={{viestintapalvelu_iposti_username}}
+viestintapalvelu.iposti.directory={{viestintapalvelu_iposti_directory}}
 
 # Oletusarvoja
 accessRight.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/accessRightService
@@ -67,10 +79,14 @@ log4j.properties.file=${user.home.conf}/log4j.properties
 oid.rest.url.backend=${host.ilb}/oid-service/rest/oid
 oid.webservice.url.backend=${host.ilb}/services/oidService
 root.organisaatio.oid=1.2.246.562.10.00000000001
+ryhmasahkoposti.queue.handle.size=99
+ryhmasahkoposti.sender.cron=0 * * * * *
 ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 ryhmasahkopostipalvelu.templateService.rest.url=http://${host.virkailija}/viestintapalvelu/api/v1
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
+viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
+viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 web.url.cas=https\://${host.cas}/cas
