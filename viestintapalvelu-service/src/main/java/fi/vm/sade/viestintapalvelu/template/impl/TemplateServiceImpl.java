@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -26,7 +27,6 @@ import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Draft;
 import fi.vm.sade.viestintapalvelu.model.DraftReplacement;
-import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
 import fi.vm.sade.viestintapalvelu.model.Replacement;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
@@ -335,9 +335,15 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content, String type)  {
     	fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
-
+    	
+    	if (name == null) 
+    	    return null;
+    	
         Template template = templateDAO.findTemplateByName(name, language, type);
 
+        if (template == null)
+            return null;
+        
         searchTempl.setId(template.getId());
     	searchTempl.setName(template.getName());
     	//searchTempl.setStyles(template.getStyles());
@@ -368,7 +374,18 @@ public class TemplateServiceImpl implements TemplateService {
             
 	    	List<fi.vm.sade.viestintapalvelu.template.TemplateContent> templateContent = new LinkedList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
 	    	for (TemplateContent co : template.getContents()) {
-	    		fi.vm.sade.viestintapalvelu.template.TemplateContent cont = new fi.vm.sade.viestintapalvelu.template.TemplateContent();
+	    	    
+	    	    if (StringUtils.equalsIgnoreCase(type, Template.TYPE_EMAIL)) {
+	                    // If type is email -> read only email content and subject from template
+	                    // all other contents are ignored
+	    	        if (!StringUtils.equalsIgnoreCase(co.getName(), TemplateContent.CONTENT_NAME_EMAIL_BODY))
+	    	            continue;
+	    	    } else {
+	    	        // If type is doc -> read all template contents by ignore email subject or email content
+                        if (StringUtils.equalsIgnoreCase(co.getName(), TemplateContent.CONTENT_NAME_EMAIL_BODY))
+                            continue;
+	    	    }
+	    	    fi.vm.sade.viestintapalvelu.template.TemplateContent cont = new fi.vm.sade.viestintapalvelu.template.TemplateContent();
 				cont.setId(co.getId());
 				cont.setName(co.getName());
 				cont.setContent(co.getContent());

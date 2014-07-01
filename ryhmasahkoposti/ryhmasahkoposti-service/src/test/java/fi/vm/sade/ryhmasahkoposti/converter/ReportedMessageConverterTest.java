@@ -25,26 +25,26 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageConverterTest {
     private ReportedMessageConverter reportedMessageConverter;
-    
+
     @Mock
     CurrentUserComponent mockedCurrentUserComponent;
-    
+
     @Before
     public void setup() {
         this.reportedMessageConverter = new ReportedMessageConverter(mockedCurrentUserComponent);
     }
 
-	@Test
-	public void testReportedMessageConversion() throws IOException {
-		EmailMessage emailMessage = RaportointipalveluTestData.getEmailMessage();
+    @Test
+    public void testReportedMessageConversion() throws IOException {
+        EmailMessage emailMessage = RaportointipalveluTestData.getEmailMessage();
         Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(emailMessage.getSenderOid());
-        
-        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
-        
-        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailMessage, null);
 
-		assertNotNull(reportedMessage);
-		assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 
-	}
+        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
+
+        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailMessage, null, null, null, null, null, null);
+
+        assertNotNull(reportedMessage);
+        assertEquals(emailMessage.getSenderOid(), reportedMessage.getSenderOid()); 
+    }
 }

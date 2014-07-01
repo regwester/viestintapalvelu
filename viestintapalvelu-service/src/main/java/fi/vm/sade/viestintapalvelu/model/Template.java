@@ -76,6 +76,17 @@ public class Template extends BaseEntity {
     @Column(name = "tyyppi", nullable = true)
     private String type;
 
+    /**
+     * Type email
+     */
+    public static final String TYPE_EMAIL = "email";
+
+    /**
+     * Type document
+     */
+    public static final String TYPE_DOC = "doc";
+
+    
     public String getStyles() {
         return styles;
     }

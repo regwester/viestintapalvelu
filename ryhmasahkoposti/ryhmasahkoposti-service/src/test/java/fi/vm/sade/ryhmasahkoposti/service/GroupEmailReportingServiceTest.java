@@ -43,6 +43,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
@@ -126,8 +127,9 @@ public class GroupEmailReportingServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testAddSendingGroupEmail() throws IOException {
-        when(mockedReportedMessageConverter.convert(any(EmailMessage.class), eq("null"))).thenReturn(
-            new ReportedMessage());
+        when(mockedReportedMessageConverter.convert(any(EmailMessage.class), any(ReplacementDTO.class), any(ReplacementDTO.class), 
+                any(ReplacementDTO.class), any(ReplacementDTO.class), any(ReplacementDTO.class), eq("null"))).thenReturn(
+                        new ReportedMessage());
 
         ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
         savedReportedMessage.setId(new Long(2));
