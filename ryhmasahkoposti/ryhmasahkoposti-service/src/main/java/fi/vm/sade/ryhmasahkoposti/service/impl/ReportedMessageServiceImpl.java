@@ -40,6 +40,12 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
 	    PagingAndSortingDTO pagingAndSorting) {
         return reportedMessageDAO.findBySearchCriteria(query, pagingAndSorting);
 	}
+    
+    @Override
+	public List<ReportedMessage> getReportedMessages(String senderOid,
+			String processConstraint, PagingAndSortingDTO pagingAndSorting) {
+		return reportedMessageDAO.findBySenderOid(senderOid, processConstraint, pagingAndSorting);
+	}
 
 	@Override
 	public ReportedMessage getReportedMessage(Long id) {

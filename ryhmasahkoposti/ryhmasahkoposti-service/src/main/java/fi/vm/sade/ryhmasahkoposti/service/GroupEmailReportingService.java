@@ -87,6 +87,17 @@ public interface GroupEmailReportingService {
      */
     public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, 
 	    PagingAndSortingDTO pagingAndSorting);
+    
+    /**
+     * Hakee käyttäjän määritellyn prosessin sisällä lähettämät 
+     * 
+     * @param senderOid Organisaation oid-tunnus
+     * @param processConstraint Prosessi, jonka kautta viesti on lähetetty
+     * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
+     * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
+     */
+    public ReportedMessagesDTO getReportedMessagesBySenderOid(String organizationOid, 
+	    String processConstraint, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee hakuparametrien mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -113,6 +124,13 @@ public interface GroupEmailReportingService {
      * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
     public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
+    
+    /**
+     * Palauttaa käyttäjän oid:n
+     * 
+     * @return Käyttäjän oid
+     */
+    public String getCurrentUserOid();
 
     /**
      * Palauttaa käyttäjän organisaatiotiedot

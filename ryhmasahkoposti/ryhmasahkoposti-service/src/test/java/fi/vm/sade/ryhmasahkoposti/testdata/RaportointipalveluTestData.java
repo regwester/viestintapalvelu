@@ -149,6 +149,18 @@ public class RaportointipalveluTestData {
 
         return henkilo;
     }
+    
+    public static Henkilo getSender() {
+    	Henkilo sender = new Henkilo();
+    	
+    	sender.setOidHenkilo("1.2.246.562.24.42645159413"); // matches sender oid
+    	sender.setHetu("081181-9984");
+    	sender.setEtunimet("Etunimi");
+    	sender.setSukunimi("Sukunimi");
+    	sender.setKutsumanimi("Kutsumanimi");
+    	
+    	return sender;
+    }
 
     public static OrganisaatioRDTO getOrganisaatioRDTO() {
         OrganisaatioRDTO organisaatio = new OrganisaatioRDTO();

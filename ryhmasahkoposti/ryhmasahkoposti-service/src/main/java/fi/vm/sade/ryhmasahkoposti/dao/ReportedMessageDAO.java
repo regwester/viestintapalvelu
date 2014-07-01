@@ -22,6 +22,17 @@ public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
      * @return Lista raportoitavia viestejä
      */
     public List<ReportedMessage> findByOrganizationOid(String organizationOid, PagingAndSortingDTO pagingAndSorting);
+    
+    /**
+     * Hakee halutun käyttäjän lähettämiä raportoitavia viestejä halutussa järjestyksessä
+     *  
+     * @param senderOid Lähettäjän oid-tunnus
+     * @param processConstraint Prosessi, jonka kautta viesti on lähetetty
+     * @param pagingAndSorting Palautettavien tietojen sivutus ja järjestystiedot
+     * @return Lista raportoitavia viestejä
+     */
+    public List<ReportedMessage> findBySenderOid(String senderOid, String processConstraint, 
+    		PagingAndSortingDTO pagingAndSorting);
 	
     /**
 	 * Hakee hakuparametrien mukaiset raportoitavat viestit

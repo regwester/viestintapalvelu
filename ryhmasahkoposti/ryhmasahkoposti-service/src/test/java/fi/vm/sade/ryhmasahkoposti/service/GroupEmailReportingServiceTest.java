@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -391,6 +392,41 @@ public class GroupEmailReportingServiceTest {
         assertTrue(reportedMessagesDTO.getReportedMessages().get(0).getStatusReport()
             .equalsIgnoreCase("Lahetyksiä epäonnistui"));
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testGetReportedMessagesBySenderOid() {
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        reportedMessage.setId(new Long(1));
+        reportedMessage.setVersion(new Long(0));
+
+        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
+        reportedRecipient.setReportedMessage(reportedMessage);
+        reportedRecipients.add(reportedRecipient);
+        
+        reportedMessage.setReportedRecipients(reportedRecipients);
+        mockedReportedMessages.add(reportedMessage);
+
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+
+        when(mockedReportedMessageService.getReportedMessages("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting))
+            .thenReturn(mockedReportedMessages);
+
+        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
+        when(mockedReportedMessageDTOConverter.convert(mockedReportedMessages)).thenReturn(
+            mockedReportedMessageDTOs);
+
+        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(
+            "1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
+
+        assertNotNull(reportedMessagesDTO);
+        assertEquals(1, reportedMessagesDTO.getReportedMessages().size());
+    }
+    
+    
 
     @SuppressWarnings("unchecked")
     @Test
