@@ -5,6 +5,7 @@ public interface RestConstants {
     public static final String PATH_REPORT_MESSAGES_LIST = "list";
     public static final String PATH_REPORT_MESSAGES_ORGANIZATION_SEARCH = "orgSearch";
 	public static final String PATH_REPORT_MESSAGES_SEARCH = "search";
+	public static final String PATH_REPORT_MESSAGES_CURRENT_USER = "currentUserHistory";
 	public static final String PATH_REPORT_MESSAGE_VIEW = "view/{messageID}";
 	public static final String PATH_REPORT_MESSAGE_VIEW_WITH_PAGING = "vwp/{messageID}";
     public static final String PATH_REPORT_MESSAGE_FAILED_VIEW_WITH_PAGING = "failed/{messageID}";

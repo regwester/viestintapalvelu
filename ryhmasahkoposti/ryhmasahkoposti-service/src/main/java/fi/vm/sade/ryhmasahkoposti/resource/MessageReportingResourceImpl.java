@@ -105,6 +105,11 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
         }
 	}
+    
+    @Override
+    public Response getReportedMessagesSentByCurrentUser() {
+    	return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+    }
 
 	@Override
 	public Response getReportedMessage(Long messageID) {
