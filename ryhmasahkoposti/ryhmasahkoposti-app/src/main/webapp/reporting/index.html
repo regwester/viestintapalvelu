@@ -1,15 +1,15 @@
 <!DOCTYPE html>
 <html id="ng-app" ng-app="reportingApp">
 
-<head>   
+<head>
     <title>OPH - Viestintäpalvelu raportointi</title>
-    
+
     <!-- JQuery libs -->
     <script type="text/javascript" src="../assets/lib/jquery/jquery-1.10.2.min.js"></script>
     <script type="text/javascript" src="../assets/lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script>
     <script type="text/javascript" src="../assets/lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js"></script>
 
-	<!-- AngularJS libs -->
+    <!-- AngularJS libs -->
     <script type="text/javascript" src="../assets/lib/angular/angular.js"></script> 
     <script type="text/javascript" src="../assets/lib/angular/angular-resource.js"></script>
     <script type="text/javascript" src="../assets/lib/angular/angular-route.js"></script>
@@ -18,32 +18,40 @@
 
     <!--Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
-    
-    <!-- AngularJS application -->
-    <script type="text/javascript" src="./js/reportingApp.js"></script>
-    <script type="text/javascript" src="./js/reportedMessageList.js"></script>
-    <script type="text/javascript" src="./js/reportedMessageView.js"></script>
-    <script type="text/javascript" src="./js/reportedMessageServices.js"></script>
-    <script type="text/javascript" src="./js/listpaging.js"></script>
-    <script type="text/javascript" src="./js/localization.js"></script>
-    <script type="text/javascript" src="./js/sharedVariables.js"></script>
-    <script type="text/javascript" src="./js/alert.js"></script>
-    <script type="text/javascript" src="./js/errorDialog.js"></script>
-    <script type="text/javascript" src="./js/errorDialogController.js"></script>
-    
+
+    <!-- Init modules -->
+    <script type="text/javascript" src="./js/init.js"></script>
+
+    <!-- Filters -->
+    <script type="text/javascript" src="./js/filters/listpaging.js"></script>
+    <script type="text/javascript" src="./js/filters/localization.js"></script>
+
+    <!-- Services -->
+    <script type="text/javascript" src="./js/services/errorDialog.js"></script>
+    <script type="text/javascript" src="./js/services/loading.js"></script>
+    <script type="text/javascript" src="./js/services/reportedMessage.js"></script>
+    <script type="text/javascript" src="./js/services/sharedVariables.js"></script>
+
+    <!-- Controllers -->
+    <script type="text/javascript" src="./js/controllers/reportedMessageList.js"></script>
+    <script type="text/javascript" src="./js/controllers/reportedMessageView.js"></script>
+    <script type="text/javascript" src="./js/controllers/errorDialog.js"></script>
+
+    <!-- Routes -->
+    <script type="text/javascript" src="./js/routes/reporting.js"></script>
+
     <!-- css -->
     <link type="text/css" rel="stylesheet" href="../assets/css/bootstrap.css"/>
     <link type="text/css" rel="stylesheet" href="../assets/css/other.css"/>
     <link type="text/css" rel="stylesheet" href="../assets/css/virkailija.css"/>
     <link type="text/css" rel="stylesheet" href="../assets/css/dialogs.css"/>
-    
-	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
 </head>
 
 <body>
-	<div id="application-wrapper">
-	    <div id="angularbox" ng-view=""></div>
-	</div>
+    <div id="application-wrapper">
+        <div id="angularbox" ng-view=""></div>
+    </div>
 </body>
 
 </html>

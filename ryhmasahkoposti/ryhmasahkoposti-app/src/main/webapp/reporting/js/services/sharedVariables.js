@@ -1,6 +1,7 @@
 'use strict';
 
-reportingApp.service('SharedVariables', function() {
+angular.module('reportingApp')
+.service('SharedVariables', function() {
     var searchArgumentValue = '';
     var selectedOrganization = '';
     
@@ -9,13 +10,13 @@ reportingApp.service('SharedVariables', function() {
             return searchArgumentValue;
         },
         setSearchArgumentValue: function(value) {
-        	searchArgumentValue = value;
+            searchArgumentValue = value;
         },
         getSelectedOrganizationValue: function() {
-        	return selectedOrganization;
+            return selectedOrganization;
         },
         setSelectedOrganizationValue: function(value) {
-        	selectedOrganization = value;
+            selectedOrganization = value;
         }
     };
 });

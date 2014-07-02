@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('localization', []).
+angular.module('localization').
     filter('i18n', ['$rootScope', '$locale', '$window', function($rootScope, $locale, $window) {
         var language = $window.navigator.userLanguage || $window.navigator.language;
 
@@ -16,7 +16,7 @@ angular.module('localization', []).
 
         jQuery.i18n.properties({
             name:'messages',
-            path:'../../assets/i18n/',
+            path:'../assets/i18n/',
             mode:'map',
             language: language,
             callback: function() {
