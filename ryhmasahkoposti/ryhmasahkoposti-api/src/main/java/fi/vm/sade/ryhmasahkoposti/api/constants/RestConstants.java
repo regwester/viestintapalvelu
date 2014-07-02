@@ -17,6 +17,7 @@ public interface RestConstants {
 	public static final String PARAM_PAGE = "page";
 	public static final String PARAM_SORTED_BY = "sortedby";
 	public static final String PARAM_ORDER = "order";
+	public static final String PARAM_PROCESS = "process";
 	
 	public static final String INTERNAL_SERVICE_ERROR = "Internal service error";
 }

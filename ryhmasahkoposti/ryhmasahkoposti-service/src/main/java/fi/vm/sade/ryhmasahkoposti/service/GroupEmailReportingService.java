@@ -97,7 +97,7 @@ public interface GroupEmailReportingService {
      * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
      */
     public ReportedMessagesDTO getReportedMessagesBySenderOid(String organizationOid, 
-	    String processConstraint, PagingAndSortingDTO pagingAndSorting);
+	    String process, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee hakuparametrien mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 

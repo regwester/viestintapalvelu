@@ -31,7 +31,7 @@ public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
      * @param pagingAndSorting Palautettavien tietojen sivutus ja järjestystiedot
      * @return Lista raportoitavia viestejä
      */
-    public List<ReportedMessage> findBySenderOid(String senderOid, String processConstraint, 
+    public List<ReportedMessage> findBySenderOidAndProcess(String senderOid, String process, 
     		PagingAndSortingDTO pagingAndSorting);
 	
     /**

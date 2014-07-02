@@ -44,14 +44,19 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     }
     
     @Override
-	public List<ReportedMessage> findBySenderOid(String senderOid, String processConstraint, PagingAndSortingDTO pagingAndSorting) {
+	public List<ReportedMessage> findBySenderOidAndProcess(String senderOid, String process, PagingAndSortingDTO pagingAndSorting) {
     	QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
     	
     	JPAQuery findAllReportedMessagesQuery = null;
 		BooleanExpression whereExpression = null;
 		OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 		
-		whereExpression = reportedMessage.senderOid.in(senderOid).and(reportedMessage.process.in(processConstraint));
+		whereExpression = reportedMessage.senderOid.in(senderOid);
+		if (process != null) {
+			// filter by process if it is provided
+			whereExpression = whereExpression.and(reportedMessage.process.containsIgnoreCase(process));
+		}
+		
 		findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
     	
 		return findAllReportedMessagesQuery.list(reportedMessage);

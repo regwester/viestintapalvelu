@@ -107,14 +107,13 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
 	}
     
     @Override
-    public Response getReportedMessagesSentByCurrentUser() {
+    public Response getReportedMessagesSentByCurrentUser(String process) {
     	try {
     		String senderOid = groupEmailReportingService.getCurrentUserOid();
-        	String processConstraint = "Osoitetietojarjestelma";
         	
         	PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(null, null);
         	ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(senderOid, 
-        			processConstraint, pagingAndSorting);
+        			process, pagingAndSorting);
         	
         	return Response.ok(reportedMessagesDTO).build();
     	} catch (ExternalInterfaceException e) {

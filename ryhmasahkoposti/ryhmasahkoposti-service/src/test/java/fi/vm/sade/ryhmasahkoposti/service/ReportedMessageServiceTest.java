@@ -94,7 +94,7 @@ public class ReportedMessageServiceTest {
 		
 		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
 		
-		when(mockedReportedMessageDAO.findBySenderOid("1.2.246.562.24.42645159413", "Hakuprosessi", 
+		when(mockedReportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi", 
 				pagingAndSorting)).thenReturn(reportedMessages);
         
         List<ReportedMessage> result = reportedMessageService.getReportedMessages("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
