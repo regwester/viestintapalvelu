@@ -130,7 +130,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         ReplacementDTO templateReplyToAddress = null;
         ReplacementDTO templateReplyToPersonal = null;
 
-
         if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
 
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
@@ -178,6 +177,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 // Subject
                 templateSubject = reportedMessageReplacementConverter.getEmailFieldFromReplacements(templateDTO.getReplacements(), 
                         emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SUBJECT);
+                
                 LOGGER.debug("Subject:" + templateSubject);
 
             }

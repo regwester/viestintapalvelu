@@ -92,9 +92,7 @@ public class TemplateBuilder {
 	}
 
 	return createContent(message, replacements); 
-
     }
-
 
     /**
      * Create message content
