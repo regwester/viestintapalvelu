@@ -110,7 +110,21 @@ public class MessageReportingResourceTest {
     
     @Test
     public void testGetReportedMessagesSentByCurrentUserIsSuccessful() {
+    	PagingAndSortingDTO mockedPagingAndSortingDTO = new PagingAndSortingDTO();
+    	mockedPagingAndSortingDTO.setFromIndex(0);
+    	mockedPagingAndSortingDTO.setNumberOfRows(0);
+    	mockedPagingAndSortingDTO.setSortedBy(null);
+    	mockedPagingAndSortingDTO.setSortOrder(null);
+    	when(mockedPagingAndSortingDTOConverter.convert(null, null)).thenReturn(mockedPagingAndSortingDTO);
+    	
+    	String mockedCurrentUserOid = RaportointipalveluTestData.getSender().getOidHenkilo();
+    	when(mockedGroupEmailReportingService.getCurrentUserOid()).thenReturn(mockedCurrentUserOid);
+    	
+    	ReportedMessagesDTO mockedReportedMessagesDTO = RaportointipalveluTestData.getReportedMessagesDTO();
+        when(mockedGroupEmailReportingService.getReportedMessagesBySenderOid(
+            mockedCurrentUserOid, "OSOITEPALVELU", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
+    	
     	Response response = messageReportingResource.getReportedMessagesSentByCurrentUser();
-    	assertEquals(response.getStatus(), Status.INTERNAL_SERVER_ERROR.getStatusCode()); // test mock implementation
+    	assertEquals(Status.OK.getStatusCode(), response.getStatus()); // test mock implementation
     }
 }

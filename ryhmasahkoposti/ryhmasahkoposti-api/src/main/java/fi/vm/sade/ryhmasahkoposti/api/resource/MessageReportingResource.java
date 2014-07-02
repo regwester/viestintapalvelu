@@ -98,13 +98,7 @@ public interface MessageReportingResource {
 	/**
 	 * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen organisaationsa lähettämistä ryhmäshköpostiviesteistä
 	 * 
-	 * @param organizationOid Organisaation oid-tunnus
-	 * @param hakuKentta Käyttäjän antama hakuparametri
-     * @param nbrOfRows Haettavien ryhmäsähköpostiviestien lukumäärä
-     * @param page Sivu, jolle halutaan siirtyä katselemaan viestejä
-     * @param sortedBy Sarake, minkä mukaan lajittelu suoritetaan
-     * @param order Lajittelujärjestys
-	 * @return Tiedot raportoitavista ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
+	 * @return Tiedot käyttäjän lähettämistä ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
 	 */
 	@PreAuthorize(SecurityConstants.READ)
 	@Produces(MediaType.APPLICATION_JSON)
