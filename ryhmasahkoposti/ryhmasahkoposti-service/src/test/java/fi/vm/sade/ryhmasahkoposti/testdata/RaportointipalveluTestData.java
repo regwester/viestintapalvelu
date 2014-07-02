@@ -25,6 +25,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
@@ -369,7 +370,7 @@ public class RaportointipalveluTestData {
         }
         return reportedReplacements;
     }
-    
+
     /**
      * Generate replacements data. 
      * 
@@ -389,5 +390,27 @@ public class RaportointipalveluTestData {
         }
         return reportedReplacements;
     }
+
+
+    /**
+     * Generate reported recipient replacements data. 
+     * 
+     * @param count
+     * @return Test object
+     */
+    public static List<ReportedRecipientReplacementDTO> getReportedReceientReplacements(int... ids) {
+
+
+        List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacementDTO>();
+
+        for(int id: ids) { 
+            ReportedRecipientReplacementDTO replacement = new ReportedRecipientReplacementDTO();
+            replacement.setName("key-" + id);
+            replacement.setDefaultValue("recipient-" + id);
+            reportedRecipientReplacements.add(replacement);
+        }
+        return reportedRecipientReplacements;
+    }
+
 
 }
