@@ -42,16 +42,14 @@ public class ReportedMessageConverter {
             reportedMessage.setSubject(emailMessage.getSubject());
 
         // Set sender
-        // TODO: set sender name
         if (senderFrom != null) 
-            reportedMessage.setSenderEmail(senderFrom.getDefaultValue());
+            reportedMessage.setSenderEmail(senderFromPersonal.getDefaultValue() + senderFrom.getDefaultValue());
         else
             reportedMessage.setSenderEmail(emailMessage.getFrom());
 
         // Set reply-to
-        // TODO: set reply to name
         if (senderFrom != null) 
-            reportedMessage.setReplyToEmail(replyTo.getDefaultValue());
+            reportedMessage.setReplyToEmail(replyToPersonal.getDefaultValue() + replyTo.getDefaultValue());
         else
             reportedMessage.setReplyToEmail(emailMessage.getReplyTo());
 
