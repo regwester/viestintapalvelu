@@ -54,7 +54,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 		whereExpression = reportedMessage.senderOid.in(senderOid);
 		if (process != null) {
 			// filter by process if it is provided
-			whereExpression = whereExpression.and(reportedMessage.process.containsIgnoreCase(process));
+			whereExpression = whereExpression.and(reportedMessage.process.equalsIgnoreCase(process));
 		}
 		
 		findAllReportedMessagesQuery = from(reportedMessage).where(whereExpression).orderBy(orderBy);
