@@ -4,10 +4,10 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -19,16 +19,14 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 @Service
 public class EmailServiceImpl implements EmailService {
     
-    //SLF4J would be better, so we can specify log levels and disable logging when necessary
-    private static final Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class
-            .getName());
+    private static final Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class);
 
     private static final int MAX_CACHE_ENTRIES = 10;
 
@@ -161,7 +159,7 @@ public class EmailServiceImpl implements EmailService {
                 message = rrService.getMessage(messageId);
                 messageCache.put(messageId, message);
             } catch (Exception e) {
-                log.log(Level.SEVERE, "Get message failed", e);
+                log.error("Get message failed", e);
             }
         }
         return message;
@@ -178,6 +176,14 @@ public class EmailServiceImpl implements EmailService {
             message.setBody(buildMessage);
         } else
             throw new Exception("Template build error. messageId=" + messageId);
+
+        String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), message.getMessageReplacements(), recipientReplacements);
+        if (!StringUtils.isEmpty(buildMessageSubject)) {
+            message.setSubject(buildMessageSubject);
+        } else
+            throw new Exception("Message subject build error. messageId=" + messageId);
+        
+
     }
 
     private List<ReportedRecipientReplacementDTO> getRecipientReplacements(EmailRecipientDTO er) {
@@ -185,7 +191,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             recipientReplacements = rrService.getRecipientReplacements(er.getRecipientID());
         } catch (IOException e) {
-            log.severe("Getting recipient replacements failed for receipientId:"
+            log.error("Getting recipient replacements failed for receipientId:"
                     + er.getRecipientID());
         }
         return recipientReplacements;
@@ -199,7 +205,7 @@ public class EmailServiceImpl implements EmailService {
         try {
             emailAVChecker.checkMessage(emailSender, message);
         } catch (Exception e) {
-            log.severe("Virus check failed" + e);
+            log.error("Virus check failed" + e);
         }
     }
 

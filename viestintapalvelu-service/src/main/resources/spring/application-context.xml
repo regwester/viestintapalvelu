@@ -27,7 +27,7 @@
                 <prop key="cas_key">viestintapalvelu</prop>
                 <prop key="cas_service">${cas.service.viestintapalvelu}</prop>
                 <prop key="cas_callback_url">${cas.callback.viestintapalvelu}</prop>
-                <prop key="spring_security_default_access">permitAll</prop>
+                <prop key="spring_security_default_access">isAuthenticated()</prop>
             </util:properties>
         </property>
     </bean>

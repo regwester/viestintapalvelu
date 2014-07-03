@@ -21,8 +21,10 @@ public class TemplateContent implements Comparable<TemplateContent> {
     private String content;
 
 	@ApiModelProperty(value = "Aikaleima")
-    private Date timestamp;
+	private Date timestamp;
+	
 
+   
     public Date getTimestamp() {
         return timestamp;
     }

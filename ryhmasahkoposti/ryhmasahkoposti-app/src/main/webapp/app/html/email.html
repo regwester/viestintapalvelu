@@ -1,13 +1,13 @@
 <div ng-controller="EmailCtrl">
     <form novalidate="novalidate" class="form-horizontal">
     
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label"></label>
             <div class="controls">
                     <h2>{{'email.header.viesti' | i18n}}</h2>
-            </div>      
+            </div>
         </div>
-                    
+
         <div class="control-group">
             <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
 
@@ -15,55 +15,55 @@
                     {{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
             </div>  
             
-            <div class="controls pushDown" ng-hide="showCnt">           
-                <div border="0" ng-repeat="header in emaildata.recipient">                                           
+            <div class="controls pushDown" ng-hide="showCnt">
+                <div border="0" ng-repeat="header in emaildata.recipient">
                         {{header.email}}
                 </div>  
-            </div>                              
+            </div>
         </div>
 
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
             <div class="controls">
                 <input type="text" size="40" ng-model="emaildata.email.from"  disabled/>
                 <input type="hidden" ng-model="emaildata.email.organizationOid"/>
-            </div>      
+            </div>
         </div>
         
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label">{{'email.label.vastausosoite' | i18n}}</label>
             <div class="controls">
                 <input type="text" size="40" ng-model="emaildata.email.replyTo"/>
-            </div>      
+            </div>
         </div>
         
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label">{{'email.label.otsikko' | i18n}}</label>
             <div class="controls">
                 <input type="text" size="40" ng-model="emaildata.email.subject"/>
-            </div>      
+            </div>
         </div>
 
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label">{{'email.label.viesti' | i18n}}</label>
             <div class="controls">
                  <textarea ui-tinymce="tinymceOptions" ng-model="emaildata.email.body"></textarea>
-            </div>      
+            </div>
         </div>
 
-        <div class="control-group">              
+        <div class="control-group">
             <div class="controls">
                 <div>
-                    <span>                                               
+                    <span>
                         <div class="image-upload" >
                             <label for="attachment-input" class="inline-operation btn btn-small">
                                 {{'email.button.liite.valitse' | i18n}}
                             </label>
-                            <input  id="attachment-input" type="file" name="file" style="display:none;" data-url="/ryhmasahkoposti-service/email/addAttachment" multiple upload>                      
+                            <input  id="attachment-input" type="file" name="file" style="display:none;" data-url="/ryhmasahkoposti-service/email/addAttachment" multiple upload>
                         </div>
-                    </span>             
+                    </span>
                 </div>
-            </div>              
+            </div>
         </div>
         
         <div class="control-group">
@@ -71,44 +71,44 @@
             <div class="controls pushDown">
                 <span ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
                 <ul>                    
-                    <li ng-repeat="name in emaildata.email.attachInfo">{{name.fileName}}                        
-                        <a ng-click="remove($index)">{{'email.liitteet.poista' | i18n}}</a>                                             
+                    <li ng-repeat="name in emaildata.email.attachInfo">{{name.fileName}}
+                        <a ng-click="remove($index)">{{'email.liitteet.poista' | i18n}}</a>
                     </li>
                 </ul> 
             </div>
         </div>
  
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label"></label>
             <div class="controls"> 
-				<button ng-click="cancelEmail()" class="inline-operation btn btn-small">
-				    {{'email.button.peruuta' | i18n}}
-				</button>
-				<button ng-click="sendGroupEmail()" class="inline-operation btn btn-small">
-				    {{'email.button.laheta' | i18n}}
-				</button>
-            </div>      
+                <button ng-click="cancelEmail()" class="inline-operation btn btn-small">
+                    {{'email.button.peruuta' | i18n}}
+                </button>
+                <button ng-click="sendGroupEmail()" class="inline-operation btn btn-small">
+                    {{'email.button.laheta' | i18n}}
+                </button>
+            </div>
         </div>
         
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label">{{'email.label.templateName' | i18n}}</label>
             <div class="controls">
                 <input type="text" size="40" ng-model="emaildata.email.templateName"/>
-            </div>      
+            </div>
         </div>
 
-        <div class="control-group">     
+        <div class="control-group">
             <label class="control-label">{{'email.label.languageCode' | i18n}}</label>
             <div class="controls">
                 <input type="text" size="5" ng-model="emaildata.email.languageCode"/>
-            </div>      
+            </div>
         </div>
-        
-        <div class="control-group">              
+
+        <div class="control-group">
             <div class="controls">
                 <div class="span3 progress" ng-show="percentage">
-                    <div class="bar" ng-style="percentage2"></div>                  
-                </div>                              
+                    <div class="bar" ng-style="percentage2"></div>
+                </div>
             </div>
         </div>
     </form>

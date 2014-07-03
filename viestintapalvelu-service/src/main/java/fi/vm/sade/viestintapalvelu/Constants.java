@@ -16,9 +16,9 @@ public class Constants {
     public static final Boolean IPOST_TEST = Boolean.FALSE;
     
     // Käyttöoikeudet
-    public static final String ASIAKIRJAPALVELU_READ = "ROLE_APP_ASIAKIRJAPALVELU_READ";
-    public static final String ASIAKIRJAPALVELU_CREATE_TEMPLATE = "ROLE_APP_ASIAKIRJAPALVELU_CREATE_TEMPLATE";
-    public static final String ASIAKIRJAPALVELU_CREATE_LETTER = "ROLE_APP_ASIAKIRJAPALVELU_CREATE_LETTER";
-    public static final String IPOSTI_READ = "ROLE_APP_IPOSTI_READ";
-    public static final String IPOSTI_SEND = "ROLE_APP_IPOSTI_SEND";
+    public static final String ASIAKIRJAPALVELU_READ = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_READ')";
+    public static final String ASIAKIRJAPALVELU_CREATE_TEMPLATE = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_CREATE_TEMPLATE')";
+    public static final String ASIAKIRJAPALVELU_CREATE_LETTER = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_CREATE_LETTER')";
+    public static final String IPOSTI_READ = "hasRole('ROLE_APP_IPOSTI_READ')";
+    public static final String IPOSTI_SEND = "hasRole('ROLE_APP_IPOSTI_SEND')";
 }

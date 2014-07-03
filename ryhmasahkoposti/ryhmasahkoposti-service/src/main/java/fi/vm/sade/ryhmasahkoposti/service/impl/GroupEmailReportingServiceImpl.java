@@ -19,18 +19,22 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.AttachmentResponseConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
@@ -67,6 +71,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private ReportedMessageConverter reportedMessageConverter;
     private ReportedRecipientConverter reportedRecipientConverter;
     private ReportedAttachmentConverter reportedAttachmentConverter;
+    private AttachmentResponseConverter attachmentResponseConverter;
     private EmailMessageDTOConverter emailMessageDTOConverter;
     private EmailRecipientDTOConverter emailRecipientDTOConverter;
     private ReportedMessageDTOConverter reportedMessageDTOConverter;
@@ -83,10 +88,10 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
             ReportedMessageAttachmentService reportedMessageAttachmentService,
             ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
-            ReportedAttachmentConverter reportedAttachmentConverter, EmailMessageDTOConverter emailMessageDTOConverter,
-            EmailRecipientDTOConverter emailRecipientDTOConverter,
-            ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent,
-            OrganizationComponent organizationComponent, TemplateComponent templateComponent,
+            ReportedAttachmentConverter reportedAttachmentConverter, AttachmentResponseConverter attachmentResponseConverter, 
+            EmailMessageDTOConverter emailMessageDTOConverter, EmailRecipientDTOConverter emailRecipientDTOConverter, 
+            ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent, 
+            OrganizationComponent organizationComponent, TemplateComponent templateComponent, 
             ReportedMessageReplacementConverter reportedMessageReplacementConverter,
             ReportedMessageReplacementService reportedMessageReplacementService,
             ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
@@ -98,6 +103,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         this.reportedMessageConverter = reportedMessageConverter;
         this.reportedRecipientConverter = reportedRecipientConverter;
         this.reportedAttachmentConverter = reportedAttachmentConverter;
+        this.attachmentResponseConverter = attachmentResponseConverter;
         this.emailMessageDTOConverter = emailMessageDTOConverter;
         this.emailRecipientDTOConverter = emailRecipientDTOConverter;
         this.reportedMessageDTOConverter = reportedMessageDTOConverter;
@@ -118,7 +124,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         // Check email template is used
         String templateContent = null;
         TemplateDTO templateDTO = null;
-        
+        ReplacementDTO templateSubject = null;
+        ReplacementDTO templateSenderFromAddress = null;
+        ReplacementDTO templateSenderFromPersonal = null;
+        ReplacementDTO templateReplyToAddress = null;
+        ReplacementDTO templateReplyToPersonal = null;
+
         if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
 
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
@@ -127,6 +138,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
             // Template is used
             try {
+                
                 templateDTO = templateComponent.getTemplateContent(emailData.getEmail().getTemplateName(),
                         languageCode, TemplateDTO.TYPE_EMAIL);
                 LOGGER.debug("Loaded template:" + templateDTO);
@@ -143,19 +155,46 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 TemplateBuilder templateBuilder = new TemplateBuilder();
                 templateContent = templateBuilder.buildTemplate(templateDTO);
 
-                LOGGER.debug("Template content:" + templateContent);
+                LOGGER.info("Template content:" + templateContent);
+
+
+                // Get sender replacements
+                templateSenderFromAddress = reportedMessageReplacementConverter.getEmailFieldFromReplacements(templateDTO.getReplacements(), 
+                        emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SENDER_FROM);
+                LOGGER.debug("Sender from address:" + templateSenderFromAddress);
+                templateSenderFromPersonal = reportedMessageReplacementConverter.getEmailFieldFromReplacements(templateDTO.getReplacements(), 
+                        emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SENDER_FROM_PERSONAL);
+                LOGGER.debug("Sender from address personal:" + templateSenderFromPersonal);
+
+                // Get reply-to replacements
+                templateReplyToAddress = reportedMessageReplacementConverter.getEmailFieldFromReplacements(templateDTO.getReplacements(), 
+                        emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_REPLY_TO);
+                LOGGER.debug("Reply-to from address:" + templateReplyToAddress);
+                templateReplyToPersonal = reportedMessageReplacementConverter.getEmailFieldFromReplacements(templateDTO.getReplacements(), 
+                        emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL);
+                LOGGER.debug("Reply-to address personal:" + templateReplyToPersonal);
+
+                // Subject
+                templateSubject = reportedMessageReplacementConverter.getEmailFieldFromReplacements(templateDTO.getReplacements(), 
+                        emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SUBJECT);
+                
+                LOGGER.debug("Subject:" + templateSubject);
 
             }
         }
 
-        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail(), templateContent);
+        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail(), templateSenderFromAddress, templateSenderFromPersonal, 
+                templateReplyToAddress, templateReplyToPersonal, templateSubject, templateContent);
         ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
 
         if (templateDTO != null) {
 
+            // Get template replacements from email data
+            List<ReplacementDTO> emailReplacements = emailData.getReplacements();
+
             // Convert message replacements
             List<ReportedMessageReplacement> messageReplacements = reportedMessageReplacementConverter.convert(
-                    reportedMessage, templateDTO.getReplacements());
+                    savedReportedMessage, templateDTO.getReplacements(), emailReplacements);
 
             // Save message replacements
             for (ReportedMessageReplacement replacement : messageReplacements) {
@@ -321,8 +360,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
         for (ReportedMessage reportedMessage : reportedMessages) {
-            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage
-                    .getId());
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
             sendingStatuses.put(reportedMessage.getId(), sendingStatus);
         }
 
@@ -411,6 +449,16 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         ReportedAttachment reportedAttachment = reportedAttachmentConverter.convert(fileItem);
         return reportedAttachmentService.saveReportedAttachment(reportedAttachment);
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public AttachmentResponse saveAttachment(EmailAttachment emailAttachment) {
+        LOGGER.info("saveAttachment(" + emailAttachment.getName() + ") called");
+
+        ReportedAttachment reportedAttachment = reportedAttachmentConverter.convert(emailAttachment);
+        Long id = reportedAttachmentService.saveReportedAttachment(reportedAttachment);      
+        return attachmentResponseConverter.convert(id, reportedAttachment);
     }
 
     @Override

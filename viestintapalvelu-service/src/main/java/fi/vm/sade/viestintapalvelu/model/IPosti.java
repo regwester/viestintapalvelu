@@ -2,12 +2,12 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
 
+import javax.persistence.Basic;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -33,12 +33,12 @@ import fi.vm.sade.generic.model.BaseEntity;
 )
  */
 
-@Table(name = "iposti", schema="kirjeet")
+@Table(name = "iposti", schema = "kirjeet")
 @Entity(name = "IPosti")
 public class IPosti extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "kirjelahetys_id")
     @JsonBackReference
     private LetterBatch letterBatch;
@@ -50,10 +50,14 @@ public class IPosti extends BaseEntity {
     @Column(name = "lahetetty", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date sentDate;
-
+    
+    @Basic(fetch = FetchType.LAZY)
     @Column(name = "aineisto")
     private byte[] content;
-
+    
+    @Column(name = "aineiston_nimi")
+    private String contentName = "";
+    
     @Column(name = "sisaltotyyppi")
     private String contentType = "";
 
@@ -69,16 +73,16 @@ public class IPosti extends BaseEntity {
         return createDate;
     }
 
-    public void setCreateDate(Date createDate) {
-        this.createDate = createDate;
+    public void setCreateDate(Date date) {
+        this.createDate = date;
     }
 
     public Date getSentDate() {
         return sentDate;
     }
 
-    public void setSentDate(Date sentDate) {
-        this.sentDate = sentDate;
+    public void setSentDate(Date date) {
+        this.sentDate = date;
     }
 
     public byte[] getContent() {
@@ -95,6 +99,14 @@ public class IPosti extends BaseEntity {
 
     public void setContentType(String contentType) {
         this.contentType = contentType;
+    }
+    
+    public String getContentName() {
+        return contentName;
+    }
+    
+    public void setContentName(String contentName) {
+        this.contentName = contentName;
     }
 
 }
