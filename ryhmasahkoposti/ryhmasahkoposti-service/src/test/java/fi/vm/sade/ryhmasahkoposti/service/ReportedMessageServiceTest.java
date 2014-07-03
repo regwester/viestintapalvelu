@@ -1,6 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import static org.junit.Assert.assertNotEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
@@ -84,6 +85,22 @@ public class ReportedMessageServiceTest {
 		
 		assertNotNull(reportedMessages);
 		assertNotEquals(0, reportedMessages.size());
+	}
+	
+	@Test
+	public void testGetReportedMessagesBySenderOid() throws IOException {
+		List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
+		reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
+		
+		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+		
+		when(mockedReportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi", 
+				pagingAndSorting)).thenReturn(reportedMessages);
+        
+        List<ReportedMessage> result = reportedMessageService.getReportedMessages("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
+		
+		assertNotNull(result);
+		assertEquals(1, result.size());
 	}
 
 	@Test

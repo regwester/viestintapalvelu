@@ -105,6 +105,24 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
         }
 	}
+    
+    @Override
+    public Response getReportedMessagesSentByCurrentUser(String process) {
+    	try {
+    		String senderOid = groupEmailReportingService.getCurrentUserOid();
+        	
+        	PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(null, null);
+        	ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(senderOid, 
+        			process, pagingAndSorting);
+        	
+        	return Response.ok(reportedMessagesDTO).build();
+    	} catch (ExternalInterfaceException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+        }
+    }
 
 	@Override
 	public Response getReportedMessage(Long messageID) {

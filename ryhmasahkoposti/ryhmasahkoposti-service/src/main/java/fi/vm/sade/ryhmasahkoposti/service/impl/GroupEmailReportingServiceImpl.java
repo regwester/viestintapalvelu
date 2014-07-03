@@ -349,6 +349,21 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         return reportedMessagesDTO;
     }
+    
+    @Override
+    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, 
+    		String process, PagingAndSortingDTO pagingAndSorting) {
+    	LOGGER.info("getReportedMessagesBySenderOid(String, String, PagingAndSortingDTO) called");
+    	
+    	ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
+  
+    	List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(senderOid, 
+    			process, pagingAndSorting);
+    	List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(reportedMessages);
+    	
+    	reportedMessagesDTO.setReportedMessages(reportedMessageDTOs);
+    	return reportedMessagesDTO;
+    }
 
     @Override
     public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
@@ -392,6 +407,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         List<ReportedRecipient> reportedRecipients = reportedRecipientService.getUnhandledReportedRecipients(listSize);
         return emailRecipientDTOConverter.convert(reportedRecipients);
+    }
+    
+    @Override
+    public String getCurrentUserOid() {
+    	String currentUserOid = currentUserComponent.getCurrentUser().getOidHenkilo();
+    	return currentUserOid;
     }
 
     @Override
