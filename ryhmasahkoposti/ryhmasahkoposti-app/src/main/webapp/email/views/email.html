@@ -1,31 +1,27 @@
 <div ng-controller="EmailCtrl">
     <form novalidate="novalidate" class="form-horizontal">
 
-        <div class="control-group">
-            <label class="control-label"></label>
-            <div class="controls">
-                    <h2>{{'email.header.viesti' | i18n}}</h2>
-            </div>
-        </div>
+        <h2>{{'email.header.viesti' | i18n}}</h2>
 
         <div class="control-group">
-            <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
+            <label class="control-label">{{'email.label.vastaanottajat' | i18n}} ({{emaildata.recipient.length}})</label>
 
-            <div class="controls pushDown" ng-hide="showTo">
-                    {{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
+            <div class="controls" ng-hide="showTo">
+                {{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
             </div>
 
-            <div class="controls pushDown" ng-hide="showCnt">
-                <div border="0" ng-repeat="header in emaildata.recipient">
-                        {{header.email}}
-                </div>
+            <div class="controls" ng-hide="showCnt">
+                <span ng-repeat="recipient in emaildata.recipient">
+                    {{recipient.email}}{{$last ? '' : ', '}}
+                </span>
             </div>
         </div>
 
         <div class="control-group">
             <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
             <div class="controls">
-                <input type="text" size="40" ng-model="emaildata.email.from"  disabled/>
+                <input type="text" size="40" ng-model="emaildata.email.fromName"/>
+                <span>&lt;{{emaildata.email.from}}&gt;</span>
                 <input type="hidden" ng-model="emaildata.email.organizationOid"/>
             </div>
         </div>
@@ -36,7 +32,7 @@
                 <input type="text" size="40" ng-model="emaildata.email.replyTo"/>
             </div>
         </div>
-        
+
         <div class="control-group">
             <label class="control-label">{{'email.label.otsikko' | i18n}}</label>
             <div class="controls">
@@ -52,21 +48,6 @@
         </div>
 
         <div class="control-group">
-            <div class="controls">
-                <div>
-                    <span>
-                        <div class="image-upload" >
-                            <label for="attachment-input" class="inline-operation btn btn-small">
-                                {{'email.button.liite.valitse' | i18n}}
-                            </label>
-                            <input  id="attachment-input" type="file" name="file" style="display:none;" data-url="/ryhmasahkoposti-service/email/addAttachment" multiple upload>
-                        </div>
-                    </span>
-                </div>
-            </div>
-        </div>
-
-        <div class="control-group">
             <label class="control-label">{{'email.label.liitteet' | i18n}}</label>
             <div class="controls pushDown">
                 <span ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
@@ -75,6 +56,15 @@
                         <a ng-click="remove($index)">{{'email.liitteet.poista' | i18n}}</a>
                     </li>
                 </ul> 
+            </div>
+        </div>
+        
+        <div class="control-group">
+            <div class="controls">
+                <div class="btn btn-small">
+                    {{'email.button.liite.valitse' | i18n}}
+                    <input  id="attachment-input" type="file" name="file" style="display:none;" data-url="/ryhmasahkoposti-service/email/addAttachment" multiple upload>
+                </div>
             </div>
         </div>
  
@@ -87,23 +77,9 @@
                 <button ng-click="saveDraft()" class="inline-operation btn btn-small">
                     {{'email.button.tallenna' | i18n}}
                 </button>
-                <button ng-click="sendGroupEmail()" class="inline-operation btn btn-small">
+                <button ng-click="sendGroupEmail()" class="inline-operation btn-primary btn-small">
                     {{'email.button.laheta' | i18n}}
                 </button>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">{{'email.label.templateName' | i18n}}</label>
-            <div class="controls">
-                <input type="text" size="40" ng-model="emaildata.email.templateName"/>
-            </div>
-        </div>
-
-        <div class="control-group">
-            <label class="control-label">{{'email.label.languageCode' | i18n}}</label>
-            <div class="controls">
-                <input type="text" size="5" ng-model="emaildata.email.languageCode"/>
             </div>
         </div>
 

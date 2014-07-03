@@ -6,7 +6,8 @@ angular.module('email')
     $rootScope.emailsendid = "";
     $scope.tinymceOptions = {
       height: 400,
-      width: 600
+      width: 600,
+      menubar: false
     };
 
     // Create empty email to get the attachInfo[] to the object
