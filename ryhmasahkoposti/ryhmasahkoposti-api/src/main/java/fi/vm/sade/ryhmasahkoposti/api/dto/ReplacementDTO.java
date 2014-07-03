@@ -29,59 +29,85 @@ public class ReplacementDTO extends BaseDTO {
     private Date timestamp;
 
     /**
+     * Replacement name of sender from field
+     */
+    public final static String NAME_EMAIL_SENDER_FROM = "sender-from";
+
+    /**
+     * Replacement name of sender from personal field
+     */
+    public final static String NAME_EMAIL_SENDER_FROM_PERSONAL = "sender-from-personal";
+
+    /**
+     * Replacement name of replay-to field
+     */
+    public final static String NAME_EMAIL_REPLY_TO = "reply-to";
+
+    /**
+     * Replacement name of replay-to personal field
+     */
+    public final static String NAME_EMAIL_REPLY_TO_PERSONAL = "reply-to-personal";
+
+    /**
+     * Replacement name of email subject
+     */
+    public final static String NAME_EMAIL_SUBJECT = "subject";
+
+
+    /**
      * @return the name
      */
     public String getName() {
-	return name;
+        return name;
     }
 
     /**
      * @param name the name to set
      */
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     /**
      * @return the defaultValue
      */
     public String getDefaultValue() {
-	return defaultValue;
+        return defaultValue;
     }
 
     /**
      * @param defaultValue the defaultValue to set
      */
     public void setDefaultValue(String defaultValue) {
-	this.defaultValue = defaultValue;
+        this.defaultValue = defaultValue;
     }
 
     /**
      * @return the mandatory
      */
     public boolean isMandatory() {
-	return mandatory;
+        return mandatory;
     }
 
     /**
      * @param mandatory the mandatory to set
      */
     public void setMandatory(boolean mandatory) {
-	this.mandatory = mandatory;
+        this.mandatory = mandatory;
     }
 
     /**
      * @return the timestamp
      */
     public Date getTimestamp() {
-	return timestamp;
+        return timestamp;
     }
 
     /**
      * @param timestamp the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
-	this.timestamp = timestamp;
+        this.timestamp = timestamp;
     }
 
     /* (non-Javadoc)
@@ -89,8 +115,8 @@ public class ReplacementDTO extends BaseDTO {
      */
     @Override
     public String toString() {
-	return "ReplacementDTO [name=" + name + ", defaultValue="
-		+ defaultValue + ", mandatory=" + mandatory + ", timestamp="
-		+ timestamp + ", getId()=" + getId() + "]";
+        return "ReplacementDTO [name=" + name + ", defaultValue="
+                + defaultValue + ", mandatory=" + mandatory + ", timestamp="
+                + timestamp + ", getId()=" + getId() + "]";
     }
 }

@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -105,5 +106,25 @@ public class MessageReportingResourceTest {
         assertTrue(searchedReportedMessagesDTO.getNumberOfReportedMessages() == 1);
         assertNotNull(searchedReportedMessagesDTO.getOrganizations());
         assertTrue(searchedReportedMessagesDTO.getOrganizations().size() == 1);
+    }
+    
+    @Test
+    public void testGetReportedMessagesSentByCurrentUserIsSuccessful() {
+    	PagingAndSortingDTO mockedPagingAndSortingDTO = new PagingAndSortingDTO();
+    	mockedPagingAndSortingDTO.setFromIndex(0);
+    	mockedPagingAndSortingDTO.setNumberOfRows(0);
+    	mockedPagingAndSortingDTO.setSortedBy(null);
+    	mockedPagingAndSortingDTO.setSortOrder(null);
+    	when(mockedPagingAndSortingDTOConverter.convert(null, null)).thenReturn(mockedPagingAndSortingDTO);
+    	
+    	String mockedCurrentUserOid = RaportointipalveluTestData.getSender().getOidHenkilo();
+    	when(mockedGroupEmailReportingService.getCurrentUserOid()).thenReturn(mockedCurrentUserOid);
+    	
+    	ReportedMessagesDTO mockedReportedMessagesDTO = RaportointipalveluTestData.getReportedMessagesDTO();
+        when(mockedGroupEmailReportingService.getReportedMessagesBySenderOid(
+            mockedCurrentUserOid, "Hakuprosessi", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
+    	
+    	Response response = messageReportingResource.getReportedMessagesSentByCurrentUser("Hakuprosessi");
+    	assertEquals(Status.OK.getStatusCode(), response.getStatus()); // test mock implementation
     }
 }

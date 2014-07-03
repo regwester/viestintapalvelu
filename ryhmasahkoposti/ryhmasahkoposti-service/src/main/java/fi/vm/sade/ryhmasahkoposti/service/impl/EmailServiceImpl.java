@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -20,8 +19,8 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 @Service
@@ -177,6 +176,14 @@ public class EmailServiceImpl implements EmailService {
             message.setBody(buildMessage);
         } else
             throw new Exception("Template build error. messageId=" + messageId);
+
+        String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), message.getMessageReplacements(), recipientReplacements);
+        if (!StringUtils.isEmpty(buildMessageSubject)) {
+            message.setSubject(buildMessageSubject);
+        } else
+            throw new Exception("Message subject build error. messageId=" + messageId);
+        
+
     }
 
     private List<ReportedRecipientReplacementDTO> getRecipientReplacements(EmailRecipientDTO er) {

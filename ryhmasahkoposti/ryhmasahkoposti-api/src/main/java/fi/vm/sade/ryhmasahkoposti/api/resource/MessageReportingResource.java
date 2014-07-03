@@ -96,6 +96,24 @@ public interface MessageReportingResource {
         @QueryParam(RestConstants.PARAM_ORDER) String order);
 	
 	/**
+	 * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen organisaationsa lähettämistä ryhmäshköpostiviesteistä
+	 * 
+	 * @param process Prosessi, jonka kautta lähetettyihin viesteihin kysely halutaan rajata
+	 * @return Tiedot käyttäjän lähettämistä ryhmäsähköpostiviesteistä {@link ReportedMessagesDTO}
+	 */
+	@PreAuthorize(SecurityConstants.READ)
+	@Produces(MediaType.APPLICATION_JSON)
+	@Path(RestConstants.PATH_REPORT_MESSAGES_CURRENT_USER)
+	@GET
+    @ApiOperation(value = "Hakee tämänhetkisen käyttäjän ja lähettämät ryhmäshköpostiviestit", 
+        notes = "Hakee kaikki käyttäjän lähettämät ryhmäsähköpostiviestit.", 
+        response = ReportedMessagesDTO.class, responseContainer = "List")
+    @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai ilmoitus liittymävirheestä")})
+	public Response getReportedMessagesSentByCurrentUser(
+			@ApiParam(value="Viestin lähettänyt prosessi, esim. Osoitepalvelujarjestelma", required=false)
+			@QueryParam(RestConstants.PARAM_PROCESS) String process);
+	
+	/**
 	 * Hakee yksittäisen ryhmäsähköpostiviestin tiedot
 	 * 
 	 * @param Ryhmäsähköpostiviestin tunnus

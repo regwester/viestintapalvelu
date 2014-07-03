@@ -10,6 +10,7 @@ import java.util.List;
 public class EmailData {
 
     private List<EmailRecipient> recipient = new LinkedList<EmailRecipient>();
+    private List<ReplacementDTO> replacements = new LinkedList<ReplacementDTO>();
     private EmailMessage email = new EmailMessage();
 
     public EmailData() {
@@ -20,6 +21,27 @@ public class EmailData {
         super();
         this.recipient = recipient;
         this.email = email;
+    }
+
+    public EmailData(List<EmailRecipient> recipient, List<ReplacementDTO> replacements, EmailMessage email) {
+        super();
+        this.recipient = recipient;
+        this.replacements = replacements;
+        this.email = email;
+    }
+
+    /**
+     * @return the replacements
+     */
+    public List<ReplacementDTO> getReplacements() {
+        return replacements;
+    }
+
+    /**
+     * @param replacements the replacements to set
+     */
+    public void setReplacements(List<ReplacementDTO> replacements) {
+        this.replacements = replacements;
     }
 
     public List<EmailRecipient> getRecipient() {
@@ -53,8 +75,12 @@ public class EmailData {
         this.email.setSenderOid(senderOid);
     }
 
+    /* (non-Javadoc)
+     * @see java.lang.Object#toString()
+     */
     @Override
     public String toString() {
-        return "EmailData [recipient=" + recipient + ", email=" + email + "]";
+        return "EmailData [recipient=" + recipient + ", replacements="
+                + replacements + ", email=" + email + "]";
     }
 }

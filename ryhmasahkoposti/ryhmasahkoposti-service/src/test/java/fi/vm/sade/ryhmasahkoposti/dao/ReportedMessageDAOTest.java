@@ -182,6 +182,86 @@ public class ReportedMessageDAOTest {
         assertNotNull(searchedReportedMessages);
         assertTrue(searchedReportedMessages.size() == 0);
     }
+    
+    @Test
+    public void testReportedMessageFoundBySenderOidAndProcessWhenProcessIsNotNull() {
+    	ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		ReportedRecipient reportedRecipient = 
+		RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+		Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
+		recipients.add(reportedRecipient);
+		reportedMessage.setReportedRecipients(recipients);
+		reportedMessageDAO.insert(reportedMessage);
+		
+		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+		List<ReportedMessage> searchedReportedMessages = 
+				reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
+		
+		assertNotNull(searchedReportedMessages);
+		assertEquals(searchedReportedMessages.size(), 1);
+		
+		ReportedMessage result = searchedReportedMessages.get(0);
+		assertEquals("1.2.246.562.24.42645159413", result.getSenderOid());
+		assertEquals("Hakuprosessi", result.getProcess());
+    }
+    
+    @Test
+    public void testReportedMessageFoundBySenderOidAndProcessWhenProcessIsNull() {
+    	ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		ReportedRecipient reportedRecipient = 
+		RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+		Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
+		recipients.add(reportedRecipient);
+		reportedMessage.setReportedRecipients(recipients);
+		reportedMessageDAO.insert(reportedMessage);
+		
+		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+		List<ReportedMessage> searchedReportedMessages = 
+				reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", null, pagingAndSorting);
+		
+		assertNotNull(searchedReportedMessages);
+		assertEquals(searchedReportedMessages.size(), 1);
+		
+		ReportedMessage result = searchedReportedMessages.get(0);
+		assertEquals("1.2.246.562.24.42645159413", result.getSenderOid());
+		assertEquals("Hakuprosessi", result.getProcess());
+    }
+    
+    @Test
+    public void testReportedMessageNotFoundBySenderOidAndProcessWhenProcessIsNotNull() {
+    	ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		ReportedRecipient reportedRecipient = 
+		RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+		Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
+		recipients.add(reportedRecipient);
+		reportedMessage.setReportedRecipients(recipients);
+		reportedMessageDAO.insert(reportedMessage);
+		
+		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+		List<ReportedMessage> searchedReportedMessages = 
+				reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Osoitetietojarjestelma", pagingAndSorting);
+		
+		assertNotNull(searchedReportedMessages);
+		assertEquals(searchedReportedMessages.size(), 0);
+    }
+    
+    @Test
+    public void testReportedMessageNotFoundBySenderOidAndProcessWhenProcessIsPartial() {
+    	ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+		ReportedRecipient reportedRecipient = 
+		RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+		Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
+		recipients.add(reportedRecipient);
+		reportedMessage.setReportedRecipients(recipients);
+		reportedMessageDAO.insert(reportedMessage);
+		
+		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+		List<ReportedMessage> searchedReportedMessages = 
+				reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Haku", pagingAndSorting);
+		
+		assertNotNull(searchedReportedMessages);
+		assertEquals(searchedReportedMessages.size(), 0);
+    }
 
 	@Test
 	public void testReportedMessageUpdateIsSuccesful() {

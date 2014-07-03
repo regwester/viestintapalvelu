@@ -57,7 +57,7 @@ public class LetterBuilder {
         for (int i = 0; i < subBatches.size(); i++) {
             LetterBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = buildPDF(subBatch);
-            mergeSubBatchToBatch(batch, subBatch);
+            batch.setTemplateId(subBatch.getTemplateId()); // buildPDF fetches template id
             
             Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
             String templateName = batch.getTemplateName();
@@ -75,19 +75,6 @@ public class LetterBuilder {
         byte[] resultZip = documentBuilder.zip(subZips);
         letterService.createLetter(batch);
         return resultZip;
-    }
-
-    private void mergeSubBatchToBatch(LetterBatch batch, LetterBatch subBatch) {
-        List<Letter> subBatchLetters = subBatch.getLetters();
-        List<Letter> batchLetters = batch.getLetters();
-        batch.setTemplateId(subBatch.getTemplateId());
-        if (batchLetters == null) {
-            batchLetters = new ArrayList<Letter>();
-        }
-        if (subBatchLetters != null) {
-            batchLetters.addAll(subBatchLetters);
-        }
-        batch.setLetters(batchLetters);
     }
 
     public byte[] printPDF(LetterBatch batch) throws IOException,

@@ -4,6 +4,7 @@
     <persistence-unit name="viestinta" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         
+        <class>fi.vm.sade.ryhmasahkoposti.model.DraftModel</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedMessage</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment</class>
