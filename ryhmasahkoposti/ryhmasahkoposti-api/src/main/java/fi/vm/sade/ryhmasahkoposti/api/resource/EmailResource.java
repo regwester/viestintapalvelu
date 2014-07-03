@@ -60,11 +60,6 @@ public interface EmailResource {
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
         throws IOException, URISyntaxException, ServletException ;
 
-    @GET
-    @Produces("application/json")
-    @Path("getEmailData")
-    public Response getEmailData();
-    
     /**
      * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle
      * 
