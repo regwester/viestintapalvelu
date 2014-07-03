@@ -125,7 +125,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         TemplateDTO templateDTO = null;
 
         if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
-
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
             if (!StringUtils.isEmpty(emailData.getEmail().getLanguageCode()))
                 languageCode = emailData.getEmail().getLanguageCode();
@@ -141,7 +140,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
 
             if (templateDTO != null) {
-
                 LOGGER.info("Template found, processing:" + templateDTO);
 
                 // Convert template
@@ -149,7 +147,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 templateContent = templateBuilder.buildTemplate(templateDTO);
 
                 LOGGER.debug("Template content:" + templateContent);
-
             }
         }
 
@@ -157,7 +154,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
 
         if (templateDTO != null) {
-
             // Convert message replacements
             List<ReportedMessageReplacement> messageReplacements = reportedMessageReplacementConverter.convert(
                 reportedMessage, templateDTO.getReplacements());
@@ -168,13 +164,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
         }
 
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailData
-            .getEmail().getAttachInfo());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
+            emailData.getEmail().getAttachInfo());
         reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
 
         List<EmailRecipient> emailRecipients = emailData.getRecipient();
         for (EmailRecipient emailRecipient : emailRecipients) {
-
             ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage,
                 emailRecipient);
 
@@ -182,11 +177,10 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
             // Save sender specific replacements (if any)
             if (emailRecipient.getRecipientReplacements() != null) {
-
-                List<ReportedRecipientReplacementDTO> emailRecipientReplacements = emailRecipient
-                    .getRecipientReplacements();
-                List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementConverter
-                    .convert(reportedRecipient, emailRecipientReplacements);
+                List<ReportedRecipientReplacementDTO> emailRecipientReplacements = 
+                    emailRecipient.getRecipientReplacements();
+                List<ReportedRecipientReplacement> reportedRecipientReplacements = 
+                    reportedRecipientReplacementConverter.convert(reportedRecipient, emailRecipientReplacements);
 
                 reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
             }
