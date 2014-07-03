@@ -7,6 +7,7 @@ import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.io.FilenameUtils;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 
 @Component
@@ -26,5 +27,25 @@ public class ReportedAttachmentConverter {
 		liite.setTimkestamp(new Date());
 		
 		return liite;
+	}
+	
+	public ReportedAttachment convert(EmailAttachment emailAttachment) {
+	    ReportedAttachment attachment = new ReportedAttachment();
+	    
+	    attachment.setAttachmentName(emailAttachment.getName());
+	    attachment.setContentType(emailAttachment.getContentType());
+	    attachment.setAttachment(emailAttachment.getData());
+	    
+	    return attachment;
+	}
+	
+	public EmailAttachment convert(ReportedAttachment ra) {
+	    EmailAttachment attachment = new EmailAttachment();
+	    
+	    attachment.setName(ra.getAttachmentName());
+	    attachment.setContentType(ra.getContentType());
+	    attachment.setData(ra.getAttachment());
+	    
+	    return attachment;
 	}
 }

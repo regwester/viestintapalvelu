@@ -16,7 +16,6 @@ import javax.inject.Singleton;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
-import org.omg.CORBA.Current;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -52,42 +51,30 @@ public class LetterBuilder {
         this.documentBuilder = documentBuilder;
     }
 
-    public byte[] printZIP(LetterBatch batch) throws IOException,
-            DocumentException {
+    public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException {
         Map<String, byte[]> subZips = new HashMap<String, byte[]>();
         List<LetterBatch> subBatches = batch.split(Constants.IPOST_BATCH_LIMIT);
         for (int i = 0; i < subBatches.size(); i++) {
             LetterBatch subBatch = subBatches.get(i);
             MergedPdfDocument pdf = buildPDF(subBatch);
-            mergeSubBatchToBatch(batch, subBatch);
-            Map<String, Object> context = createIPostDataContext(pdf
-                    .getDocumentMetadata());
-            context.put("filename", batch.getTemplateName() + ".pdf");
-            byte[] ipostXml = documentBuilder.applyTextTemplate(
-                    Constants.LETTER_IPOST_TEMPLATE, context);
+            batch.setTemplateId(subBatch.getTemplateId()); // buildPDF fetches template id
+            
+            Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
+            String templateName = batch.getTemplateName();
+            context.put("filename", templateName + ".pdf");
+            byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
+            
             Map<String, byte[]> documents = new HashMap<String, byte[]>();
-            documents.put(batch.getTemplateName() + ".pdf", pdf.toByteArray());
-            documents.put(batch.getTemplateName() + ".xml", ipostXml);
-            subZips.put(batch.getTemplateName() + "_" + (i + 1) + ".zip",
-                    documentBuilder.zip(documents));
+            documents.put(templateName + ".pdf", pdf.toByteArray());
+            documents.put(templateName + ".xml", ipostXml);
+            String zipName = templateName + "_" + batch.getLanguageCode() + "_" + (i + 1) + ".zip";
+            byte[] zip = documentBuilder.zip(documents);
+            subZips.put(zipName,zip);
+            batch.addIPostiData(zipName,zip);
         }
         byte[] resultZip = documentBuilder.zip(subZips);
-        batch.setiPostiData(resultZip);
         letterService.createLetter(batch);
         return resultZip;
-    }
-
-    private void mergeSubBatchToBatch(LetterBatch batch, LetterBatch subBatch) {
-        List<Letter> subBatchLetters = subBatch.getLetters();
-        List<Letter> batchLetters = batch.getLetters();
-        batch.setTemplateId(subBatch.getTemplateId());
-        if (batchLetters == null) {
-            batchLetters = new ArrayList<Letter>();
-        }
-        if (subBatchLetters != null) {
-            batchLetters.addAll(subBatchLetters);
-        }
-        batch.setLetters(batchLetters);
     }
 
     public byte[] printPDF(LetterBatch batch) throws IOException,
@@ -109,14 +96,10 @@ public class LetterBuilder {
             template = templateService.getTemplateByName(
                     batch.getTemplateName(), batch.getLanguageCode());
 
-            batch.setTemplateId(template.getId()); // Search was by name ==>
-                                                   // update also to template Id
+            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
         }
 
-        if (template == null && batch.getTemplateId() != null) { // If not found
-                                                                 // by name (is
-                                                                 // this
-                                                                 // possible ?)
+        if (template == null && batch.getTemplateId() != null) { // If not found by name
             long templateId = batch.getTemplateId();
             template = templateService.findById(templateId);
         }
@@ -155,8 +138,7 @@ public class LetterBuilder {
                 if (temp != null) {
                     letterTemplate = temp;
                     letterTemplReplacements = new HashMap<String, Object>();
-                    for (Replacement templRepl : letterTemplate
-                            .getReplacements()) {
+                    for (Replacement templRepl : letterTemplate.getReplacements()) {
                         letterTemplReplacements.put(templRepl.getName(),
                                 templRepl.getDefaultValue());
                     }
@@ -170,17 +152,10 @@ public class LetterBuilder {
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(letterTemplate, tc.getContent()
                             .getBytes(), letter.getAddressLabel(),
-                            letterTemplReplacements, // Template, basic
-                                                     // replacement
-                            batch.getTemplateReplacements(), // LetterBatch,
-                                                             // (last) sent
-                                                             // replacements
+                            letterTemplReplacements, // Template, basic replacement
+                            batch.getTemplateReplacements(), // LetterBatch, (last) sent replacements
                             // that might have overwritten the template values
-                            letter.getTemplateReplacements()); // Letter, e.g
-                                                               // student
-                                                               // results,
-                                                               // addressLabel,
-                                                               // ...
+                            letter.getTemplateReplacements()); // Letter, e.g. student results, addressLabel, ...
                     currentDocument.addContent(page);
                 }
                 source.add(currentDocument);
@@ -190,8 +165,7 @@ public class LetterBuilder {
         }
 
         // Write LetterBatch to DB
-        batch.setLetters(updateLetters); // Contains now the generated
-                                         // PdfDocuments
+        batch.setLetters(updateLetters); // Contains now the generated PdfDocuments
         // letterService.createLetter(batch);
 
         return documentBuilder.merge(source);

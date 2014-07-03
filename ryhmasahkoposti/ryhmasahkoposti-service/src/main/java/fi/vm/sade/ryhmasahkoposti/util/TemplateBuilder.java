@@ -92,9 +92,7 @@ public class TemplateBuilder {
 	}
 
 	return createContent(message, replacements); 
-
     }
-
 
     /**
      * Create message content
@@ -161,6 +159,7 @@ public class TemplateBuilder {
 	    styles = "";
 	}
 	dataContext.put("tyylit", styles);
+        dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
 
 	StringWriter writer = new StringWriter();
 	templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(pageContent)));

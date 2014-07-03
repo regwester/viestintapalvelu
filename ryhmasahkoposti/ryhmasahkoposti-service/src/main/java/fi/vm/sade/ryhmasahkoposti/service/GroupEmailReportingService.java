@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.apache.commons.fileupload.FileItem;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
@@ -144,6 +146,14 @@ public interface GroupEmailReportingService {
      * @return Liitteelle generoitu avain
      */
     public Long saveAttachment(FileItem fileItem) throws IOException;
+
+    /**
+     * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
+     * 
+     * @param emailAttachment Sähköpostiin liitetty tiedosto
+     * @return Tallennetun liitteen tiedot
+     */
+    public AttachmentResponse saveAttachment(EmailAttachment emailAttachment);
 
     /**
      * Merkitsee sähköpostin lähetyksen vastaanottajalle alkaneeksi

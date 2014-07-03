@@ -8,8 +8,8 @@ shell command:
 #ant -Dtomcat-host=luokka -Dtomcat-port=8311
 -->
         <property name="oph.name" value="viestintapalvelu"/>
-        <property name="pom.version" value="8.0-SNAPSHOT"/>
-        <property name="ryhmasahkoposti.pom.version" value="0.0.2-SNAPSHOT"/>
+        <property name="pom.version" value="9.0-SNAPSHOT"/>
+        <property name="ryhmasahkoposti.pom.version" value="9.8-SNAPSHOT"/>
 
         <property name="maven.repo" value="${user.home}/.m2/repository"/>
         <property name="tomcat.name" value="tomcat_${oph.name}"/>

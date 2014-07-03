@@ -6,65 +6,60 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EmailMessage {
-    private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class.getName()); 
+    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class);
 
     private String callingProcess = "";
-    private String from;		// Email FROM
-    private String replyTo;		// Email REPLYTO
-    private String senderOid;	// The one who is doing the actual sending
+    private String from; // Email FROM
+    private String replyTo; // Email REPLYTO
+    private String senderOid; // The one who is doing the actual sending
     private String organizationOid;
     private String subject;
     private String body;
     private String footer;
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
-    List<EmailAttachment> attachments = new LinkedList<EmailAttachment>(); 
+    List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
     List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isValid = true;
-    
+
     /**
      * Template name
      */
     private String templateName;
 
     /**
-     * Laguange code
+     * Language code
      */
     private String languageCode;
 
-    public EmailMessage() {}
+    public EmailMessage() {
+    }
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String body) {
-    	this.callingProcess = callingProcess; 		
-    	this.from = from;
-    	this.replyTo = replyTo;
-    	this.subject = subject;
-    	this.body = body;
+        this.callingProcess = callingProcess;
+        this.from = from;
+        this.replyTo = replyTo;
+        this.subject = subject;
+        this.body = body;
     }
-
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, String languageCode) {
-    	this.callingProcess = callingProcess; 		
-    	this.from = from;
-    	this.replyTo = replyTo;
-    	this.subject = subject;
-    	this.templateName = templateName;
-    	this.languageCode = languageCode;
+        this.callingProcess = callingProcess;
+        this.from = from;
+        this.replyTo = replyTo;
+        this.subject = subject;
+        this.templateName = templateName;
+        this.languageCode = languageCode;
     }
 
-
     public void setBody(String body) {
-    	if (body != null) {
-    	    String lc = body.toLowerCase();
-    	    isHtml = lc.contains("<br/>") || lc.contains("<p>")  || lc.contains("</tr>") || lc.contains("</div>");
-    	}
-    	this.body = body;
+        this.body = body;
     }
 
     public String getCallingProcess() {
@@ -96,12 +91,12 @@ public class EmailMessage {
     }
 
     public void setFooter(String languageCode) {
-    	this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
-    	addFooterToBody();
+        this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
+        addFooterToBody();
     }
 
     private void addFooterToBody() {
-        this.body = this.body + "\n" + this.footer;	
+        this.body = this.body + "\n" + this.footer;
     }
 
     public void setSubject(String subject) {
@@ -145,10 +140,10 @@ public class EmailMessage {
     }
 
     public void addEmailAttachement(EmailAttachment attachment) {
-    	if (this.attachments == null) {
-    	    this.attachments = new ArrayList<EmailAttachment>();
-    	}
-    	this.attachments.add(attachment);
+        if (this.attachments == null) {
+            this.attachments = new ArrayList<EmailAttachment>();
+        }
+        this.attachments.add(attachment);
     }
 
     public void setAttachments(List<EmailAttachment> attachments) {
@@ -160,10 +155,10 @@ public class EmailMessage {
     }
 
     public void addAttachInfo(AttachmentResponse attachInfo) {
-    	if (this.attachInfo == null) {
-    	    this.attachInfo = new LinkedList<AttachmentResponse>();
-    	}
-    	this.attachInfo.add(attachInfo);
+        if (this.attachInfo == null) {
+            this.attachInfo = new LinkedList<AttachmentResponse>();
+        }
+        this.attachInfo.add(attachInfo);
     }
 
     public List<AttachmentResponse> getAttachInfo() {
@@ -173,6 +168,7 @@ public class EmailMessage {
     public void setAttachInfo(List<AttachmentResponse> attachInfo) {
         this.attachInfo = attachInfo;
     }
+
     public void setCallingProcess(String callingProcess) {
         this.callingProcess = callingProcess;
     }
@@ -185,7 +181,8 @@ public class EmailMessage {
     }
 
     /**
-     * @param templateName the templateName to set
+     * @param templateName
+     *            the templateName to set
      */
     public void setTemplateName(String templateName) {
         this.templateName = templateName;
@@ -199,63 +196,61 @@ public class EmailMessage {
     }
 
     /**
-     * @param languageCode the languageCode to set
+     * @param languageCode
+     *            the languageCode to set
      */
     public void setLanguageCode(String languageCode) {
         this.languageCode = languageCode;
     }
 
     private String generateFooter(String emailFooter, String lang) {
-    	String footer = "";
-    
-    	if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
-    	    lang = "FI";
-    
-    	} else { if ("SE".equalsIgnoreCase(lang)) {
-    	    lang = "SE";
-    
-    	} else {
-    	    lang = "EN";
-    	}}        
-    
-    	String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
-    
-    	try {
-    	    footer =  readFooter( footerFileName );
-    
-    	} catch (FileNotFoundException e) {
-    	    log.log(Level.SEVERE, "Failed to find footer file:  " + footerFileName + ", " + e.getMessage());        	
-    	} catch (IOException e) {
-    	    log.log(Level.SEVERE, "Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());        	
-    	}
-    
-    	return footer;
+        String footer = "";
+
+        if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
+            lang = "FI";
+
+        } else if ("SE".equalsIgnoreCase(lang) || "SV".equalsIgnoreCase(lang)) {
+            // should be SV
+            lang = "SE";
+        } else {
+            lang = "EN";
+        }
+
+        String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
+
+        try {
+            footer = readFooter(footerFileName);
+
+        } catch (FileNotFoundException e) {
+            log.error("Failed to find footer file:  " + footerFileName + ", " + e.getMessage());
+        } catch (IOException e) {
+            log.error("Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());
+        }
+
+        return footer;
     }
 
     private String readFooter(String footer) throws FileNotFoundException, IOException {
-    	InputStream in = getClass().getResourceAsStream(footer);
-    	if (in == null) {
-    	    throw new FileNotFoundException("Template " + footer + " not found");
-    	}
-    	return new String(IOUtils.toByteArray(in), "UTF-8");
+        InputStream in = getClass().getResourceAsStream(footer);
+        if (in == null) {
+            throw new FileNotFoundException("Template " + footer + " not found");
+        }
+        return new String(IOUtils.toByteArray(in), "UTF-8");
     }
-    
+
     public boolean isValid() {
         return this.isValid;
     }
-    
-    public void setInvalid(){
+
+    public void setInvalid() {
         this.isValid = false;
     }
-    
+
     @Override
     public String toString() {
-	return "EmailMessage [callingProcess=" + callingProcess + ", from="
-		+ from + ", replyTo=" + replyTo + ", senderOid=" + senderOid
-		+ ", subject=" + subject + ", body=" + body + ", footer="
-		+ footer + ", isHtml=" + isHtml + ", charset=" + charset
-		+ ", attachments=" + attachments + ", attachInfo=" + attachInfo
-		+ "]";
+        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", replyTo=" + replyTo + ", senderOid=" + senderOid + ", subject="
+                + subject + ", body=" + body + ", footer=" + footer + ", isHtml=" + isHtml + ", charset=" + charset + ", attachments=" + attachments
+                + ", attachInfo=" + attachInfo + "]";
     }
 
 }

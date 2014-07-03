@@ -22,7 +22,7 @@ public class IPostiServiceImpl implements IPostiService {
     }
     
     @Override
-    public IPosti findById(Long ipostiId) {
+    public IPosti findBatchById(Long ipostiId) {
         List<IPosti> results = iPostiDAO.findBy("id", ipostiId);
         return (results != null && results.size() > 0) ? results.get(0) : null;
     }
@@ -35,5 +35,10 @@ public class IPostiServiceImpl implements IPostiService {
     @Override
     public void update(IPosti iposti) {
         iPostiDAO.update(iposti);
+    }
+
+    @Override
+    public List<IPosti> findMailById(Long mailId) {
+        return iPostiDAO.findMailById(mailId);
     }
 }

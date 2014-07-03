@@ -60,6 +60,11 @@ public interface EmailResource {
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
         throws IOException, URISyntaxException, ServletException ;
 
+    @GET
+    @Produces("application/json")
+    @Path("getEmailData")
+    public Response getEmailData();
+    
     /**
      * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle
      * 
@@ -103,6 +108,24 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response = SendingStatusDTO.class)
 	public Response sendEmailStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId);
+
+    /**
+     * Lähettää generoidun PDF:n sähköpostilla
+     * 
+     * @param emailData Ryhmäsähköpostin tiedot
+     * @return Ryhmäsähköpostin tunnus
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")   
+    @Path("sendPdf")
+    @PreAuthorize(SecurityConstants.SEND)
+    @ApiOperation(value = "Lähettää generoidun PDF:n sähköpostilla", 
+        notes = "Lisää liitetiedoston tietokantaan ennen lähetystietojen lisäystä", response = EmailSendId.class)
+    @ApiResponses({@ApiResponse(code = 500, 
+        message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
+    public Response sendPdfByEmail(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot", 
+        required = true) EmailData emailData);
 
     /**
      * Lähettää ryhmäsähköpostin. Lisää ryhmäsähköpostiviestiin alatunnisteen.

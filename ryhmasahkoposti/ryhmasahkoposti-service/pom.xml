@@ -6,7 +6,7 @@
 	<parent>
 		<groupId>fi.vm.sade.ryhmasahkoposti</groupId>
 		<artifactId>ryhmasahkoposti</artifactId>
-		<version>9.7</version>
+		<version>9.8</version>
 		<relativePath>../pom.xml</relativePath>
 	</parent>
 
