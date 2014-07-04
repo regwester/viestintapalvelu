@@ -7,11 +7,17 @@ angular.module('viestintapalvelu')
     $urlRouterProvider.otherwise('/email');
 
     $stateProvider
-    .state('email', { //Change these to substates (use dot notation, change url and configure controllers)
+    .state('email', { 
       url: "/email",
       templateUrl: "/ryhmasahkoposti-app/email/views/email.html",
       controller: "EmailCtrl"
-    }).state('email_cancel', {
+    }).state('email.draft', {
+      url: '/draft',
+      templateUrl: "/ryhmasahkoposti-app/email/views/draft.html",
+      controller: "DraftCtrl"
+    })
+    //Change these to substates (use dot notation, change url and configure controllers)
+    .state('email_cancel', {
       url: "/email/cancel",
       templateUrl: "/ryhmasahkoposti-app/email/views/emailCancel.html",
       controller: "EmailCancelCtrl"

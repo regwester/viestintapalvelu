@@ -238,5 +238,34 @@ a, .clickable-header-cell {
 }
 
 ul.normal-margin {
-    margin: 13px 13px 13px 13px;
+    margin: 13px;
+}
+
+.align-with-form {
+    margin-left: 70px;
+}
+
+.linklist {
+    list-style: none;
+    margin: 0px 0px 10px 0px;
+    
+}
+
+.bold {
+    font-weight: 700;
+}
+
+.fileinput-button {
+    position: relative;
+    overflow: hidden;
+}
+
+.fileinput-button input {
+    position: absolute;
+    top: 0;
+    right: 0;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+    display: block;
 }

@@ -11,7 +11,7 @@
     <title>OPH - Viestint&aumlpalvelu</title>
 
     <!-- css -->
-    <link rel="stylesheet" type="text/css" href="./assets/css/bootstrap.css"/>
+    <link rel="stylesheet" type="text/css" href="./assets/lib/bootstrap/bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="./assets/css/other.css"/>
     <link rel="stylesheet" type="text/css" href="./assets/css/virkailija.css"/>
     <link rel="stylesheet" type="text/css" href="./assets/css/dialogs.css"/>
@@ -91,4 +91,5 @@
 
     <!-- Routes -->
     <script type="text/javascript" src="./system/routes.js"></script>
+
 </body>
