@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailCtrl', ['$scope', '$rootScope', 'GroupEmailInitFactory', 'GroupEmailFactory' ,'uploadManager', '$state', 'ErrorDialog', 
-  function($scope, $rootScope, GroupEmailInitFactory, GroupEmailFactory, uploadManager, $state, ErrorDialog) {
+.controller('EmailCtrl', ['$scope', '$rootScope', 'GroupEmail', 'uploadManager', '$state', 'ErrorDialog', 
+  function($scope, $rootScope, GroupEmail, uploadManager, $state, ErrorDialog) {
     $rootScope.emailsendid = "";
     $scope.tinymceOptions = {
       height: 400,
@@ -10,38 +10,11 @@ angular.module('email')
       menubar: false
     };
 
-    // Create empty email to get the attachInfo[] to the object
-    $scope.email = 
-      {callingProcess: '',
-      from: '',
-      organizationOid: '',
-      replyTo: '',
-      subject: '',
-      body: '',
-      attachInfo: []
-    };
-
     $scope.emaildata = window.emailData;
-    
-    // Copy the received email values to the empty email 
-    $scope.email.callingProcess = $scope.emaildata.email.callingProcess;
-    $scope.email.from = $scope.emaildata.email.from;
-    $scope.email.organizationOid = $scope.emaildata.email.organizationOid;
-    $scope.email.replyTo = $scope.emaildata.email.replyTo;
-    $scope.email.subject = $scope.emaildata.email.subject;
-    $scope.email.body = $scope.emaildata.email.body;
-
-    $scope.email.templateName = $scope.emaildata.email.templateName;
-    $scope.email.languageCode = $scope.emaildata.email.languageCode;
-
-    // Copy to emaildata.email the original sended values WITH the empty attachInfo[]
-    $scope.emaildata.email = $scope.email; 
-
-    $scope.showTo  = $scope.emaildata.recipient.length <= 30;
-    $scope.showCnt = $scope.emaildata.recipient.length >  30;
+    $scope.emaildata.email.attachInfo = [];
 
     $scope.sendGroupEmail = function () {
-      $scope.emailsendid = GroupEmailFactory.sendGroupEmail($scope.emaildata).$promise.then(
+      $scope.emailsendid = GroupEmail.email.save($scope.emaildata).$promise.then(
         function(value) {
           $rootScope.emailsendid = value;
           $state.go('email_status');
@@ -61,22 +34,11 @@ angular.module('email')
     };
 
     $scope.init = function() {
-      $scope.initResponse = GroupEmailInitFactory.initGroupEmail();
+      $scope.initResponse = GroupEmail.init.query();
     };
 
-    $scope.files = [];
     $scope.percentage = 0;
     $scope.percentage2 = { width: 0 + '%' }; // For IE9
-    // Upload --> 
-    $scope.upload = function () {
-      uploadManager.upload();
-      $scope.files = [];
-    };
-
-    $rootScope.$on('fileAdded', function (e, call) {
-      $scope.files.push(call);
-      $scope.$apply();
-    });
 
     $rootScope.$on('uploadProgress', function (e, call) {
       $scope.percentage = call;
@@ -84,10 +46,6 @@ angular.module('email')
       $scope.$apply();
     });
 
-    $rootScope.$on('uploadDone', function (e, call) {
-      $scope.$apply();
-    });
-      
     $rootScope.$on('fileLoaded', function (e, call) {
       $scope.emaildata.email.attachInfo.push(call);
       $scope.$apply();
@@ -95,10 +53,13 @@ angular.module('email')
 
     //--- 'Poista' ---
     $scope.remove = function(id) {
-      //alert("Poista " + id);
       $scope.emaildata.email.attachInfo.splice(id, 1);
     };
-
+    
+    $scope.showRecipients = function() {
+      return $scope.emaildata.recipient.length <= 30;
+    };
+    
     $scope.init();
   }
 ]);

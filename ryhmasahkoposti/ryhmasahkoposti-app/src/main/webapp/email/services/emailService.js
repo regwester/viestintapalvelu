@@ -2,29 +2,17 @@
 
 //--- Resources ---
 angular.module('email')
-.factory('GroupEmailInitFactory', function($resource) {
-  return $resource('/ryhmasahkoposti-service/email/initGroupEmail', {}, {
-    initGroupEmail: {method: 'GET', isArray: false}
-  });
-})
-
-.factory('GroupEmailFactory', function ($resource) {
-  return $resource('/ryhmasahkoposti-service/email/sendGroupEmail', {}, {
-    sendGroupEmail: { method: 'POST', isArray: false}
-  });
-})
-
-.factory('EmailSendStatusFactory', function ($resource) {
-  return $resource('/ryhmasahkoposti-service/email/sendEmailStatus', {}, {
-    sendEmailStatus: { method: 'POST', isArray: false}
-  });
-})
-
-.factory('EmailResultFactory', function ($resource) {
-  return $resource('/ryhmasahkoposti-service/email/sendResult', {}, {
-    sendResult: { method: 'POST', isArray: false}
-  });
-})
+.factory('GroupEmail', ['$resource', function($resource){
+  var baseUrl = '/ryhmasahkoposti-service/email/';
+  return {
+    init: $resource(baseUrl + 'initGroupEmail', {}, { //These endpoints are bad. There should never be verbs in the url.
+      query: {method: 'GET', isArray: false}
+    }),
+    status: $resource(baseUrl + 'sendEmailStatus'),
+    email: $resource(baseUrl + 'sendGroupEmail'),
+    result: $resource(baseUrl + 'sendResult')
+  };
+}])
 
 //--- Upload ---
 .factory('uploadManager', function ($rootScope) {
@@ -35,7 +23,7 @@ angular.module('email')
     setProgress: function (percentage) {
       $rootScope.$broadcast('uploadProgress', percentage);
     },
-    setResult : function(result) { 
+    setResult : function(result) {
       $rootScope.$broadcast('fileLoaded', result);
     }
   };
