@@ -165,7 +165,7 @@ angular.module('report')
          * Näytetään listalta valittu raportoitava viesti
          */
         $scope.showReportedMessage = function(reportedMessage) {
-            $state.go("/reportMessages/view/", {messageID: reportedMessage.messageID});
+            $state.go('report_view', {messageID: reportedMessage.messageID});
         };
         
         // Alustetaan ensimmäinen sivu
