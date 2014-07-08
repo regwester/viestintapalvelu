@@ -2,9 +2,10 @@
 
 angular.module('report')
 .controller('ReportedMessageViewCtrl', 
-    function ReportedMessageViewCtrl($scope, $stateParams, $state, 
-        GetReportedMessagesBySearchArgument, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccesful, 
-        ErrorDialog) {
+    ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients', 'ReportedMessageAndRecipientsSendingUnsuccesful', 'ErrorDialog', 
+    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccesful, ErrorDialog) {
+        var polling; // promise returned by $interval
+
         $scope.pageSize = 10;
         $scope.currentPage = 1;
         $scope.sortedBy = '';
@@ -35,6 +36,19 @@ angular.module('report')
             }, function(error) {
                 ErrorDialog.showError(error);
             });
+        };
+
+        function fetchIfSending() {
+            // if reportedMessagesDTO is not set, then wait for initial fetch to complete
+            if ($scope.reportedMessageDTO) { 
+                if (angular.isNumber($scope.reportedMessageDTO.endTime)) {
+                    // no need to refresh is sending is complete
+                    $interval.cancel(polling); 
+                } else {
+                    // fetch latest report
+                    $scope.fetch();
+                }
+            } 
         };
 
         // Painettiin katso lähetys epäonnistunut painiketta
@@ -84,5 +98,7 @@ angular.module('report')
 
         // Alustetaan ensimmäinen sivu
         $scope.selectPage(1);
+        // start polling the server for updates
+        polling = $interval(fetchIfSending, 1000);
     }
-);
+]);
