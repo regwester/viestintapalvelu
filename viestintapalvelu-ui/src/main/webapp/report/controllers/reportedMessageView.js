@@ -19,21 +19,19 @@ angular.module('report')
 
         // Haetaan raportoitava viesti
         $scope.fetch = function() {
-            ReportedMessageAndRecipients.get({messageID: $stateParams.messageID, 
-                nbrofrows: $scope.pageSize,	page: $scope.currentPage}, 
+            // compose the parameter object for AJAX call
+            var parameters = {
+                messageID: $stateParams.messageID,
+                nbrofrows: $scope.pageSize,
+                page: $scope.currentPage
+            };
+            if ($scope.sortedBy.length > 0) { // include sortedBy and order if sorting is activated
+                angular.extend(parameters, { sortedby: $scope.sortedBy, order: $scope.order });
+            }
+
+            ReportedMessageAndRecipients.get(parameters, 
             function(result) {
                 $scope.reportedMessageDTO = result;
-            }, function(error) {
-                ErrorDialog.showError(error);
-            });
-        };
-
-        // Haetaan raportoitava viesti lajiteltuna otsikkosarakkeen mukaan
-        $scope.fetchWithSort = function() {
-            ReportedMessageAndRecipients.get({messageID: $stateParams.messageID, 
-                nbrofrows: $scope.pageSize,	page: $scope.currentPage, sortedby: $scope.sortedBy, order: $scope.order}, 
-            function(result) {
-                $scope.reportedMessageDTO = result;	
             }, function(error) {
                 ErrorDialog.showError(error);
             });
@@ -54,11 +52,7 @@ angular.module('report')
         // Sivuvalintaa painettu
         $scope.selectPage = function(page) {
             $scope.currentPage = page;
-            if ($scope.sortedBy != '') {
-                $scope.fetchWithSort();
-            } else {
-                $scope.fetch();
-            }
+            $scope.fetch();
         };
 
         // Otsikkosaraketta klikattu. Palautetaan tyyliksi sort-true tai sort-false.
@@ -85,7 +79,7 @@ angular.module('report')
             }
             // Asetetaan sivuksi ensimmäinen ja haetaan sanoman tiedot lajiteltuna
             $scope.currentPage = 1;
-            $scope.fetchWithSort();
+            $scope.fetch();
         };
 
         // Alustetaan ensimmäinen sivu
