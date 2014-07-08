@@ -16,9 +16,8 @@ angular.module('email')
 
     $scope.sendGroupEmail = function () {
       $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
-        function(value) {
-          $rootScope.emailsendid = value;
-          $state.go('email_status');
+        function(resp) {
+          $state.go('report_view', {messageID: resp.id});
         },
         function(error) {
           ErrorDialog.showError(error);
