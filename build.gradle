@@ -28,6 +28,7 @@ task(zipIt, type: Zip) {
 	from 'src/main/resources'
 	from 'ryhmasahkoposti/target'
 	from 'viestintapalvelu-service/target'
+	from 'viestintapalvelu-ui/target'
 }
 
 // Task for copying the .zip file to

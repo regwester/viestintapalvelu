@@ -8,9 +8,10 @@ shell command:
 #ant -Dtomcat-host=luokka -Dtomcat-port=8311
 -->
         <property name="oph.name" value="viestintapalvelu"/>
-        <property name="pom.version" value="8.0-SNAPSHOT"/>
-        <property name="ryhmasahkoposti.pom.version" value="9.8-SNAPSHOT"/>
-
+        <property name="viestintapalvelu.service.pom.version" value="8.0-SNAPSHOT"/>
+        <property name="ryhmasahkoposti.service.pom.version" value="9.8-SNAPSHOT"/>
+        <property name="viestintapalvelu.ui.pom.version" value="9.8-SNAPSHOT"/>
+		
         <property name="maven.repo" value="${user.home}/.m2/repository"/>
         <property name="tomcat.name" value="tomcat_${oph.name}"/>
         <property name="tomcat.home" value="/data00/oph/${oph.name}/tomcat"/>
@@ -39,15 +40,15 @@ shell command:
         <scp todir="tomcat@${tomcat-host}:${tomcat.home}/webapps/"
              keyfile="${ssh.keyfile}" passphrase="${ssh.keypass}">
 
-            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu-service/${pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu-service/${viestintapalvelu.service.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/ryhmasahkoposti-service/${ryhmasahkoposti.pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/ryhmasahkoposti-service/${ryhmasahkoposti.service.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/ryhmasahkoposti-app/${ryhmasahkoposti.pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/viestintapalvelu-ui/${viestintapalvelu.ui.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
@@ -56,11 +57,11 @@ shell command:
         <echo>unzip war-files to tom webapp dir...</echo>
         <sshexec command="
 mkdir -p ${tomcat.home}/webapps/viestintapalvelu;
-mkdir -p ${tomcat.home}/webapps/ryhmasahkoposti-app;
+mkdir -p ${tomcat.home}/webapps/viestintapalvelu-ui;
 mkdir -p ${tomcat.home}/webapps/ryhmasahkoposti-service;
 
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
-unzip -qo -d${tomcat.home}/webapps/ryhmasahkoposti-app ${tomcat.home}/webapps/ryhmasahkoposti-app*.war;
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu-ui ${tomcat.home}/webapps/viestintapalvelu-ui*.war;
 unzip -qo -d${tomcat.home}/webapps/ryhmasahkoposti-service ${tomcat.home}/webapps/ryhmasahkoposti-service*.war;
 
 rm -rf ${tomcat.home}/webapps/*.war;"

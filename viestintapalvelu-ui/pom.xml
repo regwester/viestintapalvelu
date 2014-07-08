@@ -3,14 +3,14 @@
 	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 	<modelVersion>4.0.0</modelVersion>
 	<parent>
-		<groupId>fi.vm.sade.ryhmasahkoposti</groupId>
-		<artifactId>ryhmasahkoposti</artifactId>
+		<groupId>fi.vm.sade.viestintapalvelu</groupId>
+		<artifactId>viestintapalvelu</artifactId>
 		<version>9.9-SNAPSHOT</version>
 	</parent>
 
-	<artifactId>ryhmasahkoposti-app</artifactId>
+	<artifactId>viestintapalvelu-ui</artifactId>
 	<packaging>war</packaging>
-	<name>Ryhmasahkoposti :: APP</name>
+	<name>Viestintapalvelu :: UI</name>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -19,16 +19,14 @@
 		<dependency>
 			<groupId>org.jsoup</groupId>
 			<artifactId>jsoup</artifactId>
-			<version>1.7.2</version>
 			<scope>compile</scope>
 		</dependency>
 		<dependency>
 			<groupId>commons-lang</groupId>
 			<artifactId>commons-lang</artifactId>
-			<version>${commons-lang.version}</version>
 		</dependency>
 	</dependencies>
 	<build>
-		<finalName>ryhmasahkoposti-app</finalName>
+		<finalName>viestintapalvelu-ui</finalName>
 	</build>
 </project>

@@ -341,7 +341,6 @@
 
 	<modules>
 		<module>ryhmasahkoposti-api</module>
-		<module>ryhmasahkoposti-app</module>
 		<module>ryhmasahkoposti-service</module>
 	</modules>
 </project>

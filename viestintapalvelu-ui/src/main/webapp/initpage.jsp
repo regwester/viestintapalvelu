@@ -2,7 +2,7 @@
 <html>
 
 <body>
-	<form action="/ryhmasahkoposti-app/" method="post">
+	<form action="/viestintapalvelu-ui/" method="post">
 		<textarea rows="30" cols="200" name="emailData">
 			{
 					recipient: [<%for (int i = 0; i < 2; i++) {%>
