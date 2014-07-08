@@ -1,0 +1,11 @@
+<div class="reported-message-status row-fluid">
+  <div class="reported-message-progress-bar span3" ng-if="!isSendingComplete()">
+    <progressbar value="getTotalSendings()" max="status.numberOfReciepients"></progressbar>
+    <span class="progress-label">{{ getTotalSendings() }}/{{ status.numberOfReciepients }} ({{ percentage(getTotalSendings(), status.numberOfReciepients) }} %)</span>
+  </div>
+  <div class="span9">
+    <span ng-if="isSendingComplete()">Valmis. {{ status.numberOfSuccesfulSendings }}/{{ status.numberOfReciepients }} viestiä ({{ percentage(status.numberOfSuccesfulSendings, status.numberOfReciepients) }} %) lähetettiin onnistuneesti.</span>
+    <span ng-if="!isSendingComplete()">Noin {{ getETA() }} minuuttia jäljellä.</span>
+    <span ng-if="status.numberOfFailedSendings > 0">Epäonnistuneita lähetyksiä: {{status.numberOfFailedSendings}}</span>
+  </div>
+</div>

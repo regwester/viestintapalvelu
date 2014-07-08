@@ -318,3 +318,14 @@ ul.normal-margin {
 .singleRowTable thead td {
     font-weight: bold;
 }
+
+.reported-message-progress-bar {
+    position: relative;
+}
+
+.reported-message-progress-bar .progress-label {
+    position: absolute;
+    top: 0;
+    width: 100%;
+    text-align: center;
+}

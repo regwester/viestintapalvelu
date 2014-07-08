@@ -80,6 +80,7 @@
     
     <!-- Directives -->
     <script type="text/javascript" src="./email/directives/upload.js"></script>
+    <script type="text/javascript" src="./report/directives/reportedMessageStatus.js"></script>
 
     <!-- Controllers -->
     <script type="text/javascript" src="./email/controllers/draft.js"></script>
@@ -88,6 +89,7 @@
     <script type="text/javascript" src="./email/controllers/emailSendStatus.js"></script>
     <script type="text/javascript" src="./email/controllers/emailResponse.js"></script>
     <script type="text/javascript" src="./email/controllers/errorDialog.js"></script>
+
     <script type="text/javascript" src="./report/controllers/reportedMessageList.js"></script>
     <script type="text/javascript" src="./report/controllers/reportedMessageView.js"></script>
     <script type="text/javascript" src="./report/controllers/errorDialog.js"></script>

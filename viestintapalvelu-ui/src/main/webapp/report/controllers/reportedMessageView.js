@@ -45,7 +45,7 @@ angular.module('report')
             ReportedMessageAndRecipientsSendingUnsuccesful.get({messageID: $stateParams.messageID, 
                 nbrofrows: $scope.pageSize,	page: $scope.currentPage}, 
             function(result) {
-                $scope.reportedMessageDTO = result; 
+                $scope.reportedMessageDTO = result;
             }, function(error) {
                 ErrorDialog.showError(error);
             });
