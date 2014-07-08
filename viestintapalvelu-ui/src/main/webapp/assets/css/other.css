@@ -288,5 +288,33 @@ ul.normal-margin {
 
 .filelist li a, .filelist li a:hover {
     text-decoration: none;
-    color: #999999
+    color: #999999;
+}
+
+.previewText {
+    color: #999999;
+    line-height: 1.2em;
+    font-size: 0.875em;
+    height: 3.6em;
+    overflow: hidden;
+}
+
+.previewText:after {
+    content: "...";
+}
+
+.singleRowTable {
+    border-color: #BFE4F1;
+}
+
+.singleRowTable tbody {
+    border-top: 1px solid #BFE4F1;
+}
+
+.singleRowTable tbody tr:nth-child(even) td {
+    border-top: none;
+}
+
+.singleRowTable thead td {
+    font-weight: bold;
 }

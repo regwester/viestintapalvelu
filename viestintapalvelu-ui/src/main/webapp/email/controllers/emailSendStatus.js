@@ -1,12 +1,12 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailSendStatusCtrl', ['$scope', '$rootScope', 'GroupEmail', '$state', '$timeout', 'ErrorDialog',
-  function($scope, $rootScope, GroupEmail, $state, $timeout, ErrorDialog) {
+.controller('EmailSendStatusCtrl', ['$scope', '$rootScope', 'EmailService', '$state', '$timeout', 'ErrorDialog',
+  function($scope, $rootScope, EmailService, $state, $timeout, ErrorDialog) {
 
     $scope.emailsendid = $rootScope.emailsendid;
     $scope.getStatus = function () {
-      $scope.SendingStatusDTO = GroupEmail.status.save($scope.emailsendid.id).$promise.then(
+      $scope.SendingStatusDTO = EmailService.status.save($scope.emailsendid.id).$promise.then(
         function(value) {
           $scope.SendingStatusDTO = value; 
         },

@@ -1,0 +1,25 @@
+<div>
+    <button ui-sref="email">Takaisin</button>
+    <h2>Valitse viestin sisältö</h2>
+    <p>Valitse viestin sisällöksi viestipohja, luonnos tai aikaisemmin lähetetty viesti. Valinta korvaa viestin nykyisen otsikon, sisällön ja liitetiedostot, mutta ei vaikuta lähettäjän nimeen tai vastaanottajiin.</p>
+    <tabset>
+        <tab>
+            <tab-heading>
+                <a ui-sref="email.savedContent.templates" ui-sref-active="active">Viestipohjat</a>
+            </tab-heading>
+        </tab>
+        <tab>
+            <tab-heading>
+                <a ui-sref="email.savedContent.sentEmails" ui-sref-active="active">Lähetetyt</a>
+            </tab-heading>
+        </tab>
+        <tab>
+            <tab-heading>
+                <a ui-sref="email.savedContent.drafts" ui-sref-active="active">Luonnokset</a>
+            </tab-heading>
+        </tab>
+    </tabset>
+    <div>
+        <div ui-view></div>
+    </div>
+</div>

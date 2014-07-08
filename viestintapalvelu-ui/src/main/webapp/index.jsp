@@ -69,7 +69,9 @@
     <script type="text/javascript" src="./system/localization.js"></script>
 
     <!-- Services -->
-    <script type="text/javascript" src="./email/services/emailService.js"></script>
+    <script type="text/javascript" src="./email/services/email.js"></script>
+    <script type="text/javascript" src="./email/services/upload.js"></script>
+    <script type="text/javascript" src="./email/services/draft.js"></script>
     <script type="text/javascript" src="./email/services/errorDialog.js"></script>
     <script type="text/javascript" src="./report/services/errorDialog.js"></script>
     <script type="text/javascript" src="./report/services/loading.js"></script>
@@ -80,6 +82,7 @@
     <script type="text/javascript" src="./email/directives/upload.js"></script>
 
     <!-- Controllers -->
+    <script type="text/javascript" src="./email/controllers/draft.js"></script>
     <script type="text/javascript" src="./email/controllers/email.js"></script>
     <script type="text/javascript" src="./email/controllers/emailCancel.js"></script>
     <script type="text/javascript" src="./email/controllers/emailSendStatus.js"></script>

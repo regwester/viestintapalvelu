@@ -5,44 +5,62 @@ angular.module('viestintapalvelu')
   function ($stateProvider, $urlRouterProvider) {
 
     $urlRouterProvider.otherwise('/email');
-
+    
+    var emailUrl = '/viestintapalvelu-ui/email/views/';
+    var reportUrl = '/viestintapalvelu-ui/report/views/';
+    
     $stateProvider
-    .state('email', { 
-      url: "/email",
-      templateUrl: "/viestintapalvelu-ui/email/views/email.html",
-      controller: "EmailCtrl"
-    }).state('email.draft', {
-      url: '/draft',
-      templateUrl: "/viestintapalvelu-ui/email/views/draft.html",
-      controller: "DraftCtrl"
+    .state('email', {
+      url: '/email',
+      templateUrl: emailUrl + 'email.html',
+      controller: 'EmailCtrl'
     })
+      .state('email.savedContent', {
+        url: '',
+        abstract: true,
+        templateUrl: emailUrl + 'savedContent.html',
+      })
+        .state('email.savedContent.drafts', {
+          url: '/drafts',
+          templateUrl: emailUrl + 'partials/drafts.html',
+          controller: 'DraftCtrl'
+        })
+        .state('email.savedContent.sentEmails', {
+          url: '/sentEmails',
+          templateUrl: emailUrl + 'partials/sentEmails.html'
+        })
+        .state('email.savedContent.templates', {
+          url: '/templates',
+          templateUrl: emailUrl + 'partials/templates.html'
+        })
+    
     //Change these to substates (use dot notation, change url and configure controllers)
     .state('email_cancel', {
-      url: "/email/cancel",
-      templateUrl: "/viestintapalvelu-ui/email/views/emailCancel.html",
-      controller: "EmailCancelCtrl"
+      url: '/email/cancel',
+      templateUrl: emailUrl + 'emailCancel.html',
+      controller: 'EmailCancelCtrl'
     }).state('email_status', {
-      url: "/email/status",
-      templateUrl: "/viestintapalvelu-ui/email/views/emailSendStatus.html",
-      controller: "EmailSendStatusCtrl"
+      url: '/email/status',
+      templateUrl: emailUrl + 'emailSendStatus.html',
+      controller: 'EmailSendStatusCtrl'
     }).state('email_response', {
-      url: "/email/response",
-      controller: "EmailResponseCtrl",
-      templateUrl: "/viestintapalvelu-ui/email/views/emailResponse.html"
+      url: '/email/response',
+      controller: 'EmailResponseCtrl',
+      templateUrl: emailUrl + 'emailResponse.html'
     })
-
+    
     .state('report', { //same here
-      url: "/reportMessages/list",
-      templateUrl:"/viestintapalvelu-ui/report/views/reportedMessageList.html",
-      controller: "ReportedMessageListCtrl"
+      url: '/reportMessages/list',
+      templateUrl: reportUrl + 'reportedMessageList.html',
+      controller: 'ReportedMessageListCtrl'
     }).state('report_search', {
-      url: "/reportMessages/search",
-      templateUrl:"/viestintapalvelu-ui/report/views/reportedMessageList.html",
-      controller: "ReportedMessageListCtrl"
+      url: '/reportMessages/search',
+      templateUrl: reportUrl + 'reportedMessageList.html',
+      controller: 'ReportedMessageListCtrl'
     }).state('report_view', {
-      url: "/reportMessages/view/:messageID",
-      templateUrl: "/viestintapalvelu-ui/report/views/reportedMessageView.html",
-      controller: "ReportedMessageViewCtrl"
+      url: '/reportMessages/view/:messageID',
+      templateUrl: reportUrl + 'reportedMessageView.html',
+      controller: 'ReportedMessageViewCtrl'
     });
   }
 ]);

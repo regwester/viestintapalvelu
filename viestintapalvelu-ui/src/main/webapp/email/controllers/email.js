@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailCtrl', ['$scope', '$rootScope', 'GroupEmail', 'uploadManager', '$state', 'ErrorDialog', 
-  function($scope, $rootScope, GroupEmail, uploadManager, $state, ErrorDialog) {
+.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 
+  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog) {
     $rootScope.emailsendid = "";
     $scope.tinymceOptions = {
       height: 400,
@@ -12,9 +12,10 @@ angular.module('email')
 
     $scope.emaildata = window.emailData;
     $scope.emaildata.email.attachInfo = [];
+    $scope.emaildata.email.html = true;
 
     $scope.sendGroupEmail = function () {
-      $scope.emailsendid = GroupEmail.email.save($scope.emaildata).$promise.then(
+      $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
         function(value) {
           $rootScope.emailsendid = value;
           $state.go('email_status');
@@ -27,14 +28,28 @@ angular.module('email')
         }
       );
     };
-
+    
+    $scope.isEmailState = function() {
+      return $state.is('email');
+    };
+    
     $scope.cancelEmail = function () {
       $state.go('email_cancel');
       $rootScope.callingProcess = $scope.emaildata.email.callingProcess;
     };
 
+    $scope.saveDraft = function() {
+      DraftService.save($scope.emaildata.email, function(id) {
+        //success
+        $state.go('drafts');
+      }, function(e) {
+        //error
+        //do the error dialog popup
+      });
+    };
+
     $scope.init = function() {
-      $scope.initResponse = GroupEmail.init.query();
+      $scope.initResponse = EmailService.init.query();
     };
 
     $scope.percentage = 0;
