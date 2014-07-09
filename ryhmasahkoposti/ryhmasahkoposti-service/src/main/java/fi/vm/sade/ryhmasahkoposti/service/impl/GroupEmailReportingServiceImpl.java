@@ -284,6 +284,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 pagingAndSorting);
 
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
         List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
                 .getReportedMessageAttachments());
@@ -306,6 +307,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 .getReportedRecipientsByStatusSendingUnsuccesful(messageID, pagingAndSorting);
 
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
+        sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
         List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
                 .getReportedMessageAttachments());
