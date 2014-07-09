@@ -18,7 +18,12 @@
             <div class="control-group">
                 <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
                 <div class="controls">
-                    <input type="text" size="40" ng-model="emaildata.email.fromName"/>
+                    <input type="text" size="40" ng-model="emaildata.email.sender"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{'email.label.from' | i18n}}</label>
+                <div class="controls">
                     <span>&lt;{{emaildata.email.from}}&gt;</span>
                     <input type="hidden" ng-model="emaildata.email.organizationOid"/>
                 </div>
@@ -96,5 +101,5 @@
     </div>
 </div>
 <div ng-if="!isEmailState()">
-    <div class="span12" ui-view></div>
+    <div class="span8" ui-view></div>
 </div>

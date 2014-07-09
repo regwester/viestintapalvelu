@@ -1,34 +1,55 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.joda.time.DateTime;
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+
+import fi.vm.sade.ryhmasahkoposti.api.serializers.JsonDateSerializer;
 
 @JsonDeserialize(builder = Draft.Builder.class)
 public class Draft {
-    
+    private String from;
+    private String sender;
     private String replyTo;
     private String subject;
     private String body;
-    private String userOid;
-    private Set<EmailAttachment> attachments = new HashSet<EmailAttachment>();
+    private String organizationOid;
+    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isHtml;
-    private Date createDate;
+    @JsonSerialize(using=JsonDateSerializer.class)
+    private DateTime createDate = new DateTime(); //set the default value to now
     
     public Draft() {}
     
     private Draft(Builder builder) {
+        this.from = builder.from;
+        this.sender = builder.sender;
         this.replyTo = builder.replyTo;
         this.subject = builder.subject;
         this.body = builder.body;
-        this.userOid = builder.userOid;
-        this.attachments = builder.attachments;
+        this.organizationOid = builder.organizationOid;
+        this.attachInfo = builder.attachInfo;
         this.isHtml = builder.isHtml;
         this.createDate = builder.createDate;
     }
-    
+
+    public String getFrom() {
+        return from;
+    }
+    public void setFrom(String from) {
+        this.from = from;
+    }
+    public String getSender() {
+        return sender;
+    }
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
     public String getReplyTo() {
         return replyTo;
     }
@@ -47,20 +68,20 @@ public class Draft {
     public void setBody(String body) {
         this.body = body;
     }
-    public String getUserOid() {
-        return userOid;
+    public String getOrganizationOid() {
+        return organizationOid;
     }
-    public void setUserOid(String userOid) {
-        this.userOid = userOid;
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
     }
-    public Set<EmailAttachment> getAttachments() {
-        return attachments;
+    public List<AttachmentResponse> getAttachInfo() {
+        return attachInfo;
     }
-    public void setAttachments(Set<EmailAttachment> attachments) {
-        this.attachments = attachments;
+    public void setAttachInfo(List<AttachmentResponse> attachInfo) {
+        this.attachInfo = attachInfo;
     }
-    public void addAttachment(EmailAttachment attachment) {
-        this.attachments.add(attachment);
+    public void addAttachment(AttachmentResponse attachment) {
+        this.attachInfo.add(attachment);
     }
     public boolean isHtml() {
         return isHtml;
@@ -68,24 +89,35 @@ public class Draft {
     public void setHtml(boolean isHtml) {
         this.isHtml = isHtml;
     }
-    public Date getCreateDate() {
+    @JsonSerialize(using=JsonDateSerializer.class)
+    public DateTime getCreateDate() {
         return createDate;
     }
-    public void setCreateDate(Date createDate) {
+    public void setCreateDate(DateTime createDate) {
         this.createDate = createDate;
     }
 
     public static class Builder {
+        private String from;
+        private String sender;
         private String replyTo;
         private String subject;
         private String body;
-        private String userOid;
-        private Set<EmailAttachment> attachments = new HashSet<EmailAttachment>();
+        private String organizationOid;
+        private List<AttachmentResponse> attachInfo = new ArrayList<AttachmentResponse>();
         private boolean isHtml;
-        private Date createDate;
+        private DateTime createDate;
         
         public Builder() {}
         
+        public Builder from(String from) {
+            this.from = from;
+            return this;
+        }
+        public Builder sender(String sender) {
+            this.sender = sender;
+            return this;
+        }
         public Builder replyTo(String replyTo) {
             this.replyTo = replyTo;
             return this;
@@ -98,23 +130,23 @@ public class Draft {
             this.body = body;
             return this;
         }
-        public Builder userOid(String oid) {
-            this.userOid = oid;
+        public Builder organizationOid(String oid) {
+            this.organizationOid = oid;
             return this;
         }
-        public Builder addAttachment(EmailAttachment a) {
-            this.attachments.add(a);
+        public Builder addAttachment(AttachmentResponse a) {
+            this.attachInfo.add(a);
             return this;
         }
-        public Builder setAttachments(Set<EmailAttachment> attachments) {
-            this.attachments = attachments;
+        public Builder setAttachments(List<AttachmentResponse> attachInfo) {
+            this.attachInfo = attachInfo;
             return this;
         }
         public Builder isHtml(boolean isHtml) {
             this.isHtml = isHtml;
             return this;
         }
-        public Builder createDate(Date date) {
+        public Builder createDate(DateTime date) {
             this.createDate = date;
             return this;
         }
@@ -126,9 +158,8 @@ public class Draft {
 
     @Override
     public String toString() {
-        return "Draft [replyTo=" + replyTo + ", subject=" + subject + ", body=" + body + ", userOid=" + userOid
-                + ", attachments=" + attachments + ", isHtml=" + isHtml + ", createDate=" + createDate + "]";
+        return "Draft [replyTo=" + replyTo + ", subject=" + subject + ", body=" + body + ", organizationOid=" + organizationOid
+                + ", attachInfo=" + attachInfo + ", isHtml=" + isHtml + ", createDate=" + createDate + "]";
     }
-
 
 }

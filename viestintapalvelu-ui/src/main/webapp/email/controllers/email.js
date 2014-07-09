@@ -38,15 +38,22 @@ angular.module('email')
     };
 
     $scope.saveDraft = function() {
+      console.log("Saving draft");
+      console.log($scope.emaildata.email);
       DraftService.save($scope.emaildata.email, function(id) {
         //success
-        $state.go('drafts');
+        $state.go('.savedContent.drafts');
       }, function(e) {
         //error
         //do the error dialog popup
       });
     };
-
+    
+    $scope.$on('useDraft', function(event, draft) {
+      $scope.emaildata.email = draft;
+      $state.go('email');
+    });
+    
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
     };

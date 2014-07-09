@@ -1,55 +1,76 @@
 package fi.vm.sade.ryhmasahkoposti.converter;
 
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.StringEscapeUtils;
+import org.joda.time.DateTime;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
 
 @Component
 public class DraftConverter {
-
+    
     @Autowired
-    private ReportedAttachmentConverter reportedAttachmentConverter;
+    private ReportedAttachmentService reportedAttachmentService;
     
     public DraftModel convert(Draft draft) {
-        Set<EmailAttachment> eaSet = draft.getAttachments();
-        Set<ReportedAttachment> raSet = new HashSet<ReportedAttachment>();
-        for(EmailAttachment a : eaSet) {
-            raSet.add(reportedAttachmentConverter.convert(a));
-        }
-        
+        List<ReportedAttachment> raList = reportedAttachmentService.getReportedAttachments(draft.getAttachInfo());
+        Set<ReportedAttachment> raSet = new HashSet<ReportedAttachment>(raList);
         return new DraftModel.Builder()
         .replyTo(draft.getReplyTo())
+        .sender(draft.getSender())
+        .from(draft.getFrom())
         .subject(draft.getSubject())
-        .userOid(draft.getUserOid())
+        .userOid(draft.getOrganizationOid())
         .body(draft.getBody())
         .isHtml(draft.isHtml())
-        .createDate(draft.getCreateDate())
+        .createDate(draft.getCreateDate().toDate())
         .setAttachments(raSet)
         .build();
     }
     
     public Draft convert(DraftModel draftModel) {
         Set<ReportedAttachment> raSet = draftModel.getAttachments();
-        Set<EmailAttachment> eaSet = new HashSet<EmailAttachment>();
+        List<AttachmentResponse> eaList = new ArrayList<AttachmentResponse>();
         for(ReportedAttachment a : raSet) {
-            eaSet.add(reportedAttachmentConverter.convert(a));
+            AttachmentResponse result = new AttachmentResponse();
+            result.setUuid(a.getId().toString());
+            result.setContentType(a.getContentType());
+            result.setFileName(a.getAttachmentName());
+            result.setFileSize(a.getAttachment().length);
+            eaList.add(result);
+        }
+        
+        Date d = draftModel.getCreateDate();
+        // Need to check that d is not null, so DateTime doesn't initialize into current time
+        // DateTime(null) is the same as DateTime()
+        DateTime dt = (d == null) ? null : new DateTime(d);
+        
+        String body = draftModel.getBody();
+        if(draftModel.isHtml()) {
+            body = StringEscapeUtils.unescapeHtml(body);
         }
         
         return new Draft.Builder()
         .replyTo(draftModel.getReplyTo())
         .subject(draftModel.getSubject())
-        .userOid(draftModel.getUserOid())
-        .body(draftModel.getBody())
+        .organizationOid(draftModel.getUserOid())
+        .body(body)
+        .from(draftModel.getFrom())
+        .sender(draftModel.getSender())
         .isHtml(draftModel.isHtml())
-        .createDate(draftModel.getCreateDate())
-        .setAttachments(eaSet)
+        .createDate(dt)
+        .setAttachments(eaList)
         .build();
     }
     

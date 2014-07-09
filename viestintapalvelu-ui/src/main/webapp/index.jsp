@@ -31,7 +31,7 @@
     <script type="text/javascript" src="./assets/lib/angular/angular.js"></script> 
     <script type="text/javascript" src="./assets/lib/angular/angular-resource.js"></script>
     <script type="text/javascript" src="./assets/lib/angular/angular-animate.js"></script>
-    <script type="text/javascript" src="./assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.8.0.min.js"></script>
+    <script type="text/javascript" src="./assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
     <script type="text/javascript" src="./assets/lib/ui-router/angular-ui-router.min.js"></script>
      
     <script type="text/javascript" src="./assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js"></script>
@@ -43,7 +43,8 @@
 
     <script type="text/javascript" src="./assets/lib/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="./assets/lib/tinymce/ui-angular-tinymce.js"></script>
-
+    
+    <script type="text/javascript" src="./assets/lib/lodash/lodash.min.js"></script>
     <%
         String emailData = request.getParameter("emailData");
         if (emailData != null) {
@@ -66,7 +67,9 @@
 
     <!-- Filters-->
     <script type="text/javascript" src="./report/filters/listpaging.js"></script>
-    <script type="text/javascript" src="./system/localization.js"></script>
+    <script type="text/javascript" src="./system/filters/localization.js"></script>
+    <script type="text/javascript" src="./system/filters/html2text.js"></script>
+    <script type="text/javascript" src="./system/filters/bytes2size.js"></script>
 
     <!-- Services -->
     <script type="text/javascript" src="./email/services/email.js"></script>
@@ -84,6 +87,7 @@
     <script type="text/javascript" src="./report/directives/limitedParagraph.js"></script>
 
     <!-- Controllers -->
+    <script type="text/javascript" src="./email/controllers/tab.js"></script>
     <script type="text/javascript" src="./email/controllers/draft.js"></script>
     <script type="text/javascript" src="./email/controllers/email.js"></script>
     <script type="text/javascript" src="./email/controllers/emailCancel.js"></script>

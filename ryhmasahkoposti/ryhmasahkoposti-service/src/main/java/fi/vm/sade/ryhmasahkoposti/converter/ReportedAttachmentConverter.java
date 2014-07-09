@@ -24,7 +24,7 @@ public class ReportedAttachmentConverter {
 //		liite.setAttachment(zippedAttachment);
 		
 		liite.setAttachment(fileItem.get());
-		liite.setTimkestamp(new Date());
+		liite.setTimestamp(new Date());
 		
 		return liite;
 	}

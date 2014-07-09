@@ -4,11 +4,12 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.JoinColumn;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -38,21 +39,24 @@ public class DraftModel extends BaseEntity {
     private String userOid;
     
     @Column(name = "lahettajan_osoite")
-    private String senderAddress;
+    private String from;
     
-    @JoinTable(
-      name="luonnos_liite",
-      joinColumns=@JoinColumn(name="luonnos_id", referencedColumnName="id"),
-      inverseJoinColumns=@JoinColumn(name="liite_id", referencedColumnName="id")
-    )
-    @ManyToMany(fetch = FetchType.EAGER, targetEntity = ReportedAttachment.class)
+    @Column(name = "lahettajan_nimi")
+    private String sender;
+    
+    @ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
+    @JoinTable(name="luonnos_liite",
+            joinColumns = @JoinColumn(name="luonnos_id", referencedColumnName="id"),
+            inverseJoinColumns = @JoinColumn(name="liite_id", referencedColumnName="id"))
     private Set<ReportedAttachment> attachments;
     
     @Column(name = "tallennettu")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
     
-    public DraftModel(){}
+    public DraftModel(){
+        super();
+    }
     
     private DraftModel(Builder builder) {
         this.replyTo = builder.replyTo;
@@ -62,7 +66,9 @@ public class DraftModel extends BaseEntity {
         this.attachments = builder.attachments;
         this.isHtml = builder.isHtml;
         this.createDate = builder.createDate;
-        this.senderAddress = builder.senderAddress;
+        this.from = builder.from;
+        this.sender = builder.sender;
+        
     }
     
     public String getReplyTo() {
@@ -121,12 +127,20 @@ public class DraftModel extends BaseEntity {
         this.createDate = createDate;
     }
     
-    public String getSenderAddress() {
-        return senderAddress;
+    public String getSender() {
+        return sender;
     }
 
-    public void setSenderAddress(String senderAddress) {
-        this.senderAddress = senderAddress;
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getFrom() {
+        return from;
+    }
+
+    public void setFrom(String from) {
+        this.from = from;
     }
 
     public static long getSerialversionuid() {
@@ -141,7 +155,8 @@ public class DraftModel extends BaseEntity {
         private Set<ReportedAttachment> attachments = new HashSet<ReportedAttachment>();
         private boolean isHtml;
         private Date createDate;
-        private String senderAddress;
+        private String sender;
+        private String from;
         
         public Builder() {}
         
@@ -177,8 +192,12 @@ public class DraftModel extends BaseEntity {
             this.createDate = date;
             return this;
         }
-        public Builder senderAddress(String address) {
-            this.senderAddress = address;
+        public Builder sender(String address) {
+            this.sender = address;
+            return this;
+        }
+        public Builder from(String from) {
+            this.from = from;
             return this;
         }
         public DraftModel build() {

@@ -87,7 +87,7 @@ public interface EmailResource {
         notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
     @ApiResponses({@ApiResponse(code = 500, 
         message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
-	public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) 
+	public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true)
 	    EmailData emailData);
 
     /**

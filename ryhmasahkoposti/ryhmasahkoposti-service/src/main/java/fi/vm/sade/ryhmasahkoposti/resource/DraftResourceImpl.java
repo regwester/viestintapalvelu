@@ -24,7 +24,7 @@ public class DraftResourceImpl implements DraftResource {
     @Autowired
     private DraftService draftService;
     
-    public Draft getDraft(@PathParam("draftId") Long draftId){
+    public Draft getDraft(@PathParam("draftId") Long draftId) {
         if(draftId == null) {
             throwError400("DraftId is not defined");
         }
@@ -35,7 +35,7 @@ public class DraftResourceImpl implements DraftResource {
         return draft;
     }
     
-    public List<Draft> getAllDrafts(){
+    public List<Draft> getAllDrafts() {
         List<Draft> drafts = draftService.getAllDrafts();
         if(drafts == null) {
             throwError500("Drafts could not be retrieved");
@@ -43,14 +43,14 @@ public class DraftResourceImpl implements DraftResource {
         return drafts;
     }
     
-    public Draft deleteDraft(Long draftId){
+    public Draft deleteDraft(Long draftId) {
         if(draftId == null) {
             throwError400("DraftId is not defined");
         }
         return draftService.deleteDraft(draftId);
     }
     
-    public String saveDraft(Draft draft){
+    public String saveDraft(Draft draft) {
         if(draft == null) {
             throwError400("Draft is not defined");
         }

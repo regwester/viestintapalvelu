@@ -19,6 +19,7 @@ angular.module('viestintapalvelu')
         url: '',
         abstract: true,
         templateUrl: emailUrl + 'savedContent.html',
+        controller: 'TabCtrl'
       })
         .state('email.savedContent.drafts', {
           url: '/drafts',

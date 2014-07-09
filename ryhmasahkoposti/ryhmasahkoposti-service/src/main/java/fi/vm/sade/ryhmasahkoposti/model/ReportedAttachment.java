@@ -56,7 +56,7 @@ public class ReportedAttachment extends BaseEntity {
 		return timestamp;
 	}
 
-	public void setTimkestamp(Date timestamp) {
+	public void setTimestamp(Date timestamp) {
 		this.timestamp = timestamp;
 	}
 }

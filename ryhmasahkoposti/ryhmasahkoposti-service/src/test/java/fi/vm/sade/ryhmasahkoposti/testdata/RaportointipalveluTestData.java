@@ -299,7 +299,7 @@ public class RaportointipalveluTestData {
         raportoitavaLiite.setAttachmentName("koekutsu.doc");
         raportoitavaLiite.setContentType("application/pdf");
         raportoitavaLiite.setAttachment(sisalto);
-        raportoitavaLiite.setTimkestamp(new Date());
+        raportoitavaLiite.setTimestamp(new Date());
 
         return raportoitavaLiite; 		
     }
