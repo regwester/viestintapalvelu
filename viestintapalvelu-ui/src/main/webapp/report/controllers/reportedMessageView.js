@@ -4,7 +4,8 @@ angular.module('report')
 .controller('ReportedMessageViewCtrl', 
     ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients', 'ReportedMessageAndRecipientsSendingUnsuccesful', 'ErrorDialog', 
     function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccesful, ErrorDialog) {
-        var polling; // promise returned by $interval
+        var polling, // promise returned by $interval
+            POLLING_INTERVAL = 5 * 60 * 1000; // 5 seconds
 
         $scope.pageSize = 10;
         $scope.currentPage = 1;
@@ -99,6 +100,6 @@ angular.module('report')
         // Alustetaan ensimmäinen sivu
         $scope.selectPage(1);
         // start polling the server for updates
-        polling = $interval(fetchIfSending, 1000);
+        polling = $interval(fetchIfSending, POLLING_INTERVAL);
     }
 ]);
