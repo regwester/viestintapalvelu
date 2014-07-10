@@ -495,4 +495,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         return true;
     }
 
+	@Override
+	public ReportedAttachment getAttachment(Long attachmentID) {
+		LOGGER.info("getAttachment(" + attachmentID +") called");
+		
+		ReportedAttachment reportedAttachment = reportedAttachmentService.getReportedAttachment(attachmentID);
+		return reportedAttachment;
+	}
+
 }

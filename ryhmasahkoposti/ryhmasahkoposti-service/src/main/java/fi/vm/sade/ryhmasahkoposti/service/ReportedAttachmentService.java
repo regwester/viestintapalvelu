@@ -8,6 +8,15 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
 
 public interface ReportedAttachmentService {
+	
+	/**
+	 * Hakee yksittäisen raportoitavan liitteen
+	 * 
+	 * @param attachmentID Liitteen tunniste
+	 * @return Tunnistetta vastaava raportoitava liite
+	 */
+	public ReportedAttachment getReportedAttachment(Long attachmentID); 
+	
 	/**
 	 * Hakee raportoitavat liitteet aiemmin tallennetujen liitteiden tietojen perusteella
 	 * 

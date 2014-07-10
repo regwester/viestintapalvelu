@@ -36,7 +36,7 @@
     </div>
 
     <div class="row-fluid" ng-if="reportedMessageDTO.attachments.length > 0">
-        <div class="span2" ng-if="$index == 0">{{'reportedmessageview.otsikko.liitetiedostot' | i18n}}</div>
+        <div class="span2">{{'reportedmessageview.otsikko.liitetiedostot' | i18n}}</div>
         <div class="span10">
             <ul class="attachments-list">
                 <li ng-repeat="attachment in reportedMessageDTO.attachments">

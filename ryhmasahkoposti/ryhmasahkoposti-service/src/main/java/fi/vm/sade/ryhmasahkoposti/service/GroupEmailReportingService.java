@@ -17,6 +17,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 /**
@@ -156,6 +157,14 @@ public interface GroupEmailReportingService {
      * @return true, päivitys on tehty.
      */
     public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
+    
+    /**
+     * Hakee ryhmäsähköpostin liitteen tietokannasta
+     * 
+     * @param fileItem Liitetiedoston tiedot
+     * @return Liitteen tiedot
+     */
+    public ReportedAttachment getAttachment(Long attachmentID) throws IOException;
 
     /**
      * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten

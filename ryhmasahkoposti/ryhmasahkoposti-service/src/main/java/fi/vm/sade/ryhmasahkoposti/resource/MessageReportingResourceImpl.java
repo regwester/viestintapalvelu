@@ -20,6 +20,7 @@ import fi.vm.sade.ryhmasahkoposti.api.resource.MessageReportingResource;
 import fi.vm.sade.ryhmasahkoposti.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
@@ -165,5 +166,19 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
             LOGGER.error(e.getMessage());
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();            
         }
-    }    
+    }
+
+	@Override
+	public Response downloadReportedMessageAttachment(Long attachmentID) {
+		try {
+			ReportedAttachment reportedAttachment = groupEmailReportingService.getAttachment(attachmentID);
+			byte[] binary = reportedAttachment.getAttachment();
+			return Response.ok(binary).header("Content-Disposition", "attachment; filename=\"" + reportedAttachment.getAttachmentName() + "\"").build();
+		} catch (ExternalInterfaceException e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();            
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();            
+        }
+	}    
 }

@@ -21,6 +21,12 @@ public class ReportedAttachmentServiceImpl implements ReportedAttachmentService 
     public ReportedAttachmentServiceImpl(ReportedAttachmentDAO reportedAttachmentDAO) {
 		this.reportedAttachmentDAO = reportedAttachmentDAO;
 	}   
+	
+	@Override
+	public ReportedAttachment getReportedAttachment(Long attachmentID) {
+		ReportedAttachment reportedAttachment = reportedAttachmentDAO.read(attachmentID);
+		return reportedAttachment;
+	}
 
 	@Override
 	public List<ReportedAttachment> getReportedAttachments(Set<ReportedMessageAttachment> reportedMessageAttachments) {
@@ -52,4 +58,5 @@ public class ReportedAttachmentServiceImpl implements ReportedAttachmentService 
 		reportedAttachment = reportedAttachmentDAO.insert(reportedAttachment);
 		return reportedAttachment.getId();
 	}
+
 }

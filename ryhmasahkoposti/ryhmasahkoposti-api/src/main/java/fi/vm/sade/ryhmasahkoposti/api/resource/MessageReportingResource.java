@@ -188,4 +188,20 @@ public interface MessageReportingResource {
         @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(RestConstants.PARAM_ORDER) String order);
+    
+    /**
+     * Palauttaa yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui
+     * 
+     * @param attachmentID Liitetiedoston tunnus
+     */
+    @PreAuthorize(SecurityConstants.READ)
+    @Produces(MediaType.APPLICATION_OCTET_STREAM)
+    @Path(RestConstants.PATH_REPORT_MESSAGE_DOWNLOAD_ATTACHMENT)
+    @GET
+    @ApiOperation(value = "Hakee yksittäisen ryhmäsähköpostin liitteen ja palauttaa tiedoston binäärimuodossa", 
+        notes = "Hakee avainta vastaavan ryhmäsähköpostiviestin liitteen ja palauttaa liitetiedoston ladattavassa muodossa.")
+    @ApiResponses(value={@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
+    public Response downloadReportedMessageAttachment(
+    		@ApiParam(value="Ryhmäsähköpostiviestin liitteen avain", required=true)
+    		@PathParam(RestConstants.PARAM_ATTACHMENT_ID) Long attachmentID);
 }
