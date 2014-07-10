@@ -329,3 +329,8 @@ ul.normal-margin {
     width: 100%;
     text-align: center;
 }
+
+ul.attachments-list {
+  list-style-type: none;
+  margin-left: 0;
+}

@@ -40,7 +40,7 @@
         <div class="span10">
             <ul class="attachments-list">
                 <li ng-repeat="attachment in reportedMessageDTO.attachments">
-                    <a>{{ attachment.name }}</a> ({{attachment.size}} kt)
+                    <a ng-href="/ryhmasahkoposti-service/reportMessages/attachment/{{attachment.attachmentID}}">{{ attachment.name }}</a> ({{ attachment.data.length / 1000 | number:0 }} kt)
                 </li>
             </ul>
         </div>
