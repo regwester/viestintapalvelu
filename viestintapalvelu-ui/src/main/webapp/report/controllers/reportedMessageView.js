@@ -5,7 +5,7 @@ angular.module('report')
     ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients', 'ReportedMessageAndRecipientsSendingUnsuccesful', 'ErrorDialog', 
     function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccesful, ErrorDialog) {
         var polling, // promise returned by $interval
-            POLLING_INTERVAL = 5 * 60 * 1000; // 5 seconds
+            POLLING_INTERVAL = 5 * 1000; // 5 seconds
 
         $scope.pageSize = 10;
         $scope.currentPage = 1;
