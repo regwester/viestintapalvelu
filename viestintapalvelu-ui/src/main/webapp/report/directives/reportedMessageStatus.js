@@ -9,16 +9,33 @@ angular.module('report').directive('reportedMessageStatus', function() {
       return Math.floor((current / (total)) * 100);
     };
 
-    scope.getTotalSendings = function() {
+    scope.getTotalSendings = function getTotalSendings() {
       var status = scope.status;
       return status.numberOfSuccesfulSendings + status.numberOfFailedSendings;
     };
 
     scope.getETA = function() {
-      return "ETA"; // placeholder implementation
+      var status = scope.status,
+          elapsedTime, timePerSending, remainderApproximation,
+          ETA = '';
+
+      function toMinutes(ms) {
+        return Math.floor((ms / 1000) / 60);
+      }
+      
+      if (!isSendingComplete()) {
+        if (getTotalSendings() > 0) {
+          elapsedTime = status.sendingEnded - status.sendingStarted;
+          timePerSending = elapsedTime / getTotalSendings();
+          remainderApproximation = timePerSending * (status.nbrOfReciepients - getTotalSendings());
+          ETA = toMinutes(remainderApproximation);
+        }
+      }
+
+      return ETA; // placeholder implementation
     };
 
-    scope.isSendingComplete = function() {
+    scope.isSendingComplete = function isSendingComplete() {
       return scope.status.sendingEnded !== null;
     };
 
