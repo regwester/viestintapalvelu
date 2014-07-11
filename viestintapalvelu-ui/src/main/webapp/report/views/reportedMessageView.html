@@ -81,12 +81,15 @@
                 <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
                 <td>{{emailRecipient.oid}}</td>
                 <td>{{emailRecipient.email}}</td>
-                <td ng-if="emailRecipient.sendSuccessfull == '1'">
+                <td ng-if="emailRecipient.sendSuccessfull === '1'">
                     {{'reportedmessageview.text.lahetys_vastaanottajalle_onnistui' | i18n}}
                 </td>
-                <td ng-if="emailRecipient.sendSuccessfull != '1'">
+                <td ng-if="emailRecipient.sendSuccessfull === '0'">
                     <img style="margin-right:10px;" src="./assets/img/alert-icon28x29.png">
                     {{'reportedmessageview.text.lahetys_vastaanottajalle_epaonnistui' | i18n}}
+                </td>
+                <td ng-if="emailRecipient.sendSuccessfull === null">
+                    {{'reportedmessageview.text.lahetys_vastaanottajalle_kesken' | i18n}}
                 </td>
             </tr>
         </table>
