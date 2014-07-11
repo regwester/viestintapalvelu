@@ -2,7 +2,7 @@
 	<div class="row-fluid">
 		<div class="span2">
 			<button type="button" ng-click="back()" class="btn">
-			     <span class="bbutton">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;{{'reportedmessageview.button.takaisin' | i18n}}</span>
+			     <i class="icon-arrow-left" style="padding-right: 0.2em;"></i>{{'reportedmessageview.button.takaisin_listaukseen' | i18n}}</span>
 			</button>
 		</div>
 		<div class="span10">
@@ -95,7 +95,7 @@
         </table>
     </div>
     
-    <div ng-if="reportedMessageDTO.emailRecipients.length > 0">
+    <div ng-if="reportedMessageDTO.emailRecipients.length > pageSize">
         <pagination total-items="reportedMessageDTO.sendingStatus.numberOfReciepients" items-per-page="pageSize" page="currentPage" on-select-page="selectPage(page)" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
     </div>
 </div>
