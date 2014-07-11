@@ -27,7 +27,13 @@
   
     <div class="row-fluid">
         <div class="span2">{{'reportedmessageview.otsikko.sisalto' | i18n}}</div>
-        <div class="span10">{{reportedMessageDTO.body}}</div>
+        <div class="span6" ng-if="reportedMessageDTO.body">
+            <limited-paragraph 
+                content="reportedMessageDTO.body"
+                show-button-text="Näyta kaikki"
+                hide-button-text="Piilota"
+                limit="350" />
+        </div>
     </div>
 
     <div class="row-fluid">
