@@ -28,5 +28,47 @@
 	</dependencies>
 	<build>
 		<finalName>viestintapalvelu-ui</finalName>
+		<plugins>
+			<plugin>
+                <groupId>com.github.searls</groupId>
+                <artifactId>jasmine-maven-plugin</artifactId>
+                <version>1.3.1.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <preloadSources>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/jquery/jquery-1.10.2.min.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/jquery/jquery.i18n.properties-min-1.0.9.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js</source>
+
+                        <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-mocks.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-resource.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-animate.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.8.0.min.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-router/angular-ui-router.min.js</source>
+
+                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js</source>
+
+                        <source>${project.basedir}/src/main/webapp/email/init.js</source>
+                        <source>${project.basedir}/src/main/webapp/report/init.js</source>
+                        <source>${project.basedir}/src/main/webapp/system/init.js</source>
+                    </preloadSources>
+                    <jsSrcDir>${project.basedir}/src/main/webapp</jsSrcDir>
+                    <sourceExcludes>
+                        <exclude>assets/**/*.js</exclude>
+                        <exclude>**/init.js</exclude>
+                    </sourceExcludes>
+                    <jsTestSrcDir>${project.basedir}/src/test/spec</jsTestSrcDir>
+                </configuration>
+            </plugin>
+        </plugins>
 	</build>
 </project>
