@@ -5,6 +5,6 @@
   </div>
   <div class="span9">
     <span ng-if="isSendingComplete()">{{ 'reportedmessagestatus.text.valmis' | i18n }} {{ status.numberOfSuccesfulSendings }}/{{ status.numberOfReciepients }} {{ 'reportedmessagestatus.text.viestia' | i18n }} ({{ percentage(status.numberOfSuccesfulSendings, status.numberOfReciepients) }} %) {{ 'reportedmessagestatus.text.lahetettiin_onnistuneesti' | i18n }}</span>
-    <span ng-if="status.numberOfFailedSendings > 0">{{ 'reportedmessagestatus.text.epaonnistuneita_lahetyksia' | i18n }}: {{status.numberOfFailedSendings}}</span>
+    <span ng-if="status.numberOfFailedSendings > 0"><img style="margin-right: 0.2em;" src="./assets/img/alert-icon28x29.png" />{{ 'reportedmessagestatus.text.epaonnistuneita_lahetyksia' | i18n }}: {{status.numberOfFailedSendings}}</span>
   </div>
 </div>
