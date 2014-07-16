@@ -26,7 +26,8 @@ task(zipIt, type: Zip) {
     destinationDir new File(buildDir, "distributions")
 	archiveName zipFileName
 	from 'src/main/resources'
-	from 'ryhmasahkoposti/target'
+	from 'ryhmasahkoposti/ryhmasahkoposti-app/target'
+	from 'ryhmasahkoposti/ryhmasahkoposti-service/target'
 	from 'viestintapalvelu-service/target'
 	from 'viestintapalvelu-ui/target'
 }
