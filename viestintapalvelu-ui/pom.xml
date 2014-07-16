@@ -67,6 +67,10 @@
                         <exclude>**/init.js</exclude>
                     </sourceExcludes>
                     <jsTestSrcDir>${project.basedir}/src/test/spec</jsTestSrcDir>
+                    <debug>true</debug>
+                    <!-- IE9 is used because jQuery 1.10.2 for some reason does not work with any other browserVersion that HtmlUnit can simulate.
+                         As a side benefit, the tests will fail if your Javascript is not IE9 -compatible! -->
+                    <browserVersion>INTERNET_EXPLORER_9</browserVersion>
                 </configuration>
             </plugin>
         </plugins>
