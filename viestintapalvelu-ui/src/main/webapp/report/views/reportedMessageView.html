@@ -70,6 +70,7 @@
     </div>
 	
     <div class="results" ng-if="reportedMessageDTO.emailRecipients.length > 0">
+        <p>{{ 'reportedmessageview.text.vastaanottajat' | i18n }} ({{reportedMessageDTO.sendingStatus.numberOfReciepients}})</p>
         <table class="table-striped">
             <tr>
                 <th class="span4 clickable-header-cell" ng-click="sort('searchName')" ng-class="clickHeader('searchName')">{{'reportedmessageview.otsikko.nimi' | i18n}}</th>
