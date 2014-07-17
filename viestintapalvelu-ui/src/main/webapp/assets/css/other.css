@@ -346,11 +346,30 @@ ul.normal-margin {
     position: relative;
 }
 
+.reported-message-progress-bar .progress {
+    width: 90%;
+}
+
 .reported-message-progress-bar .progress-label {
     position: absolute;
     top: 0;
-    width: 100%;
+    width: 90%;
     text-align: center;
+}
+
+.reported-message-progress-bar i.ajax-loader {
+    display: block;
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 10%;
+    height: 20px; /* same as progress bar */
+
+    background-image: url("../img/ajax-loader-big.gif");
+    background-repeat: no-repeat;
+    background-size: auto 100%;
+    background-position: center;
+
 }
 
 ul.attachments-list {
