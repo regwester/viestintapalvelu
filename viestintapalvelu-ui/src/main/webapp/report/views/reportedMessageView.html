@@ -96,7 +96,7 @@
         </table>
     </div>
     
-    <div ng-if="reportedMessageDTO.emailRecipients.length > pageSize">
-        <pagination total-items="reportedMessageDTO.sendingStatus.numberOfReciepients" items-per-page="pageSize" page="currentPage" on-select-page="selectPage(page)" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+    <div class="pagination" ng-if="reportedMessageDTO.sendingStatus.numberOfReciepients > pagination.pageSize">
+        <pagination ng-model="pagination.currentPage" total-items="reportedMessageDTO.sendingStatus.numberOfReciepients" items-per-page="{{pagination.pageSize}}" ng-change="fetch()" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
     </div>
 </div>

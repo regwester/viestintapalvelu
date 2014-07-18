@@ -7,8 +7,10 @@ angular.module('report')
         var polling, // promise returned by $interval
             POLLING_INTERVAL = 5 * 1000; // 5 seconds
 
-        $scope.pageSize = 10;
-        $scope.currentPage = 1;
+        $scope.pagination = {
+            currentPage: 1,
+            pageSize: 10,
+        };
         $scope.sortedBy = '';
         $scope.order = 'asc';
         $scope.descending = false;
@@ -24,8 +26,8 @@ angular.module('report')
             // compose the parameter object for AJAX call
             var parameters = {
                 messageID: $stateParams.messageID,
-                nbrofrows: $scope.pageSize,
-                page: $scope.currentPage
+                nbrofrows: $scope.pagination.pageSize,
+                page: $scope.pagination.currentPage
             };
             if ($scope.sortedBy.length > 0) { // include sortedBy and order if sorting is activated
                 angular.extend(parameters, { sortedby: $scope.sortedBy, order: $scope.order });
@@ -56,18 +58,12 @@ angular.module('report')
         $scope.showSendingUnsuccesful = function() {
             $scope.showSendingUnsuccesfulClicked = true;
             ReportedMessageAndRecipientsSendingUnsuccesful.get({messageID: $stateParams.messageID, 
-                nbrofrows: $scope.pageSize,	page: $scope.currentPage}, 
+                nbrofrows: $scope.pagination.pageSize,	page: $scope.pagination.currentPage}, 
             function(result) {
                 $scope.reportedMessageDTO = result;
             }, function(error) {
                 ErrorDialog.showError(error);
             });
-        };
-
-        // Sivuvalintaa painettu
-        $scope.selectPage = function(page) {
-            $scope.currentPage = page;
-            $scope.fetch();
         };
 
         // Otsikkosaraketta klikattu. Palautetaan tyyliksi sort-true tai sort-false.
@@ -93,12 +89,12 @@ angular.module('report')
                 $scope.order = 'desc';
             }
             // Asetetaan sivuksi ensimmäinen ja haetaan sanoman tiedot lajiteltuna
-            $scope.currentPage = 1;
+            $scope.pagination.currentPage = 1;
             $scope.fetch();
         };
 
         // Alustetaan ensimmäinen sivu
-        $scope.selectPage(1);
+        $scope.fetch();
         // start polling the server for updates
         polling = $interval(fetchIfSending, POLLING_INTERVAL);
     }
