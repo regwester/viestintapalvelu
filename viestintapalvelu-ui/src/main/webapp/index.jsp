@@ -12,9 +12,9 @@
 
     <!-- css -->
     <link rel="stylesheet" type="text/css" href="./assets/lib/bootstrap/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="./assets/css/other.css"/>
     <link rel="stylesheet" type="text/css" href="./assets/css/virkailija.css"/>
     <link rel="stylesheet" type="text/css" href="./assets/css/dialogs.css"/>
+    <link rel="stylesheet" type="text/css" href="./assets/css/other.css"/>
 
 </head>
 
@@ -44,7 +44,6 @@
     <script type="text/javascript" src="./assets/lib/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="./assets/lib/tinymce/ui-angular-tinymce.js"></script>
     
-    <script type="text/javascript" src="./assets/lib/lodash/lodash.min.js"></script>
     <%
         String emailData = request.getParameter("emailData");
         if (emailData != null) {
@@ -91,8 +90,6 @@
     <script type="text/javascript" src="./email/controllers/draft.js"></script>
     <script type="text/javascript" src="./email/controllers/email.js"></script>
     <script type="text/javascript" src="./email/controllers/emailCancel.js"></script>
-    <script type="text/javascript" src="./email/controllers/emailSendStatus.js"></script>
-    <script type="text/javascript" src="./email/controllers/emailResponse.js"></script>
     <script type="text/javascript" src="./email/controllers/errorDialog.js"></script>
 
     <script type="text/javascript" src="./report/controllers/reportedMessageList.js"></script>

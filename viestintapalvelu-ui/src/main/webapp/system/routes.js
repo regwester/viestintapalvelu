@@ -35,22 +35,12 @@ angular.module('viestintapalvelu')
           templateUrl: emailUrl + 'partials/templates.html'
         })
     
-    //Change these to substates (use dot notation, change url and configure controllers)
     .state('email_cancel', {
       url: '/email/cancel',
       templateUrl: emailUrl + 'emailCancel.html',
       controller: 'EmailCancelCtrl'
-    }).state('email_status', {
-      url: '/email/status',
-      templateUrl: emailUrl + 'emailSendStatus.html',
-      controller: 'EmailSendStatusCtrl'
-    }).state('email_response', {
-      url: '/email/response',
-      controller: 'EmailResponseCtrl',
-      templateUrl: emailUrl + 'emailResponse.html'
-    })
-    
-    .state('report', { //same here
+    })    
+    .state('report', { //Change these to substates (use dot notation, change url and configure controllers)
       url: '/reportMessages/list',
       templateUrl: reportUrl + 'reportedMessageList.html',
       controller: 'ReportedMessageListCtrl'

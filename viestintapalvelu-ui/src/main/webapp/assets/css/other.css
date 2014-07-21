@@ -243,6 +243,7 @@ ul.normal-margin {
 
 .align-with-form {
     margin-left: 70px;
+    margin-bottom: 40px;
 }
 
 .linklist {
@@ -273,22 +274,6 @@ ul.normal-margin {
 .filelist {
     list-style: none;
     margin: 0;
-}
-
-.filelist li {
-    clear: none;
-    display: inline-block;
-    background-color: rgb(210, 236, 245);
-    border-radius: 3px;
-    border: 1px solid rgb(146, 204, 224);
-    padding: 1px 5px;
-    margin-left: 5px;
-    margin-bottom: 5px;
-}
-
-.filelist li a, .filelist li a:hover {
-    text-decoration: none;
-    color: #999999;
 }
 
 .previewText {
@@ -375,4 +360,12 @@ ul.normal-margin {
 ul.attachments-list {
   list-style-type: none;
   margin-left: 0;
+}
+
+.required:after {
+	content: " *";
+}
+
+.no-decoration, .no-decoration:hover, .no-decoration:active {
+	text-decoration: none !important;
 }
