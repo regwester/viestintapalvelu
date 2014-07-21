@@ -71,14 +71,9 @@ angular.module('email')
       $scope.emaildata.email.attachInfo.push(call);
       $scope.$apply();
     });
-
-    //--- 'Poista' ---
+    
     $scope.remove = function(id) {
       $scope.emaildata.email.attachInfo.splice(id, 1);
-    };
-    
-    $scope.showRecipients = function() {
-      return $scope.emaildata.recipient.length <= 30;
     };
     
     $scope.init();

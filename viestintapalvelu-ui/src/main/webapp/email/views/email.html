@@ -5,11 +5,11 @@
     <div class="span8">
         <form novalidate="novalidate" class="form-horizontal">
             <div class="control-group">
-                <label class="control-label">{{'email.label.vastaanottajat' | i18n}} ({{emaildata.recipient.length}})</label>
-                <div class="controls" ng-hide="showRecipients">
+                <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
+                <div class="controls" ng-if="emaildata.recipient.length > 30">
                     {{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
                 </div>
-                <div class="controls" ng-show="showRecipients">
+                <div class="controls" ng-if="emaildata.recipient.length <= 30">
                     <span ng-repeat="recipient in emaildata.recipient">
                         {{recipient.email}}{{$last ? '' : ', '}}
                     </span>
@@ -35,13 +35,13 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">{{'email.label.otsikko' | i18n}}</label>
+                <label class="control-label required">{{'email.label.otsikko' | i18n}}</label>
                 <div class="controls">
                     <input type="text" size="40" ng-model="emaildata.email.subject"/>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">{{'email.label.viesti' | i18n}}</label>
+                <label class="control-label required">{{'email.label.viesti' | i18n}}</label>
                 <div class="controls">
                      <textarea ui-tinymce="tinymceOptions" ng-model="emaildata.email.body"></textarea>
                 </div>
@@ -51,8 +51,8 @@
                 <div class="controls pushDown">
                     <span class="bold" ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
                     <ul class="filelist">
-                        <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName}}
-                            <a ng-click="remove($index)">X</a>
+                        <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName}} ({{attachment.fileSize | bytesToSize}})
+                            <a ng-click="remove($index)"><i class="icon-remove"></i>Poista</a>
                         </li>
                     </ul> 
                 </div>
