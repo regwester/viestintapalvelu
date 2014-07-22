@@ -7,8 +7,10 @@
 
     <div class="organisation-select form-inline span4">
       <label for="organisationSelect">Organisaatio:</label>
-      <select name="organisationSelect" ng-model="filterBy.oid">
-        <option ng-repeat="org in userOrganisations" value="{{ org.oid }}">{{ org.name }}</option>
+      <select name="organisationSelect" 
+              ng-model="selectedOrganizationOid" 
+              ng-options="org.oid as org.name for org in reportedLettersDTO.organizations"
+              ng-if="reportedLettersDTO.organizations">
       </select>
     </div>
 
@@ -18,5 +20,35 @@
       <button class="btn ">Tyhjennä</button>
     </div>
 
+  </div>
+
+  <div class="results row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > 0">
+    <table class="table-striped clickable-table-row">
+      <tr>
+        <th class="span1">{{ 'reportedletterlist.otsikko.ajankohta' | i18n | uppercase }}</th>
+        <th class="span1">{{ 'reportedletterlist.otsikko.kirjepohja' | i18n | uppercase }}</th>
+        <th class="span2">{{ 'reportedletterlist.otsikko.haku' | i18n | uppercase }}</th>
+        <th class="span3">{{ 'reportedletterlist.otsikko.hakukohde' | i18n | uppercase }}</th>
+        <th class="span2">{{ 'reportedletterlist.otsikko.tila' | i18n | uppercase }}</th>
+        <th class="span2">{{ 'reportedletterlist.otsikko.tunniste' | i18n | uppercase }}</th>
+      </tr>
+      <tr ng-repeat="reportedLetter in reportedLettersDTO.letterBatchReports" ng-click="showReportedLetter(reportedLetter)">
+        <td>{{ reportedLetter.startTime | date:'dd.MM.yyyy' }}</a></td>
+        <td>{{ reportedLetter.template.name }}</td>
+        <td>{{ reportedLetter.applicationPeriod }}</td>
+        <td>{{ reportedLetter.fetchTargetName }}</td>
+        <td>{{ reportedLetter.status }}</td>
+        <td>{{ reportedLetter.letterBatchID }}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="pagination row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
+    <pagination total-items="reportedLettersDTO.numberOfLetterBatches" 
+                items-per-page="{{ pagination.pageSize }}"
+                ng-model="pagination.page"
+                ng-change="fetch()"
+                previous-text="{{'pagination.button.edellinen' | i18n}}"
+                next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
   </div>
 </div>
