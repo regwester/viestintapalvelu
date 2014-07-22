@@ -86,7 +86,12 @@ public class LetterReportServiceImpl implements LetterReportService {
     public LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting) {
         List<LetterBatch> letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(organizationOID, 
             pagingAndSorting);
-        return getLetterBatchesReport(letterBatches);
+        LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
+        
+        // set total number of letter batches
+        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatches(organizationOID));
+        
+        return letterBatchesReport;
     }
     
     @Override
@@ -152,7 +157,6 @@ public class LetterReportServiceImpl implements LetterReportService {
     private LetterBatchesReportDTO getLetterBatchesReport(List<LetterBatch> letterBatches) {
         LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
         
-        letterBatchesReport.setNumberOfLetterBatches((long) letterBatches.size());
         List<LetterBatchReportDTO> letterBatchReports = new ArrayList<LetterBatchReportDTO>();
         
         for (LetterBatch letterBatch : letterBatches) {

@@ -155,4 +155,16 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 
         return booleanBuilder;
     }
+
+	@Override
+	public Long findNumberOfLetterBatches(String organizationOid) {
+		EntityManager em = getEntityManager();
+		
+		String findNumberOfLetterBatches = 
+			"SELECT COUNT(*) FROM LetterBatch a WHERE a.organizationOid = :organizationOid";
+		TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
+		query.setParameter("organizationOid", organizationOid);
+	
+		return query.getSingleResult();
+	}
 }
