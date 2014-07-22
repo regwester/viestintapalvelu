@@ -81,7 +81,7 @@ public class LetterBatch extends BaseEntity {
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<IPosti> iposts = new ArrayList<IPosti>();
 

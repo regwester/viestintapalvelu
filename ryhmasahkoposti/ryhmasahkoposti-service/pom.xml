@@ -69,7 +69,7 @@
 		<dependency>
 			<groupId>fi.vm.sade.organisaatio</groupId>
 			<artifactId>organisaatio-api</artifactId>
-			<version>${organisaatio.version}</version>
+			<version>10.0-SNAPSHOT</version>
 		</dependency>
 
 		<!-- Ryhmäsähköposti API -->

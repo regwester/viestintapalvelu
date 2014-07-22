@@ -42,11 +42,9 @@ public class IPostZIPTest {
                 new ArrayList<Map<String, String>>());
         byte[] mainZip = TestUtil.generateIPostZIP(Arrays
                 .asList(kirje1, kirje2));
-        Map<String, byte[]> zipEntryNamesAndContents = ZipUtil
-                .zipEntryNamesAndContents(mainZip);
+        Map<String, byte[]> zipEntryNamesAndContents = ZipUtil.zipEntryNamesAndContents(mainZip);
         byte[] zip = zipEntryNamesAndContents.get("jalkiohjauskirje_1.zip");
-        Map<String, byte[]> subZipEntryNamesAndContents = ZipUtil
-                .zipEntryNamesAndContents(zip);
+        Map<String, byte[]> subZipEntryNamesAndContents = ZipUtil.zipEntryNamesAndContents(zip);
         filenames = subZipEntryNamesAndContents.keySet();
         ipostXML = exctractIPostXML(zip);
     }

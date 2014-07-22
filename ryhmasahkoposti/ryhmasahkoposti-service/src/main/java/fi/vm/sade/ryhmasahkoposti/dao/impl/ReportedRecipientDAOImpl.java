@@ -20,128 +20,129 @@ import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 @Repository
-public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipient, Long> implements ReportedRecipientDAO {
+public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipient, Long> implements
+    ReportedRecipientDAO {
 
     @Override
     public List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting) {
-	QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
+        QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 
-	BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-	OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 
-	JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(
-		pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
+        JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression)
+            .limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
 
-	return findByMessageIdQuery.list(reportedRecipient);
+        return findByMessageIdQuery.list(reportedRecipient);
     }
 
     @Override
-    public List<ReportedRecipient> findByMessageIdAndSendingUnsuccesful(Long messageID, 
-	    PagingAndSortingDTO pagingAndSorting) {
-	QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
+    public List<ReportedRecipient> findByMessageIdAndSendingUnsuccesful(Long messageID,
+        PagingAndSortingDTO pagingAndSorting) {
+        QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 
-	BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-	whereExpression = whereExpression.and(reportedRecipient.sendingSuccesful.eq("0"));
-	OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
+        whereExpression = whereExpression.and(reportedRecipient.sendingSuccesful.eq("0"));
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 
-	JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(
-		pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
+        JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression)
+            .limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
 
-	return findByMessageIdQuery.list(reportedRecipient);
+        return findByMessageIdQuery.list(reportedRecipient);
     }
 
     @Override
     public ReportedRecipient findByRecipientID(Long recipientID) {
-	return read(recipientID);
+        return read(recipientID);
     }
 
     @Override
     public Date findMaxValueOfSendingEndedByMessageID(Long messageID) {
-	EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
 
-	String findMaxValueOfSendingEnded = "SELECT MAX(a.sendingEnded) FROM ReportedRecipient a "	+ 
-		"WHERE a.reportedMessage.id = :messageID";
-	TypedQuery<Date> query = em.createQuery(findMaxValueOfSendingEnded, Date.class);
-	query.setParameter("messageID", messageID);
+        String findMaxValueOfSendingEnded = "SELECT MAX(a.sendingEnded) FROM ReportedRecipient a "
+            + "WHERE a.reportedMessage.id = :messageID";
+        TypedQuery<Date> query = em.createQuery(findMaxValueOfSendingEnded, Date.class);
+        query.setParameter("messageID", messageID);
 
-	return query.getSingleResult();
+        return query.getSingleResult();
     }
 
     @Override
     public Long findNumberOfRecipientsByMessageID(Long messageID) {
-	EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
 
-	String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a " + 
-		"JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID";
-	TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
-	query.setParameter("messageID", messageID);
+        String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a "
+            + "JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID";
+        TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
+        query.setParameter("messageID", messageID);
 
-	return query.getSingleResult();
+        return query.getSingleResult();
     }
 
     @Override
     public Long findNumberOfRecipientsByMessageIDAndSendingSuccesful(Long messageID, boolean sendingSuccesful) {
-	EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
 
-	String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a "	+ 
-		"JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID AND a.sendingSuccesful = :sendingSuccesful";
-	TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
-	query.setParameter("messageID", messageID);
+        String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a "
+            + "JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID AND a.sendingSuccesful = :sendingSuccesful";
+        TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
+        query.setParameter("messageID", messageID);
 
-	if (sendingSuccesful) {
-	    query.setParameter("sendingSuccesful", "1");
-	} else {
-	    query.setParameter("sendingSuccesful", "0");
-	}
+        if (sendingSuccesful) {
+            query.setParameter("sendingSuccesful", "1");
+        } else {
+            query.setParameter("sendingSuccesful", "0");
+        }
 
-	return query.getSingleResult();
+        return query.getSingleResult();
     }
 
     @Override
     public List<ReportedRecipient> findUnhandled() {
-	EntityManager em = getEntityManager();
+        EntityManager em = getEntityManager();
 
-	String findUnhandled = "SELECT a FROM ReportedRecipient a JOIN a.reportedMessage " + 
-		"WHERE a.sendingStarted = null";
-	TypedQuery<ReportedRecipient> query = em.createQuery(findUnhandled, ReportedRecipient.class);
+        String findUnhandled = "SELECT a FROM ReportedRecipient a JOIN a.reportedMessage "
+            + "WHERE a.sendingStarted = null";
+        TypedQuery<ReportedRecipient> query = em.createQuery(findUnhandled, ReportedRecipient.class);
 
-	return query.getResultList();
+        return query.getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {
-	return new JPAQuery(getEntityManager()).from(o);
+        return new JPAQuery(getEntityManager()).from(o);
     }
 
     protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting) {
-	if (pagingAndSorting.getSortedBy() == null || pagingAndSorting.getSortedBy().isEmpty()) {
-	    return QReportedRecipient.reportedRecipient.searchName.asc(); 
-	}
+        if (pagingAndSorting.getSortedBy() == null || pagingAndSorting.getSortedBy().isEmpty()) {
+            return QReportedRecipient.reportedRecipient.searchName.asc();
+        }
 
-	if (pagingAndSorting.getSortedBy().equalsIgnoreCase("searchName")) {
-	    if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
-		return QReportedRecipient.reportedRecipient.searchName.asc();
-	    }
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("searchName")) {
+            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+                return QReportedRecipient.reportedRecipient.searchName.asc();
+            }
 
-	    return QReportedRecipient.reportedRecipient.searchName.desc();
-	}
+            return QReportedRecipient.reportedRecipient.searchName.desc();
+        }
 
-	if (pagingAndSorting.getSortedBy().equalsIgnoreCase("recipientOid")) {
-	    if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
-		return QReportedRecipient.reportedRecipient.recipientOid.asc();
-	    }
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("recipientOid")) {
+            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+                return QReportedRecipient.reportedRecipient.recipientOid.asc();
+            }
 
-	    return QReportedRecipient.reportedRecipient.recipientOid.desc();         
-	}
+            return QReportedRecipient.reportedRecipient.recipientOid.desc();
+        }
 
-	if (pagingAndSorting.getSortedBy().equalsIgnoreCase("recipientEmail")) {
-	    if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
-		return QReportedRecipient.reportedRecipient.recipientEmail.asc();
-	    }
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("recipientEmail")) {
+            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
+                return QReportedRecipient.reportedRecipient.recipientEmail.asc();
+            }
 
-	    return QReportedRecipient.reportedRecipient.recipientEmail.desc();                      
-	}
+            return QReportedRecipient.reportedRecipient.recipientEmail.desc();
+        }
 
-	return QReportedRecipient.reportedRecipient.searchName.asc();
+        return QReportedRecipient.reportedRecipient.searchName.asc();
     }
 
 }
