@@ -168,7 +168,10 @@ public class LetterReportResource extends AsynchronousResource {
     @GET
     @Path(Urls.REPORTING_SEARCH_PATH)
     @Produces(MediaType.APPLICATION_JSON)
-    @ApiOperation(value = "", notes = "", response = LetterBatchesReportDTO.class, responseContainer = "List")
+    @ApiOperation(value = "Hakee hakuparametrien mukaiset kirjelähetysten tiedot", notes = "Hakee hakuparametrien "
+        + "mukaisesti halutun määrän käyttäjän ja hänen organisaantionsa kirjelähetyksiä. Haku voidaan aloittaa "
+        + "tietystä kohtaa ja ne voidaan hakea lajiteltuna nousevasti tai laskevasti tietyn sarakkeen mukaan.", 
+        response = LetterBatchesReportDTO.class, responseContainer = "List")
     public Response searchLetterBatchReports(@ApiParam(value="Organisaation oid-tunnus", required=false) 
         @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, 
         @ApiParam(value="Näytöllä annettu hakutekijä esim. kirjeen saajan nimi", required=false) 
