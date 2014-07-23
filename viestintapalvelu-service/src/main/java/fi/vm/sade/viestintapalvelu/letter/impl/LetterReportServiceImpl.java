@@ -173,6 +173,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         letterBatchReport.setFetchTargetName(getFetchTargetName(letterBatch));
         letterBatchReport.setLetterBatchID(letterBatch.getId());
         letterBatchReport.setTag(letterBatch.getTag());
+        letterBatchReport.setTimestamp(letterBatch.getTimestamp());
         
         Template template = templateService.findById(letterBatch.getTemplateId());
         letterBatchReport.setTemplate(template);
