@@ -1,0 +1,22 @@
+<div class="container">
+  <div class="titlebar row-fluid">
+    <h1>Kirjeiden lähetysraportit</h1>
+  </div> 
+
+  <div class="search-controls row-fluid">
+
+    <div class="organisation-select form-inline span4">
+      <label for="organisationSelect">Organisaatio:</label>
+      <select name="organisationSelect" ng-model="filterBy.oid">
+        <option ng-repeat="org in userOrganisations" value="{{ org.oid }}">{{ org.name }}</option>
+      </select>
+    </div>
+
+    <div class="search form-inline span8">
+      <input type="text" name="searchText" placeholder="Hae viestin tai vastaanottajan tiedoilla" ng-model="filterBy.query" />
+      <button class="btn btn-primary">Hae</button>
+      <button class="btn ">Tyhjennä</button>
+    </div>
+
+  </div>
+</div>

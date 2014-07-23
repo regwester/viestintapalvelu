@@ -52,6 +52,12 @@ angular.module('viestintapalvelu')
       url: '/reportMessages/view/:messageID',
       templateUrl: reportUrl + 'reportedMessageView.html',
       controller: 'ReportedMessageViewCtrl'
+    })
+
+    .state('letter_reports', {
+      url: '/reportLetters',
+      templateUrl: reportUrl + 'reportedLetterList.html',
+      controller: 'ReportedLetterListCtrl'
     });
   }
 ]);
