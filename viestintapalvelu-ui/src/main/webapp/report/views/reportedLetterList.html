@@ -15,9 +15,9 @@
     </div>
 
     <div class="search form-inline span8">
-      <input type="text" name="searchText" placeholder="Hae viestin tai vastaanottajan tiedoilla" ng-model="filterBy.query" />
-      <button class="btn btn-primary">Hae</button>
-      <button class="btn ">Tyhjennä</button>
+      <input type="text" ng-model="searchArgument" placeholder="Hae viestin tai vastaanottajan tiedoilla" />
+      <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument">Hae</button>
+      <button class="btn" ng-click="emptySearch()">Tyhjennä</button>
     </div>
 
   </div>
