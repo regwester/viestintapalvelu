@@ -167,4 +167,18 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 	
 		return query.getSingleResult();
 	}
+
+	@Override
+	public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery) {
+		QLetterBatch letterBatch = QLetterBatch.letterBatch;
+        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
+        QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
+        
+        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(letterReportQuery, letterBatch, letterReceiverAddress);        
+        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
+                letterBatch.letterReceivers, letterReceivers).leftJoin(
+                letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
+        
+		return findBySearchCriteria.count();
+	}
 }
