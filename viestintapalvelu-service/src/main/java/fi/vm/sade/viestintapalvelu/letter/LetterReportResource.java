@@ -66,7 +66,8 @@ public class LetterReportResource extends AsynchronousResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Hakee käyttäjän organisaation kirjelähetysten tiedot", notes = "Hakee halutun määrän käyttäjän "
         + "ja hänen organisaantionsa kirjelähetyksiä. Haku voidaan aloittaa tietystä kohtaa ja ne voidaan hakea lajiteltuna "
-        + "nousevasti tai laskevasti tietyn sarakkeen mukaan.", response = LetterBatchesReportDTO.class, responseContainer = "List")
+        + "nousevasti tai laskevasti tietyn sarakkeen mukaan. Palauttaa tietojen mukana käyttäjän kaikki organisaatiot", 
+        response = LetterBatchesReportDTO.class, responseContainer = "List")
     public Response getLetterBatchReports(@ApiParam(value="Organisaation oid-tunnus", required=false) 
         @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, 
         @ApiParam(value="Haettavien rivien lukumäärä", required=true)
@@ -170,7 +171,8 @@ public class LetterReportResource extends AsynchronousResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Hakee hakuparametrien mukaiset kirjelähetysten tiedot", notes = "Hakee hakuparametrien "
         + "mukaisesti halutun määrän käyttäjän ja hänen organisaantionsa kirjelähetyksiä. Haku voidaan aloittaa "
-        + "tietystä kohtaa ja ne voidaan hakea lajiteltuna nousevasti tai laskevasti tietyn sarakkeen mukaan.", 
+        + "tietystä kohtaa ja ne voidaan hakea lajiteltuna nousevasti tai laskevasti tietyn sarakkeen mukaan. "
+        + "Palauttaa tietojen mukana käyttäjän kaikki organisaatiot", 
         response = LetterBatchesReportDTO.class, responseContainer = "List")
     public Response searchLetterBatchReports(@ApiParam(value="Organisaation oid-tunnus", required=false) 
         @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, 
