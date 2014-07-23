@@ -53,6 +53,11 @@
 .select-style select:focus {
     outline: none;
 }
+
+.results {
+    padding-top: 20px;
+}
+
 .results table {
    border-left: 1px solid #e3e3e3;
    border-collapse: collapse;

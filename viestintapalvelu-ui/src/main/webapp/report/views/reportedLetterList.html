@@ -43,7 +43,7 @@
     </table>
   </div>
 
-  <div class="pagination row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
+  <div class="pagination pagination-centered row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
     <pagination total-items="reportedLettersDTO.numberOfLetterBatches" 
                 items-per-page="{{ pagination.pageSize }}"
                 ng-model="pagination.page"

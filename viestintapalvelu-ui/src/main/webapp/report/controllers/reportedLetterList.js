@@ -19,7 +19,7 @@ angular.module('report')
   $scope.fetch = function() {
     var params = {};
     if ($scope.organisationOid) {
-      params.orgOid = $scope.organisationOid;
+      params.orgOid = $scope.selectedOrganizationOid;
     }
 
     angular.extend(params, {
@@ -35,6 +35,10 @@ angular.module('report')
       .error(function(err) {
         console.log(err);
       });
+  };
+
+  $scope.showReportedLetter = function(letterBatch) {
+    console.log(letterBatch);
   };
 
   $scope.fetch();
