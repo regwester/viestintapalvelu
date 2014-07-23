@@ -95,6 +95,10 @@ public class EmailSender {
     }
 
     private String getContent(EmailMessage emailMessage) {
+        if(!emailMessage.isHtml()) {
+            //Change LF to CRLF (SMTP standard)
+            return emailMessage.getBody().replaceAll("\n", "\r\n");
+        }
         return emailMessage.getBody();
     }
     
