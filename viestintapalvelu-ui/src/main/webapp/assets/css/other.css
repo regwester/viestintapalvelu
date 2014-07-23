@@ -327,6 +327,10 @@ ul.normal-margin {
     display: block;
 }
 
+.limited-paragraph {
+    word-wrap: break-word;
+}
+
 .reported-message-progress-bar {
     position: relative;
 }
