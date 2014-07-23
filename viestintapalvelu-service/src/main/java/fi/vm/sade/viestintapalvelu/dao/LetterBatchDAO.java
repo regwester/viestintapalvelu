@@ -51,7 +51,6 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      * @param pagingAndSorting Sivutus- ja lajittelutiedot
      * @return Lista kirjelähetysten tietoja
      */
-    
     public List<LetterBatch> findLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery, PagingAndSortingDTO pagingAndSorting);
     
     /**
@@ -60,7 +59,7 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 	 * @param  organizationOid Organisaation oid-tunnus
 	 * @return Kirjelähetysten lukumäärä
 	 */
-	Long findNumberOfLetterBatches(String organizationOid);
+	public Long findNumberOfLetterBatches(String organizationOid);
 	
 	/**
 	 * Hakee kirjelähetysten lukumäärän annettujen hakuparametrien mukaisesti
@@ -68,5 +67,5 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 	 * @param  letterReportQuery Kirjelähetysten raportoinnin hakuparametrit
 	 * @return Hakuparametreja vastaavien kirjelähetysten lukumäärä
 	 */
-	Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery);
+	public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery);
 }
