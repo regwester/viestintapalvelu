@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.dto.letter;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import fi.vm.sade.viestintapalvelu.dto.iposti.IPostiDTO;
@@ -14,6 +15,7 @@ public class LetterBatchReportDTO implements Serializable {
     private String fetchTargetName;
     private String tag;    
     private boolean deliveryTypeIPosti;
+    private Date timestamp;
     private List<LetterReceiverDTO> letterReceivers;
     private List<IPostiDTO> iPostis;
     
@@ -63,6 +65,14 @@ public class LetterBatchReportDTO implements Serializable {
     
     public void setDeliveryTypeIPosti(boolean deliveryTypeIPosti) {
         this.deliveryTypeIPosti = deliveryTypeIPosti;
+    }
+
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
     }
 
     public List<LetterReceiverDTO> getLetterReceivers() {
