@@ -58,6 +58,11 @@ angular.module('viestintapalvelu')
       url: '/reportLetters',
       templateUrl: reportUrl + 'reportedLetterList.html',
       controller: 'ReportedLetterListCtrl'
+    })
+    .state('letter_batch_view', {
+      url: '/reportLetters/:letterBatchID',
+      templateUrl: reportUrl + 'reportedLetterView.html',
+      controller: 'ReportedLetterViewCtrl'
     });
   }
 ]);

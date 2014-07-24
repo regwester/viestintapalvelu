@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('report')
-.controller('ReportedLetterListCtrl', ['$scope', '$http', function($scope, $http) {
+.controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', function($scope, $state, $http) {
   var reportedLettersListUrl = '/viestintapalvelu/api/v1/reporting/list',
       reportedLettersSearchUrl = '/viestintapalvelu/api/v1/reporting/search';
 
@@ -48,8 +48,8 @@ angular.module('report')
     $scope.fetch(); 
   };
 
-  $scope.showReportedLetter = function(letterBatch) {
-    console.log(letterBatch);
+  $scope.showReportedLetter = function(reportedLetter) {
+    $state.go('letter_batch_view', {letterBatchID: reportedLetter.letterBatchID});
   };
 
   $scope.emptySearch = function() {

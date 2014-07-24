@@ -97,6 +97,7 @@
     <script type="text/javascript" src="./report/controllers/errorDialog.js"></script>
 
     <script type="text/javascript" src="./report/controllers/reportedLetterList.js"></script>
+    <script type="text/javascript" src="./report/controllers/reportedLetterView.js"></script>
 
     <!-- Routes -->
     <script type="text/javascript" src="./system/routes.js"></script>
