@@ -125,7 +125,6 @@ public class LetterReportServiceTest {
         assertNotNull(letterBatchesReport.getLetterBatchReports());
         assertTrue(letterBatchesReport.getLetterBatchReports().size() > 0);
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
-        assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
         assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTargetName().equalsIgnoreCase("oppilaitos"));        
     }
 
@@ -150,7 +149,6 @@ public class LetterReportServiceTest {
         assertNotNull(letterBatchesReport.getLetterBatchReports());
         assertTrue(letterBatchesReport.getLetterBatchReports().size() > 0);
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
-        assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
         assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTargetName().equalsIgnoreCase("oppilaitos"));        
     }
 
