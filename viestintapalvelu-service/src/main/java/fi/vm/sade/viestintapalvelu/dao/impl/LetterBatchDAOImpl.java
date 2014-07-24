@@ -114,6 +114,32 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return findBySearchCriteria.list(letterBatch);
     }
 
+    @Override
+    public Long findNumberOfLetterBatches(String organizationOid) {
+    	EntityManager em = getEntityManager();
+    	
+    	String findNumberOfLetterBatches = 
+    		"SELECT COUNT(*) FROM LetterBatch a WHERE a.organizationOid = :organizationOid";
+    	TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
+    	query.setParameter("organizationOid", organizationOid);
+    
+    	return query.getSingleResult();
+    }
+
+    @Override
+    public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery) {
+    	QLetterBatch letterBatch = QLetterBatch.letterBatch;
+        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
+        QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
+        
+        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(letterReportQuery, letterBatch, letterReceiverAddress);        
+        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
+                letterBatch.letterReceivers, letterReceivers).leftJoin(
+                letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
+        
+    	return findBySearchCriteria.count();
+    }
+
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
@@ -149,36 +175,10 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             booleanBuilder.or(letterBatch.fetchTarget.contains(query.getSearchArgument()));
             booleanBuilder.or(letterBatch.applicationPeriod.contains(query.getSearchArgument()));
             booleanBuilder.or(letterReceiverAddress.lastName.concat(" ").concat(
-                letterReceiverAddress.firstName).contains(query.getSearchArgument()));
+                letterReceiverAddress.firstName).containsIgnoreCase(query.getSearchArgument()));
             booleanBuilder.or(letterReceiverAddress.postalCode.contains(query.getSearchArgument()));
         }
                 
         return booleanBuilder;
     }
-
-	@Override
-	public Long findNumberOfLetterBatches(String organizationOid) {
-		EntityManager em = getEntityManager();
-		
-		String findNumberOfLetterBatches = 
-			"SELECT COUNT(*) FROM LetterBatch a WHERE a.organizationOid = :organizationOid";
-		TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
-		query.setParameter("organizationOid", organizationOid);
-	
-		return query.getSingleResult();
-	}
-
-	@Override
-	public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery) {
-		QLetterBatch letterBatch = QLetterBatch.letterBatch;
-        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
-        QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
-        
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(letterReportQuery, letterBatch, letterReceiverAddress);        
-        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
-                letterBatch.letterReceivers, letterReceivers).leftJoin(
-                letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
-        
-		return findBySearchCriteria.count();
-	}
 }
