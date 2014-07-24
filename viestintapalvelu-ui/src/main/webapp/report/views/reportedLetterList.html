@@ -22,25 +22,31 @@
 
   </div>
 
-  <div class="results row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > 0">
-    <table class="table-striped clickable-table-row">
-      <tr>
-        <th class="span1">{{ 'reportedletterlist.otsikko.ajankohta' | i18n | uppercase }}</th>
-        <th class="span1">{{ 'reportedletterlist.otsikko.kirjepohja' | i18n | uppercase }}</th>
-        <th class="span2">{{ 'reportedletterlist.otsikko.haku' | i18n | uppercase }}</th>
-        <th class="span3">{{ 'reportedletterlist.otsikko.hakukohde' | i18n | uppercase }}</th>
-        <th class="span2">{{ 'reportedletterlist.otsikko.tila' | i18n | uppercase }}</th>
-        <th class="span2">{{ 'reportedletterlist.otsikko.tunniste' | i18n | uppercase }}</th>
-      </tr>
-      <tr ng-repeat="reportedLetter in reportedLettersDTO.letterBatchReports" ng-click="showReportedLetter(reportedLetter)">
-        <td>{{ reportedLetter.startTime | date:'dd.MM.yyyy' }}</a></td>
-        <td>{{ reportedLetter.template.name }}</td>
-        <td>{{ reportedLetter.applicationPeriod }}</td>
-        <td>{{ reportedLetter.fetchTargetName }}</td>
-        <td>{{ reportedLetter.status }}</td>
-        <td>{{ reportedLetter.letterBatchID }}</td>
-      </tr>
+  <div class="reported-letters row-fluid">
+    <table class="table table-striped clickable-table-row" ng-if="reportedLettersDTO.numberOfLetterBatches > 0">
+      <thead>
+        <tr>
+          <th class="span1">{{ 'reportedletterlist.otsikko.ajankohta' | i18n | uppercase }}</th>
+          <th class="span1">{{ 'reportedletterlist.otsikko.kirjepohja' | i18n | uppercase }}</th>
+          <th class="span2">{{ 'reportedletterlist.otsikko.haku' | i18n | uppercase }}</th>
+          <th class="span3">{{ 'reportedletterlist.otsikko.hakukohde' | i18n | uppercase }}</th>
+          <th class="span2">{{ 'reportedletterlist.otsikko.tila' | i18n | uppercase }}</th>
+          <th class="span2">{{ 'reportedletterlist.otsikko.tunniste' | i18n | uppercase }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="reportedLetter in reportedLettersDTO.letterBatchReports" ng-click="showReportedLetter(reportedLetter)">
+          <td>{{ reportedLetter.timestamp | date:'d.M.yyyy H:mm' }}</a></td>
+          <td>{{ reportedLetter.template.name }}</td>
+          <td>{{ reportedLetter.applicationPeriod }}</td>
+          <td>{{ reportedLetter.fetchTargetName }}</td>
+          <td>{{ reportedLetter.status }}</td>
+          <td>{{ reportedLetter.letterBatchID }}</td>
+        </tr>
+      </tbody>
     </table>
+
+    <div class="alert alert-info" ng-if="reportedLettersDTO.numberOfLetterBatches === 0">Yhtään kirjelähetystä ei löytynyt.</div>
   </div>
 
   <div class="pagination pagination-centered row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
