@@ -171,8 +171,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
         
         if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
-            booleanBuilder.and(letterBatch.templateName.contains(query.getSearchArgument()));
-            booleanBuilder.or(letterBatch.fetchTarget.contains(query.getSearchArgument()));
+            booleanBuilder.and(letterBatch.templateName.containsIgnoreCase(query.getSearchArgument()));
+            booleanBuilder.or(letterBatch.fetchTarget.containsIgnoreCase(query.getSearchArgument()));
             booleanBuilder.or(letterBatch.applicationPeriod.contains(query.getSearchArgument()));
             booleanBuilder.or(letterReceiverAddress.lastName.concat(" ").concat(
                 letterReceiverAddress.firstName).containsIgnoreCase(query.getSearchArgument()));
