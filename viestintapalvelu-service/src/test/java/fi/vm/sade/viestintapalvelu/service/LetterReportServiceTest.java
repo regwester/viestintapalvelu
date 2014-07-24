@@ -110,6 +110,9 @@ public class LetterReportServiceTest {
         when(mockedLetterBatchDAO.findLetterBatchesBySearchArgument(
             any(LetterReportQueryDTO.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterBatches);
 
+        when(mockedLetterBatchDAO.findNumberOfLetterBatchesBySearchArgument(
+            any(LetterReportQueryDTO.class))).thenReturn(new Long(1));
+        
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
         when(mockedOrganizationComponent.getNameOfOrganisation(any(OrganisaatioRDTO.class))).thenReturn("oppilaitos");
@@ -125,6 +128,7 @@ public class LetterReportServiceTest {
         assertNotNull(letterBatchesReport.getLetterBatchReports());
         assertTrue(letterBatchesReport.getLetterBatchReports().size() > 0);
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
+        assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
         assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTargetName().equalsIgnoreCase("oppilaitos"));        
     }
 
@@ -135,6 +139,8 @@ public class LetterReportServiceTest {
         mockedLetterBatches.add(letterBatch);
         when(mockedLetterBatchDAO.findLetterBatchesByOrganizationOid(
             any(String.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterBatches);
+
+        when(mockedLetterBatchDAO.findNumberOfLetterBatches(any(String.class))).thenReturn(new Long(1));
 
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
@@ -149,6 +155,7 @@ public class LetterReportServiceTest {
         assertNotNull(letterBatchesReport.getLetterBatchReports());
         assertTrue(letterBatchesReport.getLetterBatchReports().size() > 0);
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
+        assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
         assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTargetName().equalsIgnoreCase("oppilaitos"));        
     }
 
