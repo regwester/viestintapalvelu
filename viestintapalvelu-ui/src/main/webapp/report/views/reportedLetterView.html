@@ -125,7 +125,7 @@
           <tr ng-repeat="recipient in reportedLetterDTO.letterReceivers">
             <td>{{ recipient.name }}</td>
             <td>{{ recipient.address1 }}, {{ recipient.postalCode }} {{ recipient.city | uppercase }}</td>
-            <td></td>
+            <td><a ng-click="downloadLetter(recipient)">{{recipient.templateName}}.pdf</a></td>
           </tr>
         </tbody>
       </table>

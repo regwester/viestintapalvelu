@@ -1,8 +1,9 @@
 'use strict';
 
 angular.module('report')
-.controller('ReportedLetterViewCtrl', ['$scope', '$state','$stateParams', '$http', function ($scope, $state, $stateParams, $http) {
-  var reportedLetterUrl = '/viestintapalvelu/api/v1/reporting/view';
+.controller('ReportedLetterViewCtrl', ['$scope', '$state','$stateParams', '$http', '$window', function ($scope, $state, $stateParams, $http, $window) {
+  var reportingAPIUrl = '/viestintapalvelu/api/v1/reporting'
+    , reportedLetterUrl = reportingAPIUrl + '/view';
 
   $scope.pagination = {
     page: 1,
@@ -43,6 +44,17 @@ angular.module('report')
       }
     }
     return content;
+  };
+
+  $scope.downloadLetter = function(recipient) {
+    var letterDownloadLinkUrl = reportingAPIUrl + '/letter'
+      , getLetterDownloadUrl;
+
+    getLetterDownloadLink = $http.get(letterDownloadLinkUrl, { params: { id: recipient.letterReceiverLetterID } })
+    getLetterDownloadLink.success(function(downloadLink) {
+      // changing window location will initiate download prompt
+      $window.location = downloadLink;
+    });
   };
 
   $scope.fetch();
