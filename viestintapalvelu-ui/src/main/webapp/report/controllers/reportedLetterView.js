@@ -2,7 +2,8 @@
 
 angular.module('report')
 .controller('ReportedLetterViewCtrl', ['$scope', '$state','$stateParams', '$http', '$window', function ($scope, $state, $stateParams, $http, $window) {
-  var reportingAPIUrl = '/viestintapalvelu/api/v1/reporting'
+  var seriviceAPIUrl = '/viestintapalvelu/api/v1'
+    , reportingAPIUrl = seriviceAPIUrl + '/reporting'
     , reportedLetterUrl = reportingAPIUrl + '/view';
 
   $scope.pagination = {
@@ -47,13 +48,17 @@ angular.module('report')
   };
 
   $scope.downloadLetter = function(recipient) {
-    var letterDownloadLinkUrl = reportingAPIUrl + '/letter'
-      , getLetterDownloadUrl;
+    var getLetterDownloadLink, letterDownloadLinkUrl = reportingAPIUrl + '/letter';
 
     getLetterDownloadLink = $http.get(letterDownloadLinkUrl, { params: { id: recipient.letterReceiverLetterID } })
     getLetterDownloadLink.success(function(downloadLink) {
       // changing window location will initiate download prompt
-      $window.location = downloadLink;
+      // TODO: the backend should return only the documentID, not the whole url
+      //       this way naturally exposes the user to security risks
+      var acceptableDownloadLink = $window.location.origin + seriviceAPIUrl + '/download/';
+      if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
+        $window.location = downloadLink;
+      }
     });
   };
 
