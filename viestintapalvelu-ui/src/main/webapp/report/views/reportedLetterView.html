@@ -12,17 +12,17 @@
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.kirjepohja' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.template.name }}</div>
   </div>
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.oletuskieli' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.template.language }}</div>
   </div>
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.haku' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.applicationPeriod }}</div>
   </div>
 
   <div class="row-fluid">
@@ -32,7 +32,7 @@
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.hakukohde' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.fetchTargetName }}</div>
   </div>
 
   <div class="row-fluid">
@@ -42,7 +42,13 @@
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.sisalto' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6" ng-if="reportedLetterDTO.template">
+      <limited-paragraph 
+                content="getLetterContent()"
+                show-button-text="{{ 'reportedmessageview.text.nayta_kaikki' | i18n }}"
+                hide-button-text="{{ 'reportedmessageview.text.piilota' | i18n }}"
+                limit="350" />
+    </div>
   </div>
 
   <div class="row-fluid">
@@ -57,17 +63,19 @@
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.lahetystapa' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6" ng-if="reportedLetterDTO">
+     {{ reportedLetterDTO.deliveryTypeIPosti ? 'reportedletterview.text.iposti' : 'reportedletterview.text.muu' | i18n }}
+     </div>
   </div>
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.lahetysajankohta' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.timestamp | date : 'd.M.yyyy H.mm' }}</div>
   </div>
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.kirjelahetyksen_tunniste' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.letterBatchID }}</div>
   </div>
 
   <div class="row-fluid">
@@ -77,7 +85,24 @@
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.lahetyserat' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span10">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>{{ 'reportedletterview.otsikko.numero' | i18n | uppercase }}</th>
+            <th>{{ 'reportedletterview.otsikko.lahetys' | i18n | uppercase }}</th>
+            <th>{{ 'reportedletterview.otsikko.tila' | i18n | uppercase }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="iPosti in reportedLetterDTO.iPostis">
+            <td>{{ $index }}</td>
+            <td></td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 
   <div class="row-fluid">
@@ -87,6 +112,23 @@
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.vastaanottajat' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span10">
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>{{ 'reportedletterview.otsikko.nimi' | i18n | uppercase }}</th>
+            <th>{{ 'reportedletterview.otsikko.osoite' | i18n | uppercase }}</th>
+            <th>{{ 'reportedletterview.otsikko.kirje' | i18n | uppercase }}</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="recipient in reportedLetterDTO.letterReceivers">
+            <td>{{ recipient.name }}</td>
+            <td>{{ recipient.address1 }}, {{ recipient.postalCode }} {{ recipient.city | uppercase }}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>
