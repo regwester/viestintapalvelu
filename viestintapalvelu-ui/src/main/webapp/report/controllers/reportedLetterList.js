@@ -58,7 +58,7 @@ angular.module('report')
 
     if (sortAndOrder.sortedby !== headerName) {
       sortAndOrder.sortedby = headerName;
-      sortAndOrder.order = 'desc';
+      sortAndOrder.order = 'asc';
     } else {
       sortAndOrder.order = sortAndOrder.order === 'asc' ? 'desc' : 'asc';
     }
