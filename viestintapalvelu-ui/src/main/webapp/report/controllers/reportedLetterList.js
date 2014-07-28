@@ -5,6 +5,11 @@ angular.module('report')
   var reportedLettersListUrl = '/viestintapalvelu/api/v1/reporting/list',
       reportedLettersSearchUrl = '/viestintapalvelu/api/v1/reporting/search';
 
+  $scope.sortAndOrder = {
+    sortedby: 'timestamp',
+    order: 'desc'
+  };
+
   $scope.pagination = {
     page: 1,
     pageSize: 10
@@ -30,7 +35,7 @@ angular.module('report')
     angular.extend(params, {
       page: $scope.pagination.page,
       nbrofrows: $scope.pagination.pageSize
-    });
+    }, $scope.sortAndOrder);
 
     $http.get(url, {params: params})
       .success(function(reportedLettersDTO) {
@@ -48,6 +53,20 @@ angular.module('report')
     $scope.fetch(); 
   };
 
+  $scope.sortBy = function(headerName) {
+    var sortAndOrder = $scope.sortAndOrder;
+
+    if (sortAndOrder.sortedby !== headerName) {
+      sortAndOrder.sortedby = headerName;
+      sortAndOrder.order = 'desc';
+    } else {
+      sortAndOrder.order = sortAndOrder.order === 'asc' ? 'desc' : 'asc';
+    }
+
+    $scope.pagination.page = 1;
+    $scope.fetch();
+  };
+
   $scope.showReportedLetter = function(reportedLetter) {
     $state.go('letter_batch_view', {letterBatchID: reportedLetter.letterBatchID});
   };
@@ -56,6 +75,14 @@ angular.module('report')
     $scope.searchArgument = '';
     $scope.pagination.page = 1;
     $scope.fetch();
+  };
+
+  $scope.getSortClass = function(headerName) {
+    var className = '';
+    if ($scope.sortAndOrder.sortedby === headerName) {
+      className = 'sort-' + $scope.sortAndOrder.order;
+    }
+    return className;
   };
 
   $scope.fetch();

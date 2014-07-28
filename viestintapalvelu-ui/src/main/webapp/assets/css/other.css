@@ -215,14 +215,16 @@ a, .clickable-header-cell {
     cursor: pointer;
 }
 
-.sort-true {
+.sort-true,
+.sort-desc {
 	background-image: url(../img/desc.gif);
     background-position: right center;
     background-repeat: no-repeat;
     text-align: left;
 }
 
-.sort-false {
+.sort-false,
+.sort-asc {
 	background-image: url(../img/asc.gif);
     background-position: right center;
     background-repeat: no-repeat;
