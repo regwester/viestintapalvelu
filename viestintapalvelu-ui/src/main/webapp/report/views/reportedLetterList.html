@@ -31,7 +31,7 @@
           <th class="span2 clickable-header-cell" ng-click="sortBy('applicationPeriod')" ng-class="getSortClass('applicationPeriod')">{{ 'reportedletterlist.otsikko.haku' | i18n | uppercase }}</th>
           <th class="span3 clickable-header-cell" ng-click="sortBy('fetchTarget')" ng-class="getSortClass('fetchTarget')">{{ 'reportedletterlist.otsikko.hakukohde' | i18n | uppercase }}</th>
           <th class="span2">{{ 'reportedletterlist.otsikko.tila' | i18n | uppercase }}</th>
-          <th class="span2 clickable-header-cell" ng-click="sortBy('id')" ng-class="getSortClass('id')">{{ 'reportedletterlist.otsikko.tunniste' | i18n | uppercase }}</th>
+          <th class="span2 clickable-header-cell" ng-click="sortBy('tag')" ng-class="getSortClass('tag')">{{ 'reportedletterlist.otsikko.tunniste' | i18n | uppercase }}</th>
         </tr>
       </thead>
       <tbody>
@@ -41,7 +41,7 @@
           <td>{{ reportedLetter.applicationPeriod }}</td>
           <td>{{ reportedLetter.fetchTargetName }}</td>
           <td>{{ reportedLetter.status }}</td>
-          <td>{{ reportedLetter.letterBatchID }}</td>
+          <td>{{ reportedLetter.tag }}</td>
         </tr>
       </tbody>
     </table>
