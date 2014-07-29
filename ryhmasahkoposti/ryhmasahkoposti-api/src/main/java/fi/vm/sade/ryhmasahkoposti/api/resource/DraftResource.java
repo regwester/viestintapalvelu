@@ -18,7 +18,9 @@ import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
+import org.springframework.stereotype.Component;
 
+@Component
 @Path("drafts")
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Api(value = "/drafts", description = "S&auml;hk&oumlpostien luonnosten tallentaminen")

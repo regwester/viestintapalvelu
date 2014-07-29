@@ -50,7 +50,7 @@
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-mocks.js</source>
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-resource.js</source>
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-animate.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.8.0.min.js</source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js</source>
                         <source>${project.basedir}/src/main/webapp/assets/lib/ui-router/angular-ui-router.min.js</source>
 
                         <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js</source>

@@ -7,6 +7,7 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -54,6 +55,9 @@ public class DraftResourceImpl implements DraftResource {
         if(draft == null) {
             throwError400("Draft is not defined");
         }
+        //Reset the time (might not be the best solution)
+        draft.setCreateDate(new DateTime());
+
         logger.debug("Draft: ", draft.toString());
         return draftService.saveDraft(draft);
     }

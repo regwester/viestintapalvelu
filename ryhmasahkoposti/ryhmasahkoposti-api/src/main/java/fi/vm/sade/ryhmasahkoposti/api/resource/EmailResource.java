@@ -28,12 +28,14 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import org.springframework.stereotype.Component;
 
 /**
  * REST-rajapinta ryhmäsähköpostin käsittelyä varten
  * 
  * @author vehei1
  */
+@Component
 @Path("email")
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Api(value = "/email", description = "Ryhm&auml;s&auml;hk&oumlpostin l&auml;hett&auml;minen")

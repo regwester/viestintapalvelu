@@ -573,7 +573,7 @@
 	
     <modules>
         <module>viestintapalvelu-service</module>
-        <module>viestintapalvelu-ui</module>		
+        <module>viestintapalvelu-ui</module>
         <module>ryhmasahkoposti</module>
     </modules>
 </project>

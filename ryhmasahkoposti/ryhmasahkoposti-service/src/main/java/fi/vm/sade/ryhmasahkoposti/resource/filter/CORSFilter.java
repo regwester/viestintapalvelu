@@ -1,33 +1,25 @@
 package fi.vm.sade.ryhmasahkoposti.resource.filter;
 
-import com.sun.jersey.spi.container.ContainerRequest;
-import com.sun.jersey.spi.container.ContainerResponse;
-import com.sun.jersey.spi.container.ContainerResponseFilter;
+
+import java.io.IOException;
+
+import javax.ws.rs.container.ContainerRequestContext;
+import javax.ws.rs.container.ContainerResponseContext;
+import javax.ws.rs.container.ContainerResponseFilter;
+import javax.ws.rs.core.MultivaluedMap;
 
 /**
  * Filter to handle cross-origin resource sharing.
  */
 public class CORSFilter implements ContainerResponseFilter {
-    private static final String ACAOHEADER = "Access-Control-Allow-Origin";
-    private static final String ACRHHEADER = "Access-Control-Request-Headers";
-    private static final String ACAHHEADER = "Access-Control-Allow-Headers";
-    private static final String ACAMHEADER = "Access-Control-Allow-Methods";
-    private static final String ACACHEADER = "Access-Control-Allow-Credentials";
-
-    private final transient CORSConfiguration configuration = new CORSConfiguration();
-
-    public CORSFilter() {
-    }
 
     @Override
-    public ContainerResponse filter(final ContainerRequest request, final ContainerResponse response) {
-        response.getHttpHeaders().add(ACAOHEADER, this.configuration.getOrigin());
-        final String requestHeaders = request.getHeaderValue(ACRHHEADER);
-        
-        response.getHttpHeaders().add(ACAHHEADER, requestHeaders);
-        response.getHttpHeaders().add(ACAMHEADER, this.configuration.getAllowedMethods());
-        response.getHttpHeaders().add(ACACHEADER, this.configuration.allowCredentials());
+    public void filter(ContainerRequestContext requestContext, ContainerResponseContext responseContext) throws IOException {
+        MultivaluedMap<String, Object> headers = responseContext.getHeaders();
 
-        return response;
+        headers.add("Access-Control-Allow-Origin", "*");
+        headers.add("Access-Control-Allow-Methods", "GET, POST, DELETE, PUT, OPTIONS, ACCEPTED");
+        headers.add("Access-Control-Allow-Headers", "*");
+        headers.add("Access-Control-Allow-Credentials", true);
     }
 }

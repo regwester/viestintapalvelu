@@ -7,7 +7,9 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.codehaus.jackson.map.annotate.JsonView;
+import org.springframework.stereotype.Component;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.JsonViews;
@@ -19,6 +21,7 @@ import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
  * @author vehei1
  *
  */
+@Component
 @Path("omattiedot")
 public interface OmattiedotResource {
     

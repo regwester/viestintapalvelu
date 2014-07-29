@@ -20,6 +20,7 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
+import org.springframework.stereotype.Component;
 
 /**
  * REST-rajapinta ryhmäsähköpostien selailua varten
@@ -27,6 +28,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
  * @author vehei1
  *
  */
+@Component
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Path(RestConstants.PATH_REPORT_MESSAGES)
 @Api(value = "reportMessages", description = "Ryhm&auml;s&auml;hk&ouml;postin raportointi")

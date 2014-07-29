@@ -8,6 +8,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 
 import org.dom4j.DocumentException;
+import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
@@ -18,6 +19,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
  * @author ovmol1
  *
  */
+@Component
 @Path("/template")
 public interface TemplateResource {
 

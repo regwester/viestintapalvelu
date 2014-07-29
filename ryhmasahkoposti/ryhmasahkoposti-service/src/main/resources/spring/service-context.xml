@@ -3,24 +3,20 @@
        xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
        xmlns:task="http://www.springframework.org/schema/task"
        xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
-       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client"
        xmlns:http="http://cxf.apache.org/transports/http/configuration"
-       xmlns:aop="http://www.springframework.org/schema/aop"
-       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
-       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
+       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
+       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+       http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd">
 
     <context:annotation-config/>
-    <aop:aspectj-autoproxy/>
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti" />
-	
+
 	<!-- Application and common properties -->
     <context:property-placeholder 
     	location="classpath:/properties/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties" 
@@ -47,63 +43,56 @@
     <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
 
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
-        accessDecisionManager="accessDecisionManager" xmlns="http://camel.apache.org/schema/spring-security"/>    
+        accessDecisionManager="accessDecisionManager" xmlns="http://camel.apache.org/schema/spring-security"/>
 
     <!-- External interface OmattiedotResource of HenkiloPalvelu-->
-    <jaxrs:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource" address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource" address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
     <!-- External interface HenkiloResource of HenkiloPalvelu -->
-    <jaxrs:client id="henkiloResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource" address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource" address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
     <!-- External interface OrganisaatioResource of OrganisaatioPalvelu -->
-    <jaxrs:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource" address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource" address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
     <!-- External interface LetterResource  -->
-    <jaxrs:client id="templateResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource" address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="templateResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource" address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider" />
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
     
-	<!-- Apache Camel routing context -->
+	<!-- Apache Camel route scanner -->
 	<camelContext xmlns="http://camel.apache.org/schema/spring">
-        <routeBuilder ref="omattiedotRoute"/>
-		<routeBuilder ref="henkiloRoute"/>
-		<routeBuilder ref="organisaatioRoute"/>
+        <contextScan/>
 	</camelContext>
-
-	<!-- Routes to external services -->
-    <bean id="omattiedotRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.OmattiedotRoute"/>
-	<bean id="henkiloRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.HenkiloRoute"/>
-    <bean id="organisaatioRoute" class="fi.vm.sade.ryhmasahkoposti.externalinterface.route.OrganisaatioRoute"/>
 	
 	<!-- Resourcebundle for localizing -->
 	<bean id="messageSource" class="org.springframework.context.support.ResourceBundleMessageSource">
@@ -118,17 +107,10 @@
 		<task:scheduled ref="emailServiceImpl" method="handleEmailQueue" cron="${ryhmasahkoposti.sender.cron}"/>
 	</task:scheduled-tasks>
 
-	<!-- Swagger API listing resource -->
-	<bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
-	
-	<!-- Swagger writers -->
-	<bean id="swaggerResourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
-	<bean id="swaggerApiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
-
     <!-- Swagger configuration -->	
 	<bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
         <property name="resourcePackage" value="fi.vm.sade.ryhmasahkoposti.api.resource"/>
-        <property name="version" value="1.0"/>
+        <property name="version" value="1.0.0"/>
         <property name="basePath" value="/ryhmasahkoposti-service"/>
         <property name="title" value="Ryhmasahkoposti resources"/>
         <property name="description" value="Ryhmasahkoposti offered REST resources"/>

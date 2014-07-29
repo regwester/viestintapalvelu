@@ -4,14 +4,11 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.joda.time.DateTime;
 
-import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
-
-import fi.vm.sade.ryhmasahkoposti.api.serializers.JsonDateSerializer;
-
-@JsonDeserialize(builder = Draft.Builder.class)
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class Draft {
     private String from;
     private String sender;
@@ -21,7 +18,9 @@ public class Draft {
     private String organizationOid;
     private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isHtml;
-    @JsonSerialize(using=JsonDateSerializer.class)
+    //Pattern conforms to ISO 8601 ( http://en.wikipedia.org/wiki/ISO_8601 )
+    //Example 1989-08-14T15:20:50Z
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
     private DateTime createDate = new DateTime(); //set the default value to now
     
     public Draft() {}
@@ -89,7 +88,6 @@ public class Draft {
     public void setHtml(boolean isHtml) {
         this.isHtml = isHtml;
     }
-    @JsonSerialize(using=JsonDateSerializer.class)
     public DateTime getCreateDate() {
         return createDate;
     }

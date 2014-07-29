@@ -6,11 +6,13 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.codehaus.jackson.map.annotate.JsonView;
 import org.springframework.security.access.prepost.PreAuthorize;
+
+import com.fasterxml.jackson.annotation.JsonView;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.JsonViews;
+import org.springframework.stereotype.Component;
 
 /**
  * Rajapinta henkilöpalveluun
@@ -18,6 +20,7 @@ import fi.vm.sade.authentication.model.JsonViews;
  * @author vehei1
  *
  */
+@Component
 @Path("henkilo")
 public interface HenkiloResource {
     /**

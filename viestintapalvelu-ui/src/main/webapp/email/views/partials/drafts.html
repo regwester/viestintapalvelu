@@ -20,7 +20,7 @@
                 	<span tooltip-placement="right" tooltip-html-unsafe={{getAttachmentsAsHtml(draft)}}><a>{{draft.attachInfo.length}} {{'email.attachments' | i18n}}</a></span>
                 </div>
             </td>
-            <td>{{draft.createDate}}</td>
+            <td>{{draft.createDate | date:'dd.MM.yyyy HH:mm'}}</td>
         </tr>
         <tr><td colspan="3"><div class="previewText">{{draft.body | htmlToPlainText }}</div></td></tr>
     </tbody>
