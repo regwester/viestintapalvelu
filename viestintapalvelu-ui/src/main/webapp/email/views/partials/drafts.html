@@ -17,7 +17,7 @@
                     
                 </div>
                 <div ng-if="draft.attachInfo.length > 1">
-                	<span tooltip-placement="right" tooltip-html-unsafe={{getAttachmentsAsHtml(draft)}}><a>{{draft.attachInfo.length}} {{'email.attachments' | i18n}}</a></span>
+                	<span tooltip-placement="top" tooltip-html-unsafe={{getAttachmentsAsHtml(draft)}}><a>{{draft.attachInfo.length}} {{'email.attachments' | i18n}}</a></span>
                 </div>
             </td>
             <td>{{draft.createDate | date:'dd.MM.yyyy HH:mm'}}</td>
