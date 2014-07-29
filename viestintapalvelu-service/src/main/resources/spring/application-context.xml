@@ -62,13 +62,24 @@
             <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
         </jaxrs:providers>
     </jaxrs:client>
+    
+    <jaxrs:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs:outInterceptors>
+        <jaxrs:providers>
+            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
+        </jaxrs:providers>
+    </jaxrs:client>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <routeBuilder ref="omattiedotRoute"/>
+        <routeBuilder ref="henkiloRoute"/>
         <routeBuilder ref="organisaatioRoute"/>
     </camelContext>
 
     <bean id="omattiedotRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OmattiedotRoute"/>
+    <bean id="henkiloRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.HenkiloRoute"/>
     <bean id="organisaatioRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OrganisaatioRoute"/> 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>

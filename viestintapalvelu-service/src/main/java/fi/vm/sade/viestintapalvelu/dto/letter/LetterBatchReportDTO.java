@@ -13,6 +13,7 @@ public class LetterBatchReportDTO implements Serializable {
     private Template template;
     private String applicationPeriod;
     private String fetchTargetName;
+    private String creatorName;
     private String tag;    
     private boolean deliveryTypeIPosti;
     private Date timestamp;
@@ -51,7 +52,15 @@ public class LetterBatchReportDTO implements Serializable {
         this.fetchTargetName = fetchTargetName;
     }
     
-    public String getTag() {
+    public String getCreatorName() {
+		return creatorName;
+	}
+
+	public void setCreatorName(String creatorName) {
+		this.creatorName = creatorName;
+	}
+
+	public String getTag() {
         return tag;
     }
     
