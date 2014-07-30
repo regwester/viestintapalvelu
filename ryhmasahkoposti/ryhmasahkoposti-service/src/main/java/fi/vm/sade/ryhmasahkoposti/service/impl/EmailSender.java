@@ -95,6 +95,11 @@ public class EmailSender {
     }
 
     private String getContent(EmailMessage emailMessage) {
+        if(!emailMessage.isHtml()) {
+            //Change LF to CRLF (SMTP standard)
+            //The extra space at the end is a "temporary" bug fix to plaintext LF issue
+            return emailMessage.getBody().replaceAll("\n", "\r\n") + " ";
+        }
         return emailMessage.getBody();
     }
     
