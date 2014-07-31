@@ -62,6 +62,11 @@ angular.module('report')
     });
   };
 
+  $scope.sendIPosti = function(mailID) {
+    var sendIPostiUrl = seriviceAPIUrl + '/iposti/sendMail/' + mailID;
+    $http.get(sendIPostiUrl);
+  };
+
   $scope.fetch();
 
 }]);

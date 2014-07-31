@@ -3,7 +3,7 @@ angular.module('report').directive('limitedParagraph', function() {
   return {
     restrict: 'E',
     replace: true,
-    template: '<p class="limited-paragraph">{{ content | limitTo : getLimit() }}<span ng-if="isLimited"><span ng-if="!showAll">...</span> <a ng-click="toggleShowAll()">{{ getToggleButtonText() }}</a></span></p>',
+    template: '<p class="limited-paragraph">{{ content | limitTo : getLimit() | htmlToPlainText }}<span ng-if="isLimited"><span ng-if="!showAll">...</span> <a ng-click="toggleShowAll()">{{ getToggleButtonText() }}</a></span></p>',
     scope: {
       'content': '=',
       'showButtonText': '@',
