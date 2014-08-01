@@ -1,55 +1,55 @@
 <?xml version="1.0"?>
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>fi.vm.sade.ryhmasahkoposti</groupId>
-		<artifactId>ryhmasahkoposti</artifactId>
-		<version>9.9-SNAPSHOT</version>
-		<relativePath>../pom.xml</relativePath>
-	</parent>
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fi.vm.sade.ryhmasahkoposti</groupId>
+        <artifactId>ryhmasahkoposti</artifactId>
+        <version>9.9-SNAPSHOT</version>
+        <relativePath>../pom.xml</relativePath>
+    </parent>
 
-	<artifactId>ryhmasahkoposti-api</artifactId>
-	<name>Ryhmasahkoposti :: API</name>
-	<packaging>jar</packaging>
+    <artifactId>ryhmasahkoposti-api</artifactId>
+    <name>Ryhmasahkoposti :: API</name>
+    <packaging>jar</packaging>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
 
 
-	<dependencies>
+    <dependencies>
 
-		<!-- Java Servlet API -->
-		<dependency>
-			<groupId>javax.servlet</groupId>
-			<artifactId>javax.servlet-api</artifactId>
-			<scope>provided</scope>
-		</dependency>
+        <!-- Java Servlet API -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
-		<!-- Spring security -->
-		<dependency>
-			<groupId>org.springframework.security</groupId>
-			<artifactId>spring-security-core</artifactId>
-		</dependency>
+        <!-- Spring security -->
+        <dependency>
+            <groupId>org.springframework.security</groupId>
+            <artifactId>spring-security-core</artifactId>
+        </dependency>
 
-		<!-- Apache commons -->
-		<dependency>
-			<groupId>commons-io</groupId>
-			<artifactId>commons-io</artifactId>
-		</dependency>
-		<dependency>
-			<groupId>commons-codec</groupId>
-			<artifactId>commons-codec</artifactId>
-		</dependency>
+        <!-- Apache commons -->
+        <dependency>
+            <groupId>commons-io</groupId>
+            <artifactId>commons-io</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-codec</groupId>
+            <artifactId>commons-codec</artifactId>
+        </dependency>
 
         <!-- Swagger -->
-		<dependency>
-			<groupId>com.wordnik</groupId>
-			<artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
-		</dependency>
-		
+        <dependency>
+            <groupId>com.wordnik</groupId>
+            <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
+        </dependency>
+
         <!-- Jersey -->
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
@@ -86,62 +86,62 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        
-	</dependencies>
 
-	<build>
-		<plugins>
+    </dependencies>
+
+    <build>
+        <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
             </plugin>
-			<plugin>
+            <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-resources-plugin</artifactId>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-codegen-plugin</artifactId>
-				<version>2.6.2</version>
-				<dependencies>
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-value-constructor</artifactId>
-						<version>3.0</version>
-					</dependency>
-					<dependency>
-						<groupId>org.jvnet.jaxb2_commons</groupId>
-						<artifactId>jaxb2-basics</artifactId>
-						<version>0.6.2</version>
-					</dependency>
-				</dependencies>
-				<executions>
-					<execution>
-						<id>generate-ryhmasahkoposti-api</id>
-						<phase>generate-sources</phase>
-						<configuration>
-							<sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
-							<defaultOptions>
-								<bindingFiles>
-									<bindingFile>${basedir}/src/main/resources/wsdl/binding.xjb</bindingFile>
-								</bindingFiles>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-codegen-plugin</artifactId>
+                <version>2.6.2</version>
+                <dependencies>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-value-constructor</artifactId>
+                        <version>3.0</version>
+                    </dependency>
+                    <dependency>
+                        <groupId>org.jvnet.jaxb2_commons</groupId>
+                        <artifactId>jaxb2-basics</artifactId>
+                        <version>0.6.2</version>
+                    </dependency>
+                </dependencies>
+                <executions>
+                    <execution>
+                        <id>generate-ryhmasahkoposti-api</id>
+                        <phase>generate-sources</phase>
+                        <configuration>
+                            <sourceRoot>${project.build.directory}/generated-sources</sourceRoot>
+                            <defaultOptions>
+                                <bindingFiles>
+                                    <bindingFile>${basedir}/src/main/resources/wsdl/binding.xjb</bindingFile>
+                                </bindingFiles>
 
-								<extraargs>
-									<extraarg>-frontend</extraarg>
-									<extraarg>jaxws21</extraarg>
-									<extraarg>-xjc-Xvalue-constructor</extraarg>
-								</extraargs>
-							</defaultOptions>
-							<wsdlOption>
-								<wsdl>${basedir}/src/main/resources/wsdl/ryhmasahkopostiService.wsdl</wsdl>
-							</wsdlOption>
-						</configuration>
-						<goals>
-							<goal>wsdl2java</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-		</plugins>
-	</build>
+                                <extraargs>
+                                    <extraarg>-frontend</extraarg>
+                                    <extraarg>jaxws21</extraarg>
+                                    <extraarg>-xjc-Xvalue-constructor</extraarg>
+                                </extraargs>
+                            </defaultOptions>
+                            <wsdlOption>
+                                <wsdl>${basedir}/src/main/resources/wsdl/ryhmasahkopostiService.wsdl</wsdl>
+                            </wsdlOption>
+                        </configuration>
+                        <goals>
+                            <goal>wsdl2java</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
 </project>
