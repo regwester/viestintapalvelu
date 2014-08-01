@@ -6,8 +6,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -34,7 +34,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 
  */
 
-@Table(name = "vastaanottajaosoite", schema="kirjeet")
+@Table(name = "vastaanottajaosoite", schema= "kirjeet")
 @Entity()
 public class LetterReceiverAddress extends BaseEntity {
     private static final long serialVersionUID = 1L;

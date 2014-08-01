@@ -11,11 +11,9 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.wordnik.swagger.annotations.ApiModel;
-
 import fi.vm.sade.generic.model.BaseEntity;
 
-@Table(name = "korvauskentat", schema="kirjeet")
+@Table(name = "korvauskentat", schema= "kirjeet")
 @Entity()
 public class Replacement extends BaseEntity {
 

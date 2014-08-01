@@ -163,11 +163,13 @@ public class TemplateResource extends AsynchronousResource {
         DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
 
-        String[] templates = { "/hyvaksymiskirje_FI.json", "/hyvaksymiskirje_SV.json", "/jalkiohjauskirje_FI.json",
-            "/jalkiohjauskirje_SV.json"
-        // "/koekutsukirje_FI.json", "/koekutsukirje_SV.json",
-        // "/koekutsukirje_EN.json",
-        };
+        String[] templates = {
+                "/test_data/hyvaksymiskirje_FI.json", "/test_data/hyvaksymiskirje_SV.json",
+                "/test_data/jalkiohjauskirje_FI.json", "/test_data/jalkiohjauskirje_SV.json",
+                "/test_data/hyvaksymiskirje_nivel_FI.json", "/test_data/hyvaksymiskirje_nivel_SV.json",
+                "/test_data/jalkiohjauskirje_nivel_FI.json", "/test_data/jalkiohjauskirje_nivel_SV.json",
+                "/test_data/koekutsukirje_EN.json","/test_data/koekutsukirje_SV.json", "/test_data/koekutsukirje_FI.json"
+                };
 
         for (String template : templates) {
             Map<String, String> current = new HashMap<String, String>();

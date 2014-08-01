@@ -5,12 +5,13 @@ import java.io.File;
 import javax.servlet.ServletException;
 
 import org.apache.catalina.LifecycleException;
-import org.apache.catalina.Wrapper;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.glassfish.jersey.servlet.ServletContainer;
 
 public class Launcher {
     public static final int DEFAULT_PORT = PortFinder.findFreePort();
+    //public static ApplicationResourceConfig applicationResourceConfig = new ApplicationResourceConfig();
 
     public static void main(String[] args) throws Exception {
         Tomcat tomcat = start();
@@ -23,38 +24,16 @@ public class Launcher {
         tomcat.setPort(DEFAULT_PORT);
 
         File staticResources = new File("src/main/webapp");
-        String jerseyServletName = "Jersey REST Service";
-        StandardContext staticCtx = (StandardContext) tomcat.addContext("/", staticResources.getAbsolutePath());
-        staticCtx.setDefaultWebXml(tomcat.noDefaultWebXmlPath());
-        staticCtx.addParameter("contextConfigLocation", "classpath:test-application-context.xml");
-        staticCtx.addApplicationListener("org.springframework.web.context.ContextLoaderListener");
+        StandardContext context = (StandardContext) tomcat.addContext("/", staticResources.getAbsolutePath());
+        context.setDefaultWebXml(tomcat.noDefaultWebXmlPath());
+        context.addParameter("contextConfigLocation", "classpath:test-application-context.xml");
+        context.addApplicationListener("org.springframework.web.context.ContextLoaderListener");
 
-        // <servlet>
-        // <servlet-name>Jersey REST Service</servlet-name>
-        // <servlet-class>com.sun.jersey.spi.spring.container.servlet.SpringServlet</servlet-class>
-        // <init-param>
-        // <param-name>com.sun.jersey.spi.container.ContainerResponseFilters</param-name>
-        // <param-value>fi.vm.sade.generic.rest.CorsFilter</param-value>
-        // </init-param>
-        // <init-param>
-        // <param-name>com.sun.jersey.api.json.POJOMappingFeature</param-name>
-        // <param-value>true</param-value>
-        // </init-param>
-        // <load-on-startup>1</load-on-startup>
-        // </servlet>
-        // <servlet-mapping>
-        // <servlet-name>Jersey REST Service</servlet-name>
-        // <url-pattern>/api/v1/*</url-pattern>
-        // </servlet-mapping>
+        Tomcat.addServlet(context, "jersey-servlet", ServletContainer.class.getName());
+        context.addServletMapping("/api/v1/*", "jersey-servlet");
 
-        Wrapper w = Tomcat.addServlet(staticCtx, jerseyServletName,
-                com.sun.jersey.spi.spring.container.servlet.SpringServlet.class.getName());
-        w.addInitParameter("com.sun.jersey.spi.container.ContainerResponseFilters",
-                "fi.vm.sade.generic.rest.CorsFilter");
-        w.addInitParameter("com.sun.jersey.api.json.POJOMappingFeature", "true");
-        staticCtx.addServletMapping("/api/v1/*", jerseyServletName);
-        Tomcat.initWebappDefaults(staticCtx);
-        staticCtx.setCachingAllowed(false);
+        Tomcat.initWebappDefaults(context);
+        context.setCachingAllowed(false);
 
         tomcat.start();
 

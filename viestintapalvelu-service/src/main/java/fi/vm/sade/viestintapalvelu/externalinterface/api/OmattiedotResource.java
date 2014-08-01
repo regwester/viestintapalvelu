@@ -7,11 +7,11 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.codehaus.jackson.map.annotate.JsonView;
-
+import com.fasterxml.jackson.annotation.JsonView;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.JsonViews;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import org.springframework.stereotype.Component;
 
 /**
  * Rajapinta käyttäjän omiin tietoihin
@@ -19,6 +19,7 @@ import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
  * @author vehei1
  *
  */
+@Component
 @Path("omattiedot")
 public interface OmattiedotResource {
     
@@ -27,7 +28,7 @@ public interface OmattiedotResource {
      * 
      * @return Henkilön tiedot
      */
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @JsonView(JsonViews.Basic.class)
     @GET
     public Henkilo currentHenkiloTiedot();
@@ -37,7 +38,7 @@ public interface OmattiedotResource {
      * 
      * @return Lista henkilön organisaatiotietoja
      */
-    @Produces(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @JsonView(JsonViews.Basic.class)
     @Path("/organisaatiohenkilo")
     @GET

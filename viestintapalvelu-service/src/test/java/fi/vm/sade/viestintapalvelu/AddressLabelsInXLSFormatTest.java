@@ -1,9 +1,10 @@
 package fi.vm.sade.viestintapalvelu;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.testdata.Generator;
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
+
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;

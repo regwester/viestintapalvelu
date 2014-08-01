@@ -46,7 +46,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration("/test-appliction-context.xml")
+@ContextConfiguration("/test-application-context.xml")
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
     DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)

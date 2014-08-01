@@ -17,14 +17,14 @@
 	<name>Viestintapalvelu</name>
 
 	<properties>
-		<camel.version>2.12.1</camel.version>
+		<camel.version>2.13.2</camel.version>
 		<cas-client.version>3.1.10</cas-client.version>
 		<cglib.version>2.2.2</cglib.version>
 		<commons.fileupload.version>1.2.2</commons.fileupload.version>
 		<commons-io.version>1.3.2</commons-io.version>
 		<commons-lang.version>2.6</commons-lang.version>
 		<commonscodec.version>1.2</commonscodec.version>
-		<cxf.version>2.7.8</cxf.version>
+		<cxf.version>3.0.1</cxf.version>
 		<dom4j.version>1.6.1</dom4j.version>
 		<generic.version>9.0-SNAPSHOT</generic.version>
 		<guava.version>13.0.1</guava.version>
@@ -37,12 +37,13 @@
 		<http.client.version>4.2.5</http.client.version>
 		<icu4j.version>3.4.4</icu4j.version>
 		<itext.version>2.1.7</itext.version>
-		<jackson.version>1.9.13</jackson.version>
+		<jackson.version>2.4.1</jackson.version>
 		<javassist.version>3.12.1.GA</javassist.version>
 		<javax.inject.version>1</javax.inject.version>
 		<javax.persistence>2.0.0</javax.persistence>
+        <jaxb.version>2.1.14</jaxb.version>
 		<jaxen.version>1.1.1</jaxen.version>
-		<jersey.version>1.18</jersey.version>
+		<jersey.version>2.6</jersey.version>
 		<jgroups.version>2.10.0.GA</jgroups.version>
 		<joda.version>2.1</joda.version>
 		<jretrofit.version>1.1</jretrofit.version>
@@ -54,12 +55,13 @@
         <mockito.version>1.9.0</mockito.version>
 		<powermock.version>1.5.4</powermock.version>
 		<pdfbox.version>1.8.1</pdfbox.version>
+        <querydsl.version>3.2.2</querydsl.version>
 		<springockito.version>1.0.9</springockito.version>
-        <spring.version>3.1.3.RELEASE</spring.version>
-        <spring.security.version>${spring.version}</spring.security.version>
+        <spring.version>3.2.10.RELEASE</spring.version>
+        <spring-security.version>3.1.3.RELEASE</spring-security.version>
         <slf4j.version>1.6.1</slf4j.version>
         <surefire.plugin.version>2.12</surefire.plugin.version>
-        <swagger.version>1.3.0</swagger.version>
+        <swagger.version>1.3.7</swagger.version>
 		<velocity.version>1.7</velocity.version>
     </properties>
 
@@ -90,6 +92,16 @@
 			</dependency>
 			
 			<!-- Spring -->
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-core</artifactId>
@@ -100,6 +112,11 @@
 				<artifactId>spring-context</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-web</artifactId>
@@ -107,19 +124,19 @@
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-asm</artifactId>
+				<artifactId>spring-aop</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
-				<artifactId>spring-aop</artifactId>
-				<version>${spring.version}</version>
-			</dependency>
-				  <dependency>
-				<groupId>org.springframework</groupId>
 				<artifactId>spring-orm</artifactId>
 				<version>${spring.version}</version>
 			</dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
 			<dependency>
 				<groupId>org.springframework</groupId>
 				<artifactId>spring-test</artifactId>
@@ -131,27 +148,27 @@
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-core</artifactId>
-				<version>${spring.security.version}</version>
+				<version>${spring-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-config</artifactId>
-				<version>${spring.security.version}</version>
+				<version>${spring-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-web</artifactId>
-				<version>${spring.security.version}</version>
+				<version>${spring-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-cas</artifactId>
-				<version>${spring.security.version}</version>
+				<version>${spring-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>org.springframework.security</groupId>
 				<artifactId>spring-security-ldap</artifactId>
-				<version>${spring.security.version}</version>
+				<version>${spring-security.version}</version>
 			</dependency>
 			<dependency>
 				<groupId>fi.vm.sade.generic</groupId>
@@ -159,42 +176,46 @@
 				<version>${generic.version}</version>
 			</dependency>
 			
-			<!-- Jersey, REST, Json -->
-			<dependency>
-				<groupId>com.sun.jersey.contribs</groupId>
-				<artifactId>jersey-spring</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey.contribs</groupId>
-				<artifactId>jersey-multipart</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-core</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-server</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-client</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-servlet</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>com.sun.jersey</groupId>
-				<artifactId>jersey-json</artifactId>
-				<version>${jersey.version}</version>
-			</dependency>
+			<!-- Jersey -->
+            <dependency>
+                <groupId>org.glassfish.jersey.containers</groupId>
+                <artifactId>jersey-container-servlet</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.glassfish.jersey.core</groupId>
+                <artifactId>jersey-client</artifactId>
+                <version>${jersey.version}</version>
+            </dependency>
+            <!-- Jersey Spring 3 DI support -->
+            <dependency>
+                <groupId>org.glassfish.jersey.ext</groupId>
+                <artifactId>jersey-spring3</artifactId>
+                <version>${jersey.version}</version>
+                <!-- We want to use our own version of spring -->
+                <exclusions>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-core</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-web</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-beans</artifactId>
+                    </exclusion>
+                    <exclusion>
+                        <groupId>org.springframework</groupId>
+                        <artifactId>spring-context</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 			
 			<!-- Byte Code Generation Library -->
 			<dependency>
@@ -204,26 +225,16 @@
 			</dependency>
 			
 			<!-- Jackson JSON parsing and generation library -->
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-core-asl</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-jaxrs</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-mapper-asl</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.codehaus.jackson</groupId>
-				<artifactId>jackson-xc</artifactId>
-				<version>${jackson.version}</version>
-			</dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.jaxrs</groupId>
+                <artifactId>jackson-jaxrs-json-provider</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.fasterxml.jackson.datatype</groupId>
+                <artifactId>jackson-datatype-joda</artifactId>
+                <version>${jackson.version}</version>
+            </dependency>
 
 			<!-- Java Secure Channel -->
 			<dependency>
@@ -407,39 +418,63 @@
 				<version>${camel.version}</version>
 			</dependency>
 
-			<!-- Apache CXF -->
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-core</artifactId>
-				<version>${cxf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-frontend-jaxws</artifactId>
-				<version>${cxf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-frontend-jaxrs</artifactId>
-				<version>${cxf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-rt-transports-http</artifactId>
-				<version>${cxf.version}</version>
-			</dependency>
-			<dependency>
-				<groupId>org.apache.cxf</groupId>
-				<artifactId>cxf-api</artifactId>
-				<version>${cxf.version}</version>
-			</dependency>
-			
-			<!-- Swagger -->
-			<dependency>
-				<groupId>com.wordnik</groupId>
-				<artifactId>swagger-jersey-jaxrs_2.10</artifactId>
-				<version>${swagger.version}</version>
-			</dependency>
+            <!-- Apache CXF -->
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxws</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-frontend-jaxrs</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-rs-client</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-databinding-jaxb</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <!-- For some reason jaxb versions sometimes resolve to 2.1.4 and sometimes the latest version.
+                 Having two different versions in class path causes problems, so we define our own version. -->
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <version>${jaxb.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <version>${jaxb.version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-bindings-soap</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-features-clustering</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
+
+            <!-- Swagger -->
+            <dependency>
+                <groupId>com.wordnik</groupId>
+                <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
+                <version>${swagger.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <groupId>javax.ws.rs</groupId>
+                        <artifactId>jsr311-api</artifactId>
+                    </exclusion>
+                </exclusions>
+            </dependency>
 
 			<!-- Central Authentication Service -->
 			<dependency>
@@ -574,6 +609,7 @@
     <modules>
         <module>viestintapalvelu-service</module>
         <module>viestintapalvelu-ui</module>
-        <module>ryhmasahkoposti</module>
+        <module>ryhmasahkoposti-api</module>
+        <module>ryhmasahkoposti-service</module>
     </modules>
 </project>

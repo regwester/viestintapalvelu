@@ -10,6 +10,8 @@ import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
+import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -22,6 +24,7 @@ import javax.ws.rs.core.Response;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -51,7 +54,7 @@ public class AddressLabelResource extends AsynchronousResource {
 	private DownloadCache downloadCache;
 	@Autowired
 	private AddressLabelBuilder labelBuilder;
-	@Autowired
+	@Qualifier
 	private DokumenttiResource dokumenttiResource;
 	@Autowired
 	private ExecutorService executor;

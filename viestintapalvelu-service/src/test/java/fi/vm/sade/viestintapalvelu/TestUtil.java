@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
@@ -19,13 +20,14 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFText2HTML;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
 import org.dom4j.Node;
 import org.dom4j.XPath;
 import org.dom4j.io.SAXReader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.NodeList;
 import org.w3c.tidy.Configuration;
 import org.w3c.tidy.Tidy;
@@ -41,17 +43,19 @@ import fi.vm.sade.viestintapalvelu.koekutsukirje.KoekutsukirjeBatch;
 
 public class TestUtil {
 
-    private final static String ADDRESS_LABEL_PDF_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    private static final Logger LOGGER = LoggerFactory.getLogger(TestUtil.class);
+
+    private static final String ADDRESS_LABEL_PDF_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/addresslabel/pdf";
-    private final static String ADDRESS_LABEL_XLS_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    private static final String ADDRESS_LABEL_XLS_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/addresslabel/xls";
-    private final static String JALKIOHJAUSKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    private static final String JALKIOHJAUSKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/jalkiohjauskirje/pdf";
-    private final static String IPOST_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    private static final String IPOST_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/jalkiohjauskirje/zip";
-    private final static String HYVAKSYMISKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    private static final String HYVAKSYMISKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/hyvaksymiskirje/pdf";
-    private final static String KOEKUTSUKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
+    private static final String KOEKUTSUKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
     		+ "/api/v1/koekutsukirje/pdf";
 
     public static List<List<String>> generateAddressLabelsPDF(List<AddressLabel> labels) throws Exception {
@@ -90,12 +94,14 @@ public class TestUtil {
     }
 
     private static byte[] get(Object json, String url) throws IOException, DocumentException {
+
         DefaultHttpClient client = new DefaultHttpClient();
         client.getParams().setParameter("http.protocol.content-charset", "UTF-8");
         HttpPost post = new HttpPost(url);
         post.setHeader("Content-Type", "application/json;charset=utf-8");
         post.setEntity(new StringEntity(new ObjectMapper().writeValueAsString(json), ContentType.APPLICATION_JSON));
         HttpResponse response = client.execute(post);
+        LOGGER.info("Response " + response.toString());
         String resultUrl = IOUtils.toString(response.getEntity().getContent(), "UTF-8");
         HttpGet get = new HttpGet(resultUrl);
         response = client.execute(get);

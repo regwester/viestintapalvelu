@@ -6,8 +6,8 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
 import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -263,8 +263,7 @@ public class AddressLabelsInPDFFormatTest {
         }
     }
 
-    private static List<AddressLabel> createLabels(int count) throws JsonParseException, JsonMappingException,
-            IOException {
+    private static List<AddressLabel> createLabels(int count) throws IOException {
         return new Generator<AddressLabel>() {
             protected AddressLabel createObject(TestData testData) {
                 String postOffice = testData.random("postOffice");
