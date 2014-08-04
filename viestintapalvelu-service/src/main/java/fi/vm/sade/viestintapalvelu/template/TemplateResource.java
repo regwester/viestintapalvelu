@@ -18,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -236,13 +237,13 @@ public class TemplateResource extends AsynchronousResource {
 
     @POST
     @Path("/store")
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
     public Template store(Template template) throws IOException, DocumentException {
         templateService.storeTemplateDTO(template);
-        return new Template();
+        return new Template(); //TODO: return something more meaningful
     }
 
     @POST
@@ -253,7 +254,7 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = StoreDraft, notes = StoreDraft)
     public Draft storeDraft(Draft draft) throws IOException, DocumentException {
         templateService.storeDraftDTO(draft);
-        return new Draft();
+        return new Draft(); //TODO: return something more meaningful
     }
 
     @GET

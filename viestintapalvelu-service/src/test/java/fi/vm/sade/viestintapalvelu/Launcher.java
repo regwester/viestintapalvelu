@@ -7,11 +7,11 @@ import javax.servlet.ServletException;
 import org.apache.catalina.LifecycleException;
 import org.apache.catalina.core.StandardContext;
 import org.apache.catalina.startup.Tomcat;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.glassfish.jersey.servlet.ServletContainer;
 
 public class Launcher {
     public static final int DEFAULT_PORT = PortFinder.findFreePort();
-    //public static ApplicationResourceConfig applicationResourceConfig = new ApplicationResourceConfig();
 
     public static void main(String[] args) throws Exception {
         Tomcat tomcat = start();
@@ -29,7 +29,7 @@ public class Launcher {
         context.addParameter("contextConfigLocation", "classpath:test-application-context.xml");
         context.addApplicationListener("org.springframework.web.context.ContextLoaderListener");
 
-        Tomcat.addServlet(context, "jersey-servlet", ServletContainer.class.getName());
+        Tomcat.addServlet(context, "jersey-servlet", new ServletContainer(new ApplicationResourceConfig()));
         context.addServletMapping("/api/v1/*", "jersey-servlet");
 
         Tomcat.initWebappDefaults(context);

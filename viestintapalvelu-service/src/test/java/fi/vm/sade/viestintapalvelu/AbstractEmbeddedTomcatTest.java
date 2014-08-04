@@ -11,6 +11,8 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 
+/** NOTE! This class is not in use at the moment. */
+
 /* Prepares the tomcat server with jersey servlet to do integration testing.*/
 public abstract class AbstractEmbeddedTomcatTest {
     /** Tomcat instance */

@@ -51,7 +51,7 @@
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -60,7 +60,7 @@
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -69,9 +69,11 @@
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
+
+    <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <contextScan/>
