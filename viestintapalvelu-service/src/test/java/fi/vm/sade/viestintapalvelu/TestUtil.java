@@ -49,14 +49,8 @@ public class TestUtil {
             + "/api/v1/addresslabel/pdf";
     private static final String ADDRESS_LABEL_XLS_URL = "http://localhost:" + Launcher.DEFAULT_PORT
             + "/api/v1/addresslabel/xls";
-    private static final String JALKIOHJAUSKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
-            + "/api/v1/jalkiohjauskirje/pdf";
     private static final String IPOST_URL = "http://localhost:" + Launcher.DEFAULT_PORT
-            + "/api/v1/jalkiohjauskirje/zip";
-    private static final String HYVAKSYMISKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
-            + "/api/v1/hyvaksymiskirje/pdf";
-    private static final String KOEKUTSUKIRJE_URL = "http://localhost:" + Launcher.DEFAULT_PORT
-    		+ "/api/v1/koekutsukirje/pdf";
+            + "/api/v1/iposti/getById";
 
     public static List<List<String>> generateAddressLabelsPDF(List<AddressLabel> labels) throws Exception {
         AddressLabelBatch batch = new AddressLabelBatch(labels);
@@ -68,29 +62,9 @@ public class TestUtil {
         return readXLS(get(batch, ADDRESS_LABEL_XLS_URL));
     }
 
-    public static List<List<String>> generateJalkiohjauskirje(Jalkiohjauskirje kirje) throws DocumentException,
-            IOException {
-        JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(Arrays.asList(kirje));
-        return readPDF(get(batch, JALKIOHJAUSKIRJE_URL), 1, 2);
-    }
-
     public static byte[] generateIPostZIP(List<Jalkiohjauskirje> kirjeet) throws Exception {
         JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(kirjeet);
         return get(batch, IPOST_URL);
-    }
-
-    public static List<List<String>> generateHyvaksymiskirje(Hyvaksymiskirje kirje) throws Exception {
-        HyvaksymiskirjeBatch batch = new HyvaksymiskirjeBatch(Arrays.asList(kirje));
-        return readPDF(get(batch, HYVAKSYMISKIRJE_URL), 1, 2);
-    }
-
-    public static List<List<String>> generateKoekutsukirje(Koekutsukirje kirje) throws Exception {
-        KoekutsukirjeBatch batch = new KoekutsukirjeBatch(Arrays.asList(kirje));
-        return readPDF(get(batch, KOEKUTSUKIRJE_URL), 1, 2);
-    }
-    public static String generateLiite(Jalkiohjauskirje kirje) throws Exception {
-        JalkiohjauskirjeBatch batch = new JalkiohjauskirjeBatch(Arrays.asList(kirje));
-        return readAsHtml(get(batch, JALKIOHJAUSKIRJE_URL), 2, 2);
     }
 
     private static byte[] get(Object json, String url) throws IOException, DocumentException {

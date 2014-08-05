@@ -49,16 +49,6 @@ public class IntegrationTest {
                 response.getFirstHeader("Content-Disposition").toString());
     }
 
-    @Test
-    public void jalkiohjauskirjePDFPrinting() throws Exception {
-        HttpResponse response = get("/jalkiohjauskirje_pdf.json", "http://localhost:" + Launcher.DEFAULT_PORT
-                + "/api/v1/jalkiohjauskirje/pdf");
-        assertEquals(200, response.getStatusLine().getStatusCode());
-        assertEquals("Content-Type: application/pdf;charset=utf-8", response.getFirstHeader("Content-Type").toString());
-        assertEquals("Content-Disposition: attachment; filename=\"jalkiohjauskirje.pdf\"",
-                response.getFirstHeader("Content-Disposition").toString());
-    }
-
     private HttpResponse get(String jsonFile, String url) throws UnsupportedEncodingException, IOException,
             ClientProtocolException {
         String json = new Scanner(getClass().getResourceAsStream(jsonFile), "UTF-8").useDelimiter("\u001a").next();
