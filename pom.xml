@@ -2,13 +2,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
-
+    <!-- Commented out because of all the obsolete plugins/dependencies -->
+    <!--
     <parent>
         <groupId>fi.vm.sade.generic</groupId>
         <artifactId>build-parent</artifactId>
         <version>9.0-SNAPSHOT</version>
     </parent>
-
+    -->
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
     <version>9.9-SNAPSHOT</version>
@@ -24,6 +25,10 @@
     </modules>
 
     <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+
+        <assertj.version>1.6.1</assertj.version>
         <authentication-domain.version>1.0-SNAPSHOT</authentication-domain.version>
         <camel.version>2.13.2</camel.version>
         <cas-client.version>3.1.10</cas-client.version>
@@ -60,30 +65,37 @@
         <jsch.version>0.1.50</jsch.version>
         <jsoup.version>1.7.2</jsoup.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.10</junit.version>
+        <junit.version>4.11</junit.version>
         <log4j.version>1.2.17</log4j.version>
         <mail.version>1.4.7</mail.version>
-        <mockito.version>1.9.0</mockito.version>
+        <mockito.version>1.9.5</mockito.version>
         <organisaatio.version>8.0</organisaatio.version>
         <!-- jdbc4 is for JDK1.6 and jdbc41 is for JDK1.7 -->
         <postgresql.version>9.3-1102-jdbc4</postgresql.version>
-        <powermock.version>1.5.4</powermock.version>
+        <powermock.version>1.5.5</powermock.version>
         <pdfbox.version>1.8.1</pdfbox.version>
         <querydsl.version>3.2.2</querydsl.version>
         <sade-generic.version>${generic.version}</sade-generic.version>
+        <servlet.version>3.0.1</servlet.version>
         <springockito.version>1.0.9</springockito.version>
         <spring.version>3.2.10.RELEASE</spring.version>
         <spring-security.version>3.1.3.RELEASE</spring-security.version>
         <slf4j.version>1.6.1</slf4j.version>
         <surefire.plugin.version>2.12</surefire.plugin.version>
         <swagger.version>1.3.7</swagger.version>
+        <tomcat.version>7.0.26</tomcat.version>
         <validation.version>1.0.0.GA</validation.version>
         <velocity.version>1.7</velocity.version>
     </properties>
 
     <dependencyManagement>
         <dependencies>
-            <!-- Hibernate validation -->
+            <!-- Hibernate -->
+            <dependency>
+                <groupId>org.hibernate</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-validator</artifactId>
@@ -97,11 +109,6 @@
             <dependency>
                 <groupId>org.hibernate</groupId>
                 <artifactId>hibernate-ehcache</artifactId>
-                <version>${hibernate.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>org.hibernate</groupId>
-                <artifactId>hibernate-validator</artifactId>
                 <version>${hibernate.version}</version>
             </dependency>
             <dependency>
@@ -150,6 +157,11 @@
             <dependency>
                 <groupId>org.springframework</groupId>
                 <artifactId>spring-context</artifactId>
+                <version>${spring.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
                 <version>${spring.version}</version>
             </dependency>
             <dependency>
@@ -304,31 +316,18 @@
                 <artifactId>commons-io</artifactId>
                 <version>${commons-io.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-beanutils</groupId>
+                <artifactId>commons-beanutils</artifactId>
+                <version>${commonsbean.version}</version>
+            </dependency>
 
-            <!-- Tomcat -->
+            <!-- Tomcat servlet api -->
             <dependency>
                 <groupId>org.apache.tomcat</groupId>
                 <artifactId>tomcat-servlet-api</artifactId>
                 <version>${tomcat.version}</version>
                 <scope>provided</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-core</artifactId>
-                <version>${tomcat.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-logging-log4j</artifactId>
-                <version>${tomcat.version}</version>
-                <scope>test</scope>
-            </dependency>
-            <dependency>
-                <groupId>org.apache.tomcat.embed</groupId>
-                <artifactId>tomcat-embed-jasper</artifactId>
-                <version>${tomcat.version}</version>
-                <scope>test</scope>
             </dependency>
 
             <!-- International Components for Unicode -->
@@ -428,6 +427,11 @@
                 <version>${slf4j.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>log4j</groupId>
+                <artifactId>log4j</artifactId>
+                <version>${log4j.version}</version>
+            </dependency>
 
             <!-- Java byte code manipulation -->
             <dependency>
@@ -449,6 +453,16 @@
             </dependency>
 
             <!-- Apache Camel -->
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-core</artifactId>
+                <version>${camel.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>camel-http</artifactId>
+                <version>${camel.version}</version>
+            </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-spring</artifactId>
@@ -580,6 +594,33 @@
                 <version>${flyway.version}</version>
             </dependency>
 
+            <!-- TESTING -->
+
+            <!-- Jersey Test Framework -->
+            <!-- Jetty, Requires >= java 1.7 -->
+            <dependency>
+                <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+                <artifactId>jersey-test-framework-provider-jetty</artifactId>
+                <version>${jersey.version}</version>
+                <scope>test</scope>
+            </dependency>
+            <!-- Grizzly2 -->
+            <dependency>
+                <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+                <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+                <version>${jersey.version}</version>
+                <scope>test</scope>
+            </dependency>
+
+
+            <!-- AssertJ -->
+            <dependency>
+                <groupId>org.assertj</groupId>
+                <artifactId>assertj-core</artifactId>
+                <version>${assertj.version}</version>
+                <scope>test</scope>
+            </dependency>
+
             <!-- JUnit test and mocking -->
             <dependency>
                 <groupId>junit</groupId>
@@ -692,16 +733,44 @@
                         </nonFilteredFileExtensions>
                     </configuration>
                 </plugin>
+                <!-- Unit tests -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
-                    <version>2.14.1</version>
+                    <version>2.17</version>
                     <configuration>
                         <parallel>none</parallel>
                         <forkCount>1</forkCount>
                         <perCoreThreadCount>false</perCoreThreadCount>
                         <threadCount>1</threadCount>
                         <argLine>-Dfile.encoding=UTF-8</argLine>
+                    </configuration>
+                </plugin>
+                <!-- Integration tests -->
+                <plugin>
+                    <groupId>org.apache.maven.plugins</groupId>
+                    <artifactId>maven-failsafe-plugin</artifactId>
+                    <version>2.17</version>
+                    <executions>
+                        <execution>
+                            <goals>
+                                <goal>integration-test</goal>
+                                <goal>verify</goal>
+                            </goals>
+                        </execution>
+                    </executions>
+                    <!-- Exclude all CXF related artifacts from classpath -->
+                    <configuration>
+                        <includes>
+                            <include>**/IT*.java</include>
+                            <include>**/*IT.java</include>
+                            <include>**/*ITCase.java</include>
+                        </includes>
+                        <classpathDependencyExcludes>
+                            <classpathDependencyExcludes>org.apache.cxf:cxf-rt-rs-client</classpathDependencyExcludes>
+                            <classpathDependencyExcludes>org.apache.cxf:cxf-rt-frontend-jaxrs</classpathDependencyExcludes>
+                            <classpathDependencyExcludes>org.apache.camel:camel-cxf</classpathDependencyExcludes>
+                        </classpathDependencyExcludes>
                     </configuration>
                 </plugin>
                 <plugin>

@@ -18,8 +18,6 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
-import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;

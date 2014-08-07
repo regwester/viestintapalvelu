@@ -1,16 +1,33 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:http="http://cxf.apache.org/transports/http/configuration"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mockito="http://www.mockito.org/spring/mockito"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mockito="http://www.mockito.org/spring/mockito" xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-	       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
-	       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-	       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-	       http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd">
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+           http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd" >
             
 	<context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
+
+    <!-- Global CXF provider configuration -->
+    <cxf:bus>
+        <cxf:properties>
+            <entry key="org.apache.cxf.jaxrs.bus.providers">
+                <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider"/>
+            </entry>
+            <!--<entry key="org.apache.cxf.jaxrs.bus.providers" key-ref="busProviders"/>-->
+        </cxf:properties>
+    </cxf:bus>
+    <!--<util:list id="busProviders">
+        <ref bean="customJsonProvider"/>
+    </util:list>
+    <bean id="customJsonProvider" class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider"/>
+    -->
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>

@@ -27,19 +27,6 @@
         </property>
     </bean>
 
-    <!-- Cannot get this working in ApplicationResourceConfig -->
-    <bean id="jacksonObjectMapper" class="com.fasterxml.jackson.databind.ObjectMapper"/>
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-        <property name="targetObject" ref="jacksonObjectMapper"/>
-        <property name="targetMethod" value="configure"/>
-        <property name="arguments">
-            <list>
-                <value type="com.fasterxml.jackson.databind.DeserializationFeature">FAIL_ON_UNKNOWN_PROPERTIES</value>
-                <value>false</value>
-            </list>
-        </property>
-    </bean>
-
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
 

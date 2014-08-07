@@ -21,10 +21,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class IPostZIPTest {
-    @ClassRule
-    public static TomcatRule tomcat = new TomcatRule();
+    //@ClassRule
+    //public static TomcatRule tomcat = new TomcatRule();
 
-    private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
+    /*private static AddressLabel label = new AddressLabel("Åle", "Öistämö",
             "Brännkyrksgatan 177 B 149", "Södermalm", "13", "65330",
             "Stockholm", "SL", "Sweden", "SE");
     private static AddressLabel labelWithSpecialCharacters = new AddressLabel(
@@ -134,5 +134,5 @@ public class IPostZIPTest {
         }
         in.close();
         return null;
-    }
+    }*/
 }

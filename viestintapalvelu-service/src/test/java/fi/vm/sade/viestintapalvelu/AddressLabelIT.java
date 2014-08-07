@@ -1,79 +1,53 @@
 package fi.vm.sade.viestintapalvelu;
 
-import static org.junit.Assert.assertEquals;
-
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
+import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
-import org.junit.experimental.runners.Enclosed;
-import org.junit.runner.RunWith;
+
+import static org.assertj.core.api.Assertions.*;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.testdata.Generator;
 
-@RunWith(Enclosed.class)
-public class AddressLabelsInPDFFormatTest {
-    @ClassRule
-    public static TomcatRule tomcat = new TomcatRule();
+import javax.ws.rs.client.Entity;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static class WhenCreatingLabelForValidForeignAddress {
+public class AddressLabelIT extends AbstractWebServiceIT {
 
-        private static AddressLabel label = new AddressLabel("Åle", "Öistämö", "Brännkyrksgatan 177 B 149",
+    @Test
+    public void createLabelForValidForeignAddress() {
+        /*AddressLabel label = new AddressLabel("Åle", "Öistämö", "Brännkyrksgatan 177 B 149",
                 "Södermalm", "13", "65330", "Stockholm", "SL", "Sweden", "SE");
-        private static List<String> pdf;
-
-        @BeforeClass
-        public static void setUp() throws Exception {
-            pdf = TestUtil.generateAddressLabelsPDF(Arrays.asList(label)).get(0);
-        }
-
-        @Test
-        public void firstNameAndLastNameAreMappedToFirstRow() throws Exception {
-            assertEquals(label.getFirstName() + " " + label.getLastName(), pdf.get(0));
-        }
-
-        @Test
-        public void streetAddresslineIsMappedToSecondRow() throws Exception {
-            assertEquals(label.getAddressline(), pdf.get(1));
-        }
-
-        @Test
-        public void streetAddressline2IsMappedToThirdRow() throws Exception {
-            assertEquals(label.getAddressline2(), pdf.get(2));
-        }
-
-        @Test
-        public void streetAddressline3IsMappedToFourthRow() throws Exception {
-            assertEquals(label.getAddressline3(), pdf.get(3));
-        }
-
-        @Test
-        public void postalCodeAndPostOfficeAreMappedToFifthRow() throws Exception {
-            assertEquals(label.getPostalCode() + " " + label.getCity(), pdf.get(4));
-        }
-
-        @Test
-        public void regionIsMappedToSixthRow() throws Exception {
-            assertEquals(label.getRegion(), pdf.get(5));
-        }
-
-        @Test
-        public void countryIsMappedToSeventhRow() throws Exception {
-            assertEquals(label.getCountry(), pdf.get(6));
-        }
-
-        @Test
-        public void labelContainsSevenRows() throws Exception {
-            assertEquals(7, pdf.size());
-        }
+        Entity<AddressLabel> addressLabelEntity = Entity.entity(label, MediaType.APPLICATION_JSON);
+        Response res = target(getResourcePath() + "pdf").request().post(addressLabelEntity);
+        String output = res.readEntity(String.class);
+        System.out.println(output);
+        */
+        /*
+        List<String> pdf = new ArrayList<String>();
+        assertThat(pdf).hasSize(7);
+        assertThat(pdf.get(0)).isEqualTo("Åle Öistämö");
+        assertThat(pdf.get(1)).isEqualTo("Brännkyrksgatan 177 B 149");
+        assertThat(pdf.get(2)).isEqualTo("Södermalm");
+        assertThat(pdf.get(3)).isEqualTo("13");
+        assertThat(pdf.get(4)).isEqualTo("65330 Stockholm");
+        assertThat(pdf.get(5)).isEqualTo("SL");
+        assertThat(pdf.get(6)).isEqualTo("Sweden");
+        */
     }
 
+    @Override
+    protected ResourceConfig configure(ResourceConfig rc) {
+        return rc;
+    }
+
+    @Override
+    protected String getResourcePath() {
+        return "addresslabel/";
+    }
+
+    /*
     public static class WhenCreatingLabelWithSpecialCharacters {
         @Test
         public void specialCharactersAreDisplayed() throws Exception {
@@ -283,4 +257,5 @@ public class AddressLabelsInPDFFormatTest {
                 Arrays.asList(new AddressLabel(firstName, lastName, addressline, addressline2, addressline3,
                         postalCode, postOffice, region, country, countryCode))).get(0);
     }
+    */
 }

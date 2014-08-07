@@ -4,8 +4,8 @@
         xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
     <modelVersion>4.0.0</modelVersion>
     <parent>
-        <groupId>fi.vm.sade.ryhmasahkoposti</groupId>
-        <artifactId>ryhmasahkoposti</artifactId>
+        <groupId>fi.vm.sade.viestintapalvelu</groupId>
+        <artifactId>viestintapalvelu</artifactId>
         <version>9.9-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>

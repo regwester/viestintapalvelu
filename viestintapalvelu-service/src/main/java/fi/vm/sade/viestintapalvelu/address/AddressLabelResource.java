@@ -84,7 +84,7 @@ public class AddressLabelResource extends AsynchronousResource {
 			@Context HttpServletRequest request) {
 		String documentId;
 		try {
-			byte[] pdf = labelBuilder.printPDF(input);
+			byte[] pdf = labelBuilder.printPDF(input); //TODO: add validation?
 			documentId = downloadCache.addDocument(new Download(
 					"application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
 		} catch (Exception e) {

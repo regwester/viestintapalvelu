@@ -214,21 +214,6 @@
             <artifactId>tomcat-servlet-api</artifactId>
             <scope>provided</scope>
         </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-core</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-logging-log4j</artifactId>
-            <scope>test</scope>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.tomcat.embed</groupId>
-            <artifactId>tomcat-embed-jasper</artifactId>
-            <scope>test</scope>
-        </dependency>
 
         <!-- Incompatible icu4j version as transitive dependency if not included,
             causes stacktrace when running tests from eclipse -->
@@ -481,6 +466,26 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <!-- TESTING -->
+
+        <!-- Jersey Test Framework -->
+        <!-- This version of Jetty needs >= Java 1.7 -->
+        <!--
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-jetty</artifactId>
+        </dependency>
+        -->
+        <dependency>
+            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
+            <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.assertj</groupId>
+            <artifactId>assertj-core</artifactId>
+        </dependency>
+
         <!-- JUnit test and mocking -->
         <dependency>
             <groupId>junit</groupId>
@@ -544,6 +549,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>org.apache.tomcat.maven</groupId>
