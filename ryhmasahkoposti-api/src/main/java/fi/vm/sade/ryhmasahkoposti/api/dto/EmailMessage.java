@@ -7,15 +7,18 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailMessage {
-    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage.class);
+    private final static Logger log = LoggerFactory.getLogger(EmailMessage.class);
 
     private String callingProcess = "";
     private String from; // Email FROM
+    private String sender; // Email Name
     private String replyTo; // Email REPLYTO
     private String senderOid; // The one who is doing the actual sending
     private String organizationOid;
@@ -72,6 +75,14 @@ public class EmailMessage {
 
     public void setFrom(String from) {
         this.from = from;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
     }
 
     public String getReplyTo() {
@@ -248,7 +259,7 @@ public class EmailMessage {
 
     @Override
     public String toString() {
-        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", replyTo=" + replyTo + ", senderOid=" + senderOid + ", subject="
+        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" +  replyTo + ", senderOid=" + senderOid + ", subject="
                 + subject + ", body=" + body + ", footer=" + footer + ", isHtml=" + isHtml + ", charset=" + charset + ", attachments=" + attachments
                 + ", attachInfo=" + attachInfo + "]";
     }

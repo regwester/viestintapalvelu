@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.feature;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
@@ -14,7 +15,8 @@ public class JacksonFeature implements Feature {
 
     private static final ObjectMapper mapper = new ObjectMapper() {{
         registerModule(new JodaModule());
-        configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+        disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
     }};
 
     private static final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider(){{

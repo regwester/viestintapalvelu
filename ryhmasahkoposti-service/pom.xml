@@ -76,7 +76,7 @@
 
         <!-- Ryhmäsähköposti API -->
         <dependency>
-            <groupId>fi.vm.sade.ryhmasahkoposti</groupId>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
             <artifactId>ryhmasahkoposti-api</artifactId>
             <version>${project.version}</version>
         </dependency>

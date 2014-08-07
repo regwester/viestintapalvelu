@@ -1,12 +1,11 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import java.util.LinkedList;
 import java.util.List;
 
-/**
- * 
- * @author migar1
- */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailData {
 
     private List<EmailRecipient> recipient = new LinkedList<EmailRecipient>();
