@@ -60,6 +60,15 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
+    <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
     <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
@@ -69,9 +78,6 @@
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
 
-    <!-- Register external resources -->
-    <!-- <bean id="dokumenttiResource" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" /> -->
-     
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />
 
