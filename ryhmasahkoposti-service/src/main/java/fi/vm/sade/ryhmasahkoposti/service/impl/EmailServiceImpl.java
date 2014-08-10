@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private EmailSender emailSender;
+
+    @Autowired
+    private ReportedMessageDAO emailDao;
 
     @Autowired
     private EmailAVChecker emailAVChecker;
@@ -75,6 +79,11 @@ public class EmailServiceImpl implements EmailService {
         EmailResponse resp = new EmailResponse(status, email.getSubject());
         log.info("Email  response: " + resp.toString());
         return resp;
+    }
+
+    @Override
+    public Long getCount(String oid) {
+        return emailDao.findNumberOfReportedMessage(oid);
     }
 
     /**

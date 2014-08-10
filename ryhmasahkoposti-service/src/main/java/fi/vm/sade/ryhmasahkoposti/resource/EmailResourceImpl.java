@@ -21,6 +21,7 @@ import org.codehaus.jettison.json.JSONObject;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
@@ -37,7 +38,10 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
 public class EmailResourceImpl implements EmailResource {
-    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);	
+    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
+
+    @Value("${ryhmasahkoposti.from}")
+    private String globalFromAddress;
 
     @Autowired
     private EmailService emailService;
@@ -114,7 +118,10 @@ public class EmailResourceImpl implements EmailResource {
     }
 
     @Override
-    public Response sendGroupEmailWithFooter(EmailData emailData) {
+    public Response sendGroupEmailWithFooter(EmailData emailData) { //TODO: Validate the values we get from the client (are empty subject/body/recipients ok?)
+        // Replace whatever from address we got from the client with the global one
+        emailData.getEmail().setFrom(globalFromAddress);
+
     	// Setting footer with the first ones language code
     	String languageCode = emailData.getRecipient().get(0).getLanguageCode();
     	// Footer is moved to the end of the body here
@@ -160,6 +167,20 @@ public class EmailResourceImpl implements EmailResource {
     	    log.error("Problems in getting group email data from DB, "+ e.getMessage());
     	    return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
     	}
+    }
+
+    @Override
+    public Response getCount() {
+        log.debug("Retrieving the count for emails");
+        try {
+            Long count = emailService.getCount("1234"); //TODO: replace with user oid, that you get as request parameter somehow
+            String response = "{\"count\":" + count.toString() + "}";
+            return Response.ok(response).build();
+        } catch (Exception e) {
+            log.error("Problems in retrieving the count for emails, " + e.getMessage());
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
+        }
+
     }
 
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {

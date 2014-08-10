@@ -21,10 +21,10 @@
             languageCode: 'FI'}
         ],
         email: {callingProcess: 'Osoitetietojarjestelma',
-            sender: 'Opetushallituksen tiedotus',
-            from: 'oph_tiedotus@oph.fi',
+            sender: 'Opetushallitus',
+            from: 'opintopolku@oph.fi',
             organizationOid: '1.2.246.562.10.00000000001',
-            replyTo: 'Mikko.Mallikas@oph.fi',
+            replyTo: 'mikko.mallikas@oph.fi',
             subject: 'Testi viesti',
             body: ''
         }

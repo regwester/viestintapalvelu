@@ -9,6 +9,7 @@ public interface DraftDAO extends JpaDAO<DraftModel, Long> {
     
     public List<DraftModel> getAllDrafts();
     public DraftModel getDraft(Long id);
+    public Long getCount();
     public void saveDraft(DraftModel draft);
     public DraftModel deleteDraft(Long id);
     

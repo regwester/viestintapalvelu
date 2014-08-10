@@ -43,7 +43,16 @@ public class DraftResourceImpl implements DraftResource {
         }
         return drafts;
     }
-    
+
+    public String getCount() {
+        Long count = draftService.getCount();
+        if(count == null) {
+            throwError500("Count could not be retrieved");
+        }
+        String response = "{\"count\":" + count.toString() + "}";
+        return response;
+    }
+
     public Draft deleteDraft(Long draftId) {
         if(draftId == null) {
             throwError400("DraftId is not defined");

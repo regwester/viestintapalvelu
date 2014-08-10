@@ -10,6 +10,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
@@ -42,7 +43,12 @@ public interface DraftResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public List<Draft> getAllDrafts();
-    
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/count")
+    public String getCount();
+
     @DELETE
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{draftId}")

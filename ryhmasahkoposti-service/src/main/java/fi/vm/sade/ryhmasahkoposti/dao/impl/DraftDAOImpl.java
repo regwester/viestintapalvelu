@@ -26,6 +26,13 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<DraftModel, Long> implement
     }
 
     @Override
+    public Long getCount() {
+        Number number = (Number) getEntityManager()
+                .createNativeQuery("SELECT count(1) FROM luonnos").getSingleResult();
+        return number.longValue();
+    }
+
+    @Override
     public void saveDraft(DraftModel draft) {
         insert(draft);
     }

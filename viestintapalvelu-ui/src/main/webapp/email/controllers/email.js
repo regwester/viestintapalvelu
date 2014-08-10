@@ -48,6 +48,12 @@ angular.module('email')
         //do the error dialog popup
       });
     };
+
+    $scope.count = {
+        drafts : 0,
+        emails : 0,
+        templates: 0
+      };
     
     $scope.$on('useDraft', function(event, draft) {
       $scope.emaildata.email = draft;
@@ -56,6 +62,9 @@ angular.module('email')
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
+      DraftService.count().$promise.then(function(count){
+        $scope.count.drafts = count.count;
+      });
     };
 
     $scope.percentage = 0;

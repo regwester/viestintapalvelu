@@ -22,4 +22,5 @@ ryhmasahkoposti.antivirus.port=3310
 ryhmasahkoposti.antivirus.timeout=1200
 ryhmasahkoposti.require.virus.check=false
 
-
+# Ryhmäsähköpostin lähetysosoite
+ryhmasahkoposti.from=opintopolku@oph.fi

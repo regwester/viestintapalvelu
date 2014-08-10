@@ -44,6 +44,11 @@ public class DraftServiceImpl implements DraftService {
     }
 
     @Override
+    public Long getCount() {
+        return draftDao.getCount();
+    }
+
+    @Override
     public Draft deleteDraft(Long id) {
         DraftModel draftModel = draftDao.deleteDraft(id);
         return draftConverter.convert(draftModel);
