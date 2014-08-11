@@ -1,35 +1,34 @@
 <project
-	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
-	xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-	<modelVersion>4.0.0</modelVersion>
-	<parent>
-		<groupId>fi.vm.sade.viestintapalvelu</groupId>
-		<artifactId>viestintapalvelu</artifactId>
-		<version>9.9-SNAPSHOT</version>
-	</parent>
+        xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd"
+        xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+    <modelVersion>4.0.0</modelVersion>
+    <parent>
+        <groupId>fi.vm.sade.viestintapalvelu</groupId>
+        <artifactId>viestintapalvelu</artifactId>
+        <version>9.9-SNAPSHOT</version>
+    </parent>
 
-	<artifactId>viestintapalvelu-ui</artifactId>
-	<packaging>war</packaging>
-	<name>Viestintapalvelu :: UI</name>
+    <artifactId>viestintapalvelu-ui</artifactId>
+    <packaging>war</packaging>
+    <name>Viestintapalvelu :: UI</name>
 
-	<properties>
-		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-	</properties>
-	<dependencies>
-		<dependency>
-			<groupId>org.jsoup</groupId>
-			<artifactId>jsoup</artifactId>
-			<scope>compile</scope>
-		</dependency>
-		<dependency>
-			<groupId>commons-lang</groupId>
-			<artifactId>commons-lang</artifactId>
-		</dependency>
-	</dependencies>
-	<build>
-		<finalName>viestintapalvelu-ui</finalName>
-		<plugins>
-			<plugin>
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
+    <dependencies>
+        <dependency>
+            <groupId>org.jsoup</groupId>
+            <artifactId>jsoup</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>commons-lang</groupId>
+            <artifactId>commons-lang</artifactId>
+        </dependency>
+    </dependencies>
+    <build>
+        <finalName>viestintapalvelu-ui</finalName>
+        <plugins>
+            <plugin>
                 <groupId>com.github.searls</groupId>
                 <artifactId>jasmine-maven-plugin</artifactId>
                 <version>1.3.1.3</version>
@@ -43,19 +42,32 @@
                 <configuration>
                     <preloadSources>
                         <source>${project.basedir}/src/main/webapp/assets/lib/jquery/jquery-1.10.2.min.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/jquery/jquery.i18n.properties-min-1.0.9.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js</source>
+                        <source>
+                            ${project.basedir}/src/main/webapp/assets/lib/jquery/jquery.i18n.properties-min-1.0.9.js
+                        </source>
+                        <source>
+                            ${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js
+                        </source>
 
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular.js</source>
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-mocks.js</source>
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-resource.js</source>
                         <source>${project.basedir}/src/main/webapp/assets/lib/angular/angular-animate.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-router/angular-ui-router.min.js</source>
+                        <source>
+                            ${project.basedir}/src/main/webapp/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js
+                        </source>
+                        <source>${project.basedir}/src/main/webapp/assets/lib/ui-router/angular-ui-router.min.js
+                        </source>
 
-                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js</source>
-                        <source>${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js</source>
+                        <source>
+                            ${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js
+                        </source>
+                        <source>
+                            ${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js
+                        </source>
+                        <source>
+                            ${project.basedir}/src/main/webapp/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js
+                        </source>
 
                         <source>${project.basedir}/src/main/webapp/email/init.js</source>
                         <source>${project.basedir}/src/main/webapp/report/init.js</source>
@@ -74,5 +86,5 @@
                 </configuration>
             </plugin>
         </plugins>
-	</build>
+    </build>
 </project>

@@ -4,17 +4,19 @@
     <p>Valitse viestin sisällöksi viestipohja, luonnos tai aikaisemmin lähetetty viesti. Valinta korvaa viestin nykyisen otsikon, sisällön ja liitetiedostot, mutta ei vaikuta lähettäjän nimeen tai vastaanottajiin.</p>
     <div class="custom-tabs">
         <tabset ng-init="selectActiveTab()">
+            <!--
             <tab active="tabs[0].active">
                 <tab-heading>
                     <a class="no-decoration" ui-sref="email.savedContent.templates" ui-sref-active="active">Viestipohjat</a>
                 </tab-heading>
             </tab>
-            <tab active="tabs[1].active">
+            -->
+            <tab active="tabs[0].active">
                 <tab-heading>
                     <a class="no-decoration" ui-sref="email.savedContent.sentEmails" ui-sref-active="active">Lähetetyt</a>
                 </tab-heading>
             </tab>
-            <tab active="tabs[2].active">
+            <tab active="tabs[1].active">
                 <tab-heading>
                     <a class="no-decoration" ui-sref="email.savedContent.drafts" ui-sref-active="active">Luonnokset</a>
                 </tab-heading>

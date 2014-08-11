@@ -29,7 +29,7 @@ CREATE TABLE kirjeet.luonnoskorvauskentat (
 ) 
  */
 
-@Table(name = "luonnoskorvauskentat", schema="kirjeet")
+@Table(name = "luonnoskorvauskentat", schema= "kirjeet")
 @Entity()
 public class DraftReplacement extends BaseEntity {
 

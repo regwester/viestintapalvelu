@@ -15,9 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonManagedReference;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -36,7 +35,7 @@ CREATE TABLE kirjeet.vastaanottaja (
  */
 
 
-@Table(name = "vastaanottaja", schema="kirjeet")
+@Table(name = "vastaanottaja", schema= "kirjeet")
 @Entity()
 public class LetterReceivers extends BaseEntity {
     private static final long serialVersionUID = 1L;

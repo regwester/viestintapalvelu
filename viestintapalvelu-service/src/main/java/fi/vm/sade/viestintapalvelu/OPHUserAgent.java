@@ -9,7 +9,7 @@ import java.io.InputStream;
  * If on a template external file is referenced, flying saucer uses user agent to load the referenced
  * resource. For example:
  * <p/>
- * <link rel="stylesheet" type="text/css" href="classpath:/ipost_pdf.css"/>
+ * <link rel="stylesheet" type="text/css" href="classpath:/template_styles/ipost_pdf.css"/>
  * <p/>
  * See also: https://svn.atlassian.com/svn/public/atlassian/vendor/xhtmlrenderer-8.0/tags/8.3-atlassian/www/r7/users-guide-r7.html#xil_17
  */

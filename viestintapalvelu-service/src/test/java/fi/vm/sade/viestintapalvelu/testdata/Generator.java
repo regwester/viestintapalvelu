@@ -1,8 +1,9 @@
 package fi.vm.sade.viestintapalvelu.testdata;
 
-import org.codehaus.jackson.JsonParseException;
-import org.codehaus.jackson.map.JsonMappingException;
-import org.codehaus.jackson.map.ObjectMapper;
+
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.io.File;
 import java.io.IOException;
@@ -13,8 +14,7 @@ public abstract class Generator<T> {
     private Map<String, List<Object>> datasets = new HashMap<String, List<Object>>();
     private Random random = new Random();
 
-    public Generator() throws JsonParseException, JsonMappingException,
-            IOException {
+    public Generator() throws IOException {
         addDataset("firstname", "src/main/webapp/generator/firstnames.json");
         addDataset("lastname", "src/main/webapp/generator/lastnames.json");
         addDataset("street", "src/main/webapp/generator/streets.json");
@@ -35,7 +35,7 @@ public abstract class Generator<T> {
 
     @SuppressWarnings("unchecked")
     public void addDataset(String datasetKey, String datasetURL)
-            throws JsonParseException, JsonMappingException, IOException {
+            throws IOException {
         ObjectMapper mapper = new ObjectMapper();
         List<Object> values = mapper
                 .readValue(new File(datasetURL), List.class);

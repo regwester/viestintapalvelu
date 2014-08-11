@@ -7,7 +7,9 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import org.springframework.stereotype.Component;
 
+@Component
 @Path("/organisaatio")
 public interface OrganisaatioResource {
     @GET

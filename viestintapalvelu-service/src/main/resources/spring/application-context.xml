@@ -1,20 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:task="http://www.springframework.org/schema/task" xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xmlns:http="http://cxf.apache.org/transports/http/configuration" xmlns:aop="http://www.springframework.org/schema/aop"
+       xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client" xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
-       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
-         http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <context:property-placeholder
             location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
@@ -31,92 +26,60 @@
             </util:properties>
         </property>
     </bean>
-    
+
     <context:annotation-config />
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
+
     <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
     <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
     
-    <jaxrs:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
-    <jaxrs:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
-    <jaxrs:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+    <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-        </jaxrs:providers>
-    </jaxrs:client>
-    
-    <jaxrs:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
-        <jaxrs:outInterceptors>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
+    <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
-        </jaxrs:outInterceptors>
-        <jaxrs:providers>
-            <bean class="org.codehaus.jackson.jaxrs.JacksonJsonProvider"/>
-        </jaxrs:providers>
-    </jaxrs:client>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
+    <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <routeBuilder ref="omattiedotRoute"/>
-        <routeBuilder ref="henkiloRoute"/>
-        <routeBuilder ref="organisaatioRoute"/>
+        <contextScan/>
     </camelContext>
 
-    <bean id="omattiedotRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OmattiedotRoute"/>
-    <bean id="henkiloRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.HenkiloRoute"/>
-    <bean id="organisaatioRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OrganisaatioRoute"/> 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
 
-     
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />
-
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.liite"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.address"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.document"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.download"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.pdfprint"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.externalinterface"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.hyvaksymiskirje"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.koekutsukirje"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.letter"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.letter.impl"/>    
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.template"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.template.impl"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.model" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao.impl" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.validator"/>   
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.iposti"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.iposti.impl"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.convert"/>
-    
-    <!-- Swagger -->
-    <!-- Swagger API listing resource -->
-    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
-
-    <!-- Swagger writers -->
-    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
-    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
 
     <!-- Swagger configuration -->
     <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
@@ -128,7 +91,6 @@
         <property name="scan" value="true"/>
     </bean>
 
- 
     <!-- Add EntityManagerFactory (required by JTA) support -->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
         <property name="loadTimeWeaver">

@@ -22,7 +22,7 @@ angular.module('email')
     $scope.pageChanged = function() {
       console.log('Current Page: ' + $scope.currentPage);
     };
-    
+
     function groupToPages() {
       $scope.pagedDrafts = [];
       for (var i = 0; i < $scope.drafts.length; i++) {

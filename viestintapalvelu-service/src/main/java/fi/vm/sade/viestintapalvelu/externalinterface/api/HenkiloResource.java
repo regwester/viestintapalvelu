@@ -7,10 +7,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import org.codehaus.jackson.map.annotate.JsonView;
-
+import com.fasterxml.jackson.annotation.JsonView;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.JsonViews;
+import org.springframework.stereotype.Component;
 
 /**
  * Rajapinta henkiloiden hakemiseen
@@ -18,6 +18,7 @@ import fi.vm.sade.authentication.model.JsonViews;
  * @author jahyn1
  *
  */
+@Component
 @Path("henkilo")
 public interface HenkiloResource {
     
