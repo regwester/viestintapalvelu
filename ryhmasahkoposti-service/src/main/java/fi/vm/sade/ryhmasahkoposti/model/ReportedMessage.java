@@ -31,6 +31,9 @@ public class ReportedMessage extends BaseEntity {
     @Column(name="lahettajan_sahkopostiosoite", nullable=false)
     private String senderEmail;
 
+    @Column(name="lahettajan_näyttöteksti")
+    private String senderDisplayText;
+
     @Column(name="lahettajan_organisaatio_oid", nullable=true)
     private String senderOrganizationOid;
 
@@ -98,6 +101,14 @@ public class ReportedMessage extends BaseEntity {
 
     public void setSenderEmail(String senderEmail) {
 	this.senderEmail = senderEmail;
+    }
+
+    public String getSenderDisplayText() {
+        return senderDisplayText;
+    }
+
+    public void setSenderDisplayText(String senderDisplayText) {
+        this.senderDisplayText = senderDisplayText;
     }
 
     public String getSenderOrganizationOid() {
@@ -219,16 +230,24 @@ public class ReportedMessage extends BaseEntity {
      */
     @Override
     public String toString() {
-	return "ReportedMessage [process=" + process + ", senderOid="
-		+ senderOid + ", senderName=" + senderName + ", senderEmail="
-		+ senderEmail + ", senderOrganizationOid="
-		+ senderOrganizationOid + ", replyToEmail=" + replyToEmail
-		+ ", subject=" + subject + ", message=" + message
-		+ ", htmlMessage=" + htmlMessage + ", characterSet="
-		+ characterSet + ", reportedRecipients=" + reportedRecipients
-		+ ", reportedMessageAttachments=" + reportedMessageAttachments
-		+ ", sendingStarted=" + sendingStarted + ", sendingEnded="
-		+ sendingEnded + ", timestamp=" + timestamp + ", type=" + type
-		+ "]";
+        return "ReportedMessage{" +
+                "process='" + process + '\'' +
+                ", senderOid='" + senderOid + '\'' +
+                ", senderName='" + senderName + '\'' +
+                ", senderEmail='" + senderEmail + '\'' +
+                ", senderDisplayText='" + senderDisplayText + '\'' +
+                ", senderOrganizationOid='" + senderOrganizationOid + '\'' +
+                ", replyToEmail='" + replyToEmail + '\'' +
+                ", subject='" + subject + '\'' +
+                ", message='" + message + '\'' +
+                ", htmlMessage='" + htmlMessage + '\'' +
+                ", characterSet='" + characterSet + '\'' +
+                ", reportedRecipients=" + reportedRecipients +
+                ", reportedMessageAttachments=" + reportedMessageAttachments +
+                ", sendingStarted=" + sendingStarted +
+                ", sendingEnded=" + sendingEnded +
+                ", timestamp=" + timestamp +
+                ", type='" + type + '\'' +
+                '}';
     }
 }

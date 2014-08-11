@@ -43,7 +43,7 @@ public class DraftModel extends BaseEntity {
     
     @Column(name = "lahettajan_nimi")
     private String sender;
-    
+
     @ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
     @JoinTable(name="luonnos_liite",
             joinColumns = @JoinColumn(name="luonnos_id", referencedColumnName="id"),

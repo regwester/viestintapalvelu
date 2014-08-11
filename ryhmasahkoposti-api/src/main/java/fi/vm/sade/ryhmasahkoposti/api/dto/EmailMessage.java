@@ -18,7 +18,7 @@ public class EmailMessage {
 
     private String callingProcess = "";
     private String from; // Email FROM
-    private String sender; // Email Name
+    private String sender; // Email Personal name
     private String replyTo; // Email REPLYTO
     private String senderOid; // The one who is doing the actual sending
     private String organizationOid;

@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Properties;
 import java.util.logging.Level;
@@ -63,12 +64,12 @@ public class EmailSender {
         return message;
     }
 
-    public MimeMessage createMail(EmailMessage emailMessage, String emailAddress) throws MessagingException {
+    public MimeMessage createMail(EmailMessage emailMessage, String emailAddress) throws MessagingException, UnsupportedEncodingException {
         Session session = createSession();
         MimeMessage msg = new MimeMessage(session);
 
         msg.setRecipients(MimeMessage.RecipientType.TO, InternetAddress.parse(emailAddress, false));
-        msg.setFrom(new InternetAddress(emailMessage.getFrom()));
+        msg.setFrom(new InternetAddress(emailMessage.getFrom(), emailMessage.getSender()));
         msg.setSubject(emailMessage.getSubject(), emailMessage.getCharset());
         if (emailMessage.getReplyTo() != null) {
             InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyTo(), false);
