@@ -65,7 +65,7 @@
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
-            <bean class="customJsonProvider"/>
+            <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 

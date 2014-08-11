@@ -1,9 +1,15 @@
 package fi.vm.sade.viestintapalvelu.feature;
 
+import javax.ws.rs.ext.Provider;
+
+import org.springframework.stereotype.Component;
+
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
+@Provider
+@Component
 public class CustomJsonProvider extends JacksonJaxbJsonProvider {
     public CustomJsonProvider() {
         ObjectMapper mapper = new ObjectMapper();
