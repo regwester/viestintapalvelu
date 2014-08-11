@@ -75,6 +75,7 @@ public class EmailMessageDTOConverter {
 	emailMessageDTO.setMessageID(reportedMessage.getId());
 	emailMessageDTO.setSubject(reportedMessage.getSubject());
 	emailMessageDTO.setFrom(reportedMessage.getSenderEmail());
+    emailMessageDTO.setSender(reportedMessage.getSenderDisplayText());
 	emailMessageDTO.setStartTime(reportedMessage.getSendingStarted());
 	emailMessageDTO.setEndTime(reportedMessage.getSendingEnded());
 	emailMessageDTO.setCallingProcess(reportedMessage.getProcess());

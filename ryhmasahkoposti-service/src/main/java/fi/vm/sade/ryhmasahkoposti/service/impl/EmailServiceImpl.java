@@ -63,25 +63,6 @@ public class EmailServiceImpl implements EmailService {
     };
 
     @Override
-    public EmailResponse sendEmail(EmailMessage email) { //not being used
-
-        log.info("Send email info: " + email.toString());
-        
-        String status;
-        try {
-            emailSender.handleMail(email, "tähän vastaanottajan osoite jotenkin");
-            status = "OK";
-        } catch (Exception e) {
-            log.info("Sending mail failed: " + e.getMessage());
-            status = "Error";
-        }
-        
-        EmailResponse resp = new EmailResponse(status, email.getSubject());
-        log.info("Email  response: " + resp.toString());
-        return resp;
-    }
-
-    @Override
     public Long getCount(String oid) {
         return emailDao.findNumberOfReportedMessage(oid);
     }
@@ -123,9 +104,9 @@ public class EmailServiceImpl implements EmailService {
         if (rrService.startSending(er)) {
             log.info("Handling really " + er + " " + er.getRecipientID());
             Long messageId = er.getEmailMessageID();
-            EmailMessageDTO message = getMessage(messageId);
 
             try {
+                EmailMessageDTO message = getMessage(messageId);
                 if (virusCheckRequired(message)) {
                     doVirusCheck(message);
                 }
@@ -164,12 +145,8 @@ public class EmailServiceImpl implements EmailService {
     private EmailMessageDTO getMessage(Long messageId) {
         EmailMessageDTO message = messageCache.get(messageId);
         if (message == null) {
-            try {
-                message = rrService.getMessage(messageId);
-                messageCache.put(messageId, message);
-            } catch (Exception e) {
-                log.error("Get message failed", e);
-            }
+            message = rrService.getMessage(messageId);
+            messageCache.put(messageId, message);
         }
         return message;
     }

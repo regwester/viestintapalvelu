@@ -3,8 +3,6 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Properties;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -16,7 +14,9 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 
-import org.apache.commons.lang.StringEscapeUtils;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -26,8 +26,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 
 @Service
 public class EmailSender {
-    private final static Logger log = Logger.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class
-            .getName());
+    private static final Logger LOGGER = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class);
 
     @Value("${ryhmasahkoposti.smtp.host}")
     String smtpHost;
@@ -35,33 +34,17 @@ public class EmailSender {
     String smtpPort;
     
     public void handleMail(EmailMessage emailMessage, String emailAddress) throws Exception {
-        
-        if (emailMessage == null) {
-            throw new IllegalStateException("Email message missing");
-        }
-
-        MimeMessage message = createMimeMessage(emailMessage, emailAddress);
-        
-        if (message != null) { // message was created successfully
+        try {
+            MimeMessage message = createMail(emailMessage, emailAddress);
             if (EmailConstants.TEST_MODE.equals("NO")) {
-                sendMail(message);
+                LOGGER.debug("Sending message: " + message.toString());
+                Transport.send(message);
             } else {
                 mockSendMail(emailMessage, emailAddress); //just log the message
             }
-        } else {
-            throw new Exception("MimeMessage creation failed!");
-        }
-    }
-
-    private MimeMessage createMimeMessage(EmailMessage emailMessage, String emailAddress) {
-        
-        MimeMessage message = null;
-        try {
-            message = createMail(emailMessage, emailAddress);
         } catch (Exception e) {
-            log.log(Level.SEVERE, "Failed to build message to " + emailAddress + ": " + emailMessage.getBody(), e);
+            LOGGER.error("Failed to send message to " + emailAddress + ": " + emailMessage.getBody(), e);
         }
-        return message;
     }
 
     public MimeMessage createMail(EmailMessage emailMessage, String emailAddress) throws MessagingException, UnsupportedEncodingException {
@@ -127,7 +110,7 @@ public class EmailSender {
                 multipart.addBodyPart(attachmentPart);
 
             } else {
-                log.log(Level.SEVERE, "Failed to insert attachment - it is not valid " + attachment.getName());
+                LOGGER.error("Failed to insert attachment - it is not valid " + attachment.getName());
                 emailMessage.setInvalid();
                 break;
             }
@@ -140,21 +123,6 @@ public class EmailSender {
         mailProps.put("mail.smtp.port", smtpPort);
         Session session = Session.getInstance(mailProps);
         return session;
-    }
-
-    private void sendMail(MimeMessage message) throws Exception {
-        
-        String logMsg = " in mailsending (Smtp: " + EmailConstants.SMTP + "), " + " SUBJECT '"
-                + message.getSubject() + "' FROM '" + message.getFrom() + "' REPLYTO '"
-                + (message.getReplyTo() == null ? "" : message.getReplyTo()) + "' TO '"
-                + message.getRecipients(MimeMessage.RecipientType.TO)[0].toString() + "'";
-        try {
-            Transport.send(message);
-            log.info(getTimestamp() + "Success" + logMsg);
-        } catch (MessagingException e) {
-            log.log(Level.SEVERE, getTimestamp() + " Problems" + logMsg + ": " + e.getMessage());
-            throw new Exception(e.getMessage());
-        }
     }
 
     private void mockSendMail(EmailMessage emailMessage, String emailAddress) {
@@ -178,7 +146,7 @@ public class EmailSender {
         }
         sb.append("\n");
         sb.append(emailMessage.getBody());
-        log.info(sb.toString());
+        LOGGER.debug("MockSendMail:\n" + sb.toString());
     }
 
     public String getSmtpHost() {
