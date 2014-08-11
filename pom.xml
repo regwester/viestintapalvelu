@@ -84,7 +84,7 @@
         <postgresql.version>9.3-1102-jdbc4</postgresql.version>
         <powermock.version>1.5.5</powermock.version>
         <pdfbox.version>1.8.1</pdfbox.version>
-        <querydsl.version>3.2.2</querydsl.version>
+        <querydsl.version>3.3.4</querydsl.version>
         <sade-generic.version>${generic.version}</sade-generic.version>
         <servlet.version>3.0.1</servlet.version>
         <springockito.version>1.0.9</springockito.version>
