@@ -4,7 +4,7 @@ angular.module('email')
 .controller('TabCtrl', ['$scope', '$state', function($scope, $state) {
   
   //$scope.tabs = [{active: false},{active: false},{active:false}];
-  //$scope.tabs = [{active: false},{active: false}]
+  $scope.tabs = [{active: false}, {active: false}];
   $scope.selectActiveTab = function() {
     //var states = ['email.savedContent.templates', 'email.savedContent.sentMails', 'email.savedContent.drafts'];
     var states = ['email.savedContent.sentMails', 'email.savedContent.drafts'];

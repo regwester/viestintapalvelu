@@ -1,0 +1,32 @@
+<div>
+    <p ng-show="totalItems() == 0">Ei tallennettuja luonnoksia</p>
+    <table ng-hide="totalItems() == 0" class="table singleRowTable">
+        <thead>
+        <tr>
+            <th>{{'email.subject' | i18n | uppercase}}</th>
+            <th>{{'email.attachments' | i18n | uppercase}}</th>
+            <th>{{'email.savedate' | i18n | uppercase}}</th>
+        </tr>
+        </thead>
+        <tbody ng-repeat="item in currentItems()" ng-click="selectItem(item)">
+        <tr>
+            <td>{{item.subject}}</td>
+            <td>
+                <div ng-if="item.attachInfo.length == 1">
+                    <span>{{item.attachInfo[0].fileName}}</span>
+                    <span>&nbsp;</span>
+                    <span>({{item.attachInfo[0].fileSize | bytesToSize}})</span>
+                </div>
+                <div ng-if="item.attachInfo.length > 1">
+                    <span tooltip-placement="top" tooltip-html-unsafe={{getAttachmentsAsHtml(item)}}><a>{{item.attachInfo.length}} {{'email.attachments' | i18n}}</a></span>
+                </div>
+            </td>
+            <td>{{item.createDate | date:'dd.MM.yyyy HH:mm'}}</td>
+        </tr>
+        <tr><td colspan="3"><div class="previewText">{{item.body | htmlToPlainText }}</div></td></tr>
+        </tbody>
+    </table>
+    <div ng-hide="totalItems() <= limit" class="pagination">
+        <pagination total-items="totalItems()" ng-model="currentPage" max-size=limit ></pagination>
+    </div>
+</div>

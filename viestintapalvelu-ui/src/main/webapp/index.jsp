@@ -82,6 +82,7 @@
     
     <!-- Directives -->
     <script type="text/javascript" src="./email/directives/upload.js"></script>
+    <script type="text/javascript" src="./email/directives/singleRowTable.js"></script>
     <script type="text/javascript" src="./report/directives/reportedMessageStatus.js"></script>
     <script type="text/javascript" src="./report/directives/limitedParagraph.js"></script>
 

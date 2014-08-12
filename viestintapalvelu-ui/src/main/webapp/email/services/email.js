@@ -9,6 +9,7 @@ angular.module('email')
     }),
     status: $resource(baseUrl + 'sendEmailStatus'),
     email: $resource(baseUrl + 'sendGroupEmail'),
-    result: $resource(baseUrl + 'sendResult')
+    result: $resource(baseUrl + 'sendResult'),
+
   };
 }]);
