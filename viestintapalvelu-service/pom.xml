@@ -87,6 +87,10 @@
             </exclusions>
         </dependency>
         <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context-support</artifactId>
+            </dependency>
+        <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
             <exclusions>
@@ -479,6 +483,13 @@
         <dependency>
             <groupId>org.glassfish.jersey.test-framework.providers</groupId>
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
+            <scope>test</scope>
+            <exclusions>
+            	<exclusion>
+            		<artifactId>asm-all-repackaged</artifactId>
+            		<groupId>org.glassfish.hk2.external</groupId>
+            	</exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>
