@@ -89,6 +89,7 @@
     <!-- Controllers -->
     <script type="text/javascript" src="./email/controllers/tab.js"></script>
     <script type="text/javascript" src="./email/controllers/draft.js"></script>
+    <script type="text/javascript" src="./email/controllers/messages.js"></script>
     <script type="text/javascript" src="./email/controllers/email.js"></script>
     <script type="text/javascript" src="./email/controllers/emailCancel.js"></script>
     <script type="text/javascript" src="./email/controllers/errorDialog.js"></script>

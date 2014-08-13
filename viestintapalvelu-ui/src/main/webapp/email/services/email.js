@@ -10,6 +10,6 @@ angular.module('email')
     status: $resource(baseUrl + 'sendEmailStatus'),
     email: $resource(baseUrl + 'sendGroupEmail'),
     result: $resource(baseUrl + 'sendResult'),
-
+    messages: $resource('/ryhmasahkoposti-service/reportMessages/currentUserHistory')
   };
 }]);
