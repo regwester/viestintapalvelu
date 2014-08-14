@@ -62,6 +62,7 @@ public class DraftConverter {
         }
         
         return new Draft.Builder()
+        .id(draftModel.getId())
         .replyTo(draftModel.getReplyTo())
         .subject(draftModel.getSubject())
         .organizationOid(draftModel.getUserOid())

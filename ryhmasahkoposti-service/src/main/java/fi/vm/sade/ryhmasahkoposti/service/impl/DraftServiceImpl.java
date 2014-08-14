@@ -28,14 +28,14 @@ public class DraftServiceImpl implements DraftService {
     
     @Override
     @Transactional
-    public Draft getDraft(Long id) {
-        DraftModel draftModel = draftDao.getDraft(id);
+    public Draft getDraft(Long id, String oid) {
+        DraftModel draftModel = draftDao.getDraft(id, oid);
         return draftConverter.convert(draftModel);
     }
 
     @Override
-    public List<Draft> getAllDrafts() {
-        List<DraftModel> draftModels = draftDao.getAllDrafts();
+    public List<Draft> getAllDrafts(String oid) {
+        List<DraftModel> draftModels = draftDao.getAllDrafts(oid);
         List<Draft> drafts = new ArrayList<Draft>();
         for(DraftModel draftModel : draftModels) {
             drafts.add(draftConverter.convert(draftModel));
@@ -44,14 +44,14 @@ public class DraftServiceImpl implements DraftService {
     }
 
     @Override
-    public Long getCount() {
-        return draftDao.getCount();
+    public Long getCount(String oid) {
+        return draftDao.getCount(oid);
     }
 
     @Override
-    public Draft deleteDraft(Long id) {
-        DraftModel draftModel = draftDao.deleteDraft(id);
-        return draftConverter.convert(draftModel);
+    @Transactional
+    public void deleteDraft(Long id, String oid) {
+        draftDao.deleteDraft(id, oid);
     }
 
     @Override

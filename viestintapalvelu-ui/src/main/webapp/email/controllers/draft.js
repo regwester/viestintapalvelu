@@ -6,11 +6,12 @@ angular.module('email')
 
     $scope.drafts = [];
 
-    DraftService.query().$promise.then(function(result) {
+    DraftService.drafts.query().$promise.then(function(result) {
       $scope.drafts = result;
     });
     
     $scope.selectDraft = function(draft) {
+      DraftService.selectDraft(draft.id);
       $scope.$emit('useDraft', draft);
     };
   }

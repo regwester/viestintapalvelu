@@ -10,6 +10,7 @@ import org.joda.time.DateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Draft {
+    private Long id;
     private String from;
     private String sender;
     private String replyTo;
@@ -26,6 +27,7 @@ public class Draft {
     public Draft() {}
     
     private Draft(Builder builder) {
+        this.id = builder.id;
         this.from = builder.from;
         this.sender = builder.sender;
         this.replyTo = builder.replyTo;
@@ -36,7 +38,8 @@ public class Draft {
         this.isHtml = builder.isHtml;
         this.createDate = builder.createDate;
     }
-
+    public Long getId() {return id;}
+    public void setId(Long id) {this.id = id;}
     public String getFrom() {
         return from;
     }
@@ -96,6 +99,7 @@ public class Draft {
     }
 
     public static class Builder {
+        private Long id;
         private String from;
         private String sender;
         private String replyTo;
@@ -107,6 +111,11 @@ public class Draft {
         private DateTime createDate;
         
         public Builder() {}
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
         
         public Builder from(String from) {
             this.from = from;
@@ -156,8 +165,18 @@ public class Draft {
 
     @Override
     public String toString() {
-        return "Draft [replyTo=" + replyTo + ", subject=" + subject + ", body=" + body + ", organizationOid=" + organizationOid
-                + ", attachInfo=" + attachInfo + ", isHtml=" + isHtml + ", createDate=" + createDate + "]";
+        return "Draft{" +
+                "id=" + id +
+                ", from='" + from + '\'' +
+                ", sender='" + sender + '\'' +
+                ", replyTo='" + replyTo + '\'' +
+                ", subject='" + subject + '\'' +
+                ", body='" + body + '\'' +
+                ", organizationOid='" + organizationOid + '\'' +
+                ", attachInfo=" + attachInfo +
+                ", isHtml=" + isHtml +
+                ", createDate=" + createDate +
+                '}';
     }
 
 }
