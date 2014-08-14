@@ -17,6 +17,10 @@ angular.module('email')
     $scope.sendGroupEmail = function () {
       $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
         function(resp) {
+          var selectedDraft = DraftService.selectedDraft();
+          if(!!selectedDraft) {
+            DraftService.drafts.delete({id: selectedDraft});
+          }
           $state.go('report_view', {messageID: resp.id});
         },
         function(error) {

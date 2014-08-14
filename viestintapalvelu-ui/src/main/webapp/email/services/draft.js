@@ -6,7 +6,7 @@ angular.module('email')
     var selectedDraft;
 
     return {
-      drafts: $resource('/ryhmasahkoposti-service/drafts/:draftId', {draftId: '@id'},
+      drafts: $resource('/ryhmasahkoposti-service/drafts/:draftId/:id', {draftId: '@id'},
         {
           //Custom resource methods
           count: {

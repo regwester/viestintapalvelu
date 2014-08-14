@@ -57,12 +57,18 @@ public class DraftResourceImpl implements DraftResource {
         return response;
     }
 
-    public Draft deleteDraft(Long draftId) {
+    public String deleteDraft(Long draftId) {
         if(draftId == null) {
             throwError400("DraftId is not defined");
         }
-        String oid = getCurrentUserOid();
-        return draftService.deleteDraft(draftId, oid);
+        try {
+            String oid = getCurrentUserOid();
+            draftService.deleteDraft(draftId, oid);
+            return "{\"code\": 200, \"status\": \"success\"}";
+        } catch (Exception e) {
+            logger.error("Failed to delete the draft.", e);
+            return "{\"code\": 200, \"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
+        }
     }
     
     public String saveDraft(Draft draft) { //TODO: validate that organization oid in draft matches user oid, or better yet, simply ignore the given oid

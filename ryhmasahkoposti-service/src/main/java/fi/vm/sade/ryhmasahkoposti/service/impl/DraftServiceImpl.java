@@ -49,9 +49,9 @@ public class DraftServiceImpl implements DraftService {
     }
 
     @Override
-    public Draft deleteDraft(Long id, String oid) {
-        DraftModel draftModel = draftDao.deleteDraft(id, oid);
-        return draftConverter.convert(draftModel);
+    @Transactional
+    public void deleteDraft(Long id, String oid) {
+        draftDao.deleteDraft(id, oid);
     }
 
     @Override

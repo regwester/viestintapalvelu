@@ -11,6 +11,6 @@ public interface DraftDAO extends JpaDAO<DraftModel, Long> {
     public DraftModel getDraft(Long id, String oid);
     public Long getCount(String oid);
     public void saveDraft(DraftModel draft);
-    public DraftModel deleteDraft(Long id, String oid);
+    public void deleteDraft(Long id, String oid);
     
 }

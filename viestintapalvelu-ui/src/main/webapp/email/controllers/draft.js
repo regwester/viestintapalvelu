@@ -11,6 +11,7 @@ angular.module('email')
     });
     
     $scope.selectDraft = function(draft) {
+      DraftService.selectDraft(draft.id);
       $scope.$emit('useDraft', draft);
     };
   }

@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
 import java.util.List;
 
+import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
 import fi.vm.sade.ryhmasahkoposti.model.QDraftModel;
 import org.springframework.stereotype.Repository;
@@ -45,9 +46,8 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<DraftModel, Long> implement
     }
 
     @Override
-    public DraftModel deleteDraft(Long id, String oid) {
-        DraftModel draft = getDraft(id, oid);
-        remove(draft);
-        return draft;
+    public void deleteDraft(Long id, String oid) { //TODO: throw exception if delete doesn't happen?
+        JPADeleteClause clause = new JPADeleteClause(getEntityManager(), draftModel);
+        clause.where(draftModel.userOid.eq(oid), draftModel.id.eq(id)).execute();
     }
 }
