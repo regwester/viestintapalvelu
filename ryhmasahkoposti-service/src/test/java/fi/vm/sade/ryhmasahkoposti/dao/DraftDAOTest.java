@@ -1,7 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import java.util.List;
-
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,8 +15,8 @@ import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.dao.DraftDAO;
 import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
+import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
@@ -31,7 +30,7 @@ public class DraftDAOTest {
     private DraftDAO draftDao;
     
     private DraftModel draftModel;
-    
+
     @Before
     public void setUp() {
         draftModel = new DraftModel.Builder()
@@ -49,7 +48,7 @@ public class DraftDAOTest {
     @Test
     @Transactional
     public void testGetDraftById() {
-        DraftModel draft = draftDao.getDraft(draftModel.getId());
+        DraftModel draft = draftDao.getDraft(draftModel.getId(), "Jack");
         
         Assert.assertEquals("jack.bauer@ctu.com", draft.getReplyTo());
         Assert.assertEquals("Saving the world", draft.getSubject());
@@ -74,7 +73,7 @@ public class DraftDAOTest {
         Long id = oldDraft.getId();
         Assert.assertNotNull(id);
         
-        DraftModel newDraft = draftDao.getDraft(id);
+        DraftModel newDraft = draftDao.getDraft(id, "John");
         
         Assert.assertEquals("john.matrix@commando.com", newDraft.getReplyTo());
         Assert.assertEquals("Bennett", newDraft.getSubject());
@@ -96,18 +95,16 @@ public class DraftDAOTest {
         
         draftDao.saveDraft(newDraft);
     
-        List<DraftModel> drafts = draftDao.getAllDrafts();
-        Assert.assertEquals(2, drafts.size());
+        List<DraftModel> drafts = draftDao.getAllDrafts("Sledge");
+        Assert.assertEquals(1, drafts.size());
     }
     
     @Test
     @Transactional
     public void testDeleteDraft() {
-        
-        DraftModel draft = draftDao.deleteDraft(draftModel.getId());
-        Assert.assertEquals(draftModel.getId(), draft.getId());
-        draft = draftDao.getDraft(draftModel.getId());
-        Assert.assertNull(draft);
+        draftDao.deleteDraft(draftModel.getId(), "Jack");
+        DraftModel draft = draftDao.getDraft(draftModel.getId(), "Jack");
+        assertThat(draft).isNull();
     }
     
 }
