@@ -6,7 +6,7 @@ angular.module('email')
 
     $scope.drafts = [];
 
-    DraftService.query().$promise.then(function(result) {
+    DraftService.drafts.query().$promise.then(function(result) {
       $scope.drafts = result;
     });
     

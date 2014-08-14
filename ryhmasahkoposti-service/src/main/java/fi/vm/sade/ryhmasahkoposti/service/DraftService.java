@@ -6,10 +6,10 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
 
 public interface DraftService {
     
-    public Draft getDraft(Long id);
-    public List<Draft> getAllDrafts();
-    public Long getCount();
-    public Draft deleteDraft(Long id);
+    public Draft getDraft(Long id, String userOid);
+    public List<Draft> getAllDrafts(String userOid);
+    public Long getCount(String userOid);
+    public Draft deleteDraft(Long id, String userOid);
     public String saveDraft(Draft draft);
     
 }

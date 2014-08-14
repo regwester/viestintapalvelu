@@ -7,10 +7,10 @@ import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
 
 public interface DraftDAO extends JpaDAO<DraftModel, Long> {
     
-    public List<DraftModel> getAllDrafts();
-    public DraftModel getDraft(Long id);
-    public Long getCount();
+    public List<DraftModel> getAllDrafts(String oid);
+    public DraftModel getDraft(Long id, String oid);
+    public Long getCount(String oid);
     public void saveDraft(DraftModel draft);
-    public DraftModel deleteDraft(Long id);
+    public DraftModel deleteDraft(Long id, String oid);
     
 }

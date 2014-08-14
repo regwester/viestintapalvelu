@@ -13,12 +13,12 @@
             -->
             <tab active="tabs[0].active">
                 <tab-heading>
-                    <a class="no-decoration" ui-sref="email.savedContent.sentEmails" ui-sref-active="active">Lähetetyt</a>
+                    <a class="no-decoration" ui-sref="email.savedContent.sentEmails" ui-sref-active="active">Lähetetyt (<span ng-bind="counts.emails"></span>)</a>
                 </tab-heading>
             </tab>
             <tab active="tabs[1].active">
                 <tab-heading>
-                    <a class="no-decoration" ui-sref="email.savedContent.drafts" ui-sref-active="active">Luonnokset</a>
+                    <a class="no-decoration" ui-sref="email.savedContent.drafts" ui-sref-active="active">Luonnokset (<span ng-bind="counts.drafts"></span>)</a>
                 </tab-heading>
             </tab>
         </tabset>

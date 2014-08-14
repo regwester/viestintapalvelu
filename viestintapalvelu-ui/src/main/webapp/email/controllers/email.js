@@ -40,7 +40,7 @@ angular.module('email')
     $scope.saveDraft = function() {
       console.log("Saving draft");
       console.log($scope.emaildata.email);
-      DraftService.save($scope.emaildata.email, function(id) {
+      DraftService.drafts.save($scope.emaildata.email, function(id) {
         //success
         $state.go('.savedContent.drafts');
       }, function(e) {
@@ -49,7 +49,7 @@ angular.module('email')
       });
     };
 
-    $scope.count = {
+    $scope.counts = {
         drafts : 0,
         emails : 0,
         templates: 0
@@ -62,8 +62,8 @@ angular.module('email')
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
-      DraftService.count().$promise.then(function(count){
-        $scope.count.drafts = count.count;
+      DraftService.drafts.count().$promise.then(function(count){
+        $scope.counts.drafts = count.count;
       });
     };
 
