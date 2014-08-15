@@ -16,8 +16,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonManagedReference;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -40,7 +39,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  *
  */
 
-@Table(name = "kirjelahetys", schema="kirjeet")
+@Table(name = "kirjelahetys", schema= "kirjeet")
 @Entity(name = "LetterBatch")
 public class LetterBatch extends BaseEntity {
 	private static final long serialVersionUID = 1L;
@@ -81,7 +80,7 @@ public class LetterBatch extends BaseEntity {
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<IPosti> iposts = new ArrayList<IPosti>();
 

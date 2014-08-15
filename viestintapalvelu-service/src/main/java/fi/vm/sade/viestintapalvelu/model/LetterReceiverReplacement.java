@@ -11,10 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
-
-import com.wordnik.swagger.annotations.ApiModel;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -36,7 +33,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 
  */
 
-@Table(name = "vastaanottajakorvauskentat", schema="kirjeet")
+@Table(name = "vastaanottajakorvauskentat", schema= "kirjeet")
 @Entity()
 public class LetterReceiverReplacement extends BaseEntity {
     private static final long serialVersionUID = 1L;

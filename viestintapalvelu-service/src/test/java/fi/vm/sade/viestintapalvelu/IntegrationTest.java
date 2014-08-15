@@ -17,21 +17,21 @@ import org.junit.ClassRule;
 import org.junit.Test;
 
 public class IntegrationTest {
-    @ClassRule
-    public static TomcatRule tomcat = new TomcatRule();
-    private String responseBody;
+    //@ClassRule
+    //public static TomcatRule tomcat = new TomcatRule();
+    /*private String responseBody;
 
     @Test
     public void staticResourcesWork() throws Exception {
         DefaultHttpClient httpClient = new DefaultHttpClient();
-        HttpGet httpGet = new HttpGet(Urls.localhost(Launcher.DEFAULT_PORT).index());
+        HttpGet httpGet = new HttpGet(Urls.localhost(1024).index());
         HttpResponse response = httpClient.execute(httpGet);
         assertEquals(200, response.getStatusLine().getStatusCode());
     }
 
     @Test
     public void addressLabelPrinting() throws Exception {
-        HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost(Launcher.DEFAULT_PORT).addresslabel()
+        HttpResponse response = get("/addresslabel_pdf.json", Urls.localhost(1024).addresslabel()
                 + "/pdf");
         assertStatusCodeEquals(200, response);
         assertEquals("Content-Type: application/pdf;charset=utf-8", response.getFirstHeader("Content-Type").toString());
@@ -41,21 +41,11 @@ public class IntegrationTest {
 
     @Test
     public void addressLabelXLSPrinting() throws Exception {
-        HttpResponse response = get("/addresslabel_xls.json", Urls.localhost(Launcher.DEFAULT_PORT).addresslabel()
+        HttpResponse response = get("/addresslabel_xls.json", Urls.localhost(1024).addresslabel()
                 + "/xls");
         assertEquals(200, response.getStatusLine().getStatusCode());
         assertEquals("Content-Type: application/vnd.ms-excel", response.getFirstHeader("Content-Type").toString());
         assertEquals("Content-Disposition: attachment; filename=\"addresslabels.xls\"",
-                response.getFirstHeader("Content-Disposition").toString());
-    }
-
-    @Test
-    public void jalkiohjauskirjePDFPrinting() throws Exception {
-        HttpResponse response = get("/jalkiohjauskirje_pdf.json", "http://localhost:" + Launcher.DEFAULT_PORT
-                + "/api/v1/jalkiohjauskirje/pdf");
-        assertEquals(200, response.getStatusLine().getStatusCode());
-        assertEquals("Content-Type: application/pdf;charset=utf-8", response.getFirstHeader("Content-Type").toString());
-        assertEquals("Content-Disposition: attachment; filename=\"jalkiohjauskirje.pdf\"",
                 response.getFirstHeader("Content-Disposition").toString());
     }
 
@@ -84,5 +74,5 @@ public class IntegrationTest {
     private void assertStatusCodeEquals(int expected, HttpResponse response) throws IOException {
         assertEquals("HTTP status code " + expected + " expected, HTTP response was: " + response
                 + readResponseBody(response), expected, response.getStatusLine().getStatusCode());
-    }
+    }*/
 }

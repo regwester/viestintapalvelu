@@ -6,9 +6,6 @@ angular.module('app')
 
     $scope.tabs = [
        {name: 'Osoitetarrat', id:'osoitetarrat', content: getContentPath('osoitetarrat')},
-       {name: 'Jälkiohjauskirje', id:'jalkiohjauskirje', content: getContentPath('jalkiohjauskirje')},
-       {name: 'Hyväksymiskirje', id:'hyvaksymiskirje', content: getContentPath('hyvaksymiskirje')},
-       {name: 'Koekutsukirje', id:'koekutsukirje', content: getContentPath('koekutsukirje')},
        {name: 'Letter', id:'letter', content: getContentPath('letter'), active: true},
        {name: 'Mallien tuonti', id:'importtemplate', content: getContentPath('importtemplate')},
        {name: 'Tulostus', id:'print', content: getContentPath('print')},

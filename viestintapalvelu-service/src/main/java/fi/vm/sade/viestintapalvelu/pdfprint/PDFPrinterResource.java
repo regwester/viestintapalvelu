@@ -18,6 +18,7 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.jsoup.Jsoup;
@@ -30,7 +31,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
 
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
@@ -46,7 +46,6 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.letter.LetterResource;
 
-@Component
 @Path(Urls.PRINTER_PATH)
 @PreAuthorize("isAuthenticated()")
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.PRINTER_PATH, description = "Pdf tulosteiden muodostus rajapinta")
@@ -63,7 +62,7 @@ public class PDFPrinterResource extends AsynchronousResource {
     private DocumentBuilder documentBuilder;
 
     @GET
-    @Produces("text/plain")
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("/isAlive")
     public String isAlive() {
         return "alive";
@@ -79,8 +78,8 @@ public class PDFPrinterResource extends AsynchronousResource {
      * @throws DocumentException
      */
     @POST
-    @Consumes("application/json")
-    @Produces("text/plain")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @Produces(MediaType.TEXT_PLAIN)
     @Path("/pdf")
     // @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     // @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
@@ -114,7 +113,7 @@ public class PDFPrinterResource extends AsynchronousResource {
      * @throws DocumentException
      */
     @POST
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces("application/pdf")
     @Path("/pdf/content")
     // @ApiOperation(value = "Muodostaa HTML-pohjaisesta asiakirja PDF-dokumentin ja palauttaa sen", notes = "")

@@ -1,21 +1,13 @@
 package fi.vm.sade.viestintapalvelu.model;
 
-import java.util.Date;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
 
-import com.wordnik.swagger.annotations.ApiModel;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -42,7 +34,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 
  */
 
-@Table(name = "vastaanottajaosoite", schema="kirjeet")
+@Table(name = "vastaanottajaosoite", schema= "kirjeet")
 @Entity()
 public class LetterReceiverAddress extends BaseEntity {
     private static final long serialVersionUID = 1L;

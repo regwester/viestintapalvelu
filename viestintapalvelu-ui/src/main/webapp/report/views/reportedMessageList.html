@@ -1,0 +1,85 @@
+<div class="container">
+	<div class="row-fluid">
+		<div class="span12">
+	    	<h1>{{'reportedmessagelist.otsikko.viestintapalvelu' | i18n}}</h1>
+	    </div>
+	</div>
+
+	<div class="row-fluid" ng-if="reportedMessagesDTO.reportedMessages.length == 0">
+	    <div class="span9">
+	        <alert type="info" ng-cloak>
+	           {{'reportedmessagelist.alert.eiRaportoitaviaViesteja' | i18n}}
+	        </alert>
+	    </div>
+	</div>
+
+
+    <div class="row-fluid">
+        <div class="span3">
+            <label class="ng-binding" for="organizationSelection">Organisaatio</label>
+        </div>
+        <div class="span6">
+            <label class="ng-binding" for="searchArgument">&nbsp;</label>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span3" ng-if="reportedMessagesDTO.organizations.length == 1" ng-repeat="organization in reportedMessagesDTO.organizations">
+            {{organization.name}}
+        </div>
+
+        <div class="span3 form-inline" ng-if="reportedMessagesDTO.organizations.length > 1">
+            <select id="organizationSelection" ng-model="form.organization" ng-change="selectOrganization()"
+               ng-options="organization as organization.name for organization in reportedMessagesDTO.organizations"
+               ng-init="form.organization = reportedMessagesDTO.organizations[reportedMessagesDTO.selectedOrganization]"> 
+            </select>
+        </div>
+
+    	<div class="span3">
+	        <input type="text" name="searchArgument" id="searchArgument" class="input-xlarge" ng-model="form.searchArgument" placeholder="{{'reportedmessagelist.text.hakuohje' | i18n}}"/>
+	    </div>
+	    
+	    <div class="span3">
+	        <button class="btn btn-primary" type="button" ng-click="search()"><span>{{'reportedmessagelist.button.hae' | i18n}}</span></button>
+	        <button class="btn" type="button" ng-click="clean()"><span>{{'reportedmessagelist.button.tyhjenna' | i18n}}</span></button>
+        </div>
+    </div>
+	
+	<div class="row-fluid">
+		<div class="span3">
+		</div>
+	</div>
+	
+	<div class="row-fluid" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
+		<div class="span3">
+			{{reportedMessagesDTO.numberOfReportedMessages}} &nbsp {{'reportedmessagelist.otsikko.raporttia' | i18n}}
+		</div>
+	</div>
+	
+    <div class="results" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
+        <table class="table-striped clickable-table-row">
+            <tr>
+                <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
+                <th class="span3 clickable-header-cell" ng-click="sort('senderName')" ng-class="clickHeader('senderName')">{{'reportedmessagelist.otsikko.lahettajanNimi' | i18n}}</th>
+                <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
+                <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
+                <th class="span4">{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
+            </tr>
+            <tr ng-repeat="reportedMessage in reportedMessagesDTO.reportedMessages" ng-click="showReportedMessage(reportedMessage)">
+                <td>{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
+                <td>{{reportedMessage.senderName}}</td>
+                <td>{{reportedMessage.callingProcess}}</td>
+                <td>{{reportedMessage.subject}}</td>
+                <td>
+                    <img ng-show="reportedMessage.sendingStatus.numberOfFailedSendings > 0" style="margin-right:10px;" src="./assets/img/alert-icon28x29.png">
+                    {{reportedMessage.statusReport}}
+                </td>
+            </tr>
+        </table>
+    </div>
+    
+    <div ng-if="reportedMessagesDTO.reportedMessages.length > 0">
+        <pagination total-items="reportedMessagesDTO.numberOfReportedMessages" items-per-page="pageSize" page="currentPage" on-select-page="selectPage(page)" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+    </div>
+</div>
+

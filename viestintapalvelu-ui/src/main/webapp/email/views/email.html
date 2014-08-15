@@ -1,0 +1,105 @@
+<div class="row" ng-if="isEmailState()">
+    <div>
+        <h2 class="align-with-form">{{'email.header.viesti' | i18n}}</h2>
+    </div>
+    <div class="span8">
+        <form novalidate="novalidate" class="form-horizontal">
+            <div class="control-group">
+                <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
+                <div class="controls" ng-if="emaildata.recipient.length > 30">
+                    {{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
+                </div>
+                <div class="controls" ng-if="emaildata.recipient.length <= 30">
+                    <span ng-repeat="recipient in emaildata.recipient">
+                        {{recipient.email}}{{$last ? '' : ', '}}
+                    </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
+                <div class="controls">
+                    <input type="text" size="40" ng-model="emaildata.email.sender"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{'email.label.from' | i18n}}</label>
+                <div class="controls">
+                    <span>&lt;{{emaildata.email.from}}&gt;</span>
+                    <input type="hidden" ng-model="emaildata.email.organizationOid"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{'email.label.vastausosoite' | i18n}}</label>
+                <div class="controls">
+                    <input type="text" size="40" ng-model="emaildata.email.replyTo"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label required">{{'email.label.otsikko' | i18n}}</label>
+                <div class="controls">
+                    <input type="text" size="40" ng-model="emaildata.email.subject"/>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label required">{{'email.label.viesti' | i18n}}</label>
+                <div class="controls">
+                     <textarea ui-tinymce="tinymceOptions" ng-model="emaildata.email.body"></textarea>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label">{{'email.label.liitteet' | i18n}}</label>
+                <div class="controls pushDown">
+                    <span class="bold" ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
+                    <ul class="filelist">
+                        <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName}} ({{attachment.fileSize | bytesToSize}})
+                            <a ng-click="remove($index)"><i class="icon-remove"></i>Poista</a>
+                        </li>
+                    </ul> 
+                </div>
+            </div>
+            <div class="control-group">
+                <div class="controls">
+                    <div class="span3 progress" ng-show="percentage">
+                        <div class="bar" ng-style="percentage2"></div>
+                    </div>
+                </div>
+        	</div>
+            <div class="control-group">
+                <div class="controls">
+                    <span class="btn btn-small fileinput-button">
+                        <span>{{'email.button.liite.valitse' | i18n}}</span>
+                        <input  id="attachment-input" type="file" name="file" data-url="/ryhmasahkoposti-service/email/addAttachment" multiple upload>
+                    </span>
+                </div>
+            </div>
+            <div class="control-group">
+                <label class="control-label"></label>
+                <div class="controls"> 
+                    <button ng-click="cancelEmail()" class="inline-operation btn btn-small">
+                        {{'email.button.peruuta' | i18n}}
+                    </button>
+                    <button ng-click="saveDraft()" class="inline-operation btn btn-small">
+                        {{'email.button.tallenna' | i18n}}
+                    </button>
+                    <button ng-click="sendGroupEmail()" class="inline-operation btn-primary btn-small">
+                        {{'email.button.laheta' | i18n}}
+                    </button>
+                </div>
+            </div>
+        </form>
+    </div>
+    <div class="span4">
+        <div class="notification">
+            <h5>Valitse viestin sisältö</h5>
+            <p>Voit valita viestin otsikon, sisällön ja liitetiedostot valitsemalla jonkin seuraavista:</p>
+            <ul class="linklist">
+                <!-- <li><a ui-sref=".savedContent.templates" ui-sref-active="active">Valmiit viestipohjat</a></li> -->
+                <li><a ui-sref=".savedContent.sentEmails" ui-sref-active="active">Lahetetyt viestit (<span ng-bind="counts.emails"></span>)</a></li>
+                <li><a ui-sref=".savedContent.drafts" ui-sref-active="active">Tallennetut luonnokset (<span ng-bind="counts.drafts"></span>)</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div ng-if="!isEmailState()">
+    <div class="span8" ui-view></div>
+</div>

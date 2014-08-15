@@ -9,10 +9,14 @@ import java.util.Map;
 import java.util.Set;
 
 import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
+import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
@@ -42,6 +46,25 @@ public class DocumentProviderTestData {
         return henkilo;
     }
 
+    public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) {
+        List<IPosti> iPostis = new ArrayList<IPosti>();
+        
+        IPosti iposti = new IPosti();
+        
+        byte[] content = {'i','p','o', 's','t','c','o','n','t','e','n','t'};
+        iposti.setContent(content);
+        iposti.setContentName("Iposti content");
+        iposti.setContentType("application/pdf");
+        iposti.setCreateDate(new Date());
+        iposti.setId(id);
+        iposti.setLetterBatch(letterBatch);
+        iposti.setSentDate(new Date());
+        iposti.setVersion(new Long(0));
+        
+        iPostis.add(iposti);
+        return iPostis;
+    }
+    
     public static fi.vm.sade.viestintapalvelu.letter.LetterBatch getLetterBatch() {
         LetterBatch letterBatch = new LetterBatch();
         
@@ -219,6 +242,35 @@ public class DocumentProviderTestData {
         return letters;
     }
 
+    public static OrganisaatioRDTO getOrganisaatioRDTO() {
+        OrganisaatioRDTO organisaatio = new OrganisaatioRDTO();
+
+        organisaatio.setOid("1.2.246.562.10.00000000001");
+        Map<String, String> nimet = new HashMap<String, String>();
+        nimet.put("fi", "Oppilaitos");
+        organisaatio.setNimi(nimet);
+
+        return organisaatio;
+    }
+
+    public static OrganizationDTO getOrganizationDTO() {
+        OrganizationDTO organizationDTO = new OrganizationDTO();
+
+        organizationDTO.setName("OPH");
+        organizationDTO.setOid("1.2.246.562.10.00000000001");
+
+        return organizationDTO;
+    }
+
+    public static PagingAndSortingDTO getPagingAndSortingDTO() {
+        PagingAndSortingDTO pagingAndSorting = new PagingAndSortingDTO();
+        
+        pagingAndSorting.setFromIndex(1);
+        pagingAndSorting.setNumberOfRows(1);
+        
+        return pagingAndSorting;
+    }
+    
     public static Replacement getReplacement(Long id, Template template) {
         Replacement replacement = new Replacement();
         

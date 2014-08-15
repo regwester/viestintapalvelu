@@ -12,9 +12,10 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 
 /*
  * CREATE TABLE kirjeet.iposti
@@ -60,7 +61,18 @@ public class IPosti extends BaseEntity {
     
     @Column(name = "sisaltotyyppi")
     private String contentType = "";
-
+    
+    public IPosti() {}
+    
+///"SELECT p.id, p.version, p.kirjelahetys_id, p.luotu from IPosti p where p.sentDate is null",
+    public IPosti(long id, long version , Date createDate, LetterBatch lb) {
+        this.setId(id);
+        this.setVersion(version);
+        this.setCreateDate(createDate);
+        this.setLetterBatch(lb);
+        
+    }
+    
     public LetterBatch getLetterBatch() {
         return letterBatch;
     }
