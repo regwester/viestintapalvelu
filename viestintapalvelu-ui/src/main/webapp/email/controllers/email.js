@@ -1,13 +1,15 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 
-  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog) {
+.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 'Global',
+  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog, Global) {
+
     $rootScope.emailsendid = "";
     $scope.tinymceOptions = {
       height: 400,
       width: 600,
-      menubar: false
+      menubar: false,
+      language: Global.getUserLanguage()
     };
 
     $scope.emaildata = window.emailData;

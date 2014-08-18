@@ -405,3 +405,7 @@ ul.attachments-list {
     margin-bottom: 5px;
     line-height: 2em;
 }
+
+.filelist .icon-remove {
+    margin-right: 5px;
+}

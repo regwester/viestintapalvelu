@@ -79,6 +79,7 @@
     <script type="text/javascript" src="./report/services/loading.js"></script>
     <script type="text/javascript" src="./report/services/reportedMessage.js"></script>
     <script type="text/javascript" src="./report/services/sharedVariables.js"></script>
+    <script type="text/javascript" src="./system/services/global.js"></script>
     
     <!-- Directives -->
     <script type="text/javascript" src="./email/directives/upload.js"></script>
