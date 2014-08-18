@@ -66,6 +66,7 @@ angular.module('email')
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
       updateDraftCount();
+      updateMessageCount();
     };
 
     $scope.percentage = 0;
@@ -92,6 +93,12 @@ angular.module('email')
       DraftService.drafts.count().$promise.then(function(count){
         $scope.counts.drafts = count.count;
       });
+    }
+
+    function updateMessageCount() {
+      EmailService.messageCount.get().$promise.then(function(count) {
+        $scope.counts.emails = count.count;
+      })
     }
 
   }
