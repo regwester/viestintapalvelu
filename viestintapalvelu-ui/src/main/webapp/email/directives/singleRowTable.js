@@ -2,7 +2,6 @@ angular.module('email').directive('rowTable', ['$filter', function($filter) {
 
   function link(scope, element, attrs) {
 
-    scope.currentPage = 1;
     scope.totalItems = function() {
       return scope.items.length;
     };
@@ -26,6 +25,8 @@ angular.module('email').directive('rowTable', ['$filter', function($filter) {
   }
 
   function Controller($scope) {
+    $scope.currentPage = 1;
+
     function groupItems() {
       var items = [];
       for (var i = 0; i < $scope.items.length; i++) {
@@ -41,6 +42,7 @@ angular.module('email').directive('rowTable', ['$filter', function($filter) {
     $scope.currentItems = function() {
       return groupItems()[$scope.currentPage - 1];
     }
+
   }
 
   return {

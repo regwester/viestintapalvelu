@@ -27,6 +27,6 @@
         </tbody>
     </table>
     <div ng-if="totalItems() > limit" class="pagination">
-        <pagination total-items="totalItems()" ng-model="currentPage" max-size=limit ></pagination>
+        <pagination total-items="totalItems()" ng-model="$parent.currentPage" items-per-page=limit ></pagination>
     </div>
 </div>
