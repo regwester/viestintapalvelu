@@ -45,11 +45,10 @@ angular.module('email')
       console.log("Saving draft");
       console.log($scope.emaildata.email);
       DraftService.drafts.save($scope.emaildata.email, function(id) {
-        //success
+        updateDraftCount();
         $state.go('.savedContent.drafts');
       }, function(e) {
-        //error
-        //do the error dialog popup
+        //do the error dialog popup?
       });
     };
 
@@ -57,8 +56,8 @@ angular.module('email')
         drafts : 0,
         emails : 0,
         templates: 0
-      };
-    
+    };
+
     $scope.$on('useDraft', function(event, draft) {
       $scope.emaildata.email = draft;
       $state.go('email');
@@ -66,9 +65,7 @@ angular.module('email')
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
-      DraftService.drafts.count().$promise.then(function(count){
-        $scope.counts.drafts = count.count;
-      });
+      updateDraftCount();
     };
 
     $scope.percentage = 0;
@@ -90,5 +87,12 @@ angular.module('email')
     };
     
     $scope.init();
+
+    function updateDraftCount() {
+      DraftService.drafts.count().$promise.then(function(count){
+        $scope.counts.drafts = count.count;
+      });
+    }
+
   }
 ]);

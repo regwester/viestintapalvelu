@@ -49,6 +49,7 @@ angular.module('email').directive('rowTable', ['$filter', function($filter) {
     templateUrl: './email/views/partials/rowTable.html',
     scope: {
       'items': '=',
+      'empty': '@',
       'ondelete': '&',
       'onselect': '&',
       'limit': '='

@@ -399,3 +399,9 @@ ul.attachments-list {
     background: #fee7a5;
     color: #333333;
 }
+
+.form-horizontal .controls {
+    padding-top: 5px;
+    margin-bottom: 5px;
+    line-height: 2em;
+}
