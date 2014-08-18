@@ -13,6 +13,7 @@ angular.module('email')
     $scope.emaildata = window.emailData;
     $scope.emaildata.email.attachInfo = [];
     $scope.emaildata.email.html = true;
+    $scope.emaildata.email.from = 'opintopolku@oph.fi'; //For display only, the value comes from the backend configs
 
     $scope.sendGroupEmail = function () {
       $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
