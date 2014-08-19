@@ -9,7 +9,13 @@ angular.module('email')
       height: 400,
       width: 600,
       menubar: false,
-      language: Global.getUserLanguage()
+      language: Global.getUserLanguage(),
+      //paste plugin to avoid ms word tags and similar content
+      plugins: "paste",
+      paste_auto_cleanup_on_paste : true,
+      paste_remove_styles: true,
+      paste_remove_styles_if_webkit: true,
+      paste_strip_class_attributes: true
     };
 
     $scope.emaildata = window.emailData;
