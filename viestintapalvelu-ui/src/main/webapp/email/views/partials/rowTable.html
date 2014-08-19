@@ -13,7 +13,7 @@
             <td>{{item.subject}}</td>
             <td>
                 <div ng-if="item.attachInfo.length == 1">
-                    <span>{{item.attachInfo[0].fileName}}</span>
+                    <span>{{item.attachInfo[0].fileName | limitSizeWithMiddleEllipsis}}</span>
                     <span>&nbsp;</span>
                     <span>({{item.attachInfo[0].fileSize | bytesToSize}})</span>
                 </div>
@@ -23,7 +23,7 @@
             </td>
             <td>{{item.createDate | date:'dd.MM.yyyy HH:mm'}}</td>
         </tr>
-        <tr><td colspan="3"><div class="previewText">{{item.body | htmlToPlainText }}</div></td></tr>
+        <tr><td colspan="3"><div class="previewText">{{item.body | htmlToPlainText}}</div></td></tr>
         </tbody>
     </table>
     <div ng-if="totalItems() > limit" class="pagination">

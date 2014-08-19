@@ -15,7 +15,7 @@ angular.module('email').directive('rowTable', ['$filter', function($filter) {
       var attachments = item.attachInfo;
       var html = '';
       for(var i = 0; i < attachments.length; i++) {
-        html += '<span>' + attachments[i].fileName + '</span>';
+        html += '<span>' + $filter('limitSizeWithMiddleEllipsis')(attachments[i].fileName, 15) + '</span>';
         html += '&nbsp;';
         html += '<span>(' + $filter('bytesToSize')(attachments[i].fileSize) + ')</span>';
         html += '<br/>';
