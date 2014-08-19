@@ -65,4 +65,11 @@ public class DraftServiceImpl implements DraftService {
         }
         return "Success";
     }
+
+    @Override
+    public String updateDraft(Long id, String oid, Draft draft) {
+        //TODO: implement me
+        return null;
+    }
+
 }

@@ -11,5 +11,6 @@ public interface DraftService {
     public Long getCount(String userOid);
     public void deleteDraft(Long id, String userOid);
     public String saveDraft(Draft draft);
-    
+    public String updateDraft(Long id, String userOid, Draft draft);
+
 }

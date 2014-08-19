@@ -53,8 +53,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         if(count == null) {
             throwError500("Count could not be retrieved");
         }
-        String response = "{\"count\":" + count.toString() + "}";
-        return response;
+        return "{\"count\":" + count.toString() + "}";
     }
 
     public String deleteDraft(Long draftId) {
@@ -64,10 +63,10 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         try {
             String oid = getCurrentUserOid();
             draftService.deleteDraft(draftId, oid);
-            return "{\"code\": 200, \"status\": \"success\"}";
+            return "{\"status\": \"success\"}";
         } catch (Exception e) {
-            logger.error("Failed to delete the draft.", e);
-            return "{\"code\": 200, \"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
+            logger.error("Failed to delete the draft: ", e);
+            return "{\"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
         }
     }
     
@@ -83,5 +82,21 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         logger.debug("Draft: ", draft.toString());
         return draftService.saveDraft(draft);
     }
+
+    @Override
+    public String updateDraft(Long id, Draft draft) {
+        if(id == null) {
+            throwError400("DraftId is not defined");
+        }
+        try {
+            String oid = getCurrentUserOid();
+            draftService.updateDraft(id, oid, draft);
+            return "{\"status\": \"success\"}";
+        } catch(Exception e ) {
+            logger.error("Failed to update the draft: ", e);
+            return "{\"status\": \"failure\"}"; //TODO: throw some unique webapplication exception?
+        }
+    }
+
 
 }
