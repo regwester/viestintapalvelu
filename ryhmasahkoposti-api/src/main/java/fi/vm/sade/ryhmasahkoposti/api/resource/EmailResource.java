@@ -107,6 +107,24 @@ public interface EmailResource {
     public Response sendEmailStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId);
 
     /**
+     * Lähettää ryhmäsähköpostin. Lisää ryhmäsähköpostiviestiin alatunnisteen.
+     * 
+     * @param emailData Ryhmäsähköpostin tiedot
+     * @return Ryhmäsähköpostin tunnus
+     */
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")   
+    @Path("sendGroupEmail")
+    @PreAuthorize(SecurityConstants.SEND)
+    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille alaviitteen kera", 
+        notes = "Lisää käyttäjän kielen mukaisen alatunnisteen lähetettävään viestiin", response = EmailSendId.class)
+    @ApiResponses({@ApiResponse(code = 500, 
+        message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
+    public Response sendEmailWithTemplate(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot",
+        required = true) EmailData emailData);
+
+    /**
      * Lähettää generoidun PDF:n sähköpostilla
      * 
      * @param emailData Ryhmäsähköpostin tiedot
@@ -122,24 +140,6 @@ public interface EmailResource {
     @ApiResponses({@ApiResponse(code = 500, 
         message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
     public Response sendPdfByEmail(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot", 
-        required = true) EmailData emailData);
-
-    /**
-     * Lähettää ryhmäsähköpostin. Lisää ryhmäsähköpostiviestiin alatunnisteen.
-     * 
-     * @param emailData Ryhmäsähköpostin tiedot
-     * @return Ryhmäsähköpostin tunnus
-     */
-    @POST
-    @Consumes("application/json")
-    @Produces("application/json")   
-    @Path("sendGroupEmail")
-    @PreAuthorize(SecurityConstants.SEND)
-    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille alaviitteen kera", 
-        notes = "Lisää käyttäjän kielen mukaisen alatunnisteen lähetettävään viestiin", response = EmailSendId.class)
-    @ApiResponses({@ApiResponse(code = 500, 
-        message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
-    public Response sendGroupEmailWithFooter(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot",
         required = true) EmailData emailData);
 
     /**

@@ -23,12 +23,15 @@ angular.module('viestintapalvelu')
       })
         .state('email.savedContent.drafts', {
           url: '/drafts',
-          templateUrl: emailUrl + 'partials/drafts.html',
+          //templateUrl: emailUrl + 'partials/drafts.html',
+          template: '<row-table items="drafts" onselect="selectDraft(id)" limit="10" empty="rowTable.empty.drafts"></row-table>',
           controller: 'DraftCtrl'
         })
         .state('email.savedContent.sentEmails', {
           url: '/sentEmails',
-          templateUrl: emailUrl + 'partials/sentEmails.html'
+          //templateUrl: emailUrl + 'partials/sentEmails.html'
+          template: '<row-table items="messages" onselect="selectEmail(id)" limit="10" empty="rowTable.empty.messages"></row-table>',
+          controller: 'MessagesCtrl'
         })
         .state('email.savedContent.templates', {
           url: '/templates',

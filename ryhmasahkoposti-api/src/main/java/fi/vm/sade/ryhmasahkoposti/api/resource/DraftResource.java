@@ -52,7 +52,7 @@ public interface DraftResource {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{draftId}")
-    public Draft deleteDraft(@PathParam(value = "draftId") Long id);
+    public String deleteDraft(@PathParam(value = "draftId") Long id);
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")

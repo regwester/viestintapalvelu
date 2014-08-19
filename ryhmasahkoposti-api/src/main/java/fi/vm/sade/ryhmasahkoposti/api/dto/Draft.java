@@ -10,12 +10,14 @@ import org.joda.time.DateTime;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class Draft {
+    private Long id;
     private String from;
     private String sender;
     private String replyTo;
     private String subject;
     private String body;
     private String organizationOid;
+    private String userOid;
     private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isHtml;
     //Pattern conforms to ISO 8601 ( http://en.wikipedia.org/wiki/ISO_8601 )
@@ -26,17 +28,20 @@ public class Draft {
     public Draft() {}
     
     private Draft(Builder builder) {
+        this.id = builder.id;
         this.from = builder.from;
         this.sender = builder.sender;
         this.replyTo = builder.replyTo;
         this.subject = builder.subject;
         this.body = builder.body;
         this.organizationOid = builder.organizationOid;
+        this.userOid = builder.userOid;
         this.attachInfo = builder.attachInfo;
         this.isHtml = builder.isHtml;
         this.createDate = builder.createDate;
     }
-
+    public Long getId() {return id;}
+    public void setId(Long id) {this.id = id;}
     public String getFrom() {
         return from;
     }
@@ -73,6 +78,8 @@ public class Draft {
     public void setOrganizationOid(String organizationOid) {
         this.organizationOid = organizationOid;
     }
+    public String getUserOid() { return userOid; }
+    public void setUserOid(String oid) { this.userOid = oid; }
     public List<AttachmentResponse> getAttachInfo() {
         return attachInfo;
     }
@@ -96,17 +103,24 @@ public class Draft {
     }
 
     public static class Builder {
+        private Long id;
         private String from;
         private String sender;
         private String replyTo;
         private String subject;
         private String body;
         private String organizationOid;
+        private String userOid;
         private List<AttachmentResponse> attachInfo = new ArrayList<AttachmentResponse>();
         private boolean isHtml;
         private DateTime createDate;
         
         public Builder() {}
+
+        public Builder id(Long id) {
+            this.id = id;
+            return this;
+        }
         
         public Builder from(String from) {
             this.from = from;
@@ -130,6 +144,10 @@ public class Draft {
         }
         public Builder organizationOid(String oid) {
             this.organizationOid = oid;
+            return this;
+        }
+        public Builder userOid(String oid) {
+            this.userOid = oid;
             return this;
         }
         public Builder addAttachment(AttachmentResponse a) {
@@ -156,8 +174,19 @@ public class Draft {
 
     @Override
     public String toString() {
-        return "Draft [replyTo=" + replyTo + ", subject=" + subject + ", body=" + body + ", organizationOid=" + organizationOid
-                + ", attachInfo=" + attachInfo + ", isHtml=" + isHtml + ", createDate=" + createDate + "]";
+        return "Draft{" +
+                "id=" + id +
+                ", from='" + from + '\'' +
+                ", sender='" + sender + '\'' +
+                ", replyTo='" + replyTo + '\'' +
+                ", subject='" + subject + '\'' +
+                ", body='" + body + '\'' +
+                ", organizationOid='" + organizationOid + '\'' +
+                ", userOid='" + userOid + '\'' +
+                ", attachInfo=" + attachInfo +
+                ", isHtml=" + isHtml +
+                ", createDate=" + createDate +
+                '}';
     }
 
 }

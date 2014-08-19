@@ -27,19 +27,12 @@ public class EmailMessage {
     private String footer;
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
-    List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
-    List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
+    private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isValid = true;
-
-    /**
-     * Template name
-     */
     private String templateName;
-
-    /**
-     * Language code
-     */
     private String languageCode;
+    private List<SourceRegister> sourceRegister;
 
     public EmailMessage() {
     }
@@ -52,13 +45,15 @@ public class EmailMessage {
         this.body = body;
     }
 
-    public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, String languageCode) {
+    public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, 
+        String languageCode, List<SourceRegister> sourceRegister) {
         this.callingProcess = callingProcess;
         this.from = from;
         this.replyTo = replyTo;
         this.subject = subject;
         this.templateName = templateName;
         this.languageCode = languageCode;
+        this.sourceRegister = sourceRegister;
     }
 
     public void setBody(String body) {
@@ -255,6 +250,14 @@ public class EmailMessage {
 
     public void setInvalid() {
         this.isValid = false;
+    }
+    
+    public List<SourceRegister> getSourceRegister() {
+        return this.sourceRegister;
+    }
+
+    public void setSourceRegister(List<SourceRegister> sourceRegister) {
+        this.sourceRegister = sourceRegister;
     }
 
     @Override

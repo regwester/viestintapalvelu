@@ -31,7 +31,8 @@ public class DraftConverter {
         .sender(draft.getSender())
         .from(draft.getFrom())
         .subject(draft.getSubject())
-        .userOid(draft.getOrganizationOid())
+        .organizationOid(draft.getOrganizationOid())
+        .userOid(draft.getUserOid())
         .body(draft.getBody())
         .isHtml(draft.isHtml())
         .createDate(draft.getCreateDate().toDate())
@@ -62,9 +63,11 @@ public class DraftConverter {
         }
         
         return new Draft.Builder()
+        .id(draftModel.getId())
         .replyTo(draftModel.getReplyTo())
         .subject(draftModel.getSubject())
-        .organizationOid(draftModel.getUserOid())
+        .organizationOid(draftModel.getOrganizationOid())
+        .userOid(draftModel.getUserOid())
         .body(body)
         .from(draftModel.getFrom())
         .sender(draftModel.getSender())

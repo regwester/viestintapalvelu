@@ -22,7 +22,6 @@
         ],
         email: {callingProcess: 'Osoitetietojarjestelma',
             sender: 'Opetushallitus',
-            from: 'opintopolku@oph.fi',
             organizationOid: '1.2.246.562.10.00000000001',
             replyTo: 'mikko.mallikas@oph.fi',
             subject: 'Testi viesti',

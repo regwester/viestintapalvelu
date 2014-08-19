@@ -4,9 +4,7 @@ import java.nio.charset.Charset;
 
 public class Constants {
     public static final int IPOST_BATCH_LIMIT = 500;
-    public static final String HYVAKSYMISKIRJE_TEMPLATE = "/templates/hyvaksymiskirje_{LANG}.html";
     public static final String LIITE_TEMPLATE = "/templates/liite_{LANG}.html";
-    public static final String JALKIOHJAUSKIRJE_TEMPLATE = "/templates/jalkiohjauskirje_{LANG}.html";
     public static final String KOEKUTSUKIRJE_TEMPLATE = "/templates/koekutsukirje_{LANG}.html";
     public static final String LETTER_TEMPLATE = "/templates/letter_{LANG}.html";
     public static final String IPOST_TEMPLATE = "/templates/ipost.xml";

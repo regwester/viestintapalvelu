@@ -11,6 +11,7 @@ import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
@@ -18,7 +19,7 @@ import fi.vm.sade.ryhmasahkoposti.api.resource.DraftResource;
 import fi.vm.sade.ryhmasahkoposti.service.DraftService;
 
 @Component
-public class DraftResourceImpl implements DraftResource {
+public class DraftResourceImpl extends GenericResourceImpl implements DraftResource {
     
     private final Logger logger = LoggerFactory.getLogger(DraftResourceImpl.class.getName());
     
@@ -29,7 +30,8 @@ public class DraftResourceImpl implements DraftResource {
         if(draftId == null) {
             throwError400("DraftId is not defined");
         }
-        Draft draft = draftService.getDraft(draftId);
+        String oid = getCurrentUserOid();
+        Draft draft = draftService.getDraft(draftId, oid);
         if(draft == null) {
             throwError404("Draft could not be found with id: " + draftId.toString());
         }
@@ -37,7 +39,8 @@ public class DraftResourceImpl implements DraftResource {
     }
     
     public List<Draft> getAllDrafts() {
-        List<Draft> drafts = draftService.getAllDrafts();
+        String oid = getCurrentUserOid();
+        List<Draft> drafts = draftService.getAllDrafts(oid);
         if(drafts == null) {
             throwError500("Drafts could not be retrieved");
         }
@@ -45,7 +48,8 @@ public class DraftResourceImpl implements DraftResource {
     }
 
     public String getCount() {
-        Long count = draftService.getCount();
+        String oid = getCurrentUserOid();
+        Long count = draftService.getCount(oid);
         if(count == null) {
             throwError500("Count could not be retrieved");
         }
@@ -53,11 +57,18 @@ public class DraftResourceImpl implements DraftResource {
         return response;
     }
 
-    public Draft deleteDraft(Long draftId) {
+    public String deleteDraft(Long draftId) {
         if(draftId == null) {
             throwError400("DraftId is not defined");
         }
-        return draftService.deleteDraft(draftId);
+        try {
+            String oid = getCurrentUserOid();
+            draftService.deleteDraft(draftId, oid);
+            return "{\"code\": 200, \"status\": \"success\"}";
+        } catch (Exception e) {
+            logger.error("Failed to delete the draft.", e);
+            return "{\"code\": 200, \"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
+        }
     }
     
     public String saveDraft(Draft draft) {
@@ -66,25 +77,11 @@ public class DraftResourceImpl implements DraftResource {
         }
         //Reset the time (might not be the best solution)
         draft.setCreateDate(new DateTime());
+        //Set the user oid (again, overwriting things might not be the most elegant solution)
+        draft.setUserOid(getCurrentUserOid());
 
         logger.debug("Draft: ", draft.toString());
         return draftService.saveDraft(draft);
     }
-    
-    private void throwError404(String msg) {
-        throwError(Response.Status.NOT_FOUND, msg);
-    }
-    
-    private void throwError400(String msg) {
-        throwError(Response.Status.BAD_REQUEST, msg);
-    }
-    
-    private void throwError500(String msg) {
-        throwError(Response.Status.INTERNAL_SERVER_ERROR, msg);
-    }
-    
-    private void throwError(Response.Status status, String msg) {
-        throw new WebApplicationException(Response.status(status)
-                .type(MediaType.TEXT_PLAIN).entity(msg).build());
-    }
+
 }

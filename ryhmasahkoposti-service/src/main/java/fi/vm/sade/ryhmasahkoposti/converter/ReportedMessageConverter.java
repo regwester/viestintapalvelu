@@ -50,9 +50,9 @@ public class ReportedMessageConverter {
 
         // Set personal name
         if(senderFromPersonal != null)
-            reportedMessage.setSenderName(senderFromPersonal.getDefaultValue());
+            reportedMessage.setSenderDisplayText(senderFromPersonal.getDefaultValue());
         else
-            reportedMessage.setSenderName(emailMessage.getSender());
+            reportedMessage.setSenderDisplayText(emailMessage.getSender()); //TODO: resolve mismatch in naming
 
         // Set reply-to
         if (senderFrom != null) 

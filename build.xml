@@ -8,9 +8,9 @@ shell command:
 #ant -Dtomcat-host=luokka -Dtomcat-port=8311
 -->
         <property name="oph.name" value="viestintapalvelu"/>
-        <property name="viestintapalvelu.service.pom.version" value="8.0-SNAPSHOT"/>
-        <property name="ryhmasahkoposti.service.pom.version" value="9.8-SNAPSHOT"/>
-        <property name="viestintapalvelu.ui.pom.version" value="9.8-SNAPSHOT"/>
+        <property name="viestintapalvelu.service.pom.version" value="9.9-SNAPSHOT"/>
+        <property name="ryhmasahkoposti.service.pom.version" value="9.9-SNAPSHOT"/>
+        <property name="viestintapalvelu.ui.pom.version" value="9.9-SNAPSHOT"/>
 		
         <property name="maven.repo" value="${user.home}/.m2/repository"/>
         <property name="tomcat.name" value="tomcat_${oph.name}"/>
@@ -48,7 +48,7 @@ shell command:
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/viestintapalvelu-ui/${viestintapalvelu.ui.pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/viestintapalvelu-ui/${viestintapalvelu.ui.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
@@ -60,7 +60,7 @@ mkdir -p ${tomcat.home}/webapps/viestintapalvelu;
 mkdir -p ${tomcat.home}/webapps/viestintapalvelu-ui;
 mkdir -p ${tomcat.home}/webapps/ryhmasahkoposti-service;
 
-unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu*.war;
+unzip -qo -d${tomcat.home}/webapps/viestintapalvelu ${tomcat.home}/webapps/viestintapalvelu-service*.war;
 unzip -qo -d${tomcat.home}/webapps/viestintapalvelu-ui ${tomcat.home}/webapps/viestintapalvelu-ui*.war;
 unzip -qo -d${tomcat.home}/webapps/ryhmasahkoposti-service ${tomcat.home}/webapps/ryhmasahkoposti-service*.war;
 

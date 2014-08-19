@@ -53,6 +53,10 @@ public class ReplacementDTO extends BaseDTO {
      */
     public final static String NAME_EMAIL_SUBJECT = "subject";
 
+    /**
+     * Replacement name of email subject
+     */
+    public final static String NAME_EMAIL_BODY = "sisalto";
 
     /**
      * @return the name

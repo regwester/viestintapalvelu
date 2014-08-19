@@ -79,15 +79,18 @@
     <script type="text/javascript" src="./report/services/loading.js"></script>
     <script type="text/javascript" src="./report/services/reportedMessage.js"></script>
     <script type="text/javascript" src="./report/services/sharedVariables.js"></script>
+    <script type="text/javascript" src="./system/services/global.js"></script>
     
     <!-- Directives -->
     <script type="text/javascript" src="./email/directives/upload.js"></script>
+    <script type="text/javascript" src="./email/directives/singleRowTable.js"></script>
     <script type="text/javascript" src="./report/directives/reportedMessageStatus.js"></script>
     <script type="text/javascript" src="./report/directives/limitedParagraph.js"></script>
 
     <!-- Controllers -->
     <script type="text/javascript" src="./email/controllers/tab.js"></script>
     <script type="text/javascript" src="./email/controllers/draft.js"></script>
+    <script type="text/javascript" src="./email/controllers/messages.js"></script>
     <script type="text/javascript" src="./email/controllers/email.js"></script>
     <script type="text/javascript" src="./email/controllers/emailCancel.js"></script>
     <script type="text/javascript" src="./email/controllers/errorDialog.js"></script>

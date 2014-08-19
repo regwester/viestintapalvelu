@@ -1,22 +1,29 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 
-  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog) {
+.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 'Global',
+  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog, Global) {
+
     $rootScope.emailsendid = "";
     $scope.tinymceOptions = {
       height: 400,
       width: 600,
-      menubar: false
+      menubar: false,
+      language: Global.getUserLanguage()
     };
 
     $scope.emaildata = window.emailData;
     $scope.emaildata.email.attachInfo = [];
     $scope.emaildata.email.html = true;
+    $scope.emaildata.email.from = 'opintopolku@oph.fi'; //For display only, the value comes from the backend configs
 
     $scope.sendGroupEmail = function () {
       $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
         function(resp) {
+          var selectedDraft = DraftService.selectedDraft();
+          if(!!selectedDraft) {
+            DraftService.drafts.delete({id: selectedDraft});
+          }
           $state.go('report_view', {messageID: resp.id});
         },
         function(error) {
@@ -40,21 +47,20 @@ angular.module('email')
     $scope.saveDraft = function() {
       console.log("Saving draft");
       console.log($scope.emaildata.email);
-      DraftService.save($scope.emaildata.email, function(id) {
-        //success
+      DraftService.drafts.save($scope.emaildata.email, function(id) {
+        updateDraftCount();
         $state.go('.savedContent.drafts');
       }, function(e) {
-        //error
-        //do the error dialog popup
+        //do the error dialog popup?
       });
     };
 
-    $scope.count = {
+    $scope.counts = {
         drafts : 0,
         emails : 0,
         templates: 0
-      };
-    
+    };
+
     $scope.$on('useDraft', function(event, draft) {
       $scope.emaildata.email = draft;
       $state.go('email');
@@ -62,9 +68,8 @@ angular.module('email')
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
-      DraftService.count().$promise.then(function(count){
-        $scope.count.drafts = count.count;
-      });
+      updateDraftCount();
+      updateMessageCount();
     };
 
     $scope.percentage = 0;
@@ -86,5 +91,18 @@ angular.module('email')
     };
     
     $scope.init();
+
+    function updateDraftCount() {
+      DraftService.drafts.count().$promise.then(function(count){
+        $scope.counts.drafts = count.count;
+      });
+    }
+
+    function updateMessageCount() {
+      EmailService.messageCount.get().$promise.then(function(count) {
+        $scope.counts.emails = count.count;
+      })
+    }
+
   }
 ]);

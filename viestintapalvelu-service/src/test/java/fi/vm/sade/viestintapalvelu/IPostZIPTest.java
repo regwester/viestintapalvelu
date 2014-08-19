@@ -1,22 +1,5 @@
 package fi.vm.sade.viestintapalvelu;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.jalkiohjauskirje.Jalkiohjauskirje;
-import org.dom4j.Document;
-import org.dom4j.DocumentException;
-import org.dom4j.DocumentHelper;
-import org.dom4j.XPath;
-import org.dom4j.io.SAXReader;
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipInputStream;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 

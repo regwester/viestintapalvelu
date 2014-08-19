@@ -22,6 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
@@ -37,7 +38,7 @@ import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
-public class EmailResourceImpl implements EmailResource {
+public class EmailResourceImpl extends GenericResourceImpl implements EmailResource {
     private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
 
     @Value("${ryhmasahkoposti.from}")
@@ -182,8 +183,7 @@ public class EmailResourceImpl implements EmailResource {
     public Response getCount() {
         log.debug("Retrieving the count for emails");
         try {
-            // TODO: replace with user oid, that you get as request parameter somehow
-            Long count = emailService.getCount("1234"); 
+            Long count = emailService.getCount(getCurrentUserOid());
             String response = "{\"count\":" + count.toString() + "}";
             return Response.ok(response).build();
         } catch (Exception e) {
@@ -209,4 +209,5 @@ public class EmailResourceImpl implements EmailResource {
         }
         return result;
     }
+
 }

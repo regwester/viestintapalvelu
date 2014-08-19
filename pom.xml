@@ -30,12 +30,18 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <buildversion_prefix />
 
+        <ant-contrib.version>1.0b3</ant-contrib.version>
+
         <checkstyle.plugin.version>2.9.1</checkstyle.plugin.version>
         <checkstyle.excludes>**/generated/**/*,**/com/**/*,**/org/**/*,**/net/**/*,**/*Mock.java</checkstyle.excludes>
         <checkstyle.skip>false</checkstyle.skip>
         <checkstyle.failsOnError>true</checkstyle.failsOnError>
         <checkstyle.consoleOutput>true</checkstyle.consoleOutput>
         <checkstyle.configLocation><![CDATA[http://pulpetti.hard.ware.fi:9000/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=SonarWayWithFindbugsAndOPHCheckstyle]]></checkstyle.configLocation>
+
+        <clover.version>3.1.8</clover.version>
+        <clover.outputDirectory>${bamboo.data.home}/www/clover/${project.groupId}</clover.outputDirectory>
+        <clover.base>${bamboo.data.home}/clover/${project.groupId}</clover.base>
         <!-- end-of-build-parent properties -->
 
         <assertj.version>1.6.1</assertj.version>
@@ -894,7 +900,7 @@
                                     <echo file="target/${project.build.finalName}/${buildversion_prefix}buildversion.txt">
                                         <![CDATA[artifactId=${project.artifactId}
                                             version=${project.version}
-                                            buildNumber=${build}
+                                            buildNumber=${project.build}
                                             branchName=${branch}
                                             vcsRevision=${revision}
                                             buildTtime=${maven.build.timestamp}
@@ -1641,7 +1647,8 @@
             </properties>
         </profile>
 
-        <profile><!-- Generate db diagram on Bamboo master branch builds -->
+        <!-- Generate db diagram on Bamboo master branch builds -->
+        <profile>
             <id>generate-db-diagram</id>
             <activation>
                 <property>

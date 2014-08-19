@@ -16,7 +16,7 @@
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">{{'email.label.lahettaja' | i18n}}</label>
+                <label class="control-label">{{'email.label.sender' | i18n}}</label>
                 <div class="controls">
                     <input type="text" size="40" ng-model="emaildata.email.sender"/>
                 </div>
@@ -49,7 +49,7 @@
             <input type="hidden" ng-model="emaildata.email.templateName"/> 
             <div class="control-group">
                 <label class="control-label">{{'email.label.liitteet' | i18n}}</label>
-                <div class="controls pushDown">
+                <div class="controls">
                     <span class="bold" ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
                     <ul class="filelist">
                         <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName}} ({{attachment.fileSize | bytesToSize}})
@@ -68,7 +68,7 @@
             <div class="control-group">
                 <div class="controls">
                     <span class="btn btn-small fileinput-button">
-                        <span>{{'email.button.liite.valitse' | i18n}}</span>
+                        <span>{{'email.button.attachment.choose' | i18n}}</span>
                         <input  id="attachment-input" type="file" name="file" data-url="/ryhmasahkoposti-service/email/addAttachment" multiple upload>
                     </span>
                 </div>
@@ -91,12 +91,12 @@
     </div>
     <div class="span4">
         <div class="notification">
-            <h5>Valitse viestin sisältö</h5>
-            <p>Voit valita viestin otsikon, sisällön ja liitetiedostot valitsemalla jonkin seuraavista:</p>
+            <h5>{{'email.notification.choose' | i18n}}</h5>
+            <p>{{'email.notification.description' | i18n }}</p>
             <ul class="linklist">
                 <!-- <li><a ui-sref=".savedContent.templates" ui-sref-active="active">Valmiit viestipohjat</a></li> -->
-                <li><a ui-sref=".savedContent.sentEmails" ui-sref-active="active">Lahetetyt viestit (<span ng-bind="count.emails"></span>)</a></li>
-                <li><a ui-sref=".savedContent.drafts" ui-sref-active="active">Tallennetut luonnokset (<span ng-bind="count.drafts"></span>)</a></li>
+                <li><a ui-sref=".savedContent.sentEmails" ui-sref-active="active">{{'email.sentEmails' | i18n}} (<span ng-bind="counts.emails"></span>)</a></li>
+                <li><a ui-sref=".savedContent.drafts" ui-sref-active="active">{{'email.drafts' | i18n}} (<span ng-bind="counts.drafts"></span>)</a></li>
             </ul>
         </div>
     </div>
