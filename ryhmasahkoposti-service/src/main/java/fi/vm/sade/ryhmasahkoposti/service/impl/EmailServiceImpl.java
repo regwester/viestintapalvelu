@@ -186,7 +186,8 @@ public class EmailServiceImpl implements EmailService {
         } else
             throw new Exception("Template build error. messageId=" + messageId);
 
-        String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), message.getMessageReplacements(), recipientReplacements);
+        String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), 
+            message.getMessageReplacements(), recipientReplacements);
         if (!StringUtils.isEmpty(buildMessageSubject)) {
             message.setSubject(buildMessageSubject);
         } else

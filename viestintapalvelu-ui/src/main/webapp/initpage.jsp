@@ -26,7 +26,12 @@
             organizationOid: '1.2.246.562.10.00000000001',
             replyTo: 'mikko.mallikas@oph.fi',
             subject: 'Testi viesti',
-            body: ''
+            body: '',
+            templateName: 'emailtemplate',
+            languageCode: 'FI',
+            sourceRegister: [
+                {name: 'opintopolku'}
+            ]
         }
     }
         </textarea>
