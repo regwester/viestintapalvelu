@@ -23,8 +23,9 @@ public class ReportedMessageConverter {
         this.currentUserComponent = currentUserComponent;
     }
 
-    public ReportedMessage convert(EmailMessage emailMessage, ReplacementDTO senderFrom, ReplacementDTO senderFromPersonal, ReplacementDTO replyTo, 
-            ReplacementDTO replyToPersonal, ReplacementDTO subject, String templateContent) throws IOException {
+    public ReportedMessage convert(EmailMessage emailMessage, ReplacementDTO senderFrom, ReplacementDTO senderFromPersonal, 
+        ReplacementDTO replyTo, ReplacementDTO replyToPersonal, ReplacementDTO subject, String templateContent) 
+        throws IOException {
         ReportedMessage reportedMessage = new ReportedMessage();
 
         Henkilo henkilo = currentUserComponent.getCurrentUser();

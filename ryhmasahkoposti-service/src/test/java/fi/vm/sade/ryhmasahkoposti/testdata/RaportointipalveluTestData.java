@@ -27,6 +27,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -83,6 +84,13 @@ public class RaportointipalveluTestData {
         emailMessage.setFrom("lahettaja.oppilaitos@sposti.fi");
         emailMessage.setSenderOid("1.2.246.562.24.42645159413");
         emailMessage.setSubject("Koekutsu");
+        
+        List<SourceRegister> sourceRegisters = new ArrayList<SourceRegister>();
+        SourceRegister sourceRegister = new SourceRegister();
+        sourceRegister.setName("opintopolku");
+        sourceRegisters.add(sourceRegister);
+        
+        emailMessage.setSourceRegister(sourceRegisters);
 
         return emailMessage;
     }

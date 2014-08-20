@@ -21,8 +21,10 @@ import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 
@@ -38,31 +40,31 @@ public class TemplateBuilder {
      * @param template
      * @return
      */
-    public String buildTemplate(TemplateDTO template) {
+    public String buildTemplate(TemplateDTO template, EmailData emailData) {
 
-	if (template == null) {
-	    LOGGER.error("Template is null");
-	    return null;
-	}
+        if (template == null) {
+            LOGGER.error("Template is null");
+            return null;
+        }
 
-	// Create a list to sort
-	List<TemplateContentDTO> contentList = new ArrayList<TemplateContentDTO>();
-	for (TemplateContentDTO templateContent : template.getContents()) {
-	    contentList.add(templateContent);
-	}
+        // Create a list to sort
+        List<TemplateContentDTO> contentList = new ArrayList<TemplateContentDTO>();
+        for (TemplateContentDTO templateContent : template.getContents()) {
+            contentList.add(templateContent);
+        }
 
-	// Sort
-	Collections.sort(contentList);
+        // Sort
+        Collections.sort(contentList);
 
-	// Create page
-	StringBuffer result = new StringBuffer();
-	for (TemplateContentDTO tc : contentList) {
+        // Create page
+        StringBuffer result = new StringBuffer();
+        for (TemplateContentDTO tc : contentList) {
 
-	    String page = createPage(template, tc.getContent().getBytes()); 
-	    result.append(page);
-	}
+            String page = createPage(template, emailData, tc.getContent().getBytes());
+            result.append(page);
+        }
 
-	return result.toString();
+        return result.toString();
     }
 
     /**
@@ -71,27 +73,25 @@ public class TemplateBuilder {
      * @param template
      * @return
      */
-    public String buildTempleMessage(String message, 
-	    List<ReplacementDTO> messageReplacements, 
-	    List<ReportedRecipientReplacementDTO> recipientReplacements) {
+    public String buildTempleMessage(String message, List<ReplacementDTO> messageReplacements,
+        List<ReportedRecipientReplacementDTO> recipientReplacements) {
+        Map<String, Object> replacements = new HashMap<String, Object>();
 
-	Map<String, Object> replacements = new HashMap<String, Object>();        	
+        // Message replacements exist
+        if (messageReplacements != null) { 
+            for (ReplacementDTO repl : messageReplacements) {
+                replacements.put(repl.getName(), repl.getDefaultValue());
+            }            
+        }
 
-	// Place message replacements
-	if (messageReplacements != null) {
-	    for (ReplacementDTO repl : messageReplacements) {
-		replacements.put(repl.getName(), repl.getDefaultValue());
-	    }
-	}
+        // Place user replacements
+        if (recipientReplacements != null) {
+            for (ReportedRecipientReplacementDTO repl : recipientReplacements) {
+                replacements.put(repl.getName(), repl.getDefaultValue());
+            }
+        }
 
-	// Place user replacements
-	if (recipientReplacements != null) {
-	    for (ReportedRecipientReplacementDTO repl : recipientReplacements) {
-		replacements.put(repl.getName(), repl.getDefaultValue());
-	    }
-	}
-
-	return createContent(message, replacements); 
+        return createContent(message, replacements);
     }
 
     /**
@@ -103,42 +103,44 @@ public class TemplateBuilder {
      */
     private String createContent(String message, Map<String, Object> replacements) {
 
-	@SuppressWarnings("unchecked")
-	Map<String, Object> dataContext = createDataContext(replacements);
+        @SuppressWarnings("unchecked")
+        Map<String, Object> dataContext = createDataContext(replacements);
 
-	StringWriter writer = new StringWriter();
-	templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", 
-		new InputStreamReader(new ByteArrayInputStream(message.getBytes())));
-	return writer.toString();
+        StringWriter writer = new StringWriter();
+        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(
+            new ByteArrayInputStream(message.getBytes())));
+        return writer.toString();
     }
 
     /**
      * Create data context
+     * 
      * @param replacementsList
      * @return
      */
     private Map<String, Object> createDataContext(Map<String, Object>... replacementsList) {
+        Map<String, Object> data = new HashMap<String, Object>();
+                
+        for (Map<String, Object> replacements : replacementsList) {
+            if (replacements == null) {
+                continue;
+            }
 
-	Map<String, Object> data = new HashMap<String, Object>();
-	for (Map<String, Object> replacements : replacementsList) {
-	    if (replacements != null) {
-		for (String key : replacements.keySet()) {
-		    if (replacements.get(key) instanceof String) {
-			data.put(key, cleanHtmlFromApi((String) replacements.get(key)));
-		    } else {
-			data.put(key, replacements.get(key));
-		    }
-		}
-	    }
-	}
+            for (String key : replacements.keySet()) {
+                if (replacements.get(key) instanceof String) {
+                    data.put(key, cleanHtmlFromApi((String) replacements.get(key)));
+                } else {
+                    data.put(key, replacements.get(key));
+                }
+            }
+        }
 
-	data.put("letterDate",
-		new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-	return data;
+        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        return data;
     }
 
     private String cleanHtmlFromApi(String string) {
-	return Jsoup.clean(string, Whitelist.relaxed());
+        return Jsoup.clean(string, Whitelist.relaxed());
     }
 
     /**
@@ -151,19 +153,35 @@ public class TemplateBuilder {
      * @throws IOException
      * @throws DocumentException
      */
-    private String createPage(TemplateDTO template, byte[] pageContent) {
-
-	Map<String, Object> dataContext = new HashMap<String, Object>();
-	String styles = template.getStyles();
-	if (styles == null) {
-	    styles = "";
-	}
-	dataContext.put("tyylit", styles);
+    private String createPage(TemplateDTO template, EmailData emailData, byte[] pageContent) {
+        Map<String, Object> dataContext = new HashMap<String, Object>();
+        String styles = template.getStyles();
+        
+        if (styles == null) {
+            styles = "";
+        }
+                
+        dataContext.put("tyylit", styles);
         dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
 
-	StringWriter writer = new StringWriter();
-	templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(pageContent)));
-	return writer.toString();
+        if (emailData.getEmail().getBody() != null) {
+            dataContext.put("sisalto", cleanHtmlFromApi((String) emailData.getEmail().getBody()));
+        }
+        
+        if (emailData.getEmail().getSourceRegister() != null) {
+            Map<String, Boolean> sourceRegisters = new HashMap<String, Boolean>();
+            
+            for (SourceRegister sourceRegister : emailData.getEmail().getSourceRegister()) {
+                sourceRegisters.put(sourceRegister.getName(), true);
+            }
+            
+            dataContext.put("sourceregisters", sourceRegisters);
+        }
+
+        StringWriter writer = new StringWriter();
+        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(
+            new ByteArrayInputStream(pageContent)));
+        return writer.toString();
 
     }
 }
