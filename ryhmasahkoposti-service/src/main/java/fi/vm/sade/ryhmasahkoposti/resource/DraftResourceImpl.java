@@ -3,15 +3,12 @@ package fi.vm.sade.ryhmasahkoposti.resource;
 import java.util.List;
 
 import javax.ws.rs.PathParam;
-import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
@@ -78,6 +75,8 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         draft.setCreateDate(new DateTime());
         //Set the user oid (again, overwriting things might not be the most elegant solution)
         draft.setUserOid(getCurrentUserOid());
+        //clean the html
+        draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
 
         logger.debug("Draft: ", draft.toString());
         return draftService.saveDraft(draft);
