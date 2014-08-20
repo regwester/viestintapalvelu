@@ -22,7 +22,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
@@ -36,6 +35,7 @@ import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 
 @Component
 public class EmailResourceImpl extends GenericResourceImpl implements EmailResource {
@@ -90,13 +90,28 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
-    public Response initGroupEmail() {
+    public Response ping() {
         Response response = Response.ok("ok").build();
         return response;
     }
 
+    // TODO: Validate the values we get from the client (are empty subject/body/recipients ok?)
     @Override
     public Response sendEmail(EmailData emailData) {
+        /*
+         *  Select source address
+         */
+        handleFromAddress(emailData);
+        /*
+         *  Select source address and template
+         */
+        chooseTemplate(emailData);
+        /*
+         * Check if request includes attachment 
+         * validate it and add to database
+         */
+        handleIncludedAttachments(emailData);
+
         try {
             String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
             log.info("DB index is " + sendId);
@@ -111,8 +126,8 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
-    public Response sendEmailStatus(String sendId) {
-        log.error("sendEmailStatus called with ID: " + sendId + ".");
+    public Response getStatus(String sendId) {
+        log.error("getStatus called with ID: " + sendId + ".");
         try {
             SendingStatusDTO sendingStatusDTO = groupEmailReportingService.getSendingStatus(Long.valueOf(sendId));
             return Response.ok(sendingStatusDTO).build();
@@ -122,54 +137,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         }
     }
 
-    // TODO: Validate the values we get from the client (are empty subject/body/recipients ok?)
     @Override
-    public Response sendEmailWithTemplate(EmailData emailData) { 
-        // Replace whatever from address we got from the client with the global one
-        emailData.getEmail().setFrom(globalFromAddress);
-        
-        // Calling service hasn't given template name. Use default template.
-        if (emailData.getEmail().getTemplateName() == null || emailData.getEmail().getTemplateName().isEmpty()) {
-            emailData.getEmail().setTemplateName(defaultTemplateName);
-        }
-        // Calling service hasn't given template language. Use default language.        
-        if (emailData.getEmail().getLanguageCode() == null || emailData.getEmail().getLanguageCode().isEmpty()) {
-            emailData.getEmail().setLanguageCode(defaultTemplateLanguage);
-        }       
-
-        try {
-            String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
-            log.info("DB index is " + sendId);
-            return Response.ok(new EmailSendId(sendId)).build();
-        } catch (ExternalInterfaceException e) {
-            log.error("Problems in getting data from external interfaces, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            log.error("Problems in writing send data info to DB, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
-    }
-
-    @Override
-    public Response sendPdfByEmail(EmailData emailData) {
-        try {
-            EmailAttachment emailAttachment = emailData.getEmail().getAttachments().get(0);
-            AttachmentResponse attachmentResponse = groupEmailReportingService.saveAttachment(emailAttachment);
-            emailData.getEmail().addAttachInfo(attachmentResponse);
-            String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
-            return Response.ok(new EmailSendId(sendId)).build();
-        } catch (ExternalInterfaceException e) {
-            log.error("Problems in getting data from external interfaces, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            log.error("Problems in writing send data info to DB, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
-    }
-
-    @Override
-    public Response sendResult(String sendId) {
-        log.info("sendResult called with ID: " + sendId + ".");
+    public Response getResult(String sendId) {
+        log.info("getResult called with ID: " + sendId + ".");
         try {
             ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(Long.valueOf(sendId));
             return Response.ok(reportedMessageDTO).build();
@@ -193,12 +163,16 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     }
 
+    private void handleFromAddress(EmailData emailData) {
+        // Replace whatever from address we got from the client with the global one
+        emailData.getEmail().setFrom(globalFromAddress);
+    }
+    
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {
         AttachmentResponse result = new AttachmentResponse();
 
         if (!item.isFormField()) {
             Long id = groupEmailReportingService.saveAttachment(item);
-
             String fileName = item.getName();
             String contentType = item.getContentType();
             byte[] data = item.get();
@@ -209,5 +183,42 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         }
         return result;
     }
-
+    
+    private void handleIncludedAttachments(EmailData emailData) {
+        if (hasAttachments(emailData)) {
+            for (EmailAttachment emailAttachment : emailData.getEmail().getAttachments()) {
+                AttachmentResponse attachmentResponse = groupEmailReportingService.saveAttachment(emailAttachment);
+                emailData.getEmail().addAttachInfo(attachmentResponse);
+            }
+        }
+    }
+    
+    private boolean hasAttachments(EmailData emailData) {
+        if (emailData.getEmail() != null) {
+            List<? extends EmailAttachment> attachmentList = emailData.getEmail().getAttachments();
+            return (attachmentList != null && attachmentList.size() > 0); 
+        } else  {
+            return false;
+        }
+    }
+    /*
+     * Choose default templates
+     */
+    // TODO: define default templates by calling process 
+    private void chooseTemplate(EmailData emailData) {
+        CallingProcess callingProcess = CallingProcess.getByName(emailData.getEmail().getCallingProcess());
+        // backwards compatibility 
+        // TODO possible to define defaults by process 
+        // and make sure that there is default template which  all services can use 
+        if (callingProcess != null && callingProcess == CallingProcess.OSOITETIETOJARJESTELMA) {
+            // Calling service hasn't given template name. Use default template.
+            if (emailData.getEmail().getTemplateName() == null || emailData.getEmail().getTemplateName().isEmpty()) {
+                emailData.getEmail().setTemplateName(defaultTemplateName);
+            }
+            // Calling service hasn't given template language. Use default language.        
+            if (emailData.getEmail().getLanguageCode() == null || emailData.getEmail().getLanguageCode().isEmpty()) {
+                emailData.getEmail().setLanguageCode(defaultTemplateLanguage);
+            }
+        }
+    }
 }

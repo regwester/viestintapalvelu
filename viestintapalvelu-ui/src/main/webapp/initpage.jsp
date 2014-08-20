@@ -12,12 +12,12 @@
         <%}%>
             {oid: '1.2.246.562.24.21860986107',
             oidType: 'virkailija',
-            email: 'ville.vastaanottaja@example.com',
+            email: 'veli.vastaanottaja@example.com',
             languageCode: 'FI'},
             
             {oid: '1.2.246.562.24.98095750306',
             oidType: 'virkailija',
-            email: 'torspo.uolevi@example.com',
+            email: 'veera.vastaanottaja@example.com',
             languageCode: 'FI'}
         ],
         email: {callingProcess: 'Osoitetietojarjestelma',
