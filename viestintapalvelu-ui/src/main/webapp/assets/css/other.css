@@ -405,6 +405,13 @@ ul.attachments-list {
     margin-bottom: 5px;
     line-height: 2em;
 }
+.form-horizontal .control-group {
+    margin-bottom: 10px;
+}
+
+.form-horizontal .control-group.attachment-group {
+    margin-bottom: 0px;
+}
 
 .filelist .icon-remove {
     margin-right: 5px;

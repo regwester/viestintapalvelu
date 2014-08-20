@@ -47,20 +47,20 @@
                 </div>
             </div>
             <input type="hidden" ng-model="emaildata.email.templateName"/> 
-            <div class="control-group">
+            <div class="control-group attachment-group">
                 <label class="control-label">{{'email.label.liitteet' | i18n}}</label>
                 <div class="controls">
                     <span class="bold" ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
                     <ul class="filelist">
-                        <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName}} ({{attachment.fileSize | bytesToSize}})
+                        <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName | limitSizeWithMiddleEllipsis : 15}} ({{attachment.fileSize | bytesToSize}})
                             <a ng-click="remove($index)"><i class="icon-remove"></i>Poista</a>
                         </li>
                     </ul> 
                 </div>
             </div>
-            <div class="control-group">
+            <div ng-show="percentage" class="control-group">
                 <div class="controls">
-                    <div class="span3 progress" ng-show="percentage">
+                    <div class="span3 progress">
                         <div class="bar" ng-style="percentage2"></div>
                     </div>
                 </div>
