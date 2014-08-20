@@ -37,5 +37,6 @@ public class InputCleaner {
         Whitelist wl = Whitelist.relaxed();
         wl.addTags("span");
         wl.addAttributes(":all", "style");
+        return wl;
     }
 }
