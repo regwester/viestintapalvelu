@@ -18,7 +18,7 @@ import fi.vm.sade.ryhmasahkoposti.service.DraftService;
 @Service
 public class DraftServiceImpl implements DraftService {
 
-    final Logger logger = LoggerFactory.getLogger(DraftServiceImpl.class);
+    final Logger log = LoggerFactory.getLogger(DraftServiceImpl.class);
     
     @Autowired
     private DraftDAO draftDao;
@@ -50,7 +50,7 @@ public class DraftServiceImpl implements DraftService {
 
     @Override
     @Transactional
-    public void deleteDraft(Long id, String oid) {
+    public void deleteDraft(Long id, String oid) throws Exception {
         draftDao.deleteDraft(id, oid);
     }
 
@@ -65,4 +65,11 @@ public class DraftServiceImpl implements DraftService {
         }
         return "Success";
     }
+
+    @Override
+    public String updateDraft(Long id, String oid, Draft draft) {
+        //TODO: implement me
+        return null;
+    }
+
 }

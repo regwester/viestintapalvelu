@@ -9,7 +9,8 @@ public interface DraftService {
     public Draft getDraft(Long id, String userOid);
     public List<Draft> getAllDrafts(String userOid);
     public Long getCount(String userOid);
-    public void deleteDraft(Long id, String userOid);
+    public void deleteDraft(Long id, String userOid) throws Exception;
     public String saveDraft(Draft draft);
-    
+    public String updateDraft(Long id, String userOid, Draft draft);
+
 }

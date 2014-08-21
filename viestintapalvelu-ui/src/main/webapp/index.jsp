@@ -69,6 +69,7 @@
     <script type="text/javascript" src="./system/filters/localization.js"></script>
     <script type="text/javascript" src="./system/filters/html2text.js"></script>
     <script type="text/javascript" src="./system/filters/bytes2size.js"></script>
+    <script type="text/javascript" src="./system/filters/limitsize.js"></script>
 
     <!-- Services -->
     <script type="text/javascript" src="./email/services/email.js"></script>

@@ -61,7 +61,7 @@ public interface MessageReportingResource {
         @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
         @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
-        @QueryParam(RestConstants.PARAM_ORDER) String order);
+        @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
 	
 	/**
 	 * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen organisaationsa lähettämistä ryhmäshköpostiviesteistä
@@ -95,7 +95,7 @@ public interface MessageReportingResource {
         @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
         @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
-        @QueryParam(RestConstants.PARAM_ORDER) String order);
+        @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
 	
 	/**
 	 * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen organisaationsa lähettämistä ryhmäshköpostiviesteistä
@@ -113,7 +113,7 @@ public interface MessageReportingResource {
     @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai ilmoitus liittymävirheestä")})
 	public Response getReportedMessagesSentByCurrentUser(
 			@ApiParam(value="Viestin lähettänyt prosessi, esim. Osoitepalvelujarjestelma", required=false)
-			@QueryParam(RestConstants.PARAM_PROCESS) String process);
+			@QueryParam(RestConstants.PARAM_PROCESS) String process) throws Exception;
 	
 	/**
 	 * Hakee yksittäisen ryhmäsähköpostiviestin tiedot
@@ -129,7 +129,7 @@ public interface MessageReportingResource {
         notes = "Hakee avainta vastaavaa ryhmäsähköpostiviestin tiedot.", response = ReportedMessageDTO.class)
 	@ApiResponses(value = {@ApiResponse(code = 500, message = "Internal service error")})
 	public Response getReportedMessage(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) 
-	    @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID);
+	    @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID) throws Exception;
 	
 	/**
 	 * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa tietyn määrän vastaanottajien tietoja
@@ -158,7 +158,7 @@ public interface MessageReportingResource {
         @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
         @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
-        @QueryParam(RestConstants.PARAM_ORDER) String order);
+        @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
 
 	/**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui
@@ -179,7 +179,7 @@ public interface MessageReportingResource {
             + "Palauttaa halutun määrän vastaanottajia lajiteltuna halutun sarakkeen mukaisesti", 
         response = ReportedMessageDTO.class)
     @ApiResponses(value={@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
-    public Response getReportedMessageAndRecipientsSendingUnsuccesful(
+    public Response getReportedMessageAndRecipientsSendingUnsuccessful(
         @ApiParam(value="Ryhmäsähköpostiviestin avain", required=true)
         @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID, 
         @ApiParam(value="Haettavien rivien lukumäärä", required=true)
@@ -189,7 +189,7 @@ public interface MessageReportingResource {
         @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
         @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
-        @QueryParam(RestConstants.PARAM_ORDER) String order);
+        @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
     
     /**
      * Palauttaa yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui
@@ -205,5 +205,5 @@ public interface MessageReportingResource {
     @ApiResponses(value={@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
     public Response downloadReportedMessageAttachment(
     		@ApiParam(value="Ryhmäsähköpostiviestin liitteen avain", required=true)
-    		@PathParam(RestConstants.PARAM_ATTACHMENT_ID) Long attachmentID);
+    		@PathParam(RestConstants.PARAM_ATTACHMENT_ID) Long attachmentID) throws Exception;
 }
