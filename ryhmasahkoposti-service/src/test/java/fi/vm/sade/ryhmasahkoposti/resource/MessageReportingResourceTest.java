@@ -52,7 +52,7 @@ public class MessageReportingResourceTest {
     }
     
     @Test
-    public void testGetReportedMessagesIsSuccesful() {
+    public void testGetReportedMessagesIsSuccessful() throws Exception {
         PagingAndSortingDTO mockedPagingAndSortingDTO = RaportointipalveluTestData.getPagingAndSortingDTO();
         when(mockedPagingAndSortingDTOConverter.convert(any(Integer.class), any(Integer.class), any(String.class), 
             any(String.class))).thenReturn(mockedPagingAndSortingDTO);
@@ -78,7 +78,7 @@ public class MessageReportingResourceTest {
     }
 
     @Test
-    public void testGetReportedMessagesWithSearchArgumentIsSuccesful() {
+    public void testGetReportedMessagesWithSearchArgumentIsSuccessful() throws Exception {
         PagingAndSortingDTO mockedPagingAndSortingDTO = RaportointipalveluTestData.getPagingAndSortingDTO();
         when(mockedPagingAndSortingDTOConverter.convert(any(Integer.class), any(Integer.class), any(String.class), 
             any(String.class))).thenReturn(mockedPagingAndSortingDTO);
@@ -109,7 +109,7 @@ public class MessageReportingResourceTest {
     }
     
     @Test
-    public void testGetReportedMessagesSentByCurrentUserIsSuccessful() {
+    public void testGetReportedMessagesSentByCurrentUserIsSuccessful() throws Exception {
     	PagingAndSortingDTO mockedPagingAndSortingDTO = new PagingAndSortingDTO();
     	mockedPagingAndSortingDTO.setFromIndex(0);
     	mockedPagingAndSortingDTO.setNumberOfRows(0);

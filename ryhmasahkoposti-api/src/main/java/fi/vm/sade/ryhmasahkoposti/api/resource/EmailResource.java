@@ -90,7 +90,7 @@ public interface EmailResource {
     @ApiResponses({@ApiResponse(code = 500, 
         message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
     public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true)
-        EmailData emailData);
+        EmailData emailData) throws Exception;
 
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot
@@ -104,7 +104,7 @@ public interface EmailResource {
     @Path("sendEmailStatus")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response = SendingStatusDTO.class)
-    public Response sendEmailStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId);
+    public Response sendEmailStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId) throws Exception;
 
     /**
      * Lähettää ryhmäsähköpostin. Lisää ryhmäsähköpostiviestiin alatunnisteen.
@@ -122,7 +122,7 @@ public interface EmailResource {
     @ApiResponses({@ApiResponse(code = 500, 
         message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
     public Response sendEmailWithTemplate(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot",
-        required = true) EmailData emailData);
+        required = true) EmailData emailData) throws Exception;
 
     /**
      * Lähettää generoidun PDF:n sähköpostilla
@@ -140,7 +140,7 @@ public interface EmailResource {
     @ApiResponses({@ApiResponse(code = 500, 
         message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
     public Response sendPdfByEmail(@ApiParam(value = "Lähetettävän ryhmäsähköpostin viestin ja vastaanottajien tiedot", 
-        required = true) EmailData emailData);
+        required = true) EmailData emailData) throws Exception;
 
     /**
      * Pyytää tiedot raportoittavista ryhmäsähköposteista
@@ -163,5 +163,5 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.READ)
     @ApiOperation(value = "Palauttaa sähköpostien lukumäärän")
     @ApiResponses({@ApiResponse(code = 500, message = "Internal service error")})
-    public Response getCount();
+    public Response getCount() throws Exception;
 }

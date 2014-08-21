@@ -46,7 +46,7 @@ public interface DraftResource {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{draftId}")
-    public String deleteDraft(@PathParam(value = "draftId") Long id);
+    public String deleteDraft(@PathParam(value = "draftId") Long id) throws Exception;
     
     @POST
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
@@ -57,5 +57,5 @@ public interface DraftResource {
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Path("/{draftId}")
-    public String updateDraft(@PathParam(value="draftId") Long id, Draft draft);
+    public String updateDraft(@PathParam(value="draftId") Long id, Draft draft) throws Exception;
 }

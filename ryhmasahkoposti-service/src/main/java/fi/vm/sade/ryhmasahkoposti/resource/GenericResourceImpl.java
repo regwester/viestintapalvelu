@@ -8,23 +8,6 @@ import javax.ws.rs.core.Response;
 
 public class GenericResourceImpl {
 
-    protected void throwError404(String msg) {
-        throwError(Response.Status.NOT_FOUND, msg);
-    }
-
-    protected void throwError400(String msg) {
-        throwError(Response.Status.BAD_REQUEST, msg);
-    }
-
-    protected void throwError500(String msg) {
-        throwError(Response.Status.INTERNAL_SERVER_ERROR, msg);
-    }
-
-    protected void throwError(Response.Status status, String msg) {
-        throw new WebApplicationException(Response.status(status)
-                .type(MediaType.TEXT_PLAIN).entity(msg).build());
-    }
-
     /**
      * Fetches user oid from SecurityContext
      *

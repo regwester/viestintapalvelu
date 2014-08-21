@@ -2,6 +2,9 @@ package fi.vm.sade.ryhmasahkoposti.resource;
 
 import java.util.List;
 
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.InternalServerErrorException;
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.PathParam;
 
 import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
@@ -25,12 +28,12 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
     
     public Draft getDraft(@PathParam("draftId") Long draftId) {
         if(draftId == null) {
-            throwError400("DraftId is not defined");
+            throw new BadRequestException("DraftId is not defined");
         }
         String oid = getCurrentUserOid();
         Draft draft = draftService.getDraft(draftId, oid);
         if(draft == null) {
-            throwError404("Draft could not be found with id: " + draftId.toString());
+            throw new NotFoundException("Draft could not be found with id: " + draftId.toString());
         }
         return draft;
     }
@@ -39,7 +42,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         String oid = getCurrentUserOid();
         List<Draft> drafts = draftService.getAllDrafts(oid);
         if(drafts == null) {
-            throwError500("Drafts could not be retrieved");
+            throw new InternalServerErrorException("Drafts could not be retrieved");
         }
         return drafts;
     }
@@ -48,20 +51,20 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         String oid = getCurrentUserOid();
         Long count = draftService.getCount(oid);
         if(count == null) {
-            throwError500("Count could not be retrieved");
+            throw new InternalServerErrorException("Count could not be retrieved");
         }
         return "{\"count\":" + count.toString() + "}";
     }
 
-    public String deleteDraft(Long draftId) {
+    public String deleteDraft(Long draftId) throws Exception {
         if(draftId == null) {
-            throwError400("DraftId is not defined");
+            throw new BadRequestException("DraftId is not defined");
         }
         try {
             String oid = getCurrentUserOid();
             draftService.deleteDraft(draftId, oid);
             return "{\"status\": \"success\"}";
-        } catch (Exception e) {
+        } catch (Exception e) { //TODO: don't catch anything here, instead keep throwing some meaningful exception
             logger.error("Failed to delete the draft: ", e);
             return "{\"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
         }
@@ -69,7 +72,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
     
     public String saveDraft(Draft draft) {
         if(draft == null) {
-            throwError400("Draft is not defined");
+            throw new BadRequestException("Draft is not defined");
         }
         //Reset the time (might not be the best solution)
         draft.setCreateDate(new DateTime());
@@ -83,17 +86,19 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
     }
 
     @Override
-    public String updateDraft(Long id, Draft draft) {
+    public String updateDraft(Long id, Draft draft) throws Exception {
         if(id == null) {
-            throwError400("DraftId is not defined");
+            throw new BadRequestException("DraftId is not defined");
         }
         try {
             String oid = getCurrentUserOid();
+            //clean the html
+            draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
             draftService.updateDraft(id, oid, draft);
             return "{\"status\": \"success\"}";
-        } catch(Exception e ) {
+        } catch(Exception e ) { //TODO: don't catch anything here, instead keep throwing some meaningful exception
             logger.error("Failed to update the draft: ", e);
-            return "{\"status\": \"failure\"}"; //TODO: throw some unique webapplication exception?
+            return "{\"status\": \"failure\"}";
         }
     }
 
