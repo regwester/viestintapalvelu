@@ -22,7 +22,7 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
 
 	@Override
     public Long getNumberOfReportedMessages(String organizationOid) {
-        return reportedMessageDAO.findNumberOfReportedMessage(organizationOid);
+        return reportedMessageDAO.findNumberOfReportedMessages(organizationOid);
     }
 
     @Override
@@ -42,9 +42,8 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
 	}
     
     @Override
-	public List<ReportedMessage> getReportedMessages(String senderOid,
-			String process, PagingAndSortingDTO pagingAndSorting) {
-		return reportedMessageDAO.findBySenderOidAndProcess(senderOid, process, pagingAndSorting);
+	public List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting) {
+		return reportedMessageDAO.findBySenderOid(senderOid, pagingAndSorting);
 	}
 
 	@Override

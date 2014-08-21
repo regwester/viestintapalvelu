@@ -93,8 +93,7 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
         String senderOid = groupEmailReportingService.getCurrentUserOid();
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(null, null);
-        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(senderOid,
-                process, pagingAndSorting);
+        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(senderOid, pagingAndSorting);
 
         return Response.ok(reportedMessagesDTO).build();
 
@@ -120,7 +119,7 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
                                                                        Integer page, String sortedBy, String order) throws Exception {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessageDTO reportedMessageDTO =
-                groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccesful(messageID, pagingAndSorting);
+                groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccessful(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();
     }
 

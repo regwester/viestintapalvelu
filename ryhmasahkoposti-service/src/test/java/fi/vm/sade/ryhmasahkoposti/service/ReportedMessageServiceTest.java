@@ -56,7 +56,7 @@ public class ReportedMessageServiceTest {
 	}
 	
 	@Test
-	public void testReportedMessageSaveIsSuccesful() throws IOException {		
+	public void testReportedMessageSaveIsSuccessful() throws IOException {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		
 		ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -94,17 +94,16 @@ public class ReportedMessageServiceTest {
 		
 		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
 		
-		when(mockedReportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi", 
-				pagingAndSorting)).thenReturn(reportedMessages);
+		when(mockedReportedMessageDAO.findBySenderOid("1.2.246.562.24.42645159413", pagingAndSorting)).thenReturn(reportedMessages);
         
-        List<ReportedMessage> result = reportedMessageService.getReportedMessages("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
+        List<ReportedMessage> result = reportedMessageService.getUserMessages("1.2.246.562.24.42645159413", pagingAndSorting);
 		
 		assertNotNull(result);
 		assertEquals(1, result.size());
 	}
 
 	@Test
-	public void testFindBySearchCriteriaIsSuccesful() throws IOException {
+	public void testFindBySearchCriteriaIsSuccessful() throws IOException {
 		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
 		mockedReportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 					
@@ -123,7 +122,7 @@ public class ReportedMessageServiceTest {
 		    reportedMessageService.getReportedMessages(reportedMessageQuery, pagingAndSorting);
 		
 		assertNotNull(reportedMessages);
-		assertNotEquals(0, reportedMessages.size());		
+		assertNotEquals(0, reportedMessages.size());
 	}
 	
 	@Test
@@ -139,7 +138,7 @@ public class ReportedMessageServiceTest {
 	}
 
 	@Test
-	public void testGetReportedMessageNotFoundByPrimaryKey() {		
+	public void testGetReportedMessageNotFoundByPrimaryKey() {
 		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 		reportedMessage.setId(new Long(1));
 		

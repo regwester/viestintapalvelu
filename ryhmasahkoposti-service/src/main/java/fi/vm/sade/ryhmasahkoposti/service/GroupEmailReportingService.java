@@ -76,7 +76,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
      */
-    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccesful(Long messageID, 
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID,
 	    PagingAndSortingDTO pagingAndSorting);
 
     /**
@@ -93,12 +93,10 @@ public interface GroupEmailReportingService {
      * Hakee käyttäjän määritellyn prosessin sisällä lähettämät 
      * 
      * @param senderOid Organisaation oid-tunnus
-     * @param processConstraint Prosessi, jonka kautta viesti on lähetetty
      * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
      * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
      */
-    public ReportedMessagesDTO getReportedMessagesBySenderOid(String organizationOid, 
-	    String process, PagingAndSortingDTO pagingAndSorting);
+    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee hakuparametrien mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -121,7 +119,7 @@ public interface GroupEmailReportingService {
     /**
      * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
      * 
-     * @param vastaanottajienLukumaara Palautettavien vastaanottajien lukumaara
+     * @param listSize Palautettavien vastaanottajien lukumaara
      * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
     public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
@@ -161,7 +159,7 @@ public interface GroupEmailReportingService {
     /**
      * Hakee ryhmäsähköpostin liitteen tietokannasta
      * 
-     * @param fileItem Liitetiedoston tiedot
+     * @param attachmentID Liitetiedoston tunniste
      * @return Liitteen tiedot
      */
     public ReportedAttachment getAttachment(Long attachmentID) throws IOException;

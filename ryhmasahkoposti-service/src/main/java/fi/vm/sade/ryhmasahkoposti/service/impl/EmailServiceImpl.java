@@ -13,10 +13,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
@@ -64,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public Long getCount(String oid) {
-        return emailDao.findNumberOfReportedMessage(oid);
+        return emailDao.findNumberOfUserMessages(oid);
     }
 
     /**

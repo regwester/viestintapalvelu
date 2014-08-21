@@ -122,7 +122,7 @@ public class MessageReportingResourceTest {
     	
     	ReportedMessagesDTO mockedReportedMessagesDTO = RaportointipalveluTestData.getReportedMessagesDTO();
         when(mockedGroupEmailReportingService.getReportedMessagesBySenderOid(
-            mockedCurrentUserOid, "Hakuprosessi", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
+            mockedCurrentUserOid, mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
     	
     	Response response = messageReportingResource.getReportedMessagesSentByCurrentUser("Hakuprosessi");
     	assertEquals(Status.OK.getStatusCode(), response.getStatus()); // test mock implementation

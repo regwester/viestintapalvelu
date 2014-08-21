@@ -35,7 +35,7 @@ public interface ReportedMessageService {
      * Hakee annettujen parametrien mukaiset raportoitavat viestit
      * 
      * @param query Hakuparametrit
-     * @param Sivutus ja lajittelutiedot
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Lists raportoitavia viestejä {@link ReportedMessage}
      */
     public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
@@ -54,11 +54,10 @@ public interface ReportedMessageService {
      * Hakee määritellyn lähettäjän tietyn prosessin sisällä lähettämät raportoitavat viestit
      *  
      * @param senderOid Organisaation oid-tunnus
-     * @param processConstraint Prosessi, jonka kautta viesti on lähetetty
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return
      */
-    public List<ReportedMessage> getReportedMessages(String senderOid, String processConstraint, PagingAndSortingDTO pagingAndSorting);
+    public List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Tallentaa raportoitvan ryhmäsähköpostin viestin
