@@ -72,7 +72,7 @@ public interface EmailResource {
     @Path("ok")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa OK-vastauksen käyttöliittymälle")
-    public Response ping();
+    public Response ok();
     
     /**
      * Lähettää ryhmäsähköpostin vastaanottajille ilman alaviitettä

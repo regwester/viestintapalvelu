@@ -90,7 +90,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
-    public Response ping() {
+    public Response ok() {
         Response response = Response.ok("ok").build();
         return response;
     }
