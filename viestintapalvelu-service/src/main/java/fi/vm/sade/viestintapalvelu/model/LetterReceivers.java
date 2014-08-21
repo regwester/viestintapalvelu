@@ -34,7 +34,6 @@ CREATE TABLE kirjeet.vastaanottaja (
 )
  */
 
-
 @Table(name = "vastaanottaja", schema= "kirjeet")
 @Entity()
 public class LetterReceivers extends BaseEntity {
@@ -55,7 +54,10 @@ public class LetterReceivers extends BaseEntity {
      
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private LetterReceiverAddress letterReceiverAddress;
-  
+
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private LetterReceiverEmail letterReceiverEmail;
+
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private LetterReceiverLetter letterReceiverLetter;
   
@@ -92,7 +94,15 @@ public class LetterReceivers extends BaseEntity {
 		this.letterReceiverAddress = letterReceiverAddress;
 	}
 
-	public LetterReceiverLetter getLetterReceiverLetter() {
+	public LetterReceiverEmail getLetterReceiverEmail() {
+        return letterReceiverEmail;
+    }
+
+    public void setLetterReceiverEmail(LetterReceiverEmail letterReceiverEmail) {
+        this.letterReceiverEmail = letterReceiverEmail;
+    }
+
+    public LetterReceiverLetter getLetterReceiverLetter() {
 		return letterReceiverLetter;
 	}
 
@@ -101,11 +111,10 @@ public class LetterReceivers extends BaseEntity {
 	}
 
 	@Override
-	public String toString() {
-		return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp="
-				+ timestamp + ", letterReceiverReplacement="
-				+ letterReceiverReplacement + ", letterReceiverAddress="
-				+ letterReceiverAddress + "]";
-	}
+    public String toString() {
+        return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
+                + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
+                + letterReceiverLetter + "]";
+    }
 
 }

@@ -14,38 +14,49 @@ public class Letter {
     @ApiModelProperty(value = "Osoitetiedot", required = true)
     private AddressLabel addressLabel;
 
+    @ApiModelProperty(value = "Kirjeen vastaanottajan sähköpostiosoite. Kirjeestä lähetetään sähköposti, mikäli sähköpostiosoite on annettu.", required = false)
+    private String emailAddress;
+
     @ApiModelProperty(value = "Kirjepohjan vastaanottaja kielikoodi. Mikäli annettua kielikoodia vastaava kirjepohja löytyy, käytetään sitä."
             + " kielikoodi ISO 639-1")
     private String languageCode;
 
     @ApiModelProperty(value = "Kirjeen vastaanottajakohtaiset personointikentät", required = false, notes = "")
     private Map<String, Object> templateReplacements;
-    
+
     @ApiModelProperty(value = "Kirjeen sisältö")
     private LetterContent letterContent;
-    
-    
+
     public Letter() {
     }
 
-    public Letter(AddressLabel addressLabel,  Map<String, Object> customLetterContents) {
-        this.addressLabel = addressLabel;
-        this.templateReplacements = customLetterContents;
-    }
-    public Letter(AddressLabel addressLabel, Template template,
-            Map<String, Object> customLetterContents) {
+    public Letter(AddressLabel addressLabel, Map<String, Object> customLetterContents) {
         this.addressLabel = addressLabel;
         this.templateReplacements = customLetterContents;
     }
 
-    public Letter(AddressLabel addressLabel, String templateName,
-            String languageCode, Map<String, Object> replacements) {
+    public Letter(AddressLabel addressLabel, Template template, Map<String, Object> customLetterContents) {
+        this.addressLabel = addressLabel;
+        this.templateReplacements = customLetterContents;
+    }
+
+    public Letter(AddressLabel addressLabel, String templateName, String languageCode, Map<String, Object> replacements) {
         this.addressLabel = addressLabel;
         this.templateReplacements = replacements;
     }
 
+    public Letter(AddressLabel addressLabel, String templateName, String languageCode, Map<String, Object> replacements, String emailAddress) {
+        this.addressLabel = addressLabel;
+        this.templateReplacements = replacements;
+        this.emailAddress = emailAddress;
+    }
+
     public AddressLabel getAddressLabel() {
         return addressLabel;
+    }
+
+    public String getEmailAddress() {
+        return emailAddress;
     }
 
     public Map<String, Object> getCustomLetterContents() {
@@ -63,10 +74,10 @@ public class Letter {
     public void setAddressLabel(AddressLabel addressLabel) {
         this.addressLabel = addressLabel;
     }
-        
+
     public LetterContent getLetterContent() {
-		return letterContent;
-	}
+        return letterContent;
+    }
 
     public String getLanguageCode() {
         return languageCode;
@@ -76,14 +87,13 @@ public class Letter {
         this.languageCode = languageCode;
     }
 
-	public void setLetterContent(LetterContent letterContent) {
-		this.letterContent = letterContent;
-	}
+    public void setLetterContent(LetterContent letterContent) {
+        this.letterContent = letterContent;
+    }
 
-	@Override
+    @Override
     public String toString() {
-        return "Letter [addressLabel=" + addressLabel + ", templateReplacements="
-                + templateReplacements + "]";
+        return "Letter [addressLabel=" + addressLabel + ", templateReplacements=" + templateReplacements + "]";
     }
 
 }
