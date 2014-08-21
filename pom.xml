@@ -478,6 +478,12 @@
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-http</artifactId>
                 <version>${camel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>geronimo-servlet_3.0_spec</artifactId>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
