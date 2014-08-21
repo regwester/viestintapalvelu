@@ -65,7 +65,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
             draftService.deleteDraft(draftId, oid);
             return "{\"status\": \"success\"}";
         } catch (Exception e) { //TODO: don't catch anything here, instead keep throwing some meaningful exception
-            logger.error("Failed to delete the draft: ", e);
+            logger.error("Failed to delete the draft: {}", e);
             return "{\"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
         }
     }
@@ -81,7 +81,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         //clean the html
         draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
 
-        logger.debug("Draft: ", draft.toString());
+        logger.debug("Draft: {}", draft.toString());
         return draftService.saveDraft(draft);
     }
 
@@ -97,7 +97,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
             draftService.updateDraft(id, oid, draft);
             return "{\"status\": \"success\"}";
         } catch(Exception e ) { //TODO: don't catch anything here, instead keep throwing some meaningful exception
-            logger.error("Failed to update the draft: ", e);
+            logger.error("Failed to update the draft: {}", e);
             return "{\"status\": \"failure\"}";
         }
     }

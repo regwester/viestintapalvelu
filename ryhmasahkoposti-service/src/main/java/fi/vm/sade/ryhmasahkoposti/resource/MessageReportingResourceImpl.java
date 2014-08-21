@@ -22,7 +22,7 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
 public class MessageReportingResourceImpl implements MessageReportingResource {
-    private static Logger log = LoggerFactory.getLogger(MessageReportingResourceImpl.class);
+    private static Logger logger = LoggerFactory.getLogger(MessageReportingResourceImpl.class);
     private GroupEmailReportingService groupEmailReportingService;
     private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
     private PagingAndSortingDTOConverter pagingAndSortingDTOConverter;

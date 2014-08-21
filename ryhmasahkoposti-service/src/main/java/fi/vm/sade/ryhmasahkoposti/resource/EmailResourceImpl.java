@@ -35,7 +35,7 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
 public class EmailResourceImpl extends GenericResourceImpl implements EmailResource {
-    private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
+    private final static Logger logger = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
 
     @Value("${ryhmasahkoposti.from}")
     private String globalFromAddress;
@@ -55,7 +55,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)
         throws IOException, URISyntaxException, ServletException {
 
-        log.info("Adding attachment " + request.getMethod());
+        logger.debug("Adding attachment: {}", request.getMethod());
 
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         AttachmentResponse result = null;
@@ -80,7 +80,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
             response.setStatus(400);
             response.getWriter().append("Not a multipart request");
         }
-        log.info("Added attachment: " + result);
+        logger.debug("Added attachment: {}", result);
         JSONObject json = new JSONObject(result.toMap());
         return json.toString();
     }
@@ -94,13 +94,13 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     @Override
     public Response sendEmail(EmailData emailData) throws Exception {
         String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
-        log.info("DB index is " + sendId);
+        logger.debug("DB index is: {}", sendId);
         return Response.ok(new EmailSendId(sendId)).build();
     }
 
     @Override
     public Response sendEmailStatus(String sendId) throws Exception {
-        log.error("sendEmailStatus called with ID: " + sendId + ".");
+        logger.debug("sendEmailStatus called with ID: {}", sendId);
         SendingStatusDTO sendingStatusDTO = groupEmailReportingService.getSendingStatus(Long.valueOf(sendId));
         return Response.ok(sendingStatusDTO).build();
     }
@@ -121,7 +121,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         }
 
         String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
-        log.info("DB index is " + sendId);
+        logger.debug("DB index is: {}", sendId);
         return Response.ok(new EmailSendId(sendId)).build();
     }
 
@@ -136,14 +136,14 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     @Override
     public Response sendResult(String sendId) {
-        log.info("sendResult called with ID: " + sendId + ".");
+        logger.debug("sendResult called with ID: {}", sendId);
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(Long.valueOf(sendId));
         return Response.ok(reportedMessageDTO).build();
     }
 
     @Override
     public Response getCount() throws Exception {
-        log.debug("Retrieving the count for emails");
+        logger.debug("Retrieving the count for emails");
         Long count = emailService.getCount(getCurrentUserOid());
         String response = "{\"count\":" + count.toString() + "}";
         return Response.ok(response).build();
