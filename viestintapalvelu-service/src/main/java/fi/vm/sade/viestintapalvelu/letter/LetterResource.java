@@ -122,8 +122,8 @@ public class LetterResource extends AsynchronousResource {
         String documentId;
         try {
             
-            boolean valid = LetterBatchValidator.validate(input);
-            LOG.debug("Validated input got " + valid);
+            LetterBatchValidator.validate(input);
+            LOG.debug("Validated input");
             
             byte[] pdf = letterBuilder.printPDF(input);
             

@@ -62,8 +62,8 @@ public class LetterBuilder {
 
     
     public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException, Exception {
-        boolean valid = LetterBatchValidator.validate(batch);
-        LOG.debug("Validated batch result: " + valid);
+        LetterBatchValidator.validate(batch);
+        LOG.debug("Validated batch result");
         
         Map<String, byte[]> subZips = new HashMap<String, byte[]>();
         List<LetterBatch> subBatches = batch.split(Constants.IPOST_BATCH_LIMIT);
@@ -93,8 +93,8 @@ public class LetterBuilder {
     public byte[] printPDF(LetterBatch batch) throws IOException,
             DocumentException, Exception {
 
-        boolean valid = LetterBatchValidator.validate(batch);
-        LOG.debug("Validated batch result: " + valid);
+        LetterBatchValidator.validate(batch);
+        LOG.debug("Validated batch result");
 
         MergedPdfDocument resultPDF = buildPDF(batch);
         // store batch to database
