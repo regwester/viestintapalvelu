@@ -365,6 +365,11 @@ public class LetterResource extends AsynchronousResource {
     @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
         notes = "")
     public Response asyncLetter( @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final LetterBatch input) {
+        try {
+            LetterBatchValidator.validate(input);
+        } catch (Exception e) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
         Long id = letterService.createLetter(input).getId();
         return Response.status(Status.OK).entity(id).build();
     }
