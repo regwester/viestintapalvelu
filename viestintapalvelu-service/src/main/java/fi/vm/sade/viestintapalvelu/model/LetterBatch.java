@@ -17,6 +17,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -71,6 +72,14 @@ public class LetterBatch extends BaseEntity {
 
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
+    
+    @Column(name = "kasittely_aloitettu")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date handlingStarted;
+    
+    @Column(name = "kasittely_valmis")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date handlingFinished;
     
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -177,7 +186,23 @@ public class LetterBatch extends BaseEntity {
     
     public String getTag() {
         return tag;
-    }    
+    }
+    
+    public Date getHandlingFinished() {
+        return handlingFinished;
+    }
+    
+    public void setHandlingFinished(Date handlingFinished) {
+        this.handlingFinished = handlingFinished;
+    }
+    
+    public Date getHandlingStarted() {
+        return handlingStarted;
+    }
+    
+    public void setHandlingStarted(Date handlingStarted) {
+        this.handlingStarted = handlingStarted;
+    }
 
     @Override
 	public String toString() {
