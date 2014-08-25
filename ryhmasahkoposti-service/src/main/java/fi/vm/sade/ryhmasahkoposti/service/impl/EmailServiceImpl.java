@@ -62,7 +62,7 @@ public class EmailServiceImpl implements EmailService {
 
     @Override
     public Long getCount(String oid) {
-        return emailDao.findNumberOfReportedMessage(oid);
+        return emailDao.findNumberOfUserMessages(oid);
     }
 
     /**

@@ -129,9 +129,9 @@ public class ReportedMessageDTOConverter {
     }
 
     private void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
-        Long numberOfSuccesfulSendings = new Long(0);
+        Long numberOfSuccessfulSendings = new Long(0);
         if (sendingStatusDTO.getNumberOfSuccesfulSendings() != null) {
-            numberOfSuccesfulSendings = sendingStatusDTO.getNumberOfSuccesfulSendings();
+            numberOfSuccessfulSendings = sendingStatusDTO.getNumberOfSuccesfulSendings();
         }
 
         Long numberOfFailedSendings = new Long(0);
@@ -139,7 +139,7 @@ public class ReportedMessageDTOConverter {
             numberOfFailedSendings = sendingStatusDTO.getNumberOfFailedSendings();
         }
 
-        Object[] parameters = { numberOfSuccesfulSendings, numberOfFailedSendings };
+        Object[] parameters = { numberOfSuccessfulSendings, numberOfFailedSendings };
         reportedMessageDTO.setSendingReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", parameters));
     }
 

@@ -39,130 +39,129 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
-	DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
-@Transactional(readOnly=true)
+@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@Transactional(readOnly = true)
 public class ReportedMessageServiceTest {
-	@Rule
-	public ExpectedException expectedException = ExpectedException.none();
-	@Mock
-	ReportedMessageDAO mockedReportedMessageDAO;
-	
-	private ReportedMessageService reportedMessageService;
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
+    @Mock
+    ReportedMessageDAO mockedReportedMessageDAO;
 
-	@Before
-	public void setup() {
-		reportedMessageService = new ReportedMessageServiceImpl(mockedReportedMessageDAO);
-	}
-	
-	@Test
-	public void testReportedMessageSaveIsSuccesful() throws IOException {		
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		
-		ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
-		savedReportedMessage.setId(new Long(1));
-		savedReportedMessage.setVersion(new Long(0));
-		
-		when(mockedReportedMessageDAO.insert(reportedMessage)).thenReturn(savedReportedMessage);
-		savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
-		
-		assertNotNull(savedReportedMessage.getId());
-		assertNotNull(savedReportedMessage.getVersion());
-	}
+    private ReportedMessageService reportedMessageService;
 
-	@Test
-	public void testGetReportedMessagesByOrganizationOid() throws IOException {
-		List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
-		reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
-		
-		when(mockedReportedMessageDAO.findByOrganizationOid(any(String.class), 
-		    any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
-				
+    @Before
+    public void setup() {
+        reportedMessageService = new ReportedMessageServiceImpl(mockedReportedMessageDAO);
+    }
+
+    @Test
+    public void testReportedMessageSaveIsSuccessful() throws IOException {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+
+        ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
+        savedReportedMessage.setId(new Long(1));
+        savedReportedMessage.setVersion(new Long(0));
+
+        when(mockedReportedMessageDAO.insert(reportedMessage)).thenReturn(savedReportedMessage);
+        savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
+
+        assertNotNull(savedReportedMessage.getId());
+        assertNotNull(savedReportedMessage.getVersion());
+    }
+
+    @Test
+    public void testGetReportedMessagesByOrganizationOid() throws IOException {
+        List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
+        reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
+
+        when(mockedReportedMessageDAO.findByOrganizationOid(any(String.class),
+                any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
+
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
-        
-		reportedMessages = reportedMessageService.getReportedMessages("1.2.246.562.10.00000000001", pagingAndSorting);
-		
-		assertNotNull(reportedMessages);
-		assertNotEquals(0, reportedMessages.size());
-	}
-	
-	@Test
-	public void testGetReportedMessagesBySenderOid() throws IOException {
-		List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
-		reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
-		
-		PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
-		
-		when(mockedReportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi", 
-				pagingAndSorting)).thenReturn(reportedMessages);
-        
-        List<ReportedMessage> result = reportedMessageService.getReportedMessages("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
-		
-		assertNotNull(result);
-		assertEquals(1, result.size());
-	}
 
-	@Test
-	public void testFindBySearchCriteriaIsSuccesful() throws IOException {
-		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
-		mockedReportedMessages.add(RaportointipalveluTestData.getReportedMessage());
-					
-		ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
+        reportedMessages = reportedMessageService.getReportedMessages("1.2.246.562.10.00000000001", pagingAndSorting);
+
+        assertNotNull(reportedMessages);
+        assertNotEquals(0, reportedMessages.size());
+    }
+
+    @Test
+    public void testGetReportedMessagesBySenderOid() throws IOException {
+        List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
+        reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
+
+        PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
+
+        when(mockedReportedMessageDAO.findBySenderOid("1.2.246.562.24.42645159413", pagingAndSorting)).thenReturn(reportedMessages);
+
+        List<ReportedMessage> result = reportedMessageService.getUserMessages("1.2.246.562.24.42645159413", pagingAndSorting);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testFindBySearchCriteriaIsSuccessful() throws IOException {
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        mockedReportedMessages.add(RaportointipalveluTestData.getReportedMessage());
+
+        ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedRecipientQuery.setRecipientEmail("vastaan.ottaja@sposti.fi");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
-        
-		when(mockedReportedMessageDAO.findBySearchCriteria(
-		    reportedMessageQuery, pagingAndSorting)).thenReturn(mockedReportedMessages);
-        
-		List<ReportedMessage> reportedMessages = 
-		    reportedMessageService.getReportedMessages(reportedMessageQuery, pagingAndSorting);
-		
-		assertNotNull(reportedMessages);
-		assertNotEquals(0, reportedMessages.size());		
-	}
-	
-	@Test
-	public void testGetReportedMessageByPrimaryKey() throws IOException {
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		reportedMessage.setId(new Long(1));
-		
-		when(mockedReportedMessageDAO.read(any(Long.class))).thenReturn(reportedMessage);
-		
-		reportedMessage = reportedMessageService.getReportedMessage(new Long(1));
-		
-		assertNotNull(reportedMessage);
-	}
 
-	@Test
-	public void testGetReportedMessageNotFoundByPrimaryKey() {		
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		reportedMessage.setId(new Long(1));
-		
-		when(mockedReportedMessageDAO.read(new Long(1))).thenReturn(reportedMessage);
-		
-		reportedMessage = reportedMessageService.getReportedMessage(new Long(10));
-		
-		assertNull(reportedMessage);
-	}
+        when(mockedReportedMessageDAO.findBySearchCriteria(
+                reportedMessageQuery, pagingAndSorting)).thenReturn(mockedReportedMessages);
 
-	@Test
-	public void testUpdateReportedMessage() throws IOException {
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		
-		doAnswer(new Answer<Object>() {
-		    public Object answer(InvocationOnMock invocation) {
-		        @SuppressWarnings("unused")
-				Object[] args = invocation.getArguments();
-		        return null;
-		    }})
-		.when(mockedReportedMessageDAO).update(reportedMessage);
-	 
-		reportedMessage.setSendingEnded(new Date());
-		reportedMessageService.updateReportedMessage(reportedMessage);
-	}
+        List<ReportedMessage> reportedMessages =
+                reportedMessageService.getReportedMessages(reportedMessageQuery, pagingAndSorting);
+
+        assertNotNull(reportedMessages);
+        assertNotEquals(0, reportedMessages.size());
+    }
+
+    @Test
+    public void testGetReportedMessageByPrimaryKey() throws IOException {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        reportedMessage.setId(new Long(1));
+
+        when(mockedReportedMessageDAO.read(any(Long.class))).thenReturn(reportedMessage);
+
+        reportedMessage = reportedMessageService.getReportedMessage(new Long(1));
+
+        assertNotNull(reportedMessage);
+    }
+
+    @Test
+    public void testGetReportedMessageNotFoundByPrimaryKey() {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        reportedMessage.setId(new Long(1));
+
+        when(mockedReportedMessageDAO.read(new Long(1))).thenReturn(reportedMessage);
+
+        reportedMessage = reportedMessageService.getReportedMessage(new Long(10));
+
+        assertNull(reportedMessage);
+    }
+
+    @Test
+    public void testUpdateReportedMessage() throws IOException {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+
+        doAnswer(new Answer<Object>() {
+            public Object answer(InvocationOnMock invocation) {
+                @SuppressWarnings("unused")
+                Object[] args = invocation.getArguments();
+                return null;
+            }
+        }).when(mockedReportedMessageDAO).update(reportedMessage);
+
+        reportedMessage.setSendingEnded(new Date());
+        reportedMessageService.updateReportedMessage(reportedMessage);
+    }
 }
