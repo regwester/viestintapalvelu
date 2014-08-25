@@ -1,6 +1,5 @@
 /* Custom dialog/modal headers */
 
-.dialog-header-error { background-color: #d2322d; }
 .dialog-header-wait { background-color: #428bca; }
 .dialog-header-notify { background-color: #eeeeee; }
 .dialog-header-confirm { background-color: #333333; }

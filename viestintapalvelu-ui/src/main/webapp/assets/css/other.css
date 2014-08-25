@@ -147,15 +147,6 @@
 	clear: both;
 }
 
-.modal {
-    width: inherit;
-}
-
-.modal-body {
-    max-height: none;
-    overflow-y: visible;
-}
-
 .results .modal-header h1 {
     margin: 0;
 }
@@ -415,4 +406,8 @@ ul.attachments-list {
 
 .filelist .icon-remove {
     margin-right: 5px;
+}
+
+.modal-dialog .modal-body img {
+    margin-right: 10px;
 }
