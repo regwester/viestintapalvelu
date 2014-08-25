@@ -107,18 +107,7 @@ public class LetterBuilder {
 
         Template template = batch.getTemplate();
 
-        if (template == null && batch.getTemplateName() != null
-                && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(
-                    batch.getTemplateName(), batch.getLanguageCode());
-
-            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
-        }
-
-        if (template == null && batch.getTemplateId() != null) { // If not found by name
-            long templateId = batch.getTemplateId();
-            template = templateService.findById(templateId);
-        }
+        template = initTemplateId(batch, template);
 
         if (template == null) {
             // still null ??
@@ -185,6 +174,26 @@ public class LetterBuilder {
         // letterService.createLetter(batch);
 
         return documentBuilder.merge(source);
+    }
+    
+    public void initTemplateId(LetterBatch batch) {
+        initTemplateId(batch, batch.getTemplate());
+    }
+
+    private Template initTemplateId(LetterBatch batch, Template template) {
+        if (template == null && batch.getTemplateName() != null
+                && batch.getLanguageCode() != null) {
+            template = templateService.getTemplateByName(
+                    batch.getTemplateName(), batch.getLanguageCode());
+
+            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
+        }
+
+        if (template == null && batch.getTemplateId() != null) { // If not found by name
+            long templateId = batch.getTemplateId();
+            template = templateService.findById(templateId);
+        }
+        return template;
     }
 
     /**

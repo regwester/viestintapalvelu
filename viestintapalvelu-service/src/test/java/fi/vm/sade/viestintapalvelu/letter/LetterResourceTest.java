@@ -31,12 +31,14 @@ public class LetterResourceTest {
     @Mock
     private LetterService service;
     
+    @Mock
+    private LetterBuilder builder;
+    
     @Before
     public void init() throws Exception {
         resource = new LetterResource();
-        Field letterService = resource.getClass().getDeclaredField("letterService");
-        letterService.setAccessible(true);
-        letterService.set(resource, service);
+        injectObject("letterService", service);
+        injectObject("letterBuilder", builder);
         when(service.createLetter(any(LetterBatch.class))).thenReturn(DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID));
     }
     
@@ -47,6 +49,12 @@ public class LetterResourceTest {
     }
     
     @Test
+    public void initializesTemplateId() {
+        resource.asyncLetter(DocumentProviderTestData.getLetterBatch());
+        verify(builder, times(1)).initTemplateId(any(LetterBatch.class));
+    }
+    
+    @Test
     public void returnsLetterBatchIdFromResource() {
         assertEquals(LETTERBATCH_ID, (Long)resource.asyncLetter(DocumentProviderTestData.getLetterBatch()).getEntity());
     }
@@ -54,5 +62,11 @@ public class LetterResourceTest {
     @Test
     public void returnsBadRequestForInvalidLetterBatch() {
         assertEquals(Status.BAD_REQUEST.getStatusCode(), resource.asyncLetter(null).getStatus());
+    }
+
+    private void injectObject(String field, Object object) throws NoSuchFieldException, IllegalAccessException {
+        Field letterService = resource.getClass().getDeclaredField(field);
+        letterService.setAccessible(true);
+        letterService.set(resource, object);
     }
 }

@@ -368,9 +368,12 @@ public class LetterResource extends AsynchronousResource {
         try {
             LetterBatchValidator.validate(input);
         } catch (Exception e) {
+            LOG.error("Validation error", e);
             return Response.status(Status.BAD_REQUEST).build();
         }
+        letterBuilder.initTemplateId(input);
         Long id = letterService.createLetter(input).getId();
+        
         return Response.status(Status.OK).entity(id).build();
     }
 }
