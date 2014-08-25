@@ -37,6 +37,7 @@
     <mockito:mock id="henkiloResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" />
     <mockito:mock id="omattiedotResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource"/>
     <mockito:mock id="organisaatioResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource"/>
+    <mockito:mock id="emailResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource"/>
     
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <contextScan/>

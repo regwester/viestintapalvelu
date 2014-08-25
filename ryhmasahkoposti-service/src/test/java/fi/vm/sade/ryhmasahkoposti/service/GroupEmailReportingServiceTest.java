@@ -104,7 +104,7 @@ public class GroupEmailReportingServiceTest {
     @Mock
     private OrganizationComponent mockedOrganizationComponent;
     @Mock
-    private TemplateComponent mockedTemplateComponent;
+    private TemplateService mockedTemplateComponent;
     @Mock
     private ReportedMessageReplacementConverter mokedReportedMessageReplacementConverter;
     @Mock

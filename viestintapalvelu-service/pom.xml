@@ -36,6 +36,13 @@
             </exclusions>
         </dependency>
 
+        <!-- Ryhmäsähköposti API -->
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>ryhmasahkoposti-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Organisaatiopalvelu -->
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>

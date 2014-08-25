@@ -58,6 +58,7 @@ import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageReplacementService;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientReplacementService;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
+import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 @Service
@@ -77,7 +78,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private ReportedMessageDTOConverter reportedMessageDTOConverter;
     private CurrentUserComponent currentUserComponent;
     private OrganizationComponent organizationComponent;
-    private TemplateComponent templateComponent;
+    private TemplateService templateService;
     private ReportedMessageReplacementConverter reportedMessageReplacementConverter;
     private ReportedMessageReplacementService reportedMessageReplacementService;
     private ReportedRecipientReplacementConverter reportedRecipientReplacementConverter;
@@ -85,35 +86,35 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
     @Autowired
     public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
-                                          ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
-                                          ReportedMessageAttachmentService reportedMessageAttachmentService,
-                                          ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
-                                          ReportedAttachmentConverter reportedAttachmentConverter, AttachmentResponseConverter attachmentResponseConverter,
-                                          EmailMessageDTOConverter emailMessageDTOConverter, EmailRecipientDTOConverter emailRecipientDTOConverter,
-                                          ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent,
-                                          OrganizationComponent organizationComponent, TemplateComponent templateComponent,
-                                          ReportedMessageReplacementConverter reportedMessageReplacementConverter,
-                                          ReportedMessageReplacementService reportedMessageReplacementService,
-                                          ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
-                                          ReportedRecipientReplacementService reportedRecipientReplacementService) {
-        this.reportedMessageService = reportedMessageService;
-        this.reportedRecipientService = reportedRecipientService;
-        this.reportedAttachmentService = reportedAttachmentService;
-        this.reportedMessageAttachmentService = reportedMessageAttachmentService;
-        this.reportedMessageConverter = reportedMessageConverter;
-        this.reportedRecipientConverter = reportedRecipientConverter;
-        this.reportedAttachmentConverter = reportedAttachmentConverter;
-        this.attachmentResponseConverter = attachmentResponseConverter;
-        this.emailMessageDTOConverter = emailMessageDTOConverter;
-        this.emailRecipientDTOConverter = emailRecipientDTOConverter;
-        this.reportedMessageDTOConverter = reportedMessageDTOConverter;
-        this.currentUserComponent = currentUserComponent;
-        this.organizationComponent = organizationComponent;
-        this.templateComponent = templateComponent;
-        this.reportedMessageReplacementConverter = reportedMessageReplacementConverter;
-        this.reportedMessageReplacementService = reportedMessageReplacementService;
-        this.reportedRecipientReplacementConverter = reportedRecipientReplacementConverter;
-        this.reportedRecipientReplacementService = reportedRecipientReplacementService;
+        ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
+        ReportedMessageAttachmentService reportedMessageAttachmentService,
+        ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
+        ReportedAttachmentConverter reportedAttachmentConverter, AttachmentResponseConverter attachmentResponseConverter, 
+        EmailMessageDTOConverter emailMessageDTOConverter, EmailRecipientDTOConverter emailRecipientDTOConverter, 
+        ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent, 
+        OrganizationComponent organizationComponent, TemplateService templateService, 
+        ReportedMessageReplacementConverter reportedMessageReplacementConverter,
+        ReportedMessageReplacementService reportedMessageReplacementService,
+        ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
+        ReportedRecipientReplacementService reportedRecipientReplacementService) {
+            this.reportedMessageService = reportedMessageService;
+            this.reportedRecipientService = reportedRecipientService;
+            this.reportedAttachmentService = reportedAttachmentService;
+            this.reportedMessageAttachmentService = reportedMessageAttachmentService;
+            this.reportedMessageConverter = reportedMessageConverter;
+            this.reportedRecipientConverter = reportedRecipientConverter;
+            this.reportedAttachmentConverter = reportedAttachmentConverter;
+            this.attachmentResponseConverter = attachmentResponseConverter;
+            this.emailMessageDTOConverter = emailMessageDTOConverter;
+            this.emailRecipientDTOConverter = emailRecipientDTOConverter;
+            this.reportedMessageDTOConverter = reportedMessageDTOConverter;
+            this.currentUserComponent = currentUserComponent;
+            this.organizationComponent = organizationComponent;
+            this.templateService = templateService;
+            this.reportedMessageReplacementConverter = reportedMessageReplacementConverter;
+            this.reportedMessageReplacementService = reportedMessageReplacementService;
+            this.reportedRecipientReplacementConverter = reportedRecipientReplacementConverter;
+            this.reportedRecipientReplacementService = reportedRecipientReplacementService;
     }
 
     @Override
@@ -136,9 +137,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 languageCode = emailData.getEmail().getLanguageCode();
 
             // Template is used
-            try {
-                templateDTO = templateComponent.getTemplateContent(emailData.getEmail().getTemplateName(),
-                        languageCode, TemplateDTO.TYPE_EMAIL);
+            try {               
+                templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(),
+                    languageCode, TemplateDTO.TYPE_EMAIL);
                 LOGGER.debug("Loaded template:" + templateDTO);
             } catch (Exception e) {
                 LOGGER.error("Failed to load template for templateName:" + emailData.getEmail().getTemplateName()
