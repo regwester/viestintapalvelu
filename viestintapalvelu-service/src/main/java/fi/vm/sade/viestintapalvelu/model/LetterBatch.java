@@ -81,6 +81,14 @@ public class LetterBatch extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date handlingFinished;
     
+    @Column(name = "email_kasittely_aloitettu")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date emailHandlingStarted;
+    
+    @Column(name = "email_kasittely_valmis")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date emailHandlingFinished;
+    
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
@@ -202,6 +210,22 @@ public class LetterBatch extends BaseEntity {
     
     public void setHandlingStarted(Date handlingStarted) {
         this.handlingStarted = handlingStarted;
+    }
+    
+    public Date getEmailHandlingStarted() {
+        return emailHandlingStarted;
+    }
+    
+    public void setEmailHandlingStarted(Date emailHandlingStarted) {
+        this.emailHandlingStarted = emailHandlingStarted;
+    }
+    
+    public Date getEmailHandlingFinished() {
+        return emailHandlingFinished;
+    }
+    
+    public void setEmailHandlingFinished(Date emailHandlingFinished) {
+        this.emailHandlingFinished = emailHandlingFinished;
     }
 
     @Override
