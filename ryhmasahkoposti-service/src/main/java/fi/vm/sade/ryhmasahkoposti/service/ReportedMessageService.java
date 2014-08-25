@@ -60,6 +60,16 @@ public interface ReportedMessageService {
     public List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting);
 
     /**
+     * Hakee määritellyn lähettäjän tietyn prosessin sisällä lähettämät raportoitavat viestit
+     *
+     * @param senderOid Organisaation oid-tunnus
+     * @param process Kutsuva prosessi
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @return
+     */
+    public List<ReportedMessage> getUserMessages(String senderOid, String process, PagingAndSortingDTO pagingAndSorting);
+
+    /**
      * Tallentaa raportoitvan ryhmäsähköpostin viestin
      * 
      * @param reportedMessage Ryhmäsähköpostin raportoitavaviesti

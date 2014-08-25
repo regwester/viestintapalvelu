@@ -13,14 +13,14 @@ import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
 
 @Service
 public class ReportedMessageServiceImpl implements ReportedMessageService {
-	private ReportedMessageDAO reportedMessageDAO;
-	
-	@Autowired
-	public ReportedMessageServiceImpl(ReportedMessageDAO reportedMessageDAO) {
-		this.reportedMessageDAO = reportedMessageDAO;
-	}
+    private ReportedMessageDAO reportedMessageDAO;
 
-	@Override
+    @Autowired
+    public ReportedMessageServiceImpl(ReportedMessageDAO reportedMessageDAO) {
+        this.reportedMessageDAO = reportedMessageDAO;
+    }
+
+    @Override
     public Long getNumberOfReportedMessages(String organizationOid) {
         return reportedMessageDAO.findNumberOfReportedMessages(organizationOid);
     }
@@ -29,36 +29,41 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
     public Long getNumberOfReportedMessages(ReportedMessageQueryDTO query) {
         return reportedMessageDAO.findNumberOfReportedMessage(query);
     }
-	
-	@Override
-	public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
-	    return reportedMessageDAO.findByOrganizationOid(organizationOid, pagingAndSorting);
-	}
-	
+
     @Override
-	public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
-	    PagingAndSortingDTO pagingAndSorting) {
+    public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
+        return reportedMessageDAO.findByOrganizationOid(organizationOid, pagingAndSorting);
+    }
+
+    @Override
+    public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query,
+                                                     PagingAndSortingDTO pagingAndSorting) {
         return reportedMessageDAO.findBySearchCriteria(query, pagingAndSorting);
-	}
-    
+    }
+
     @Override
-	public List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting) {
-		return reportedMessageDAO.findBySenderOid(senderOid, pagingAndSorting);
-	}
+    public List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting) {
+        return reportedMessageDAO.findBySenderOid(senderOid, pagingAndSorting);
+    }
 
-	@Override
-	public ReportedMessage getReportedMessage(Long id) {
-		return reportedMessageDAO.read(id);
-	}
+    @Override
+    public List<ReportedMessage> getUserMessages(String senderOid, String process, PagingAndSortingDTO pagingAndSortingDTO) {
+        return reportedMessageDAO.findBySenderOidAndProcess(senderOid, process, pagingAndSortingDTO);
+    }
 
-	@Override
-	public void updateReportedMessage(ReportedMessage reportedMessage) {
-		reportedMessageDAO.update(reportedMessage);
-	}
+    @Override
+    public ReportedMessage getReportedMessage(Long id) {
+        return reportedMessageDAO.read(id);
+    }
 
-	@Override
-	public ReportedMessage saveReportedMessage(ReportedMessage reportedMessage) {
-		return reportedMessageDAO.insert(reportedMessage);
-	}
-	
+    @Override
+    public void updateReportedMessage(ReportedMessage reportedMessage) {
+        reportedMessageDAO.update(reportedMessage);
+    }
+
+    @Override
+    public ReportedMessage saveReportedMessage(ReportedMessage reportedMessage) {
+        return reportedMessageDAO.insert(reportedMessage);
+    }
+
 }

@@ -21,7 +21,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
-public class MessageReportingResourceImpl implements MessageReportingResource {
+public class MessageReportingResourceImpl extends GenericResourceImpl implements MessageReportingResource {
     private static Logger logger = LoggerFactory.getLogger(MessageReportingResourceImpl.class);
     private GroupEmailReportingService groupEmailReportingService;
     private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
@@ -90,12 +90,10 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
 
     @Override
     public Response getReportedMessagesSentByCurrentUser(String process) throws Exception {
-        String senderOid = groupEmailReportingService.getCurrentUserOid();
+        ReportedMessagesDTO reportedMessages =
+                groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process, PagingAndSortingDTO.getDefault());
 
-        PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(null, null);
-        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(senderOid, pagingAndSorting);
-
-        return Response.ok(reportedMessagesDTO).build();
+        return Response.ok(reportedMessages).build();
 
     }
 

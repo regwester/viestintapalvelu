@@ -420,7 +420,7 @@ public class GroupEmailReportingServiceTest {
             mockedReportedMessageDTOs);
 
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(
-            "1.2.246.562.24.42645159413", pagingAndSorting);
+            "1.2.246.562.24.42645159413", null, pagingAndSorting);
 
         assertNotNull(reportedMessagesDTO);
         assertEquals(1, reportedMessagesDTO.getReportedMessages().size());

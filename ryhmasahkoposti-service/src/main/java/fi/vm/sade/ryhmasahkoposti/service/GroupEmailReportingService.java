@@ -96,7 +96,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
      * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
      */
-    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, PagingAndSortingDTO pagingAndSorting);
+    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, String process, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee hakuparametrien mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 

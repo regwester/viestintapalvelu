@@ -346,10 +346,15 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     }
 
     @Override
-    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, PagingAndSortingDTO pagingAndSorting) {
+    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, String process, PagingAndSortingDTO pagingAndSorting) {
         LOGGER.info("getReportedMessagesBySenderOid(String, String, PagingAndSortingDTO) called");
 
-        List<ReportedMessage> reportedMessages = reportedMessageService.getUserMessages(senderOid, pagingAndSorting);
+        List<ReportedMessage> reportedMessages;
+        if(process == null) {
+            reportedMessages = reportedMessageService.getUserMessages(senderOid, pagingAndSorting);
+        } else {
+            reportedMessages = reportedMessageService.getUserMessages(senderOid, process, pagingAndSorting);
+        }
         List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(reportedMessages);
 
         ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
