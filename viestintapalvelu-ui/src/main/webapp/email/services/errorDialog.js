@@ -6,7 +6,7 @@ angular.module('email')
     return {
       showError : function(msg) {
         return $modal.open({
-          templateUrl: './email/views/errorDialog.html',
+          templateUrl: './email/views/error-dialog.html',
           controller: 'ErrorDialogCtrl',
           size: 'lg',
           resolve: {

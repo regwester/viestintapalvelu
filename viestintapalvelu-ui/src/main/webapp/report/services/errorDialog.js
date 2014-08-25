@@ -10,7 +10,7 @@ angular.module('report')
                 }
                 
                 return $modal.open({
-                    templateUrl: './report/views/errorDialog.html',
+                    templateUrl: './report/views/error-dialog.html',
                     controller: 'ErrorDialogCtrl',
                     size: 'lg',
                     resolve: {
