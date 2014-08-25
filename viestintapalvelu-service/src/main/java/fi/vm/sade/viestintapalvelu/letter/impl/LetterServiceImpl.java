@@ -399,4 +399,14 @@ public class LetterServiceImpl implements LetterService {
         }
         letterBatchDAO.update(batch);
     }
+
+    @Override
+    public LetterBatch fetchById(long id) {
+        return letterBatchDAO.read(id);
+    }
+
+    @Override
+    public void updateLetter(LetterReceiverLetter letter) {
+        letterReceiverLetterDAO.update(letter);
+    }
 }

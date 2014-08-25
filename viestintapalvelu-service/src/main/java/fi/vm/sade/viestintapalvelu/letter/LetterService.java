@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 import java.util.List;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -67,5 +68,8 @@ public interface LetterService {
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
     
     void updateBatchProcessingFinished(long id, LetterBatchProcess process);
-
+    
+    LetterBatch fetchById(long id);
+    
+    void updateLetter(LetterReceiverLetter letter);
 }
