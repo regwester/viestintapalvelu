@@ -11,6 +11,11 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
  *
  */
 public interface LetterService {
+    
+    public enum LetterBatchProcess {
+        EMAIL, LETTER
+    }
+    
     /**
      * Luo kirjelähetyksen
      * 
@@ -58,5 +63,9 @@ public interface LetterService {
      * @return Kirjeen sisällön tiedot
      */
     public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
+    
+    void updateBatchProcessingStarted(long id, LetterBatchProcess process);
+    
+    void updateBatchProcessingFinished(long id, LetterBatchProcess process);
 
 }

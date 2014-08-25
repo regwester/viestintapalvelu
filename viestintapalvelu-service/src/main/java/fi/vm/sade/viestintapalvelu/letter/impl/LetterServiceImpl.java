@@ -373,4 +373,30 @@ public class LetterServiceImpl implements LetterService {
         outputStream.close();
         return outputStream.toByteArray();
     }
+
+    @Override
+    public void updateBatchProcessingStarted(long id, LetterBatchProcess process) {
+        LetterBatch batch = letterBatchDAO.read(id);
+        switch (process) {
+        case EMAIL: 
+            batch.setEmailHandlingStarted(new Date());
+            break;
+        case LETTER:
+            batch.setHandlingStarted(new Date());
+        }
+        letterBatchDAO.update(batch);
+    }
+
+    @Override
+    public void updateBatchProcessingFinished(long id, LetterBatchProcess process) {
+        LetterBatch batch = letterBatchDAO.read(id);
+        switch (process) {
+        case EMAIL: 
+            batch.setEmailHandlingFinished(new Date());
+            break;
+        case LETTER:
+            batch.setHandlingFinished(new Date());
+        }
+        letterBatchDAO.update(batch);
+    }
 }

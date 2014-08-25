@@ -1,11 +1,5 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.when;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -26,11 +20,18 @@ import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-application-context.xml")
@@ -135,5 +136,37 @@ public class LetterServiceTest {
         assertNotNull(letterContent.getContent());
         assertTrue(new String(letterContent.getContent()).equalsIgnoreCase("letter"));
     }
-
+    
+    @Test
+    public void setsHandlingStartedWhenStartingProcessIsCalled() {
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        when(mockedLetterBatchDAO.read(any(Long.class))).thenReturn(batch);
+        letterService.updateBatchProcessingStarted(1l, LetterBatchProcess.LETTER);
+        assertNotNull(batch.getHandlingStarted());
+    }
+    
+    @Test
+    public void setsHandlingFinishedWhenFinishingProcessIsCalled() {
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        when(mockedLetterBatchDAO.read(any(Long.class))).thenReturn(batch);
+        letterService.updateBatchProcessingFinished(1l, LetterBatchProcess.LETTER);
+        assertNotNull(batch.getHandlingFinished());
+    }
+    
+    @Test
+    public void setsEmailHandlingStartedWhenStartingProcessIsCalled() {
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        when(mockedLetterBatchDAO.read(any(Long.class))).thenReturn(batch);
+        letterService.updateBatchProcessingStarted(1l, LetterBatchProcess.EMAIL);
+        assertNotNull(batch.getEmailHandlingStarted());
+    }
+    
+    @Test
+    public void setsEmailHandlingFinishedWhenFinishingProcessIsCalled() {
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        when(mockedLetterBatchDAO.read(any(Long.class))).thenReturn(batch);
+        letterService.updateBatchProcessingFinished(1l, LetterBatchProcess.EMAIL);
+        assertNotNull(batch.getEmailHandlingFinished());
+    }
+    
 }
