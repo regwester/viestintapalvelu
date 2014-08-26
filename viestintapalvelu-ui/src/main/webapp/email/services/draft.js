@@ -13,6 +13,9 @@ angular.module('email')
             method: 'GET',
             isArray: false,
             url: '/ryhmasahkoposti-service/drafts/count'
+          },
+          update: {
+            method: "PUT"
           }
         }),
       selectDraft: function(id) {

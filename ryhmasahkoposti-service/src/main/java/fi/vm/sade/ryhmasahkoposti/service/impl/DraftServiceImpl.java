@@ -3,6 +3,7 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.vm.sade.ryhmasahkoposti.exception.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -56,20 +57,29 @@ public class DraftServiceImpl implements DraftService {
 
     @Override
     @Transactional
-    public String saveDraft(Draft draft) {
-        DraftModel draftModel = draftConverter.convert(draft);
-        try{
-            draftDao.saveDraft(draftModel);
-        } catch(Exception e){
-            return "Error: " + e.toString();
+    public Long saveDraft(Draft draft) {
+        try {
+            DraftModel draftModel = draftConverter.convert(draft);
+            draftModel = draftDao.saveDraft(draftModel);
+            return draftModel.getId();
+        } catch(Exception e) {
+            log.error("JPA Exception: {}", e);
+            throw new PersistenceException("error.msg.savingDraft", e);
         }
-        return "Success";
+
     }
 
     @Override
-    public String updateDraft(Long id, String oid, Draft draft) {
-        //TODO: implement me
-        return null;
+    @Transactional
+    public void updateDraft(Long id, String oid, Draft draft) {
+        try {
+            DraftModel draftModel = draftConverter.convert(draft);
+            draftDao.updateDraft(id, oid, draftModel);
+        } catch(Exception e) {
+            log.error("JPA Exception: {}", e);
+            throw new PersistenceException("error.msg.updatingDraft", e);
+        }
+
     }
 
 }

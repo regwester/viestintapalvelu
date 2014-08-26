@@ -35,12 +35,12 @@ public class WebExceptionMapper implements ExtendedExceptionMapper<Throwable> {
         if(throwable instanceof AccessDeniedException) {
             logger.error("AccessDeniedException: {}", throwable);
             return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN)
-                .entity(resource.getString("error.forbidden")).language(getUserLocale()).build();
+                .entity(resource.getString("error.msg.forbidden")).language(getUserLocale()).build();
         }
         else if (throwable instanceof AuthenticationException) {
             logger.error("AuthenticationException: {}", throwable);
             return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN)
-                .entity(resource.getString("error.unauthorized")).language(getUserLocale()).build();
+                .entity(resource.getString("error.msg.unauthorized")).language(getUserLocale()).build();
         }
         /* Custom exceptions*/
         else if(throwable instanceof ExternalInterfaceException) {
@@ -48,13 +48,15 @@ public class WebExceptionMapper implements ExtendedExceptionMapper<Throwable> {
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
                 .entity(resource.getString(throwable.getMessage())).language(getUserLocale()).build();
         }
-        //rest of the handled exceptions, throw them in the service layer and catch them here
-
+        else if(throwable instanceof PersistenceException){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(resource.getString(throwable.getMessage())).language(getUserLocale()).build();
+        }
         /* Unhandled exceptions */
         else {
             logger.error("Encountered an exception: {}", throwable);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN)
-                    .entity(resource.getString("error.internal")).language(getUserLocale()).build();
+                    .entity(resource.getString("error.msg.internal")).language(getUserLocale()).build();
         }
     }
 

@@ -72,7 +72,7 @@ public interface DraftResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
-    public String saveDraft(Draft draft);
+    public Long saveDraft(Draft draft);
 
     /**
      * Muokkaa tallennettua luonnosta annetun tunnisteen ja luonnos objektin perusteella.

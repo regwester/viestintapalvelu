@@ -60,17 +60,12 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         if(draftId == null) {
             throw new BadRequestException("DraftId is not defined");
         }
-        try {
-            String oid = getCurrentUserOid();
-            draftService.deleteDraft(draftId, oid);
-            return "{\"status\": \"success\"}";
-        } catch (Exception e) { //TODO: don't catch anything here, instead keep throwing some meaningful exception
-            logger.error("Failed to delete the draft: {}", e);
-            return "{\"status\": \"failure\", \"reason\": \"" + e.toString() + "\" }";
-        }
+        String oid = getCurrentUserOid();
+        draftService.deleteDraft(draftId, oid);
+        return "{\"status\": \"success\"}";
     }
     
-    public String saveDraft(Draft draft) {
+    public Long saveDraft(Draft draft) {
         if(draft == null) {
             throw new BadRequestException("Draft is not defined");
         }
@@ -90,16 +85,12 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         if(id == null) {
             throw new BadRequestException("DraftId is not defined");
         }
-        try {
-            String oid = getCurrentUserOid();
-            //clean the html
-            draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
-            draftService.updateDraft(id, oid, draft);
-            return "{\"status\": \"success\"}";
-        } catch(Exception e ) { //TODO: don't catch anything here, instead keep throwing some meaningful exception
-            logger.error("Failed to update the draft: {}", e);
-            return "{\"status\": \"failure\"}";
-        }
+
+        String oid = getCurrentUserOid();
+        //clean the html
+        draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
+        draftService.updateDraft(id, oid, draft);
+        return "{\"status\": \"success\"}";
     }
 
 
