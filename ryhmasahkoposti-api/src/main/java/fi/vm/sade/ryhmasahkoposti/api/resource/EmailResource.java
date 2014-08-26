@@ -83,7 +83,6 @@ public interface EmailResource {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    @Path("/")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", 
         notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)

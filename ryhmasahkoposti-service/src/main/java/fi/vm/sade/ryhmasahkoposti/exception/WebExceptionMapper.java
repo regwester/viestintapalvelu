@@ -4,6 +4,7 @@ import org.glassfish.jersey.spi.ExtendedExceptionMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.AccessDeniedException;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.stereotype.Service;
 
 import javax.ws.rs.WebApplicationException;
@@ -30,25 +31,36 @@ public class WebExceptionMapper implements ExtendedExceptionMapper<Throwable> {
 
     @Override
     public Response toResponse(Throwable throwable) {
+        /* Spring security related exceptions */
         if(throwable instanceof AccessDeniedException) {
-            logger.error("Encountered an exception: {}", throwable);
-            return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN)
-                .entity(resource.getString("error.unauthorized")).language(getUserLocale()).build();
+            logger.error("AccessDeniedException: {}", throwable);
+            return Response.status(Response.Status.FORBIDDEN).type(MediaType.TEXT_PLAIN)
+                .entity(resource.getString("error.msg.forbidden")).language(getUserLocale()).build();
         }
+        else if (throwable instanceof AuthenticationException) {
+            logger.error("AuthenticationException: {}", throwable);
+            return Response.status(Response.Status.UNAUTHORIZED).type(MediaType.TEXT_PLAIN)
+                .entity(resource.getString("error.msg.unauthorized")).language(getUserLocale()).build();
+        }
+        /* Custom exceptions*/
         else if(throwable instanceof ExternalInterfaceException) {
             logger.error("Problems in getting data from external interfaces: {}", throwable);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
-                .entity(resource.getString("error.internal")).language(getUserLocale()).build();
+                .entity(resource.getString(throwable.getMessage())).language(getUserLocale()).build();
         }
-        //rest of the handled exceptions, throw them in the service layer and catch them here
+        else if(throwable instanceof PersistenceException){
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR)
+                    .entity(resource.getString(throwable.getMessage())).language(getUserLocale()).build();
+        }
+        /* Unhandled exceptions */
         else {
             logger.error("Encountered an exception: {}", throwable);
             return Response.status(Response.Status.INTERNAL_SERVER_ERROR).type(MediaType.TEXT_PLAIN)
-                    .entity(resource.getString("error.internal")).language(getUserLocale()).build();
+                    .entity(resource.getString("error.msg.internal")).language(getUserLocale()).build();
         }
     }
 
-    //TODO: get the actual user language from somewhere
+    //TODO: get the actual user language from accept-language header
     private Locale getUserLocale() {
         return new Locale("fi", "FI");
     }

@@ -4,6 +4,9 @@ import java.util.List;
 
 import com.mysema.query.jpa.impl.JPADeleteClause;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.jpa.impl.JPAUpdateClause;
+import com.mysema.query.types.Expression;
+import fi.vm.sade.generic.service.exception.NotAuthorizedException;
 import fi.vm.sade.ryhmasahkoposti.model.QDraftModel;
 import org.springframework.stereotype.Repository;
 
@@ -41,13 +44,25 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<DraftModel, Long> implement
     }
 
     @Override
-    public void saveDraft(DraftModel draft) {
-        insert(draft);
+    public DraftModel saveDraft(DraftModel draft) {
+        return insert(draft);
     }
 
     @Override
-    public void deleteDraft(Long id, String oid) { //TODO: throw exception if delete doesn't happen?
+    public void deleteDraft(Long id, String oid) {
         JPADeleteClause clause = new JPADeleteClause(getEntityManager(), draftModel);
         clause.where(draftModel.userOid.eq(oid), draftModel.id.eq(id)).execute();
+    }
+
+    @Override
+    public void updateDraft(Long id, String oid, DraftModel draft) {
+        DraftModel draftModel = (DraftModel) getEntityManager().find(DraftModel.class, id);
+        if(draftModel.getUserOid().equals(oid)){
+            draftModel.setBody(draft.getSender());
+            draftModel.setBody(draft.getSubject());
+            draftModel.setReplyTo(draft.getReplyTo());
+            draftModel.setBody(draft.getBody());
+            draftModel.setAttachments(draft.getAttachments());
+        }
     }
 }

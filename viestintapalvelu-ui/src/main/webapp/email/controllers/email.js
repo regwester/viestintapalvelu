@@ -23,7 +23,10 @@ angular.module('email')
     $scope.emaildata.email.html = true;
     $scope.emaildata.email.from = 'opintopolku@oph.fi'; //For display only, the value comes from the backend configs
 
+    $rootScope.callingProcess = $scope.emaildata.email.callingProcess;
+
     $scope.sendGroupEmail = function () {
+      $scope.emaildata.email.callingProcess = $rootScope.callingProcess;
       $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
         function(resp) {
           var selectedDraft = DraftService.selectedDraft();
@@ -32,11 +35,8 @@ angular.module('email')
           }
           $state.go('report_view', {messageID: resp.id});
         },
-        function(error) {
-          ErrorDialog.showError(error);
-        },
-        function(update) {
-          alert("Notification " + update);
+        function(e) {
+          ErrorDialog.showError(e);
         }
       );
     };
@@ -47,19 +47,34 @@ angular.module('email')
     
     $scope.cancelEmail = function () {
       $state.go('email_cancel');
-      $rootScope.callingProcess = $scope.emaildata.email.callingProcess;
     };
 
     $scope.saveDraft = function() {
-      console.log("Saving draft");
-      console.log($scope.emaildata.email);
-      DraftService.drafts.save($scope.emaildata.email, function(id) {
+      var draft = $scope.emaildata.email;
+      if(draft.id) {
+        updateDraft(draft);
+      } else {
+        saveDraft(draft);
+      }
+    };
+
+    function updateDraft(draft){
+      DraftService.drafts.update(draft, function() {
+        $state.go('.savedContent.drafts');
+      }, function(e) {
+        ErrorDialog.showError(e);
+      })
+
+    }
+
+    function saveDraft(draft) {
+      DraftService.drafts.save(draft, function() {
         updateDraftCount();
         $state.go('.savedContent.drafts');
       }, function(e) {
-        //do the error dialog popup?
+        ErrorDialog.showError(e);
       });
-    };
+    }
 
     $scope.counts = {
         drafts : 0,
@@ -71,6 +86,10 @@ angular.module('email')
       $scope.emaildata.email = draft;
       $state.go('email');
     });
+    $scope.$on('useEmail', function(event, email) {
+      $scope.emaildata.email = email;
+      $state.go('email');
+    })
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
