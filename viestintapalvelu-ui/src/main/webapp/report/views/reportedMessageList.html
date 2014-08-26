@@ -56,30 +56,34 @@
 		</div>
 	</div>
 	
-    <div class="results" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
-        <table class="table-striped clickable-table-row">
-            <tr>
-                <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
-                <th class="span3 clickable-header-cell" ng-click="sort('senderName')" ng-class="clickHeader('senderName')">{{'reportedmessagelist.otsikko.lahettajanNimi' | i18n}}</th>
-                <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
-                <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
-                <th class="span4">{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
-            </tr>
-            <tr ng-repeat="reportedMessage in reportedMessagesDTO.reportedMessages" ng-click="showReportedMessage(reportedMessage)">
-                <td>{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
-                <td>{{reportedMessage.senderName}}</td>
-                <td>{{reportedMessage.callingProcess}}</td>
-                <td>{{reportedMessage.subject}}</td>
-                <td>
-                    <img ng-show="reportedMessage.sendingStatus.numberOfFailedSendings > 0" style="margin-right:10px;" src="./assets/img/alert-icon28x29.png">
-                    {{reportedMessage.statusReport}}
-                </td>
-            </tr>
+    <div class="row-fluid" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
+        <table class="table table-striped clickable-table-row">
+            <thead>
+	            <tr>
+	                <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
+	                <th class="span3 clickable-header-cell" ng-click="sort('senderName')" ng-class="clickHeader('senderName')">{{'reportedmessagelist.otsikko.lahettajanNimi' | i18n}}</th>
+	                <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
+	                <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
+	                <th class="span4">{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
+	            </tr>
+            </thead>
+            <tbody>
+	            <tr ng-repeat="reportedMessage in reportedMessagesDTO.reportedMessages" ng-click="showReportedMessage(reportedMessage)">
+	                <td>{{reportedMessage.startTime | date:'dd.MM.yyyy'}}</a></td>
+	                <td>{{reportedMessage.senderName}}</td>
+	                <td>{{reportedMessage.callingProcess}}</td>
+	                <td>{{reportedMessage.subject}}</td>
+	                <td>
+	                    <img ng-show="reportedMessage.sendingStatus.numberOfFailedSendings > 0" style="margin-right:10px;" src="./assets/img/alert-icon28x29.png">
+	                    {{reportedMessage.statusReport}}
+	                </td>
+	            </tr>
+            </tbody>
         </table>
     </div>
     
-    <div ng-if="reportedMessagesDTO.reportedMessages.length > 0">
-        <pagination total-items="reportedMessagesDTO.numberOfReportedMessages" items-per-page="pageSize" page="currentPage" on-select-page="selectPage(page)" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+    <div class="pagination pagination-centered row-fluid" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
+        <pagination total-items="reportedMessagesDTO.numberOfReportedMessages" items-per-page="{{pagination.pageSize}}" ng-model="pagination.page" ng-change="pageChanged()" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
     </div>
 </div>
 

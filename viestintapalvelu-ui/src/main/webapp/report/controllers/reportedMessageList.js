@@ -1,15 +1,19 @@
 'use strict';
 
-angular.module('report')
-.controller('ReportedMessageListCtrl',
+angular.module('report').controller('ReportedMessageListCtrl',
     function ReportedMessageListCtrl($scope, $state, GetReportedMessagesByOrganization,
         GetReportedMessagesBySearchArgument, SharedVariables, ErrorDialog) {
-        $scope.pageSize = 10;
-        $scope.currentPage = 1;
+		$scope.pagination = {
+			page: 1,
+			pageSize: 10
+		};
         $scope.sortedBy = '';
         $scope.order = 'asc';
         $scope.descending = false;
-        $scope.form = {organization: '', searchArgument: ''};
+        $scope.form = {
+        	organization: '', 
+        	searchArgument: ''
+        };
 
         /**
          * Haetaan raportoitavat viestit
@@ -17,8 +21,8 @@ angular.module('report')
         $scope.fetch = function() {
             // Hakutekijää ei ole annettu. Listalle haetut sanomat.
             if (SharedVariables.getSearchArgumentValue() == '') {
-                GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid, nbrofrows: $scope.pageSize, 
-                    page: $scope.currentPage}, 
+                GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid, 
+                	nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page}, 
                 function(result) {
                     $scope.reportedMessagesDTO = result;
                 }, function(error) {
@@ -30,7 +34,8 @@ angular.module('report')
                 $scope.form.searchArgument = SharedVariables.getSearchArgumentValue();
                 
                 GetReportedMessagesBySearchArgument.get({orgOid: $scope.form.organization.oid, 
-                    searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pageSize, page: $scope.currentPage}, 
+                    searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pagination.pageSize, 
+                    page: $scope.pagination.page}, 
                 function(result) {
                     $scope.reportedMessagesDTO = result;
                 }, function(error) {
@@ -46,7 +51,8 @@ angular.module('report')
             // Hakutekijää ei ole annettu. Haetaan kaikki lajiteltuna.
             if (SharedVariables.getSearchArgumentValue() == '') {
                 GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid, 
-                    nbrofrows: $scope.pageSize, page: $scope.currentPage, sortedby: $scope.sortedBy, order: $scope.order}, 
+                    nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page, sortedby: $scope.sortedBy, 
+                    order: $scope.order}, 
                 function(result) {
                     $scope.reportedMessagesDTO = result;
                 }, function(error){
@@ -58,7 +64,8 @@ angular.module('report')
                 $scope.form.searchArgument = SharedVariables.getSearchArgumentValue();
                 GetReportedMessagesBySearchArgument.get(
                     {orgOid: $scope.form.organization.oid, searchArgument: $scope.form.searchArgument, 
-                    nbrofrows: $scope.pageSize, page: $scope.currentPage, sortedby: $scope.sortedBy, order: $scope.order}, 
+                    nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page, sortedby: $scope.sortedBy, 
+                    order: $scope.order}, 
                 function(result) {
                     $scope.reportedMessagesDTO = result;
                 }, function(error) {
@@ -76,14 +83,15 @@ angular.module('report')
             SharedVariables.setSelectedOrganizationValue($scope.form.organization);
             // Suoritetaan haku
             GetReportedMessagesBySearchArgument.get({orgOid: $scope.form.organization.oid,
-                searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pageSize, page: $scope.currentPage}, 
+                searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pagination.pageSize, 
+                page: $scope.pagination.page}, 
             function(result) {
                 $scope.reportedMessagesDTO = result;
             }, function(error) {
                 ErrorDialog.showError(error);
             });
             // Näytettäväksi sivuksi ensimmäinen sivu.
-            $scope.currentPage = 1;
+            $scope.pagination.page = 1;
         };
             
         /**
@@ -94,7 +102,8 @@ angular.module('report')
             SharedVariables.setSearchArgumentValue('');
             $scope.form.searchArgument = '';
             // Haetaan kaikkitiedot
-            $scope.selectPage(1);
+            $scope.pagination.page = 1;
+            $scope.fetch();
         };
 
         /**
@@ -126,16 +135,14 @@ angular.module('report')
             }
             
             // Asetetaan sivuksi ensimmäinen ja haetaan sanomat lajiteltuna
-            $scope.currentPage = 1; 
+            $scope.pagination.page = 1; 
             $scope.fetchWithSorting();
         };
         
         /**
          * Valittiin seuraava tai edellinen sivu
          */
-        $scope.selectPage = function(page) {
-            $scope.currentPage = page;
-            
+        $scope.pageChanged = function() {
             if ($scope.sortedBy != '') {
                 $scope.fetchWithSorting();
             } else {
@@ -151,14 +158,14 @@ angular.module('report')
             SharedVariables.setSelectedOrganizationValue($scope.form.organization);
             // Suoritetaan haku
             GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid,
-                nbrofrows: $scope.pageSize, page: $scope.currentPage}, 
+                nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page}, 
             function(result) {
                 $scope.reportedMessagesDTO = result;
             }, function(error) {
                 ErrorDialog.showError(error);
             });
             // Näytettäväksi sivuksi ensimmäinen sivu.
-            $scope.currentPage = 1;
+            $scope.pagination.page = 1;
         };      
         
         /**
@@ -169,5 +176,5 @@ angular.module('report')
         };
         
         // Alustetaan ensimmäinen sivu
-        $scope.selectPage(1);
+        $scope.fetch();
 });

@@ -1,14 +1,15 @@
 'use strict';
 
-angular.module('report')
-.controller('ReportedMessageViewCtrl', 
-    ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients', 'ReportedMessageAndRecipientsSendingUnsuccesful', 'ErrorDialog', 
-    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccesful, ErrorDialog) {
+angular.module('report').controller('ReportedMessageViewCtrl', 
+    ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients', 
+     'ReportedMessageAndRecipientsSendingUnsuccesful', 'ErrorDialog', 
+    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, 
+    	ReportedMessageAndRecipientsSendingUnsuccesful, ErrorDialog) {
         var polling, // promise returned by $interval
             POLLING_INTERVAL = 5 * 1000; // 5 seconds
 
         $scope.pagination = {
-            currentPage: 1,
+            page: 1,
             pageSize: 10,
         };
         $scope.sortedBy = '';
@@ -21,13 +22,28 @@ angular.module('report')
             $state.go('report');
         };
 
+        // Muodostetaan hakuparametrit
+        $scope.buildSearchParameters = function() {
+			var parameters = {
+			    messageID: $stateParams.messageID,
+			    nbrofrows: $scope.pagination.pageSize,
+			    page: $scope.pagination.page
+			};
+
+			if ($scope.sortedBy.length > 0) { // include sortedBy and order if sorting is activated
+				angular.extend(parameters, { sortedby: $scope.sortedBy, order: $scope.order });
+			}
+        	
+			return parameters;
+        };
+        
         // Haetaan raportoitava viesti
         $scope.fetch = function() {
             // compose the parameter object for AJAX call
             var parameters = {
                 messageID: $stateParams.messageID,
                 nbrofrows: $scope.pagination.pageSize,
-                page: $scope.pagination.currentPage
+                page: $scope.pagination.page
             };
             if ($scope.sortedBy.length > 0) { // include sortedBy and order if sorting is activated
                 angular.extend(parameters, { sortedby: $scope.sortedBy, order: $scope.order });
@@ -41,10 +57,22 @@ angular.module('report')
             });
         };
 
+        // Haaetaan vastaanottajat joille viestin lähetys on epäonnistunut
+        $scope.fetchUnsuccesfulSendings = function() {
+        	var parameters = $scope.buildSearchParameters();
+        	
+            ReportedMessageAndRecipientsSendingUnsuccesful.get(parameters, 
+            function(result) {
+                $scope.reportedMessageDTO = result;
+            }, function(error) {
+                ErrorDialog.showError(error);
+            });        	
+        };
+        
         function fetchIfSending() {
             // if reportedMessagesDTO is not set, then wait for initial fetch to complete
             if ($scope.reportedMessageDTO) { 
-                if (angular.isNumber($scope.reportedMessageDTO.endTime)) {
+                if ($scope.reportedMessageDTO.sendingStatus.sendingEnded != null) {
                     // no need to refresh is sending is complete
                     $interval.cancel(polling); 
                 } else {
@@ -54,16 +82,18 @@ angular.module('report')
             } 
         };
 
-        // Painettiin katso lähetys epäonnistunut painiketta
+        // Painettiin näytä kaikki linkkiä
+        $scope.showAll = function() {
+            $scope.showSendingUnsuccesfulClicked = false;
+            $scope.sortedBy = '';
+            $scope.order = 'asc';
+            $scope.fetch();
+        };
+
+        // Painettiin näytä epäonnistuneet linkkiä
         $scope.showSendingUnsuccesful = function() {
             $scope.showSendingUnsuccesfulClicked = true;
-            ReportedMessageAndRecipientsSendingUnsuccesful.get({messageID: $stateParams.messageID, 
-                nbrofrows: $scope.pagination.pageSize,	page: $scope.pagination.currentPage}, 
-            function(result) {
-                $scope.reportedMessageDTO = result;
-            }, function(error) {
-                ErrorDialog.showError(error);
-            });
+            $scope.fetchUnsuccesfulSendings();
         };
 
         // Otsikkosaraketta klikattu. Palautetaan tyyliksi sort-true tai sort-false.
@@ -71,6 +101,15 @@ angular.module('report')
             return headerName == $scope.sortedBy && 'sort-' + $scope.descending;
         };
 
+        // Painettu seuraava sivu painiketta
+        $scope.pageChanged = function() {
+           	if ($scope.showSendingUnsuccesfulClicked == false) {
+           		$scope.fetch();            		
+            } else {
+                $scope.showSendingUnsuccesful();
+            }
+        };
+        
         // Lajittelu otsikkosarakkeen mukaan
         $scope.sort = function(headerName) {
             // Painettiin samaa otsikkosaraketta kuin aiemmin. Vaihdetaan järjestystä. 
@@ -89,7 +128,7 @@ angular.module('report')
                 $scope.order = 'desc';
             }
             // Asetetaan sivuksi ensimmäinen ja haetaan sanoman tiedot lajiteltuna
-            $scope.pagination.currentPage = 1;
+            $scope.pagination.page = 1;
             $scope.fetch();
         };
 
