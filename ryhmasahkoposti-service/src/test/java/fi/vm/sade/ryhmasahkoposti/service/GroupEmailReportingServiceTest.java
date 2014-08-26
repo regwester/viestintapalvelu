@@ -104,7 +104,7 @@ public class GroupEmailReportingServiceTest {
     @Mock
     private OrganizationComponent mockedOrganizationComponent;
     @Mock
-    private TemplateComponent mockedTemplateComponent;
+    private TemplateService mockedTemplateComponent;
     @Mock
     private ReportedMessageReplacementConverter mokedReportedMessageReplacementConverter;
     @Mock
@@ -411,7 +411,7 @@ public class GroupEmailReportingServiceTest {
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
 
-        when(mockedReportedMessageService.getReportedMessages("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting))
+        when(mockedReportedMessageService.getUserMessages("1.2.246.562.24.42645159413", pagingAndSorting))
             .thenReturn(mockedReportedMessages);
 
         List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
@@ -420,7 +420,7 @@ public class GroupEmailReportingServiceTest {
             mockedReportedMessageDTOs);
 
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(
-            "1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
+            "1.2.246.562.24.42645159413", null, pagingAndSorting);
 
         assertNotNull(reportedMessagesDTO);
         assertEquals(1, reportedMessagesDTO.getReportedMessages().size());

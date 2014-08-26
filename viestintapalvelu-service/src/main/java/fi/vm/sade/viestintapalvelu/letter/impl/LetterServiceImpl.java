@@ -53,8 +53,10 @@ public class LetterServiceImpl implements LetterService {
     /* - Create LetterBatch - */
     /* ---------------------- */
     public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+        System.out.println("getting current user!!! ");
         Henkilo henkilo = currentUserComponent.getCurrentUser();
-
+        System.out.println("getting current user!!!  got "+ henkilo);
+        
         // kirjeet.kirjelahetys
         LetterBatch letterB = new LetterBatch();
         letterB.setTemplateId(letterBatch.getTemplateId());
@@ -217,42 +219,6 @@ public class LetterServiceImpl implements LetterService {
     }
     
     /*
-    private List<Letter> parseLetterDTOs(Set<LetterReceivers> letterReceivers) {
-     
-        List<Letter> letters = new LinkedList<Letter>();
-
-        for (LetterReceivers letterRec : letterReceivers) {
-            Letter letter = new Letter();
-
-            // Should fetch by receiver...
-
-            // kirjeet.vastaanottajakorvauskentat
-            Map<String, Object> replacements = new HashMap<String, Object>();
-            for (LetterReceiverReplacement letterRepl : letterRec.getLetterReceiverReplacement()) {
-                replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());
-
-                // not implemented totally.
-
-            }
-            letter.setTemplateReplacements(replacements);
-
-            // kirjeet.vastaanottajaosoite
-            fi.vm.sade.viestintapalvelu.address.AddressLabel addr = new fi.vm.sade.viestintapalvelu.address.AddressLabel(
-                letterRec.getLetterReceiverAddress().getFirstName(),
-                letterRec.getLetterReceiverAddress().getLastName(), letterRec.getLetterReceiverAddress()
-                    .getAddressline(), letterRec.getLetterReceiverAddress().getAddressline2(), letterRec
-                    .getLetterReceiverAddress().getAddressline3(),
-                letterRec.getLetterReceiverAddress().getPostalCode(), letterRec.getLetterReceiverAddress().getCity(),
-                letterRec.getLetterReceiverAddress().getRegion(), letterRec.getLetterReceiverAddress().getCountry(),
-                letterRec.getLetterReceiverAddress().getCountryCode());
-            letter.setAddressLabel(addr);
-
-            letters.add(letter);
-        }
-        return letters;
-    }
-    */
-    /*
      * kirjeet.vastaanottaja
      */
     private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch,
@@ -404,7 +370,6 @@ public class LetterServiceImpl implements LetterService {
             int count = deflater.deflate(buffer);
             outputStream.write(buffer, 0, count);
         }
-    
         outputStream.close();
         return outputStream.toByteArray();
     }

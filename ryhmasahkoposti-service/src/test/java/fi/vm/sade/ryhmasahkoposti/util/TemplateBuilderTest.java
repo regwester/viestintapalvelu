@@ -17,6 +17,7 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
@@ -27,9 +28,11 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @PrepareForTest(TemplateBuilder.class)
 @ContextConfiguration("/test-bundle-context.xml")
 public class TemplateBuilderTest {
-
+    private EmailData emailData;
+    
     @Before
     public void setup() {
+        this.emailData = RaportointipalveluTestData.getEmailData();        
     }
 
     @Test
@@ -47,7 +50,7 @@ public class TemplateBuilderTest {
 
         TemplateBuilder builder = new TemplateBuilder();
 
-        String template = builder.buildTemplate(templateDTO);
+        String template = builder.buildTemplate(templateDTO, emailData);
 
         assertNotNull(template);
         assertEquals(template, content.getContent()); 
@@ -68,7 +71,7 @@ public class TemplateBuilderTest {
         templateDTO.setContents(contents);
 
         TemplateBuilder builder = new TemplateBuilder();
-        String message = builder.buildTemplate(templateDTO);
+        String message = builder.buildTemplate(templateDTO, emailData);
 
         List<ReplacementDTO> messageReplacements = RaportointipalveluTestData.getEmailReplacements(1, 2, 3);
         List<ReportedRecipientReplacementDTO> recipientReplacements = RaportointipalveluTestData.getReportedReceientReplacements(2, 3);
@@ -95,7 +98,7 @@ public class TemplateBuilderTest {
         templateDTO.setContents(contents);
 
         TemplateBuilder builder = new TemplateBuilder();
-        String message = builder.buildTemplate(templateDTO);
+        String message = builder.buildTemplate(templateDTO, emailData);
 
         List<ReplacementDTO> messageReplacements = RaportointipalveluTestData.getEmailReplacements(1, 2, 3);
         List<ReportedRecipientReplacementDTO> recipientReplacements = RaportointipalveluTestData.getReportedReceientReplacements(4, 5, 6);
@@ -121,7 +124,7 @@ public class TemplateBuilderTest {
         templateDTO.setContents(contents);
 
         TemplateBuilder builder = new TemplateBuilder();
-        String message = builder.buildTemplate(templateDTO);
+        String message = builder.buildTemplate(templateDTO, emailData);
 
         List<ReplacementDTO> messageReplacements = RaportointipalveluTestData.getEmailReplacements(1, 2, 3);
         List<ReportedRecipientReplacementDTO> recipientReplacements = RaportointipalveluTestData.getReportedReceientReplacements(1, 2, 3);
@@ -147,7 +150,7 @@ public class TemplateBuilderTest {
         templateDTO.setContents(contents);
 
         TemplateBuilder builder = new TemplateBuilder();
-        String message = builder.buildTemplate(templateDTO);
+        String message = builder.buildTemplate(templateDTO, emailData);
 
         List<ReplacementDTO> messageReplacements = RaportointipalveluTestData.getEmailReplacements(1, 2, 3);
         List<ReportedRecipientReplacementDTO> recipientReplacements = null;
@@ -173,7 +176,7 @@ public class TemplateBuilderTest {
         templateDTO.setContents(contents);
 
         TemplateBuilder builder = new TemplateBuilder();
-        String message = builder.buildTemplate(templateDTO);
+        String message = builder.buildTemplate(templateDTO, emailData);
 
         List<ReplacementDTO> messageReplacements = null;
         List<ReportedRecipientReplacementDTO> recipientReplacements = RaportointipalveluTestData.getReportedReceientReplacements(1, 2, 3);
@@ -200,7 +203,7 @@ public class TemplateBuilderTest {
         templateDTO.setContents(contents);
 
         TemplateBuilder builder = new TemplateBuilder();
-        String message = builder.buildTemplate(templateDTO);
+        String message = builder.buildTemplate(templateDTO, emailData);
 
         List<ReplacementDTO> messageReplacements = null;
         List<ReportedRecipientReplacementDTO> recipientReplacements = null;

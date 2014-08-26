@@ -169,7 +169,9 @@ public class TemplateResource extends AsynchronousResource {
                 "/test_data/jalkiohjauskirje_FI.json", "/test_data/jalkiohjauskirje_SV.json",
                 "/test_data/hyvaksymiskirje_nivel_FI.json", "/test_data/hyvaksymiskirje_nivel_SV.json",
                 "/test_data/jalkiohjauskirje_nivel_FI.json", "/test_data/jalkiohjauskirje_nivel_SV.json",
-                "/test_data/koekutsukirje_EN.json","/test_data/koekutsukirje_SV.json", "/test_data/koekutsukirje_FI.json"
+                "/test_data/koekutsukirje_EN.json","/test_data/koekutsukirje_SV.json", "/test_data/koekutsukirje_FI.json",
+                "/test_data/osoitepalvelu_email_EN.json","/test_data/osoitepalvelu_email_SV.json", 
+                "/test_data/osoitepalvelu_email_FI.json"
                 };
 
         for (String template : templates) {

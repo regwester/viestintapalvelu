@@ -37,6 +37,9 @@ public class DraftModel extends BaseEntity {
     
     @Column(name = "lahettajan_oid")
     private String userOid;
+
+    @Column(name = "organisaation_oid")
+    private String organizationOid;
     
     @Column(name = "lahettajan_osoite")
     private String from;
@@ -63,6 +66,7 @@ public class DraftModel extends BaseEntity {
         this.subject = builder.subject;
         this.body = builder.body;
         this.userOid = builder.userOid;
+        this.organizationOid = builder.organizationOid;
         this.attachments = builder.attachments;
         this.isHtml = builder.isHtml;
         this.createDate = builder.createDate;
@@ -101,6 +105,12 @@ public class DraftModel extends BaseEntity {
 
     public void setUserOid(String userOid) {
         this.userOid = userOid;
+    }
+
+    public String getOrganizationOid() { return organizationOid; }
+
+    public void setOrganizationOid(String oid) {
+        this.organizationOid = oid;
     }
 
     public boolean isHtml() {
@@ -152,6 +162,7 @@ public class DraftModel extends BaseEntity {
         private String subject;
         private String body;
         private String userOid;
+        private String organizationOid;
         private Set<ReportedAttachment> attachments = new HashSet<ReportedAttachment>();
         private boolean isHtml;
         private Date createDate;
@@ -174,6 +185,10 @@ public class DraftModel extends BaseEntity {
         }
         public Builder userOid(String oid) {
             this.userOid = oid;
+            return this;
+        }
+        public Builder organizationOid(String oid) {
+            this.organizationOid = oid;
             return this;
         }
         public Builder addAttachment(ReportedAttachment a) {
@@ -204,5 +219,21 @@ public class DraftModel extends BaseEntity {
             return new DraftModel(this);
         }
         
+    }
+
+    @Override
+    public String toString() {
+        return "DraftModel{" +
+                "replyTo='" + replyTo + '\'' +
+                ", subject='" + subject + '\'' +
+                ", body='" + body + '\'' +
+                ", isHtml=" + isHtml +
+                ", userOid='" + userOid + '\'' +
+                ", organizationOid='" + organizationOid + '\'' +
+                ", from='" + from + '\'' +
+                ", sender='" + sender + '\'' +
+                ", attachments=" + attachments +
+                ", createDate=" + createDate +
+                '}';
     }
 }

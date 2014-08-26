@@ -22,12 +22,21 @@ public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
      * @return Lista raportoitavia viestejä
      */
     public List<ReportedMessage> findByOrganizationOid(String organizationOid, PagingAndSortingDTO pagingAndSorting);
-    
+
+    /**
+     * Hakee halutun käyttäjän lähettämiä raportoitavia viestejä halutussa järjestyksessä
+     *
+     * @param senderOid Lähettäjän oid-tunnus
+     * @param pagingAndSorting Palautettavien tietojen sivutus ja järjestystiedot
+     * @return Lista raportoitavia viestejä
+     */
+    public List<ReportedMessage> findBySenderOid(String senderOid, PagingAndSortingDTO pagingAndSorting);
+
     /**
      * Hakee halutun käyttäjän lähettämiä raportoitavia viestejä halutussa järjestyksessä
      *  
      * @param senderOid Lähettäjän oid-tunnus
-     * @param processConstraint Prosessi, jonka kautta viesti on lähetetty
+     * @param process Prosessi, jonka kautta viesti on lähetetty
      * @param pagingAndSorting Palautettavien tietojen sivutus ja järjestystiedot
      * @return Lista raportoitavia viestejä
      */
@@ -50,7 +59,15 @@ public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
 	 * @param  organizationOid Organisaation oid-tunnus
 	 * @return Raportoitujen ryhmäsähköpostien lukumäärä
 	 */
-	public Long findNumberOfReportedMessage(String organizationOid);
+	public Long findNumberOfReportedMessages(String organizationOid);
+
+    /**
+     * Hakee raportoitujen ryhmäsähköpostien lukumäärän tietyllä käyttäjällä
+     *
+     * @param  userOid Käyttäjän oid-tunnus
+     * @return Kyseisen käyttäjän lähettämien ryhmäsähköpostien lukumäärä
+     */
+    public Long findNumberOfUserMessages(String userOid);
 
 	   /**
      * Hakee hakuparametrien mukaiset raportoitujen ryhmäsähköpostien lukumäärän

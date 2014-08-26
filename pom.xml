@@ -39,7 +39,7 @@
         <checkstyle.consoleOutput>true</checkstyle.consoleOutput>
         <checkstyle.configLocation><![CDATA[http://pulpetti.hard.ware.fi:9000/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=SonarWayWithFindbugsAndOPHCheckstyle]]></checkstyle.configLocation>
 
-        <clover.version>3.1.8</clover.version>
+        <clover.version>3.3.0</clover.version>
         <clover.outputDirectory>${bamboo.data.home}/www/clover/${project.groupId}</clover.outputDirectory>
         <clover.base>${bamboo.data.home}/clover/${project.groupId}</clover.base>
         <!-- end-of-build-parent properties -->
@@ -478,6 +478,12 @@
                 <groupId>org.apache.camel</groupId>
                 <artifactId>camel-http</artifactId>
                 <version>${camel.version}</version>
+                <exclusions>
+                    <exclusion>
+                        <artifactId>geronimo-servlet_3.0_spec</artifactId>
+                        <groupId>org.apache.geronimo.specs</groupId>
+                    </exclusion>
+                </exclusions>
             </dependency>
             <dependency>
                 <groupId>org.apache.camel</groupId>
@@ -1387,38 +1393,28 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-clover2-plugin</artifactId>
                         <version>${clover.version}</version>
-
                         <configuration>
                             <licenseLocation>${bamboo.data.home}/clover/clover.license</licenseLocation>
                             <outputDirectory>${clover.outputDirectory}</outputDirectory>
                             <snapshot>${clover.base}/snapshot/clover.snapshot</snapshot>
                             <cloverDatabase>${clover.base}/db/clover.db</cloverDatabase>
                             <historyDir>${clover.base}/history</historyDir>
-
                             <singleCloverDatabase>true</singleCloverDatabase>
                             <generateHistorical>true</generateHistorical>
                             <alwaysReport>true</alwaysReport>
                             <generateXml>true</generateXml>
                             <includesAllSourceRoots>true</includesAllSourceRoots>
-                            <!--<copyExcludedFiles>false</copyExcludedFiles>-->
-                            <!--<includes>
-                                  <include>**/api/**/*.java</include>
-                                  <include>some/path/MyFile.java</include>
-                                  [...]
-                              </includes>  -->
                             <excludes>
                                 <exclude>**/*Mock.java</exclude>
                                 <exclude>**/*.scala</exclude>
                                 <!-- TODO, FIXME: exclude "**/*-api/**" modules. -->
                             </excludes>
-                            <!--  <targetPercentage>50%</targetPercentage>  -->
                         </configuration>
                         <executions>
                             <execution>
                                 <id>clover</id>
                                 <goals>
                                     <goal>setup</goal>
-                                    <!--<goal>optimize</goal>-->
                                     <goal>snapshot</goal>
                                 </goals>
                             </execution>
@@ -1427,7 +1423,6 @@
                                 <goals>
                                     <goal>clover</goal>
                                     <goal>log</goal>
-                                    <!-- <goal>check</goal> disable!-->
                                     <goal>save-history</goal>
                                 </goals>
                             </execution>

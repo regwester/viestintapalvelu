@@ -50,7 +50,7 @@ angular.module('report')
   $scope.downloadLetter = function(recipient) {
     var getLetterDownloadLink, letterDownloadLinkUrl = reportingAPIUrl + '/letter';
 
-    getLetterDownloadLink = $http.get(letterDownloadLinkUrl, { params: { id: recipient.letterReceiverLetterID } })
+    getLetterDownloadLink = $http.get(letterDownloadLinkUrl, { params: { id: recipient.letterReceiverLetterID } });
     getLetterDownloadLink.success(function(downloadLink) {
       // changing window location will initiate download prompt
       // TODO: the backend should return only the documentID, not the whole url

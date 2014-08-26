@@ -23,14 +23,14 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
  */
 @Component
 public class ReportedMessageReplacementConverter {
-
     CurrentUserComponent currentUserComponent;
 
     @Autowired
-    public ReportedMessageReplacementConverter(CurrentUserComponent currentUserComponent) {}
+    public ReportedMessageReplacementConverter(CurrentUserComponent currentUserComponent) {        
+    }
 
     /**
-     * Convert recipient specific replacements
+     * Convert message specific replacements
      * 
      * @param reportedMessage
      * @param reportedRecipientReplacements
@@ -38,25 +38,22 @@ public class ReportedMessageReplacementConverter {
      * @throws IOException
      */
     public List<ReportedMessageReplacement> convert(ReportedMessage reportedMessage, 
-            Set<ReplacementDTO> templateReplacements, List<ReplacementDTO> emailReplacements) 
-                    throws IOException {
-
+        Set<ReplacementDTO> templateReplacements, List<ReplacementDTO> emailReplacements) throws IOException {
         List<ReportedMessageReplacement> reportedMessageReplacements = new ArrayList<ReportedMessageReplacement>();	
 
         for (ReplacementDTO replacement : templateReplacements) {
-
             // Check if not send from the email
             ReplacementDTO _replacement = getReplacement(emailReplacements, replacement.getName());
             if (_replacement != null)
                 replacement = _replacement;
 
-            ReportedMessageReplacement messageRecipentMessageReplacement = new ReportedMessageReplacement();
-            messageRecipentMessageReplacement.setName(replacement.getName());
-            messageRecipentMessageReplacement.setDefaultValue(replacement.getDefaultValue());
-            messageRecipentMessageReplacement.setTimestamp(new Date());
-            messageRecipentMessageReplacement.setReportedMessage(reportedMessage);
+            ReportedMessageReplacement reportedMessageReplacement = new ReportedMessageReplacement();
+            reportedMessageReplacement.setName(replacement.getName());
+            reportedMessageReplacement.setDefaultValue(replacement.getDefaultValue());
+            reportedMessageReplacement.setTimestamp(new Date());
+            reportedMessageReplacement.setReportedMessage(reportedMessage);
 
-            reportedMessageReplacements.add(messageRecipentMessageReplacement);
+            reportedMessageReplacements.add(reportedMessageReplacement);
         }
 
         return reportedMessageReplacements;
@@ -71,8 +68,7 @@ public class ReportedMessageReplacementConverter {
      * @return {@link ReplacementDTO}
      */
     public ReplacementDTO getEmailFieldFromReplacements(Set<ReplacementDTO> templateReplacements, 
-            List<ReplacementDTO> emailReplacements, String replacementName) {
-
+        List<ReplacementDTO> emailReplacements, String replacementName) {
         if (templateReplacements == null && emailReplacements == null)
             return null;
 
@@ -102,7 +98,6 @@ public class ReportedMessageReplacementConverter {
      * @return {@link ReplacementDTO}
      */
     private ReplacementDTO getReplacement(List<ReplacementDTO> replacements, String replacementName) {
-
         if (replacements == null)
             return null;
 

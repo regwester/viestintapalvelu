@@ -34,8 +34,8 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
-    DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
+        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 public class MessageReportingResourceTest {
     @Mock
     private GroupEmailReportingService mockedGroupEmailReportingService;
@@ -47,28 +47,28 @@ public class MessageReportingResourceTest {
 
     @Before
     public void setup() {
-        this.messageReportingResource = new MessageReportingResourceImpl(mockedGroupEmailReportingService, 
-            mockedReportedMessageQueryDTOConverter, mockedPagingAndSortingDTOConverter);
+        this.messageReportingResource = new MessageReportingResourceImpl(mockedGroupEmailReportingService,
+                mockedReportedMessageQueryDTOConverter, mockedPagingAndSortingDTOConverter);
     }
-    
+
     @Test
-    public void testGetReportedMessagesIsSuccesful() {
+    public void testGetReportedMessagesIsSuccessful() throws Exception {
         PagingAndSortingDTO mockedPagingAndSortingDTO = RaportointipalveluTestData.getPagingAndSortingDTO();
-        when(mockedPagingAndSortingDTOConverter.convert(any(Integer.class), any(Integer.class), any(String.class), 
-            any(String.class))).thenReturn(mockedPagingAndSortingDTO);
-        
+        when(mockedPagingAndSortingDTOConverter.convert(any(Integer.class), any(Integer.class), any(String.class),
+                any(String.class))).thenReturn(mockedPagingAndSortingDTO);
+
         List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
         organizations.add(RaportointipalveluTestData.getOrganizationDTO());
         when(mockedGroupEmailReportingService.getUserOrganizations()).thenReturn(organizations);
-        
+
         ReportedMessagesDTO mockedReportedMessagesDTO = RaportointipalveluTestData.getReportedMessagesDTO();
         when(mockedGroupEmailReportingService.getReportedMessagesByOrganizationOid(
-            "1.2.246.562.10.00000000001", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
-        
-        Response response = 
-            messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc");
+                "1.2.246.562.10.00000000001", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
+
+        Response response =
+                messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc");
         ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
-        
+
         assertNotNull(searchedReportedMessagesDTO);
         assertNotNull(searchedReportedMessagesDTO.getReportedMessages());
         assertTrue(searchedReportedMessagesDTO.getReportedMessages().size() == 1);
@@ -78,53 +78,33 @@ public class MessageReportingResourceTest {
     }
 
     @Test
-    public void testGetReportedMessagesWithSearchArgumentIsSuccesful() {
+    public void testGetReportedMessagesWithSearchArgumentIsSuccessful() throws Exception {
         PagingAndSortingDTO mockedPagingAndSortingDTO = RaportointipalveluTestData.getPagingAndSortingDTO();
-        when(mockedPagingAndSortingDTOConverter.convert(any(Integer.class), any(Integer.class), any(String.class), 
-            any(String.class))).thenReturn(mockedPagingAndSortingDTO);
-        
+        when(mockedPagingAndSortingDTOConverter.convert(any(Integer.class), any(Integer.class), any(String.class),
+                any(String.class))).thenReturn(mockedPagingAndSortingDTO);
+
         List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
         organizations.add(RaportointipalveluTestData.getOrganizationDTO());
         when(mockedGroupEmailReportingService.getUserOrganizations()).thenReturn(organizations);
-        
+
         ReportedMessageQueryDTO mockedReportedMessageQueryDTO = RaportointipalveluTestData.getReportedMessageQueryDTO();
         when(mockedReportedMessageQueryDTOConverter.convert(any(String.class), any(String.class))).thenReturn(
-            mockedReportedMessageQueryDTO);
-        
+                mockedReportedMessageQueryDTO);
+
         ReportedMessagesDTO mockedReportedMessagesDTO = RaportointipalveluTestData.getReportedMessagesDTO();
         when(mockedGroupEmailReportingService.getReportedMessages(
-            mockedReportedMessageQueryDTO, mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
-        
-        Response response = 
-            messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", "testi.vastaanottaja@sposti.fi", 
-            10, 1, "sendingStarted", "asc");
+                mockedReportedMessageQueryDTO, mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
+
+        Response response =
+                messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", "testi.vastaanottaja@sposti.fi",
+                        10, 1, "sendingStarted", "asc");
         ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
-        
+
         assertNotNull(searchedReportedMessagesDTO);
         assertNotNull(searchedReportedMessagesDTO.getReportedMessages());
         assertTrue(searchedReportedMessagesDTO.getReportedMessages().size() == 1);
         assertTrue(searchedReportedMessagesDTO.getNumberOfReportedMessages() == 1);
         assertNotNull(searchedReportedMessagesDTO.getOrganizations());
         assertTrue(searchedReportedMessagesDTO.getOrganizations().size() == 1);
-    }
-    
-    @Test
-    public void testGetReportedMessagesSentByCurrentUserIsSuccessful() {
-    	PagingAndSortingDTO mockedPagingAndSortingDTO = new PagingAndSortingDTO();
-    	mockedPagingAndSortingDTO.setFromIndex(0);
-    	mockedPagingAndSortingDTO.setNumberOfRows(0);
-    	mockedPagingAndSortingDTO.setSortedBy(null);
-    	mockedPagingAndSortingDTO.setSortOrder(null);
-    	when(mockedPagingAndSortingDTOConverter.convert(null, null)).thenReturn(mockedPagingAndSortingDTO);
-    	
-    	String mockedCurrentUserOid = RaportointipalveluTestData.getSender().getOidHenkilo();
-    	when(mockedGroupEmailReportingService.getCurrentUserOid()).thenReturn(mockedCurrentUserOid);
-    	
-    	ReportedMessagesDTO mockedReportedMessagesDTO = RaportointipalveluTestData.getReportedMessagesDTO();
-        when(mockedGroupEmailReportingService.getReportedMessagesBySenderOid(
-            mockedCurrentUserOid, "Hakuprosessi", mockedPagingAndSortingDTO)).thenReturn(mockedReportedMessagesDTO);
-    	
-    	Response response = messageReportingResource.getReportedMessagesSentByCurrentUser("Hakuprosessi");
-    	assertEquals(Status.OK.getStatusCode(), response.getStatus()); // test mock implementation
     }
 }

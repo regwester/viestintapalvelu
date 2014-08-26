@@ -12,21 +12,25 @@
         <%}%>
             {oid: '1.2.246.562.24.21860986107',
             oidType: 'virkailija',
-            email: 'ville.vastaanottaja@example.com',
+            email: 'veli.vastaanottaja@example.com',
             languageCode: 'FI'},
             
             {oid: '1.2.246.562.24.98095750306',
             oidType: 'virkailija',
-            email: 'torspo.uolevi@example.com',
+            email: 'veera.vastaanottaja@example.com',
             languageCode: 'FI'}
         ],
         email: {callingProcess: 'Osoitetietojarjestelma',
             sender: 'Opetushallitus',
-            from: 'opintopolku@oph.fi',
             organizationOid: '1.2.246.562.10.00000000001',
             replyTo: 'mikko.mallikas@oph.fi',
             subject: 'Testi viesti',
-            body: ''
+            body: '',
+            templateName: 'emailtemplate',
+            languageCode: 'FI',
+            sourceRegister: [
+                {name: 'opintopolku'}
+            ]
         }
     }
         </textarea>

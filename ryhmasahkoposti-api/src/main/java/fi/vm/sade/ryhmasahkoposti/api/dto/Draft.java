@@ -17,6 +17,7 @@ public class Draft {
     private String subject;
     private String body;
     private String organizationOid;
+    private String userOid;
     private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isHtml;
     //Pattern conforms to ISO 8601 ( http://en.wikipedia.org/wiki/ISO_8601 )
@@ -34,6 +35,7 @@ public class Draft {
         this.subject = builder.subject;
         this.body = builder.body;
         this.organizationOid = builder.organizationOid;
+        this.userOid = builder.userOid;
         this.attachInfo = builder.attachInfo;
         this.isHtml = builder.isHtml;
         this.createDate = builder.createDate;
@@ -76,6 +78,8 @@ public class Draft {
     public void setOrganizationOid(String organizationOid) {
         this.organizationOid = organizationOid;
     }
+    public String getUserOid() { return userOid; }
+    public void setUserOid(String oid) { this.userOid = oid; }
     public List<AttachmentResponse> getAttachInfo() {
         return attachInfo;
     }
@@ -106,6 +110,7 @@ public class Draft {
         private String subject;
         private String body;
         private String organizationOid;
+        private String userOid;
         private List<AttachmentResponse> attachInfo = new ArrayList<AttachmentResponse>();
         private boolean isHtml;
         private DateTime createDate;
@@ -141,6 +146,10 @@ public class Draft {
             this.organizationOid = oid;
             return this;
         }
+        public Builder userOid(String oid) {
+            this.userOid = oid;
+            return this;
+        }
         public Builder addAttachment(AttachmentResponse a) {
             this.attachInfo.add(a);
             return this;
@@ -173,6 +182,7 @@ public class Draft {
                 ", subject='" + subject + '\'' +
                 ", body='" + body + '\'' +
                 ", organizationOid='" + organizationOid + '\'' +
+                ", userOid='" + userOid + '\'' +
                 ", attachInfo=" + attachInfo +
                 ", isHtml=" + isHtml +
                 ", createDate=" + createDate +

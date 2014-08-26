@@ -147,15 +147,6 @@
 	clear: both;
 }
 
-.modal {
-    width: inherit;
-}
-
-.modal-body {
-    max-height: none;
-    overflow-y: visible;
-}
-
 .results .modal-header h1 {
     margin: 0;
 }
@@ -398,4 +389,25 @@ ul.attachments-list {
 .tooltip div.tooltip-inner {
     background: #fee7a5;
     color: #333333;
+}
+
+.form-horizontal .controls {
+    padding-top: 5px;
+    margin-bottom: 5px;
+    line-height: 2em;
+}
+.form-horizontal .control-group {
+    margin-bottom: 10px;
+}
+
+.form-horizontal .control-group.attachment-group {
+    margin-bottom: 0px;
+}
+
+.filelist .icon-remove {
+    margin-right: 5px;
+}
+
+.modal-dialog .modal-body img {
+    margin-right: 10px;
 }
