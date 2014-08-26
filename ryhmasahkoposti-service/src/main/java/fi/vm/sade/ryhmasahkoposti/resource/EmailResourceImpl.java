@@ -12,6 +12,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -113,6 +114,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
          */
         handleIncludedAttachments(emailData);
 
+        /* Sanitize body content */
+        sanitizeInput(emailData);
+
         String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
         log.debug("DB index is {}", sendId);
         return Response.ok(new EmailSendId(sendId)).build();
@@ -143,6 +147,10 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     private void handleFromAddress(EmailData emailData) {
         // Replace whatever from address we got from the client with the global one
         emailData.getEmail().setFrom(globalFromAddress);
+    }
+
+    private void sanitizeInput(EmailData emailData) {
+        emailData.getEmail().setBody(InputCleaner.cleanHtml(emailData.getEmail().getBody()));
     }
     
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {
