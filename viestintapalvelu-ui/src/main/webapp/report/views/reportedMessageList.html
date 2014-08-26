@@ -30,7 +30,7 @@
 
         <div class="span3 form-inline" ng-if="reportedMessagesDTO.organizations.length > 1">
             <select id="organizationSelection" ng-model="form.organization" ng-change="selectOrganization()"
-               ng-options="organization as organization.name for organization in reportedMessagesDTO.organizations"
+               ng-options="organization.name for organization in reportedMessagesDTO.organizations track by organization.oid"
                ng-init="form.organization = reportedMessagesDTO.organizations[reportedMessagesDTO.selectedOrganization]"> 
             </select>
         </div>
