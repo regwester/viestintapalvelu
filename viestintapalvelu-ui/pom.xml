@@ -5,7 +5,7 @@
     <parent>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
         <artifactId>viestintapalvelu</artifactId>
-        <version>9.9-SNAPSHOT</version>
+        <version>9.9</version>
     </parent>
 
     <artifactId>viestintapalvelu-ui</artifactId>
