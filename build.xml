@@ -44,7 +44,7 @@ shell command:
                 <include name="*.war"/>
             </fileset>
 
-            <fileset dir="${maven.repo}/fi/vm/sade/ryhmasahkoposti/ryhmasahkoposti-service/${ryhmasahkoposti.service.pom.version}">
+            <fileset dir="${maven.repo}/fi/vm/sade/viestintapalvelu/ryhmasahkoposti-service/${ryhmasahkoposti.service.pom.version}">
                 <include name="*.war"/>
             </fileset>
 
