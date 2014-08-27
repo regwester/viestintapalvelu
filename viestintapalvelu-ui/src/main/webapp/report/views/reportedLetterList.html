@@ -8,8 +8,10 @@
     <div class="organisation-select form-inline span4">
       <label for="organisationSelect">Organisaatio:</label>
       <select name="organisationSelect" 
-              ng-model="selectedOrganizationOid" 
-              ng-options="org.oid as org.name for org in reportedLettersDTO.organizations"
+              ng-model="form.organization" 
+              ng-change="fetch()"
+              ng-options="organization.name for organization in reportedLettersDTO.organizations track by organization.oid"
+              ng-init="form.organization = reportedLettersDTO.organizations[reportedLettersDTO.selectedOrganization]"
               ng-if="reportedLettersDTO.organizations">
       </select>
     </div>
