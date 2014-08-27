@@ -12,9 +12,6 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
 import fi.vm.sade.generic.model.BaseEntity;
 
 /*
@@ -33,7 +30,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 )
  */
 
-@Table(name = "luonnos", schema="kirjeet")
+@Table(name = "luonnos", schema= "kirjeet")
 @Entity(name = "Draft")
 public class Draft extends BaseEntity {
     private static final long serialVersionUID = 1L;

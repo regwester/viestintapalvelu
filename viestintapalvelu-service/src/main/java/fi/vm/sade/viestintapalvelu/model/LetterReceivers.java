@@ -15,9 +15,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
-import org.codehaus.jackson.annotate.JsonManagedReference;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -35,8 +34,7 @@ CREATE TABLE kirjeet.vastaanottaja (
 )
  */
 
-
-@Table(name = "vastaanottaja", schema="kirjeet")
+@Table(name = "vastaanottaja", schema= "kirjeet")
 @Entity()
 public class LetterReceivers extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -56,7 +54,10 @@ public class LetterReceivers extends BaseEntity {
      
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private LetterReceiverAddress letterReceiverAddress;
-  
+
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    private LetterReceiverEmail letterReceiverEmail;
+
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private LetterReceiverLetter letterReceiverLetter;
   
@@ -93,7 +94,15 @@ public class LetterReceivers extends BaseEntity {
 		this.letterReceiverAddress = letterReceiverAddress;
 	}
 
-	public LetterReceiverLetter getLetterReceiverLetter() {
+	public LetterReceiverEmail getLetterReceiverEmail() {
+        return letterReceiverEmail;
+    }
+
+    public void setLetterReceiverEmail(LetterReceiverEmail letterReceiverEmail) {
+        this.letterReceiverEmail = letterReceiverEmail;
+    }
+
+    public LetterReceiverLetter getLetterReceiverLetter() {
 		return letterReceiverLetter;
 	}
 
@@ -102,11 +111,10 @@ public class LetterReceivers extends BaseEntity {
 	}
 
 	@Override
-	public String toString() {
-		return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp="
-				+ timestamp + ", letterReceiverReplacement="
-				+ letterReceiverReplacement + ", letterReceiverAddress="
-				+ letterReceiverAddress + "]";
-	}
+    public String toString() {
+        return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
+                + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
+                + letterReceiverLetter + "]";
+    }
 
 }

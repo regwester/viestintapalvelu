@@ -4,33 +4,59 @@ import java.util.List;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
+/**
+ * Rajapinta kirjeiden liiketoimtakäsittelyä varten
+ *  
+ * @author vehei1
+ *
+ */
 public interface LetterService {
-
-    /* ---------------------- */
-    /* - Create LetterBatch - */
-    /* ---------------------- */
+    /**
+     * Luo kirjelähetyksen
+     * 
+     * @param letterBatch Annetun kirjelähetyksen tiedot
+     * @return Luodun kirjelähetyksen tiedot
+     */
     public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch);
 
-    /* ------------ */
-    /* - findById - */
-    /* ------------ */
+    /**
+     * Hakee kirjelähetyksen tiedot annetun avaimen perusteella
+     * 
+     * @param id Kirjelähetyksen avain
+     * @return Kirjelähetyksen tiedot
+     */
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id);
 
-    /* ------------------------------- */
-    /* - findLetterBatchByNameOrgTag - */
-    /* ------------------------------- */
+    /**
+     * Hakee annettujen hakuparametrien mukaiset kirjelähetyksen tiedot
+     * 
+     * @param templateName Kirjepohjan nimi
+     * @param languageCode Kielikoodi
+     * @param organizationOid Organisaation OID
+     * @param tag Tunniste
+     * @return Kirjelähetyksen tiedot
+     */
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
         String languageCode, String organizationOid, String tag);
 
-    /* ------------------------------- */
-    /* - findReplacementByNameOrgTag - */
-    /* ------------------------------- */
+    /**
+     * Hakee annettujen hakuparametrien mukaiset korvauskentien tiedot
+     * 
+     * @param templateName Kirjepohjan nimi
+     * @param languageCode Kielikoodi
+     * @param organizationOid organisaation OID
+     * @param tag Tunniste
+     * @return Lista korvauskenttien tietoja
+     */
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
         String languageCode, String organizationOid, String tag);
 
-    /* ------------- */
-    /* - getLetter - */
-    /* ------------- */
+    /**
+     * Hakee vastaanottajan kirjeen sisällön
+     * 
+     * @param id Vastaanottajan kirjeen avain
+     * @return Kirjeen sisällön tiedot
+     */
     public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
 
 }

@@ -1,0 +1,32 @@
+<div>
+    <p ng-if="totalItems() == 0">{{empty | i18n }}</p>
+    <table ng-if="totalItems() != 0" class="table singleRowTable">
+        <thead>
+        <tr>
+            <th>{{'rowTable.header.subject' | i18n | uppercase}}</th>
+            <th>{{'rowTable.header.attachments' | i18n | uppercase}}</th>
+            <th>{{'rowTable.header.savedate' | i18n | uppercase}}</th>
+        </tr>
+        </thead>
+        <tbody ng-repeat="item in currentItems()" ng-click="selectItem(item)">
+        <tr>
+            <td>{{item.subject}}</td>
+            <td>
+                <div ng-if="item.attachInfo.length == 1">
+                    <span>{{item.attachInfo[0].fileName | limitSizeWithMiddleEllipsis}}</span>
+                    <span>&nbsp;</span>
+                    <span>({{item.attachInfo[0].fileSize | bytesToSize}})</span>
+                </div>
+                <div ng-if="item.attachInfo.length > 1">
+                    <span tooltip-placement="top" tooltip-html-unsafe={{getAttachmentsAsHtml(item)}}><a>{{item.attachInfo.length}} {{'rowTable.attachments' | i18n}}</a></span>
+                </div>
+            </td>
+            <td>{{item.createDate | date:'dd.MM.yyyy HH:mm'}}</td>
+        </tr>
+        <tr><td colspan="3"><div class="previewText">{{item.body | htmlToPlainText}}</div></td></tr>
+        </tbody>
+    </table>
+    <div ng-if="totalItems() > limit" class="pagination">
+        <pagination total-items="totalItems()" ng-model="$parent.currentPage" items-per-page=limit ></pagination>
+    </div>
+</div>

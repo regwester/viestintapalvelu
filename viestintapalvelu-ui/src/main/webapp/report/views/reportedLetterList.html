@@ -1,0 +1,60 @@
+<div class="container">
+  <div class="titlebar row-fluid">
+    <h1>Kirjeiden lähetysraportit</h1>
+  </div> 
+
+  <div class="search-controls row-fluid">
+
+    <div class="organisation-select form-inline span4">
+      <label for="organisationSelect">Organisaatio:</label>
+      <select name="organisationSelect" 
+              ng-model="selectedOrganizationOid" 
+              ng-options="org.oid as org.name for org in reportedLettersDTO.organizations"
+              ng-if="reportedLettersDTO.organizations">
+      </select>
+    </div>
+
+    <div class="search form-inline span8">
+      <input type="text" ng-model="searchArgument" placeholder="Hae viestin tai vastaanottajan tiedoilla" />
+      <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument">Hae</button>
+      <button class="btn" ng-click="emptySearch()">Tyhjennä</button>
+    </div>
+
+  </div>
+
+  <div class="reported-letters row-fluid">
+    <table class="table table-striped clickable-table-row" ng-if="reportedLettersDTO.numberOfLetterBatches > 0">
+      <thead>
+        <tr>
+          <th class="span1 clickable-header-cell" ng-click="sortBy('timestamp')" ng-class="getSortClass('timestamp')">{{ 'reportedletterlist.otsikko.ajankohta' | i18n | uppercase }}</th>
+          <th class="span1 clickable-header-cell" ng-click="sortBy('templateName')" ng-class="getSortClass('templateName')">{{ 'reportedletterlist.otsikko.kirjepohja' | i18n | uppercase }}</th>
+          <th class="span2 clickable-header-cell" ng-click="sortBy('applicationPeriod')" ng-class="getSortClass('applicationPeriod')">{{ 'reportedletterlist.otsikko.haku' | i18n | uppercase }}</th>
+          <th class="span3 clickable-header-cell" ng-click="sortBy('fetchTarget')" ng-class="getSortClass('fetchTarget')">{{ 'reportedletterlist.otsikko.hakukohde' | i18n | uppercase }}</th>
+          <th class="span2">{{ 'reportedletterlist.otsikko.tila' | i18n | uppercase }}</th>
+          <th class="span2 clickable-header-cell" ng-click="sortBy('tag')" ng-class="getSortClass('tag')">{{ 'reportedletterlist.otsikko.tunniste' | i18n | uppercase }}</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr ng-repeat="reportedLetter in reportedLettersDTO.letterBatchReports" ng-click="showReportedLetter(reportedLetter)">
+          <td>{{ reportedLetter.timestamp | date:'d.M.yyyy H:mm' }}</a></td>
+          <td>{{ reportedLetter.template.name }}</td>
+          <td>{{ reportedLetter.applicationPeriod }}</td>
+          <td>{{ reportedLetter.fetchTargetName }}</td>
+          <td>{{ reportedLetter.status }}</td>
+          <td>{{ reportedLetter.tag }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <div class="alert alert-info" ng-if="reportedLettersDTO.numberOfLetterBatches === 0">Yhtään kirjelähetystä ei löytynyt.</div>
+  </div>
+
+  <div class="pagination pagination-centered row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
+    <pagination total-items="reportedLettersDTO.numberOfLetterBatches" 
+                items-per-page="{{ pagination.pageSize }}"
+                ng-model="pagination.page"
+                ng-change="fetch()"
+                previous-text="{{'pagination.button.edellinen' | i18n}}"
+                next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+  </div>
+</div>

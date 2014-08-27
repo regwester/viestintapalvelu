@@ -92,6 +92,8 @@ public class IPostiResource {
             item.put("id", ""+ip.getId());
             item.put("date", ""+ip.getCreateDate());
             item.put("ipostiId", String.valueOf(ip.getLetterBatch().getId()));
+            item.put("template", ""+ip.getLetterBatch().getTemplateName());
+            item.put("language", ""+ip.getLetterBatch().getLanguage());
             item.put("name", ip.getContentName());
             result.add(item);
         }
@@ -134,6 +136,13 @@ public class IPostiResource {
         }
     }
     
+    /**
+     * Sends single iposti item
+     * @param id
+     * @param request
+     * @return
+     * @throws Exception
+     */
     @GET
     @Path("/sendBatch/{ipostiId}")
     @PreAuthorize(Constants.IPOSTI_SEND)
@@ -142,12 +151,19 @@ public class IPostiResource {
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
     public Map<String,String> uploadExistingBatch(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
         IPosti iposti = iPostiService.findBatchById(id);
-        ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
-        iposti.setSentDate(new Date());
-        iPostiService.update(iposti);
+        String forceS = request.getParameter("forceUpload");
+        boolean force = (forceS != null || "true".equalsIgnoreCase(forceS));
+        upload(iposti, force);
         return new HashMap<String, String>(); //what is this supposed to return?
     }
-    
+    /**
+     * Sends all iposti items for single mail creations
+     * @param id
+     * @param request
+     * @return
+     * @throws Exception
+     */
+   
     @GET
     @Path("/sendMail/{mailId}")
     @PreAuthorize(Constants.IPOSTI_SEND)
@@ -156,12 +172,12 @@ public class IPostiResource {
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
     public Response uploadExistingMail(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request) throws Exception {
         try {
+            String forceS = request.getParameter("forceUpload");
+            boolean force = (forceS != null || "true".equalsIgnoreCase(forceS));
             List<IPosti> iposts = iPostiService.findMailById(id);
             if(iposts != null) {
                 for (IPosti iposti : iposts) {
-                    ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
-                    iposti.setSentDate(new Date());
-                    iPostiService.update(iposti);
+                    upload(iposti, force);
                 }
                 return Response.status(Status.OK).build();
             }
@@ -171,41 +187,12 @@ public class IPostiResource {
         }
     }
     
-    /*
-    @POST
-    @Path("/sendBatch")
-    @PreAuthorize(Constants.IPOSTI_SEND)
-    @Produces("application/json")
-    @ApiOperation(value = ApiSend, notes = ApiSend)
-    @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
-    public Map<String,String> upload(@Context HttpServletRequest request) {
-        
-        boolean isMultipart = ServletFileUpload.isMultipartContent(request);
-        Map<String,String> result = new HashMap<String, String>();
-        if (isMultipart) {
-            FileItemFactory factory = new DiskFileItemFactory();
-            ServletFileUpload upload = new ServletFileUpload(factory);
-
-            try {
-                List<FileItem> items = upload.parseRequest(request);
-                Iterator<FileItem> iterator = items.iterator();
-                int count = 0;
-                while (iterator.hasNext()) {
-                    FileItem item = (FileItem) iterator.next();
-                    if (item.getName() != null) {
-                        ipostiUpload.upload(item.get(), item.getName());
-                        count++;
-                    }
-                }
-                result.put("handledFileCount", ""+count);
-            } catch (FileUploadException e) {
-                e.printStackTrace();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+    private void upload(IPosti iposti, Boolean force) throws Exception {
+        if(iposti.getSentDate() == null || (force != null && true == force)) {
+            ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
+            iposti.setSentDate(new Date());
+            iPostiService.update(iposti);
         }
-        result.put("result", "OK");
-        return result;
     }
-    */
+
 }

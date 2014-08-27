@@ -15,6 +15,11 @@ public class Urls {
     public static final String PRINTER_PATH = "printer";
     public static final String TEMPLATE_RESOURCE_PATH = "template";
     public static final String IPOSTI_RESOURCE_PATH = "iposti";
+    public static final String REPORTING_PATH = "reporting";
+    public static final String REPORTING_LIST_PATH = "list";
+    public static final String REPORTING_SEARCH_PATH = "search";
+    public static final String REPORTING_VIEW_PATH = "view";
+    public static final String REPORTING_LETTER_PATH = "letter";    
 
     public static RestServer localhost() {
         return new Localhost();

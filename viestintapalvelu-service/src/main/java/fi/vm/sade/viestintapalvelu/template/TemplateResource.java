@@ -18,6 +18,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
@@ -163,11 +164,15 @@ public class TemplateResource extends AsynchronousResource {
         DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
 
-        String[] templates = { "/hyvaksymiskirje_FI.json", "/hyvaksymiskirje_SV.json", "/jalkiohjauskirje_FI.json",
-            "/jalkiohjauskirje_SV.json"
-        // "/koekutsukirje_FI.json", "/koekutsukirje_SV.json",
-        // "/koekutsukirje_EN.json",
-        };
+        String[] templates = {
+                "/test_data/hyvaksymiskirje_FI.json", "/test_data/hyvaksymiskirje_SV.json",
+                "/test_data/jalkiohjauskirje_FI.json", "/test_data/jalkiohjauskirje_SV.json",
+                "/test_data/hyvaksymiskirje_nivel_FI.json", "/test_data/hyvaksymiskirje_nivel_SV.json",
+                "/test_data/jalkiohjauskirje_nivel_FI.json", "/test_data/jalkiohjauskirje_nivel_SV.json",
+                "/test_data/koekutsukirje_EN.json","/test_data/koekutsukirje_SV.json", "/test_data/koekutsukirje_FI.json",
+                "/test_data/osoitepalvelu_email_EN.json","/test_data/osoitepalvelu_email_SV.json", 
+                "/test_data/osoitepalvelu_email_FI.json"
+                };
 
         for (String template : templates) {
             Map<String, String> current = new HashMap<String, String>();
@@ -234,13 +239,13 @@ public class TemplateResource extends AsynchronousResource {
 
     @POST
     @Path("/store")
-    @Consumes("application/json")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
     public Template store(Template template) throws IOException, DocumentException {
         templateService.storeTemplateDTO(template);
-        return new Template();
+        return new Template(); //TODO: return something more meaningful
     }
 
     @POST
@@ -251,7 +256,7 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = StoreDraft, notes = StoreDraft)
     public Draft storeDraft(Draft draft) throws IOException, DocumentException {
         templateService.storeDraftDTO(draft);
-        return new Draft();
+        return new Draft(); //TODO: return something more meaningful
     }
 
     @GET

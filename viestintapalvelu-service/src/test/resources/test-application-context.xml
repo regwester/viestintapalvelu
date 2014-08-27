@@ -1,61 +1,47 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:task="http://www.springframework.org/schema/task" xmlns:camel="http://camel.apache.org/schema/spring"
-       xmlns:jaxrs="http://cxf.apache.org/jaxrs" xmlns:jaxws="http://cxf.apache.org/jaxws"
-       xmlns:http="http://cxf.apache.org/transports/http/configuration" xmlns:aop="http://www.springframework.org/schema/aop"
-       xmlns:tx="http://www.springframework.org/schema/tx" xmlns:mockito="http://www.mockito.org/spring/mockito"
+       xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:mockito="http://www.mockito.org/spring/mockito" xmlns:cxf="http://cxf.apache.org/core"
+       xmlns:util="http://www.springframework.org/schema/util"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-	       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-	       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-	       http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop.xsd
-	       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task.xsd
-	       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
-	       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
-	       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-	       http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd
-	       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
-	       http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd">
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
+           http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+           http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd" >
             
 	<context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.liite"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.address"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.document"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.download"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.externalinterface"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.externalinterface.api"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.externalinterface.common"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.externalinterface.component"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.externalinterface.route"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.hyvaksymiskirje"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.jalkiohjauskirje"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.koekutsukirje"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.letter"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.letter.impl"/>    
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.template"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.template.impl"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.message"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.model" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.dao.impl" />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.validator" />      
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.iposti"/>
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu.iposti.impl"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
+
+    <!-- Global CXF provider configuration -->
+    <cxf:bus>
+        <cxf:properties>
+            <entry key="org.apache.cxf.jaxrs.bus.providers">
+                <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider"/>
+            </entry>
+            <!--<entry key="org.apache.cxf.jaxrs.bus.providers" key-ref="busProviders"/>-->
+        </cxf:properties>
+    </cxf:bus>
+    <!--<util:list id="busProviders">
+        <ref bean="customJsonProvider"/>
+    </util:list>
+    <bean id="customJsonProvider" class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider"/>
+    -->
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
-    
+
+
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />
+    <mockito:mock id="henkiloResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" />
     <mockito:mock id="omattiedotResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource"/>
     <mockito:mock id="organisaatioResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource"/>
+    <mockito:mock id="emailResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource"/>
     
     <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <routeBuilder ref="omattiedotRoute"/>
-        <routeBuilder ref="organisaatioRoute"/>
+        <contextScan/>
     </camelContext>
-
-    <bean id="omattiedotRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OmattiedotRoute"/>
-    <bean id="organisaatioRoute" class="fi.vm.sade.viestintapalvelu.externalinterface.route.OrganisaatioRoute"/>
     
     <!-- HyperSQL datasource -->
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">   

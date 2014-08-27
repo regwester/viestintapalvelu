@@ -147,9 +147,6 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 
 angular.module('app').factory('Printer', ['$http', '$window', function ($http, $window) {
     var addressLabel = 'api/v1/addresslabel/';
-    var jalkiohjauskirje = 'api/v1/jalkiohjauskirje/';
-    var hyvaksymiskirje = 'api/v1/hyvaksymiskirje/';
-    var koekutsukirje = 'api/v1/koekutsukirje/';
     var letter = 'api/v1/letter/';
     var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
@@ -162,22 +159,6 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         function osoitetarratXLS(labels) {
             print(addressLabel + 'xls', {"addressLabels": labels})
         }
-
-        function jalkiohjauskirjePDF(letters) {
-            print(jalkiohjauskirje + 'pdf', {
-                "letters": letters});
-        }
-
-        function hyvaksymiskirjePDF(letters) {
-            print(hyvaksymiskirje + 'pdf', {
-                "letters": letters});
-        }
-
-        function koekutsukirjePDF(letters) {
-            print(koekutsukirje + 'pdf', {
-                "letters": letters});
-        }
-
 
         function letterPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
         	print(letter + 'pdf', {
@@ -211,9 +192,6 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
 
         return {
             ipostZIP: ipostZIP,
-            jalkiohjauskirjePDF: jalkiohjauskirjePDF,
-            hyvaksymiskirjePDF: hyvaksymiskirjePDF,
-            koekutsukirjePDF: koekutsukirjePDF,
             osoitetarratPDF: osoitetarratPDF,
             osoitetarratXLS: osoitetarratXLS,
             letterPDF: letterPDF,

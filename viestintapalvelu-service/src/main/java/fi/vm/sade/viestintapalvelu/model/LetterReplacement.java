@@ -11,8 +11,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
-import org.codehaus.jackson.annotate.JsonBackReference;
-
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -33,7 +32,7 @@ CREATE TABLE kirjeet.lahetyskorvauskentat(
 )
  */
 
-@Table(name = "lahetyskorvauskentat", schema="kirjeet")
+@Table(name = "lahetyskorvauskentat", schema= "kirjeet")
 @Entity()
 public class LetterReplacement extends BaseEntity {
     private static final long serialVersionUID = 1L;

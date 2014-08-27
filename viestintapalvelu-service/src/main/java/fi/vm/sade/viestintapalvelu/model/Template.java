@@ -32,7 +32,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 
 @ApiModel(value = "Kirjetemplate")
-@Table(name = "kirjepohja", schema="kirjeet")
+@Table(name = "kirjepohja", schema= "kirjeet")
 @Entity(name = "Template")
 public class Template extends BaseEntity {
 

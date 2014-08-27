@@ -17,7 +17,8 @@ public class IPostiDAOImpl extends AbstractJpaDAOImpl<IPosti, Long> implements I
     @Override
     public List<IPosti> findUnSent() {
         EntityManager em = getEntityManager();
-        TypedQuery<IPosti> q = em.createQuery("SELECT p from IPosti p where p.sentDate is null", IPosti.class);
+        TypedQuery<IPosti> q = em.createQuery("SELECT new IPosti(p.id, p.version, p.createDate, p.letterBatch) from IPosti p left join p.letterBatch where p.sentDate is null", IPosti.class);
+        //TypedQuery<IPosti> q = em.createQuery("SELECT p from IPosti p where p.sentDate is null", IPosti.class);
         return q.getResultList();
     }
 

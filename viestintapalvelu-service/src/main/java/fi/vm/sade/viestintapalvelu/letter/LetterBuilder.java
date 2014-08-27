@@ -16,6 +16,8 @@ import javax.inject.Singleton;
 
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,14 +31,18 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 
 @Service
 @Singleton
 public class LetterBuilder {
+
+    private final Logger LOG = LoggerFactory.getLogger(LetterBuilder.class);
 
     private DocumentBuilder documentBuilder;
 
@@ -46,12 +52,19 @@ public class LetterBuilder {
     @Autowired
     private LetterService letterService;
 
+    @Autowired
+    private EmailComponent emailComponent;
+    
     @Inject
     public LetterBuilder(DocumentBuilder documentBuilder) {
         this.documentBuilder = documentBuilder;
     }
 
-    public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException {
+    
+    public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException, Exception {
+        boolean valid = LetterBatchValidator.validate(batch);
+        LOG.debug("Validated batch result: " + valid);
+        
         Map<String, byte[]> subZips = new HashMap<String, byte[]>();
         List<LetterBatch> subBatches = batch.split(Constants.IPOST_BATCH_LIMIT);
         for (int i = 0; i < subBatches.size(); i++) {
@@ -78,7 +91,10 @@ public class LetterBuilder {
     }
 
     public byte[] printPDF(LetterBatch batch) throws IOException,
-            DocumentException {
+            DocumentException, Exception {
+
+        boolean valid = LetterBatchValidator.validate(batch);
+        LOG.debug("Validated batch result: " + valid);
 
         MergedPdfDocument resultPDF = buildPDF(batch);
         // store batch to database
@@ -133,8 +149,7 @@ public class LetterBuilder {
             if (letter.getLanguageCode() != null
                     && !letter.getLanguageCode().equalsIgnoreCase(
                             template.getLanguage())) {
-                Template temp = templateService.getTemplateByName(
-                        letterTemplate.getName(), letter.getLanguageCode());
+                Template temp = templateService.getTemplateByName(letterTemplate.getName(), letter.getLanguageCode());
                 if (temp != null) {
                     letterTemplate = temp;
                     letterTemplReplacements = new HashMap<String, Object>();
@@ -161,6 +176,7 @@ public class LetterBuilder {
                 source.add(currentDocument);
                 letter.setLetterContent(new LetterContent(documentBuilder.merge(currentDocument).toByteArray(), "application/pdf", new Date()));
             }
+            sendEmail(letter);
             updateLetters.add(letter);
         }
 
@@ -370,5 +386,11 @@ public class LetterBuilder {
 
     private String cleanHtmlFromApi(String string) {
         return Jsoup.clean(string, Whitelist.relaxed());
+    }
+    
+    private void sendEmail(Letter letter) throws IOException {
+        //if (letter.getEmailAddress() != null && letter.getEmailAddress().length() > 0) {
+            emailComponent.sendEmail(letter);
+        //}
     }
 }

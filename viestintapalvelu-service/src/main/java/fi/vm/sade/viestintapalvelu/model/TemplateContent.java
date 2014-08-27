@@ -28,7 +28,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  )
  */
 
-@Table(name = "sisalto", schema="kirjeet")
+@Table(name = "sisalto", schema= "kirjeet")
 @Entity()
 public class TemplateContent extends BaseEntity implements
         Comparable<TemplateContent> {

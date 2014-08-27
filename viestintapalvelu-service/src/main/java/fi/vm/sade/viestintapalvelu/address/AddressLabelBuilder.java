@@ -8,6 +8,7 @@ import java.util.Map;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import fi.vm.sade.viestintapalvelu.Constants;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -19,9 +20,6 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 @Service
 @Singleton
 public class AddressLabelBuilder {
-
-    private static final String ADDRESS_LABEL_PDF_TEMPLATE = "/osoitetarrat.html";
-    private static final String ADDRESS_LABEL_XLS_TEMPLATE = "/osoitetarrat.xls";
 
     private DocumentBuilder documentBuilder;
 
@@ -36,7 +34,7 @@ public class AddressLabelBuilder {
                 return new HtmlAddressLabelDecorator(addressLabel);
             }
         });
-        byte[] xhtml = documentBuilder.applyTextTemplate(ADDRESS_LABEL_PDF_TEMPLATE, context);
+        byte[] xhtml = documentBuilder.applyTextTemplate(Constants.ADDRESS_LABEL_PDF_TEMPLATE, context);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
@@ -46,7 +44,7 @@ public class AddressLabelBuilder {
                 return new XmlAddressLabelDecorator(addressLabel);
             }
         });
-        return documentBuilder.applyTextTemplate(ADDRESS_LABEL_XLS_TEMPLATE, context);
+        return documentBuilder.applyTextTemplate(Constants.ADDRESS_LABEL_XLS_TEMPLATE, context);
     }
 
     private Map<String, Object> createDataContext(List<AddressLabel> addressLabels,

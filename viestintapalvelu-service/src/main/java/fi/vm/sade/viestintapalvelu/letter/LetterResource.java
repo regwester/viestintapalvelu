@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,6 +44,8 @@ import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
+import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
@@ -62,7 +65,7 @@ public class LetterResource extends AsynchronousResource {
     @Autowired
     private LetterBuilder letterBuilder;
 
-    @Autowired
+    @Qualifier
     private DokumenttiResource dokumenttiResource;
 
     @Autowired
@@ -73,7 +76,7 @@ public class LetterResource extends AsynchronousResource {
 
     @Autowired
     private UserRightsValidator userRightsValidator;
-
+    
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
@@ -120,7 +123,12 @@ public class LetterResource extends AsynchronousResource {
         @Context HttpServletRequest request) throws IOException, DocumentException {
         String documentId;
         try {
+            
+            boolean valid = LetterBatchValidator.validate(input);
+            LOG.debug("Validated input got " + valid);
+            
             byte[] pdf = letterBuilder.printPDF(input);
+            
             documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "letter.pdf", pdf));
         } catch (Exception e) {
             e.printStackTrace();
@@ -133,6 +141,7 @@ public class LetterResource extends AsynchronousResource {
     /**
      * Varaudutaan viestintapalvelun klusterointiin. Ei tarvitse tietoturvaa
      * https:n lisäksi. Kutsuja antaa datat ja kutsuja saa kirjeen.
+     * @throws Exception 
      */
     @POST
     @Consumes("application/json")
@@ -143,7 +152,7 @@ public class LetterResource extends AsynchronousResource {
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public InputStream syncPdf(
         @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
-        throws IOException, DocumentException {
+        throws Exception {
         return new ByteArrayInputStream(letterBuilder.printPDF(input));
     }
 
@@ -306,7 +315,7 @@ public class LetterResource extends AsynchronousResource {
     @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
     public InputStream syncZip(
         @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) LetterBatch input,
-        @Context HttpServletRequest request) throws IOException, DocumentException, NoSuchAlgorithmException {
+        @Context HttpServletRequest request) throws Exception {
         return new ByteArrayInputStream(letterBuilder.printZIP(input));
     }
 
