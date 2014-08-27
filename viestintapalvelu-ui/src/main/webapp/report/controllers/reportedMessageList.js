@@ -7,7 +7,7 @@ angular.module('report').controller('ReportedMessageListCtrl',
 			page: 1,
 			pageSize: 10
 		};
-        $scope.sortedBy = '';
+        $scope.sortedBy = 'sendingStarted';
         $scope.order = 'asc';
         $scope.descending = false;
         $scope.form = {
@@ -111,10 +111,14 @@ angular.module('report').controller('ReportedMessageListCtrl',
         };
 
         /**
-         *  Otsikkosaraketta klikattu. Palautetaan tyyliksi sort-true tai sort-false.
+         *  Palautetaan lajittelutyyli
          */
-        $scope.clickHeader = function(headerName) {
-            return headerName == $scope.sortedBy && 'sort-' + $scope.descending;
+        $scope.getSortClass = function(headerName) {
+            var className = '';
+            if ($scope.sortedBy === headerName) {
+            	className = 'sort-' + $scope.order;
+            }
+            return className;
         };
         
         /**
