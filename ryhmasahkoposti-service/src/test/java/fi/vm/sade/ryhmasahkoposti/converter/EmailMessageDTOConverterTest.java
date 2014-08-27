@@ -53,7 +53,7 @@ public class EmailMessageDTOConverterTest {
 		
 		assertNotNull(emailMessageDTOs);
 		assertTrue(emailMessageDTOs.size() == 1);
-		assertTrue(emailMessageDTOs.get(0).isHtml() == false);
+		assertTrue(emailMessageDTOs.get(0).isHtml() == true);
 	}
 
 	@Test
