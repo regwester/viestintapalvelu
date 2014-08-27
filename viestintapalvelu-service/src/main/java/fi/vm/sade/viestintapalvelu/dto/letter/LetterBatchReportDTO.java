@@ -18,6 +18,7 @@ public class LetterBatchReportDTO implements Serializable {
     private boolean deliveryTypeIPosti;
     private Date timestamp;
     private List<LetterReceiverDTO> letterReceivers;
+    private Long numberOfReceivers; 
     private List<IPostiDTO> iPostis;
     
     public Long getLetterBatchID() {
@@ -90,6 +91,14 @@ public class LetterBatchReportDTO implements Serializable {
 
     public void setLetterReceivers(List<LetterReceiverDTO> letterReceivers) {
         this.letterReceivers = letterReceivers;
+    }
+
+    public Long getNumberOfReceivers() {
+        return numberOfReceivers;
+    }
+
+    public void setNumberOfReceivers(Long numberOfReceivers) {
+        this.numberOfReceivers = numberOfReceivers;
     }
 
     public List<IPostiDTO> getiPostis() {

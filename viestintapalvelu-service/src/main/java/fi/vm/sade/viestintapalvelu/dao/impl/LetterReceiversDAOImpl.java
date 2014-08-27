@@ -2,6 +2,9 @@ package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -39,6 +42,18 @@ public class LetterReceiversDAOImpl extends AbstractJpaDAOImpl<LetterReceivers, 
             limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
 
         return findLetterReceivers.list(letterReceivers);
+    }
+    
+    @Override
+    public Long findNumberOfReciversByLetterBatchID(Long letterBatchID) {
+        EntityManager em = getEntityManager();
+
+        String findNumberOfRecivers = "SELECT COUNT(*) FROM LetterReceivers a "
+            + "JOIN a.letterBatch WHERE a.letterBatch.id = :letterBatchID";
+        TypedQuery<Long> query = em.createQuery(findNumberOfRecivers, Long.class);
+        query.setParameter("letterBatchID", letterBatchID);
+
+        return query.getSingleResult();    
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

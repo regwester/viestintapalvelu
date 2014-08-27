@@ -132,4 +132,9 @@
       </table>
     </div>
   </div>
+  
+  <div class="pagination pagination-centered row-fluid" ng-if="reportedLetterDTO.numberOfReceivers > pagination.pageSize">
+    <pagination ng-model="pagination.page" total-items="reportedLetterDTO.numberOfReceivers" items-per-page="{{pagination.pageSize}}" ng-change="fetch()" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+  </div>
+  
 </div>
