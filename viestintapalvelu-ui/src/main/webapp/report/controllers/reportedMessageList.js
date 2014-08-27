@@ -21,6 +21,10 @@ angular.module('report').controller('ReportedMessageListCtrl',
         $scope.fetch = function() {
             // Hakutekijää ei ole annettu. Listalle haetut sanomat.
             if (SharedVariables.getSearchArgumentValue() == '') {
+            	if (SharedVariables.getSelectedOrganizationValue() != '') {
+            		$scope.form.organization = SharedVariables.getSelectedOrganizationValue();
+            	}
+            	
                 GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid, 
                 	nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page}, 
                 function(result) {
