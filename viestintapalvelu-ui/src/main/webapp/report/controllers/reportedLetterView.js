@@ -62,6 +62,19 @@ angular.module('report')
     });
   };
 
+  $scope.downloadContents = function(letterBatchID) {
+	  var getContentsDownloadLink; 
+	  var contentsDownloadLinkUrl = reportingAPIUrl + '/contents';
+
+	  getContentsDownloadLink = $http.get(contentsDownloadLinkUrl, {params: {id: letterBatchID}});
+	  getContentsDownloadLink.success(function(downloadLink) {
+		  var acceptableDownloadLink = $window.location.origin + seriviceAPIUrl + '/download/';
+		  if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
+			  $window.location = downloadLink;
+		  }
+	  });
+  };
+
   $scope.sendIPosti = function(mailID) {
     var sendIPostiUrl = seriviceAPIUrl + '/iposti/sendMail/' + mailID;
     $http.get(sendIPostiUrl);
