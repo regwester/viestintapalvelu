@@ -4,6 +4,7 @@ angular.module('report')
 .service('SharedVariables', function() {
     var searchArgumentValue = '';
     var selectedOrganization = '';
+    var selectedPage = 1;
     
     return {
         getSearchArgumentValue: function() {
@@ -17,6 +18,12 @@ angular.module('report')
         },
         setSelectedOrganizationValue: function(value) {
             selectedOrganization = value;
+        },
+        getSelectedPage: function() {
+        	return selectedPage;
+        },
+        setSelectedPage: function(value) {
+        	selectedPage = value;
         }
     };
 });

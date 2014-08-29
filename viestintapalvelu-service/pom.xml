@@ -7,7 +7,7 @@
     <parent>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
         <artifactId>viestintapalvelu</artifactId>
-        <version>9.9-SNAPSHOT</version>
+        <version>10.0-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -477,6 +477,18 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <!-- Apache PDFBox API library for PDF document handling -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- TESTING -->
 
         <!-- Jersey Test Framework -->
@@ -536,20 +548,6 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- Apache PDFBox API library -->
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>${pdfbox.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

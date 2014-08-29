@@ -1,25 +1,38 @@
 <div class="container">
   <div class="titlebar row-fluid">
-    <h1>Kirjeiden lähetysraportit</h1>
+    <h1>{{'reportedletterlist.otsikko.lahetysraportit' | i18n}}</h1>
   </div> 
 
   <div class="search-controls row-fluid">
 
     <div class="organisation-select form-inline span4">
-      <label for="organisationSelect">Organisaatio:</label>
+      <label for="organisationSelect">{{'reportedletterlist.otsikko.organisaatio' | i18n}}</label>
       <select name="organisationSelect" 
-              ng-model="selectedOrganizationOid" 
-              ng-options="org.oid as org.name for org in reportedLettersDTO.organizations"
+              ng-model="form.organization" 
+              ng-change="fetch()"
+              ng-options="organization.name for organization in reportedLettersDTO.organizations track by organization.oid"
+              ng-init="form.organization = reportedLettersDTO.organizations[reportedLettersDTO.selectedOrganization]"
               ng-if="reportedLettersDTO.organizations">
       </select>
     </div>
 
     <div class="search form-inline span8">
       <input type="text" ng-model="searchArgument" placeholder="Hae viestin tai vastaanottajan tiedoilla" />
-      <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument">Hae</button>
-      <button class="btn" ng-click="emptySearch()">Tyhjennä</button>
+      <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument">{{'reportedletterlist.button.hae' | i18n}}</button>
+      <button class="btn" ng-click="emptySearch()">{{'reportedletterlist.button.tyhjenna' | i18n}}</button>
     </div>
 
+  </div>
+
+  <div class="row-fluid">
+    <div class="span3">
+    </div>
+  </div>
+
+  <div class="row-fluid" ng-if="reportedLettersDTO.letterBatchReports.length > 0">
+    <div class="span3">
+      {{reportedLettersDTO.numberOfLetterBatches}} &nbsp {{'reportedletterlist.otsikko.raporttia' | i18n}}
+    </div>
   </div>
 
   <div class="reported-letters row-fluid">
@@ -46,7 +59,7 @@
       </tbody>
     </table>
 
-    <div class="alert alert-info" ng-if="reportedLettersDTO.numberOfLetterBatches === 0">Yhtään kirjelähetystä ei löytynyt.</div>
+    <div class="alert alert-info" ng-if="reportedLettersDTO.numberOfLetterBatches === 0">{{'reportedletterlist.alert.eikirjelahetyksia' | i18n}}</div>
   </div>
 
   <div class="pagination pagination-centered row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
