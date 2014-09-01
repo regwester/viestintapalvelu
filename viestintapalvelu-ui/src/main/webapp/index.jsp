@@ -50,7 +50,6 @@
             // Sanitize data:
             emailData = Jsoup.clean(emailData, Whitelist.relaxed());
             emailData = StringEscapeUtils.unescapeHtml(emailData);
-            //System.out.println(emailData);
         } else {
             // no emaildata found.
             emailData = "";
@@ -59,6 +58,7 @@
     <!-- Bind the email data to window. -->
     <script type="text/javascript"> window.emailData = <%= emailData %>;</script>
 
+    <!-- TODO: minimize and concatenate -->
     <!-- Initialize modules -->
     <script type="text/javascript" src="./email/init.js"></script>
     <script type="text/javascript" src="./report/init.js"></script>
@@ -70,6 +70,7 @@
     <script type="text/javascript" src="./system/filters/html2text.js"></script>
     <script type="text/javascript" src="./system/filters/bytes2size.js"></script>
     <script type="text/javascript" src="./system/filters/limitsize.js"></script>
+    <script type="text/javascript" src="./system/filters/trustAsHtml.js"></script>
 
     <!-- Services -->
     <script type="text/javascript" src="./email/services/email.js"></script>
@@ -85,6 +86,7 @@
     <!-- Directives -->
     <script type="text/javascript" src="./email/directives/upload.js"></script>
     <script type="text/javascript" src="./email/directives/singleRowTable.js"></script>
+    <script type="text/javascript" src="./email/directives/recipientList.js"></script>
     <script type="text/javascript" src="./report/directives/reportedMessageStatus.js"></script>
     <script type="text/javascript" src="./report/directives/limitedParagraph.js"></script>
 
@@ -95,6 +97,7 @@
     <script type="text/javascript" src="./email/controllers/email.js"></script>
     <script type="text/javascript" src="./email/controllers/emailCancel.js"></script>
     <script type="text/javascript" src="./email/controllers/errorDialog.js"></script>
+    <script type="text/javascript" src="./email/controllers/preview.js"></script>
 
     <script type="text/javascript" src="./report/controllers/reportedMessageList.js"></script>
     <script type="text/javascript" src="./report/controllers/reportedMessageView.js"></script>
