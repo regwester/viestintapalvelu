@@ -1,56 +1,45 @@
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
-import java.util.*;
-
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
+import fi.vm.sade.viestintapalvelu.email.EmailBuilder;
+import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource;
-import fi.vm.sade.viestintapalvelu.letter.Letter;
 
 @Component
 public class EmailComponent {
+    private static Logger LOGGER = LoggerFactory.getLogger(EmailComponent.class);
+    
     @Resource
     private EmailResource emailResourceClient;
     
-    public boolean sendEmail(Letter letter) {
-        // ei toiminnassa!!! 
-        return false;
-        
-        //EmailData emailData = buildEmailData(letter);
-        //return checkResponse(emailResourceClient.sendEmail(emailData));
-    }
+    @Autowired
+    private EmailBuilder emailBuilder;
     
-    private EmailData buildEmailData(Letter letter) {
-        EmailData emailData = new EmailData();
-        emailData.setRecipient(getRecipients(letter));
-        
-        emailData.setEmail(getEmailMessage(letter));
-        
-        return emailData;
-    }
-    
-    private EmailMessage getEmailMessage(Letter letter) {
-        EmailMessage message = new EmailMessage();
-        return message;
-    }
-    
-    private List<EmailRecipient> getRecipients(Letter letter) {
-        EmailRecipient recipient = new EmailRecipient();
-        recipient.setEmail(letter.getEmailAddress());
-        recipient.setLanguageCode(letter.getLanguageCode());
-        List<EmailRecipient> recipients = new ArrayList<EmailRecipient>();
-        return recipients;
+    public boolean sendEmail(EmailSourceData source) {
+        LOGGER.debug("Handling email for letter " + source);
+        EmailData emailData;
+        try {
+            emailData = emailBuilder.buildEmailData(source);
+            LOGGER.debug("Got emaildata "+ emailData +  " for letter "+ source);
+            
+        } catch (Exception e) {
+            LOGGER.debug("Could not make email data for letter "+ source+ " reason " + e);
+            return false;
+        }
+        return checkResponse(emailResourceClient.sendEmail(emailData));
     }
     
     private boolean checkResponse(Response response) {
-     // if response is ok.. 
-        
+        // if response is ok.. 
+        LOGGER.debug("Got email response: "+response.toString() +  " " + response.getStatus());
         return true;
     }
 }

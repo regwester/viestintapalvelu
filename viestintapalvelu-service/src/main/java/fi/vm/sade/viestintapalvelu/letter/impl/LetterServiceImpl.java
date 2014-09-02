@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Date;
@@ -13,6 +14,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import org.apache.pdfbox.util.PDFMergerUtility;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -208,6 +210,29 @@ public class LetterServiceImpl implements LetterService {
         return content;
     }
 
+    @Override
+    public byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception {
+        ByteArrayOutputStream contentsOutputStream = new ByteArrayOutputStream();
+        PDFMergerUtility merger = new PDFMergerUtility();
+        
+        LetterBatch letterBatch = letterBatchDAO.read(letterBatchID);
+        
+        Set<LetterReceivers> letterReceivers = letterBatch.getLetterReceivers();
+        for (LetterReceivers letterReceiver : letterReceivers) {
+            LetterReceiverLetter letter = letterReceiver.getLetterReceiverLetter();
+            
+            if (letter.getContentType().equals("application/zip")) {
+                byte[] content = unZip(letter.getLetter());
+                merger.addSource(new ByteArrayInputStream(content));
+            }
+        }
+        
+        merger.setDestinationStream(contentsOutputStream);
+        merger.mergeDocuments();
+        
+        return contentsOutputStream.toByteArray();
+    }
+    
     private IPosti createIPosti(LetterBatch letterB, Map.Entry<String, byte[]> data) {
         IPosti iPosti = new IPosti();
         iPosti.setLetterBatch(letterB);

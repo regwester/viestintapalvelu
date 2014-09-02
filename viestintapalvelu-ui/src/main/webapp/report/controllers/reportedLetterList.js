@@ -15,17 +15,14 @@ angular.module('report')
     pageSize: 10
   };
 
-  // used to make sure the right option is selected after fetch happens
-  function setSelectedOrganizationOid() {
-    var index = $scope.reportedLettersDTO.selectedOrganization
-      , org = $scope.reportedLettersDTO.organizations[index];
-    $scope.selectedOrganizationOid = org.oid;
-  }
-
+  $scope.form = {
+	organization: ''	  
+  };
+  
   $scope.fetch = function() {
     var params = {}, url = reportedLettersListUrl;
-    if ($scope.organisationOid) {
-      params.orgOid = $scope.selectedOrganizationOid;
+    if ($scope.form.organization) {
+      params.orgOid = $scope.form.organization.oid;
     }
     if ($scope.searchArgument) {
       params.searchArgument = $scope.searchArgument;
@@ -40,7 +37,6 @@ angular.module('report')
     $http.get(url, {params: params})
       .success(function(reportedLettersDTO) {
         $scope.reportedLettersDTO = reportedLettersDTO;
-        setSelectedOrganizationOid();
       })
       .error(function(err) {
         console.log(err);
