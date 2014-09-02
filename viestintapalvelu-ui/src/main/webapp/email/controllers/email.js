@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 'Global',
-  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog, Global) {
+.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'DialogService', 'Global',
+  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, DialogService, Global) {
 
     $scope.tinymceOptions = {
       height: 400,
@@ -51,7 +51,7 @@ angular.module('email')
       DraftService.drafts.update(draft, function() {
         $state.go('.savedContent.drafts');
       }, function(e) {
-        ErrorDialog.showError(e);
+        DialogService.showErrorDialog(e.data);
       })
 
     }
@@ -61,7 +61,7 @@ angular.module('email')
         updateDraftCount();
         $state.go('.savedContent.drafts');
       }, function(e) {
-        ErrorDialog.showError(e);
+        DialogService.showErrorDialog(e.data);
       });
     }
 

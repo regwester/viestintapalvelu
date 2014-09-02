@@ -1,15 +1,19 @@
-<div class="modal error-dialog">
-    <div class="modal-header dialog-header-error">
-        <h3 ng-bind="'dialog.error.header' | i18n"></h3>
+<div class="modal {{opts.type}}-dialog">
+    <div class="modal-header dialog-header-{{opts.type}}">
+        <h3 ng-bind="'dialog.{{opts.type}}.header' | i18n"></h3>
     </div>
     <div class="modal-body text-danger">
-        <div class="alert alert-block">
-            <img src="./assets/img/alert-icon28x29.png"/>
-            <span ng-bind="msg"></span>
+        <div class="{{opts.type}} {{opts.type}}-block">
+            <img src="./assets/img/{{opts.type}}-icon28x29.png"/>
+            <span ng-bind="opts.msg"></span>
         </div>
     </div>
-    <div class="modal-footer">
-        <button type="button" class="btn" ng-click="close()"
-        <button type="button" class="btn btn-primary" ng-click="close()" ng-bind="'dialog.ok' | i18n"></button>
+    <!-- TODO: pass the buttons from controller -->
+    <div class="modal-footer" ng-if="opts.type == 'confirm'">
+        <button type="button" class="btn" ng-click="cancel()" ng-bind="'dialog.cancel' | i18n"></button>
+        <button type="button" class="btn btn-primary" ng-click="confirm()" ng-bind="'dialog.ok' | i18n"></button>
+    </div>
+    <div class="modal-footer" ng-if="opts.type != 'confirm'">
+        <button type="button" class="btn btn-primary" ng-click="cancel()" ng-bind="'dialog.ok' | i18n"></button>
     </div>
 </div>

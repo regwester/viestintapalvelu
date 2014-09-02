@@ -3,30 +3,43 @@
 angular.module('viestintapalvelu')
   .factory('DialogService', ['$modal',
     function($modal) {
-
+      /* Define a set of default values for the modal. */
       var defaults = {
-        templateUrl: '/email/views/partials/dialog.html',
-        size: 'lg'
+        size: 'lg',
+        templateUrl: 'email/views/partials/dialog.html',
+        controller: 'DialogCtrl'
       };
 
+      /* Override those default values where a custom value was given. */
+      function getOptions(customOpts) {
+        var opts = {};
+        angular.extend(opts, defaults, customOpts);
+        return opts;
+      }
+
+      function openDialog(size, fn) {
+        var customOpts = {size: size, resolve: { opts: fn }};
+        return $modal.open(getOptions(customOpts));
+      }
+
       return {
-        showDialog : function(opts) {
-          return $modal.open({
-            templateUrl: (opts.templateUrl ? opts.templateUrl : defaults.templateUrl),
-            controller: (opts.controller ? opts.controller : defaults.controller),
-            size: (opts.size ? opts.size : defaults.size),
-            resolve: {
-              msg: function() {
-                return opts.msg;
-              }
-            }
-          });
+        showConfirmationDialog : function(msg, confirm, size) {
+          var fn = function() {
+            return { type: 'confirm', msg: msg, confirm: confirm }
+          };
+          openDialog(size, fn);
         },
-        showErrorDialog: function(opts) {
-          return $modal.open({
-            templateUrl: 'email/views/partials/errorDialog.html',
-            controller: 'errorDialog'
-          })
+        showErrorDialog: function(msg, size) {
+          var fn = function() {
+            return { type: 'error', msg: msg };
+          };
+          openDialog(size, fn);
+        },
+        showInfoDialog: function(msg, size) {
+          var fn = function() {
+            return { type: 'info', msg: msg };
+          };
+          openDialog(size, fn);
         }
       };
     }
