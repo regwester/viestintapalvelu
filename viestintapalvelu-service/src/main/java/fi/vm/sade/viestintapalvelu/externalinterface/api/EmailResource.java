@@ -16,7 +16,7 @@ import fi.vm.sade.authentication.model.JsonViews;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 
 @Component
-@Path("email")
+@Path("/")
 public interface EmailResource {
 
     @GET

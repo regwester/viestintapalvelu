@@ -71,6 +71,8 @@
                 </div>
                 <input class="input-normal input-pile" type="text" ng-model="kirje.languageCode"
                                    placeholder="{{kirje.languageCode || 'Language code' }}">
+                <input class="input-normal input-pile" type="text" ng-model="kirje.emailAddress"
+                                   placeholder="{{kirje.emailAddress || 'Email osoite' }}">
             </td>
             <td class="hyvaksytty">
                 <div>{{kirje.koulu}}</div>
@@ -144,6 +146,6 @@
     </table>
     
     
-    {{ {replacements:replacements}  }}
+    {{ {Sisalto :replacements}  }}
 </div>
 </div>
