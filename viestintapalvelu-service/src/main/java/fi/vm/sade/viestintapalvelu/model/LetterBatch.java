@@ -100,13 +100,24 @@ public class LetterBatch extends BaseEntity {
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<IPosti> iposts = new ArrayList<IPosti>();
-
+    
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
+    private List<UsedTemplate> usedTemplates = new ArrayList<UsedTemplate>();
+    
     public List<IPosti> getIposti() {
         return iposts;
     }
 
     public void addIPosti(IPosti iposti) {
         iposts.add(iposti);
+    }
+    
+    public List<UsedTemplate> getUsedTemplates() {
+        return usedTemplates;
+    }
+    
+    public void addUsedTemplate(UsedTemplate template) {
+        usedTemplates.add(template);
     }
 
     public Long getTemplateId() {

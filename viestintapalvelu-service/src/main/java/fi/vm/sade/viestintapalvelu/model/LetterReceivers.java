@@ -17,6 +17,7 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -47,6 +48,9 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
+    
+    @Column(name = "haluttukieli")
+    private String wantedLanguage;
         
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -109,6 +113,14 @@ public class LetterReceivers extends BaseEntity {
 	public void setLetterReceiverLetter(LetterReceiverLetter letterReceiverLetter) {
 		this.letterReceiverLetter = letterReceiverLetter;
 	}
+	
+	public String getWantedLanguage() {
+        return wantedLanguage;
+    }
+	
+	public void setWantedLanguage(String wantedLanguage) {
+        this.wantedLanguage = wantedLanguage;
+    }
 
 	@Override
     public String toString() {

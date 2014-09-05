@@ -15,6 +15,7 @@
         <class>fi.vm.sade.viestintapalvelu.model.Template</class>
         <class>fi.vm.sade.viestintapalvelu.model.TemplateContent</class>
         <class>fi.vm.sade.viestintapalvelu.model.IPosti</class>
+        <class>fi.vm.sade.viestintapalvelu.model.UsedTemplate</class>
         
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
