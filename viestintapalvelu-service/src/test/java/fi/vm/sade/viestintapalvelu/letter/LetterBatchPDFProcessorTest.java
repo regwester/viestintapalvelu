@@ -55,6 +55,14 @@ public class LetterBatchPDFProcessorTest {
         verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
         verify(service, timeout(100).times(amountOfReceivers)).updateLetter(any(LetterReceiverLetter.class));
     }
+    
+    @Test
+    public void updatesProcessFinishedOnLetterBatch() {
+        final int amountOfReceivers = 157;
+        when(service.fetchById(LETTERBATCH_ID)).thenReturn(givenLetterBatchWithReceivers(amountOfReceivers));
+        processor.processLetterBatch(LETTERBATCH_ID);
+        verify(service, timeout(100)).updateBatchProcessingFinished(LETTERBATCH_ID, LetterBatchProcess.LETTER);
+    }
 
     private LetterBatch givenLetterBatchWithReceivers(final int amountOfReceivers) {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);

@@ -43,6 +43,8 @@ public class LetterBatchPDFProcessor {
                         //TODO: handle
                     }
                 }
+                service.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
+                
             }
 
             private Map<String, Object> formReplacementMap(LetterBatch batch) {
