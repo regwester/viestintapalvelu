@@ -36,6 +36,8 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
@@ -398,32 +400,41 @@ public class LetterBuilder {
         //}
     }
     
-    public void constructPDFForLetterReceiverLetter(LetterReceiverLetter letter, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
-        Template template = templateService.findById(batch.getTemplateId());
+    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch, 
+            Map<String, Object> letterReplacements, Map<String, Object> batchReplacements) throws FileNotFoundException, IOException, DocumentException {
+        LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
+        
+        Template template = determineTemplate(receiver, batch);
         
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
-        
-        //TODO: letter specific Replacement fields according to language template
         
         templReplacements.putAll(formReplacementMap(letter.getLetterReceivers().getLetterReceiverReplacement()));
 
         List<TemplateContent> contents = template.getContents();
-        PdfDocument currentDocument = new PdfDocument(null);//letter.getAddressLabel());
+        AddressLabel address = AddressLabelConverter.convert(letter.getLetterReceivers().getLetterReceiverAddress());
+        PdfDocument currentDocument = new PdfDocument(address);
         Collections.sort(contents);
         
-        AddressLabel address = AddressLabelConverter.convert(letter.getLetterReceivers().getLetterReceiverAddress());
-        
-//        for (TemplateContent tc : contents) {
-//            byte[] page = createPagePdf(template, tc.getContent().getBytes(), address),
-//                    letterTemplReplacements, // Template, basic replacement
-//                    batch.getLetterReplacements(), // LetterBatch, (last) sent replacements
-//                    // that might have overwritten the template values
-//                    letter.getTemplateReplacements()); // Letter, e.g. student results, addressLabel, ...
-//            currentDocument.addContent(page);
-//        }
-//        letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());//(new LetterContent(documentBuilder.merge(currentDocument).toByteArray(), "application/pdf", new Date()));
+        for (TemplateContent tc : contents) {
+            byte[] page = createPagePdf(template, tc.getContent().getBytes(), address,
+                    templReplacements, batchReplacements, letterReplacements);
+            currentDocument.addContent(page);
+        }
+        letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
     }
     
+    private Template determineTemplate(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+        if(receiver.getWantedLanguage() != null) {
+            for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
+                if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {
+                    return templateService.findById(usedTemplate.getTemplate().getId());
+                }
+            }
+        }
+        return templateService.findById(batch.getTemplateId());
+    }
+
+
     private Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements) {
         Map<String, Object> templReplacements = new HashMap<String, Object>();
         for (LetterReceiverReplacement replacement : replacements) {
