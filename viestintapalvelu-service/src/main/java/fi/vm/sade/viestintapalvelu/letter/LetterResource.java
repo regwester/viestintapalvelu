@@ -12,6 +12,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
@@ -379,5 +380,26 @@ public class LetterResource extends AsynchronousResource {
         letterPDFProcessor.processLetterBatch(id);
         
         return Response.status(Status.OK).entity(id).build();
+    }
+    
+    @GET
+    @Consumes("text/plain")
+    @Produces("text/plain")
+    @Path("/async/letter/status/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
+    public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+        return null;
+    }
+    
+    @GET
+    @Consumes("text/plain")
+    @Produces("application/pdf")
+    @Path("/async/letter/pdf/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
+    public Response statusLetter(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+        //needs to check that process has been finished
+        return null;
     }
 }
