@@ -7,7 +7,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.mockito.stubbing.Answer;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -17,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
@@ -26,6 +29,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -46,12 +50,15 @@ public class LetterServiceTest {
     private LetterReceiverLetterDAO mockedLetterReceiverLetterDAO;
     @Mock
     private CurrentUserComponent mockedCurrentUserComponent;
+    @Mock
+    private TemplateDAO templateDAO;
+    
     private LetterService letterService;
     
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
-            mockedCurrentUserComponent);
+            mockedCurrentUserComponent, templateDAO);
     }
     
     @Test
@@ -59,18 +66,23 @@ public class LetterServiceTest {
         fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch();
         
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
-        when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenReturn(
-            DocumentProviderTestData.getLetterBatch(new Long(1)));
-        
+        when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenAnswer(new Answer<LetterBatch>() {
+            @Override
+            public LetterBatch answer(InvocationOnMock invocation) throws Throwable {
+              return (LetterBatch) invocation.getArguments()[0];
+            }
+        });
+        when(templateDAO.findTemplateByName(any(String.class), any(String.class)))
+            .thenReturn(DocumentProviderTestData.getTemplate(1l));
         LetterBatch createdLetterBatch = letterService.createLetter(letterBatch);
         
         assertNotNull(createdLetterBatch);
-        assertTrue(createdLetterBatch.getId() > 0);
         assertNotNull(createdLetterBatch.getLetterReceivers());
         assertTrue(createdLetterBatch.getLetterReceivers().size() > 0);
         assertNotNull(createdLetterBatch.getLetterReplacements());
         assertTrue(createdLetterBatch.getLetterReplacements().size() > 0);
         assertNotNull(createdLetterBatch.getTemplateId());
+        assertEquals(1, createdLetterBatch.getUsedTemplates().size());
     }
 
     @Test

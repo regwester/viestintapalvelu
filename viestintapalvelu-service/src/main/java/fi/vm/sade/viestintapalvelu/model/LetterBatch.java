@@ -4,6 +4,7 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -101,8 +102,8 @@ public class LetterBatch extends BaseEntity {
     @JsonManagedReference
     private List<IPosti> iposts = new ArrayList<IPosti>();
     
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.REMOVE)
-    private List<UsedTemplate> usedTemplates = new ArrayList<UsedTemplate>();
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<UsedTemplate> usedTemplates = new HashSet<UsedTemplate>();
     
     public List<IPosti> getIposti() {
         return iposts;
@@ -112,12 +113,16 @@ public class LetterBatch extends BaseEntity {
         iposts.add(iposti);
     }
     
-    public List<UsedTemplate> getUsedTemplates() {
+    public Set<UsedTemplate> getUsedTemplates() {
         return usedTemplates;
     }
     
     public void addUsedTemplate(UsedTemplate template) {
         usedTemplates.add(template);
+    }
+    
+    public void setUsedTemplates(Set<UsedTemplate> usedTemplates) {
+        this.usedTemplates = usedTemplates;
     }
 
     public Long getTemplateId() {

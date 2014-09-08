@@ -20,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
@@ -29,6 +30,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
+import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 
 /**
  * @author migar1
@@ -40,13 +42,15 @@ public class LetterServiceImpl implements LetterService {
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
     private CurrentUserComponent currentUserComponent;
+    private TemplateDAO templateDAO;
 
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
-        CurrentUserComponent currentUserComponent) {
+        CurrentUserComponent currentUserComponent, TemplateDAO templateDAO) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     	this.currentUserComponent = currentUserComponent;
+    	this.templateDAO = templateDAO;
     }
 
     /* ---------------------- */
@@ -74,6 +78,7 @@ public class LetterServiceImpl implements LetterService {
 
         // kirjeet.vastaanottaja
         letterB.setLetterReceivers(parseLetterReceiversModels(letterBatch, letterB));
+        letterB.setUsedTemplates(parseUsedTemplates(letterBatch, letterB));
         
         Map<String, byte[]> ipostiData = letterBatch.getIPostiData();
         if (ipostiData != null) {
@@ -83,6 +88,31 @@ public class LetterServiceImpl implements LetterService {
         }
         return storeLetterBatch(letterB);
     }
+    private Set<UsedTemplate> parseUsedTemplates(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
+        Set<UsedTemplate> templates = new HashSet<UsedTemplate>();
+        Set<String> languageCodes = new HashSet<String>();
+        String templateName = getTemplateNameFromBatch(letterBatch);
+        for(fi.vm.sade.viestintapalvelu.letter.Letter letter : letterBatch.getLetters()) {
+            languageCodes.add(letter.getLanguageCode());
+        }
+        languageCodes.add(letterBatch.getLanguageCode());
+        for (String languageCode : languageCodes) {
+            fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(templateName, languageCode);
+            if (template != null) {
+                UsedTemplate usedTemplate = new UsedTemplate();
+                usedTemplate.setLetterBatch(letterB);
+                usedTemplate.setTemplate(template);
+                templates.add(usedTemplate);
+            }
+        }
+        return templates;
+    }
+
+    private String getTemplateNameFromBatch(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(letterBatch.getTemplateName(), letterBatch.getLanguageCode());
+        return template != null ? template.getName() : templateDAO.read(letterBatch.getTemplateId()).getName();
+    }
+
     /* ------------ */
     /* - findById - */
     /* ------------ */
@@ -228,7 +258,8 @@ public class LetterServiceImpl implements LetterService {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = new fi.vm.sade.viestintapalvelu.model.LetterReceivers();
             rec.setTimestamp(new Date());
             rec.setLetterBatch(letterB);
-
+            rec.setWantedLanguage(letter.getLanguageCode());
+            
             // kirjeet.vastaanottajakorvauskentat
             if ((letter.getCustomLetterContents() != null) || (letter.getCustomLetterContents().isEmpty())) {
                 Set<LetterReceiverReplacement> letterRepl = new HashSet<LetterReceiverReplacement>();
