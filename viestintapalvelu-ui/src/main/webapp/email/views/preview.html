@@ -2,9 +2,12 @@
     <div class="span8">
         <div class="row button-group">
             <div class="span8">
-                <button type="button" class="btn">Takaisin muokkaukseen</button>
-                <button type="button" class="btn">Peruuta viestin lähetys</button>
-                <button type="button" class="btn btn-primary">Lähetä</button>
+                <button type="button" class="btn" ui-sref="email">Takaisin muokkaukseen</button>
+                <button type="button" class="btn" ng-click="cancelEmail()">Peruuta viestin lähetys</button>
+                <!--[if (gt IE 9)|!(IE)]><!-->
+                <button type="button" class="btn" ng-if="downloadSupported()" ng-click="downloadEmail()">Lataa sähköposti</button>
+                <!--<![endif]-->
+                <button type="button" class="btn btn-primary" ng-click="sendEmail()">Lähetä</button>
             </div>
         </div>
         <h3 ng-bind="'preview.header' | i18n"/>
@@ -38,6 +41,9 @@
             <div class="span8">
                 <button type="button" class="btn" ui-sref="email">Takaisin muokkaukseen</button>
                 <button type="button" class="btn" ng-click="cancelEmail()">Peruuta viestin lähetys</button>
+                <!--[if (gt IE 9)|!(IE)]><!-->
+                <button type="button" class="btn" ng-if="downloadSupported()" ng-click="downloadEmail()">Lataa sähköposti</button>
+                <!--<![endif]-->
                 <button type="button" class="btn btn-primary" ng-click="sendEmail()">Lähetä</button>
             </div>
         </div>

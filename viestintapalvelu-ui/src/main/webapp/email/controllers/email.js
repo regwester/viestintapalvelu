@@ -47,6 +47,10 @@ angular.module('email')
       }
     };
 
+    $scope.getEmailData = function() {
+      return {recipient: $scope.recipients, email: $scope.email};
+    }
+
     function updateDraft(draft){
       DraftService.drafts.update(draft, function() {
         $state.go('.savedContent.drafts');
