@@ -75,6 +75,9 @@ public class LetterResource extends AsynchronousResource {
     @Autowired
     private UserRightsValidator userRightsValidator;
     
+    @Autowired
+    private LetterBatchPDFProcessor letterPDFProcessor;
+    
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
@@ -373,6 +376,7 @@ public class LetterResource extends AsynchronousResource {
         }
         letterBuilder.initTemplateId(input);
         Long id = letterService.createLetter(input).getId();
+        letterPDFProcessor.processLetterBatch(id);
         
         return Response.status(Status.OK).entity(id).build();
     }

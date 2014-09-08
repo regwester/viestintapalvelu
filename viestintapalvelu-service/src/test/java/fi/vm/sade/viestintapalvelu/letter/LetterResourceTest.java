@@ -34,11 +34,15 @@ public class LetterResourceTest {
     @Mock
     private LetterBuilder builder;
     
+    @Mock
+    private LetterBatchPDFProcessor processor;
+    
     @Before
     public void init() throws Exception {
         resource = new LetterResource();
         injectObject("letterService", service);
         injectObject("letterBuilder", builder);
+        injectObject("letterPDFProcessor", processor);
         when(service.createLetter(any(LetterBatch.class))).thenReturn(DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID));
     }
     
@@ -62,6 +66,11 @@ public class LetterResourceTest {
     @Test
     public void returnsBadRequestForInvalidLetterBatch() {
         assertEquals(Status.BAD_REQUEST.getStatusCode(), resource.asyncLetter(null).getStatus());
+    }
+    
+    @Test
+    public void startsProcessingLetters() {
+        resource.asyncLetter(DocumentProviderTestData.getLetterBatch()).getEntity();
     }
 
     private void injectObject(String field, Object object) throws NoSuchFieldException, IllegalAccessException {
