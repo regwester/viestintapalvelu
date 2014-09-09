@@ -4,6 +4,7 @@
 
 	<select ng-model="template" ng-options="c.name group by c.lang for c in templates" ng-change="templateChanged()"></select>
   Currently selected: {{ {selected_template:template}  }}
+
 <br/>
 	<select ng-model="history" ng-options="h.name for h in historyList" ng-change="historyChanged()"></select>
 <br/>
@@ -13,7 +14,7 @@
 		Tunniste: <input ng-model="tag" />
 	</td></tr>	  	  
 	 <tr><td>
-		Haku: <input ng-model="applicationPeriod" />
+		Haku: <input ng-model="applicationPeriod" ng-change="templateChanged()" />
 	</td></tr>
 </table>	  
 <br/>

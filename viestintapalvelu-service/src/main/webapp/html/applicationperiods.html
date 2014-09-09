@@ -1,0 +1,93 @@
+<div ng-controller='ApplicationPeriodsController'>
+
+    <select ng-model="template" ng-options="c.name group by c.lang for c in templates" ng-change="templateChanged()"></select>
+
+    <div ng-show="template">
+        <label for="version">Versio</label>
+        <select id="version" ng-model="version" ng-options="versionDescription(c) group by c.type for c in versions" ng-change="versionSelected()"></select>
+        <br/>
+    </div>
+
+    <div ng-show="version">
+        <h2>
+            Version tiedot
+        </h2>
+        <div>
+            <table cellpadding="5">
+                <tr>
+                    <th style="text-align: left">
+                        Nimi:
+                    </th>
+                    <td>
+                        {{version.name}}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: left">
+                        Kieli
+                    </th>
+                    <td>
+                        {{version.language}}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: left">
+                        Muokattu:
+                    </th>
+                    <td>
+                        {{version.timestamp}}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: left">
+                        Tyyppi
+                    </th>
+                    <td>
+                        {{version.type}}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: left">
+                        Kuvaus
+                    </th>
+                    <td>
+                        {{version.description}}
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: left;vertical-align: top;">
+                        Sisällöt
+                    </th>
+                    <td style="max-width: 800px;">
+                        <div style="max-height:300px;overflow: auto;">
+                            {{version.contents}}
+                        </div>
+                    </td>
+                </tr>
+                <tr>
+                    <th style="text-align: left;vertical-align: top;">
+                        Korvaukset
+                    </th>
+                    <td style="max-width: 800px">
+                        <div style="max-height:300px;overflow: auto;">
+                            {{version.replacements}}
+                        </div>
+                    </td>
+                </tr>
+            </table>
+        </div>
+
+        <h3>Linkitetyt haut</h3>
+        <ol>
+            <li ng-repeat="applicationPeriod in applicationPeriods">
+                <input ng-model="applicationPeriod.oid"/>
+            </li>
+        </ol>
+        <button class="btn" ng-click="add()">Lisää Haku</button>
+        <small>(Jätä poistettava haku tyhjäksi)</small>
+
+        <br/><br/>
+        <button class="btn btn-primary" ng-click="save()">Tallenna liitokset</button>
+    </div>
+
+</div>

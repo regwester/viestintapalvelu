@@ -1,9 +1,9 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 import java.util.Date;
 import java.util.List;
-
-import com.wordnik.swagger.annotations.ApiModel;
 
 @ApiModel(value = "Kirjetemplate")
 public class Template{
@@ -17,7 +17,9 @@ public class Template{
     private String name;
 
     private String language;
-    
+
+    private String description;
+
     private String styles;
 
     private String storingOid;
@@ -27,6 +29,8 @@ public class Template{
     private List<TemplateContent> contents;
 
     private List<Replacement> replacements;
+
+    private List<String> applicationPeriods;
 
     private String templateVersio;
     
@@ -128,13 +132,31 @@ public class Template{
 		this.type = type;
 	}
 
-	@Override
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public List<String> getApplicationPeriods() {
+        return applicationPeriods;
+    }
+
+    public void setApplicationPeriods(List<String> applicationPeriods) {
+        this.applicationPeriods = applicationPeriods;
+    }
+
+    @Override
 	public String toString() {
-		return "Template [id=" + id + ", timestamp=" + timestamp + ", name="
-				+ name + ", language=" + language + ", styles=" + styles
+		return "Template [id=" + id + ", timestamp=" + timestamp
+                + ", name=" + name + ", description=" + description
+                +", language=" + language + ", styles=" + styles
 				+ ", storingOid=" + storingOid + ", organizationOid="
 				+ organizationOid + ", contents=" + contents
 				+ ", replacements=" + replacements + ", templateVersio="
-				+ templateVersio + ", type=" + type + "]";
+				+ templateVersio + ", type=" + type + ", applicationPeriods="
+                + applicationPeriods + "]";
 	}
 }
