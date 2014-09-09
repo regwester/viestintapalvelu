@@ -38,6 +38,11 @@
     <script type="text/javascript" src="assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js"></script>
     <script type="text/javascript" src="assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js"></script>
 
+    <!-- HTML5 saveAs() polyfill, IE 10+, Firefox, Chrome, Opera, Safari supported -->
+    <script type="text/javascript" src="assets/lib/file/FileSaver.js"></script>
+    <!-- HTML5 Blob polyfill -->
+    <script type="text/javascript" src="assets/lib/file/Blob.js"></script>
+
     <!--Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
 

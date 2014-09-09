@@ -129,7 +129,7 @@ public interface EmailResource {
     public Response getCount() throws Exception;
     
     @POST
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("preview")
     public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true)

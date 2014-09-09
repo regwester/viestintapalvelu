@@ -130,7 +130,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     public Response getPreview(EmailData emailData) throws Exception {
         log.debug("getPreview called with EmailData: {}", emailData);
         String email = emailService.getEML(emailData.getEmail(), "vastaanottaja@example.com");
-        return Response.ok(email).build();
+        return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
     }
 
     @Override
