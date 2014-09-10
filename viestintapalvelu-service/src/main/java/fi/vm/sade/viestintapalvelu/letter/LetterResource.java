@@ -363,7 +363,7 @@ public class LetterResource extends AsynchronousResource {
     
     @POST
     @Consumes("application/json")
-    @Produces("text/plain")
+    @Produces("application/json")
     @Path("/async/letter")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
@@ -383,8 +383,8 @@ public class LetterResource extends AsynchronousResource {
     }
     
     @GET
-    @Consumes("text/plain")
-    @Produces("text/plain")
+    @Consumes("application/json")
+    @Produces("application/json")
     @Path("/async/letter/status/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
@@ -393,12 +393,12 @@ public class LetterResource extends AsynchronousResource {
     }
     
     @GET
-    @Consumes("text/plain")
+    @Consumes("application/json")
     @Produces("application/pdf")
     @Path("/async/letter/pdf/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
-    public Response statusLetter(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
         //needs to check that process has been finished
         return null;
     }
