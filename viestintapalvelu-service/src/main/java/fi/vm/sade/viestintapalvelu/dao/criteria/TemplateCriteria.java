@@ -44,6 +44,11 @@ public interface TemplateCriteria {
     String getApplicationPeriod();
 
     /**
+     * @return true if the matching template should be the default one (for given name and language)
+     */
+    boolean isDefaultRequired();
+
+    /**
      * @param name to use (or not to use if null)
      * @return a criteria with name condition set to given value
      */
@@ -66,4 +71,14 @@ public interface TemplateCriteria {
      * @return a criteria with Haku OID condition set to given value
      */
     TemplateCriteria withApplicationPeriod(String hakuOid);
+
+    /**
+     * @return a criteria with default requirement
+     */
+    TemplateCriteria withDefaultRequired();
+
+    /**
+     * @return a criteria without default requirement
+     */
+    TemplateCriteria withoutDefaultRequired();
 }

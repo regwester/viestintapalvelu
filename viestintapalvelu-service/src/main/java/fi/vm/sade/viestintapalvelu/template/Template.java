@@ -33,6 +33,8 @@ public class Template{
     private List<String> applicationPeriods;
 
     private String templateVersio;
+
+    private boolean usedAsDefault;
     
     private String type;
     
@@ -148,6 +150,14 @@ public class Template{
         this.applicationPeriods = applicationPeriods;
     }
 
+    public boolean isUsedAsDefault() {
+        return usedAsDefault;
+    }
+
+    public void setUsedAsDefault(boolean usedAsDefault) {
+        this.usedAsDefault = usedAsDefault;
+    }
+
     @Override
 	public String toString() {
 		return "Template [id=" + id + ", timestamp=" + timestamp
@@ -156,7 +166,9 @@ public class Template{
 				+ ", storingOid=" + storingOid + ", organizationOid="
 				+ organizationOid + ", contents=" + contents
 				+ ", replacements=" + replacements + ", templateVersio="
-				+ templateVersio + ", type=" + type + ", applicationPeriods="
-                + applicationPeriods + "]";
+				+ templateVersio + ", type=" + type
+                + ", applicationPeriods=" + applicationPeriods
+                + ", usedAsDefault=" + usedAsDefault
+                + "]";
 	}
 }

@@ -14,7 +14,6 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -90,35 +89,62 @@ public class TemplateDAOTest {
                 .withLanguage("FI")
                 .withType("doc")
                 .withApplicationPeriod(testHakuOid));
-        // Fill however default to this one (trying again without application period condition):
+        assertNull(template);
+    }
+
+    @Test
+    public void testFindTemplateByNameAndDefaultFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        storedTemplate.setUsedAsDefault(true);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                .withDefaultRequired());
         assertNotNull(template);
-        assertNotNull(template.getId());
-        assertEquals(storedTemplate.getName(), template.getName());
-        assertTrue(template.getContents().size() == 1);
-        assertTrue(template.getReplacements().size() == 1);
-        assertEquals(template.getType(), "doc");
+        assertEquals(template.getId(), storedTemplate.getId());
+    }
+
+    @Test
+    public void testFindTemplateByNameAndDefaultNotFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                .withDefaultRequired());
+        assertNull(template);
+    }
+
+    @Test
+    public void testFindTemplateByNameAndWithoutDefaultFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                // test the criteria as well:
+                .withDefaultRequired().withoutDefaultRequired());
+        assertNotNull(template);
+        assertEquals(template.getId(), storedTemplate.getId());
     }
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuNotFound2() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null),
-            storedTemplate2 = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
         String testHakuOid = "1234.56789.154875";
         DocumentProviderTestData.getTemplateHaku(storedTemplate, "1234.56789.012345");
-        storedTemplate.setTimestamp(new Date());
-        storedTemplate2.setTimestamp(new Date(storedTemplate.getTimestamp().getTime()+1l));
         templateDAO.insert(storedTemplate);
-        templateDAO.insert(storedTemplate2);
 
         Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
                 .withName("test_template")
                 .withLanguage("FI")
                 .withType("doc")
                 .withApplicationPeriod(testHakuOid));
-        assertNotNull(template);
-        assertNotNull(template.getId());
-        // Will fallback to the last saved:
-        assertEquals(template.getId(), storedTemplate2.getId());
+        assertNull(template);
     }
 
     @Test

@@ -78,9 +78,23 @@
         </div>
 
         <h3>Linkitetyt haut</h3>
+
+        <table>
+            <tr>
+                <td>
+                    <input type="checkbox" ng-model="usedAsDefault" id="usedAsDefault" />
+                </td>
+                <td>
+                    <label for="usedAsDefault">
+                        Käytä tätä oletuspohjana, jos ei löydy pohjaa, johon haku on linkitetty.
+                    </label>
+                </td>
+            </tr>
+        </table>
         <ol>
-            <li ng-repeat="applicationPeriod in applicationPeriods">
+            <li ng-repeat="applicationPeriod in applicationPeriods | filter:{deleted:false}">
                 <input ng-model="applicationPeriod.oid"/>
+                <button ng-click="delete(applicationPeriod)" class="btn btn-danger">Poista</button>
             </li>
         </ol>
         <button class="btn" ng-click="add()">Lisää Haku</button>

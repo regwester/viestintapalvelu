@@ -30,10 +30,6 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         } catch (Exception e) {
             templ = null;
         }
-        if (templ == null && criteria.getApplicationPeriod() != null) {
-            // If no result with application period, default to one without:
-            return findTemplate(criteria.withApplicationPeriod(null));
-        }
         return templ;
     }
 
@@ -61,6 +57,9 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         if (criteria.getApplicationPeriod() != null) {
             queryStr.append(" INNER JOIN a.applicationPeriods templateApplicationPeriod ");
             and(where).append("templateApplicationPeriod.id.applicationPeriod = :applicationPeriodOid");
+        }
+        if (criteria.isDefaultRequired()) {
+            and(where).append("a.usedAsDefault = true");
         }
         if (where.length() > 0) {
             queryStr.append(" WHERE ").append(where);

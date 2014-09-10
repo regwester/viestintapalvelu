@@ -10,12 +10,8 @@ import java.util.List;
 public interface TemplateDAO extends JpaDAO<Template, Long> {
 
     /**
-     * Tries to find the result with the given criteria. However, if
-     * criteria specifies an applicationPeriod, tries again without
-     * application period condition.
-     *
      * @param criteria
-     * @return the first Template matching the criteria (with above exception) or null if not found
+     * @return the first Template matching the criteria or null if not found
      */
     Template findTemplate(TemplateCriteria criteria);
 

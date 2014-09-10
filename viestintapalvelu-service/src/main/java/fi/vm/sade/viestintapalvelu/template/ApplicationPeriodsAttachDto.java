@@ -27,6 +27,7 @@ import java.util.List;
 public class ApplicationPeriodsAttachDto implements Serializable {
     private Long templateId;
     private List<String> applicationPeriods;
+    private boolean useAsDefault=false;
 
     public Long getTemplateId() {
         return templateId;
@@ -42,5 +43,13 @@ public class ApplicationPeriodsAttachDto implements Serializable {
 
     public void setApplicationPeriods(List<String> applicationPeriods) {
         this.applicationPeriods = applicationPeriods;
+    }
+
+    public boolean isUseAsDefault() {
+        return useAsDefault;
+    }
+
+    public void setUseAsDefault(boolean useAsDefault) {
+        this.useAsDefault = useAsDefault;
     }
 }

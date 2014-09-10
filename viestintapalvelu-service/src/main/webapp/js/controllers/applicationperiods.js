@@ -21,6 +21,7 @@ angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Tem
     $scope.template = null;
     $scope.version = null;
     $scope.applicationPeriods = [];
+    $scope.usedAsDefault = false;
 
     Template.getNames().success(function (data) {
         $scope.templates = data;
@@ -32,28 +33,29 @@ angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Tem
         Template.listVersionsByName($scope.template, true, true).success(function (data) {
             $scope.versions = data;
             if (!$scope.applicationPeriods || !$scope.applicationPeriods.length) {
-                $scope.applicationPeriods = [{oid:""}];
+                $scope.applicationPeriods = [{oid:"", deleted:false}];
             }
         });
     };
 
     $scope.versionSelected = function() {
         $scope.applicationPeriods = createPeriods($scope.version);
+        $scope.usedAsDefault = $scope.version.usedAsDefault;
     };
 
     $scope.add = function() {
         if ($scope.version) {
-            $scope.applicationPeriods.push({oid:""});
+            $scope.applicationPeriods.push({oid:"", deleted:false});
         }
     };
 
     function createPeriods(version) {
         var periods = [];
         angular.forEach(version.applicationPeriods, function (v) {
-            periods.push({oid: v});
+            periods.push({oid: v, deleted:false});
         });
         if (!periods.length) {
-            periods.push({oid: ""});
+            periods.push({oid: "", deleted:false});
         }
         return periods;
     };
@@ -61,20 +63,27 @@ angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Tem
     function extractPeriods(applicationPeriods) {
         var periods = [];
         angular.forEach(applicationPeriods, function (v) {
-            periods.push(v.oid);
+            if (!v.deleted) {
+                periods.push(v.oid);
+            }
         });
         return periods;
     };
 
     $scope.save = function() {
         if ($scope.version) {
-            Template.saveAttachedApplicationPeriods($scope.version.id, extractPeriods($scope.applicationPeriods))
+            Template.saveAttachedApplicationPeriods($scope.version.id, extractPeriods($scope.applicationPeriods),
+                            $scope.usedAsDefault)
                     .success(function() {
                 alert("Liitokset tallennettu.");
             }).failure(function() {
                 alert("Tallennus epäonnistui");
             });
         }
+    };
+
+    $scope.delete = function(applicationPeriod) {
+        applicationPeriod.deleted = true;
     };
 
     $scope.versionDescription = function(version) {

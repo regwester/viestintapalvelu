@@ -73,6 +73,9 @@ public class Template extends BaseEntity {
     @Column(name = "kuvaus", nullable = true)
     private String description;
 
+    @Column(name = "oletuspohja", nullable = false)
+    private boolean usedAsDefault = false;
+
     /**
      * Type email
      */
@@ -179,6 +182,14 @@ public class Template extends BaseEntity {
 
     public Set<TemplateApplicationPeriod> getApplicationPeriods() {
         return applicationPeriods;
+    }
+
+    public boolean isUsedAsDefault() {
+        return usedAsDefault;
+    }
+
+    public void setUsedAsDefault(boolean defaultTemplate) {
+        this.usedAsDefault = defaultTemplate;
     }
 
     protected void setApplicationPeriods(Set<TemplateApplicationPeriod> hakus) {

@@ -52,6 +52,7 @@ public class TemplateServiceImpl implements TemplateService {
         Set<TemplateContent> contents = new HashSet<TemplateContent>();
         result.setLanguage(languageCode);
         result.setName("template");
+        result.setUsedAsDefault(false);
         result.setOrganizationOid("oid_org");
         result.setStoringOid("storingOid");
         result.setTimestamp(new Date());
@@ -105,8 +106,8 @@ public class TemplateServiceImpl implements TemplateService {
     public void storeTemplate(Template template) {
         Henkilo henkilo = currentUserComponent.getCurrentUser();
         template.setStoringOid(henkilo.getOidHenkilo());
-        
         templateDAO.insert(template);
+        ensureNoOtherDefaults(template);
     }
     
     /* (non-Javadoc)
@@ -120,6 +121,7 @@ public class TemplateServiceImpl implements TemplateService {
         model.setDescription(template.getDescription());
         model.setTimestamp(new Date()); //template.getTimestamp());
         model.setStyles(template.getStyles());
+        model.setUsedAsDefault(template.isUsedAsDefault());
         model.setLanguage(template.getLanguage());
         model.setOrganizationOid(template.getOrganizationOid());        
         model.setContents(parseContentModels(template.getContents(), model));
@@ -133,8 +135,28 @@ public class TemplateServiceImpl implements TemplateService {
     public fi.vm.sade.viestintapalvelu.template.Template saveAttachedApplicationPeriods(ApplicationPeriodsAttachDto dto) {
         Template model = templateDAO.read(dto.getTemplateId());
         updateApplicationPeriodRelation(dto.getApplicationPeriods(), model);
+        model.setUsedAsDefault(dto.isUseAsDefault());
         templateDAO.update(model);
+        ensureNoOtherDefaults(model);
+
         return convertBasicData(model, new fi.vm.sade.viestintapalvelu.template.Template());
+    }
+
+    protected void ensureNoOtherDefaults(Template model) {
+        if (model.isUsedAsDefault()) {
+            // Can not have multiple defaults for the templates with the same name, language and type:
+            List<Template> templates = templateDAO.findTemplates(
+                    new TemplateCriteriaImpl().withName(model.getName())
+                            .withLanguage(model.getLanguage())
+                            .withType(model.getType()));
+            for (Template otherTemplate : templates) {
+                if (!otherTemplate.getId().equals(model.getId())
+                        && otherTemplate.isUsedAsDefault()) {
+                    otherTemplate.setUsedAsDefault(false);
+                    templateDAO.update(otherTemplate);
+                }
+            }
+        }
     }
 
     private void updateApplicationPeriodRelation(List<String> applicationPeriods, Template to) {
@@ -193,7 +215,6 @@ public class TemplateServiceImpl implements TemplateService {
         }
         return replacements;
     }
-	
 	
     
     /* (non-Javadoc)
@@ -381,8 +402,17 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         Template template = templateDAO.findTemplate(criteria);
-        if (template == null) {
-            return null;
+        if (template == null && criteria.getApplicationPeriod() != null) {
+            criteria = criteria.withApplicationPeriod(null).withDefaultRequired();
+            template = templateDAO.findTemplate(criteria);
+            if (template == null) {
+                // Last, if no default specified, try without applicationPeriod and without default requirement
+                // (will match the last one(;
+                template = templateDAO.findTemplate(criteria.withoutDefaultRequired());
+            }
+            if (template == null) {
+                return null;
+            }
         }
 
         convertBasicData(template, searchTempl);
@@ -397,6 +427,7 @@ public class TemplateServiceImpl implements TemplateService {
     private fi.vm.sade.viestintapalvelu.template.Template convertBasicData(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
         to.setId(from.getId());
         to.setName(from.getName());
+        to.setUsedAsDefault(from.isUsedAsDefault());
         //searchTempl.setStyles(template.getStyles());
         to.setLanguage(from.getLanguage());
         to.setTimestamp(from.getTimestamp());
