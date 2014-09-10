@@ -401,7 +401,7 @@ ul.attachments-list {
 }
 
 .form-horizontal .control-group.attachment-group {
-    margin-bottom: 0px;
+    margin-bottom: 0;
 }
 
 .filelist .icon-remove {
@@ -410,4 +410,17 @@ ul.attachments-list {
 
 .modal-dialog .modal-body img {
     margin-right: 10px;
+}
+
+.html-content {
+    margin-top: 40px;
+    margin-bottom: 40px;
+}
+
+.button-group {
+    margin-top: 20px;
+}
+
+.button-group.btn {
+    margin-right: 6px;
 }

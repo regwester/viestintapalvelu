@@ -31,6 +31,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
@@ -153,29 +154,41 @@ public class LetterBuilder {
                 }
             }
 
+            @SuppressWarnings("unchecked")
+            Map<String, Object> dataContext = createDataContext(template, letter.getAddressLabel(), 
+                    letterTemplReplacements,  // Template replacements defaults from template
+                    batch.getTemplateReplacements(),  // LetterBatch replacements common for all recipients
+                    letter.getTemplateReplacements()); // Letter recipient level replacements
+            
+            EmailSourceData emailSource = null;
+            if (shouldReceiveEmail(letter)) {
+                try {
+                    emailSource = new EmailSourceData(letter, dataContext);
+                } catch (Exception e) {
+                   LOG.info("Could not handle email sending for " + letter + " reason " + e );
+                   e.printStackTrace();
+                }
+            }
+            
             if (letterTemplate != null) {
                 List<TemplateContent> contents = letterTemplate.getContents();
                 PdfDocument currentDocument = new PdfDocument(letter.getAddressLabel());
                 Collections.sort(contents);
                 for (TemplateContent tc : contents) {
-                    byte[] page = createPagePdf(letterTemplate, tc.getContent().getBytes(), letter.getAddressLabel(), letterTemplReplacements, // Template,
-                                                                                                                                               // basic
-                                                                                                                                               // replacement
-                            batch.getTemplateReplacements(), // LetterBatch,
-                                                             // (last) sent
-                                                             // replacements
-                            // that might have overwritten the template values
-                            letter.getTemplateReplacements()); // Letter, e.g.
-                                                               // student
-                                                               // results,
-                                                               // addressLabel,
-                                                               // ...
+                    byte[] page = createPagePdf(letterTemplate, tc.getContent().getBytes(), dataContext);
+                    if (emailSource != null && tc.getName() != null && tc.getName().equalsIgnoreCase("liite")) {
+                        // Hardcoded template content name "liite" for emailed attachments.. works for current templates
+                        // in future templates should have "add as email attachment" -type property field which 
+                        // would be checked here. 
+                        emailSource.addAttahcment("liite", page, "application/pdf");
+                    }
                     currentDocument.addContent(page);
                 }
                 source.add(currentDocument);
                 letter.setLetterContent(new LetterContent(documentBuilder.merge(currentDocument).toByteArray(), "application/pdf", new Date()));
             }
-            sendEmail(letter);
+            
+            sendEmail(emailSource);
             updateLetters.add(letter);
         }
 
@@ -227,15 +240,15 @@ public class LetterBuilder {
         return new String(result);
     }
 
-    private byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
-            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws FileNotFoundException, IOException, DocumentException {
+    private byte[] createPagePdf(Template template, byte[] pageContent, Map<String, Object> dataContext) throws FileNotFoundException, IOException, DocumentException {
 
         @SuppressWarnings("unchecked")
-        Map<String, Object> dataContext = createDataContext(template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
+        //Map<String, Object> dataContext = createDataContext(template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
+    
     /**
      * Create page as XHTML
      * 
@@ -258,6 +271,7 @@ public class LetterBuilder {
         return documentBuilder.applyTextTemplate(pageContent, dataContext);
     }
 
+    
     private Map<String, Object> createDataContext(Template template, AddressLabel addressLabel, Map<String, Object>... replacementsList) {
 
         Map<String, Object> data = new HashMap<String, Object>();
@@ -364,10 +378,14 @@ public class LetterBuilder {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
 
-    private void sendEmail(Letter letter) throws IOException {
-        // if (letter.getEmailAddress() != null &&
-        // letter.getEmailAddress().length() > 0) {
-        emailComponent.sendEmail(letter);
-        // }
+    private boolean shouldReceiveEmail(Letter letter) {
+        return (letter.getEmailAddress() != null && !letter.getEmailAddress().isEmpty());
+    }
+    
+    private void sendEmail(EmailSourceData source) throws IOException {
+        if (source == null) {
+            return;
+        }
+        emailComponent.sendEmail(source);
     }
 }

@@ -1,21 +1,14 @@
 package fi.vm.sade.viestintapalvelu.model;
 
-import java.util.Date;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-
 import fi.vm.sade.generic.model.BaseEntity;
+
+import javax.persistence.*;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 /*
  * CREATE TABLE kirjeet.kirjepohja (
@@ -76,6 +69,10 @@ public class Template extends BaseEntity {
     @Column(name = "tyyppi", nullable = true)
     private String type;
 
+    @ApiModelProperty(value = "Pohjan versiokohtainen kuvaus")
+    @Column(name = "kuvaus", nullable = true)
+    private String description;
+
     /**
      * Type email
      */
@@ -106,6 +103,11 @@ public class Template extends BaseEntity {
 
     @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Replacement> replacements;
+
+    @ApiModelProperty(value = "Liittyvät haut")
+    @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<TemplateApplicationPeriod> applicationPeriods = new HashSet<TemplateApplicationPeriod>(0);
 
     public Date getTimestamp() {
         return timestamp;
@@ -166,4 +168,20 @@ public class Template extends BaseEntity {
 	public void setType(String type) {
 		this.type = type;
 	}
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
+    }
+
+    public Set<TemplateApplicationPeriod> getApplicationPeriods() {
+        return applicationPeriods;
+    }
+
+    protected void setApplicationPeriods(Set<TemplateApplicationPeriod> hakus) {
+        this.applicationPeriods = hakus;
+    }
 }

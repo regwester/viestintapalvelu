@@ -1,9 +1,12 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -12,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
@@ -65,6 +69,13 @@ public class EmailServiceImpl implements EmailService {
         return emailDao.findNumberOfUserMessages(oid);
     }
 
+    public String getEML(EmailMessage emailMessage, String emailAddress) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        MimeMessage message = emailSender.createMail(emailMessage, emailAddress);
+        message.writeTo(baos);
+        return new String(baos.toByteArray());
+    }
+    
     /**
      * Spring scheduler method
      */
@@ -197,4 +208,5 @@ public class EmailServiceImpl implements EmailService {
     private boolean virusCheckPassed(EmailMessageDTO message) {
         return !virusCheckRequired || (message.isVirusChecked() && !message.isInfected());
     }
+
 }

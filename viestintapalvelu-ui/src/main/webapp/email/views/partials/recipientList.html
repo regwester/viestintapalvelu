@@ -1,0 +1,11 @@
+<div ng-class="form ? 'control-group' : 'row'">
+    <label ng-class="form ? 'control-label' : 'span2'">{{'email.label.recipients' | i18n}}</label>
+    <div ng-class="form ? 'controls' : 'span6'" ng-if="recipients.length > limit">
+        {{recipients.length}} {{'email.label.recipients.count' | i18n}}
+    </div>
+    <div ng-class="form ? 'controls' : 'span6'" ng-if="recipients.length <= limit">
+        <span ng-repeat="recipient in recipients">
+            {{recipient.email}}{{$last ? '' : ', '}}
+        </span>
+    </div>
+</div>
