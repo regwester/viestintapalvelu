@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+import org.apache.commons.lang.WordUtils;
 import org.hibernate.validator.constraints.NotEmpty;
 
 import javax.validation.constraints.Size;
@@ -66,23 +67,23 @@ public class AddressLabel {
     private String countryCode;
 
     public String getFirstName() {
-        return firstName;
+        return capitalize(firstName);
     }
 
     public String getLastName() {
-        return lastName;
+        return capitalize(lastName);
     }
 
     public String getAddressline() {
-        return addressline;
+        return capitalizeAddress(addressline);
     }
 
     public String getAddressline2() {
-        return addressline2;
+        return capitalizeAddress(addressline2);
     }
 
     public String getAddressline3() {
-        return addressline3;
+        return capitalizeAddress(addressline3);
     }
 
     public String getPostalCode() {
@@ -90,21 +91,49 @@ public class AddressLabel {
     }
 
     public String getCity() {
-        return city;
+        return  uppercase(city);
     }
 
     public String getRegion() {
-        return region;
+        return uppercase(region);
     }
 
     public String getCountry() {
-        return country;
+        return uppercase(country);
     }
 
     public String getCountryCode() {
         return countryCode;
     }
 
+    private String uppercase(String s) {
+        if (s != null) {
+            return s.toUpperCase();
+        }
+        return s;
+    }
+    
+    private String capitalizeAddress(String s) {
+        if (s != null) {
+            // jos PL, PO, PB tai Poste restante osoite jätetään käsittelemättä
+            // Ei ehkä täysin globaali ratkaisu. 
+            // Poikkeussääntöjä pitänee vielä jatkossa lisätä. 
+            if (s.contains("PL ")|| s.contains("PO ") || s.contains("PB ") 
+                    || s.contains("Poste restante")) {
+                return s;
+            }
+            return capitalize(s.toLowerCase());
+        }
+        return s;
+    }
+    
+    private String capitalize(String s) {
+        if (s != null) {
+            return WordUtils.capitalize(s.toLowerCase());
+        }
+        return s;
+    }
+    
     @Override
     public String toString() {
         return "AddressLabel [firstName=" + firstName + ", lastName="

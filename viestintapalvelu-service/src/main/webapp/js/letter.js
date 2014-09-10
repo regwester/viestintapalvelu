@@ -14,6 +14,7 @@ angular.module('app').controller(
     $scope.applicationPeriod = "K2014";
     
     $scope.templateChanged = function() {
+        $scope.template.applicationPeriod = $scope.applicationPeriod;
     	Template.getByName($scope.template).success(function (data) {
     		$scope.replacements = data;
     		for (i in data.replacements) {
@@ -22,7 +23,6 @@ angular.module('app').controller(
     				$scope.tinymceModel = r.defaultValue;
     			}
     		}
-    		
     	});
     	Template.getHistory($scope.template, $scope.oid, $scope.applicationPeriod, $scope.tag).success(function (data) {
     		$scope.historyList = data;
@@ -61,7 +61,7 @@ angular.module('app').controller(
                 "templateReplacements": {"tulokset" : tulokset,
                 "koulu": tulokset[0]['organisaationNimi'],
                 "koulutus": tulokset[0]['hakukohteenNimi']
-                },
+                }
                            
             };
         }));

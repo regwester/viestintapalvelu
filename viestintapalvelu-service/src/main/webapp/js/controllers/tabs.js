@@ -8,6 +8,7 @@ angular.module('app')
        {name: 'Osoitetarrat', id:'osoitetarrat', content: getContentPath('osoitetarrat')},
        {name: 'Letter', id:'letter', content: getContentPath('letter'), active: true},
        {name: 'Mallien tuonti', id:'importtemplate', content: getContentPath('importtemplate')},
+       {name: 'Hakulinkitys', id: 'applicationperiods', content:getContentPath('applicationperiods')},
        {name: 'Tulostus', id:'print', content: getContentPath('print')},
        {name: 'IPosti', id:'iposti', content: getContentPath('iposti')}
     ];

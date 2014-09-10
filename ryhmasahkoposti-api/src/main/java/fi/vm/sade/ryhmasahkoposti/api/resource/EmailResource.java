@@ -127,4 +127,12 @@ public interface EmailResource {
     @ApiOperation(value = "Palauttaa sähköpostien lukumäärän")
     @ApiResponses({@ApiResponse(code = 500, message = "Internal service error")})
     public Response getCount() throws Exception;
+    
+    @POST
+    @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("preview")
+    public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true)
+        EmailData emailData) throws Exception;
+    
 }

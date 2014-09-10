@@ -10,9 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
-import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -25,8 +23,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
-
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
@@ -34,6 +30,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
@@ -127,6 +124,13 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         log.debug("getStatus called with ID: {}", sendId);
         SendingStatusDTO sendingStatusDTO = groupEmailReportingService.getSendingStatus(Long.valueOf(sendId));
         return Response.ok(sendingStatusDTO).build();
+    }
+
+    @Override
+    public Response getPreview(EmailData emailData) throws Exception {
+        log.debug("getPreview called with EmailData: {}", emailData);
+        String email = emailService.getEML(emailData.getEmail(), "vastaanottaja@example.com");
+        return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
     }
 
     @Override

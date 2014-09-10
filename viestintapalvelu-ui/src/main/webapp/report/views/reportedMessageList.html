@@ -60,10 +60,10 @@
         <table class="table table-striped clickable-table-row">
             <thead>
 	            <tr>
-	                <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="clickHeader('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
-	                <th class="span3 clickable-header-cell" ng-click="sort('senderName')" ng-class="clickHeader('senderName')">{{'reportedmessagelist.otsikko.lahettajanNimi' | i18n}}</th>
-	                <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="clickHeader('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
-	                <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="clickHeader('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
+	                <th class="span1 clickable-header-cell" ng-click="sort('sendingStarted')" ng-class="getSortClass('sendingStarted')">{{'reportedmessagelist.otsikko.ajankohta' | i18n}}</th>
+	                <th class="span3 clickable-header-cell" ng-click="sort('senderName')" ng-class="getSortClass('senderName')">{{'reportedmessagelist.otsikko.lahettajanNimi' | i18n}}</th>
+	                <th class="span2 clickable-header-cell" ng-click="sort('process')" ng-class="getSortClass('process')">{{'reportedmessagelist.otsikko.prosessi' | i18n}}</th>
+	                <th class="span4 clickable-header-cell" ng-click="sort('subject')" ng-class="getSortClass('subject')">{{'reportedmessagelist.otsikko.aihe' | i18n}}</th>
 	                <th class="span4">{{'reportedmessagelist.otsikko.tila' | i18n}}</th>
 	            </tr>
             </thead>

@@ -17,9 +17,15 @@
   <script src='swagger-ui.js' type='text/javascript'></script>
   <script src='lib/highlight.7.3.pack.js' type='text/javascript'></script>
   <script type="text/javascript">
-    $(function () {
+      function getBaseUrl() {
+          var url = window.location.href;
+          var arr = url.split("/");
+          return arr[0] + "//" + arr[2] + "/" + arr[3]; // should return e.g. http(s)://host:port/viestintapalvelu
+      }
+
+      $(function () {
       window.swaggerUi = new SwaggerUi({
-      url: "/viestintapalvelu/api/v1/api-docs",
+      url: getBaseUrl() + "/api/v1/api-docs",
       dom_id: "swagger-ui-container",
       supportedSubmitMethods: ['get', 'post', 'put', 'delete'],
       onComplete: function(swaggerApi, swaggerUi){

@@ -47,6 +47,8 @@ public class LetterReportResource extends AsynchronousResource {
     @Autowired
     private LetterReportService letterReportService;
     @Autowired
+    private LetterService letterService;
+    @Autowired
     private PagingAndSortingDTOConverter pagingAndSortingDTOConverter;
     @Autowired
     private DownloadCache downloadCache;
@@ -154,7 +156,32 @@ public class LetterReportResource extends AsynchronousResource {
            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build(); 
         }
     }
-    
+
+    /**
+     * Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä
+     * 
+     * @param id Kirjelähetyksen avain
+     * @param request HTTP pyyntö
+     * @return Linkin kirjeiden sisältöihin
+     */
+    @GET
+    @Path(Urls.REPORTING_CONTENTS_PATH)
+    @Produces(MediaType.TEXT_PLAIN)
+    @ApiOperation(value = "Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä", notes = "Hakee kirjelähetyksen"
+        + "vastaanottajien kirjeet. Kirjeille tehdään unzip ja ne yhdistetään yhdeksi PDF:ksi. "
+        + "Sisältö laitetaan talteen cacheen. Palautetaan linkin ko. PDF-dokumenteihin", response=String.class)
+    public Response getLetterContents(@ApiParam(value="Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id, 
+        @Context HttpServletRequest request) {
+        try {
+            byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
+            String documentId = downloadCache.addDocument(new Download(
+               "application/pdf", "letterContents" + id, letterContents));       
+            return createResponse(request, documentId);
+        } catch (Exception e) {
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build(); 
+        }
+    }
+
     /**
      * Hakee hakuparametrien mukaiset kirjelähetysten tiedot
      * 
