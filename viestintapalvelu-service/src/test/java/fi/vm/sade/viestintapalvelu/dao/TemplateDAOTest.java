@@ -93,6 +93,46 @@ public class TemplateDAOTest {
     }
 
     @Test
+    public void testFindTemplateByNameAndDefaultFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        storedTemplate.setUsedAsDefault(true);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                .withDefaultRequired());
+        assertNotNull(template);
+        assertEquals(template.getId(), storedTemplate.getId());
+    }
+
+    @Test
+    public void testFindTemplateByNameAndDefaultNotFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                .withDefaultRequired());
+        assertNull(template);
+    }
+
+    @Test
+    public void testFindTemplateByNameAndWithoutDefaultFound() {
+        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                // test the criteria as well:
+                .withDefaultRequired().withoutDefaultRequired());
+        assertNotNull(template);
+        assertEquals(template.getId(), storedTemplate.getId());
+    }
+
+    @Test
     public void testFindTemplateByNameAndAndTypeAndHakuNotFound2() {
         Template storedTemplate = DocumentProviderTestData.getTemplate(null);
         String testHakuOid = "1234.56789.154875";

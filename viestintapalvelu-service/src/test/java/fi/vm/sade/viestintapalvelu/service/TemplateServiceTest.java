@@ -133,4 +133,60 @@ public class TemplateServiceTest {
         assertTrue(templateFindByName.getType().equals("doc"));
     }
 
+
+    @Test
+    public void testGetTemplateByCriteriaWithApplicationPeriodWithFallback() {
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1)),
+                defaultTemplate = DocumentProviderTestData.getTemplate(new Long(2)),
+                lastTemplate = DocumentProviderTestData.getTemplate(new Long(3));
+        String applicationPeriodOid = "1234.5678910.12345";
+        DocumentProviderTestData.getTemplateHaku(mockedTemplate, applicationPeriodOid + "OTHER");
+        defaultTemplate.setUsedAsDefault(true);
+        String name = "test_template",
+                lang = "FI",
+                type = "doc";
+
+        // The default should not be found:
+        when(mockedTemplateDAO.findTemplate(eq(
+                new TemplateCriteriaImpl()
+                        .withName(name)
+                        .withLanguage(lang)
+                        .withType(type)
+                        .withApplicationPeriod(applicationPeriodOid)
+        ))).thenReturn(null);
+
+        // The default should be found with default requirement:
+        when(mockedTemplateDAO.findTemplate(eq(
+                new TemplateCriteriaImpl()
+                    .withName(name)
+                    .withLanguage(lang)
+                    .withType(type)
+                    .withDefaultRequired()
+        ))).thenReturn(defaultTemplate);
+
+        // Without the default requirement, the last should be found:
+        when(mockedTemplateDAO.findTemplate(eq(
+                new TemplateCriteriaImpl()
+                        .withName(name)
+                        .withLanguage(lang)
+                        .withType(type)
+                        .withoutDefaultRequired()
+        ))).thenReturn(lastTemplate);
+
+        fi.vm.sade.viestintapalvelu.template.Template templateFindByName =
+                templateService.getTemplateByName(new TemplateCriteriaImpl()
+                        .withName(name)
+                        .withLanguage(lang)
+                        .withType(type)
+                        .withApplicationPeriod(applicationPeriodOid), true);
+
+        assertNotNull(templateFindByName);
+        assertTrue(templateFindByName.getId() == 2);
+        assertNotNull(templateFindByName.getContents().size() == 1);
+        assertNotNull(templateFindByName.getReplacements().size() == 1);
+        assertTrue(templateFindByName.getType() != null);
+        assertTrue(templateFindByName.getType().equals("doc"));
+    }
+
+
 }

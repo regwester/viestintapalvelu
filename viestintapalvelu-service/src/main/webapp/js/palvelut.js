@@ -150,10 +150,11 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         	}
         }
 
-        function saveAttachedApplicationPeriods(templateId, applicationPeriods) {
+        function saveAttachedApplicationPeriods(templateId, applicationPeriods, useAsDefault) {
             return $http.put(template+"saveAttachedApplicationPeriods", {
                 templateId: templateId,
-                applicationPeriods: applicationPeriods
+                applicationPeriods: applicationPeriods,
+                useAsDefault: useAsDefault
             });
         }
 

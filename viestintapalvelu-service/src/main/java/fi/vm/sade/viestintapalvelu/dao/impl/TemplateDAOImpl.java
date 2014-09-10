@@ -58,6 +58,9 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
             queryStr.append(" INNER JOIN a.applicationPeriods templateApplicationPeriod ");
             and(where).append("templateApplicationPeriod.id.applicationPeriod = :applicationPeriodOid");
         }
+        if (criteria.isDefaultRequired()) {
+            and(where).append("a.usedAsDefault = true");
+        }
         if (where.length() > 0) {
             queryStr.append(" WHERE ").append(where);
         }
