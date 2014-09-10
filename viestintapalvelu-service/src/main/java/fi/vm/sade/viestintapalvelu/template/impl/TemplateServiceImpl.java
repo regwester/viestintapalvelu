@@ -410,9 +410,9 @@ public class TemplateServiceImpl implements TemplateService {
                 // (will match the last one(;
                 template = templateDAO.findTemplate(criteria.withoutDefaultRequired());
             }
-            if (template == null) {
-                return null;
-            }
+        }
+        if (template == null) {
+            return null;
         }
 
         convertBasicData(template, searchTempl);
