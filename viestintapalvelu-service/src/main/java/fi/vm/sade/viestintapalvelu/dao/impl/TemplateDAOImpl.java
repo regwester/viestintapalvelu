@@ -30,6 +30,10 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         } catch (Exception e) {
             templ = null;
         }
+        if (templ == null && criteria.getApplicationPeriod() != null) {
+            // If no result with application period, default to one without:
+            return findTemplate(criteria.withApplicationPeriod(null));
+        }
         return templ;
     }
 
