@@ -34,7 +34,7 @@ public class EmailSourceData {
         initEmailContext();
     }
 
-    public void addAttahcment(String name, byte[] data, String contentType) {
+    public void addAttachment(String name, byte[] data, String contentType) {
         if (attachmentData == null) {
             attachmentData = new HashMap<String, byte[]>();
             attachmentContentType = new HashMap<String, String>();

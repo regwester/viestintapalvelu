@@ -38,6 +38,5 @@ public interface EmailResource {
     @Produces(MediaType.APPLICATION_JSON)
     @JsonView(JsonViews.Basic.class)
     @Consumes("application/json")
-    @Path("")
     public Response sendEmail(EmailData emailData);
 }

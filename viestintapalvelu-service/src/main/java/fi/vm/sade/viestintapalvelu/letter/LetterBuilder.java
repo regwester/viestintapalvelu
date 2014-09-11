@@ -104,59 +104,33 @@ public class LetterBuilder {
 
     private MergedPdfDocument buildPDF(LetterBatch batch) throws IOException, DocumentException {
 
-        Template template = batch.getTemplate();
-
-        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
-
-            batch.setTemplateId(template.getId()); // Search was by name ==>
-                                                   // update also to template Id
-        }
-
-        if (template == null && batch.getTemplateId() != null) { // If not found
-                                                                 // by name
-            long templateId = batch.getTemplateId();
-            template = templateService.findById(templateId);
-        }
-
-        if (template == null) {
-            // still null ??
-            throw new IOException("could not locate template resource.");
-        }
-
-        Map<String, Object> templReplacements = new HashMap<String, Object>();
-        for (Replacement templRepl : template.getReplacements()) {
-            templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
-        }
+        Template baseTemplate = getBaseTemplate(batch);
+        Map<String, Object> baseReplacements = getTemplateReplacements(baseTemplate);
 
         List<PdfDocument> source = new ArrayList<PdfDocument>();
 
         // For updating letters content with the generated PdfDocument
-        List<Letter> updateLetters = new LinkedList<Letter>();
+        List<Letter> updatedLetters = new LinkedList<Letter>();
 
-        // loop trough
         for (Letter letter : batch.getLetters()) {
-            // letter.getTemplateReplacements(); ????????????
-            // By default use LetterBatch template
-            Template letterTemplate = template;
-            Map<String, Object> letterTemplReplacements = templReplacements;
 
-            // If user specific language is defined use recipient specific
-            // template language
-            if (letter.getLanguageCode() != null && !letter.getLanguageCode().equalsIgnoreCase(template.getLanguage())) {
-                Template temp = templateService.getTemplateByName(letterTemplate.getName(), letter.getLanguageCode());
-                if (temp != null) {
-                    letterTemplate = temp;
-                    letterTemplReplacements = new HashMap<String, Object>();
-                    for (Replacement templRepl : letterTemplate.getReplacements()) {
-                        letterTemplReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
-                    }
+            // Use the base template and base replacements by default
+            Template letterTemplate = baseTemplate;
+            Map<String, Object> letterReplacements = baseReplacements;
+
+            // Letter language != template language
+            if (languageIsDifferent(baseTemplate, letter)) {
+                // Get the template in user specific language
+                Template template = templateService.getTemplateByName(letterTemplate.getName(), letter.getLanguageCode());
+                if (template != null) {
+                    letterTemplate = template;
+                    letterReplacements = getTemplateReplacements(letterTemplate);
                 }
             }
 
             @SuppressWarnings("unchecked")
-            Map<String, Object> dataContext = createDataContext(template, letter.getAddressLabel(), 
-                    letterTemplReplacements,  // Template replacements defaults from template
+            Map<String, Object> dataContext = createDataContext(baseTemplate, letter.getAddressLabel(),
+                    letterReplacements,  // Template replacements defaults from template
                     batch.getTemplateReplacements(),  // LetterBatch replacements common for all recipients
                     letter.getTemplateReplacements()); // Letter recipient level replacements
             
@@ -165,7 +139,7 @@ public class LetterBuilder {
                 try {
                     emailSource = new EmailSourceData(letter, dataContext);
                 } catch (Exception e) {
-                   LOG.info("Could not handle email sending for " + letter + " reason " + e );
+                   LOG.info("Could not handle email sending for {} reason {}", letter, e);
                    e.printStackTrace();
                 }
             }
@@ -180,7 +154,7 @@ public class LetterBuilder {
                         // Hardcoded template content name "liite" for emailed attachments.. works for current templates
                         // in future templates should have "add as email attachment" -type property field which 
                         // would be checked here. 
-                        emailSource.addAttahcment("liite", page, "application/pdf");
+                        emailSource.addAttachment("liite", page, "application/pdf");
                     }
                     currentDocument.addContent(page);
                 }
@@ -189,15 +163,48 @@ public class LetterBuilder {
             }
             
             sendEmail(emailSource);
-            updateLetters.add(letter);
+            updatedLetters.add(letter);
         }
 
         // Write LetterBatch to DB
-        batch.setLetters(updateLetters); // Contains now the generated
-                                         // PdfDocuments
+        batch.setLetters(updatedLetters); // Contains now the generated PdfDocuments
         // letterService.createLetter(batch);
 
         return documentBuilder.merge(source);
+    }
+
+    private boolean languageIsDifferent(Template baseTemplate, Letter letter) {
+        return letter.getLanguageCode() != null && !letter.getLanguageCode().equalsIgnoreCase(baseTemplate.getLanguage());
+    }
+
+    private Template getBaseTemplate(LetterBatch batch) throws IOException {
+        // Get the given value
+        Template template = batch.getTemplate();
+
+        // Search template by name
+        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
+            template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
+            batch.setTemplateId(template.getId()); // update template Id
+        }
+
+        // Search template by id
+        if (template == null && batch.getTemplateId() != null) {
+            template = templateService.findById(batch.getTemplateId());
+        }
+
+        // Fail, if template is still not found
+        if (template == null) {
+            throw new IOException("Could not locate template resource.");
+        }
+        return template;
+    }
+
+    private Map<String, Object> getTemplateReplacements(Template template) {
+        Map<String, Object> replacements = new HashMap<String, Object>();
+        for (Replacement r : template.getReplacements()) {
+            replacements.put(r.getName(), r.getDefaultValue());
+        }
+        return replacements;
     }
 
     /**
@@ -216,10 +223,7 @@ public class LetterBuilder {
             throw new IOException("could not locate template resource.");
 
         // Get template replacements
-        Map<String, Object> templateReplacements = new HashMap<String, Object>();
-        for (Replacement templRepl : template.getReplacements()) {
-            templateReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
-        }
+        Map<String, Object> templateReplacements = getTemplateReplacements(template);
 
         List<byte[]> source = new ArrayList<byte[]>();
 
@@ -254,10 +258,7 @@ public class LetterBuilder {
      * 
      * @param template
      * @param pageContent
-     * @param addressLabel
-     * @param templReplacements
-     * @param letterBatchReplacements
-     * @param letterReplacements
+     * @param templateReplacements
      * @return
      * @throws FileNotFoundException
      * @throws IOException
@@ -383,9 +384,8 @@ public class LetterBuilder {
     }
     
     private void sendEmail(EmailSourceData source) throws IOException {
-        if (source == null) {
-            return;
+        if (source != null) {
+            emailComponent.sendEmail(source);
         }
-        emailComponent.sendEmail(source);
     }
 }
