@@ -100,7 +100,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         /*
          *  Select source address
          */
-        handleFromAddress(emailData);
+        overrideFromAddress(emailData);
         /*
          *  Select source address and template
          */
@@ -109,7 +109,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
          * Check if request includes attachment 
          * validate it and add to database
          */
-        handleIncludedAttachments(emailData);
+        attachIncludedAttachments(emailData);
 
         /* Sanitize body content */
         sanitizeInput(emailData);
@@ -148,12 +148,13 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return Response.ok(response).build();
     }
 
-    private void handleFromAddress(EmailData emailData) {
+    private void overrideFromAddress(EmailData emailData) {
         // Replace whatever from address we got from the client with the global one
         emailData.getEmail().setFrom(globalFromAddress);
     }
 
     private void sanitizeInput(EmailData emailData) {
+        log.debug("Sanitizing email body");
         emailData.getEmail().setBody(InputCleaner.cleanHtml(emailData.getEmail().getBody()));
     }
     
@@ -173,7 +174,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return result;
     }
     
-    private void handleIncludedAttachments(EmailData emailData) {
+    private void attachIncludedAttachments(EmailData emailData) {
         if (hasAttachments(emailData)) {
             for (EmailAttachment emailAttachment : emailData.getEmail().getAttachments()) {
                 AttachmentResponse attachmentResponse = groupEmailReportingService.saveAttachment(emailAttachment);
