@@ -211,6 +211,10 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             SendQueue queue = new SendQueue();
             for (int i = 0; i < queueSize && it.hasNext(); ++i) {
                 ReportedRecipient recipient = it.next();
+                if (recipient == null) {
+                    // For tests to work:
+                    continue;
+                }
                 recipient.setQueue(queue);
                 queue.getRecipients().add(recipient);
             }
