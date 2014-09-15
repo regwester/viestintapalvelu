@@ -6,7 +6,7 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.*;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDao;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.model.*;
@@ -48,7 +48,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private ReportedMessageReplacementService reportedMessageReplacementService;
     private ReportedRecipientReplacementConverter reportedRecipientReplacementConverter;
     private ReportedRecipientReplacementService reportedRecipientReplacementService;
-    private SendQueueDao sendQueueDao;
+    private SendQueueDAO sendQueueDao;
 
     @Value("${ryhmasahkoposti.queue.handle.size:100}")
     private Integer queueSize = 100;
@@ -66,7 +66,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             ReportedMessageReplacementService reportedMessageReplacementService,
             ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
             ReportedRecipientReplacementService reportedRecipientReplacementService,
-            SendQueueDao sendQueueDao) {
+            SendQueueDAO sendQueueDao) {
         this.reportedMessageService = reportedMessageService;
         this.reportedRecipientService = reportedRecipientService;
         this.reportedAttachmentService = reportedAttachmentService;

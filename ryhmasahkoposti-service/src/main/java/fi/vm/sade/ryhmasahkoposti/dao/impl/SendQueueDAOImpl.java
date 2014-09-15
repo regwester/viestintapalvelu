@@ -17,7 +17,7 @@
 package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDao;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
@@ -35,7 +35,7 @@ import static fi.vm.sade.ryhmasahkoposti.dao.DaoHelper.firstOrNull;
  * Time: 10:09
  */
 @Repository
-public class SendQueueDaoImpl extends AbstractJpaDAOImpl<SendQueue, Long> implements SendQueueDao {
+public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implements SendQueueDAO {
 
     @Override
     public int getNumberOfUnhandledQueues() {

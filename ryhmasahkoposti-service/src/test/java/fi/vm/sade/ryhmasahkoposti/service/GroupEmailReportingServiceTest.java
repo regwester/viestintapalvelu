@@ -6,7 +6,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
 import fi.vm.sade.ryhmasahkoposti.converter.*;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDao;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
@@ -85,7 +85,7 @@ public class GroupEmailReportingServiceTest {
     @Mock
     private ReportedRecipientReplacementService mockReportedRecipientReplacementService;
     @Mock
-    private SendQueueDao sendQueueDao;
+    private SendQueueDAO sendQueueDao;
 
     @Before
     public void setup() {

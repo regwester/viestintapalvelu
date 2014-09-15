@@ -12,7 +12,7 @@ public class EmailRecipientDTOConverter {
 
 	public EmailRecipientDTO convert(ReportedRecipient reportedRecipient) {
 		EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-		
+
 		emailRecipientDTO.setRecipientID(reportedRecipient.getId());
         emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
 		emailRecipientDTO.setFirstName("");

@@ -27,7 +27,7 @@ import java.util.List;
  * Date: 15.9.2014
  * Time: 10:08
  */
-public interface SendQueueDao extends JpaDAO<SendQueue, Long> {
+public interface SendQueueDAO extends JpaDAO<SendQueue, Long> {
 
     /**
      * @return the next queue in WAITING_FOR_HANDLER state by creation time and id

@@ -17,7 +17,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDao;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
@@ -45,7 +45,7 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
     public static final int SAFE_MARGIN_MILLIS = 5000;
     private static Logger log = LoggerFactory.getLogger(GroupEmailReportingServiceImpl.class);
 
-    private SendQueueDao sendQueueDao;
+    private SendQueueDAO sendQueueDao;
     private EmailQueueDTOConverter emailQueueDtoConverter;
     private EmailRecipientDTOConverter emailRecipientDTOConverter;
     // 3*60*1000 = 180000 (3 minutes default) after single sending of an email will be assumed stopped
@@ -53,10 +53,10 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
     private long maxEmailRecipientHandleTimeMillis;
 
     @Autowired
-    public EmailSendQueueServiceImpl(SendQueueDao sendQueueDao, EmailQueueDTOConverter emailQueueDtoConverter,
+    public EmailSendQueueServiceImpl(SendQueueDAO sendQueueDao, EmailQueueDTOConverter emailQueueDtoConverter,
                                      EmailRecipientDTOConverter emailRecipientDTOConverter) {
-        this.emailQueueDtoConverter = emailQueueDtoConverter;
         this.sendQueueDao = sendQueueDao;
+        this.emailQueueDtoConverter = emailQueueDtoConverter;
         this.emailRecipientDTOConverter = emailRecipientDTOConverter;
     }
 
@@ -97,7 +97,7 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
         if (maxEmailRecipientHandleTimeMillis > 0) {
             Date now = new Date();
             for (SendQueue queue : sendQueueDao.findActiveQueues()) {
-                if (queue.getFinishedAt() == null
+                if (queue.getFinishedAt() == null && queue.getLastHandledAt() != null
                         && queue.getLastHandledAt().getTime() + maxEmailRecipientHandleTimeMillis  < now.getTime()) {
                     log.info("Processing single email sending in SendQueue={} (state: {}) has taken longer than {} ms. " +
                             "Assuming processing has stopped unexpectedly. Setting the SendQueue ready for reprocessing" +
@@ -123,10 +123,15 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
                     queue != null ? queue.getVersion() : null);
             return false;
         }
+        if (queue.getFinishedAt() != null || queue.getState() != SendQueueState.PROCESSING) {
+            log.error("Illegal state {} for SendQueue={} to continueQueueHandling. Logical error.",
+                    queue.getId(), queue);
+            return false;
+        }
 
         Date now = new Date();
         long safeLimit = Math.max(0, maxEmailRecipientHandleTimeMillis - SAFE_MARGIN_MILLIS); // 5s safe marginal
-        if (maxEmailRecipientHandleTimeMillis > 0
+        if (maxEmailRecipientHandleTimeMillis > 0 && queue.getLastHandledAt() != null
                 && queue.getLastHandledAt().getTime() + safeLimit  < now.getTime()) {
             // The process consumed too much time and the queue may be (or soon be) reattached to another processes
             log.error("Discontinuing sending processor of SendQueue={} due to lastModification={} not being within " +
