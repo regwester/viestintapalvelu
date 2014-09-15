@@ -1,24 +1,16 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
 import fi.vm.sade.generic.model.BaseEntity;
+
+import javax.persistence.*;
+import java.util.Date;
 
 @Table(name="raportoitavavastaanottaja")
 @Entity
 public class ReportedRecipient extends BaseEntity {
 	private static final long serialVersionUID = -4957288730521500299L;
 
-	@ManyToOne(fetch=FetchType.EAGER)
+	@ManyToOne(fetch=FetchType.LAZY)
 	@JoinColumn(name="lahetettyviesti_id")
 	private ReportedMessage reportedMessage;
 	
@@ -57,6 +49,10 @@ public class ReportedRecipient extends BaseEntity {
 	@Column(name="aikaleima", nullable=false)
 	@Temporal(TemporalType.TIMESTAMP)
 	private Date timestamp;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="jono", nullable = true)
+    private SendQueue queue;
 
 	public ReportedMessage getReportedMessage() {
 		return reportedMessage;
@@ -154,4 +150,11 @@ public class ReportedRecipient extends BaseEntity {
 		this.timestamp = timestamp;
 	}
 
+    public SendQueue getQueue() {
+        return queue;
+    }
+
+    public void setQueue(SendQueue queue) {
+        this.queue = queue;
+    }
 }

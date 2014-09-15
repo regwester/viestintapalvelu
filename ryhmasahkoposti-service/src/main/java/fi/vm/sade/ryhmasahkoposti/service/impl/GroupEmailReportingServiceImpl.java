@@ -1,64 +1,29 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.*;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDao;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.model.*;
+import fi.vm.sade.ryhmasahkoposti.service.*;
+import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.converter.AttachmentResponseConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageReplacementConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
-import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageAttachmentService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageReplacementService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientReplacementService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
-import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
-import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
+import java.io.IOException;
+import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -83,38 +48,44 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private ReportedMessageReplacementService reportedMessageReplacementService;
     private ReportedRecipientReplacementConverter reportedRecipientReplacementConverter;
     private ReportedRecipientReplacementService reportedRecipientReplacementService;
+    private SendQueueDao sendQueueDao;
+
+    @Value("${ryhmasahkoposti.queue.handle.size:100}")
+    private Integer queueSize = 100;
 
     @Autowired
     public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
-        ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
-        ReportedMessageAttachmentService reportedMessageAttachmentService,
-        ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
-        ReportedAttachmentConverter reportedAttachmentConverter, AttachmentResponseConverter attachmentResponseConverter, 
-        EmailMessageDTOConverter emailMessageDTOConverter, EmailRecipientDTOConverter emailRecipientDTOConverter, 
-        ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent, 
-        OrganizationComponent organizationComponent, TemplateService templateService, 
-        ReportedMessageReplacementConverter reportedMessageReplacementConverter,
-        ReportedMessageReplacementService reportedMessageReplacementService,
-        ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
-        ReportedRecipientReplacementService reportedRecipientReplacementService) {
-            this.reportedMessageService = reportedMessageService;
-            this.reportedRecipientService = reportedRecipientService;
-            this.reportedAttachmentService = reportedAttachmentService;
-            this.reportedMessageAttachmentService = reportedMessageAttachmentService;
-            this.reportedMessageConverter = reportedMessageConverter;
-            this.reportedRecipientConverter = reportedRecipientConverter;
-            this.reportedAttachmentConverter = reportedAttachmentConverter;
-            this.attachmentResponseConverter = attachmentResponseConverter;
-            this.emailMessageDTOConverter = emailMessageDTOConverter;
-            this.emailRecipientDTOConverter = emailRecipientDTOConverter;
-            this.reportedMessageDTOConverter = reportedMessageDTOConverter;
-            this.currentUserComponent = currentUserComponent;
-            this.organizationComponent = organizationComponent;
-            this.templateService = templateService;
-            this.reportedMessageReplacementConverter = reportedMessageReplacementConverter;
-            this.reportedMessageReplacementService = reportedMessageReplacementService;
-            this.reportedRecipientReplacementConverter = reportedRecipientReplacementConverter;
-            this.reportedRecipientReplacementService = reportedRecipientReplacementService;
+            ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
+            ReportedMessageAttachmentService reportedMessageAttachmentService,
+            ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
+            ReportedAttachmentConverter reportedAttachmentConverter, AttachmentResponseConverter attachmentResponseConverter,
+            EmailMessageDTOConverter emailMessageDTOConverter, EmailRecipientDTOConverter emailRecipientDTOConverter,
+            ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent,
+            OrganizationComponent organizationComponent, TemplateService templateService,
+            ReportedMessageReplacementConverter reportedMessageReplacementConverter,
+            ReportedMessageReplacementService reportedMessageReplacementService,
+            ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
+            ReportedRecipientReplacementService reportedRecipientReplacementService,
+            SendQueueDao sendQueueDao) {
+        this.reportedMessageService = reportedMessageService;
+        this.reportedRecipientService = reportedRecipientService;
+        this.reportedAttachmentService = reportedAttachmentService;
+        this.reportedMessageAttachmentService = reportedMessageAttachmentService;
+        this.reportedMessageConverter = reportedMessageConverter;
+        this.reportedRecipientConverter = reportedRecipientConverter;
+        this.reportedAttachmentConverter = reportedAttachmentConverter;
+        this.attachmentResponseConverter = attachmentResponseConverter;
+        this.emailMessageDTOConverter = emailMessageDTOConverter;
+        this.emailRecipientDTOConverter = emailRecipientDTOConverter;
+        this.reportedMessageDTOConverter = reportedMessageDTOConverter;
+        this.currentUserComponent = currentUserComponent;
+        this.organizationComponent = organizationComponent;
+        this.templateService = templateService;
+        this.reportedMessageReplacementConverter = reportedMessageReplacementConverter;
+        this.reportedMessageReplacementService = reportedMessageReplacementService;
+        this.reportedRecipientReplacementConverter = reportedRecipientReplacementConverter;
+        this.reportedRecipientReplacementService = reportedRecipientReplacementService;
+        this.sendQueueDao = sendQueueDao;
     }
 
     @Override
@@ -207,12 +178,14 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         List<EmailRecipient> emailRecipients = emailData.getRecipient();
         log.debug("Process emailRecipients");
+        List<ReportedRecipient> recipients = new ArrayList<ReportedRecipient>();
         for (EmailRecipient emailRecipient : emailRecipients) {
             log.debug("Convert emailRecipient to reportedRecipient");
             ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage,
                     emailRecipient);
             log.debug("Saving reportedRecipient");
             reportedRecipientService.saveReportedRecipient(reportedRecipient);
+            recipients.add(reportedRecipient);
 
             log.debug("Processing sender specific replacements");
             if (emailRecipient.getRecipientReplacements() != null) {
@@ -225,7 +198,29 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
         }
 
+        createSendQueues(recipients);
+
         return savedReportedMessage.getId();
+    }
+
+    private List<SendQueue> createSendQueues(Collection<ReportedRecipient> recipients) {
+        log.debug("Creating send queue for {} recipients", recipients.size());
+        Iterator<ReportedRecipient> it = recipients.iterator();
+        List<SendQueue> queues = new ArrayList<SendQueue>();
+        while (it.hasNext()) {
+            SendQueue queue = new SendQueue();
+            for (int i = 0; i < queueSize && it.hasNext(); ++i) {
+                ReportedRecipient recipient = it.next();
+                recipient.setQueue(queue);
+                queue.getRecipients().add(recipient);
+            }
+            queue.setState(SendQueueState.WAITING_FOR_HANDLER);
+            sendQueueDao.insert(queue);
+            queues.add(queue);
+            log.debug("Creates SendQueue={} with {} recipients ", queue.getId(), queue.getRecipients().size());
+        }
+        log.debug("Total of {} send queues created.", queues.size());
+        return queues;
     }
 
     @Override
@@ -509,4 +504,11 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         return reportedAttachment;
     }
 
+    public Integer getQueueSize() {
+        return queueSize;
+    }
+
+    public void setQueueSize(Integer queueSize) {
+        this.queueSize = queueSize;
+    }
 }
