@@ -70,7 +70,6 @@ public class EmailServiceImpl implements EmailService {
     @Value("${ryhmasahkoposti.require.virus.check:true}")
     private boolean virusCheckRequired;
 
-
     private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(MAX_CACHE_ENTRIES + 1) {
         private static final long serialVersionUID = 1L;
 
@@ -91,16 +90,13 @@ public class EmailServiceImpl implements EmailService {
         return new String(baos.toByteArray());
     }
 
-    /**
-     * Spring scheduler method
-     */
     @Override
     public void checkEmailQueues() {
         emailQueueService.checkForStoppedProcesses();
         int numberOfQueues = emailQueueService.getNumberOfUnhandledQueues();
         if (numberOfQueues > 0) {
             int numberOfProcessesToStart = Math.min(maxTasksToStartAtOnce, numberOfQueues);
-            log.info("Found {} unhanled queues. Starting {} new handleEmailQueue processes.",
+            log.info("Found {} unhandled queues. Starting {} new handleEmailQueue processes.",
                     numberOfQueues, numberOfProcessesToStart);
             for (int i = 0; i < numberOfProcessesToStart; ++i) {
                 emailExecutor.submit(new Runnable() {
