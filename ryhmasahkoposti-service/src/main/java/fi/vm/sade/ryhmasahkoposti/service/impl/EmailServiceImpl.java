@@ -40,7 +40,8 @@ public class EmailServiceImpl implements EmailService {
     // concurrently with 10 executors. And we have max 1 min before a new cron check call
     // add to add in new calls. So assume the optimum maximum to start at once to be:
     // 60/14*10 ~= 42 (if we start more, they would be queued and only cause extra queries later)
-    private static final int MAX_TASKS_TO_START_AT_ONCE = 42;
+    @Value("${ryhmasahkoposti.max.sendqueue.tasks.to.add:42}")
+    private int maxTasksToStartAtOnce = 42;
 
     @Autowired
     private GroupEmailReportingService rrService;
@@ -98,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
         emailQueueService.checkForStoppedProcesses();
         int numberOfQueues = emailQueueService.getNumberOfUnhandledQueues();
         if (numberOfQueues > 0) {
-            int numberOfProcessesToStart = Math.min(MAX_TASKS_TO_START_AT_ONCE, numberOfQueues);
+            int numberOfProcessesToStart = Math.min(maxTasksToStartAtOnce, numberOfQueues);
             log.info("Found {} unhanled queues. Starting {} new handleEmailQueue processes.",
                     numberOfQueues, numberOfProcessesToStart);
             for (int i = 0; i < numberOfProcessesToStart; ++i) {
@@ -116,7 +117,7 @@ public class EmailServiceImpl implements EmailService {
 
     public void handleEmailQueue() {
         long start = System.currentTimeMillis();
-        int maxConcurrentLockFailures = MAX_TASKS_TO_START_AT_ONCE -1,
+        int maxConcurrentLockFailures = maxTasksToStartAtOnce -1,
             triedTimes = 0;
         EmailQueueHandleDto queue = null;
         while (queue == null && triedTimes++ < maxConcurrentLockFailures) {
@@ -189,6 +190,7 @@ public class EmailServiceImpl implements EmailService {
             } catch (Exception e) {
                 String failureCause = getFailureCause(e);
                 rrService.recipientHandledFailure(er, failureCause);
+                success = false;
             }
         }
         long took = System.currentTimeMillis() - vStart;
@@ -263,5 +265,9 @@ public class EmailServiceImpl implements EmailService {
 
     private boolean virusCheckPassed(EmailMessageDTO message) {
         return !virusCheckRequired || (message.isVirusChecked() && !message.isInfected());
+    }
+
+    public void setMaxTasksToStartAtOnce(int maxTasksToStartAtOnce) {
+        this.maxTasksToStartAtOnce = maxTasksToStartAtOnce;
     }
 }

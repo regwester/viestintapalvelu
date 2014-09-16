@@ -16,19 +16,24 @@
 
 package fi.vm.sade.ryhmasahkoposti.util;
 
-import fi.vm.sade.generic.model.BaseEntity;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 /**
  * User: ratamaa
- * Date: 15.9.2014
- * Time: 16:42
+ * Date: 16.9.2014
+ * Time: 10:10
  */
-public class UpdateVersionAnswer implements Answer<Void> {
+public class CallCounterVoidAnswer implements Answer<Void> {
+    private int callCount = 0;
+
+    @Override
     public Void answer(InvocationOnMock invocation) throws Throwable {
-        BaseEntity entity = (BaseEntity) invocation.getArguments()[0];
-        entity.setVersion(entity.getVersion()+1);
+        ++callCount;
         return null;
+    }
+
+    public int getCallCount() {
+        return callCount;
     }
 }
