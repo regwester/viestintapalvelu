@@ -38,7 +38,10 @@ public class EmailSender {
             MimeMessage message = createMail(emailMessage, emailAddress);
             if (EmailConstants.TEST_MODE.equals("NO")) {
                 LOGGER.debug("Sending message: " + message.toString());
+                long start = System.currentTimeMillis();
                 Transport.send(message);
+                long took = System.currentTimeMillis() -start;
+                LOGGER.debug("Message sent took: " + took);
             } else {
                 mockSendMail(emailMessage, emailAddress); //just log the message
             }
