@@ -42,9 +42,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     @Value("${ryhmasahkoposti.from}")
     private String globalFromAddress;
-    @Value("ryhmasahkoposti.default.template.name")
+    @Value("${ryhmasahkoposti.default.template.name}")
     private String defaultTemplateName;
-    @Value("ryhmasahkoposti.default.template.language")
+    @Value("${ryhmasahkoposti.default.template.language}")
     private String defaultTemplateLanguage;
 
     @Autowired
