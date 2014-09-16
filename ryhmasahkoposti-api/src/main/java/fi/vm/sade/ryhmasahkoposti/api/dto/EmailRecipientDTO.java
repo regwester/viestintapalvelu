@@ -1,8 +1,8 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 public class EmailRecipientDTO extends EmailRecipient {
-
     private Long recipientID;
+    private Long recipientVersion;
     private Long emailMessageID;
     private String firstName;
     private String lastName;
@@ -17,7 +17,15 @@ public class EmailRecipientDTO extends EmailRecipient {
     public void setRecipientID(Long recipientID) {
         this.recipientID = recipientID;
     }
-    
+
+    public Long getRecipientVersion() {
+        return recipientVersion;
+    }
+
+    public void setRecipientVersion(Long recipientVersion) {
+        this.recipientVersion = recipientVersion;
+    }
+
     public Long getEmailMessageID() {
         return emailMessageID;
     }

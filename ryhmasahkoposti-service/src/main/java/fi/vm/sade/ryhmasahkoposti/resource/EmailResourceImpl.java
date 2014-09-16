@@ -1,16 +1,11 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
+import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -23,17 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
-import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
-import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Iterator;
+import java.util.List;
 
 
 @Component
@@ -115,6 +108,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         sanitizeInput(emailData);
 
         String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
+        emailService.checkEmailQueues();
         log.debug("DB index is {}", sendId);
         return Response.ok(new EmailSendId(sendId)).build();
     }
