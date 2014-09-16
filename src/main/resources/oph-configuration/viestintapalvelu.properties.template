@@ -85,6 +85,11 @@ ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://${host.vir
 ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 ryhmasahkopostipalvelu.templateService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
+ryhmasahkoposti.from=opintopolku@oph.fi
+# Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
+ryhmasahkoposti.default.template.name=osoitepalvelu_email
+ryhmasahkoposti.default.template.language=FI
+
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
 viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
