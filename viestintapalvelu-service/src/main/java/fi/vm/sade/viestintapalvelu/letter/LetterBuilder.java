@@ -128,7 +128,7 @@ public class LetterBuilder {
             EmailSourceData emailSource = null;
             if (shouldReceiveEmail(letter)) {
                 try {
-                    emailSource = new EmailSourceData(letter, dataContext);
+                    emailSource = new EmailSourceData(letter, letterTemplate, dataContext);
                 } catch (Exception e) {
                    LOG.info("Could not handle email sending for {} reason {}", letter, e);
                    e.printStackTrace();

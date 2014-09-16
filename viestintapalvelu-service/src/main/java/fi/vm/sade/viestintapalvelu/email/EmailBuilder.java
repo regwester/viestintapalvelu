@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.hibernate.sql.Template;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -25,7 +26,7 @@ public class EmailBuilder {
      */
     
     private static Logger LOGGER = LoggerFactory.getLogger(EmailBuilder.class);
-    
+        
     public EmailData buildEmailData(EmailSourceData source) throws Exception {
         LOGGER.debug("Trying to construct emailData for " + source);
         if (source == null) {
@@ -40,6 +41,7 @@ public class EmailBuilder {
         return emailData;
     }
 
+    
     public EmailMessage getEmailMessage(EmailSourceData source) throws Exception {
 
         EmailMessage message = new EmailMessage();
@@ -59,6 +61,11 @@ public class EmailBuilder {
                 attachmentList.add(attachment);
             }
             message.setAttachments(attachmentList);
+        }
+        
+        if (source.getTemplate() != null) {
+            message.setTemplateName(source.getTemplate().getName());
+            message.setLanguageCode(source.getTemplate().getLanguage());
         }
         return message;
     }
