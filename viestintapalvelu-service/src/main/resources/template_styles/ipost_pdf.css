@@ -189,3 +189,6 @@ ul.dash li:before {
     float: left;
     width: 30mm;
 }
+.notice {
+    color: red;
+}
