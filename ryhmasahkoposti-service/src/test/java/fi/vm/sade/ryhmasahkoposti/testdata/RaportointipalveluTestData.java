@@ -120,6 +120,12 @@ public class RaportointipalveluTestData {
         return emailRecipientDTO;
     }
 
+    public static EmailRecipientDTO getEmailRecipientDTO(EmailMessageDTO message) {
+        EmailRecipientDTO recipient = getEmailRecipientDTO();
+        recipient.setEmailMessageID(message.getMessageID());
+        return recipient;
+    }
+
     public static Henkilo getHenkilo() {
         Henkilo henkilo = new Henkilo();
 

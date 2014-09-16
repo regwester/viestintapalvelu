@@ -270,4 +270,8 @@ public class EmailServiceImpl implements EmailService {
     public void setMaxTasksToStartAtOnce(int maxTasksToStartAtOnce) {
         this.maxTasksToStartAtOnce = maxTasksToStartAtOnce;
     }
+
+    public void setVirusCheckRequired(boolean virusCheckRequired) {
+        this.virusCheckRequired = virusCheckRequired;
+    }
 }

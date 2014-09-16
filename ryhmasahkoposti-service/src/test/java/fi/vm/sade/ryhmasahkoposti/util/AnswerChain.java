@@ -83,6 +83,9 @@ public class AnswerChain<T> implements Answer<T> {
         AnswerChain<T> nextElement = new AnswerChain<T>(answer);
         nextElement.parent = this;
         this.next = nextElement;
+        if (this.times < 0) {
+            this.times = 1;
+        }
         return nextElement;
     }
 
