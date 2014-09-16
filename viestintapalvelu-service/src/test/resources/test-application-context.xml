@@ -60,6 +60,16 @@
         <property name="dataSource" ref="dataSource"/>
     </bean>
 
+    <bean id="sessionFactory"
+          class="org.springframework.orm.hibernate4.LocalSessionFactoryBean">
+        <property name="dataSource" ref="dataSource" />
+        <property name="hibernateProperties">
+            <props>
+                <prop key="javax.persistence.validation.mode">none</prop>
+            </props>
+        </property>
+    </bean>
+
     <!-- Intializer for creating schema for JUnit testing  -->
     <bean id="dataSourceInitializer" class="org.springframework.jdbc.datasource.init.DataSourceInitializer">
         <property name="dataSource" ref="dataSource" />

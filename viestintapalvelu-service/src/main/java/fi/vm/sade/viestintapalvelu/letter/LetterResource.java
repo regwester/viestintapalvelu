@@ -1,23 +1,16 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.*;
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
+import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,21 +21,21 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
-import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
-import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
-import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
@@ -67,7 +60,7 @@ public class LetterResource extends AsynchronousResource {
     @Qualifier
     private DokumenttiResource dokumenttiResource;
 
-    @Autowired
+
     private ExecutorService executor;
 
     @Autowired
@@ -75,7 +68,7 @@ public class LetterResource extends AsynchronousResource {
 
     @Autowired
     private UserRightsValidator userRightsValidator;
-    
+
     @Autowired
     private LetterBatchPDFProcessor letterPDFProcessor;
     
@@ -349,9 +342,9 @@ public class LetterResource extends AsynchronousResource {
                 try {
                     byte[] zip = letterBuilder.printZIP(input);
                     dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()
-                        + ".zip"), now().plusDays(1).toDate().getTime(),
-                        Arrays.asList("viestintapalvelu", input.getTemplateName(), "zip"), "application/zip",
-                        new ByteArrayInputStream(zip));
+                                    + ".zip"), now().plusDays(1).toDate().getTime(),
+                            Arrays.asList("viestintapalvelu", input.getTemplateName(), "zip"), "application/zip",
+                            new ByteArrayInputStream(zip));
                 } catch (Exception e) {
                     e.printStackTrace();
                     LOG.error("letter ZIP async failed: {}", e.getMessage());
@@ -376,7 +369,8 @@ public class LetterResource extends AsynchronousResource {
             return Response.status(Status.BAD_REQUEST).build();
         }
         letterBuilder.initTemplateId(input);
-        Long id = letterService.createLetter(input).getId();
+        fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
+        Long id = letter.getId();
         letterPDFProcessor.processLetterBatch(id);
         
         return Response.status(Status.OK).entity(id).build();
@@ -389,7 +383,28 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
-        return null;
+        //use batch id to find out the letter receivers
+        //then use the letter receiver ids to get list of all letters
+        //then check if kirje is null
+        fi.vm.sade.viestintapalvelu.model.LetterBatch batch = letterService.fetchById(letterBatchId);
+        if(batch == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        }
+        List<LetterReceiverLetter> letters = letterService.getReceiverLetters(batch.getLetterReceivers());
+
+        //quick and dirty Map usage for now
+        int sent = 0;
+        int total = letters.size();
+        for (LetterReceiverLetter let : letters) {
+            if(let.getLetter() != null) {
+                sent += 1;
+            }
+        }
+        Map<String, Integer> statusMap = new HashMap<String, Integer>();
+        statusMap.put("sent", sent);
+        statusMap.put("total", total);
+
+        return Response.status(Status.OK).entity(statusMap).build();
     }
     
     @GET

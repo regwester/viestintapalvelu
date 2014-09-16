@@ -1,51 +1,53 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 @Component
 public class LetterBatchPDFProcessor {
     
-    private final ExecutorService executor;
+    private final ExecutorService executorService;
     
-    private final LetterBuilder builder;
+    private final LetterBuilder letterBuilder;
     
-    private final LetterService service;
+    private final LetterService letterService;
     
     @Autowired
-    LetterBatchPDFProcessor(ExecutorService executor, LetterBuilder builder, LetterService service) {
-        this.executor = executor;
-        this.builder = builder;
-        this.service = service;
+    LetterBatchPDFProcessor(ExecutorService executorService, LetterBuilder builder, LetterService letterService) {
+        this.executorService = executorService;
+        this.letterBuilder = builder;
+        this.letterService = letterService;
     }
     
     public void processLetterBatch(final Long letterBatchId) {
-        service.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
-        final LetterBatch batch = service.fetchById(letterBatchId);
-        executor.execute(new Runnable() {
+        letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
+        final LetterBatch batch = letterService.fetchById(letterBatchId);
 
+        executorService.execute(new Runnable() {
             @Override
             public void run() {
-                for (LetterReceivers receiver : batch.getLetterReceivers()) {
-                    try {
-                        builder.constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
-                        service.updateLetter(receiver.getLetterReceiverLetter());
-                    } catch (Exception e) {
-                        //TODO: handle
+                if (batch != null) {
+                    System.out.println("batch.getLetterReceivers().size() = " + batch.getLetterReceivers().size());
+                    for (LetterReceivers receiver : batch.getLetterReceivers()) {
+                        try {
+                            letterBuilder.constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
+                            letterService.updateLetter(receiver.getLetterReceiverLetter());
+                        } catch (Exception e) {
+                            //TODO: handle
+                        }
                     }
                 }
-                service.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
-                
+                letterService.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
+
             }
 
             private Map<String, Object> formReplacementMap(LetterBatch batch) {
@@ -63,7 +65,7 @@ public class LetterBatchPDFProcessor {
                 }
                 return replacements;
             }
-            
+
         });
     }
 }

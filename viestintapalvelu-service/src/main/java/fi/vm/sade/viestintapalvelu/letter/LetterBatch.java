@@ -44,7 +44,7 @@ public class LetterBatch {
     
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
-    
+
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
     
     public Map<String, Object> getTemplateReplacements() {
@@ -192,5 +192,13 @@ public class LetterBatch {
 
     public void addIPostiData(String name, byte[] content) {
         iPostiData.put(name, content);
+    }
+
+    public int getLetterCount() {
+        return 0;
+    }
+
+    public int getSentLetterCount() {
+        return 0;
     }
 }

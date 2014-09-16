@@ -1,36 +1,22 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.model.IPosti;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
-import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
+import fi.vm.sade.viestintapalvelu.model.*;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 /**
  * @author migar1
@@ -234,7 +220,6 @@ public class LetterServiceImpl implements LetterService {
             }
 
         }
-
         return content;
     }
 
@@ -434,6 +419,17 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public LetterBatch fetchById(long id) {
         return letterBatchDAO.read(id);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<LetterReceiverLetter> getReceiverLetters(Set<LetterReceivers> letterReceivers) {
+        List<Long> receiverIds = new ArrayList<Long>(letterReceivers.size());
+        for (LetterReceivers res : letterReceivers) {
+            receiverIds.add(res.getId());
+        }
+
+        return letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverID(receiverIds);
     }
 
     @Override
