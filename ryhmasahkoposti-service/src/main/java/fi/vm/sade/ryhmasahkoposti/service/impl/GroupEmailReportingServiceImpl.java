@@ -176,11 +176,16 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.debug("Saving reportedMessageAttachments");
         reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
 
-        List<EmailRecipient> emailRecipients = emailData.getRecipient();
-        log.debug("Process emailRecipients");
+        processRecipients(savedReportedMessage, emailData.getRecipient());
+
+        return savedReportedMessage.getId();
+    }
+
+    private void processRecipients(ReportedMessage savedReportedMessage, List<EmailRecipient> emailRecipients) throws IOException {
+        log.debug("Processing emailRecipients");
         List<ReportedRecipient> recipients = new ArrayList<ReportedRecipient>();
         for (EmailRecipient emailRecipient : emailRecipients) {
-            log.debug("Convert emailRecipient to reportedRecipient");
+            log.debug("Converting emailRecipient to reportedRecipient");
             ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage,
                     emailRecipient);
             log.debug("Saving reportedRecipient");
@@ -197,10 +202,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
             }
         }
-
         createSendQueues(recipients);
-
-        return savedReportedMessage.getId();
     }
 
     private List<SendQueue> createSendQueues(Collection<ReportedRecipient> recipients) {

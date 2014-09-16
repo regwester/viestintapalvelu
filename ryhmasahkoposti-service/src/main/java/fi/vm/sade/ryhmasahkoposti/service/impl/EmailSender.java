@@ -1,8 +1,12 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.sql.Timestamp;
-import java.util.Properties;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -13,16 +17,9 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import java.io.UnsupportedEncodingException;
+import java.sql.Timestamp;
+import java.util.Properties;
 
 @Service
 public class EmailSender {
@@ -47,6 +44,7 @@ public class EmailSender {
             }
         } catch (Exception e) {
             LOGGER.error("Failed to send message to " + emailAddress + ": " + emailMessage.getBody(), e);
+            throw e;
         }
     }
 

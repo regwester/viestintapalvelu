@@ -120,6 +120,12 @@ public class RaportointipalveluTestData {
         return emailRecipientDTO;
     }
 
+    public static EmailRecipientDTO getEmailRecipientDTO(EmailMessageDTO message) {
+        EmailRecipientDTO recipient = getEmailRecipientDTO();
+        recipient.setEmailMessageID(message.getMessageID());
+        return recipient;
+    }
+
     public static Henkilo getHenkilo() {
         Henkilo henkilo = new Henkilo();
 
@@ -248,6 +254,7 @@ public class RaportointipalveluTestData {
         raportoitavaVastaanottaja.setRecipientEmail("testi.vastaanottaja@sposti.fi");
         raportoitavaVastaanottaja.setLanguageCode("FI");
         raportoitavaVastaanottaja.setSearchName("Testi Oppilas");
+        raportoitavaVastaanottaja.setDetailsRetrieved(true);
         raportoitavaVastaanottaja.setSendingStarted(new Date());
         raportoitavaVastaanottaja.setSendingEnded(new Date());
         raportoitavaVastaanottaja.setFailureReason("");
@@ -265,6 +272,7 @@ public class RaportointipalveluTestData {
         reportedRecipient.setRecipientEmail("testi.vastaanottaja@sposti.fi");
         reportedRecipient.setLanguageCode("FI");
         reportedRecipient.setSearchName("Testi,Oppilas");
+        reportedRecipient.setDetailsRetrieved(true);
         reportedRecipient.setSendingStarted(null);
         reportedRecipient.setSendingEnded(null);
         reportedRecipient.setFailureReason("");

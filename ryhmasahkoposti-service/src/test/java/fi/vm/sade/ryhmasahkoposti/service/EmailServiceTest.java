@@ -16,6 +16,8 @@
 
 package fi.vm.sade.ryhmasahkoposti.service;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
@@ -48,9 +50,10 @@ import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirstReturn;
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirstThrow;
 import static junit.framework.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 import static org.powermock.api.mockito.PowerMockito.doAnswer;
+import static org.powermock.api.mockito.PowerMockito.doThrow;
 
 /**
  * User: ratamaa
@@ -115,26 +118,72 @@ public class EmailServiceTest {
     }
 
     @Test
-    public void testHandleEmailQueue() {
+    public void testHandleEmailQueue() throws Exception {
         emailService.setMaxTasksToStartAtOnce(42);
+        emailService.setVirusCheckRequired(false);
+        EmailMessageDTO message = RaportointipalveluTestData.getEmailMessageDTO();
+        EmailQueueHandleDto queue = createQueue(message, 3);
+
+        doAnswer(atFirstThrow(new OptimisticLockException()).times(40).thenReturn(queue))
+                .when(emailQueueService).reserveNextQueueToHandle();
+
+        AnswerChain<Boolean> answers = atFirstReturn(true).thenReturn(false)
+                .thenThrow(new IllegalStateException("Should not be called after returning false!"));
+        doAnswer(answers).when(emailQueueService).continueQueueHandling(any(EmailQueueHandleDto.class));
+
+        when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
+        when(rrService.getMessage(eq(1l))).thenReturn(message);
+        CallCounterVoidAnswer handleMail = new CallCounterVoidAnswer();
+        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class));
+
+        AnswerChain<Boolean> successHandler = atFirstReturn(true);
+        when(rrService.recipientHandledSuccess(eq(queue.getRecipients().get(0)),
+                any(String.class))).then(successHandler);
+        doThrow(new IllegalStateException("Queue not handled fully. Should not be called!"))
+                .when(emailQueueService).queueHandled(any(long.class));
+
+        emailService.handleEmailQueue();
+        assertEquals(2, answers.getTotalCallCount());
+        assertEquals(1, handleMail.getCallCount());
+        assertEquals(1, successHandler.getTotalCallCount());
+    }
+
+    protected EmailQueueHandleDto createQueue(EmailMessageDTO message, int recipientsCount) {
         EmailQueueHandleDto queue = new EmailQueueHandleDto();
         queue.setId(42l);
         queue.setVersion(2l);
         queue.setState(SendQueueState.PROCESSING);
         List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
-        recipients.add(RaportointipalveluTestData.getEmailRecipientDTO());
-        recipients.add(RaportointipalveluTestData.getEmailRecipientDTO());
-        recipients.add(RaportointipalveluTestData.getEmailRecipientDTO());
+        for (int i = 0; i < recipientsCount; ++i) {
+            recipients.add(RaportointipalveluTestData.getEmailRecipientDTO(message));
+        }
         queue.setRecipients(recipients);
+        return queue;
+    }
 
-        doAnswer(atFirstThrow(new OptimisticLockException()).times(40).thenReturn(queue))
-                .when(emailQueueService).reserveNextQueueToHandle();
+    @Test
+    public void testExceptionInHandleMessageCauses() throws Exception {
+        emailService.setMaxTasksToStartAtOnce(42);
+        emailService.setVirusCheckRequired(false);
+        EmailMessageDTO message = RaportointipalveluTestData.getEmailMessageDTO();
+        EmailQueueHandleDto queue = createQueue(message, 3);
 
-        AnswerChain<Boolean> answers = atFirstReturn(true).times(1).thenReturn(false).times(1)
-                .thenThrow(new IllegalStateException("Should not be called after returning false!"));
-        doAnswer(answers).when(emailQueueService).continueQueueHandling(any(EmailQueueHandleDto.class));
+        when(emailQueueService.reserveNextQueueToHandle()).thenReturn(queue);
+        when(emailQueueService.continueQueueHandling(any(EmailQueueHandleDto.class))).thenReturn(true);
+        when(rrService.getMessage(eq(1l))).thenReturn(message);
+        doThrow(new IllegalStateException("Email sending failed!"))
+                .when(emailSender).handleMail(any(EmailMessage.class), any(String.class));
+        when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
+        when(rrService.recipientHandledSuccess(any(EmailRecipientDTO.class), any(String.class)))
+                .thenThrow(new IllegalStateException("Should not be successful!"));
+        AnswerChain<Boolean> failureHandler = atFirstReturn(true);
+        when(rrService.recipientHandledFailure(any(EmailRecipientDTO.class), any(String.class)))
+                .then(failureHandler);
+        CallCounterVoidAnswer queueHandled = new CallCounterVoidAnswer();
+        doAnswer(queueHandled).when(emailQueueService).queueHandled(any(long.class));
 
         emailService.handleEmailQueue();
-        assertEquals(2, answers.getTotalCallCount());
+        assertEquals(3, failureHandler.getTotalCallCount());
+        assertEquals(1, queueHandled.getCallCount());
     }
 }
