@@ -86,11 +86,27 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     }
 
     $scope.generatePDF = function () {
-      Printer.letterPDF($scope.letters, {"sisalto": $scope.tinymceModel, "hakukohde": "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
+      Printer.letterPDF($scope.letters, {"sisalto": $scope.tinymceModel,
+          "hakukohde": "Tässä lukee hakukohde",
+          "tarjoaja": "Tässä tarjoajan nimi",
+          "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
+          "koeaika": "12.12.2014 klo 12.12",
+          "koepaikka": "TTY sali TB2012",
+          "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
+          "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
+      }, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
     };
 
     $scope.generateZIP = function () {
-      Printer.letterZIP($scope.letters, {"sisalto": $scope.tinymceModel, "hakukohde": "Tässä lukee hakukohde", "tarjoaja": "Tässä tarjoajan nimi"}, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
+      Printer.letterZIP($scope.letters, {"sisalto": $scope.tinymceModel,
+          "hakukohde": "Tässä lukee hakukohde",
+          "tarjoaja": "Tässä tarjoajan nimi",
+          "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
+          "koeaika": "12.12.2014 klo 12.12",
+          "koepaikka": "TTY sali TB2012",
+          "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
+          "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
+      }, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
     };
 
     $scope.updateGenerated = function () {

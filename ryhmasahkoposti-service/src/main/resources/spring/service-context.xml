@@ -103,23 +103,9 @@
 	<bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"></bean>
 
     <task:executor id="emailExecutor" rejection-policy="ABORT" pool-size="10"/>
-    <!-- ^ will have queue-capacity of Integer.MAX_VALUE -->
-    <bean id="emailScheduler" class="org.springframework.scheduling.concurrent.ConcurrentTaskScheduler">
-       <property name="concurrentExecutor" ref="emailExecutor"/>
-    </bean>
+    <task:scheduler id="emailScheduler" pool-size="10"/>
     <task:scheduled-tasks scheduler="emailScheduler">
         <task:scheduled ref="emailServiceImpl" method="checkEmailQueues" cron="${ryhmasahkoposti.sender.cron}"/>
-        <!-- For a busy wait style: -->
-        <!--<task:scheduled ref="emailServiceImpl" method="handleEmailQueue"-->
-                        <!--fixed-rate="${ryhmasahkoposti.sender.rate.millis:2000}" initial-delay="0"/>-->
-        <!--<task:scheduled ref="emailServiceImpl" method="handleEmailQueue"-->
-                        <!--fixed-rate="${ryhmasahkoposti.sender.rate.millis:2000}" initial-delay="1"/>-->
-        <!--<task:scheduled ref="emailServiceImpl" method="handleEmailQueue"-->
-                        <!--fixed-rate="${ryhmasahkoposti.sender.rate.millis:2000}" initial-delay="2"/>-->
-        <!--<task:scheduled ref="emailServiceImpl" method="handleEmailQueue"-->
-                        <!--fixed-rate="${ryhmasahkoposti.sender.rate.millis:2000}" initial-delay="3"/>-->
-        <!--<task:scheduled ref="emailServiceImpl" method="handleEmailQueue"-->
-                        <!--fixed-rate="${ryhmasahkoposti.sender.rate.millis:2000}" initial-delay="4"/>-->
     </task:scheduled-tasks>
 
     <!-- Swagger configuration -->	

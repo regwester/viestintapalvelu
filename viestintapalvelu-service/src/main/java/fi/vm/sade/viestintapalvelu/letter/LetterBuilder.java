@@ -1,28 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.lowagie.text.DocumentException;
-
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
@@ -38,6 +16,19 @@ import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Service
 @Singleton
@@ -302,6 +293,10 @@ public class LetterBuilder {
             Map<String, Boolean> columns = distinctColumns(tulokset);
             data.put("tulokset", normalizeColumns(columns, tulokset));
             data.put("columns", columns);
+        }
+        if (data.containsKey("muut_hakukohteet")) {
+            List<String> muidenHakukohteidenNimet = (List<String>) data.get("muut_hakukohteet");
+            data.put("muut_hakukohteet", muidenHakukohteidenNimet);
         }
 
         data.put("tyylit", styles);
