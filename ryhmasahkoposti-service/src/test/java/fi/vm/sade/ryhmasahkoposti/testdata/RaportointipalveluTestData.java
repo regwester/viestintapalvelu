@@ -52,7 +52,6 @@ public class RaportointipalveluTestData {
         emailMessage.setBody("Tämä on koekutsu");
         emailMessage.setCallingProcess("Hakuprosessi");
         emailMessage.setCharset("utf-8");
-        emailMessage.setFooter("");
         emailMessage.setHtml(false);
         emailMessage.setReplyTo("vastaus.oppilaitos@sposti.fi");
         emailMessage.setFrom("lahettaja.oppilaitos@sposti.fi");
@@ -76,7 +75,6 @@ public class RaportointipalveluTestData {
         emailMessageDTO.setBody("Tämä on koekutsu");
         emailMessageDTO.setCallingProcess("Hakuprosessi");
         emailMessageDTO.setCharset("utf-8");
-        emailMessageDTO.setFooter("");
         emailMessageDTO.setHtml(false);
         emailMessageDTO.setReplyTo("vastaus.oppilaitos@sposti.fi");
         emailMessageDTO.setFrom("lahettaja.oppilaitos@sposti.fi");
