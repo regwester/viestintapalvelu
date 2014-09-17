@@ -40,7 +40,7 @@ CREATE TABLE kirjeet.vastaanottaja (
 public class LetterReceivers extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kirjelahetys_id")
     @JsonBackReference
     private LetterBatch letterBatch;
@@ -51,18 +51,18 @@ public class LetterReceivers extends BaseEntity {
     
     @Column(name = "haluttukieli")
     private String wantedLanguage;
-        
-    @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
      
-    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverAddress letterReceiverAddress;
 
-    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverEmail letterReceiverEmail;
 
-    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverLetter letterReceiverLetter;
   
     public LetterBatch getLetterBatch() {

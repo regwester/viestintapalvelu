@@ -2,12 +2,18 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.*;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,25 +29,31 @@ import java.util.zip.Inflater;
  * 
  */
 @Service
-@Transactional
 public class LetterServiceImpl implements LetterService {
+    private Logger logger = LoggerFactory.getLogger(getClass());
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
+    private LetterBuilder letterBuilder;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
-        CurrentUserComponent currentUserComponent, TemplateDAO templateDAO) {
+            CurrentUserComponent currentUserComponent, TemplateDAO templateDAO,
+            LetterBuilder letterBuilder) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     	this.currentUserComponent = currentUserComponent;
     	this.templateDAO = templateDAO;
+        this.letterBuilder = letterBuilder;
     }
 
     /* ---------------------- */
     /* - Create LetterBatch - */
     /* ---------------------- */
+    @Transactional
     public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
         System.out.println("getting current user!!! ");
         Henkilo henkilo = currentUserComponent.getCurrentUser();
@@ -102,6 +114,7 @@ public class LetterServiceImpl implements LetterService {
     /* ------------ */
     /* - findById - */
     /* ------------ */
+    @Transactional(readOnly = true)
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id) {
         LetterBatch searchResult = null;
         List<LetterBatch> letterBatch = letterBatchDAO.findBy("id", id);
@@ -134,6 +147,7 @@ public class LetterServiceImpl implements LetterService {
     /* ------------------------------- */
     /* - findLetterBatchByNameOrgTag - */
     /* ------------------------------- */
+    @Transactional(readOnly = true)
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
         String languageCode, String organizationOid, String tag) {
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
@@ -162,6 +176,7 @@ public class LetterServiceImpl implements LetterService {
     /* ------------------------------- */
     /* - findReplacementByNameOrgTag - */
     /* ------------------------------- */
+    @Transactional(readOnly = true)
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
         String languageCode, String organizationOid, String tag) {
 
@@ -192,6 +207,7 @@ public class LetterServiceImpl implements LetterService {
     /* ------------- */
     /* - getLetter - */
     /* ------------- */
+    @Transactional(readOnly = true)
     public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id) {
 
         List<LetterReceiverLetter> letterReceiverLetter = letterReceiverLetterDAO.findBy("id", id);
@@ -391,7 +407,9 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    @Transactional
     public void updateBatchProcessingStarted(long id, LetterBatchProcess process) {
+        logger.info("Start processing batch {} {}", id, process);
         LetterBatch batch = letterBatchDAO.read(id);
         switch (process) {
         case EMAIL: 
@@ -404,6 +422,49 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    public void runBatch(long batchId) {
+        LetterService self = applicationContext == null ? this : applicationContext.getBean(LetterService.class);
+        List<Long> ids = letterBatchDAO.findLetterReceiverIdsByBatch(batchId);
+        logger.info("batch[id={}].getLetterReceivers().size() = {}", batchId, ids.size());
+
+        for (long receiverId : ids) {
+            logger.debug("Handling batch receiver {}", receiverId);
+            self.processLetterReceiver(receiverId);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void processLetterReceiver(long receiverId) {
+        LetterReceivers receiver = letterReceiverLetterDAO.read(receiverId).getLetterReceivers();
+        LetterBatch batch = receiver.getLetterBatch();
+        try {
+            letterBuilder.constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
+            letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
+        } catch (Exception e) {
+            //TODO: handle
+            logger.error(e.getMessage(), e);
+        }
+    }
+
+    private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+        Map<String, Object> replacements = new HashMap<String, Object>();
+        for (LetterReplacement repl : batch.getLetterReplacements()) {
+            replacements.put(repl.getName(), repl.getDefaultValue());
+        }
+        return replacements;
+    }
+
+    private Map<String, Object> formReplacementMap(LetterReceivers receiver) {
+        Map<String, Object> replacements = new HashMap<String, Object>();
+        for (LetterReceiverReplacement repl : receiver.getLetterReceiverReplacement()) {
+            replacements.put(repl.getName(), repl.getDefaultValue());
+        }
+        return replacements;
+    }
+
+    @Override
+    @Transactional
     public void updateBatchProcessingFinished(long id, LetterBatchProcess process) {
         LetterBatch batch = letterBatchDAO.read(id);
         switch (process) {
@@ -417,6 +478,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public LetterBatch fetchById(long id) {
         return letterBatchDAO.read(id);
     }
@@ -433,7 +495,30 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public LetterBatchStatusDto getBatchStatus(long batchId) {
+        return letterBatchDAO.getLetterBatchStatus(batchId);
+    }
+
+    @Override
+    @Transactional
     public void updateLetter(LetterReceiverLetter letter) {
         letterReceiverLetterDAO.update(letter);
+    }
+
+    public void setLetterBuilder(LetterBuilder letterBuilder) {
+        this.letterBuilder = letterBuilder;
+    }
+
+    public void setLetterBatchDAO(LetterBatchDAO letterBatchDAO) {
+        this.letterBatchDAO = letterBatchDAO;
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
+    }
+
+    public void setLetterReceiverLetterDAO(LetterReceiverLetterDAO letterReceiverLetterDAO) {
+        this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     }
 }

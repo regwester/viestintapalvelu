@@ -21,6 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
 
@@ -66,7 +67,6 @@ public class LetterBuilder {
         this.documentBuilder = documentBuilder;
     }
 
-    
     public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException, Exception {
         LetterBatchValidator.validate(batch);
         LOG.debug("Validated batch result");
@@ -96,6 +96,7 @@ public class LetterBuilder {
         return resultZip;
     }
 
+    
     public byte[] printPDF(LetterBatch batch) throws IOException,
             DocumentException, Exception {
 
@@ -108,7 +109,8 @@ public class LetterBuilder {
         return resultPDF.toByteArray();
     }
 
-    private MergedPdfDocument buildPDF(LetterBatch batch) throws IOException,
+    
+    public MergedPdfDocument buildPDF(LetterBatch batch) throws IOException,
             DocumentException {
 
         Template template = batch.getTemplate();
@@ -178,11 +180,13 @@ public class LetterBuilder {
         return documentBuilder.merge(source);
     }
     
+    
     public void initTemplateId(LetterBatch batch) {
         initTemplateId(batch, batch.getTemplate());
     }
 
-    private Template initTemplateId(LetterBatch batch, Template template) {
+    
+    public Template initTemplateId(LetterBatch batch, Template template) {
         if (template == null && batch.getTemplateName() != null
                 && batch.getLanguageCode() != null) {
             template = templateService.getTemplateByName(
@@ -206,8 +210,9 @@ public class LetterBuilder {
      * @param type
      * @return email content
      */
+    
     public String getTemplateContent(String templateName, String languageCode,
-            String type) throws IOException, DocumentException {
+                                     String type) throws IOException, DocumentException {
 
         // Get the template
         Template template = templateService.getTemplateByName(templateName,
@@ -237,10 +242,11 @@ public class LetterBuilder {
         return new String(result);
     }
 
-    private byte[] createPagePdf(Template template, byte[] pageContent,
-            AddressLabel addressLabel, Map<String, Object> templReplacements,
-            Map<String, Object> letterBatchReplacements,
-            Map<String, Object> letterReplacements)
+    
+    public byte[] createPagePdf(Template template, byte[] pageContent,
+                                AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                Map<String, Object> letterBatchReplacements,
+                                Map<String, Object> letterReplacements)
             throws FileNotFoundException, IOException, DocumentException {
 
         @SuppressWarnings("unchecked")
@@ -266,8 +272,9 @@ public class LetterBuilder {
      * @throws IOException
      * @throws DocumentException
      */
-    private byte[] createPageXhtml(Template template, byte[] pageContent,
-            Map<String, Object> templateReplacements)
+    
+    public byte[] createPageXhtml(Template template, byte[] pageContent,
+                                  Map<String, Object> templateReplacements)
             throws FileNotFoundException, IOException, DocumentException {
 
         @SuppressWarnings("unchecked")
@@ -276,8 +283,9 @@ public class LetterBuilder {
         return documentBuilder.applyTextTemplate(pageContent, dataContext);
     }
 
-    private Map<String, Object> createDataContext(Template template,
-            AddressLabel addressLabel, Map<String, Object>... replacementsList) {
+    
+    public Map<String, Object> createDataContext(Template template,
+                                                 AddressLabel addressLabel, Map<String, Object>... replacementsList) {
 
         Map<String, Object> data = new HashMap<String, Object>();
         for (Map<String, Object> replacements : replacementsList) {
@@ -323,8 +331,9 @@ public class LetterBuilder {
      * @param replacementsList
      * @return
      */
-    private Map<String, Object> createDataContext(Template template,
-            Map<String, Object>... replacementsList) {
+    
+    public Map<String, Object> createDataContext(Template template,
+                                                 Map<String, Object>... replacementsList) {
 
         Map<String, Object> data = new HashMap<String, Object>();
         for (Map<String, Object> replacements : replacementsList) {
@@ -349,7 +358,8 @@ public class LetterBuilder {
         return data;
     }
 
-    private List<Map<String, String>> normalizeColumns(
+    
+    public List<Map<String, String>> normalizeColumns(
             Map<String, Boolean> columns, List<Map<String, String>> tulokset) {
         for (Map<String, String> row : tulokset) {
             for (String column : columns.keySet()) {
@@ -362,7 +372,8 @@ public class LetterBuilder {
         return tulokset;
     }
 
-    private Map<String, Boolean> distinctColumns(
+    
+    public Map<String, Boolean> distinctColumns(
             List<Map<String, String>> tulokset) {
         Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
         for (Map<String, String> haku : tulokset) {
@@ -373,7 +384,8 @@ public class LetterBuilder {
         return printedColumns;
     }
 
-    private Map<String, Object> createIPostDataContext(
+    
+    public Map<String, Object> createIPostDataContext(
             final List<DocumentMetadata> documentMetadataList) {
         Map<String, Object> data = new HashMap<String, Object>();
         List<Map<String, Object>> metadataList = new ArrayList<Map<String, Object>>();
@@ -390,18 +402,20 @@ public class LetterBuilder {
         return data;
     }
 
-    private String cleanHtmlFromApi(String string) {
+    
+    public String cleanHtmlFromApi(String string) {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
     
-    private void sendEmail(Letter letter) throws IOException {
+    
+    public void sendEmail(Letter letter) throws IOException {
         //if (letter.getEmailAddress() != null && letter.getEmailAddress().length() > 0) {
             emailComponent.sendEmail(letter);
         //}
     }
-    
-    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch, 
-            Map<String, Object> letterReplacements, Map<String, Object> batchReplacements) throws FileNotFoundException, IOException, DocumentException {
+
+    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+                                                    Map<String, Object> letterReplacements, Map<String, Object> batchReplacements) throws FileNotFoundException, IOException, DocumentException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
         
         Template template = determineTemplate(receiver, batch);
@@ -423,7 +437,8 @@ public class LetterBuilder {
         letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
     }
     
-    private Template determineTemplate(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+    
+    public Template determineTemplate(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
         if(receiver.getWantedLanguage() != null) {
             for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
                 if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {
@@ -435,7 +450,8 @@ public class LetterBuilder {
     }
 
 
-    private Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements) {
+    
+    public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements) {
         Map<String, Object> templReplacements = new HashMap<String, Object>();
         for (LetterReceiverReplacement replacement : replacements) {
             templReplacements.put(replacement.getName(), replacement.getDefaultValue());
@@ -444,7 +460,8 @@ public class LetterBuilder {
     }
 
 
-    private Map<String, Object> formReplacementMap(List<Replacement> replacements) {
+    
+    public Map<String, Object> formReplacementMap(List<Replacement> replacements) {
         Map<String, Object> templReplacements = new HashMap<String, Object>();
         for (Replacement templRepl : replacements) {
             templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());

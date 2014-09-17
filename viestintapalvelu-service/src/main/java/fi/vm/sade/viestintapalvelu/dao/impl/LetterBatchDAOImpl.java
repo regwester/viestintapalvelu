@@ -16,6 +16,7 @@ import com.mysema.query.types.path.PathBuilder;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -138,6 +139,38 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
         
     	return findBySearchCriteria.count();
+    }
+
+    @Override
+    public LetterBatchStatusDto getLetterBatchStatus(long letterBatchId) {
+        List<LetterBatchStatusDto> results = getEntityManager().createQuery(
+                "select new fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto(lb.id, " +
+                        " (select count(ltr1.id) from LetterBatch batch1 " +
+                        "       inner join batch1.letterReceivers receiver1" +
+                        "       inner join receiver1.letterReceiverLetter ltr1" +
+                        "       with ltr1.letter != null" +
+                        "   where batch1.id = lb.id), " +
+                        " (select count(ltr2.id) from LetterBatch batch2 " +
+                        "       inner join batch2.letterReceivers receiver2" +
+                        "       inner join receiver2.letterReceiverLetter ltr2" +
+                        "   where batch2.id = lb.id)) from LetterBatch lb where lb.id = :batchId ",
+                    LetterBatchStatusDto.class)
+                .setParameter("batchId", letterBatchId)
+                .setMaxResults(1)
+                .getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
+    }
+
+    @Override
+    public List<Long> findLetterReceiverIdsByBatch(long batchId) {
+        return getEntityManager().createQuery(
+                    "select lr.id from LetterReceivers lr" +
+                    "    inner join lr.letterBatch batch with batch.id = :batchId" +
+                    " order by lr.id", Long.class)
+            .setParameter("batchId", batchId).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

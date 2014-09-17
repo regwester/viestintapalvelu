@@ -21,6 +21,7 @@ import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
@@ -52,13 +53,14 @@ public class LetterServiceTest {
     private CurrentUserComponent mockedCurrentUserComponent;
     @Mock
     private TemplateDAO templateDAO;
-    
     private LetterService letterService;
-    
+    @Mock
+    private LetterBuilder letterBuilder;
+
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
-            mockedCurrentUserComponent, templateDAO);
+            mockedCurrentUserComponent, templateDAO, letterBuilder);
     }
     
     @Test

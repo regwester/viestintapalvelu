@@ -46,7 +46,7 @@ public class LetterReceiverLetter extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;        
     
-    @Column(name = "kirje")
+    @Column(name = "kirje", length = 10 * 1024 * 1024)
 	private byte[] letter;    
             
     @Column(name = "sisaltotyyppi")

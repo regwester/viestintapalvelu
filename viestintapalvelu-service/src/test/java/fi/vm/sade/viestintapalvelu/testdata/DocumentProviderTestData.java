@@ -33,21 +33,26 @@ public class DocumentProviderTestData {
     }
 
     public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) {
+        return getIPosti(id, letterBatch, 1);
+    }
+
+    public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch, int count) {
         List<IPosti> iPostis = new ArrayList<IPosti>();
-        
-        IPosti iposti = new IPosti();
-        
-        byte[] content = {'i','p','o', 's','t','c','o','n','t','e','n','t'};
-        iposti.setContent(content);
-        iposti.setContentName("Iposti content");
-        iposti.setContentType("application/pdf");
-        iposti.setCreateDate(new Date());
-        iposti.setId(id);
-        iposti.setLetterBatch(letterBatch);
-        iposti.setSentDate(new Date());
-        iposti.setVersion(new Long(0));
-        
-        iPostis.add(iposti);
+        for (int i = 0; i < count; ++i) {
+            IPosti iposti = new IPosti();
+
+            byte[] content = {'i', 'p', 'o', 's', 't', 'c', 'o', 'n', 't', 'e', 'n', 't'};
+            iposti.setContent(content);
+            iposti.setContentName("Iposti content");
+            iposti.setContentType("application/pdf");
+            iposti.setCreateDate(new Date());
+            iposti.setId(id);
+            iposti.setLetterBatch(letterBatch);
+            iposti.setSentDate(new Date());
+            iposti.setVersion(new Long(0));
+
+            iPostis.add(iposti);
+        }
         return iPostis;
     }
     
@@ -70,6 +75,28 @@ public class DocumentProviderTestData {
 
     public static fi.vm.sade.viestintapalvelu.model.LetterBatch getLetterBatch(Long id) {
         fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
+        letterBatch.setApplicationPeriod("Tradenomi 2014");
+        letterBatch.setFetchTarget("fetchTarget");
+
+        if (id != null) {
+            letterBatch.setId(id);
+        }
+
+        letterBatch.setLanguage("FI");
+        letterBatch.setOrganizationOid("1.2.246.562.10.00000000001");
+        letterBatch.setStoringOid("1.2.246.562.24.00000000001");
+        letterBatch.setTag("test-tag");
+        letterBatch.setTemplateId(new Long(1));
+        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTimestamp(new Date());
+        letterBatch.setVersion(new Long(0));
+        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
+        letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
+        return letterBatch;
+    }
+
+    public static fi.vm.sade.viestintapalvelu.model.LetterBatch getLetterBatch(Long id, int count) {
+        fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
         
         letterBatch.setApplicationPeriod("Tradenomi 2014");
         letterBatch.setFetchTarget("fetchTarget");
@@ -86,7 +113,7 @@ public class DocumentProviderTestData {
         letterBatch.setTemplateName("test-templateName");
         letterBatch.setTimestamp(new Date());
         letterBatch.setVersion(new Long(0));
-        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
+        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch, count));
         letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
         
         return letterBatch;
@@ -182,7 +209,7 @@ public class DocumentProviderTestData {
             letterReceivers.setTimestamp(new Date());
             letterReceivers.setVersion(new Long(0));
             letterReceivers.setLetterReceiverAddress(getLetterReceiverAddress(id, letterReceivers));
-            letterReceivers.setLetterReceiverLetter(getLetterReceiverLetter(id, letterReceivers));
+            letterReceivers.setLetterReceiverLetter(getLetterReceiverLetter(null, letterReceivers));
             letterReceivers.setLetterReceiverReplacement(getLetterReceiverReplacement(id ,letterReceivers));
 
             letterReceiversSet.add(letterReceivers);

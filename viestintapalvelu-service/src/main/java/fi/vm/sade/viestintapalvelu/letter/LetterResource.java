@@ -6,9 +6,9 @@ import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import org.slf4j.Logger;
@@ -32,7 +32,6 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -383,26 +382,14 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
-        //use batch id to find out the letter receivers
-        //then use the letter receiver ids to get list of all letters
-        //then check if kirje is null
-        fi.vm.sade.viestintapalvelu.model.LetterBatch batch = letterService.fetchById(letterBatchId);
-        if(batch == null) {
+        LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
+        if(status == null) {
             return Response.status(Status.NOT_FOUND).build();
         }
-        List<LetterReceiverLetter> letters = letterService.getReceiverLetters(batch.getLetterReceivers());
 
-        //quick and dirty Map usage for now
-        int sent = 0;
-        int total = letters.size();
-        for (LetterReceiverLetter let : letters) {
-            if(let.getLetter() != null) {
-                sent += 1;
-            }
-        }
         Map<String, Integer> statusMap = new HashMap<String, Integer>();
-        statusMap.put("sent", sent);
-        statusMap.put("total", total);
+        statusMap.put("sent", status.getSent());
+        statusMap.put("total", status.getTotal());
 
         return Response.status(Status.OK).entity(statusMap).build();
     }
