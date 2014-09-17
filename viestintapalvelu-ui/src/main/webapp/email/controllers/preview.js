@@ -3,6 +3,7 @@
 angular.module('email')
   .controller('PreviewCtrl', ['$scope', 'EmailService', '$state', 'DialogService', 'DraftService',
     function($scope, EmailService, $state, DialogService, DraftService) {
+      $scope.sendingInProgress = false;
 
       $scope.downloadSupported = function() {
         return !!new Blob;
@@ -20,15 +21,20 @@ angular.module('email')
       };
 
       $scope.sendEmail = function () {
-        $scope.email.callingProcess = $scope.callingProcess;
-        EmailService.email.save($scope.getEmailData()).$promise.then(
-          function(res) {
-            DraftService.selectedDraft() && DraftService.drafts.delete({id: selectedDraft});
-            $state.go('report_view', {messageID: res.id});
-          }, function(e) {
-            DialogService.showErrorDialog(e.data);
-          }
-        );
+        if (!$scope.sendingInProgress) {
+            $scope.sendingInProgress = true;
+            $scope.email.callingProcess = $scope.callingProcess;
+            EmailService.email.save($scope.getEmailData()).$promise.then(
+                function(res) {
+                    DraftService.selectedDraft() && DraftService.drafts.delete({id: selectedDraft});
+                    $state.go('report_view', {messageID: res.id});
+                    $scope.sendingInProgress = false;
+                }, function(e) {
+                    DialogService.showErrorDialog(e.data);
+                    $scope.sendingInProgress = false;
+                }
+            );
+        }
       };
 
     }

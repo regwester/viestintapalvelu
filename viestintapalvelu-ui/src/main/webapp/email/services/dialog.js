@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('viestintapalvelu')
-  .factory('DialogService', ['$modal',
-    function($modal) {
+  .factory('DialogService', ['$modal', '$filter',
+    function($modal, $filter) {
       /* Define a set of default values for the modal. */
       var defaults = {
         size: 'lg',
@@ -31,7 +31,7 @@ angular.module('viestintapalvelu')
         },
         showErrorDialog: function(msg, size) {
           var fn = function() {
-            return { type: 'error', msg: msg };
+            return { type: 'error', msg: msg ? msg : $filter('i18n')("error.unknown")};
           };
           openDialog(size, fn);
         },

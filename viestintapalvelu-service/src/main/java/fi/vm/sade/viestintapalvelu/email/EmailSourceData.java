@@ -10,6 +10,7 @@ import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
+import fi.vm.sade.viestintapalvelu.template.Template;
 
 public class EmailSourceData {
 
@@ -17,6 +18,8 @@ public class EmailSourceData {
     
     private Map<String, Object> templateDataContext;
     private Letter letter;
+    
+    private Template template;
     
     private Map<String, byte[]> attachmentData;
     private Map<String, String> attachmentContentType;
@@ -26,10 +29,11 @@ public class EmailSourceData {
     @SuppressWarnings("unused")
     private EmailSourceData() {}
     
-    public EmailSourceData(Letter letter, Map<String, Object> templateDataContext) throws Exception {
+    public EmailSourceData(Letter letter, Template template, Map<String, Object> templateDataContext) throws Exception {
         this.templateDataContext = templateDataContext;
         this.letter = letter;
-
+        this.template = template;
+        
         initRecipient();
         initEmailContext();
     }
@@ -69,6 +73,10 @@ public class EmailSourceData {
         return emailContext;
     }
 
+    public Template getTemplate() {
+        return this.template;
+    }
+    
     @Override
     public String toString() {
         return "EmailDataSource for letter " + letter;

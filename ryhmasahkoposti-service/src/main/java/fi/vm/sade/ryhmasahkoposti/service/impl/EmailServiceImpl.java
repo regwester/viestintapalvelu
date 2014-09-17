@@ -1,30 +1,34 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.mail.internet.MimeMessage;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Named;
+import javax.mail.internet.MimeMessage;
+import javax.persistence.OptimisticLockException;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -32,6 +36,12 @@ public class EmailServiceImpl implements EmailService {
     private static final Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class);
 
     private static final int MAX_CACHE_ENTRIES = 10;
+    // If we have pool size of 10 it takes approx. 14s to process a 250 recipient / queue
+    // concurrently with 10 executors. And we have max 1 min before a new cron check call
+    // add to add in new calls. So assume the optimum maximum to start at once to be:
+    // 60/14*10 ~= 42 (if we start more, they would be queued and only cause extra queries later)
+    @Value("${ryhmasahkoposti.max.sendqueue.tasks.to.add:42}")
+    private int maxTasksToStartAtOnce = 42;
 
     @Autowired
     private GroupEmailReportingService rrService;
@@ -48,13 +58,17 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private EmailAVChecker emailAVChecker;
 
+    @Autowired
+    private EmailSendQueueService emailQueueService;
+
+    @Named("emailExecutor")
+    @Autowired
+    private ThreadPoolTaskExecutor emailExecutor;
+
     private TemplateBuilder templateBuilder = new TemplateBuilder();
 
     @Value("${ryhmasahkoposti.require.virus.check:true}")
     private boolean virusCheckRequired;
-
-    @Value("${ryhmasahkoposti.queue.handle.size}")
-    private String queueSizeString = "1000";
 
     private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(MAX_CACHE_ENTRIES + 1) {
         private static final long serialVersionUID = 1L;
@@ -75,35 +89,74 @@ public class EmailServiceImpl implements EmailService {
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
-    
-    /**
-     * Spring scheduler method
-     */
-    public void handleEmailQueue() {
-        int queueMaxSize = 1000;
-        try {
-            queueMaxSize = Integer.parseInt(queueSizeString);
-        } catch (NumberFormatException nfe) {
-            // never mind use default
+
+    @Override
+    public void checkEmailQueues() {
+        emailQueueService.checkForStoppedProcesses();
+        int numberOfQueues = emailQueueService.getNumberOfUnhandledQueues();
+        if (numberOfQueues > 0) {
+            int numberOfProcessesToStart = Math.min(maxTasksToStartAtOnce, numberOfQueues);
+            log.info("Found {} unhandled queues. Starting {} new handleEmailQueue processes.",
+                    numberOfQueues, numberOfProcessesToStart);
+            for (int i = 0; i < numberOfProcessesToStart; ++i) {
+                emailExecutor.submit(new Runnable() {
+                    public void run() {
+                        handleEmailQueue();
+                    }
+                });
+            }
+            log.info("Processes scheduled to emailExecutor.");
+        } else {
+            log.debug("Found no unhandled messages queues.");
         }
+    }
+
+    public void handleEmailQueue() {
         long start = System.currentTimeMillis();
-        log.info("Handling queue (max size " + queueMaxSize + "). Sending emails using: " + emailSender);
-
-        List<EmailRecipientDTO> queue = rrService.getUnhandledMessageRecipients(queueMaxSize);
-
-        int sent = 0;
-        int errors = 0;
-        int queueSize = queue.size();
-        for (EmailRecipientDTO er : queue) {
-            if (handleRecipient(er)) {
-                sent++;
-            } else {
-                errors++;
+        int maxConcurrentLockFailures = maxTasksToStartAtOnce -1,
+            triedTimes = 0;
+        EmailQueueHandleDto queue = null;
+        while (queue == null && triedTimes++ < maxConcurrentLockFailures) {
+            try {
+                queue = emailQueueService.reserveNextQueueToHandle();
+            } catch(OptimisticLockException e) {
+                log.debug("OptimisticLockException while trying to reserveNextQueueToHandle. Failure: {} / {}.",
+                        maxConcurrentLockFailures);
             }
         }
-        long took = System.currentTimeMillis() - start;
-        log.info("Sending emails done. Queue: " + queueSize + ", sent: " + sent + ", errors: " + errors + ", took: "
-                + took + " ms.");
+        if (triedTimes > 0 && queue == null) {
+            log.warn("Exeeced max number of OptimisticLockExceptions while trying to reserveNextQueueToHandle. Gave up.");
+        }
+        if (queue != null) {
+            log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
+            int sent = 0;
+            int errors = 0;
+            int queueSize = queue.getRecipients().size();
+            Date lastHandledAt = new Date();
+            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
+                long recipientStart = System.currentTimeMillis();
+                if (!emailQueueService.continueQueueHandling(queue)) {
+                    long took = System.currentTimeMillis() - start;
+                    log.error("Email send queue handler for SendQueue={} stopped." +
+                            "Queue size: {}, sent: {}, errors: {}, took: {} ms.",
+                            queueSize, sent, errors, took, queue.getId());
+                    return;
+                }
+                if (handleRecipient(emailRecipient)) {
+                    sent++;
+                } else {
+                    errors++;
+                }
+                long singleRecipientTook = System.currentTimeMillis()-recipientStart;
+                log.debug("Handled single recipient in {} ms.", singleRecipientTook);
+            }
+            emailQueueService.queueHandled(queue.getId());
+            long took = System.currentTimeMillis() - start;
+            log.info("Sending emails done. SendQueue={}: size: {}, sent: {}, errors: {}, took: {} ms.",
+                    queue.getId(), queueSize, sent, errors, took);
+        } else {
+            log.info("Checked for open email sending queues and found none.");
+        }
     }
 
     private boolean handleRecipient(EmailRecipientDTO er) {
@@ -133,6 +186,7 @@ public class EmailServiceImpl implements EmailService {
             } catch (Exception e) {
                 String failureCause = getFailureCause(e);
                 rrService.recipientHandledFailure(er, failureCause);
+                success = false;
             }
         }
         long took = System.currentTimeMillis() - vStart;
@@ -209,4 +263,11 @@ public class EmailServiceImpl implements EmailService {
         return !virusCheckRequired || (message.isVirusChecked() && !message.isInfected());
     }
 
+    public void setMaxTasksToStartAtOnce(int maxTasksToStartAtOnce) {
+        this.maxTasksToStartAtOnce = maxTasksToStartAtOnce;
+    }
+
+    public void setVirusCheckRequired(boolean virusCheckRequired) {
+        this.virusCheckRequired = virusCheckRequired;
+    }
 }
