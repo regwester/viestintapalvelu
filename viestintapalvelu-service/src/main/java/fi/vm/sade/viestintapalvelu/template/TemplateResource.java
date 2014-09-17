@@ -70,7 +70,7 @@ public class TemplateResource extends AsynchronousResource {
     private final static String GetDraft2 = "Palauttaa kirjepohjan luonnoksen nimen kirjepohjan nimen, kielikoodin ja organisaatioOid:in perusteella. Tarkenteena voidaan antaa vielä haku, hakukohde ja tunniste.";
     private final static String GetDraft400 = "Kirjepohjan luonnoksen palautus epäonnistui.";
 
-    private final static String GetTemplateContent = "Palauttaa kirjepohjan pitoisuus";
+    private final static String GetTemplateContent = "Palauttaa kirjepohjan sisällön";
     private final static String GetTemplateContent400 = "Kirjepohjan palautus epäonnistui.";
 
     @GET

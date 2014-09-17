@@ -7,7 +7,7 @@
                 <!--[if (gt IE 9)|!(IE)]><!-->
                 <button type="button" class="btn" ng-if="downloadSupported()" ng-click="downloadEmail()">Lataa sähköposti</button>
                 <!--<![endif]-->
-                <button type="button" class="btn btn-primary" ng-click="sendEmail()">Lähetä</button>
+                <button type="button" class="btn btn-primary" ng-disabled="sendingInProgress" ng-click="sendEmail()">Lähetä</button>
             </div>
         </div>
         <h3 ng-bind="'preview.header' | i18n"/>
@@ -44,7 +44,7 @@
                 <!--[if (gt IE 9)|!(IE)]><!-->
                 <button type="button" class="btn" ng-if="downloadSupported()" ng-click="downloadEmail()">Lataa sähköposti</button>
                 <!--<![endif]-->
-                <button type="button" class="btn btn-primary" ng-click="sendEmail()">Lähetä</button>
+                <button type="button" class="btn btn-primary" ng-disabled="sendingInProgress" ng-click="sendEmail()">Lähetä</button>
             </div>
         </div>
     </div>

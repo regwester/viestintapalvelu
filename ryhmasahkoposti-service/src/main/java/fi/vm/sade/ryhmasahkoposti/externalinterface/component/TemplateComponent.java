@@ -37,7 +37,7 @@ public class TemplateComponent {
 	    return templateResourceClient.getTemplateContent(templateName, languageCode, type);
 	} catch (Exception e) {
 	    LOGGER.error(e.getMessage());
-	    throw new ExternalInterfaceException("error.msg.gettingOrganizationDataFailed", e);
+	    throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);
 	}
     }
 }

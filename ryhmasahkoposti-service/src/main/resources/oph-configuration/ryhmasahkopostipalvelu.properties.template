@@ -14,7 +14,9 @@ ryhmasahkoposti.app.password.to.organisaatiopalvelu=ilonkautta!
 ryhmasahkoposti.sender.cron=0 * * * * *
 ryhmasahkoposti.smtp.host=localhost
 ryhmasahkoposti.smtp.port=1025
-ryhmasahkoposti.queue.handle.size=99
+ryhmasahkoposti.queue.handle.size=250
+ryhmasahkoposti.max.sendqueue.tasks.to.add=42
+ryhmasahkoposti.max.email.recipient.handle.time.millis = 180000
 
 # Ryhm�s�hk�postin virustarkistus
 ryhmasahkoposti.antivirus.host=localhost
