@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
@@ -18,12 +19,18 @@ import org.springframework.transaction.annotation.Transactional;
  */
 public interface LetterService {
 
-
-
     public enum LetterBatchProcess {
         EMAIL, LETTER
     }
-    
+
+    /**
+     * Luo kirjelähetyksen
+     *
+     * @param letterBatch Annetun kirjelähetyksen tiedot
+     * @return Luodun kirjelähetyksen tiedot
+     */
+    LetterBatch createLetter(AsyncLetterBatchDto letterBatch);
+
     /**
      * Luo kirjelähetyksen
      * 

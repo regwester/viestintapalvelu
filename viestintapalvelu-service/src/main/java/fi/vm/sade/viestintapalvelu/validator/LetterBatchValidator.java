@@ -2,9 +2,9 @@ package fi.vm.sade.viestintapalvelu.validator;
 
 import org.apache.commons.lang.StringUtils;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.letter.Letter;
-import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
+import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 
 /**
  * Tarkistaa LetterBatchin
@@ -20,21 +20,20 @@ public class LetterBatchValidator {
      * 
      * @param letters
      */
-    public static void validate(LetterBatch letters) throws Exception {
+    public static void validate(LetterBatchDetails letters) throws Exception {
         if (letters == null) {
             throw new IllegalArgumentException("Letter to be validated was null");
         }
-        for (Letter letter : letters.getLetters()) {
+        for (LetterDetails letter : letters.getLetters()) {
             isValid(letter);
         }
     }
 
-    private static void isValid(Letter letter) throws Exception {
+    private static void isValid(LetterDetails letter) throws Exception {
         validateAddress(letter.getAddressLabel());
     }
 
-
-    private static void validateAddress(AddressLabel address) throws Exception {
+    private static void validateAddress(AddressLabelDetails address) throws Exception {
         if (address == null) {
             throw new IllegalArgumentException("AddressLabel of the letter to be validated was null");
         }

@@ -16,18 +16,23 @@
 
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
 import javax.ws.rs.core.Response;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
 import org.junit.runner.RunWith;
 import org.jvnet.hk2.annotations.Service;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,14 +44,20 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.model.*;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.fail;
 
 /**
  * User: ratamaa
@@ -62,7 +73,8 @@ public class LetterResourceAsyncPerformanceIT {
     protected static final Logger logger = LoggerFactory.getLogger(LetterResourceAsyncPerformanceIT.class);
 
     private static final long MILLIS_IN_SECOND = 1000l;
-    private static final int RECEIVERS_COUNT = 3000;
+    private static final int RECEIVERS_COUNT = 2000;
+    private static final int CONCURRENT_BATCHES = 3;
     private static final long MAX_DURATION = 60l*MILLIS_IN_SECOND;
 
     @Autowired
@@ -72,50 +84,153 @@ public class LetterResourceAsyncPerformanceIT {
     private TransactionalActions transactionalActions;
 
     @Autowired
-    private LetterBatchPDFProcessor batchPDFProcessor;
+    private LetterService letterService;
+
+    @Before
+    public void before() throws Exception {
+        final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
+        Field currentUserComponent = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
+        currentUserComponent.setAccessible(true);
+        currentUserComponent.set(((Advised)letterService).getTargetSource().getTarget(),
+                new CurrentUserComponent() {
+            @Override
+            public Henkilo getCurrentUser() {
+                return testHenkilo;
+            }
+        });
+    }
 
     @Test
     public void processesXLettersUnderMinute() throws InterruptedException, ExecutionException {
         BlockingQueue<Runnable> queue = new LinkedBlockingDeque<Runnable>();
-        ThreadPoolExecutor exec = new ThreadPoolExecutor(10,10,MAX_DURATION, TimeUnit.MILLISECONDS, queue);
+        ThreadPoolExecutor exec = new ThreadPoolExecutor(CONCURRENT_BATCHES,CONCURRENT_BATCHES+2,
+                MAX_DURATION, TimeUnit.MILLISECONDS, queue);
         logger.info("Starting processes{}LettersUnderMinute. Populating data...", RECEIVERS_COUNT);
 
-        final long batchModelId = exec.submit(new Callable<Long>() {
-            public Long call() throws Exception {
-                return transactionalActions.createTestBatch(RECEIVERS_COUNT);
-            }
-        }).get();
-        logger.info("Populated {} receivers to batch {}", RECEIVERS_COUNT, batchModelId);
+        // Use the same template:
+        final long templateId = transactionalActions.createTemplate();
 
-        logger.info("Starting processLetterBatch");
+        // Create batches concurrently:
+        List<Future<Long>> futures = new ArrayList<Future<Long>>();
+        logger.info("Calling asyncLetters");
+        for (int i = 0; i < CONCURRENT_BATCHES; ++i) {
+            futures.add(exec.submit(new Callable<Long>() {
+                public Long call() throws Exception {
+                    long id = asyncLetter(createLetterBatch(templateId, RECEIVERS_COUNT));
+                    logger.info("Letter batch {} created.", id);
+                    return id;
+                }
+            }));
+        }
+        // Saving josbs concrurently, starting runtime monitoring:
         long start = System.currentTimeMillis();
+        // Sync job ids:
+        long batchModelIds[] = new long[CONCURRENT_BATCHES];
+        for (int i = 0; i < CONCURRENT_BATCHES; ++i) {
+            batchModelIds[i] = futures.get(i).get();
+        }
 
-        exec.submit(new Runnable() {
-            @Override
-            public void run() {
-                batchPDFProcessor.processLetterBatch(batchModelId);
-                logger.info("Processes started.");
+        logger.info("Populated {} receivers to {} batches", RECEIVERS_COUNT, CONCURRENT_BATCHES);
+        // Starting concurrent monitoring:
+        List<Future<Boolean>> monitors = new ArrayList<Future<Boolean>>();
+        for (int i = 0; i < CONCURRENT_BATCHES; ++i) {
+            monitors.add(exec.submit(new ProcessMonitor(batchModelIds[i])));
+        }
+
+        // Wait for all monitors to be done and meanwhile check that max time is not exceeded:
+        while (!allDone(monitors)) {
+            long currentDuration = System.currentTimeMillis() - start;
+            if (currentDuration > MAX_DURATION) {
+                exec.shutdown();
+                fail("Test took " + roundSeconds(currentDuration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
             }
-        });
-
-        while (isProcessing(batchModelId)) {
-            assertTrue("Test took more than " + MAX_DURATION / MILLIS_IN_SECOND + "s.",
-                    System.currentTimeMillis() - start < MAX_DURATION);
             Thread.sleep(500l);
         }
+        // Assert that all monitors exited with false return value (not processing):
+        for (Future<Boolean> monitor : monitors) {
+            assertFalse(monitor.get());
+        }
+
         long duration = System.currentTimeMillis()-start;
         exec.shutdown();
 
-        assertTrue("Test took more than " + MAX_DURATION / MILLIS_IN_SECOND + "s.", duration < MAX_DURATION);
-        logger.info("Done processLetterBatch in {} s < {} s. OK.",
-                Math.round((double) duration / (double) MILLIS_IN_SECOND * 10d) / 10d,
-                MAX_DURATION / MILLIS_IN_SECOND);
+        if (duration > MAX_DURATION) {
+            fail("Test took "+roundSeconds(duration)+" s > " + roundSeconds(MAX_DURATION) + "s.");
+        }
+        long througput = Math.round( (double)(CONCURRENT_BATCHES * RECEIVERS_COUNT) / roundSeconds(duration) );
+        logger.info("Done processLetterBatch in {} s < {} s, throughput: "+througput+" messages / s. OK.",
+                roundSeconds(duration), roundSeconds(MAX_DURATION));
+    }
+
+    private double roundSeconds(long millis) {
+        return Math.round((double) millis / (double) MILLIS_IN_SECOND * 10d) / 10d;
+    }
+
+    private<T> boolean allDone(List<Future<T>> futures) {
+        int doneCount = 0;
+        for (Future<T> future : futures) {
+            if (future.isDone()) {
+                ++doneCount;
+            }
+        }
+        logger.info("> All jobs status: {} / {} ready", doneCount, futures.size());
+        return doneCount == futures.size();
+    }
+
+    protected AsyncLetterBatchDto createLetterBatch(long templateId, int letterCount) {
+        AsyncLetterBatchDto batch = new AsyncLetterBatchDto();
+        batch.setTemplateName("Test template");
+        fi.vm.sade.viestintapalvelu.template.Template template = new fi.vm.sade.viestintapalvelu.template.Template();
+        template.setId(templateId);
+        batch.setTemplate(template);
+        batch.setLanguageCode("FI");
+        batch.setTemplateId(templateId);
+        List<AsyncLetterBatchLetterDto> letters = new ArrayList<AsyncLetterBatchLetterDto>();
+        for (int i = 0; i < letterCount; ++i) {
+            AsyncLetterBatchLetterDto letter = new AsyncLetterBatchLetterDto();
+            letter.setLanguageCode("FI");
+            AddressLabel label = new AddressLabel("Joku", "Jokunen",
+                    "Sitruunakuja 6", "", "",
+                    "99999", "KORVATUNTURI",
+                    "Lappi", "Finland", "FI");
+            letter.setAddressLabel(label);
+            letter.setTemplateReplacements(new HashMap<String, Object>());
+            letters.add(letter);
+        }
+        batch.setLetters(letters);
+        batch.setTemplateReplacements(new HashMap<String, Object>());
+        return batch;
+    }
+
+    protected long asyncLetter(AsyncLetterBatchDto letterBatchDto) {
+        Response response = letterResource.asyncLetter(letterBatchDto);
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
+            throw new IllegalStateException("Response status not OK: " + response.getStatus());
+        }
+        return (Long) response.getEntity();
+    }
+
+    protected class ProcessMonitor implements Callable<Boolean> {
+        private long batchId;
+
+        public ProcessMonitor(long batchId) {
+            this.batchId = batchId;
+        }
+
+        @Override
+        public Boolean call() throws Exception {
+            while (isProcessing(this.batchId)) {
+                Thread.sleep(500l);
+            }
+            return false;
+        }
     }
 
     protected boolean isProcessing(long id) {
         Response response = letterResource.letterBatchStatus(id);
         Map<String,Integer> entity = (Map<String, Integer>) response.getEntity();
-        logger.info("Status: {} / {}", entity.get("sent"), entity.get("total"));
+        logger.info("  > Batch "+id+" status: {} / {}",
+                entity.get("sent"), entity.get("total"));
         return entity.get("sent").compareTo(entity.get("total")) < 0;
     }
 
@@ -132,32 +247,23 @@ public class LetterResourceAsyncPerformanceIT {
     @Transactional
     public static class TransactionalActions {
         @Autowired
-        private LetterBatchDAO letterBatchDAO;
-
-        @Autowired
         private TemplateDAO templateDAO;
 
-        public long createTestBatch(int count) {
+        public long createTemplate() {
             Template template = DocumentProviderTestData.getTemplate(null);
             for (TemplateContent content : template.getContents()) {
-                content.setContent("<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD " +
-                        "XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" +
-                        "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>Testi</title></head>" +
-                        "<body>Testi</body></html>");
+                content.setContent(testHtmlContent());
             }
             templateDAO.insert(template);
-
-            LetterBatch batch = DocumentProviderTestData.getLetterBatch(null, count);
-            for (LetterReceivers receiver : batch.getLetterReceivers()) {
-                receiver.getLetterReceiverLetter().setLetter(null);
-            }
-            List<IPosti> posti = DocumentProviderTestData.getIPosti(null, batch);
-            batch.getIposti().addAll(posti);
-            batch.setTemplateId(template.getId());
-            letterBatchDAO.insert(batch);
-
-            return batch.getId();
+            return template.getId();
         }
+    }
+
+    protected static String testHtmlContent() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD " +
+                "XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>Testi</title></head>" +
+                "<body>Testi</body></html>";
     }
 
 }

@@ -1,14 +1,11 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.model.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -17,12 +14,20 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
+import fi.vm.sade.viestintapalvelu.model.*;
 
 /**
  * @author migar1
@@ -35,6 +40,7 @@ public class LetterServiceImpl implements LetterService {
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
+    private LetterBatchDtoConverter letterBatchDtoConverter;
     private LetterBuilder letterBuilder;
     @Autowired
     private ApplicationContext applicationContext;
@@ -42,55 +48,77 @@ public class LetterServiceImpl implements LetterService {
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
             CurrentUserComponent currentUserComponent, TemplateDAO templateDAO,
-            LetterBuilder letterBuilder) {
+            LetterBuilder letterBuilder, LetterBatchDtoConverter letterBatchDtoConverter) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     	this.currentUserComponent = currentUserComponent;
     	this.templateDAO = templateDAO;
         this.letterBuilder = letterBuilder;
+        this.letterBatchDtoConverter = letterBatchDtoConverter;
     }
 
     /* ---------------------- */
     /* - Create LetterBatch - */
     /* ---------------------- */
+    @Override
     @Transactional
-    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
-        System.out.println("getting current user!!! ");
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        System.out.println("getting current user!!!  got "+ henkilo);
-        
+    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch) {
         // kirjeet.kirjelahetys
-        LetterBatch letterB = new LetterBatch();
-        letterB.setTemplateId(letterBatch.getTemplateId());
-        letterB.setTemplateName(letterBatch.getTemplateName());
-        letterB.setApplicationPeriod(letterBatch.getApplicationPeriod());
-        letterB.setFetchTarget(letterBatch.getFetchTarget());
-        letterB.setTimestamp(new Date());
-        letterB.setLanguage(letterBatch.getLanguageCode());
-        letterB.setStoringOid(henkilo.getOidHenkilo());
-        letterB.setOrganizationOid(letterBatch.getOrganizationOid());
-        letterB.setTag(letterBatch.getTag());        
-
-        // kirjeet.lahetyskorvauskentat
-        letterB.setLetterReplacements(parseLetterReplacementsModels(letterBatch, letterB));
+        LetterBatch model = new LetterBatch();
+        letterBatchDtoConverter.convert(letterBatch, model);
+        model.setTimestamp(new Date());
+        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
 
         // kirjeet.vastaanottaja
-        letterB.setLetterReceivers(parseLetterReceiversModels(letterBatch, letterB));
-        letterB.setUsedTemplates(parseUsedTemplates(letterBatch, letterB));
-        
+        model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model));
+        model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
+
+        addIpostData(letterBatch, model);
+        return storeLetterBatch(model);
+    }
+
+    /* ---------------------- */
+    /* - Create LetterBatch - */
+    /* ---------------------- */
+    @Override
+    @Transactional
+    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+        // kirjeet.kirjelahetys
+        LetterBatch model = new LetterBatch();
+        letterBatchDtoConverter.convert(letterBatch, model);
+        model.setTimestamp(new Date());
+        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+
+        // kirjeet.vastaanottaja
+        model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model));
+        model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
+
+        addIpostData(letterBatch, model);
+        return storeLetterBatch(model);
+    }
+
+    private Henkilo getCurrentHenkilo() {
+        logger.debug("getting current user!!! ");
+        Henkilo henkilo = currentUserComponent.getCurrentUser();
+        logger.debug("getting current user!!!  got " + henkilo);
+        return henkilo;
+    }
+
+
+    private void addIpostData(LetterBatchDetails letterBatch, LetterBatch model) {
         Map<String, byte[]> ipostiData = letterBatch.getIPostiData();
         if (ipostiData != null) {
             for(Map.Entry<String, byte[]> data: ipostiData.entrySet()){
-                letterB.addIPosti(createIPosti(letterB, data));
+                model.addIPosti(createIPosti(model, data));
             }
         }
-        return storeLetterBatch(letterB);
     }
-    private Set<UsedTemplate> parseUsedTemplates(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
+
+    private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB) {
         Set<UsedTemplate> templates = new HashSet<UsedTemplate>();
         Set<String> languageCodes = new HashSet<String>();
         String templateName = getTemplateNameFromBatch(letterBatch);
-        for(fi.vm.sade.viestintapalvelu.letter.Letter letter : letterBatch.getLetters()) {
+        for (LetterDetails letter : letterBatch.getLetters()) {
             languageCodes.add(letter.getLanguageCode());
         }
         languageCodes.add(letterBatch.getLanguageCode());
@@ -106,7 +134,7 @@ public class LetterServiceImpl implements LetterService {
         return templates;
     }
 
-    private String getTemplateNameFromBatch(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+    private String getTemplateNameFromBatch(LetterBatchDetails letterBatch) {
         fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(letterBatch.getTemplateName(), letterBatch.getLanguageCode());
         return template != null ? template.getName() : templateDAO.read(letterBatch.getTemplateId()).getName();
     }
@@ -252,52 +280,12 @@ public class LetterServiceImpl implements LetterService {
     /*
      * kirjeet.vastaanottaja
      */
-    private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch,
-        LetterBatch letterB) {
+    private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
         Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
         for (fi.vm.sade.viestintapalvelu.letter.Letter letter : letterBatch.getLetters()) {
-            fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = new fi.vm.sade.viestintapalvelu.model.LetterReceivers();
-            rec.setTimestamp(new Date());
+            fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.
+                    convert(letter, new fi.vm.sade.viestintapalvelu.model.LetterReceivers());
             rec.setLetterBatch(letterB);
-            rec.setWantedLanguage(letter.getLanguageCode());
-            
-            // kirjeet.vastaanottajakorvauskentat
-            if ((letter.getCustomLetterContents() != null) || (letter.getCustomLetterContents().isEmpty())) {
-                Set<LetterReceiverReplacement> letterRepl = new HashSet<LetterReceiverReplacement>();
-
-                Object letReplKeys[] = letter.getCustomLetterContents().keySet().toArray();
-                Object letReplVals[] = letter.getCustomLetterContents().values().toArray();
-
-                for (int i = 0; i < letReplVals.length; i++) {
-                    fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement repl = new fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement();
-
-                    repl.setName(letReplKeys[i].toString());
-                    repl.setDefaultValue(letReplVals[i].toString());
-                    // repl.setMandatory();
-                    repl.setTimestamp(new Date());
-                    repl.setLetterReceivers(rec);
-                    letterRepl.add(repl);
-                }
-                rec.setLetterReceiverReplacement(letterRepl);
-            }
-
-            // kirjeet.vastaanottajaosoite
-            if (letter.getAddressLabel() != null) {
-                LetterReceiverAddress lra = new LetterReceiverAddress();
-                lra.setFirstName(letter.getAddressLabel().getFirstName());
-                lra.setLastName(letter.getAddressLabel().getLastName());
-                lra.setAddressline(letter.getAddressLabel().getAddressline());
-                lra.setAddressline2(letter.getAddressLabel().getAddressline2());
-                lra.setAddressline3(letter.getAddressLabel().getAddressline3());
-                lra.setPostalCode(letter.getAddressLabel().getPostalCode());
-                lra.setCity(letter.getAddressLabel().getCity());
-                lra.setRegion(letter.getAddressLabel().getRegion());
-                lra.setCountry(letter.getAddressLabel().getCountry());
-                lra.setCountryCode(letter.getAddressLabel().getCountryCode());
-                lra.setLetterReceivers(rec);
-
-                rec.setLetterReceiverAddress(lra);
-            }
 
             // kirjeet.vastaanottajakirje
             if (letter.getLetterContent() != null) {
@@ -329,7 +317,24 @@ public class LetterServiceImpl implements LetterService {
                 rec.setLetterReceiverLetter(lrl);
             }
 
-            //
+            receivers.add(rec);
+        }
+        return receivers;
+    }
+
+    private Set<LetterReceivers> parseLetterReceiversModels(AsyncLetterBatchDto letterBatch, LetterBatch letterB) {
+        Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
+        for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
+            fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.
+                    convert(letter, new fi.vm.sade.viestintapalvelu.model.LetterReceivers());
+            rec.setLetterBatch(letterB);
+
+            // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
+            LetterReceiverLetter lrl = new LetterReceiverLetter();
+            lrl.setTimestamp(new Date());
+            lrl.setLetterReceivers(rec);
+            rec.setLetterReceiverLetter(lrl);
+
             receivers.add(rec);
         }
         return receivers;
@@ -520,5 +525,9 @@ public class LetterServiceImpl implements LetterService {
 
     public void setLetterReceiverLetterDAO(LetterReceiverLetterDAO letterReceiverLetterDAO) {
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
+    }
+
+    public void setCurrentUserComponent(CurrentUserComponent currentUserComponent) {
+        this.currentUserComponent = currentUserComponent;
     }
 }

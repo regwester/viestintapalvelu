@@ -9,6 +9,7 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import org.slf4j.Logger;
@@ -360,7 +361,8 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
         notes = "")
-    public Response asyncLetter( @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final LetterBatch input) {
+    public Response asyncLetter( @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
+                                     final AsyncLetterBatchDto input) {
         try {
             LetterBatchValidator.validate(input);
         } catch (Exception e) {

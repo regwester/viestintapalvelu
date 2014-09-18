@@ -8,6 +8,8 @@ import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
 
 import java.util.*;
@@ -72,6 +74,24 @@ public class DocumentProviderTestData {
         
         return letterBatch;
     }
+
+    public static AsyncLetterBatchDto getAsyncLetterBatch() {
+        AsyncLetterBatchDto letterBatch = new AsyncLetterBatchDto();
+        letterBatch.setApplicationPeriod("Test-2014");
+        letterBatch.setFetchTarget("test-fetchTarget");
+        letterBatch.setLanguageCode("FI");
+        letterBatch.setOrganizationOid("1.2.246.562.10.00000000001");
+        letterBatch.setStoringOid("1.2.246.562.24.00000000001");
+        letterBatch.setTag("test-tag");
+        letterBatch.setTemplateId(new Long(1));
+        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTemplate(getTemplate());
+        letterBatch.setTemplateReplacements(getTemplateReplacements());
+        letterBatch.setLetters(getAsyncLetterBatchLetters());
+
+        return letterBatch;
+    }
+
 
     public static fi.vm.sade.viestintapalvelu.model.LetterBatch getLetterBatch(Long id) {
         fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
@@ -272,6 +292,19 @@ public class DocumentProviderTestData {
         
         letters.add(letter);
         
+        return letters;
+    }
+
+    public static List<AsyncLetterBatchLetterDto> getAsyncLetterBatchLetters() {
+        List<AsyncLetterBatchLetterDto> letters = new ArrayList<AsyncLetterBatchLetterDto>();
+
+        AsyncLetterBatchLetterDto letter = new AsyncLetterBatchLetterDto();
+        letter.setAddressLabel(getAddressLabel());
+        letter.setLanguageCode("FI");
+        letter.setTemplateReplacements(getTemplateReplacements());
+
+        letters.add(letter);
+
         return letters;
     }
 

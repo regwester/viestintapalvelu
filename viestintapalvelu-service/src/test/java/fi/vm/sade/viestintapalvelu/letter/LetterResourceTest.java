@@ -11,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
 
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -43,24 +45,25 @@ public class LetterResourceTest {
         injectObject("letterService", service);
         injectObject("letterBuilder", builder);
         injectObject("letterPDFProcessor", processor);
-        when(service.createLetter(any(LetterBatch.class))).thenReturn(DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID));
+        when(service.createLetter(any(AsyncLetterBatchDto.class)))
+                .thenReturn(DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID));
     }
     
     @Test
     public void usesLetterService() {
-        resource.asyncLetter(DocumentProviderTestData.getLetterBatch());
-        verify(service, times(1)).createLetter(any(LetterBatch.class));
+        resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
+        verify(service, times(1)).createLetter(any(AsyncLetterBatchDto.class));
     }
     
     @Test
     public void initializesTemplateId() {
-        resource.asyncLetter(DocumentProviderTestData.getLetterBatch());
-        verify(builder, times(1)).initTemplateId(any(LetterBatch.class));
+        resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
+        verify(builder, times(1)).initTemplateId(any(LetterBatchDetails.class));
     }
     
     @Test
     public void returnsLetterBatchIdFromResource() {
-        assertEquals(LETTERBATCH_ID, (Long)resource.asyncLetter(DocumentProviderTestData.getLetterBatch()).getEntity());
+        assertEquals(LETTERBATCH_ID, (Long)resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity());
     }
     
     @Test
@@ -70,7 +73,7 @@ public class LetterResourceTest {
     
     @Test
     public void startsProcessingLetters() {
-        resource.asyncLetter(DocumentProviderTestData.getLetterBatch()).getEntity();
+        resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity();
     }
 
     private void injectObject(String field, Object object) throws NoSuchFieldException, IllegalAccessException {

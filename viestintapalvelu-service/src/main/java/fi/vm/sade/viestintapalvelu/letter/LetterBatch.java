@@ -8,10 +8,11 @@ import java.util.Map;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 @ApiModel(value = "Kerralla muodostettavien kirjeiden joukko")
-public class LetterBatch {
+public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
     private List<Letter> letters;
 
