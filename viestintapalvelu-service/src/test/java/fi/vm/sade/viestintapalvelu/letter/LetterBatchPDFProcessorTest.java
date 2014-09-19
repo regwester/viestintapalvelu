@@ -1,6 +1,9 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.Executors;
 
 import org.junit.Before;
@@ -19,9 +22,13 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LetterBatchPDFProcessorTest {
@@ -44,7 +51,7 @@ public class LetterBatchPDFProcessorTest {
 
     @Before
     public void init() {
-        processor = new LetterBatchPDFProcessor(Executors.newCachedThreadPool(), builder, service);
+        processor = new LetterBatchPDFProcessor(Executors.newCachedThreadPool(), service);
         doCallRealMethod().when(service).setLetterBatchDAO(any(LetterBatchDAO.class));
         doCallRealMethod().when(service).setLetterReceiverLetterDAO(any(LetterReceiverLetterDAO.class));
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));
@@ -66,7 +73,7 @@ public class LetterBatchPDFProcessorTest {
     @Test
     public void buildsPDFForAllReceivers() throws Exception {
         final int amountOfReceivers = 121;
-        doCallRealMethod().when(service).runBatch(any(long.class));
+        //doCallRealMethod().when(service).runBatch(any(long.class));
         when(letterBatchDAO.findLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
         doCallRealMethod().when(service).processLetterReceiver(any(long.class));
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);

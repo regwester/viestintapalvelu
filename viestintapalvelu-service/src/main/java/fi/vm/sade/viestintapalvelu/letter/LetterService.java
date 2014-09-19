@@ -1,15 +1,15 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.List;
+import java.util.Set;
+
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-
-import java.util.List;
-import java.util.Set;
-
-import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -90,8 +90,6 @@ public interface LetterService {
 
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
-    void runBatch(long batchId);
-
     @Transactional
     void processLetterReceiver(long receiverId);
 
@@ -104,4 +102,6 @@ public interface LetterService {
     LetterBatchStatusDto getBatchStatus(long batchId);
 
     void updateLetter(LetterReceiverLetter letter);
+
+    List<Long> findLetterReceiverIdsByBatch(long batchId);
 }

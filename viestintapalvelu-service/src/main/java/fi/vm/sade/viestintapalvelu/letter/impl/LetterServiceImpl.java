@@ -3,7 +3,14 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -29,7 +36,13 @@ import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
-import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.IPosti;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
+import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 
 /**
  * @author migar1
@@ -454,15 +467,8 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public void runBatch(long batchId) {
-        LetterService self = applicationContext == null ? this : applicationContext.getBean(LetterService.class);
-        List<Long> ids = letterBatchDAO.findLetterReceiverIdsByBatch(batchId);
-        logger.info("batch[id={}].getLetterReceivers().size() = {}", batchId, ids.size());
-
-        for (long receiverId : ids) {
-            logger.debug("Handling batch receiver {}", receiverId);
-            self.processLetterReceiver(receiverId);
-        }
+    public List<Long> findLetterReceiverIdsByBatch(long batchId) {
+        return letterBatchDAO.findLetterReceiverIdsByBatch(batchId);
     }
 
     @Override
