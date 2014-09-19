@@ -25,11 +25,25 @@ public class LetterBatchValidator {
             throw new IllegalArgumentException("Letter to be validated was null");
         }
         for (LetterDetails letter : letters.getLetters()) {
-            isValid(letter);
+            validate(letter);
         }
     }
 
-    private static void isValid(LetterDetails letter) throws Exception {
+    public static boolean isValid(LetterBatchDetails letters) {
+        if (letters == null) {
+            return false;
+        }
+        for (LetterDetails letter : letters.getLetters()) {
+            try {
+                validate(letter);
+            } catch (Exception e) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void validate(LetterDetails letter) throws Exception {
         validateAddress(letter.getAddressLabel());
     }
 

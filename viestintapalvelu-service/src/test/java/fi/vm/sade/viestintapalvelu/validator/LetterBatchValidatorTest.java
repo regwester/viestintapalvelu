@@ -8,6 +8,7 @@ import org.junit.Test;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 
@@ -15,7 +16,7 @@ public class LetterBatchValidatorTest {
     
     @Test(expected = IllegalArgumentException.class)
     public void throwExceptionIfGivenNullLetterBatch() throws Exception {
-        LetterBatchValidator.validate(null);        
+        LetterBatchValidator.validate((LetterBatchDetails)null);
     }
     
     @Test(expected = IllegalArgumentException.class)

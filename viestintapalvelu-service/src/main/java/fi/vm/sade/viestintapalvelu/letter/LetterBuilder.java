@@ -3,13 +3,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -70,7 +64,7 @@ public class LetterBuilder {
 
     
     public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException, Exception {
-        boolean valid = LetterBatchValidator.validate(batch);
+        boolean valid = LetterBatchValidator.isValid(batch);
         LOG.debug("Validated batch result: " + valid);
         
         Map<String, byte[]> subZips = new HashMap<String, byte[]>();
@@ -101,8 +95,7 @@ public class LetterBuilder {
 
     
     public byte[] printPDF(LetterBatch batch) throws IOException, DocumentException, Exception {
-
-        boolean valid = LetterBatchValidator.validate(batch);
+        boolean valid = LetterBatchValidator.isValid(batch);
         LOG.debug("Validated batch result: " + valid);
 
         MergedPdfDocument resultPDF = buildPDF(batch);
@@ -186,6 +179,22 @@ public class LetterBuilder {
         initTemplateId(batch, batch.getTemplate());
     }
 
+    public Template initTemplateId(LetterBatchDetails batch, Template template) {
+        if (template == null && batch.getTemplateName() != null
+                && batch.getLanguageCode() != null) {
+            template = templateService.getTemplateByName(
+                    batch.getTemplateName(), batch.getLanguageCode());
+
+            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
+        }
+
+        if (template == null && batch.getTemplateId() != null) { // If not found by name
+            long templateId = batch.getTemplateId();
+            template = templateService.findById(templateId);
+        }
+        return template;
+    }
+
     private boolean languageIsDifferent(Template baseTemplate, Letter letter) {
         return letter.getLanguageCode() != null && !letter.getLanguageCode().equalsIgnoreCase(baseTemplate.getLanguage());
     }
@@ -247,7 +256,7 @@ public class LetterBuilder {
 
             // Generate each page individually
             for (TemplateContent tc : contents) {
-                byte[] page = createPageXhtml(template, tc.getContent().getBytes(), templateReplacements);                                byte[] page = createPageXhtml(template, tc.getContent().getBytes(), templateReplacements);
+                byte[] page = createPageXhtml(template, tc.getContent().getBytes(), templateReplacements);
                 source.add(page);
             }
         }
@@ -255,6 +264,21 @@ public class LetterBuilder {
         byte[] result = documentBuilder.mergeByte(source);
 
         return new String(result);
+    }
+
+    public byte[] createPagePdf(Template template, byte[] pageContent,
+                                AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                Map<String, Object> letterBatchReplacements,
+                                Map<String, Object> letterReplacements)
+            throws FileNotFoundException, IOException, DocumentException {
+
+        @SuppressWarnings("unchecked")
+        Map<String, Object> dataContext = createDataContext(template,
+                addressLabel, templReplacements, letterBatchReplacements,
+                letterReplacements);
+        byte[] xhtml = documentBuilder.applyTextTemplate(pageContent,
+                dataContext);
+        return documentBuilder.xhtmlToPDF(xhtml);
     }
 
     private byte[] createPagePdf(Template template, byte[] pageContent, Map<String, Object> dataContext) throws FileNotFoundException, IOException, DocumentException {
@@ -283,7 +307,49 @@ public class LetterBuilder {
         Map<String, Object> dataContext = createDataContext(template, templateReplacements);
         return documentBuilder.applyTextTemplate(pageContent, dataContext);
     }
-    
+
+
+
+    public Map<String, Object> createDataContext(Template template,
+                                                 AddressLabel addressLabel, Map<String, Object>... replacementsList) {
+
+        Map<String, Object> data = new HashMap<String, Object>();
+        for (Map<String, Object> replacements : replacementsList) {
+            if (replacements != null) {
+                for (String key : replacements.keySet()) {
+                    if (replacements.get(key) instanceof String) {
+                        data.put(
+                                key,
+                                cleanHtmlFromApi((String) replacements.get(key)));
+                    } else {
+                        data.put(key, replacements.get(key));
+                    }
+                }
+            }
+        }
+
+        String styles = template.getStyles();
+        if (styles == null) {
+            styles = "";
+        }
+        data.put("letterDate",
+                new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
+        data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
+
+        // liite specific handling
+        if (data.containsKey("tulokset")) {
+            List<Map<String, String>> tulokset = (List<Map<String, String>>) data
+                    .get("tulokset");
+            Map<String, Boolean> columns = distinctColumns(tulokset);
+            data.put("tulokset", normalizeColumns(columns, tulokset));
+            data.put("columns", columns);
+        }
+
+        data.put("tyylit", styles);
+        return data;
+    }
+
     /**
      * Create data context
      * 
@@ -364,5 +430,56 @@ public class LetterBuilder {
         if (source != null) {
             emailComponent.sendEmail(source);
         }
+    }
+
+    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+                                                    Map<String, Object> letterReplacements, Map<String, Object> batchReplacements) throws FileNotFoundException, IOException, DocumentException {
+        LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
+
+        Template template = determineTemplate(receiver, batch);
+
+        Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
+
+        templReplacements.putAll(formReplacementMap(letter.getLetterReceivers().getLetterReceiverReplacement()));
+
+        List<TemplateContent> contents = template.getContents();
+        AddressLabel address = AddressLabelConverter.convert(letter.getLetterReceivers().getLetterReceiverAddress());
+        PdfDocument currentDocument = new PdfDocument(address);
+        Collections.sort(contents);
+
+        for (TemplateContent tc : contents) {
+            byte[] page = createPagePdf(template, tc.getContent().getBytes(), address,
+                    templReplacements, batchReplacements, letterReplacements);
+            currentDocument.addContent(page);
+        }
+        letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
+    }
+
+
+    public Template determineTemplate(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+        if(receiver.getWantedLanguage() != null) {
+            for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
+                if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {
+                    return templateService.findById(usedTemplate.getTemplate().getId());
+                }
+            }
+        }
+        return templateService.findById(batch.getTemplateId());
+    }
+
+    public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements) {
+        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        for (LetterReceiverReplacement replacement : replacements) {
+            templReplacements.put(replacement.getName(), replacement.getDefaultValue());
+        }
+        return templReplacements;
+    }
+
+    public Map<String, Object> formReplacementMap(List<Replacement> replacements) {
+        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        for (Replacement templRepl : replacements) {
+            templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
+        }
+        return templReplacements;
     }
 }
