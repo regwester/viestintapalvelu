@@ -2,10 +2,13 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  *
  * @author migar1
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailRecipient {
     private String oid = "";
     private String oidType = "";
