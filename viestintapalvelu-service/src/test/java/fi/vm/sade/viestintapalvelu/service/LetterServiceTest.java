@@ -52,14 +52,15 @@ public class LetterServiceTest {
     private CurrentUserComponent mockedCurrentUserComponent;
     @Mock
     private TemplateDAO templateDAO;
-    private LetterService letterService;
+    private LetterServiceImpl letterService;
     @Mock
     private LetterBuilder letterBuilder;
 
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
-            mockedCurrentUserComponent, templateDAO, letterBuilder, new LetterBatchDtoConverter());
+            mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter());
+        this.letterService.setLetterBuilder(letterBuilder);
     }
     
     @Test

@@ -43,6 +43,7 @@ public class LetterServiceImpl implements LetterService {
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
     private LetterBatchDtoConverter letterBatchDtoConverter;
+    // Causes circular reference if autowired directly, through applicationContext laxily:
     private LetterBuilder letterBuilder;
     @Autowired
     private ApplicationContext applicationContext;
@@ -50,12 +51,11 @@ public class LetterServiceImpl implements LetterService {
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
             CurrentUserComponent currentUserComponent, TemplateDAO templateDAO,
-            LetterBuilder letterBuilder, LetterBatchDtoConverter letterBatchDtoConverter) {
+            LetterBatchDtoConverter letterBatchDtoConverter) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     	this.currentUserComponent = currentUserComponent;
     	this.templateDAO = templateDAO;
-        this.letterBuilder = letterBuilder;
         this.letterBatchDtoConverter = letterBatchDtoConverter;
     }
 
@@ -471,7 +471,7 @@ public class LetterServiceImpl implements LetterService {
         LetterReceivers receiver = letterReceiverLetterDAO.read(receiverId).getLetterReceivers();
         LetterBatch batch = receiver.getLetterBatch();
         try {
-            letterBuilder.constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
+            getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
             letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
         } catch (Exception e) {
             //TODO: handle
@@ -540,6 +540,13 @@ public class LetterServiceImpl implements LetterService {
 
     public void setLetterBuilder(LetterBuilder letterBuilder) {
         this.letterBuilder = letterBuilder;
+    }
+
+    public LetterBuilder getLetterBuilder() {
+        if (this.letterBuilder == null && this.applicationContext != null) {
+            this.letterBuilder = applicationContext.getBean(LetterBuilder.class);
+        }
+        return this.letterBuilder;
     }
 
     public void setLetterBatchDAO(LetterBatchDAO letterBatchDAO) {
