@@ -51,6 +51,7 @@
     <script type="text/javascript" src="assets/lib/tinymce/ui-angular-tinymce.js"></script>
     
     <%
+        request.setCharacterEncoding("UTF-8");
         String emailData = request.getParameter("emailData");
         if (emailData != null) {
             // Sanitize data:
