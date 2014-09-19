@@ -1,20 +1,15 @@
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-
-import org.springframework.stereotype.Component;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 
 @Component
 public class ReportedMessageDTOConverter {
@@ -102,6 +97,7 @@ public class ReportedMessageDTOConverter {
             EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
 
             emailRecipientDTO.setRecipientID(reportedRecipient.getId());
+            emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
             emailRecipientDTO.setSendSuccessfull(reportedRecipient.getSendingSuccesful());
             emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
             emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
@@ -129,9 +125,9 @@ public class ReportedMessageDTOConverter {
     }
 
     private void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
-        Long numberOfSuccesfulSendings = new Long(0);
+        Long numberOfSuccessfulSendings = new Long(0);
         if (sendingStatusDTO.getNumberOfSuccesfulSendings() != null) {
-            numberOfSuccesfulSendings = sendingStatusDTO.getNumberOfSuccesfulSendings();
+            numberOfSuccessfulSendings = sendingStatusDTO.getNumberOfSuccesfulSendings();
         }
 
         Long numberOfFailedSendings = new Long(0);
@@ -139,7 +135,7 @@ public class ReportedMessageDTOConverter {
             numberOfFailedSendings = sendingStatusDTO.getNumberOfFailedSendings();
         }
 
-        Object[] parameters = { numberOfSuccesfulSendings, numberOfFailedSendings };
+        Object[] parameters = { numberOfSuccessfulSendings, numberOfFailedSendings };
         reportedMessageDTO.setSendingReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", parameters));
     }
 

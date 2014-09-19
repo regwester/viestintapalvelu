@@ -7,7 +7,7 @@
     <parent>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
         <artifactId>viestintapalvelu</artifactId>
-        <version>9.9-SNAPSHOT</version>
+        <version>10.1-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -19,7 +19,6 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <authentication-domain.version>1.0-SNAPSHOT</authentication-domain.version>
         <dokumenttipalvelu.version>1.0-SNAPSHOT</dokumenttipalvelu.version>
-        <organisaatio.version>8.0</organisaatio.version>
     </properties>
 
     <dependencies>
@@ -47,7 +46,7 @@
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>
             <artifactId>organisaatio-api</artifactId>
-            <version>10.0-SNAPSHOT</version>
+            <version>${organisaatio.version}</version>
             <exclusions>
                 <exclusion>
                     <artifactId>jsr311-api</artifactId>
@@ -477,6 +476,18 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <!-- Apache PDFBox API library for PDF document handling -->
+        <dependency>
+            <groupId>org.apache.pdfbox</groupId>
+            <artifactId>pdfbox</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>commons-logging</artifactId>
+                    <groupId>commons-logging</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+
         <!-- TESTING -->
 
         <!-- Jersey Test Framework -->
@@ -536,20 +547,6 @@
             <groupId>org.hsqldb</groupId>
             <artifactId>hsqldb</artifactId>
             <scope>test</scope>
-        </dependency>
-
-        <!-- Apache PDFBox API library -->
-        <dependency>
-            <groupId>org.apache.pdfbox</groupId>
-            <artifactId>pdfbox</artifactId>
-            <version>${pdfbox.version}</version>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>commons-logging</artifactId>
-                    <groupId>commons-logging</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
     </dependencies>
 

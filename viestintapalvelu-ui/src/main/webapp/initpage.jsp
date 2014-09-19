@@ -26,8 +26,6 @@
             replyTo: 'mikko.mallikas@oph.fi',
             subject: 'Testi viesti',
             body: '',
-            templateName: 'emailtemplate',
-            languageCode: 'FI',
             sourceRegister: [
                 {name: 'opintopolku'}
             ]

@@ -1,15 +1,14 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import java.util.ArrayList;
-import java.util.List;
-
+import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -24,13 +23,15 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
-import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-application-context.xml")
@@ -83,8 +84,8 @@ public class TemplateServiceTest {
     @Test
     public void testGetTemplateByName() {
         Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
-        when(mockedTemplateDAO.findTemplateByName(any(String.class), any(String.class), any(String.class))).thenReturn(mockedTemplate);
-        
+        when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);
+
         fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
             templateService.getTemplateByName("test_template", "FI", true);
         
@@ -97,8 +98,8 @@ public class TemplateServiceTest {
     @Test
     public void testGetTemplateByNameAndType() {
         Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
-        when(mockedTemplateDAO.findTemplateByName(any(String.class), any(String.class), any(String.class))).thenReturn(mockedTemplate);
-        
+        when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);
+
         fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
             templateService.getTemplateByName("test_template", "FI", true, "doc");
         
@@ -109,5 +110,83 @@ public class TemplateServiceTest {
         assertTrue(templateFindByName.getType() != null);
         assertTrue(templateFindByName.getType().equals("doc"));
     }
+
+    @Test
+    public void testGetTemplateByCriteriaWithApplicationPeriod() {
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
+        String applicationPeriodOid = "1234.5678910.12345";
+        DocumentProviderTestData.getTemplateHaku(mockedTemplate, applicationPeriodOid);
+        when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);
+
+        fi.vm.sade.viestintapalvelu.template.Template templateFindByName =
+                templateService.getTemplateByName(new TemplateCriteriaImpl()
+                        .withName("test_template")
+                        .withLanguage("FI")
+                        .withType("doc")
+                        .withApplicationPeriod(applicationPeriodOid), true);
+
+        assertNotNull(templateFindByName);
+        assertTrue(templateFindByName.getId() == 1);
+        assertNotNull(templateFindByName.getContents().size() == 1);
+        assertNotNull(templateFindByName.getReplacements().size() == 1);
+        assertTrue(templateFindByName.getType() != null);
+        assertTrue(templateFindByName.getType().equals("doc"));
+    }
+
+
+    @Test
+    public void testGetTemplateByCriteriaWithApplicationPeriodWithFallback() {
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1)),
+                defaultTemplate = DocumentProviderTestData.getTemplate(new Long(2)),
+                lastTemplate = DocumentProviderTestData.getTemplate(new Long(3));
+        String applicationPeriodOid = "1234.5678910.12345";
+        DocumentProviderTestData.getTemplateHaku(mockedTemplate, applicationPeriodOid + "OTHER");
+        defaultTemplate.setUsedAsDefault(true);
+        String name = "test_template",
+                lang = "FI",
+                type = "doc";
+
+        // The default should not be found:
+        when(mockedTemplateDAO.findTemplate(eq(
+                new TemplateCriteriaImpl()
+                        .withName(name)
+                        .withLanguage(lang)
+                        .withType(type)
+                        .withApplicationPeriod(applicationPeriodOid)
+        ))).thenReturn(null);
+
+        // The default should be found with default requirement:
+        when(mockedTemplateDAO.findTemplate(eq(
+                new TemplateCriteriaImpl()
+                    .withName(name)
+                    .withLanguage(lang)
+                    .withType(type)
+                    .withDefaultRequired()
+        ))).thenReturn(defaultTemplate);
+
+        // Without the default requirement, the last should be found:
+        when(mockedTemplateDAO.findTemplate(eq(
+                new TemplateCriteriaImpl()
+                        .withName(name)
+                        .withLanguage(lang)
+                        .withType(type)
+                        .withoutDefaultRequired()
+        ))).thenReturn(lastTemplate);
+
+        fi.vm.sade.viestintapalvelu.template.Template templateFindByName =
+                templateService.getTemplateByName(new TemplateCriteriaImpl()
+                        .withName(name)
+                        .withLanguage(lang)
+                        .withType(type)
+                        .withApplicationPeriod(applicationPeriodOid), true);
+
+        assertNotNull(templateFindByName);
+        assertTrue(templateFindByName.getId() == 2);
+        assertNotNull(templateFindByName.getContents().size() == 1);
+        assertNotNull(templateFindByName.getReplacements().size() == 1);
+        assertTrue(templateFindByName.getType() != null);
+        assertTrue(templateFindByName.getType().equals("doc"));
+    }
+
 
 }

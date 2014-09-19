@@ -5,8 +5,6 @@ public class EmailConstants {
 	public static final String SMTP = "localhost"; // "smtp.gmail.com";
 	public static final String PORT = "25";
 
-	public static final String EMAIL_FOOTER = "/email/emailfooter_{LANG}.txt";
-
 	public static final String EMAIL_NO_REPLY = "no-reply@cybercom.com";
 	public static final String EMAIL_TECH = "tech@cybercom.com";
  

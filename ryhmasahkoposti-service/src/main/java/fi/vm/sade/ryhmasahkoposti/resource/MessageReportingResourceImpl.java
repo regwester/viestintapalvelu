@@ -21,8 +21,8 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
 @Component
-public class MessageReportingResourceImpl implements MessageReportingResource {
-    private static Logger log = LoggerFactory.getLogger(MessageReportingResourceImpl.class);
+public class MessageReportingResourceImpl extends GenericResourceImpl implements MessageReportingResource {
+    private static Logger logger = LoggerFactory.getLogger(MessageReportingResourceImpl.class);
     private GroupEmailReportingService groupEmailReportingService;
     private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
     private PagingAndSortingDTOConverter pagingAndSortingDTOConverter;
@@ -90,13 +90,10 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
 
     @Override
     public Response getReportedMessagesSentByCurrentUser(String process) throws Exception {
-        String senderOid = groupEmailReportingService.getCurrentUserOid();
+        ReportedMessagesDTO reportedMessages =
+                groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process, PagingAndSortingDTO.getDefault());
 
-        PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(null, null);
-        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesBySenderOid(senderOid,
-                process, pagingAndSorting);
-
-        return Response.ok(reportedMessagesDTO).build();
+        return Response.ok(reportedMessages).build();
 
     }
 
@@ -120,7 +117,7 @@ public class MessageReportingResourceImpl implements MessageReportingResource {
                                                                        Integer page, String sortedBy, String order) throws Exception {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessageDTO reportedMessageDTO =
-                groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccesful(messageID, pagingAndSorting);
+                groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccessful(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();
     }
 

@@ -16,9 +16,11 @@
         <class>fi.vm.sade.viestintapalvelu.model.TemplateContent</class>
         <class>fi.vm.sade.viestintapalvelu.model.IPosti</class>
         <class>fi.vm.sade.viestintapalvelu.model.UsedTemplate</class>
+        <class>fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod</class>
         
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>
+            <property name="hibernate.show_sql" value="false"/>
             <property name="hibernate.dialect" value="org.hibernate.dialect.HSQLDialect"/>
             <property name="hibernate.c3p0.min_size" value="5"/>
             <property name="hibernate.c3p0.max_size" value="20"/>

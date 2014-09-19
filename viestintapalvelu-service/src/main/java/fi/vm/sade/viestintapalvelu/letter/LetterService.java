@@ -78,6 +78,15 @@ public interface LetterService {
      * @return Kirjeen sisällön tiedot
      */
     public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
+    
+    /**
+     * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi PDF-dokumentiksi
+     * 
+     * @param letterBatchID Kirjelähetyksen avain
+     * @return Kirjelähetyksen kirjeiden sisällöt
+     * @throws Exception
+     */
+    public byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
 
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 

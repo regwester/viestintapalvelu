@@ -1,18 +1,10 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
+import fi.vm.sade.generic.model.BaseEntity;
+
+import javax.persistence.*;
 import java.util.Date;
 import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import fi.vm.sade.generic.model.BaseEntity;
 
 @Table(name="raportoitavaviesti")
 @Entity()
@@ -52,10 +44,10 @@ public class ReportedMessage extends BaseEntity {
     @Column(name="merkisto", nullable=false)
     private String characterSet;
 
-    @OneToMany(mappedBy="reportedMessage", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="reportedMessage", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private Set<ReportedRecipient> reportedRecipients;
 
-    @OneToMany(mappedBy="reportedMessage", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy="reportedMessage", fetch=FetchType.LAZY, cascade=CascadeType.ALL)
     private Set<ReportedMessageAttachment> reportedMessageAttachments;	
 
     @Column(name="lahetysalkoi", nullable=false)

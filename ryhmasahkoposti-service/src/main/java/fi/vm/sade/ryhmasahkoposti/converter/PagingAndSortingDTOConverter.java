@@ -22,13 +22,11 @@ public class PagingAndSortingDTOConverter {
     }
     
     public PagingAndSortingDTO convert(String sortedBy, String order) {
-        PagingAndSortingDTO pagingAndSorting = new PagingAndSortingDTO();
-        
-        pagingAndSorting.setFromIndex(0);
-        pagingAndSorting.setNumberOfRows(0);        
+        PagingAndSortingDTO pagingAndSorting = PagingAndSortingDTO.getDefault();
+
         pagingAndSorting.setSortedBy(sortedBy);
         pagingAndSorting.setSortOrder(order);
-        
+
         return pagingAndSorting;
     }
 }

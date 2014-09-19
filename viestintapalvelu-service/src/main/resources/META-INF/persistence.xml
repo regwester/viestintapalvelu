@@ -4,9 +4,10 @@
     <persistence-unit name="viestinta" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>java:comp/env/jdbc/viestinta</non-jta-data-source>
-        
-		<class>fi.vm.sade.generic.model.BaseEntity</class>
-        
+
+        <class>fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod</class>
+        <class>fi.vm.sade.generic.model.BaseEntity</class>
+
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
             <property name="hibernate.default_schema" value="kirjeet" />

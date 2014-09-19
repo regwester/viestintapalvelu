@@ -1,17 +1,11 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.List;
-
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
+import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -24,19 +18,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.constants.RestConstants;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
-import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
-import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Iterator;
+import java.util.List;
 
 
 @Component
@@ -45,9 +35,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     @Value("${ryhmasahkoposti.from}")
     private String globalFromAddress;
-    @Value("ryhmasahkoposti.default.template.name")
+    @Value("${ryhmasahkoposti.default.template.name}")
     private String defaultTemplateName;
-    @Value("ryhmasahkoposti.default.template.language")
+    @Value("${ryhmasahkoposti.default.template.language}")
     private String defaultTemplateLanguage;
 
     @Autowired
@@ -61,7 +51,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)
         throws IOException, URISyntaxException, ServletException {
 
-        log.info("Adding attachment " + request.getMethod());
+        log.debug("Adding attachment: {}", request.getMethod());
 
         boolean isMultipart = ServletFileUpload.isMultipartContent(request);
         AttachmentResponse result = null;
@@ -86,7 +76,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
             response.setStatus(400);
             response.getWriter().append("Not a multipart request");
         }
-        log.info("Added attachment: " + result);
+        log.debug("Added attachment: {}", result);
         JSONObject json = new JSONObject(result.toMap());
         return json.toString();
     }
@@ -103,7 +93,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         /*
          *  Select source address
          */
-        handleFromAddress(emailData);
+        overrideFromAddress(emailData);
         /*
          *  Select source address and template
          */
@@ -112,42 +102,36 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
          * Check if request includes attachment 
          * validate it and add to database
          */
-        handleIncludedAttachments(emailData);
-        try {
-            String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
-            log.info("DB index is " + sendId);
-            return Response.ok(new EmailSendId(sendId)).build();
-        } catch (ExternalInterfaceException e) {
-            log.error("Problems in getting data from external interfaces, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e.getMessage()).build();
-        } catch (Exception e) {
-            log.error("Problems in writing send data info to DB, " + e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
+        attachIncludedAttachments(emailData);
+
+        /* Sanitize body content */
+        sanitizeInput(emailData);
+
+        String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
+        emailService.checkEmailQueues();
+        log.debug("DB index is {}", sendId);
+        return Response.ok(new EmailSendId(sendId)).build();
     }
 
     @Override
     public Response getStatus(String sendId) {
-        log.error("getStatus called with ID: " + sendId + ".");
-        try {
-            SendingStatusDTO sendingStatusDTO = groupEmailReportingService.getSendingStatus(Long.valueOf(sendId));
-            return Response.ok(sendingStatusDTO).build();
-        } catch (Exception e) {
-            log.error(e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
+        log.debug("getStatus called with ID: {}", sendId);
+        SendingStatusDTO sendingStatusDTO = groupEmailReportingService.getSendingStatus(Long.valueOf(sendId));
+        return Response.ok(sendingStatusDTO).build();
+    }
+
+    @Override
+    public Response getPreview(EmailData emailData) throws Exception {
+        log.debug("getPreview called with EmailData: {}", emailData);
+        String email = emailService.getEML(emailData.getEmail(), "vastaanottaja@example.com");
+        return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
     }
 
     @Override
     public Response getResult(String sendId) {
-        log.info("getResult called with ID: " + sendId + ".");
-        try {
-            ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(Long.valueOf(sendId));
-            return Response.ok(reportedMessageDTO).build();
-        } catch (Exception e) {
-            log.error("Problems in getting group email data from DB, "+ e.getMessage());
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(RestConstants.INTERNAL_SERVICE_ERROR).build();
-        }
+        log.debug("getResult called with ID: {}", sendId);
+        ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(Long.valueOf(sendId));
+        return Response.ok(reportedMessageDTO).build();
     }
 
     @Override
@@ -158,9 +142,14 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return Response.ok(response).build();
     }
 
-    private void handleFromAddress(EmailData emailData) {
+    private void overrideFromAddress(EmailData emailData) {
         // Replace whatever from address we got from the client with the global one
         emailData.getEmail().setFrom(globalFromAddress);
+    }
+
+    private void sanitizeInput(EmailData emailData) {
+        log.debug("Sanitizing email body");
+        emailData.getEmail().setBody(InputCleaner.cleanHtml(emailData.getEmail().getBody()));
     }
     
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {
@@ -179,7 +168,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return result;
     }
     
-    private void handleIncludedAttachments(EmailData emailData) {
+    private void attachIncludedAttachments(EmailData emailData) {
         if (hasAttachments(emailData)) {
             for (EmailAttachment emailAttachment : emailData.getEmail().getAttachments()) {
                 AttachmentResponse attachmentResponse = groupEmailReportingService.saveAttachment(emailAttachment);
@@ -192,7 +181,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         if (emailData.getEmail() != null) {
             List<? extends EmailAttachment> attachmentList = emailData.getEmail().getAttachments();
             return (attachmentList != null && attachmentList.size() > 0); 
-        } else  {
+        } else {
             return false;
         }
     }

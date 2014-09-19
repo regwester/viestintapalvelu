@@ -66,6 +66,8 @@ public class LetterReportServiceImpl implements LetterReportService {
         List<LetterReceivers> letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(
             letterBatchID, pagingAndSorting);
         
+        Long numberOfReceivers = letterReceiversDAO.findNumberOfReciversByLetterBatchID(letterBatchID); 
+        
         LetterReceivers letterReceivers = letterReceiverList.get(0);
         LetterBatch letterBatch = letterReceivers.getLetterBatch();
         
@@ -74,6 +76,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         List<LetterReceiverDTO> letterReceiverDTOs = 
             getLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);        
         letterBatchReport.setLetterReceivers(letterReceiverDTOs);
+        letterBatchReport.setNumberOfReceivers(numberOfReceivers);
         
         List<IPosti> iPostis = iPostiDAO.findMailById(letterBatchID);
         List<IPostiDTO> iPostiDTOs = getListOfIPostiDTO(iPostis);

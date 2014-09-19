@@ -79,14 +79,24 @@ log4j.properties.file=${user.home.conf}/log4j.properties
 oid.rest.url.backend=${host.ilb}/oid-service/rest/oid
 oid.webservice.url.backend=${host.ilb}/services/oidService
 root.organisaatio.oid=1.2.246.562.10.00000000001
-ryhmasahkoposti.queue.handle.size=99
+ryhmasahkoposti.queue.handle.size=250
+ryhmasahkoposti.max.sendqueue.tasks.to.add=42
 ryhmasahkoposti.sender.cron=0 * * * * *
+ryhmasahkoposti.max.email.recipient.handle.time.millis = 180000
 ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
-ryhmasahkopostipalvelu.templateService.rest.url=http://${host.virkailija}/viestintapalvelu/api/v1
+ryhmasahkopostipalvelu.templateService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
+ryhmasahkoposti.from=opintopolku@oph.fi
+# Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
+ryhmasahkoposti.default.template.name=osoitepalvelu_email
+ryhmasahkoposti.default.template.language=FI
+
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
 viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
+viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
 web.url.cas=https\://${host.cas}/cas
+
+viestintapalvelu.swagger.base.bath=/viestintapalvelu

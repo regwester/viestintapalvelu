@@ -1,20 +1,20 @@
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.stereotype.Component;
-
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import org.springframework.stereotype.Component;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Component
 public class EmailRecipientDTOConverter {
 
 	public EmailRecipientDTO convert(ReportedRecipient reportedRecipient) {
 		EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-		
+
 		emailRecipientDTO.setRecipientID(reportedRecipient.getId());
+        emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
 		emailRecipientDTO.setFirstName("");
 		emailRecipientDTO.setLastName("");
 		emailRecipientDTO.setOrganizationName("");

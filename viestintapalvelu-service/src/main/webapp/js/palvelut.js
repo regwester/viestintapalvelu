@@ -122,12 +122,26 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         function getExamples() {
 		    return $http.get(template+'getAvailableExamples');
         }
-        
-        
+
         function getByName(t) {
-		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
+            var url = template+'getByName?templateName='+t.name+'&languageCode='+t.lang;
+            if (t.applicationPeriod) {
+                url += "&applicationPeriod="+ t.applicationPeriod;
+            }
+		    return $http.get(url);
         }
-        
+
+        function listVersionsByName(t, getContents, getPeriods) {
+            var url = template+'listVersionsByName?templateName='+t.name+'&languageCode='+t.lang;
+            if (getContents) {
+                url += "&content=YES";
+            }
+            if (getPeriods) {
+                url += "&periods=YES";
+            }
+            return $http.get(url);
+        }
+
         function getHistory(t, oid, applicationPeriod, tag){
         	if (tag != null && tag != "") {
         		return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&applicationPeriod="+applicationPeriod+"&tag="+tag);
@@ -135,12 +149,22 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         	 	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid);
         	}
         }
-        
+
+        function saveAttachedApplicationPeriods(templateId, applicationPeriods, useAsDefault) {
+            return $http.put(template+"saveAttachedApplicationPeriods", {
+                templateId: templateId,
+                applicationPeriods: applicationPeriods,
+                useAsDefault: useAsDefault
+            });
+        }
+
         return {
             getNames: getNames,
             getExamples: getExamples,
             getByName: getByName,
-            getHistory: getHistory
+            getHistory: getHistory,
+            listVersionsByName: listVersionsByName,
+            saveAttachedApplicationPeriods: saveAttachedApplicationPeriods
         };
 	}();
 }]);

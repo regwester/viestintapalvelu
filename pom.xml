@@ -12,7 +12,7 @@
     -->
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>9.9-SNAPSHOT</version>
+    <version>10.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Viestintapalvelu</name>
@@ -39,7 +39,7 @@
         <checkstyle.consoleOutput>true</checkstyle.consoleOutput>
         <checkstyle.configLocation><![CDATA[http://pulpetti.hard.ware.fi:9000/sonar/profiles/export?format=checkstyle&amp;language=java&amp;name=SonarWayWithFindbugsAndOPHCheckstyle]]></checkstyle.configLocation>
 
-        <clover.version>3.1.8</clover.version>
+        <clover.version>3.3.0</clover.version>
         <clover.outputDirectory>${bamboo.data.home}/www/clover/${project.groupId}</clover.outputDirectory>
         <clover.base>${bamboo.data.home}/clover/${project.groupId}</clover.base>
         <!-- end-of-build-parent properties -->
@@ -85,7 +85,7 @@
         <log4j.version>1.2.17</log4j.version>
         <mail.version>1.4.7</mail.version>
         <mockito.version>1.9.5</mockito.version>
-        <organisaatio.version>8.0</organisaatio.version>
+        <organisaatio.version>9.7</organisaatio.version>
         <!-- jdbc4 is for JDK1.6 and jdbc41 is for JDK1.7 -->
         <postgresql.version>9.3-1102-jdbc4</postgresql.version>
         <powermock.version>1.5.5</powermock.version>
@@ -96,7 +96,7 @@
         <springockito.version>1.0.9</springockito.version>
         <spring.version>3.2.10.RELEASE</spring.version>
         <spring-security.version>3.1.3.RELEASE</spring-security.version>
-        <slf4j.version>1.6.1</slf4j.version>
+        <slf4j.version>1.7.7</slf4j.version>
         <surefire.plugin.version>2.12</surefire.plugin.version>
         <swagger.version>1.3.7</swagger.version>
         <tomcat.version>7.0.26</tomcat.version>
@@ -1412,38 +1412,28 @@
                         <groupId>com.atlassian.maven.plugins</groupId>
                         <artifactId>maven-clover2-plugin</artifactId>
                         <version>${clover.version}</version>
-
                         <configuration>
                             <licenseLocation>${bamboo.data.home}/clover/clover.license</licenseLocation>
                             <outputDirectory>${clover.outputDirectory}</outputDirectory>
                             <snapshot>${clover.base}/snapshot/clover.snapshot</snapshot>
                             <cloverDatabase>${clover.base}/db/clover.db</cloverDatabase>
                             <historyDir>${clover.base}/history</historyDir>
-
                             <singleCloverDatabase>true</singleCloverDatabase>
                             <generateHistorical>true</generateHistorical>
                             <alwaysReport>true</alwaysReport>
                             <generateXml>true</generateXml>
                             <includesAllSourceRoots>true</includesAllSourceRoots>
-                            <!--<copyExcludedFiles>false</copyExcludedFiles>-->
-                            <!--<includes>
-                                  <include>**/api/**/*.java</include>
-                                  <include>some/path/MyFile.java</include>
-                                  [...]
-                              </includes>  -->
                             <excludes>
                                 <exclude>**/*Mock.java</exclude>
                                 <exclude>**/*.scala</exclude>
                                 <!-- TODO, FIXME: exclude "**/*-api/**" modules. -->
                             </excludes>
-                            <!--  <targetPercentage>50%</targetPercentage>  -->
                         </configuration>
                         <executions>
                             <execution>
                                 <id>clover</id>
                                 <goals>
                                     <goal>setup</goal>
-                                    <!--<goal>optimize</goal>-->
                                     <goal>snapshot</goal>
                                 </goals>
                             </execution>
@@ -1452,7 +1442,6 @@
                                 <goals>
                                     <goal>clover</goal>
                                     <goal>log</goal>
-                                    <!-- <goal>check</goal> disable!-->
                                     <goal>save-history</goal>
                                 </goals>
                             </execution>

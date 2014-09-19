@@ -1,5 +1,13 @@
 package fi.vm.sade.viestintapalvelu.testdata;
 
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
@@ -11,8 +19,6 @@ import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
-
-import java.util.*;
 
 public class DocumentProviderTestData {
     public static AddressLabel getAddressLabel() {
@@ -60,6 +66,7 @@ public class DocumentProviderTestData {
     
     public static fi.vm.sade.viestintapalvelu.letter.LetterBatch getLetterBatch() {
         LetterBatch letterBatch = new LetterBatch();
+        
         letterBatch.setApplicationPeriod("Test-2014");
         letterBatch.setFetchTarget("test-fetchTarget");
         letterBatch.setLanguageCode("FI");
@@ -133,7 +140,8 @@ public class DocumentProviderTestData {
         letterBatch.setTemplateName("test-templateName");
         letterBatch.setTimestamp(new Date());
         letterBatch.setVersion(new Long(0));
-        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch, count));
+        
+        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
         letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
         
         return letterBatch;
@@ -411,6 +419,12 @@ public class DocumentProviderTestData {
         template.setReplacements(replacements);
         
         return template;
+    }
+
+    public static TemplateApplicationPeriod getTemplateHaku(Template template, String hakuOid) {
+        TemplateApplicationPeriod templateApplicationPeriod = new TemplateApplicationPeriod(template, hakuOid);
+        template.getApplicationPeriods().add(templateApplicationPeriod);
+        return templateApplicationPeriod;
     }
 
     public static TemplateContent getTemplateContent(Long id, Template template) {

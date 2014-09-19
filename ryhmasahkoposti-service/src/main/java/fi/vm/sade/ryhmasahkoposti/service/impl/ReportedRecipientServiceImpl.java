@@ -30,7 +30,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
     @Override
     public Long getNumberOfSendingFailed(Long messageID) {
-	return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(messageID, false);
+	return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
     }
 
     @Override
@@ -46,7 +46,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
     @Override
     public List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccesful(Long messageID, 
 	    PagingAndSortingDTO pagingAndSorting) {
-	return reportedRecipientDAO.findByMessageIdAndSendingUnsuccesful(messageID, pagingAndSorting);
+	return reportedRecipientDAO.findByMessageIdAndSendingUnsuccessful(messageID, pagingAndSorting);
     }
 
     @Override
@@ -64,13 +64,13 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 	Long nbrOfRecipients = reportedRecipientDAO.findNumberOfRecipientsByMessageID(messageID);
 	sendingStatus.setNumberOfReciepients(nbrOfRecipients);
 
-	Long nbrOfSuccesful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(messageID, true);
+	Long nbrOfSuccesful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, true);
 	if (nbrOfSuccesful != null) {
 	    nbrOfSuccesfulAndFailed += nbrOfSuccesful.longValue();
 	}
 	sendingStatus.setNumberOfSuccesfulSendings(nbrOfSuccesful);
 
-	Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(messageID, false);
+	Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
 	if (nbrOfFailed != null) {
 	    nbrOfSuccesfulAndFailed += nbrOfFailed.longValue();
 	} 	

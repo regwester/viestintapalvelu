@@ -1,65 +1,73 @@
 'use strict';
 
 angular.module('email')
-.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'ErrorDialog', 'Global',
-  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, ErrorDialog, Global) {
+.controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'DialogService', 'Global',
+  function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, DialogService, Global) {
 
-    $rootScope.emailsendid = "";
     $scope.tinymceOptions = {
       height: 400,
-      width: 600,
+      width: 650,
       menubar: false,
       language: Global.getUserLanguage(),
       //paste plugin to avoid ms word tags and similar content
-      plugins: "paste",
+      plugins: "paste textcolor",
+      toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor",
       paste_auto_cleanup_on_paste : true,
       paste_remove_styles: true,
       paste_remove_styles_if_webkit: true,
       paste_strip_class_attributes: true
     };
 
-    $scope.emaildata = window.emailData;
-    $scope.emaildata.email.attachInfo = [];
-    $scope.emaildata.email.html = true;
-    $scope.emaildata.email.from = 'opintopolku@oph.fi'; //For display only, the value comes from the backend configs
+    $scope.email = window.emailData.email;
+    $scope.recipients = window.emailData.recipient;
+    $scope.email.attachInfo = [];
+    $scope.email.html = true;
+    $scope.email.from = 'opintopolku@oph.fi'; //For display only, the value comes from the backend configs
 
-    $scope.sendGroupEmail = function () {
-      $scope.emailsendid = EmailService.email.save($scope.emaildata).$promise.then(
-        function(resp) {
-          var selectedDraft = DraftService.selectedDraft();
-          if(!!selectedDraft) {
-            DraftService.drafts.delete({id: selectedDraft});
-          }
-          $state.go('report_view', {messageID: resp.id});
-        },
-        function(error) {
-          ErrorDialog.showError(error);
-        },
-        function(update) {
-          alert("Notification " + update);
-        }
-      );
-    };
-    
+    $rootScope.callingProcess = $scope.email.callingProcess;
+
     $scope.isEmailState = function() {
       return $state.is('email');
     };
-    
+
+    $scope.previewEmail = function() {
+      $state.go('email.preview');
+    }
+
     $scope.cancelEmail = function () {
       $state.go('email_cancel');
-      $rootScope.callingProcess = $scope.emaildata.email.callingProcess;
     };
 
     $scope.saveDraft = function() {
-      console.log("Saving draft");
-      console.log($scope.emaildata.email);
-      DraftService.drafts.save($scope.emaildata.email, function(id) {
+      var draft = $scope.email;
+      if(draft.id) {
+        updateDraft(draft);
+      } else {
+        saveDraft(draft);
+      }
+    };
+
+    $scope.getEmailData = function() {
+      return {recipient: $scope.recipients, email: $scope.email};
+    }
+
+    function updateDraft(draft){
+      DraftService.drafts.update(draft, function() {
+        $state.go('.savedContent.drafts');
+      }, function(e) {
+        DialogService.showErrorDialog(e.data);
+      })
+
+    }
+
+    function saveDraft(draft) {
+      DraftService.drafts.save(draft, function() {
         updateDraftCount();
         $state.go('.savedContent.drafts');
       }, function(e) {
-        //do the error dialog popup?
+        DialogService.showErrorDialog(e.data);
       });
-    };
+    }
 
     $scope.counts = {
         drafts : 0,
@@ -68,9 +76,13 @@ angular.module('email')
     };
 
     $scope.$on('useDraft', function(event, draft) {
-      $scope.emaildata.email = draft;
+      $scope.email = draft;
       $state.go('email');
     });
+    $scope.$on('useEmail', function(event, email) {
+      $scope.email = email;
+      $state.go('email');
+    })
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();
@@ -88,12 +100,12 @@ angular.module('email')
     });
 
     $rootScope.$on('fileLoaded', function (e, call) {
-      $scope.emaildata.email.attachInfo.push(call);
+      $scope.email.attachInfo.push(call);
       $scope.$apply();
     });
     
     $scope.remove = function(id) {
-      $scope.emaildata.email.attachInfo.splice(id, 1);
+      $scope.email.attachInfo.splice(id, 1);
     };
     
     $scope.init();

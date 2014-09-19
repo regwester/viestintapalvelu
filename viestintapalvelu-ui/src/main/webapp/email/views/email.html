@@ -4,58 +4,48 @@
     </div>
     <div class="span8">
         <form novalidate="novalidate" class="form-horizontal">
-            <div class="control-group">
-                <label class="control-label">{{'email.label.vastaanottajat' | i18n}}</label>
-                <div class="controls" ng-if="emaildata.recipient.length > 30">
-                    {{emaildata.recipient.length}} {{'email.label.vastaanottajat.maara' | i18n}}
-                </div>
-                <div class="controls" ng-if="emaildata.recipient.length <= 30">
-                    <span ng-repeat="recipient in emaildata.recipient">
-                        {{recipient.email}}{{$last ? '' : ', '}}
-                    </span>
-                </div>
-            </div>
+            <recipient-list recipients="recipients" form="true" limit="30"></recipient-list>
             <div class="control-group">
                 <label class="control-label">{{'email.label.sender' | i18n}}</label>
                 <div class="controls">
-                    <input type="text" size="40" ng-model="emaildata.email.sender"/>
+                    <input type="text" size="40" ng-model="email.sender"/>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label">{{'email.label.from' | i18n}}</label>
                 <div class="controls">
-                    <span>&lt;{{emaildata.email.from}}&gt;</span>
-                    <input type="hidden" ng-model="emaildata.email.organizationOid"/>
+                    <span>&lt;{{email.from}}&gt;</span>
+                    <input type="hidden" ng-model="email.organizationOid"/>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label">{{'email.label.vastausosoite' | i18n}}</label>
+                <label class="control-label">{{'email.label.replyto' | i18n}}</label>
                 <div class="controls">
-                    <input type="text" size="40" ng-model="emaildata.email.replyTo"/>
+                    <input type="text" size="40" ng-model="email.replyTo"/>
                 </div>
             </div>
             <div class="control-group">
-                <label class="control-label required">{{'email.label.otsikko' | i18n}}</label>
+                <label class="control-label required">{{'email.label.subject' | i18n}}</label>
                 <div class="controls">
-                    <input type="text" size="40" ng-model="emaildata.email.subject"/>
+                    <input type="text" size="40" ng-model="email.subject"/>
                 </div>
             </div>
             <div class="control-group">
                 <label class="control-label required">{{'email.label.viesti' | i18n}}</label>
                 <div class="controls">
-                     <textarea ui-tinymce="tinymceOptions" ng-model="emaildata.email.body"></textarea>
+                     <textarea ui-tinymce="tinymceOptions" ng-model="email.body"></textarea>
                 </div>
             </div>
-            <input type="hidden" ng-model="emaildata.email.templateName"/> 
+            <input type="hidden" ng-model="email.templateName"/>
             <div class="control-group attachment-group">
-                <label class="control-label">{{'email.label.liitteet' | i18n}}</label>
+                <label class="control-label">{{'email.label.attachments' | i18n}}</label>
                 <div class="controls">
-                    <span class="bold" ng-show="!emaildata.email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span> 
+                    <span class="bold" ng-show="!email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span>
                     <ul class="filelist">
-                        <li ng-repeat="attachment in emaildata.email.attachInfo">{{attachment.fileName | limitSizeWithMiddleEllipsis : 15}} ({{attachment.fileSize | bytesToSize}})
+                        <li ng-repeat="attachment in email.attachInfo">{{attachment.fileName | limitSizeWithMiddleEllipsis : 15}} ({{attachment.fileSize | bytesToSize}})
                             <a ng-click="remove($index)"><i class="icon-remove"></i>Poista</a>
                         </li>
-                    </ul> 
+                    </ul>
                 </div>
             </div>
             <div ng-show="percentage" class="control-group">
@@ -82,8 +72,8 @@
                     <button ng-click="saveDraft()" class="inline-operation btn btn-small">
                         {{'email.button.tallenna' | i18n}}
                     </button>
-                    <button ng-click="sendGroupEmail()" class="inline-operation btn-primary btn-small">
-                        {{'email.button.laheta' | i18n}}
+                    <button ng-click="previewEmail()" class="inline-operation btn-primary btn-small">
+                        {{'email.button.preview' | i18n}}
                     </button>
                 </div>
             </div>

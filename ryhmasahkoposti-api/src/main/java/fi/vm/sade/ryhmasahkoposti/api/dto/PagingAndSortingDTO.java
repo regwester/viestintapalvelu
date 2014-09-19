@@ -9,6 +9,15 @@ public class PagingAndSortingDTO implements Serializable {
     private String sortedBy;
     private String sortOrder;
 
+    public PagingAndSortingDTO() {}
+
+    public PagingAndSortingDTO(Builder builder) {
+        fromIndex = builder.fromIndex;
+        numberOfRows = builder.numberOfRows;
+        sortedBy = builder.sortedBy;
+        sortOrder = builder.sortOrder;
+    }
+
     public int getFromIndex() {
         return fromIndex;
     }
@@ -39,5 +48,46 @@ public class PagingAndSortingDTO implements Serializable {
 
     public void setSortOrder(String sortOrder) {
         this.sortOrder = sortOrder;
+    }
+
+    public static class Builder {
+        private int fromIndex;
+        private int numberOfRows;
+        private String sortedBy;
+        private String sortOrder;
+
+        public Builder from(int index) {
+            this.fromIndex = index;
+            return this;
+        }
+        public Builder numberOfRows(int rows) {
+            this.numberOfRows = rows;
+            return this;
+        }
+        public Builder sortedBy(String value) {
+            this.sortedBy = value;
+            return this;
+        }
+        public Builder sortOrder(String value) {
+            this.sortOrder = value;
+            return this;
+        }
+        public PagingAndSortingDTO build() {
+            return new PagingAndSortingDTO(this);
+        }
+    }
+
+    public static PagingAndSortingDTO getDefault() {
+        return new Builder().from(0).numberOfRows(0).build();
+    }
+
+    @Override
+    public String toString() {
+        return "PagingAndSortingDTO{" +
+                "fromIndex=" + fromIndex +
+                ", numberOfRows=" + numberOfRows +
+                ", sortedBy='" + sortedBy + '\'' +
+                ", sortOrder='" + sortOrder + '\'' +
+                '}';
     }
 }
