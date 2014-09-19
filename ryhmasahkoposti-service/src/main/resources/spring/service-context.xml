@@ -65,8 +65,16 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource"
                          address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}"
                          inheritHeaders="true">
+        <!--<jaxrs-client:outInterceptors>-->
+            <!--<ref bean="ticketInterceptorRest"/>-->
+        <!--</jaxrs-client:outInterceptors>-->
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
+            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+                <property name="webCasUrl" value="${web.url.cas}" />
+                <property name="targetService" value="${ryhmasahkopostipalvelu.authenticationService.henkilo.cas.url}" />
+                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.henkilopalvelu}" />
+                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.henkilopalvelu}" />
+            </bean>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
@@ -79,7 +87,8 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource"
                          address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
+            <!-- Ei vaadi kirjautumista -->
+            <!--<ref bean="ticketInterceptorRest"/>-->
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>

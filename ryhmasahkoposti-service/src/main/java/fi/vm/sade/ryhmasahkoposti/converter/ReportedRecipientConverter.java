@@ -8,6 +8,8 @@ import java.util.Set;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Optional;
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
@@ -26,7 +28,7 @@ public class ReportedRecipientConverter {
         reportedRecipient.setSocialSecurityID("");
         reportedRecipient.setRecipientEmail(emailRecipient.getEmail());
         reportedRecipient.setLanguageCode(emailRecipient.getLanguageCode());
-        reportedRecipient.setSearchName("");
+        reportedRecipient.setSearchName(Optional.fromNullable(emailRecipient.getName()).or(""));
         reportedRecipient.setDetailsRetrieved(false);
         reportedRecipient.setSendingStarted(null);
         reportedRecipient.setSendingEnded(null);

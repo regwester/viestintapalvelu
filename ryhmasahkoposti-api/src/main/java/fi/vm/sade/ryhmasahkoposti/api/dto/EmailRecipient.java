@@ -11,22 +11,23 @@ public class EmailRecipient {
     private String oidType = "";
     private String email = "";
     private String languageCode = "FI";
+    private String name;
     
     /**
      * List of recipient replacements
      */
     private List<ReportedRecipientReplacementDTO> recipientReplacements;
-    
+
     public void setOid(String oid) {
-	this.oid = oid;
+        this.oid = oid;
     }
 
     public void setOidType(String oidType) {
-	this.oidType = oidType;
+        this.oidType = oidType;
     }
 
     public void setLanguageCode(String languageCode) {
-	this.languageCode = languageCode;
+        this.languageCode = languageCode;
     }
 
     public EmailRecipient() {
@@ -34,53 +35,53 @@ public class EmailRecipient {
     }
 
     public EmailRecipient(String oid) {
-	super();
-	this.oid = oid;
+        super();
+        this.oid = oid;
     }
 
     public EmailRecipient(String oid, String email) {
-	super();
-	this.oid = oid;
-	this.email = email;
+        super();
+        this.oid = oid;
+        this.email = email;
     }
 
     public EmailRecipient(String oid, String oidType, String email, String languageCode) {
-	super();
-	this.oid = oid;
-	this.oidType = oidType;
-	this.email = email;
-	this.languageCode = languageCode;
+        super();
+        this.oid = oid;
+        this.oidType = oidType;
+        this.email = email;
+        this.languageCode = languageCode;
     }
-    
-        public EmailRecipient(String oid, String oidType, String email,
-	    String languageCode,
-	    List<ReportedRecipientReplacementDTO> recipientReplacements) {
-	super();
-	this.oid = oid;
-	this.oidType = oidType;
-	this.email = email;
-	this.languageCode = languageCode;
-	this.recipientReplacements = recipientReplacements;
+
+    public EmailRecipient(String oid, String oidType, String email,
+                          String languageCode,
+                          List<ReportedRecipientReplacementDTO> recipientReplacements) {
+        super();
+        this.oid = oid;
+        this.oidType = oidType;
+        this.email = email;
+        this.languageCode = languageCode;
+        this.recipientReplacements = recipientReplacements;
     }
 
     public String getOid() {
-	return oid;
+        return oid;
     }
 
     public String getOidType() {
-	return oidType;
+        return oidType;
     }
 
     public String getLanguageCode() {
-	return languageCode;
+        return languageCode;
     }
 
     public String getEmail() {
-	return email;
+        return email;
     }
 
     public void setEmail(String email) {
-	this.email = email;
+        this.email = email;
     }
 
     
@@ -99,13 +100,22 @@ public class EmailRecipient {
         this.recipientReplacements = recipientReplacements;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+         * @see java.lang.Object#toString()
+         */
     @Override
     public String toString() {
 	return "EmailRecipient [oid=" + oid + ", oidType=" + oidType
 		+ ", email=" + email + ", languageCode=" + languageCode
+        + ", name=" + name
 		+ ", recipientReplacements=" + recipientReplacements + "]";
     }
 }
