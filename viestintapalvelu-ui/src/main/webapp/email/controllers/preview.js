@@ -26,7 +26,7 @@ angular.module('email')
             $scope.email.callingProcess = $scope.callingProcess;
             EmailService.email.save($scope.getEmailData()).$promise.then(
                 function(res) {
-                    DraftService.selectedDraft() && DraftService.drafts.delete({id: selectedDraft});
+                    DraftService.selectedDraft() && DraftService.drafts.delete({id: DraftService.selectedDraft()});
                     $state.go('report_view', {messageID: res.id});
                     $scope.sendingInProgress = false;
                 }, function(e) {
