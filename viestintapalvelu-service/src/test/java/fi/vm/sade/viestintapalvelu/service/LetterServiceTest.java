@@ -1,8 +1,19 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
+import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -17,20 +28,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
-import fi.vm.sade.viestintapalvelu.letter.LetterContent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
-import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
-import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import java.util.ArrayList;
+import java.util.List;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -195,5 +194,61 @@ public class LetterServiceTest {
         LetterReceiverLetter letter = new LetterReceiverLetter();
         letterService.updateLetter(letter);
         verify(mockedLetterReceiverLetterDAO).update(letter);
+    }
+
+    @Test
+    public void getBatchStatusSuccess() {
+        final long batchId = 123;
+
+        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(batchId, 0, 0);
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
+        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
+
+        assertEquals("Batch status should be ready when sent and total match", LetterBatchStatusDto.Status.ready, batchStatus.getProcessingStatus());
+
+        statusDto = new LetterBatchStatusDto(batchId, 456, 456);
+        batchStatus = letterService.getBatchStatus(batchId);
+
+        assertEquals("Batch status should be ready when sent and total match", LetterBatchStatusDto.Status.ready, batchStatus.getProcessingStatus());
+    }
+
+    @Test
+    public void getBatchStatusSending() {
+        final long batchId = 123;
+
+        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(batchId, 45, 123);
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
+        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
+
+        assertEquals("Batch status should be sending when the process is still going", LetterBatchStatusDto.Status.processing, batchStatus.getProcessingStatus());
+    }
+
+
+
+    @Test
+    public void getBatchStatusFailure() {
+        final long batchId = 123;
+
+        LetterBatchStatusDto statusDto = null;
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
+
+        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
+        assertEquals(LetterBatchStatusDto.Status.error, batchStatus.getProcessingStatus().error);
+        assertEquals("Error message didn't match", "Batch not found with id " + 123, batchStatus.getMessage());
+
+        statusDto = new LetterBatchStatusDto(batchId, null, null);
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
+
+        batchStatus = letterService.getBatchStatus(batchId);
+        assertEquals(LetterBatchStatusDto.Status.error, batchStatus.getProcessingStatus().error);
+        assertEquals("Error message didn't specify that batch was found but with null sending counts", "Batch was found but didn't didn't have all status data", batchStatus.getMessage());
+
+        //halted sending process TODO, needs VIES-207
+        /*
+        statusDto = new LetterBatchStatusDto(batchId, 234, 500);
+        batchStatus = letterService.getBatchStatus(batchId);
+        assertEquals("Error occurred while sending batch, resulting in halting of the process. Status should be error then.", LetterBatchStatusDto.Status.error, batchStatus.getProcessingStatus().error);
+        assertEquals("Error occurred during batch sending ", batchStatus.getMessage());
+        */
     }
 }

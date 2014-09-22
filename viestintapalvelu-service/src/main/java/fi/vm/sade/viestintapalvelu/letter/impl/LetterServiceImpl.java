@@ -1,21 +1,5 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
-
-import org.apache.pdfbox.util.PDFMergerUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
@@ -30,6 +14,21 @@ import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.model.*;
+import org.apache.pdfbox.util.PDFMergerUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
 
 /**
  * @author migar1
@@ -529,7 +528,24 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional(readOnly = true)
     public LetterBatchStatusDto getBatchStatus(long batchId) {
-        return letterBatchDAO.getLetterBatchStatus(batchId);
+        LetterBatchStatusDto batch = letterBatchDAO.getLetterBatchStatus(batchId);
+        if(batch == null) {
+            batch = new LetterBatchStatusDto(null, null, null);
+            batch.setMessage("Batch not found with id " + batchId);
+            return batch;
+        }
+
+        //todo needs VIES-207 implementation, the status should be readable from the database and not set here
+        if(batch.getTotal() == null || batch.getTotal() == null) {
+            batch.setProcessingStatus(LetterBatchStatusDto.Status.error);
+            batch.setMessage("Batch was found but didn't didn't have all status data");
+        } else if(batch.getTotal() == batch.getSent()) {
+            batch.setProcessingStatus(LetterBatchStatusDto.Status.ready);
+        } else {
+            batch.setProcessingStatus(LetterBatchStatusDto.Status.processing);
+        }
+
+        return batch;
     }
 
     @Override

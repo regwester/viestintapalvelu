@@ -22,14 +22,30 @@ package fi.vm.sade.viestintapalvelu.dao;
  * Time: 16:12
  */
 public class LetterBatchStatusDto {
+
     private Long letterBatchId;
     private Integer sent;
     private Integer total;
+
+    /**
+     * A free form text field for telling a more verbose status of the batch.
+     * For example, if the batch processing status is in error, you might want
+     * to indicate here what the actual error is.
+     */
+    private String message;
+    private Status processingStatus;
+
+    public enum Status {
+        processing,
+        ready,
+        error
+    }
 
     public LetterBatchStatusDto(Long letterBatchId, Number sent, Number total) {
         this.letterBatchId = letterBatchId;
         this.setSent(sent);
         this.setTotal(total);
+
     }
 
     public Integer getSent() {
@@ -37,7 +53,7 @@ public class LetterBatchStatusDto {
     }
 
     public void setSent(Number sent) {
-        this.sent = sent != null ? sent.intValue() : null;
+        this.sent = (sent != null) ? sent.intValue() : null;
     }
 
     public Integer getTotal() {
@@ -45,6 +61,28 @@ public class LetterBatchStatusDto {
     }
 
     public void setTotal(Number total) {
-        this.total = total != null ? total.intValue() : null;
+        this.total = (total != null) ? total.intValue() : null;
+    }
+
+    /**
+     * {@link fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto#message}
+     */
+    public String getMessage() {
+        return message;
+    }
+
+    /**
+     * {@link fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto#message}
+     */
+    public void setMessage(String message) {
+        this.message = message;
+    }
+
+    public Status getProcessingStatus() {
+        return processingStatus;
+    }
+
+    public void setProcessingStatus(Status processingStatus) {
+        this.processingStatus = processingStatus;
     }
 }
