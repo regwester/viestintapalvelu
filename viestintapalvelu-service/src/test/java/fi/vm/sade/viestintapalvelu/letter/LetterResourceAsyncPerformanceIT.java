@@ -21,7 +21,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.*;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 
 import javax.ws.rs.core.Response;
 
@@ -55,7 +61,6 @@ import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -72,10 +77,10 @@ import static org.junit.Assert.fail;
 public class LetterResourceAsyncPerformanceIT {
     protected static final Logger logger = LoggerFactory.getLogger(LetterResourceAsyncPerformanceIT.class);
 
-    private static final long MILLIS_IN_SECOND = 1000l;
+    private static final long MILLIS_IN_SECOND = 1000;
     private static final int RECEIVERS_COUNT = 2000;
     private static final int CONCURRENT_BATCHES = 3;
-    private static final long MAX_DURATION = 60l*MILLIS_IN_SECOND;
+    private static final long MAX_DURATION = 60 * MILLIS_IN_SECOND;
 
     @Autowired
     private LetterResource letterResource;
@@ -99,9 +104,31 @@ public class LetterResourceAsyncPerformanceIT {
             }
         });
     }
+    
+    @Test
+    public void processesSingleBatchWith4kLettersUnderMinute() throws Exception {
+        final Integer letterCount = 4000;
+        final long templateId = transactionalActions.createTemplate();
+        long id = asyncLetter(createLetterBatch(templateId, letterCount));
+        long start = System.currentTimeMillis();
+        while (isProcessing(id)) {
+            long currentDuration = System.currentTimeMillis() - start;
+            if (currentDuration > MAX_DURATION) {
+                fail("Test took " + roundSeconds(currentDuration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
+            }
+            Thread.sleep(5000);
+        }
+        long duration = System.currentTimeMillis()-start;
+        if (duration > MAX_DURATION) {
+            fail("Test took "+ roundSeconds(duration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
+        }
+        long througput = Math.round( (double)(letterCount) / roundSeconds(duration) );
+        logger.info("Done processLetterBatch in {} s < {} s, throughput: "+ througput +" messages / s. OK.",
+                roundSeconds(duration), roundSeconds(MAX_DURATION));
+    }
 
     @Test
-    public void processesXLettersUnderMinute() throws InterruptedException, ExecutionException {
+    public void processesThreeBatchesWith2kLettersUnderMinute() throws InterruptedException, ExecutionException {
         BlockingQueue<Runnable> queue = new LinkedBlockingDeque<Runnable>();
         ThreadPoolExecutor exec = new ThreadPoolExecutor(CONCURRENT_BATCHES,CONCURRENT_BATCHES+2,
                 MAX_DURATION, TimeUnit.MILLISECONDS, queue);
@@ -226,6 +253,7 @@ public class LetterResourceAsyncPerformanceIT {
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected boolean isProcessing(long id) {
         Response response = letterResource.letterBatchStatus(id);
         Map<String,Integer> entity = (Map<String, Integer>) response.getEntity();
