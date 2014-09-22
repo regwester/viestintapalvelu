@@ -16,6 +16,8 @@
 
 package fi.vm.sade.viestintapalvelu.dao;
 
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+
 /**
  * User: ratamaa
  * Date: 17.9.2014
@@ -33,18 +35,13 @@ public class LetterBatchStatusDto {
      * to indicate here what the actual error is.
      */
     private String message;
-    private Status processingStatus;
+    private LetterBatch.Status processingStatus;
 
-    public enum Status {
-        processing,
-        ready,
-        error
-    }
-
-    public LetterBatchStatusDto(Long letterBatchId, Number sent, Number total) {
+    public LetterBatchStatusDto(Long letterBatchId, Number sent, Number total, LetterBatch.Status status) {
         this.letterBatchId = letterBatchId;
         this.setSent(sent);
         this.setTotal(total);
+        this.processingStatus = status;
 
     }
 
@@ -78,11 +75,11 @@ public class LetterBatchStatusDto {
         this.message = message;
     }
 
-    public Status getProcessingStatus() {
+    public LetterBatch.Status getProcessingStatus() {
         return processingStatus;
     }
 
-    public void setProcessingStatus(Status processingStatus) {
+    public void setProcessingStatus(LetterBatch.Status processingStatus) {
         this.processingStatus = processingStatus;
     }
 }

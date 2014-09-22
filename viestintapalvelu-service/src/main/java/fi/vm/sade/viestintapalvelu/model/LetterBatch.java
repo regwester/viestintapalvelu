@@ -8,14 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
@@ -73,6 +66,10 @@ public class LetterBatch extends BaseEntity {
 
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
+
+    @Column(name = "käsittelyn_tila")
+    @Enumerated(EnumType.STRING)
+    private Status batchStatus;
     
     @Column(name = "kasittely_aloitettu")
     @Temporal(TemporalType.TIMESTAMP)
@@ -93,6 +90,9 @@ public class LetterBatch extends BaseEntity {
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
+
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private List<LetterBatchProcessingError> processingErrors;
  
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -254,4 +254,26 @@ public class LetterBatch extends BaseEntity {
 				+ ", storingOid=" + storingOid + ", organizationOid="
 				+ organizationOid + "]";
 	}
+
+    public Status getBatchStatus() {
+        return batchStatus;
+    }
+
+    public void setBatchStatus(Status batchStatus) {
+        this.batchStatus = batchStatus;
+    }
+
+    public List<LetterBatchProcessingError> getProcessingErrors() {
+        return processingErrors;
+    }
+
+    public void setProcessingErrors(List<LetterBatchProcessingError> processingErrors) {
+        this.processingErrors = processingErrors;
+    }
+
+    public enum Status {
+        processing,
+        ready,
+        error
+    }
 }

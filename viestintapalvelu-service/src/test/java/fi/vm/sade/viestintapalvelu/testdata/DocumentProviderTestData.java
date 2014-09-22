@@ -1,13 +1,5 @@
 package fi.vm.sade.viestintapalvelu.testdata;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
@@ -19,6 +11,8 @@ import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
+
+import java.util.*;
 
 public class DocumentProviderTestData {
     public static AddressLabel getAddressLabel() {
@@ -119,6 +113,8 @@ public class DocumentProviderTestData {
         letterBatch.setVersion(new Long(0));
         letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
         letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
+        letterBatch.setBatchStatus(fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.processing);
+
         return letterBatch;
     }
 

@@ -1,19 +1,11 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
-import java.util.List;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-
-import org.springframework.stereotype.Repository;
-
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.PathBuilder;
-
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
@@ -23,6 +15,11 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
+import org.springframework.stereotype.Repository;
+
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
+import java.util.List;
 
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
@@ -153,7 +150,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                         " (select count(ltr2.id) from LetterBatch batch2 " +
                         "       inner join batch2.letterReceivers receiver2" +
                         "       inner join receiver2.letterReceiverLetter ltr2" +
-                        "   where batch2.id = lb.id)) from LetterBatch lb where lb.id = :batchId ",
+                        "   where batch2.id = lb.id)," +
+                        " lb.batchStatus) from LetterBatch lb where lb.id = :batchId ",
                     LetterBatchStatusDto.class)
                 .setParameter("batchId", letterBatchId)
                 .setMaxResults(1)
