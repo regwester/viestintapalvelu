@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
 /**
@@ -34,10 +36,12 @@ public interface LetterService {
      * @param languageCode Kielikoodi
      * @param organizationOid Organisaation OID
      * @param tag Tunniste
+     * @param applicationPeriod
      * @return Kirjelähetyksen tiedot
      */
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
-        String languageCode, String organizationOid, String tag);
+                      String languageCode, String organizationOid,
+                      Optional<String> tag, Optional<String> applicationPeriod);
 
     /**
      * Hakee annettujen hakuparametrien mukaiset korvauskentien tiedot
@@ -46,10 +50,11 @@ public interface LetterService {
      * @param languageCode Kielikoodi
      * @param organizationOid organisaation OID
      * @param tag Tunniste
+     * @param applicationPeriod
      * @return Lista korvauskenttien tietoja
      */
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
-        String languageCode, String organizationOid, String tag);
+                  String languageCode, String organizationOid, Optional<String> tag, Optional<String> applicationPeriod);
 
     /**
      * Hakee vastaanottajan kirjeen sisällön

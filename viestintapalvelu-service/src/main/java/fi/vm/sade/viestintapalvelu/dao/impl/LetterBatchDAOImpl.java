@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Optional;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -26,21 +27,32 @@ import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
 
-    public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid, String tag) {
+    public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid,
+                                                   Optional<String> tag, Optional<String> applicationPeriod) {
         EntityManager em = getEntityManager();
 
         String findTemplate = "SELECT a FROM LetterBatch a WHERE "
             + "a.templateName=:templateName AND "
             + "a.organizationOid=:organizationOid AND "
-            + "a.language=:language AND "
-            + "a.tag LIKE :tag "
-            + "ORDER BY a.timestamp DESC";
+            + "a.language=:language  ";
+        if (tag.isPresent()) {
+            findTemplate += " AND a.tag LIKE :tag ";
+        }
+        if (applicationPeriod.isPresent()) {
+            findTemplate += " AND a.applicationPeriod = :applicationPeriod ";
+        }
+        findTemplate +=  "ORDER BY a.timestamp DESC";
 
         TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
         query.setParameter("templateName", templateName);
         query.setParameter("language", language);
         query.setParameter("organizationOid", organizationOid);
-        query.setParameter("tag", tag);
+        if (tag.isPresent()) {
+            query.setParameter("tag", tag.get());
+        }
+        if (applicationPeriod.isPresent()) {
+            query.setParameter("applicationPeriod", applicationPeriod.get());
+        }
         query.setFirstResult(0);	// LIMIT 1
         query.setMaxResults(1);  	//
 

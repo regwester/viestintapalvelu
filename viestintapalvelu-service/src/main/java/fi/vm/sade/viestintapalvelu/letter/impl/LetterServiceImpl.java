@@ -19,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Optional;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
@@ -121,11 +123,12 @@ public class LetterServiceImpl implements LetterService {
     /* - findLetterBatchByNameOrgTag - */
     /* ------------------------------- */
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
-        String languageCode, String organizationOid, String tag) {
+                          String languageCode, String organizationOid,
+                          Optional<String> tag, Optional<String> applicationPeriod) {
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
 
         LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode,
-            organizationOid, tag);
+            organizationOid, tag, applicationPeriod);
         if (letterBatch != null) {
 
             // kirjeet.kirjelahetys
@@ -149,14 +152,16 @@ public class LetterServiceImpl implements LetterService {
     /* - findReplacementByNameOrgTag - */
     /* ------------------------------- */
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
-        String languageCode, String organizationOid, String tag) {
+                          String languageCode, String organizationOid,
+                          Optional<String> tag, Optional<String> applicationPeriod) {
 
         List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
         LetterBatch letterBatch = null;
-        if (tag == null) {
+        if (!tag.isPresent() && !applicationPeriod.isPresent()) {
             letterBatch = letterBatchDAO.findLetterBatchByNameOrg(templateName, languageCode, organizationOid);
         } else {
-            letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag);
+            letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag,
+                    applicationPeriod);
         }
         if (letterBatch != null) {
 

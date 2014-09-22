@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.dao;
 
 import java.util.List;
 
+import com.google.common.base.Optional;
+
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
@@ -21,9 +23,12 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      * @param language Kielikoodi
      * @param organizationOid Organisaation OID
      * @param tag Tunniste
+     * @param applicationPeriod
      * @return Kirjelähetyksen tiedot
      */
-	public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid, String tag);
+	public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid,
+                                                   Optional<String> tag,
+                                                   Optional<String> applicationPeriod);
 
     /**
      * Haetaan kirjelähetyksen tiedot hakuparametreilla

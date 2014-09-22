@@ -31,6 +31,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -44,7 +45,6 @@ import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
@@ -252,11 +252,15 @@ public class LetterResource extends AsynchronousResource {
 
         String tag = request.getParameter("tag");
 
+        String applicationPeriod = request.getParameter("applicationPeriod");
+
         if ((tag == null) || ("".equals(tag))) {
             tag = "%%";
         }
 
-        return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid, tag)).build();
+        return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid,
+                Optional.fromNullable(tag),
+                Optional.fromNullable(applicationPeriod))).build();
     }
 
     @GET
