@@ -32,8 +32,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
@@ -389,11 +387,7 @@ public class LetterResource extends AsynchronousResource {
             return Response.status(Status.NOT_FOUND).build();
         }
 
-        Map<String, Integer> statusMap = new HashMap<String, Integer>();
-        statusMap.put("sent", status.getSent());
-        statusMap.put("total", status.getTotal());
-
-        return Response.status(Status.OK).entity(statusMap).build();
+        return Response.status(Status.OK).entity(status).build();
     }
     
     @GET
