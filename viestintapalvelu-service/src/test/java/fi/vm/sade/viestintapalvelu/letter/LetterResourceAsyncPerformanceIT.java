@@ -116,7 +116,7 @@ public class LetterResourceAsyncPerformanceIT {
             if (currentDuration > MAX_DURATION) {
                 fail("Test took " + roundSeconds(currentDuration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
             }
-            Thread.sleep(5000);
+            Thread.sleep(500);
         }
         long duration = System.currentTimeMillis()-start;
         if (duration > MAX_DURATION) {
