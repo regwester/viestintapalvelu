@@ -8,14 +8,14 @@
         {
             "order": 1,
             "name": "koekutsukirje",
-            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/> <style type=\"text/css\">$tyylit</style> <title>Koekutsu</title></head><body><div class=\"koekutsukirjeenpaivays\">$letterDate</div><div class='koekutsuheader'>    <div class='koekutsuosoitetarra'><div>$osoite</div>    </div></div><div class=\"koekutsusisalto\"><p>KOEKUTSU</p>$sisalto <p>#if ($tarjoaja)$tarjoaja<br/>#end#if ($hakukohde)\n$hakukohde<br/>\n#end</p><br/>\n#if ($koeaika)\nKoeaika: $koeaika<br/>\n#end#if ($koepaikka)Koepaikka: $koepaikka\n<br/>#end#if ($koepaikanosoite)Osoite: $koepaikanosoite\n<br/>#end<br/>#if ($muut_hakukohteet and not $muut_hakukohteet.isEmpty())<p>Kokeesi tulos hyväksytään myös seuraaviin hakukohteisiisi: </p><p>#foreach($muu_hakukohde in $muut_hakukohteet)#if ($muu_hakukohde)$muu_hakukohde<br/>#end#end</p>#end $sisalto_loppu#if ($hakijapalveluidenYhteystiedot)<p><br/>$hakijapalveluidenYhteystiedot</p>#end</div></body></html>",
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/> <style type=\"text/css\">$tyylit</style> <title>$otsikko</title></head><body><div class=\"koekutsukirjeenpaivays\">$letterDate</div><div class='koekutsuheader'>    <div class='koekutsuosoitetarra'><div>$osoite</div>    </div></div><div class=\"koekutsusisalto\"><p>$otsikko</p><p>#if ($tarjoaja)$tarjoaja#if ($hakukohde), #end#end#if ($hakukohde)$hakukohde\n#end</p> $sisalto \n<br/>#if ($muut_hakukohteet and not $muut_hakukohteet.isEmpty())<p>Kokeesi tulos hyväksytään myös seuraaviin hakukohteisiisi: </p><p>#foreach($muu_hakukohde in $muut_hakukohteet)#if ($muu_hakukohde)$muu_hakukohde<br/>#end#end</p>#end</div></body></html>",
             "timestamp": null,
             "id": null
         },
         {
             "order": 2,
             "name": "email_body",
-            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/> <style type=\"text/css\">$tyylit</style> <title>Koekutsu</title></head><body><div class=\"koekutsusisalto\"><p>$sisalto</p> #if ($tarjoaja)$tarjoaja<br/>#end#if ($hakukohde)\n$hakukohde<br/>\n#end</p><br/>\n#if ($koeaika)\nKoeaika: $koeaika<br/>\n#end#if ($koepaikka)Koepaikka: $koepaikka\n<br/>#end#if ($koepaikanosoite)Osoite: $koepaikanosoite\n<br/>#end<br/>#if ($muut_hakukohteet and not $muut_hakukohteet.isEmpty())<p>Kokeesi tulos hyväksytään myös seuraaviin hakukohteisiisi: </p><p>#foreach($muu_hakukohde in $muut_hakukohteet)#if ($muu_hakukohde)$muu_hakukohde<br/>#end#end</p>#end $sisalto_loppu#if ($hakijapalveluidenYhteystiedot)<p><br/>$hakijapalveluidenYhteystiedot</p>#end</div></body></html>",
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/> <style type=\"text/css\">$tyylit</style> <title>$otsikko</title></head><body><div class=\"koekutsusisalto\"><p>$sisalto</p> <br/>#if ($muut_hakukohteet and not $muut_hakukohteet.isEmpty())<p>Kokeesi tulos hyväksytään myös seuraaviin hakukohteisiisi: </p><p>#foreach($muu_hakukohde in $muut_hakukohteet)#if ($muu_hakukohde)$muu_hakukohde<br/>#end#end</p>#end</div></body></html>",
             "timestamp": null,
             "id": null
         }
@@ -23,17 +23,10 @@
     "replacements": [
         {
             "name": "sisalto",
-            "defaultValue": "<p>Hyvä hakija,</p><p>olet osallistunut korkeakoulujen syksyn 2014 yhteishakuun. Sinut on kutsuttu seuraavaan koetilaisuuteen:</p>",
+            "defaultValue": "<p>Hyvä hakija,</p><p>olet osallistunut korkeakoulujen syksyn 2014 yhteishakuun. Sinut on kutsuttu seuraavaan koetilaisuuteen:</p><p>Koeaika: <br/>\nKoepaikka: \n<br/>Osoite: </p><p>Lisätietoja:<p><p>Jos sinulla on kysyttävää valintakokeen järjestämisestä tai peruutat osallistumisesi, ota yhteyttä kokeen järjestävän korkeakoulun hakijapalveluihin.</p><p>Tervetuloa kokeeseen!</p><p><br/>Hakijapalveluiden yhteystiedot / kk:n yhteystiedot</p>",
             "mandatory": false,
             "timestamp": null,
             "id": 0
-        },
-        {
-            "name": "sisalto_loppu",
-            "defaultValue": "<p>Lisätietoja:<p><p>Jos sinulla on kysyttävää valintakokeen järjestämisestä tai peruutat osallistumisesi, ota yhteyttä kokeen järjestävän korkeakoulun hakijapalveluihin.</p><p>Tervetuloa kokeeseen!</p>",
-            "mandatory": false,
-            "timestamp": null,
-            "id": 1
         },
         {
             "name": "otsikko",
