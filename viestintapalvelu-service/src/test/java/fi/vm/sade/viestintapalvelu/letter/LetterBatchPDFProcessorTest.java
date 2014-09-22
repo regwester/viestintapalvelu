@@ -7,6 +7,7 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -23,15 +24,15 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import fi.vm.sade.viestintapalvelu.util.AnswerChain;
 
+import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstDoNothing;
+import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
 import static org.mockito.Matchers.any;
-
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.timeout;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LetterBatchPDFProcessorTest {
@@ -87,6 +88,30 @@ public class LetterBatchPDFProcessorTest {
         assertTrue(state.get());
         verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
         verify(letterReceiverLetterDAO, timeout(100).times(amountOfReceivers)).update(any(LetterReceiverLetter.class));
+    }
+
+    @Test
+    public void buildsPDFForAllReceiversWithFailure() throws Exception {
+        final int amountOfReceivers = 121;
+        //doCallRealMethod().when(service).runBatch(any(long.class));
+        when(letterBatchDAO.findLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
+        doCallRealMethod().when(service).processLetterReceiver(any(long.class));
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
+        when(letterReceiverLetterDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
+                .iterator().next().getLetterReceiverLetter());
+        int okCount = 20;
+        AnswerChain<Void> processCalls = atFirstDoNothing().times(okCount).thenThrow(new IllegalStateException("Something went wrong.")),
+                updateCalls = atFirstDoNothing();
+        doAnswer(processCalls)
+                .when(builder).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class),
+                        any(Map.class), any(Map.class));
+        doAnswer(updateCalls).when(letterReceiverLetterDAO).update(any(LetterReceiverLetter.class));
+
+        Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
+        assertFalse(state.get());
+        assertTrue(processCalls.getTotalCallCount() > okCount); // okCount + 1 at least + possible other threads
+        assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + LetterBatchPDFProcessor.THREADS);
+        assertEquals(okCount, updateCalls.getTotalCallCount());
     }
 
     private List<Long> listOfLongsUpTo(int amountOfReceivers) {

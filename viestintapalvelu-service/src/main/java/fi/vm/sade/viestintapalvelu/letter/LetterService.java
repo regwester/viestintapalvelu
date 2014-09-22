@@ -91,7 +91,7 @@ public interface LetterService {
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
     @Transactional
-    void processLetterReceiver(long receiverId);
+    void processLetterReceiver(long receiverId) throws Exception;
 
     void updateBatchProcessingFinished(long id, LetterBatchProcess process);
 

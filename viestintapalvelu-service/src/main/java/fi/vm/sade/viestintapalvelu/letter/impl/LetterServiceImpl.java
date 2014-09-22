@@ -489,16 +489,11 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     @Transactional
-    public void processLetterReceiver(long receiverId) {
+    public void processLetterReceiver(long receiverId) throws Exception {
         LetterReceivers receiver = letterReceiverLetterDAO.read(receiverId).getLetterReceivers();
         LetterBatch batch = receiver.getLetterBatch();
-        try {
-            getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
-            letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
-        } catch (Exception e) {
-            //TODO: handle
-            logger.error(e.getMessage(), e);
-        }
+        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
+        letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
     private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
