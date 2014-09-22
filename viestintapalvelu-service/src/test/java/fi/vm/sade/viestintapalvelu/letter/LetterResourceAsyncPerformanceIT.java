@@ -53,6 +53,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
@@ -256,10 +257,10 @@ public class LetterResourceAsyncPerformanceIT {
     @SuppressWarnings("unchecked")
     protected boolean isProcessing(long id) {
         Response response = letterResource.letterBatchStatus(id);
-        Map<String,Integer> entity = (Map<String, Integer>) response.getEntity();
+        LetterBatchStatusDto entity = (LetterBatchStatusDto) response.getEntity();
         logger.info("  > Batch "+id+" status: {} / {}",
-                entity.get("sent"), entity.get("total"));
-        return entity.get("sent").compareTo(entity.get("total")) < 0;
+                entity.getSent(), entity.getTotal());
+        return entity.getSent().compareTo(entity.getTotal()) < 0;
     }
 
     @Configuration

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -22,6 +23,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
+import static junit.framework.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 
 import static org.mockito.Mockito.doCallRealMethod;
@@ -57,6 +60,7 @@ public class LetterBatchPDFProcessorTest {
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));
         doCallRealMethod().when(service).setLogger(any(Logger.class));
         doCallRealMethod().when(service).getLetterBuilder();
+        doCallRealMethod().when(service).findLetterReceiverIdsByBatch(any(long.class));
         service.setLetterBuilder(builder);
         service.setLetterBatchDAO(letterBatchDAO);
         service.setLogger(LoggerFactory.getLogger(LetterServiceImpl.class));
@@ -79,7 +83,8 @@ public class LetterBatchPDFProcessorTest {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
         when(letterReceiverLetterDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
                 .iterator().next().getLetterReceiverLetter());
-        processor.processLetterBatch(LETTERBATCH_ID);
+        Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
+        assertTrue(state.get());
         verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
         verify(letterReceiverLetterDAO, timeout(100).times(amountOfReceivers)).update(any(LetterReceiverLetter.class));
     }

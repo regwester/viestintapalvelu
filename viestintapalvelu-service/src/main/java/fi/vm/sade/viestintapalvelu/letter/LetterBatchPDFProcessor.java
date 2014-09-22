@@ -1,7 +1,9 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
+import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import org.jgroups.util.ConcurrentLinkedBlockingQueue;
 import org.slf4j.Logger;
@@ -27,16 +29,16 @@ public class LetterBatchPDFProcessor {
         this.letterService = letterService;
     }
 
-    public void processLetterBatch(long letterBatchId) {
+    public Future<Boolean> processLetterBatch(long letterBatchId) {
         letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
         BatchJob job = new BatchJob(letterBatchId, letterService.findLetterReceiverIdsByBatch(letterBatchId), THREADS);
-        executorService.submit(job);
+        return executorService.submit(job);
     }
 
     /**
      * Queue per job (not global for the whole component):
      */
-    protected class BatchJob implements Runnable {
+    protected class BatchJob implements Callable<Boolean> {
         private final long letterBatchId;
         private final int threads;
         private volatile ConcurrentLinkedBlockingQueue<Long> unprocessedLetterReceivers;
@@ -49,13 +51,15 @@ public class LetterBatchPDFProcessor {
         }
 
         @Override
-        public void run() {
+        public Boolean call() throws Exception{
             for (int i = 0; i < threads; i++) {
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
                         Long nextId = unprocessedLetterReceivers.poll();
                         while (nextId != null) {
+                            // To ensure that no id is processed twice, you could verify the output of:
+                            // logger.debug("Thread : " + Thread.currentThread().getId() + " processing: " + nextId);
                             letterService.processLetterReceiver(nextId);
                             nextId = unprocessedLetterReceivers.poll();
                         }
@@ -68,10 +72,11 @@ public class LetterBatchPDFProcessor {
                     Thread.sleep(50l);
                 } catch (InterruptedException e) {
                     logger.error("Interrupted", e);
-                    return;
+                    return false;
                 }
             }
             letterService.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
+            return true;
         }
     }
 
