@@ -23,7 +23,7 @@
     "replacements": [
         {
             "name": "sisalto",
-            "defaultValue": "<p>Dear applicant,</p><p>You have applied in the autumn 2014 joint application to higher education. You are invited to participate in the entrance examination.</p><p>Exam time: <br/>Exam place: \n<br/>Address: </p><p>Further information:<p><p>If you have any questions regarding the arrangements of the entrance examination or you wish to cancel your participation in the exam, please contact the admission services of the higher education institution in charge of arranging the examination.</p><p>Welcome to participate in the exam!</p><p><br/>Admission services contact details / higher education institution contact details</p>",
+            "defaultValue": "<p>Dear applicant,</p><p>You have applied in the autumn 2014 joint application to higher education. You are invited to participate in the entrance examination.</p><p>Exam: <br/>\nExam time: <br/>Exam place: \n<br/>Address: </p><p>Further information:<p><p>If you have any questions regarding the arrangements of the entrance examination or you wish to cancel your participation in the exam, please contact the admission services of the higher education institution in charge of arranging the examination.</p><p>Welcome to participate in the exam!</p><p><br/>Admission services contact details / higher education institution contact details</p>",
             "mandatory": false,
             "timestamp": null,
             "id": 0
