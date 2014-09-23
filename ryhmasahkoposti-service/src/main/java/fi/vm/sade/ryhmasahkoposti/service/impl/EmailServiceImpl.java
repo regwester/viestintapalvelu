@@ -223,17 +223,17 @@ public class EmailServiceImpl implements EmailService {
 
         if (!StringUtils.isEmpty(buildMessage)) {
             message.setBody(buildMessage);
-        } else
+        } else {
             throw new Exception("Template build error. messageId=" + messageId);
+        }
 
         String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), 
             message.getMessageReplacements(), recipientReplacements);
         if (!StringUtils.isEmpty(buildMessageSubject)) {
             message.setSubject(buildMessageSubject);
-        } else
+        } else {
             throw new Exception("Message subject build error. messageId=" + messageId);
-        
-
+        }
     }
 
     private List<ReportedRecipientReplacementDTO> getRecipientReplacements(EmailRecipientDTO er) {

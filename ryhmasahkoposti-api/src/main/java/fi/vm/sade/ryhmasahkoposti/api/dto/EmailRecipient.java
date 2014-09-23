@@ -98,8 +98,7 @@ public class EmailRecipient {
     /**
      * @param recipientReplacements the recipientReplacements to set
      */
-    public void setRecipientReplacements(
-    	List<ReportedRecipientReplacementDTO> recipientReplacements) {
+    public void setRecipientReplacements(List<ReportedRecipientReplacementDTO> recipientReplacements) {
         this.recipientReplacements = recipientReplacements;
     }
 

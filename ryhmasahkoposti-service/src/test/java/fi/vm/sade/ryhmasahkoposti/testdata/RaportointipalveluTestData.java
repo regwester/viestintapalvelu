@@ -42,6 +42,7 @@ public class RaportointipalveluTestData {
         emailRecipient.setLanguageCode("vastaanottajan kielikoodi");
         emailRecipient.setOid("vastaanottajan oid-tunnus");
         emailRecipient.setOidType("arvoksi tyhja");
+        emailData.setRecipient(new ArrayList<EmailRecipient>(Arrays.asList(emailRecipient)));
 
         return emailData;
     }
@@ -325,7 +326,7 @@ public class RaportointipalveluTestData {
 
         reportedRecipientReplacement.setReportedRecipient(reportedRecipient);
         reportedRecipientReplacement.setName("test-replacement-key");
-        reportedRecipientReplacement.setDefaultValue("default-value");
+        reportedRecipientReplacement.setValue("default-value");
         reportedRecipientReplacement.setTimestamp(new Date());
 
         return reportedRecipientReplacement;
@@ -354,7 +355,7 @@ public class RaportointipalveluTestData {
     /**
      * Generate replacements data.
      *
-     * @param count
+     * @param ids
      * @return Test object
      */
     public static List<ReplacementDTO> getEmailReplacements(int... ids) {
@@ -374,7 +375,7 @@ public class RaportointipalveluTestData {
     /**
      * Generate replacements data.
      *
-     * @param count
+     * @param ids
      * @return Test object
      */
     public static Set<ReplacementDTO> getTemplateReplacements(int... ids) {
@@ -395,7 +396,7 @@ public class RaportointipalveluTestData {
     /**
      * Generate reported recipient replacements data.
      *
-     * @param count
+     * @param ids
      * @return Test object
      */
     public static List<ReportedRecipientReplacementDTO> getReportedReceientReplacements(int... ids) {
