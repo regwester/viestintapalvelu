@@ -32,8 +32,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult;
 import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.*;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDtoConverter;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
@@ -65,7 +67,9 @@ public class EmailSendQueueServiceTest {
     public void setup() {
         emailSendQueueService = new EmailSendQueueServiceImpl(sendQueueDao,
                 new EmailQueueDtoConverter(), new EmailRecipientDTOConverter(),
-                new EmailMessageDTOConverter());
+                new EmailMessageDTOConverter(),
+                new ReportedRecipientReplacementConverter(),
+                new ObjectMapperProvider());
         sendQueueDao = mock(SendQueueDAO.class);
         emailSendQueueService.setSendQueueDao(sendQueueDao);
         emailSendQueueService.setMaxEmailRecipientHandleTimeMillis(TIMEOUT_MILLIS);

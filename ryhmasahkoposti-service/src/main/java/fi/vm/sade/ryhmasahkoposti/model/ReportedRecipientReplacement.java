@@ -34,7 +34,7 @@ public class ReportedRecipientReplacement extends BaseEntity {
 
     private static final long serialVersionUID = -7834429548964811085L;
 
-    @OneToOne(fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "raportoitavavastaanottaja_id")
     private ReportedRecipient reportedRecipient;
 

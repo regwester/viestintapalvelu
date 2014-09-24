@@ -12,7 +12,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 
@@ -24,11 +23,6 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
  */
 @Component
 public class ReportedRecipientReplacementConverter {
-
-    CurrentUserComponent currentUserComponent;
-
-    @Autowired
-    public ReportedRecipientReplacementConverter(CurrentUserComponent currentUserComponent) {}
 
     @Autowired
     private ObjectMapperProvider objectMapperProvider;
@@ -85,19 +79,25 @@ public class ReportedRecipientReplacementConverter {
         ObjectMapper mapper = objectMapperProvider.getContext(ReportedRecipientReplacementConverter.class);
 
         for (ReportedRecipientReplacement replacement : replacements) {
-
-            ReportedRecipientReplacementDTO messageRecipentReplacement = new ReportedRecipientReplacementDTO();
-            messageRecipentReplacement.setName(replacement.getName());
-            messageRecipentReplacement.setDefaultValue(replacement.getValue());
-            if (replacement.getJsonValue() != null) {
-                Object value = mapper.readValue(replacement.getJsonValue(), Object.class);
-                messageRecipentReplacement.setValue(value);
-            }
-
-            reportedRecipientReplacements.add(messageRecipentReplacement);
+            reportedRecipientReplacements.add(convert(replacement, new ReportedRecipientReplacementDTO(), mapper));
         }
 
         return reportedRecipientReplacements;
+    }
+
+    public ReportedRecipientReplacementDTO convert(ReportedRecipientReplacement from, ReportedRecipientReplacementDTO to) throws IOException {
+        return convert(from, to, objectMapperProvider.getContext(ReportedRecipientReplacementConverter.class));
+    }
+
+    public ReportedRecipientReplacementDTO convert(ReportedRecipientReplacement from, ReportedRecipientReplacementDTO to,
+                                                   ObjectMapper mapper) throws IOException {
+        to.setName(from.getName());
+        to.setDefaultValue(from.getValue());
+        if (from.getJsonValue() != null) {
+            Object value = mapper.readValue(from.getJsonValue(), Object.class);
+            to.setValue(value);
+        }
+        return to;
     }
 
     public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {

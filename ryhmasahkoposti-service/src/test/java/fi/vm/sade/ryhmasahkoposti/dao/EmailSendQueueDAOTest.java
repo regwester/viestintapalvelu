@@ -231,4 +231,8 @@ public class EmailSendQueueDAOTest {
         assertEquals(recipient2.getId(), results.get(2).getReportedRecipientId());
     }
 
+    @Test
+    public void testFindRecipientReplacements() {
+        // TODO
+    }
 }

@@ -51,7 +51,7 @@ public class ReportedRecipientReplacementDAOTest {
 
     @Before
     public void setup() {
-        replacementConverter = new ReportedRecipientReplacementConverter(null);
+        replacementConverter = new ReportedRecipientReplacementConverter();
         replacementConverter.setObjectMapperProvider(new ObjectMapperProvider());
     }
 

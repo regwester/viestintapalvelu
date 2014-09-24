@@ -37,21 +37,23 @@ public class EmailMessageDTOConverter {
     }
 
     private List<ReplacementDTO> convertMessageReplacementDTO(List<ReportedMessageReplacement> reportedMessageReplacements) {
-
         List<ReplacementDTO> replacements = new ArrayList<ReplacementDTO>();
-        if (reportedMessageReplacements == null)
+        if (reportedMessageReplacements == null) {
             return replacements;
+        }
 
         for (ReportedMessageReplacement reportedMessageReplacement : reportedMessageReplacements) {
-
-            ReplacementDTO replacementDTO = new ReplacementDTO();
-            replacementDTO.setName(reportedMessageReplacement.getName());
-            replacementDTO.setDefaultValue(reportedMessageReplacement.getDefaultValue());
-            replacementDTO.setId(reportedMessageReplacement.getId());
-            replacements.add(replacementDTO);
+            replacements.add(convert(reportedMessageReplacement, new ReplacementDTO()));
         }
 
         return replacements;
+    }
+
+    public ReplacementDTO convert(ReportedMessageReplacement from, ReplacementDTO to) {
+        to.setName(from.getName());
+        to.setDefaultValue(from.getDefaultValue());
+        to.setId(from.getId());
+        return to;
     }
 
     private List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {

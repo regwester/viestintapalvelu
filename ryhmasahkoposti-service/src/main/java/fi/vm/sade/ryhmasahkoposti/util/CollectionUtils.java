@@ -34,6 +34,17 @@ public final class CollectionUtils {
     private CollectionUtils() {
     }
 
+    public static final Function<BaseEntity, Long> ENTITY_ID = new Function<BaseEntity, Long>() {
+        @Nullable
+        @Override
+        public Long apply(@Nullable BaseEntity baseEntity) {
+            if (baseEntity == null) {
+                return null;
+            }
+            return baseEntity.getId();
+        }
+    };
+
     public static<T extends BaseEntity> List<Long> extractIds(Collection<T> entities) {
         return new ArrayList<Long>(Collections2.transform(entities, ENTITY_ID));
     }
@@ -46,15 +57,26 @@ public final class CollectionUtils {
         return map;
     }
 
-    public static final Function<BaseEntity, Long> ENTITY_ID = new Function<BaseEntity, Long>() {
-        @Nullable
-        @Override
-        public Long apply(@Nullable BaseEntity baseEntity) {
-            if (baseEntity == null) {
-                return null;
-            }
-            return baseEntity.getId();
+    public static<K,V> boolean addToMappedList(Map<K, List<V>> map, K key, V value) {
+        List<V> values = map.get(key);
+        boolean newKey = values == null;
+        if (newKey) {
+            values = new ArrayList<V>();
+            map.put(key, values);
         }
-    };
+        values.add(value);
+        return newKey;
+    }
 
+    public static<CommonKey,KeyType,ValueType> Map<KeyType,ValueType> combine(Map<CommonKey,KeyType> keys,
+                                                                              Map<CommonKey,ValueType> values) {
+        Map<KeyType,ValueType> map = new HashMap<KeyType, ValueType>();
+        for (Map.Entry<CommonKey,ValueType> value : values.entrySet()) {
+            KeyType key = keys.get(value.getKey());
+            if (key != null) {
+                map.put(key, value.getValue());
+            }
+        }
+        return map;
+    }
 }

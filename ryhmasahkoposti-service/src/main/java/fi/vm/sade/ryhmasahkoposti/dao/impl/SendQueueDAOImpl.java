@@ -20,6 +20,7 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult;
 import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
 import org.springframework.stereotype.Repository;
@@ -98,6 +99,20 @@ public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implem
                 "   inner join rrAttachment.attachment attachment " +
                 "order by recipient.id, attachment.id", RecipientReportedAttachmentQueryResult.class
             ).setParameter("ids", reportedRecipientIds)
-        .getResultList();
+            .getResultList();
+    }
+
+    @Override
+    public List<ReportedRecipientReplacement> findRecipientReplacements(List<Long> reportedRecipientIds) {
+        if (reportedRecipientIds.isEmpty()) {
+            return new ArrayList<ReportedRecipientReplacement>();
+        }
+        return getEntityManager().createQuery(
+                "select replacement from ReportedRecipientReplacement replacement" +
+                "       inner join replacement.reportedRecipient recipient " +
+                "           with recipient.id in (:ids) " +
+                "order by recipient.id, replacement.id", ReportedRecipientReplacement.class
+            ).setParameter("ids", reportedRecipientIds)
+            .getResultList();
     }
 }

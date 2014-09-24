@@ -33,11 +33,11 @@ public class TemplateComponent {
      * @return
      */
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type) {
-	try {
-	    return templateResourceClient.getTemplateContent(templateName, languageCode, type);
-	} catch (Exception e) {
-	    LOGGER.error(e.getMessage());
-	    throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);
-	}
+        try {
+            return templateResourceClient.getTemplateContent(templateName, languageCode, type);
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);
+        }
     }
 }
