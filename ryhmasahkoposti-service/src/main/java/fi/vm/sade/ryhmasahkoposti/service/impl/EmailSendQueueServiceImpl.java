@@ -202,4 +202,8 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
     public void setMaxEmailRecipientHandleTimeMillis(long maxEmailRecipientHandleTimeMillis) {
         this.maxEmailRecipientHandleTimeMillis = maxEmailRecipientHandleTimeMillis;
     }
+
+    public void setSendQueueDao(SendQueueDAO sendQueueDao) {
+        this.sendQueueDao = sendQueueDao;
+    }
 }

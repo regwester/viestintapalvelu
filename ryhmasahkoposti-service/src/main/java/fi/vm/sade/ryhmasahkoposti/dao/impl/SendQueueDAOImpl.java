@@ -25,6 +25,8 @@ import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.TypedQuery;
+
+import java.util.ArrayList;
 import java.util.List;
 
 import static fi.vm.sade.ryhmasahkoposti.dao.DaoHelper.count;
@@ -85,13 +87,15 @@ public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implem
 
     @Override
     public List<RecipientReportedAttachmentQueryResult> findRecipientAttachments(List<Long> reportedRecipientIds) {
+        if (reportedRecipientIds.isEmpty()) {
+            return new ArrayList<RecipientReportedAttachmentQueryResult>();
+        }
         return getEntityManager().createQuery(
                 "select new fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult(" +
                         " recipient.id, attachment " +
                 ") from ReportedMessageRecipientAttachment rrAttachment " +
+                "   inner join rrAttachment.recipient recipient with recipient.id in (:ids) " +
                 "   inner join rrAttachment.attachment attachment " +
-                "   inner join rrAttachment.recipient recipient " +
-                "where recipient.id in (:ids) " +
                 "order by recipient.id, attachment.id", RecipientReportedAttachmentQueryResult.class
             ).setParameter("ids", reportedRecipientIds)
         .getResultList();

@@ -16,6 +16,7 @@
 
 package fi.vm.sade.ryhmasahkoposti.dao;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -182,7 +183,14 @@ public class EmailSendQueueDAOTest {
     }
 
     @Test
+    public void testFindRecipientAttachmentsWithEmptyIdList() {
+        assertEquals(0, sendQueueDAO.findRecipientAttachments(new ArrayList<Long>()).size());
+    }
+
+    @Test
     public void testFindRecipientAttachments() {
+        assertEquals(0, sendQueueDAO.findRecipientAttachments(Arrays.asList(1l)).size());
+
         ReportedMessage message = RaportointipalveluTestData.getReportedMessage();
         reportedMessageDAO.insert(message);
         ReportedAttachment attachment1 = RaportointipalveluTestData.getReportedAttachment(),
@@ -197,6 +205,10 @@ public class EmailSendQueueDAOTest {
         reportedRecipientDAO.insert(recipient2);
         reportedRecipientDAO.insert(recipient3);
         reportedRecipientDAO.insert(recipient4);
+
+        // Not found yet:
+        assertEquals(0, sendQueueDAO.findRecipientAttachments(Arrays.asList(recipient1.getId())).size());
+
         reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient1, attachment1));
         reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient1, attachment2));
         reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient2, attachment1));
