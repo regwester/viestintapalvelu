@@ -17,13 +17,14 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
-import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDtoConverter;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
 import fi.vm.sade.ryhmasahkoposti.service.impl.EmailSendQueueServiceImpl;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
@@ -67,11 +68,11 @@ public class EmailSendQueueServiceTest {
     @Mock
     private SendQueueDAO sendQueueDao;;
 
-
     @Before
     public void setup() {
         emailSendQueueService = new EmailSendQueueServiceImpl(sendQueueDao,
-                new EmailQueueDTOConverter(), new EmailRecipientDTOConverter());
+                new EmailQueueDtoConverter(), new EmailRecipientDTOConverter(),
+                new EmailMessageDTOConverter());
         emailSendQueueService.setMaxEmailRecipientHandleTimeMillis(TIMEOUT_MILLIS);
     }
 
@@ -88,7 +89,7 @@ public class EmailSendQueueServiceTest {
         when(sendQueueDao.findNextAvailableSendQueue()).thenReturn(queue);
         doAnswer(new UpdateVersionAnswer()).when(sendQueueDao).update(any(SendQueue.class));
         ReportedMessage message = RaportointipalveluTestData.getReportedMessage();
-        when(sendQueueDao.getUnhandledRecipeientsInQueue(eq(100l))).thenReturn(new ArrayList<ReportedRecipient>(Arrays.asList(
+        when(sendQueueDao.findUnhandledRecipeientsInQueue(eq(100l))).thenReturn(new ArrayList<ReportedRecipient>(Arrays.asList(
             RaportointipalveluTestData.getReportedRecipient(message)
         )));
 

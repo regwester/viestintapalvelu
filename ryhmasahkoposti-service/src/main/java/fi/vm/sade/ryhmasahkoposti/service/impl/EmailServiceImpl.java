@@ -1,9 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
@@ -29,6 +26,8 @@ import java.util.Date;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+
+import com.google.common.base.Optional;
 
 @Service
 public class EmailServiceImpl implements EmailService {
@@ -73,6 +72,7 @@ public class EmailServiceImpl implements EmailService {
     private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(MAX_CACHE_ENTRIES + 1) {
         private static final long serialVersionUID = 1L;
 
+        @Override
         protected boolean removeEldestEntry(Map.Entry<Long, EmailMessageDTO> eldest) {
             return size() > MAX_CACHE_ENTRIES;
         };
@@ -85,7 +85,8 @@ public class EmailServiceImpl implements EmailService {
 
     public String getEML(EmailMessage emailMessage, String emailAddress) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MimeMessage message = emailSender.createMail(emailMessage, emailAddress);
+        MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
+                Optional.<AttachmentContainer>absent());
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
@@ -113,8 +114,48 @@ public class EmailServiceImpl implements EmailService {
 
     public void handleEmailQueue() {
         long start = System.currentTimeMillis();
+
+        EmailQueueHandleDto queue = reserveQueue();
+        if (queue != null) {
+            log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
+            int sent = 0,
+                errors = 0,
+                queueSize = queue.getRecipients().size();
+
+            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
+                long recipientStart = System.currentTimeMillis();
+
+                if (!emailQueueService.continueQueueHandling(queue)) {
+                    long took = System.currentTimeMillis() - start;
+                    log.error("Email send queue handler for SendQueue={} stopped." +
+                            "Queue size: {}, sent: {}, errors: {}, took: {} ms.",
+                            queueSize, sent, errors, took, queue.getId());
+                    return;
+                }
+
+                if (handleRecipient(emailRecipient)) {
+                    sent++;
+                } else {
+                    errors++;
+                }
+
+                long singleRecipientTook = System.currentTimeMillis()-recipientStart;
+                log.debug("Handled single recipient in {} ms.", singleRecipientTook);
+            }
+
+            emailQueueService.queueHandled(queue.getId());
+
+            long took = System.currentTimeMillis() - start;
+            log.info("Sending emails done. SendQueue={}: size: {}, sent: {}, errors: {}, took: {} ms.",
+                    queue.getId(), queueSize, sent, errors, took);
+        } else {
+            log.info("Checked for open email sending queues and found none.");
+        }
+    }
+
+    private EmailQueueHandleDto reserveQueue() {
         int maxConcurrentLockFailures = maxTasksToStartAtOnce -1,
-            triedTimes = 0;
+                triedTimes = 0;
         EmailQueueHandleDto queue = null;
         while (queue == null && triedTimes++ < maxConcurrentLockFailures) {
             try {
@@ -127,36 +168,7 @@ public class EmailServiceImpl implements EmailService {
         if (triedTimes > 0 && queue == null) {
             log.warn("Exeeced max number of OptimisticLockExceptions while trying to reserveNextQueueToHandle. Gave up.");
         }
-        if (queue != null) {
-            log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
-            int sent = 0;
-            int errors = 0;
-            int queueSize = queue.getRecipients().size();
-            Date lastHandledAt = new Date();
-            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
-                long recipientStart = System.currentTimeMillis();
-                if (!emailQueueService.continueQueueHandling(queue)) {
-                    long took = System.currentTimeMillis() - start;
-                    log.error("Email send queue handler for SendQueue={} stopped." +
-                            "Queue size: {}, sent: {}, errors: {}, took: {} ms.",
-                            queueSize, sent, errors, took, queue.getId());
-                    return;
-                }
-                if (handleRecipient(emailRecipient)) {
-                    sent++;
-                } else {
-                    errors++;
-                }
-                long singleRecipientTook = System.currentTimeMillis()-recipientStart;
-                log.debug("Handled single recipient in {} ms.", singleRecipientTook);
-            }
-            emailQueueService.queueHandled(queue.getId());
-            long took = System.currentTimeMillis() - start;
-            log.info("Sending emails done. SendQueue={}: size: {}, sent: {}, errors: {}, took: {} ms.",
-                    queue.getId(), queueSize, sent, errors, took);
-        } else {
-            log.info("Checked for open email sending queues and found none.");
-        }
+        return queue;
     }
 
     private boolean handleRecipient(EmailRecipientDTO er) {
@@ -169,15 +181,15 @@ public class EmailServiceImpl implements EmailService {
 
             try {
                 EmailMessageDTO message = getMessage(messageId);
-                if (virusCheckRequired(message)) {
-                    doVirusCheck(message);
+                if (virusCheckRequired(message, er)) {
+                    doVirusCheck(message, er);
                 }
                 
                 if (virusCheckPassed(message)) {
                     if (StringUtils.equalsIgnoreCase(message.getType(), ReportedMessage.TYPE_TEMPLATE)) {
                         rebuildMessage(er, messageId, message);
                     }
-                    emailSender.handleMail(message, er.getEmail());
+                    emailSender.handleMail(message, er.getEmail(), Optional.of(er));
                 } else {
                     throw new Exception("Virus check problem. File infected: " + message.isInfected());
                 }
@@ -247,13 +259,16 @@ public class EmailServiceImpl implements EmailService {
         return recipientReplacements;
     }
 
-    private boolean virusCheckRequired(EmailMessageDTO message) {
-        return virusCheckRequired && !message.isVirusChecked();
+    private boolean virusCheckRequired(EmailMessageDTO message, EmailRecipientDTO recipient) {
+        return virusCheckRequired && (
+                    !message.isVirusChecked()
+                ||  (recipient.getAttachments() != null && !recipient.getAttachments().isEmpty())
+        );
     }
 
-    private void doVirusCheck(EmailMessageDTO message) {
+    private void doVirusCheck(EmailMessageDTO message, EmailRecipientDTO recipient) {
         try {
-            emailAVChecker.checkMessage(emailSender, message);
+            emailAVChecker.checkMessage(emailSender, message, Optional.fromNullable(recipient));
         } catch (Exception e) {
             log.error("Virus check failed" + e);
         }

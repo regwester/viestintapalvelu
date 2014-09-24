@@ -16,14 +16,10 @@
 
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
-import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
-import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +28,21 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import com.google.common.base.Function;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachmentDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
+import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
+import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDtoConverter;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
+import fi.vm.sade.ryhmasahkoposti.util.CollectionUtils;
 
 /**
  * User: ratamaa
@@ -46,18 +55,22 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
     private static Logger log = LoggerFactory.getLogger(GroupEmailReportingServiceImpl.class);
 
     private SendQueueDAO sendQueueDao;
-    private EmailQueueDTOConverter emailQueueDtoConverter;
+    private EmailQueueDtoConverter emailQueueDtoConverter;
     private EmailRecipientDTOConverter emailRecipientDTOConverter;
+    private EmailMessageDTOConverter emailMessageDTOConverter;
+
     // 3*60*1000 = 180000 (3 minutes default) after single sending of an email will be assumed stopped
     @Value("${ryhmasahkoposti.max.email.recipient.handle.time.millis:180000}")
     private long maxEmailRecipientHandleTimeMillis;
 
     @Autowired
-    public EmailSendQueueServiceImpl(SendQueueDAO sendQueueDao, EmailQueueDTOConverter emailQueueDtoConverter,
-                                     EmailRecipientDTOConverter emailRecipientDTOConverter) {
+    public EmailSendQueueServiceImpl(SendQueueDAO sendQueueDao, EmailQueueDtoConverter emailQueueDtoConverter,
+                                     EmailRecipientDTOConverter emailRecipientDTOConverter,
+                                     EmailMessageDTOConverter emailMessageDTOConverter) {
         this.sendQueueDao = sendQueueDao;
         this.emailQueueDtoConverter = emailQueueDtoConverter;
         this.emailRecipientDTOConverter = emailRecipientDTOConverter;
+        this.emailMessageDTOConverter = emailMessageDTOConverter;
     }
 
     @Override
@@ -83,9 +96,28 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
         // (or else this transaction should fail)
         sendQueueDao.update(queue);
 
-        List<ReportedRecipient> unhanled = sendQueueDao.getUnhandledRecipeientsInQueue(queue.getId());
-        EmailQueueHandleDto queueDto = emailQueueDtoConverter.convert(queue, new EmailQueueHandleDto(),
-                emailRecipientDTOConverter.convert(unhanled));
+        List<ReportedRecipient> unhanled = sendQueueDao.findUnhandledRecipeientsInQueue(queue.getId());
+        // Find recipient specific attachment for each unhandled recipients (in a single query):
+        List<RecipientReportedAttachmentQueryResult> recipientAttachments
+                = sendQueueDao.findRecipientAttachments(CollectionUtils.extractIds(unhanled));
+
+        // Convert recipients:
+        List<EmailRecipientDTO> recipientDtos = emailRecipientDTOConverter.convert(unhanled);
+
+        // RecipientDTOs by recipient id:
+        Map<Long, EmailRecipientDTO> unhandledByIds = CollectionUtils.map(recipientDtos, new Function<EmailRecipientDTO, Long>() {
+            public Long apply(EmailRecipientDTO reportedRecipient) {
+                return reportedRecipient == null ? null : reportedRecipient.getRecipientID();
+            }
+        });
+        // Map and convert recipientAttachments to DTOs
+        for (RecipientReportedAttachmentQueryResult attachment : recipientAttachments) {
+            unhandledByIds.get(attachment.getReportedRecipientId()).getAttachments().add(
+                    emailMessageDTOConverter.convert(attachment.getAttachment(), new EmailAttachmentDTO()));
+        }
+
+        EmailQueueHandleDto queueDto = emailQueueDtoConverter.convert(queue, new EmailQueueHandleDto(), recipientDtos);
+
         log.info("SendQueue {} has total of {} unhandled recipients.",
                 queueDto.getId(), queueDto.getRecipients().size());
         return queueDto;

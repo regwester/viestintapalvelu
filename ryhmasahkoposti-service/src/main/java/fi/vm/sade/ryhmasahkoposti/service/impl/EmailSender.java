@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
@@ -19,7 +20,10 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
+import java.util.List;
 import java.util.Properties;
+
+import com.google.common.base.Optional;
 
 @Service
 public class EmailSender {
@@ -30,9 +34,10 @@ public class EmailSender {
     @Value("${ryhmasahkoposti.smtp.port}")
     String smtpPort;
     
-    public void handleMail(EmailMessage emailMessage, String emailAddress) throws Exception {
+    public void handleMail(EmailMessage emailMessage, String emailAddress,
+                           Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
         try {
-            MimeMessage message = createMail(emailMessage, emailAddress);
+            MimeMessage message = createMail(emailMessage, emailAddress, additionalAttachments);
             if (EmailConstants.TEST_MODE.equals("NO")) {
                 LOGGER.debug("Sending message: " + message.toString());
                 long start = System.currentTimeMillis();
@@ -48,7 +53,9 @@ public class EmailSender {
         }
     }
 
-    public MimeMessage createMail(EmailMessage emailMessage, String emailAddress) throws MessagingException, UnsupportedEncodingException {
+    public MimeMessage createMail(EmailMessage emailMessage, String emailAddress,
+                                  Optional<? extends AttachmentContainer> additionalAttachments)
+            throws MessagingException, UnsupportedEncodingException {
         Session session = createSession();
         MimeMessage msg = new MimeMessage(session);
 
@@ -65,12 +72,16 @@ public class EmailSender {
         bodyPart.setContent(getContent(emailMessage), getContentType(emailMessage) + ";charset=" + emailMessage.getCharset());
         bodyPart.setHeader("Content-Transfer-Encoding", getContentTransferEncoding());
         msgContent.addBodyPart(bodyPart);
-        
-        if (emailMessage.getAttachments() != null) {
-            insertAttachments(emailMessage, msgContent);
+
+        boolean valid = emailMessage.isValid();
+        if (valid && emailMessage.getAttachments() != null) {
+            valid = insertAttachments(emailMessage, msgContent);
+        }
+        if (valid && additionalAttachments.isPresent()) {
+            valid = insertAttachments(additionalAttachments.get(), msgContent);
         }
 
-        if (emailMessage.isValid()) {
+        if (valid) {
             msg.setContent(msgContent);
             msg.setHeader("Content-Transfer-Encoding", getContentTransferEncoding());
             msg.saveChanges(); //updates changes to headers
@@ -99,7 +110,7 @@ public class EmailSender {
         return emailMessage.isHtml() ? "text/html" : "text/plain";
     }
 
-    private void insertAttachments(EmailMessage emailMessage, MimeMultipart multipart) throws MessagingException {
+    private boolean insertAttachments(AttachmentContainer emailMessage, MimeMultipart multipart) throws MessagingException {
         for (EmailAttachment attachment : emailMessage.getAttachments()) {
             if ((attachment.getData() != null) && (attachment.getName() != null)) {
                 ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
@@ -112,10 +123,10 @@ public class EmailSender {
 
             } else {
                 LOGGER.error("Failed to insert attachment - it is not valid " + attachment.getName());
-                emailMessage.setInvalid();
-                break;
+                return false;
             }
         }
+        return true;
     }
 
     private Session createSession() {

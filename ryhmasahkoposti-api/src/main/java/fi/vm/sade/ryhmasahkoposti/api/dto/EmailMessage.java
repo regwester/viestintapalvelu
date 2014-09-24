@@ -13,7 +13,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EmailMessage {
+public class EmailMessage implements AttachmentContainer {
     private final static Logger log = LoggerFactory.getLogger(EmailMessage.class);
 
     private String callingProcess = "";
@@ -142,10 +142,12 @@ public class EmailMessage {
         this.attachments = attachments;
     }
 
+    @Override
     public List<? extends EmailAttachment> getAttachments() {
         return attachments;
     }
 
+    @Override
     public void addAttachInfo(AttachmentResponse attachInfo) {
         if (this.attachInfo == null) {
             this.attachInfo = new LinkedList<AttachmentResponse>();

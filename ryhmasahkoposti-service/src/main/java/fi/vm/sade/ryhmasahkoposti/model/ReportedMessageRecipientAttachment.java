@@ -44,6 +44,14 @@ public class ReportedMessageRecipientAttachment extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp = new Date();
 
+    public ReportedMessageRecipientAttachment() {
+    }
+
+    public ReportedMessageRecipientAttachment(ReportedRecipient recipient, ReportedAttachment attachment) {
+        this.recipient = recipient;
+        this.attachment = attachment;
+    }
+
     public ReportedRecipient getRecipient() {
         return recipient;
     }

@@ -167,19 +167,30 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         }
         return result;
     }
-    
+
     private void attachIncludedAttachments(EmailData emailData) {
-        if (hasAttachments(emailData)) {
-            for (EmailAttachment emailAttachment : emailData.getEmail().getAttachments()) {
-                AttachmentResponse attachmentResponse = groupEmailReportingService.saveAttachment(emailAttachment);
-                emailData.getEmail().addAttachInfo(attachmentResponse);
+        if (emailData.getEmail() != null) {
+            attachIncludedAttachments(emailData.getEmail());
+        }
+        if (emailData.getRecipient() != null) {
+            for (EmailRecipient recipient : emailData.getRecipient()) {
+                attachIncludedAttachments(recipient);
             }
         }
     }
     
-    private boolean hasAttachments(EmailData emailData) {
-        if (emailData.getEmail() != null) {
-            List<? extends EmailAttachment> attachmentList = emailData.getEmail().getAttachments();
+    private void attachIncludedAttachments(AttachmentContainer container) {
+        if (hasAttachments(container)) {
+            for (EmailAttachment emailAttachment : container.getAttachments()) {
+                AttachmentResponse attachmentResponse = groupEmailReportingService.saveAttachment(emailAttachment);
+                container.addAttachInfo(attachmentResponse);
+            }
+        }
+    }
+    
+    private boolean hasAttachments(AttachmentContainer container) {
+        if (container != null) {
+            List<? extends EmailAttachment> attachmentList = container.getAttachments();
             return (attachmentList != null && attachmentList.size() > 0); 
         } else {
             return false;

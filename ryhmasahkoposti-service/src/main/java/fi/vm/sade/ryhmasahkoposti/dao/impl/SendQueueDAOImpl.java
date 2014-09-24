@@ -17,6 +17,7 @@
 package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult;
 import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
@@ -71,7 +72,7 @@ public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implem
     }
 
     @Override
-    public List<ReportedRecipient> getUnhandledRecipeientsInQueue(long queueId) {
+    public List<ReportedRecipient> findUnhandledRecipeientsInQueue(long queueId) {
         return getEntityManager().createQuery(
                     "select recipient\n" +
                     "   from ReportedRecipient recipient\n" +
@@ -80,5 +81,19 @@ public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implem
                     "order by recipient.timestamp, recipient.id", ReportedRecipient.class)
                 .setParameter("queueId", queueId)
                 .getResultList();
+    }
+
+    @Override
+    public List<RecipientReportedAttachmentQueryResult> findRecipientAttachments(List<Long> reportedRecipientIds) {
+        return getEntityManager().createQuery(
+                "select new fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult(" +
+                        " recipient.id, attachment " +
+                ") from ReportedMessageRecipientAttachment rrAttachment " +
+                "   inner join rrAttachment.attachment attachment " +
+                "   inner join rrAttachment.recipient recipient " +
+                "where recipient.id in (:ids) " +
+                "order by recipient.id, attachment.id", RecipientReportedAttachmentQueryResult.class
+            ).setParameter("ids", reportedRecipientIds)
+        .getResultList();
     }
 }

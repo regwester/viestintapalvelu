@@ -14,28 +14,17 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ryhmasahkoposti.service.dto;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
-import org.springframework.stereotype.Component;
+package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.List;
 
 /**
  * User: ratamaa
- * Date: 15.9.2014
- * Time: 10:56
+ * Date: 24.9.2014
+ * Time: 9:53
  */
-@Component
-public class EmailQueueDTOConverter {
+public interface AttachmentContainer {
+    List<? extends EmailAttachment> getAttachments();
 
-    public EmailQueueHandleDto convert(SendQueue from, EmailQueueHandleDto to, List<EmailRecipientDTO> recipients) {
-        to.setId(from.getId());
-        to.setVersion(from.getVersion());
-        to.setState(from.getState());
-        to.setRecipients(recipients);
-        return to;
-    }
-
+    void addAttachInfo(AttachmentResponse attachInfo);
 }

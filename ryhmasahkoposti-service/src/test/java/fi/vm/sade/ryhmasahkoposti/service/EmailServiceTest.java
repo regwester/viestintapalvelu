@@ -16,6 +16,7 @@
 
 package fi.vm.sade.ryhmasahkoposti.service;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
@@ -45,6 +46,8 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import javax.persistence.OptimisticLockException;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.google.common.base.Optional;
 
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirstReturn;
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirstThrow;
@@ -134,7 +137,8 @@ public class EmailServiceTest {
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         CallCounterVoidAnswer handleMail = new CallCounterVoidAnswer();
-        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class));
+        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
+                any(Optional.class));
 
         AnswerChain<Boolean> successHandler = atFirstReturn(true);
         when(rrService.recipientHandledSuccess(eq(queue.getRecipients().get(0)),
@@ -172,7 +176,8 @@ public class EmailServiceTest {
         when(emailQueueService.continueQueueHandling(any(EmailQueueHandleDto.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         doThrow(new IllegalStateException("Email sending failed!"))
-                .when(emailSender).handleMail(any(EmailMessage.class), any(String.class));
+                .when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
+                any(Optional.class));
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.recipientHandledSuccess(any(EmailRecipientDTO.class), any(String.class)))
                 .thenThrow(new IllegalStateException("Should not be successful!"));

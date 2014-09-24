@@ -17,6 +17,7 @@
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
 
@@ -51,7 +52,14 @@ public interface SendQueueDAO extends JpaDAO<SendQueue, Long> {
      * @return the reported recipients whose sending has not been started for given queue in
      * their timstamp order
      */
-    List<ReportedRecipient> getUnhandledRecipeientsInQueue(long queueId);
+    List<ReportedRecipient> findUnhandledRecipeientsInQueue(long queueId);
+
+    /**
+     * @param reportedRecipientIds ids of ReportedRecipients for which to collect all ReportedAttachment
+     *                             related to their ReportedMessageRecipientAttachments
+     * @return reported attachments for given recipient ids (with related ID to avoid unnecessary fetching)
+     */
+    List<RecipientReportedAttachmentQueryResult> findRecipientAttachments(List<Long> reportedRecipientIds);
 
     /**
      * @return the number of unhandled message queues
