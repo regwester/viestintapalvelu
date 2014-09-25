@@ -15,7 +15,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 
 /**
  * Interface to template service
- * 	
+ * 
  * @author ovmol1
  *
  */
@@ -26,8 +26,13 @@ public interface TemplateResource {
     @GET
     @Transactional
     @Produces("application/json")
-    @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
-    public TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, 
-	            @PathParam("languageCode") String languageCode, @PathParam("type") String type)
-	    throws IOException, DocumentException;
+    @Path("/{templateName}/{languageCode}/{type}/{applicationPeriod}/getTemplateContent")
+    public TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
+            @PathParam("type") String type, @PathParam("applicationPeriod") String applicationPeriod) throws IOException, DocumentException;
+
+    @GET
+    @Path("/{templateId}/getTemplateContent")
+    @Produces("application/json")
+    @Transactional
+    public TemplateDTO getTemplateByID(@PathParam("templateId") String templateId);
 }

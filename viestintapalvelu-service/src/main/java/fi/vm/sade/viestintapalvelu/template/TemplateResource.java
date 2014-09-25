@@ -128,6 +128,7 @@ public class TemplateResource extends AsynchronousResource {
         // return result;
     }
 
+    @Deprecated
     @GET
     @Path("/getById")
     @Produces("application/json")
@@ -141,6 +142,8 @@ public class TemplateResource extends AsynchronousResource {
         return templateService.findById(id);
     }
 
+
+    
     @GET
     @Path("/getAvailableExamples")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
@@ -490,6 +493,17 @@ public class TemplateResource extends AsynchronousResource {
         return sb.toString();
     }
 
+    @GET
+    @Path("/{templateId}/getTemplateContent")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
+    public Template getTemplateByID(@PathParam("templateId") String templateId) {
+        Long id = Long.parseLong(templateId);
+        return templateService.findById(id);
+    }
+    
     @GET
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
