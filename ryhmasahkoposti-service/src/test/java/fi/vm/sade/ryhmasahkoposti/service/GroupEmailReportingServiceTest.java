@@ -502,4 +502,5 @@ public class GroupEmailReportingServiceTest {
         assertTrue(organizationDTOs.get(0).getOid().equals("1.2.246.562.10.00000000001"));
         assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
     }
+
 }

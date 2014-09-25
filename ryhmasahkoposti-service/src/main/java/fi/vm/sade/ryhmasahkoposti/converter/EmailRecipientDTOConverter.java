@@ -1,11 +1,12 @@
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import org.springframework.stereotype.Component;
-
 import java.util.ArrayList;
 import java.util.List;
+
+import org.springframework.stereotype.Component;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 @Component
 public class EmailRecipientDTOConverter {
@@ -33,5 +34,4 @@ public class EmailRecipientDTOConverter {
 		}
 		return emailRecipientDTOs;
 	}
-
 }

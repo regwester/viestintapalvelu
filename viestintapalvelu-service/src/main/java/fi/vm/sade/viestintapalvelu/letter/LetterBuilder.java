@@ -1,10 +1,27 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
+import org.jsoup.Jsoup;
+import org.jsoup.safety.Whitelist;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
@@ -16,19 +33,6 @@ import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.text.SimpleDateFormat;
-import java.util.*;
 
 @Service
 @Singleton
@@ -112,7 +116,11 @@ public class LetterBuilder {
             // Letter language != template language
             if (languageIsDifferent(baseTemplate, letter)) {
                 // Get the template in user specific language
-                Template template = templateService.getTemplateByName(letterTemplate.getName(), letter.getLanguageCode());
+                Template template = templateService.getTemplateByName(
+                        new TemplateCriteriaImpl()
+                                .withName(letterTemplate.getName())
+                                .withLanguage(letter.getLanguageCode())
+                                .withApplicationPeriod(batch.getApplicationPeriod()), true);
                 if (template != null) {
                     letterTemplate = template;
                     letterReplacements = getTemplateReplacements(letterTemplate);
@@ -174,7 +182,10 @@ public class LetterBuilder {
 
         // Search template by name
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
+            template = templateService.getTemplateByName(new TemplateCriteriaImpl()
+                    .withName(batch.getTemplateName())
+                    .withLanguage(batch.getLanguageCode())
+                    .withApplicationPeriod(batch.getApplicationPeriod()), true);
             batch.setTemplateId(template.getId()); // update template Id
         }
 

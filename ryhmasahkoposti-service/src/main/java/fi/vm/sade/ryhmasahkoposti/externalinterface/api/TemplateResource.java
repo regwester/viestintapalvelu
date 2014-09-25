@@ -28,6 +28,6 @@ public interface TemplateResource {
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
     public TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, 
-	    @PathParam("languageCode") String languageCode, @PathParam("type") String type) 
+	            @PathParam("languageCode") String languageCode, @PathParam("type") String type)
 	    throws IOException, DocumentException;
 }

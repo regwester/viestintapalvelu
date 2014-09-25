@@ -14,28 +14,16 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ryhmasahkoposti.service.dto;
+package fi.vm.sade.viestintapalvelu.dao;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
-import org.springframework.stereotype.Component;
-
-import java.util.List;
+import fi.vm.sade.generic.dao.JpaDAO;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
 
 /**
  * User: ratamaa
- * Date: 15.9.2014
- * Time: 10:56
+ * Date: 24.9.2014
+ * Time: 17:58
  */
-@Component
-public class EmailQueueDTOConverter {
-
-    public EmailQueueHandleDto convert(SendQueue from, EmailQueueHandleDto to, List<EmailRecipientDTO> recipients) {
-        to.setId(from.getId());
-        to.setVersion(from.getVersion());
-        to.setState(from.getState());
-        to.setRecipients(recipients);
-        return to;
-    }
+public interface LetterReceiverLetterAttachmentDAO extends JpaDAO<LetterReceiverLetterAttachment, Long> {
 
 }

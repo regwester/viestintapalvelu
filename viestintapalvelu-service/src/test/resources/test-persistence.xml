@@ -16,6 +16,7 @@
         <class>fi.vm.sade.viestintapalvelu.model.TemplateContent</class>
         <class>fi.vm.sade.viestintapalvelu.model.IPosti</class>
         <class>fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod</class>
+        <class>fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment</class>
         
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>

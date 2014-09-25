@@ -70,11 +70,12 @@ public class TemplateBuilder {
     /**
      * Build template content without any replacements
      * 
-     * @param template
+     * @param messageReplacements
+     * @param recipientReplacements
      * @return
      */
     public String buildTempleMessage(String message, List<ReplacementDTO> messageReplacements,
-        List<ReportedRecipientReplacementDTO> recipientReplacements) {
+                                     List<ReportedRecipientReplacementDTO> recipientReplacements) {
         Map<String, Object> replacements = new HashMap<String, Object>();
 
         // Message replacements exist
@@ -87,7 +88,7 @@ public class TemplateBuilder {
         // Place user replacements
         if (recipientReplacements != null) {
             for (ReportedRecipientReplacementDTO repl : recipientReplacements) {
-                replacements.put(repl.getName(), repl.getDefaultValue());
+                replacements.put(repl.getName(), repl.getEffectiveValue());
             }
         }
 

@@ -1,5 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -9,17 +11,18 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
  * @author migar1
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EmailRecipient {
+public class EmailRecipient implements AttachmentContainer {
     private String oid = "";
     private String oidType = "";
     private String email = "";
     private String languageCode = "FI";
     private String name;
-    
     /**
      * List of recipient replacements
      */
     private List<ReportedRecipientReplacementDTO> recipientReplacements;
+    private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
 
     public void setOid(String oid) {
         this.oid = oid;
@@ -98,8 +101,7 @@ public class EmailRecipient {
     /**
      * @param recipientReplacements the recipientReplacements to set
      */
-    public void setRecipientReplacements(
-    	List<ReportedRecipientReplacementDTO> recipientReplacements) {
+    public void setRecipientReplacements(List<ReportedRecipientReplacementDTO> recipientReplacements) {
         this.recipientReplacements = recipientReplacements;
     }
 
@@ -108,17 +110,41 @@ public class EmailRecipient {
     }
 
     public void setName(String name) {
-        this.name = name;
+       this.name = name;
+    }
+
+    public List<EmailAttachment> getAttachments() {
+        return attachments;
+    }
+
+    @Override
+    public void addAttachInfo(AttachmentResponse attachInfo) {
+        if (this.attachInfo == null) {
+            this.attachInfo = new ArrayList<AttachmentResponse>();
+        }
+        this.attachInfo.add(attachInfo);
+    }
+
+    public void setAttachments(List<EmailAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public List<AttachmentResponse> getAttachInfo() {
+        return attachInfo;
+    }
+
+    public void setAttachInfo(List<AttachmentResponse> attachInfo) {
+        this.attachInfo = attachInfo;
     }
 
     /* (non-Javadoc)
-         * @see java.lang.Object#toString()
-         */
+                 * @see java.lang.Object#toString()
+                 */
     @Override
     public String toString() {
-	return "EmailRecipient [oid=" + oid + ", oidType=" + oidType
-		+ ", email=" + email + ", languageCode=" + languageCode
-        + ", name=" + name
-		+ ", recipientReplacements=" + recipientReplacements + "]";
+        return "EmailRecipient [oid=" + oid + ", oidType=" + oidType
+                + ", email=" + email + ", languageCode=" + languageCode
+                + ", name=" + name
+                + ", recipientReplacements=" + recipientReplacements + "]";
     }
 }

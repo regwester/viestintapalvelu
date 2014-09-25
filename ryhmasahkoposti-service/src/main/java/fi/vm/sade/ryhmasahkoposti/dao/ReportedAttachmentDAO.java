@@ -4,6 +4,7 @@ import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageRecipientAttachment;
 
 /**
  * Rajapinta ryhmäsähköpostin raportoitavien liitteiden tietokantakäsittelyä varten
@@ -18,5 +19,7 @@ public interface ReportedAttachmentDAO extends JpaDAO<ReportedAttachment, Long> 
 	 * @param liitteet Lista raportoitavia liitteitä
 	 * @return Lista raportoitavien liitteiden avaimia
 	 */
-	public List<Long> saveReportedAttachments(List<ReportedAttachment> liitteet);
+	List<Long> saveReportedAttachments(List<ReportedAttachment> liitteet);
+
+    void insert(ReportedMessageRecipientAttachment recipientAttachment);
 }

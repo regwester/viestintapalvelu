@@ -16,11 +16,12 @@
 
 package fi.vm.sade.ryhmasahkoposti.dao;
 
+import java.util.List;
+
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
-
-import java.util.List;
 
 /**
  * User: ratamaa
@@ -51,7 +52,27 @@ public interface SendQueueDAO extends JpaDAO<SendQueue, Long> {
      * @return the reported recipients whose sending has not been started for given queue in
      * their timstamp order
      */
-    List<ReportedRecipient> getUnhandledRecipeientsInQueue(long queueId);
+    List<ReportedRecipient> findUnhandledRecipeientsInQueue(long queueId);
+
+    /**
+     * NOTE: related ReportedRecipient's PK IS NOT accessible through ReportedAttachment without additional
+     * queries, thus the use of RecipientReportedAttachmentQueryResult
+     *
+     * @param reportedRecipientIds ids of ReportedRecipients for which to collect all ReportedAttachment
+     *                             related to their ReportedMessageRecipientAttachments
+     * @return reported attachments for given recipient ids (with related ID to avoid unnecessary fetching)
+     */
+    List<RecipientReportedAttachmentQueryResult> findRecipientAttachments(List<Long> reportedRecipientIds);
+
+    /**
+     * NOTE: (compared to findRecipientAttachments) that related ReportedRecipient's PK may be accessed through
+     * getReportedRecipient() without additional queries (since it is a direct foreign key reference
+     * from ReportedRecipientReplacement).
+     *
+     * @param reportedRecipientIds ids of ReportedRecipients for which to collect all ReportedRecipientReplacements
+     * @return ReportedRecipients' ReportedRecipientReplacements
+     */
+    List<ReportedRecipientReplacement> findRecipientReplacements(List<Long> reportedRecipientIds);
 
     /**
      * @return the number of unhandled message queues

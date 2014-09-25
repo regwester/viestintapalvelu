@@ -15,6 +15,9 @@ import javax.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 
@@ -63,12 +66,13 @@ public class EmailAVChecker {
 	 * @throws IOException
 	 * @throws MessagingException
 	 */
-	public void checkMessage(EmailSender sender, EmailMessageDTO message) throws Exception {
+	public void checkMessage(EmailSender sender, EmailMessageDTO message,
+                     Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
 		if (!checkAlive()) {
 			log.warning("Antivirus service not alive at: " + hostname + " port " + port);
 			throw new Exception("Cannot check viruses ClamAV service not available");
 		}
-		boolean isInfected = isInfected(sender, message); 
+		boolean isInfected = isInfected(sender, message, additionalAttachments);
 		message.setInfected(isInfected);
 		message.setVirusChecked(true);
 	}
@@ -81,10 +85,11 @@ public class EmailAVChecker {
 	 * @throws IOException
 	 * @throws MessagingException
 	 */
-	private boolean isInfected(EmailSender sender, EmailMessageDTO message)
+	private boolean isInfected(EmailSender sender, EmailMessageDTO message,
+                               Optional<? extends AttachmentContainer> additionalAttachments)
 			throws IOException, MessagingException {
 
-		MimeMessage msg = sender.createMail(message, "noone@localhost.local");
+		MimeMessage msg = sender.createMail(message, "noone@localhost.local", additionalAttachments);
 		
 		// check attachments separately..
 		for (EmailAttachment attachment : message.getAttachments()) {
