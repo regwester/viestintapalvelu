@@ -49,12 +49,12 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
-import junit.framework.TestCase;
 
 import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
+import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -193,7 +193,7 @@ public class EmailResourceIT {
         verifyAttachment(personalAttachment, (MimeBodyPart)multipart.getBodyPart(2));
         verifyAttachment(attachment, (MimeBodyPart)multipart.getBodyPart(3));
         verifyAttachment(attachment2, (MimeBodyPart)multipart.getBodyPart(4));
-        verifyAttachment(attachment3, (MimeBodyPart)multipart.getBodyPart(5));
+        verifyAttachment(attachment3, (MimeBodyPart) multipart.getBodyPart(5));
     }
 
     private void verifyAttachment(EmailAttachment attachment, MimeBodyPart mimePart) throws MessagingException, IOException {
@@ -214,7 +214,8 @@ public class EmailResourceIT {
 
     private TemplateDTO assumeTestTemplate(String templateName, String languageCode) throws IOException, DocumentException {
         TemplateDTO template = RaportointipalveluTestData.template(templateName, languageCode);
-        when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL)))
+        when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL),
+                    any(String.class)))
                 .thenReturn(template);
         return template;
     }
