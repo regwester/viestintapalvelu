@@ -20,6 +20,8 @@ import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
@@ -27,13 +29,38 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
+import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
 
+@Component
 public class TemplateBuilder {
 
     private static Logger LOGGER = LoggerFactory.getLogger(TemplateBuilder.class);
 
     private VelocityEngine templateEngine = new VelocityEngine();
 
+    @Autowired
+    private TemplateService templateService;
+
+    
+    public TemplateDTO getTemplate(EmailData emailData) {
+        TemplateDTO templateDTO = null;
+        try {
+            
+            templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(),
+                emailData.getEmail().getLanguageCode(), TemplateDTO.TYPE_EMAIL, null);
+            LOGGER.debug("Loaded template: {} for {}", templateDTO, emailData.getEmail().getTemplateName());
+        } catch (Exception e) {
+            LOGGER.error("Failed to load template for templateName: {}, languageCode={}",
+                    emailData.getEmail().getTemplateName(), emailData.getEmail().getLanguageCode(), e);
+        }
+
+        if (templateDTO != null) {
+            LOGGER.debug("Template found, processing: {}", templateDTO);
+        }
+        return templateDTO;
+    }
+    
+    
     /**
      * Build template content without any replacements
      * 

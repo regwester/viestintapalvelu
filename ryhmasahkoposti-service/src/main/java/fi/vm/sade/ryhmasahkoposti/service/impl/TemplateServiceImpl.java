@@ -14,8 +14,8 @@ public class TemplateServiceImpl implements TemplateService {
     private TemplateComponent templateComponent;
 
     @Override
-    public TemplateDTO getTemplate(String templateName, String languageCode, String templateType) {
-        return templateComponent.getTemplateContent(templateName, languageCode, templateType);
+    public TemplateDTO getTemplate(String templateName, String languageCode, String templateType, String applicationPeriod) {
+        return templateComponent.getTemplateContent(templateName, languageCode, templateType, applicationPeriod);
     }
 
 }
