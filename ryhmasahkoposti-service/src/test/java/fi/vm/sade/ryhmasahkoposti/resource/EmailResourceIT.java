@@ -19,6 +19,7 @@ package fi.vm.sade.ryhmasahkoposti.resource;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
@@ -31,6 +32,8 @@ import org.dom4j.DocumentException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.invocation.InvocationOnMock;
+import org.mockito.stubbing.Answer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,15 +52,16 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import fi.vm.sade.ryhmasahkoposti.util.AnswerChain;
 
 import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
+import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirst;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 /**
  * User: ratamaa
@@ -154,6 +158,14 @@ public class EmailResourceIT {
                 .add(new ReportedRecipientReplacementDTO("additionalAttachmentUri", attachment3Uri));
         emailData.getRecipient().add(recipient);
 
+        final List<String> urlsReportedForDeletion = new ArrayList<String>();
+        AnswerChain<Void> answersForAttachmentDeletions = atFirst(new Answer<Void>() {
+            public Void answer(InvocationOnMock invocation) throws Throwable {
+                urlsReportedForDeletion.addAll((List<String>) invocation.getArguments()[0]);
+                return null;
+            }
+        });
+        doAnswer(answersForAttachmentDeletions).when(attachmentResource).deleteByUris(any(List.class));
         long start = System.currentTimeMillis();
         Response response = emailResource.sendEmail(emailData);
         assertNotNull(response);
@@ -194,6 +206,11 @@ public class EmailResourceIT {
         verifyAttachment(attachment, (MimeBodyPart)multipart.getBodyPart(3));
         verifyAttachment(attachment2, (MimeBodyPart)multipart.getBodyPart(4));
         verifyAttachment(attachment3, (MimeBodyPart) multipart.getBodyPart(5));
+
+        assertEquals(1, answersForAttachmentDeletions.getTotalCallCount());
+        assertEquals(3, urlsReportedForDeletion.size());
+        assertTrue(urlsReportedForDeletion.containsAll(
+                Arrays.asList(attachmentUri, attachment2Uri, attachment3Uri)));
     }
 
     private void verifyAttachment(EmailAttachment attachment, MimeBodyPart mimePart) throws MessagingException, IOException {
