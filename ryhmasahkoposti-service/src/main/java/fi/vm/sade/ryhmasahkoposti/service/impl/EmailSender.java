@@ -20,7 +20,6 @@ import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
 import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
-import java.util.List;
 import java.util.Properties;
 
 import com.google.common.base.Optional;
@@ -77,7 +76,7 @@ public class EmailSender {
         if (valid && emailMessage.getAttachments() != null) {
             valid = insertAttachments(emailMessage, msgContent);
         }
-        if (valid && additionalAttachments.isPresent()) {
+        if (valid && additionalAttachments.isPresent() && additionalAttachments.get().getAttachments() != null) {
             valid = insertAttachments(additionalAttachments.get(), msgContent);
         }
 
@@ -110,8 +109,8 @@ public class EmailSender {
         return emailMessage.isHtml() ? "text/html" : "text/plain";
     }
 
-    private boolean insertAttachments(AttachmentContainer emailMessage, MimeMultipart multipart) throws MessagingException {
-        for (EmailAttachment attachment : emailMessage.getAttachments()) {
+    private boolean insertAttachments(AttachmentContainer container, MimeMultipart multipart) throws MessagingException {
+        for (EmailAttachment attachment : container.getAttachments()) {
             if ((attachment.getData() != null) && (attachment.getName() != null)) {
                 ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
 

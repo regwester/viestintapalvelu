@@ -1,5 +1,18 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import java.io.IOException;
+import java.util.*;
+
+import org.apache.commons.fileupload.FileItem;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
@@ -12,18 +25,6 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationCompon
 import fi.vm.sade.ryhmasahkoposti.model.*;
 import fi.vm.sade.ryhmasahkoposti.service.*;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
-import org.apache.commons.fileupload.FileItem;
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.IOException;
-import java.util.*;
 
 @Service
 @Transactional(readOnly = true)
@@ -192,7 +193,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             reportedRecipientService.saveReportedRecipient(reportedRecipient);
             recipients.add(reportedRecipient);
 
-            log.debug("Processing sender specific replacements");
+            log.debug("Processing recipient specific replacements");
             if (emailRecipient.getRecipientReplacements() != null) {
                 List<ReportedRecipientReplacementDTO> emailRecipientReplacements =
                         emailRecipient.getRecipientReplacements();
@@ -200,6 +201,13 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                         reportedRecipientReplacementConverter.convert(reportedRecipient, emailRecipientReplacements);
                 log.debug("Saving reportedRecipientReplacements");
                 reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
+            }
+
+            log.debug("Processing recipient specific attachments");
+            if (emailRecipient.getAttachments() != null) {
+                List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailRecipient.getAttachInfo());
+                log.debug("Saving ReportedMessageRecipientAttachments");
+                reportedMessageAttachmentService.saveReportedRecipientAttachments(reportedRecipient, reportedAttachments);
             }
         }
         createSendQueues(recipients);

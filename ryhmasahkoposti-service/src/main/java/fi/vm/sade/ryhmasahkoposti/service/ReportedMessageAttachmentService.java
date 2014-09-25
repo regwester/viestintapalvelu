@@ -4,7 +4,7 @@ import java.util.List;
 
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 /**
  * Rajapinta raportoitavan ryhmäsähköpostiviestin liittyvien liitteiden käsittelyä varten
@@ -15,19 +15,20 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
 public interface ReportedMessageAttachmentService {
 
 	/**
-	 * Hakee raportoitavan ryhmäsähköpostiviestiin liittyvät liitteet
-	 * 
-	 * @param messageID Raportoitavan ryhmäsähköpostin avain
-	 * @return Lista ryhmäsähköpostiin liitettyjen liitteiden avaimia
-	 */
-	public List<ReportedMessageAttachment> getReportedMessageAttachments(Long messageID);
-	
-	/**
 	 * Tallentaa raportoitavan ryhmäsähköpostiviestiin liittyvät liitteet
 	 * 
 	 * @param reportedMessage Raportoitavan ryhmäsähköpostiviestin tiedot
 	 * @param reportedAttachments Lista ryhmäsähköpostiin liitettyjen liitteiden tietoja
 	 */
-	public void saveReportedMessageAttachments(ReportedMessage reportedMessage,
+	void saveReportedMessageAttachments(ReportedMessage reportedMessage,
 		List<ReportedAttachment> reportedAttachments);
+
+    /**
+     * Tallentaa raportoitavan ryhmäsähköpostiviestin vastaanottajaan liittyvät liitteet
+     *
+     * @param emailRecipient Raportoitavan ryhmäsähköpositn vastaanottaja
+     * @param reportedAttachments Lista vastaajanottajaan liitettyjen liitteiden tietoja
+     */
+    void saveReportedRecipientAttachments(ReportedRecipient emailRecipient, List<ReportedAttachment> reportedAttachments);
+
 }

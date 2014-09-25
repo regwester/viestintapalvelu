@@ -21,8 +21,6 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.springframework.stereotype.Component;
-
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 
 /**
@@ -30,7 +28,6 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
  * Date: 24.9.2014
  * Time: 15:06
  */
-@Component
 @Path("/attachment")
 public interface AttachmentResource {
 

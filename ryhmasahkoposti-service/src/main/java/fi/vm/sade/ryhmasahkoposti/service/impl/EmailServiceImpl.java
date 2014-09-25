@@ -286,6 +286,7 @@ public class EmailServiceImpl implements EmailService {
                 success = true;
             } catch (Exception e) {
                 String failureCause = getFailureCause(e);
+                log.error("Failure when handling EmailRecipient="+emailRecipient.getRecipientID()+": "+e.getMessage(), e);
                 rrService.recipientHandledFailure(emailRecipient, failureCause);
                 success = false;
             }
@@ -337,6 +338,12 @@ public class EmailServiceImpl implements EmailService {
             throws Exception {
         log.info("Downloading attachment for EmailRecipientDTO={}, URI={}", er.getRecipientID(), uri);
         EmailAttachment attachment = downloaderForUri(uri).download(uri);
+        if (attachment != null) {
+            er.getAttachments().add(attachment);
+        } else {
+            throw new IllegalArgumentException("Attachment with URI="
+                    + uri + " for EmailRecipient="+er.getRecipientID()+" not found.");
+        }
         emailSendQueState.addDownloadedAttachmentUri(uri);
         log.debug("Downloaded attachment URI={}", uri);
     }

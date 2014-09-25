@@ -21,10 +21,12 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import javax.mail.Message;
+import javax.mail.MessagingException;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.core.Response;
 
+import org.apache.cxf.helpers.IOUtils;
 import org.dom4j.DocumentException;
 import org.junit.Before;
 import org.junit.Test;
@@ -32,6 +34,8 @@ import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.core.io.Resource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -45,6 +49,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import junit.framework.TestCase;
 
 import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
 import static junit.framework.Assert.assertEquals;
@@ -78,6 +83,9 @@ public class EmailResourceIT {
     @Autowired
     private IntegrationTestConfig.MailerStatus mailerStatus;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     private TemplateResource templateClient;
     private AttachmentResource attachmentResource;
 
@@ -101,6 +109,15 @@ public class EmailResourceIT {
             replacement("title", "Otsikko"),
             replacement("etunimi", "")
         );
+        String attachmentUri = "viestinta://letterReceiverLetterAttachment/1",
+                attachment2Uri = "viestinta://letterReceiverLetterAttachment/2",
+                attachment3Uri = "viestinta://letterReceiverLetterAttachment/3";
+        EmailAttachment
+                attachment = assumeAttachment(attachmentUri, "Liite.pdf", "test.pdf"),
+                attachment2 = assumeAttachment(attachment2Uri, "Liite2.pdf", "test2.pdf"),
+                attachment3 = assumeAttachment(attachment3Uri, "Liite3.pdf", "test.pdf"),
+                personalAttachment = produceAttachment("HenkKohtLiite.pdf", "test.pdf"),
+                commonAttachment = produceAttachment("Perusliite.pdf", "test2.pdf");
 
         EmailData emailData = new EmailData();
         emailData.getEmail().setSubject("Varsinainen otsikko");
@@ -115,6 +132,7 @@ public class EmailResourceIT {
         emailData.getEmail().setSenderOid("senderUserOid.123456.78990");
         emailData.getEmail().setOrganizationOid("senderOrganizationOid.123456.7890");
         emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));
+        emailData.getEmail().addEmailAttachement(commonAttachment);
         emailData.setSenderOid("senderUserOid.123456.78990");
 
         EmailRecipient recipient = new EmailRecipient();
@@ -124,8 +142,16 @@ public class EmailResourceIT {
         recipient.setOid("vastaanottajaHenkiloOid.123456.7890");
         recipient.setOidType("virkailija");
         recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
-        recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("etunimi", "Milla"));
-        recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("lista", Arrays.asList(1,2,3)));
+        recipient.getAttachments().add(personalAttachment);
+        recipient.getRecipientReplacements()
+                .add(new ReportedRecipientReplacementDTO("etunimi", "Milla"));
+        recipient.getRecipientReplacements()
+                .add(new ReportedRecipientReplacementDTO("lista", Arrays.asList(1,2,3)));
+        recipient.getRecipientReplacements()
+                .add(new ReportedRecipientReplacementDTO("additionalAttachmentUris",
+                        Arrays.asList(attachmentUri, attachment2Uri)));
+        recipient.getRecipientReplacements()
+                .add(new ReportedRecipientReplacementDTO("additionalAttachmentUri", attachment3Uri));
         emailData.getRecipient().add(recipient);
 
         long start = System.currentTimeMillis();
@@ -150,7 +176,10 @@ public class EmailResourceIT {
         assertEquals("Varsinainen otsikko", message.getSubject());
         assertTrue(message.getContent() instanceof MimeMultipart);
         MimeMultipart multipart = (MimeMultipart)message.getContent();
+        assertEquals(6, multipart.getCount());
+
         MimeBodyPart bodyPart = (MimeBodyPart) multipart.getBodyPart(0);
+        multipart.getBodyPart(1);
         String content = bodyPart.getContent().toString();
         assertEquals("<html><head><title>Otsikko</title>" +
                 "<style type=\"text/css\">body {padding:10px;}</style></head>" +
@@ -159,6 +188,19 @@ public class EmailResourceIT {
                 // TODO: Should be:
                 //"<ul><li>1</li><li>2</li><li>3</li></ul> " +
                 "<p>Terveisin L&auml;hett&auml;j&auml;</p></body></html>", content);
+
+        verifyAttachment(commonAttachment, (MimeBodyPart)multipart.getBodyPart(1));
+        verifyAttachment(personalAttachment, (MimeBodyPart)multipart.getBodyPart(2));
+        verifyAttachment(attachment, (MimeBodyPart)multipart.getBodyPart(3));
+        verifyAttachment(attachment2, (MimeBodyPart)multipart.getBodyPart(4));
+        verifyAttachment(attachment3, (MimeBodyPart)multipart.getBodyPart(5));
+    }
+
+    private void verifyAttachment(EmailAttachment attachment, MimeBodyPart mimePart) throws MessagingException, IOException {
+        assertEquals(attachment.getContentType(), mimePart.getContentType());
+        assertEquals(attachment.getName(), mimePart.getFileName());
+        byte[] attachmentBytes = IOUtils.readBytesFromStream(mimePart.getInputStream());
+        assertEquals(new String(attachment.getData()), new String(attachmentBytes));
     }
 
     private boolean isSending(String sendId) {
@@ -175,5 +217,22 @@ public class EmailResourceIT {
         when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL)))
                 .thenReturn(template);
         return template;
+    }
+
+    private EmailAttachment assumeAttachment(String uri, String name, String testFile) throws IOException {
+        EmailAttachment attachment = produceAttachment(name, testFile);
+        when(attachmentResource.downloadByUri(eq(uri))).thenReturn(attachment);
+        return attachment;
+    }
+
+    private EmailAttachment produceAttachment(String name, String testFile) throws IOException {
+        Resource resource = applicationContext.getResource("classpath:testfiles/"+testFile);
+        EmailAttachment attachment = new EmailAttachment();
+        String[] prts = resource.getFilename().split("\\.");
+        String extension = prts[prts.length-1];
+        attachment.setContentType("application/"+extension);
+        attachment.setName(name);
+        attachment.setData(IOUtils.readBytesFromStream(resource.getInputStream()));
+        return attachment;
     }
 }
