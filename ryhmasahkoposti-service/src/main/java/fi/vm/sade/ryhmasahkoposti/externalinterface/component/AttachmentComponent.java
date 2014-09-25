@@ -64,4 +64,8 @@ public class AttachmentComponent {
             throw new ExternalInterfaceException("AttachmentComponent.markDownloaded(uris="+uris+") failed.", e);
         }
     }
+
+    public void setAttachmentResource(AttachmentResource attachmentResource) {
+        this.attachmentResource = attachmentResource;
+    }
 }

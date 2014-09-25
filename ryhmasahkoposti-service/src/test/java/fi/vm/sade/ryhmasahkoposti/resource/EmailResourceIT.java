@@ -17,18 +17,21 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 
+import javax.mail.Message;
+import javax.mail.internet.MimeBodyPart;
+import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.core.Response;
 
 import org.dom4j.DocumentException;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.ImportResource;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -36,9 +39,17 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.config.IntegrationTestConfig;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import junit.framework.Assert;
+import junit.framework.TestCase;
 
+import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
+import static junit.framework.Assert.assertEquals;
 import static junit.framework.TestCase.assertNotNull;
 import static junit.framework.TestCase.assertTrue;
 import static org.mockito.Matchers.eq;
@@ -50,12 +61,13 @@ import static org.mockito.Mockito.when;
  * Date: 25.9.2014
  * Time: 10:30
  */
-@Ignore // WIP
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = EmailResourceIT.Config.class)
+@ContextConfiguration(classes = IntegrationTestConfig.class)
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class})
 public class EmailResourceIT {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private EmailResourceImpl emailResource;
 
@@ -63,22 +75,33 @@ public class EmailResourceIT {
     private TemplateComponent templateComponent;
 
     @Autowired
+    private AttachmentComponent attachmentComponent;
+
+    @Autowired
+    private IntegrationTestConfig.MailerStatus mailerStatus;
+
     private TemplateResource templateClient;
+    private AttachmentResource attachmentResource;
 
     @Before
     public void setup() {
         templateClient = mock(TemplateResource.class);
         templateComponent.setTemplateResourceClient(templateClient);
+
+        attachmentResource = mock(AttachmentResource.class);
+        attachmentComponent.setAttachmentResource(attachmentResource);
     }
 
     @Test
     public void testEmailSendingWithReceiverSepcificDownloadedAttachments() throws Exception {
         TemplateDTO template = with(with(assumeTestTemplate("Testitemplate", "FI"),
-                        content("Testitemplate",
-                                "<html><head><title>$otsikko</title><style type=\"text/css\">$tyylit</style></head>" +
-                                        "<body><p>Hei $etunimi,</p>$sisalto $loppuosa</body></html>")
-                ),
-                replacement("loppuosa", "<p>Terveisin Lähettäjä</p>")
+                content("Testitemplate",
+                        "<html><head><title>$title</title><style type=\"text/css\">$tyylit</style></head>" +
+                        "<body><p>Hei $etunimi,</p>$sisalto <ul>#foreach ($v in $lista)<li>$v</li>#end</ul> $loppuosa</body></html>")
+            ),
+            replacement("loppuosa", "<p>Terveisin Lähettäjä</p>"),
+            replacement("title", "Otsikko"),
+            replacement("etunimi", "")
         );
 
         EmailData emailData = new EmailData();
@@ -104,9 +127,10 @@ public class EmailResourceIT {
         recipient.setOidType("virkailija");
         recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
         recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("etunimi", "Milla"));
-        recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("etunimi", "Milla"));
+        recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("lista", Arrays.asList(1,2,3)));
         emailData.getRecipient().add(recipient);
 
+        long start = System.currentTimeMillis();
         Response response = emailResource.sendEmail(emailData);
         assertNotNull(response);
         assertNotNull(response.getEntity());
@@ -114,72 +138,45 @@ public class EmailResourceIT {
         EmailSendId id = (EmailSendId)response.getEntity();
         assertNotNull(id.getId());
         // Wait for the queue to be handled:
-        // WIP
-        // TODO ...
+        while (isSending(id.getId())) {
+            Thread.sleep(10l);
+        }
+
+        long duration = System.currentTimeMillis()-start;
+        logger.info("Duration: " + duration + " ms.");
+        assertTrue(duration < 1000l);
+
+        // actually outgoing message at the javax.mail.Transport static send method:
+        assertEquals(1, mailerStatus.getMessages().size());
+        Message message = mailerStatus.getMessages().get(0);
+        assertEquals("Varsinainen otsikko", message.getSubject());
+        assertTrue(message.getContent() instanceof MimeMultipart);
+        MimeMultipart multipart = (MimeMultipart)message.getContent();
+        MimeBodyPart bodyPart = (MimeBodyPart) multipart.getBodyPart(0);
+        String content = bodyPart.getContent().toString();
+        assertEquals("<html><head><title>Otsikko</title>" +
+                "<style type=\"text/css\">body {padding:10px;}</style></head>" +
+                "<body><p>Hei Milla,</p><p>Varsinainen viestin ssis&auml;lt&ouml;</p> " +
+                "<ul></ul> " +
+                // TODO: Should be:
+                //"<ul><li>1</li><li>2</li><li>3</li></ul> " +
+                "<p>Terveisin L&auml;hett&auml;j&auml;</p></body></html>", content);
+        logger.info("Message: " + content);
+    }
+
+    private boolean isSending(String sendId) {
+        Response response = emailResource.getStatus(sendId);
+        assertNotNull(response);
+        assertNotNull(response.getEntity());
+        assertTrue(response.getEntity() instanceof SendingStatusDTO);
+        SendingStatusDTO status = (SendingStatusDTO)response.getEntity();
+        return status.getSendingEnded() == null;
     }
 
     private TemplateDTO assumeTestTemplate(String templateName, String languageCode) throws IOException, DocumentException {
-        TemplateDTO template = template(templateName, languageCode);
+        TemplateDTO template = RaportointipalveluTestData.template(templateName, languageCode);
         when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL)))
                 .thenReturn(template);
         return template;
     }
-
-    private static TemplateDTO template(String templateName, String languageCode) throws IOException, DocumentException {
-        TemplateDTO template = new TemplateDTO();
-        template.setName(templateName);
-        template.setLanguage(languageCode);
-        template.setVersionro("0");
-        template.setOrganizationOid("123.456.789");
-        template.setStoringOid("123");
-        template.setType("email");
-        template.setStyles("body {padding:10px;}");
-
-        Set<ReplacementDTO> replacements = new HashSet<ReplacementDTO>();
-
-        template.setReplacements(replacements);
-        return template;
-    }
-
-    public static TemplateDTO with(TemplateDTO template, TemplateContentDTO... contents) {
-        Set<TemplateContentDTO> templateContents = new HashSet<TemplateContentDTO>();
-        for (TemplateContentDTO content : contents) {
-            templateContents.add(content);
-        }
-        template.setContents(templateContents);
-        return template;
-    }
-
-    public static TemplateDTO with(TemplateDTO template, ReplacementDTO... replacements) {
-        Set<ReplacementDTO> replacementsSet = new HashSet<ReplacementDTO>();
-        for (ReplacementDTO replacement : replacements) {
-            replacementsSet.add(replacement);
-        }
-        template.setReplacements(replacementsSet);
-        return template;
-    }
-
-    public static TemplateContentDTO content(String name, String contentStr) {
-        TemplateContentDTO content = new TemplateContentDTO();
-        content.setName(name);
-        content.setContentType("text/html");
-        content.setOrder(1);
-        content.setTimestamp(new Date());
-        content.setContent(contentStr);
-        return content;
-    }
-
-    public static ReplacementDTO replacement(String name, String defaultValue) {
-        ReplacementDTO loppuOsa = new ReplacementDTO();
-        loppuOsa.setName(name);
-        loppuOsa.setDefaultValue(defaultValue);
-        loppuOsa.setMandatory(true);
-        return loppuOsa;
-    }
-
-    @Configuration
-    @ImportResource(value = "classpath:test-bundle-context.xml")
-    public static class Config {
-    }
-
 }

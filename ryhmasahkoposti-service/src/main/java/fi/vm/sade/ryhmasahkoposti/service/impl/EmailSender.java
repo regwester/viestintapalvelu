@@ -45,7 +45,7 @@ public class EmailSender {
                 long took = System.currentTimeMillis() -start;
                 LOGGER.debug("Message sent took: " + took);
             } else {
-                mockSendMail(emailMessage, emailAddress); //just log the message
+                mockSendMail(emailMessage, emailAddress, additionalAttachments); //just log the message
             }
         } catch (Exception e) {
             LOGGER.error("Failed to send message to " + emailAddress + ": " + emailMessage.getBody(), e);
@@ -137,7 +137,8 @@ public class EmailSender {
         return session;
     }
 
-    private void mockSendMail(EmailMessage emailMessage, String emailAddress) {
+    private void mockSendMail(EmailMessage emailMessage, String emailAddress,
+                              Optional<? extends AttachmentContainer> additionalAttachments) {
         // Log the content of the message
         StringBuffer sb = new StringBuffer("Email dummysender:");
         sb.append("\nFROM:    ");
@@ -149,6 +150,16 @@ public class EmailSender {
         if (emailMessage.getAttachments() != null && emailMessage.getAttachments().size() > 0) {
             sb.append("\nATTACHMENTS:");
             for (EmailAttachment attachment : emailMessage.getAttachments()) {
+                sb.append(" ");
+                sb.append(attachment.getName());
+                sb.append("(");
+                sb.append(attachment.getContentType());
+                sb.append(")");
+            }
+        }
+        if (additionalAttachments.isPresent()) {
+            sb.append("\nADDITIONAL ATTACHMENTS:");
+            for (EmailAttachment attachment : additionalAttachments.get().getAttachments()) {
                 sb.append(" ");
                 sb.append(attachment.getName());
                 sb.append("(");

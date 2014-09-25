@@ -7,7 +7,9 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.*;
 import org.apache.commons.fileupload.FileItem;
+import org.dom4j.DocumentException;
 
+import java.io.IOException;
 import java.util.*;
 
 public class RaportointipalveluTestData {
@@ -419,5 +421,54 @@ public class RaportointipalveluTestData {
         queue.setVersion(1l);
         queue.setState(state);
         return queue;
+    }
+
+
+    public static TemplateDTO template(String templateName, String languageCode) throws IOException, DocumentException {
+        TemplateDTO template = new TemplateDTO();
+        template.setName(templateName);
+        template.setLanguage(languageCode);
+        template.setVersionro("0");
+        template.setOrganizationOid("123.456.789");
+        template.setStoringOid("123");
+        template.setType("email");
+        template.setStyles("body {padding:10px;}");
+        return template;
+    }
+
+    public static TemplateDTO with(TemplateDTO template, TemplateContentDTO... contents) {
+        Set<TemplateContentDTO> templateContents = new HashSet<TemplateContentDTO>();
+        for (TemplateContentDTO content : contents) {
+            templateContents.add(content);
+        }
+        template.setContents(templateContents);
+        return template;
+    }
+
+    public static TemplateDTO with(TemplateDTO template, ReplacementDTO... replacements) {
+        Set<ReplacementDTO> replacementsSet = new HashSet<ReplacementDTO>();
+        for (ReplacementDTO replacement : replacements) {
+            replacementsSet.add(replacement);
+        }
+        template.setReplacements(replacementsSet);
+        return template;
+    }
+
+    public static TemplateContentDTO content(String name, String contentStr) {
+        TemplateContentDTO content = new TemplateContentDTO();
+        content.setName(name);
+        content.setContentType("text/html");
+        content.setOrder(1);
+        content.setTimestamp(new Date());
+        content.setContent(contentStr);
+        return content;
+    }
+
+    public static ReplacementDTO replacement(String name, String defaultValue) {
+        ReplacementDTO loppuOsa = new ReplacementDTO();
+        loppuOsa.setName(name);
+        loppuOsa.setDefaultValue(defaultValue);
+        loppuOsa.setMandatory(true);
+        return loppuOsa;
     }
 }

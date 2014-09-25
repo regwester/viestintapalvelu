@@ -371,7 +371,7 @@ public class EmailServiceImpl implements EmailService {
     
     private void rebuildMessage(EmailRecipientDTO er, Long messageId, EmailMessageDTO message) throws Exception {
         log.info("Build message content using template for messageId=" + messageId);
-        List<ReportedRecipientReplacementDTO> recipientReplacements = getRecipientReplacements(er);
+        List<ReportedRecipientReplacementDTO> recipientReplacements = er.getRecipientReplacements();
 
         String buildMessage = templateBuilder.buildTempleMessage(message.getBody(),
                 message.getMessageReplacements(), recipientReplacements);
