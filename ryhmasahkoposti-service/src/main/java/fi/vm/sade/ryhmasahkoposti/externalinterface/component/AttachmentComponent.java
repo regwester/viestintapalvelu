@@ -18,10 +18,9 @@ package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
@@ -37,7 +36,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource;
 public class AttachmentComponent {
     private static Logger logger = LoggerFactory.getLogger(TemplateComponent.class);
 
-    @Resource
+    @Autowired(required = false) // XXX: why this is not autowired with @Resource as in TemplateComponent?
     private AttachmentResource attachmentResource;
 
     /**
@@ -67,5 +66,6 @@ public class AttachmentComponent {
 
     public void setAttachmentResource(AttachmentResource attachmentResource) {
         this.attachmentResource = attachmentResource;
+        logger.info("AttachmentComponent.attachmentResource={}", this.attachmentResource);
     }
 }

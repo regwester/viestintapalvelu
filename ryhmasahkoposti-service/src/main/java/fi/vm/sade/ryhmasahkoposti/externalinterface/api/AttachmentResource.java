@@ -21,12 +21,8 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import com.wordnik.swagger.annotations.ApiOperation;
-
-import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 
 /**
@@ -35,12 +31,12 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
  * Time: 15:06
  */
 @Component
-@Path("attachment")
+@Path("/attachment")
 public interface AttachmentResource {
 
     @GET
-    @PreAuthorize(SecurityConstants.SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD)
     @Path("/getByUri")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public EmailAttachment downloadByUri(@QueryParam("uri") String uri);
 
     @DELETE

@@ -60,6 +60,24 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
+    <!-- External interface AttachmentResource  -->
+    <jaxrs-client:client id="attachmentResourceClient"
+                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource"
+                         address="${ryhmasahkopostipalvelu.attachmentService.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+                <property name="webCasUrl" value="${web.url.cas}" />
+                <property name="targetService" value="${cas.service.viestintapalvelu}" />
+                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+            </bean>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
     <!-- External interface HenkiloResource of HenkiloPalvelu -->
     <jaxrs-client:client id="henkiloResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource"
@@ -108,25 +126,6 @@
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
-
-    <!-- External interface AttachmentResource  -->
-    <jaxrs-client:client id="attachmentResourceClient"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource"
-                         address="${ryhmasahkopostipalvelu.attachmentService.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                <property name="webCasUrl" value="${web.url.cas}" />
-                <property name="targetService" value="${cas.service.viestintapalvelu}" />
-                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.henkilopalvelu}" />
-                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.henkilopalvelu}" />
-            </bean>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
-
 
     <!-- Apache Camel route scanner -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">

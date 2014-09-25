@@ -27,6 +27,9 @@ public class ReportedMessage extends BaseEntity {
     @Column(name = "lahettajan_näyttöteksti")
     private String senderDisplayText;
 
+    @Column(name = "viestipohja_id")
+    private Long templateId;
+
     @Column(name = "lahettajan_organisaatio_oid", nullable = true)
     private String senderOrganizationOid;
 
@@ -192,6 +195,14 @@ public class ReportedMessage extends BaseEntity {
         this.timestamp = timestamp;
     }
 
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
     /**
      * @return the type
      */
@@ -226,6 +237,7 @@ public class ReportedMessage extends BaseEntity {
         return "ReportedMessage{" +
                 "process='" + process + '\'' +
                 ", senderOid='" + senderOid + '\'' +
+                ", templateId='" + templateId + '\'' +
                 ", senderName='" + senderName + '\'' +
                 ", senderEmail='" + senderEmail + '\'' +
                 ", senderDisplayText='" + senderDisplayText + '\'' +

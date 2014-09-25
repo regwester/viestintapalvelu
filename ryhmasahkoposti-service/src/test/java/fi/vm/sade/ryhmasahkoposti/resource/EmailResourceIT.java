@@ -45,8 +45,6 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
-import junit.framework.Assert;
-import junit.framework.TestCase;
 
 import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
 import static junit.framework.Assert.assertEquals;
@@ -161,7 +159,6 @@ public class EmailResourceIT {
                 // TODO: Should be:
                 //"<ul><li>1</li><li>2</li><li>3</li></ul> " +
                 "<p>Terveisin L&auml;hett&auml;j&auml;</p></body></html>", content);
-        logger.info("Message: " + content);
     }
 
     private boolean isSending(String sendId) {
