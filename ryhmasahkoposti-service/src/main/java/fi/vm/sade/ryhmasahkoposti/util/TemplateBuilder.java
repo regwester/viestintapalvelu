@@ -13,6 +13,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.swing.text.AbstractDocument.Content;
+
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.dom4j.DocumentException;
@@ -24,6 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
@@ -41,26 +44,48 @@ public class TemplateBuilder {
     @Autowired
     private TemplateService templateService;
 
-    
+    public TemplateDTO getTemplate(EmailRecipientMessage message) {
+        if (null != message.getTemplateId()) {
+            return getTemplate(message.getTemplateId());
+        } else if (null != message.getTemplateName()) {
+            return getTemplate(message.getTemplateName(), message.getLanguageCode(), TemplateDTO.TYPE_EMAIL, message.getHakuOid());
+        }
+        return null;
+    }
+
     public TemplateDTO getTemplate(EmailData emailData) {
+        return getTemplate(emailData.getEmail().getTemplateName(), emailData.getEmail().getLanguageCode(), TemplateDTO.TYPE_EMAIL, emailData.getEmail()
+                .getHakuOid());
+    }
+
+    private TemplateDTO getTemplate(String id) {
         TemplateDTO templateDTO = null;
         try {
-            
-            templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(),
-                emailData.getEmail().getLanguageCode(), TemplateDTO.TYPE_EMAIL, null);
-            LOGGER.debug("Loaded template: {} for {}", templateDTO, emailData.getEmail().getTemplateName());
+            templateDTO = templateService.getTemplate(id);
+            LOGGER.debug("Loaded template with id: {}", id);
         } catch (Exception e) {
-            LOGGER.error("Failed to load template for templateName: {}, languageCode={}",
-                    emailData.getEmail().getTemplateName(), emailData.getEmail().getLanguageCode(), e);
+            LOGGER.error("Failed to load template for with id : {}", id, e);
         }
-
         if (templateDTO != null) {
-            LOGGER.debug("Template found, processing: {}", templateDTO);
+            LOGGER.debug("Template found: {}", templateDTO);
         }
         return templateDTO;
     }
-    
-    
+
+    private TemplateDTO getTemplate(String templateName, String languageCode, String type, String hakuOid) {
+        TemplateDTO templateDTO = null;
+        try {
+            templateDTO = templateService.getTemplate(templateName, languageCode, TemplateDTO.TYPE_EMAIL, hakuOid);
+            LOGGER.debug("Loaded template: {} for {}", templateDTO, templateName);
+        } catch (Exception e) {
+            LOGGER.error("Failed to load template for templateName: {}, languageCode={}", templateName, languageCode, e);
+        }
+        if (templateDTO != null) {
+            LOGGER.debug("Template found: {}", templateDTO);
+        }
+        return templateDTO;
+    }
+
     /**
      * Build template content without any replacements
      * 
@@ -94,22 +119,85 @@ public class TemplateBuilder {
         return result.toString();
     }
 
+    public EmailRecipientMessage applyTemplate(EmailRecipientMessage message) {
+
+        TemplateDTO template = getTemplate(message);
+        if (template != null) {
+            String content = null;
+            for (TemplateContentDTO c : template.getContents()) {
+               if ("email_body".equalsIgnoreCase(c.getName())) {
+                   content = c.getContent();
+               }
+            }
+            // is there anything to do
+            if (content == null) {
+                return message;
+            }
+            Map<String,Object> dataContext = createDataContext(template, message);
+            
+            dataContext.put("tyylit", template.getStyles());
+            dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+
+            if (message.getBody()!= null) {
+                dataContext.put("sisalto", cleanHtmlFromApi((String) message.getBody()));
+            }
+
+            if (message.getSourceRegister() != null) {
+                Map<String, Boolean> sourceRegisters = new HashMap<String, Boolean>();
+
+                for (SourceRegister sourceRegister : message.getSourceRegister()) {
+                    sourceRegisters.put(sourceRegister.getName(), true);
+                }
+
+                dataContext.put("sourceregisters", sourceRegisters);
+            }
+            
+            StringWriter writer = new StringWriter();
+            templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+            message.setBody(writer.toString());
+            
+
+        }
+        /**
+         * List<ReportedRecipientReplacementDTO> recipientReplacements =
+         * er.getRecipientReplacements();
+         * 
+         * String buildMessage =
+         * templateBuilder.buildTempleMessage(message.getBody(),
+         * message.getMessageReplacements(), recipientReplacements);
+         * 
+         * if (!StringUtils.isEmpty(buildMessage)) {
+         * message.setBody(buildMessage); } else { throw new
+         * Exception("Template build error. messageId=" + messageId); }
+         * 
+         * String buildMessageSubject = buildTempleMessage(message.getSubject(),
+         * message.getMessageReplacements(), recipientReplacements); if
+         * (!StringUtils.isEmpty(buildMessageSubject)) {
+         * message.setSubject(buildMessageSubject); } else { throw new
+         * Exception("Message subject build error. messageId=" + messageId); }
+         * 
+         * 
+         * 
+         * //TODO build message
+         * 
+         */
+        return message;
+    }
+
     /**
-     * Build template content without any replacements
-     * 
+     * Build template content 
      * @param messageReplacements
      * @param recipientReplacements
      * @return
      */
-    public String buildTempleMessage(String message, List<ReplacementDTO> messageReplacements,
-                                     List<ReportedRecipientReplacementDTO> recipientReplacements) {
+    public String buildTempleMessage(String message, List<ReplacementDTO> messageReplacements, List<ReportedRecipientReplacementDTO> recipientReplacements) {
         Map<String, Object> replacements = new HashMap<String, Object>();
 
         // Message replacements exist
-        if (messageReplacements != null) { 
+        if (messageReplacements != null) {
             for (ReplacementDTO repl : messageReplacements) {
                 replacements.put(repl.getName(), repl.getDefaultValue());
-            }            
+            }
         }
 
         // Place user replacements
@@ -122,6 +210,8 @@ public class TemplateBuilder {
         return createContent(message, replacements);
     }
 
+   
+    
     /**
      * Create message content
      * 
@@ -135,11 +225,25 @@ public class TemplateBuilder {
         Map<String, Object> dataContext = createDataContext(replacements);
 
         StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(
-            new ByteArrayInputStream(message.getBytes())));
+        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(message.getBytes())));
         return writer.toString();
     }
 
+    private Map<String, Object> createDataContext(TemplateDTO template, EmailRecipientMessage message) {
+        Map<String, Object> replacements = new HashMap<String, Object>();
+        for (ReplacementDTO r : template.getReplacements()) {
+            replacements.put(r.getName(), r.getDefaultValue());
+        }
+        for (ReplacementDTO r : message.getMessageReplacements()) {
+            replacements.put(r.getName(), r.getDefaultValue());
+            
+        }
+        for (ReportedRecipientReplacementDTO r : message.getRecipient().getRecipientReplacements()){
+            replacements.put(r.getName(), r.getValue());
+        }
+        return createDataContext(replacements);
+    }
+    
     /**
      * Create data context
      * 
@@ -148,7 +252,7 @@ public class TemplateBuilder {
      */
     private Map<String, Object> createDataContext(Map<String, Object>... replacementsList) {
         Map<String, Object> data = new HashMap<String, Object>();
-                
+
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements == null) {
                 continue;
@@ -171,6 +275,7 @@ public class TemplateBuilder {
         return Jsoup.clean(string, Whitelist.relaxed());
     }
 
+    
     /**
      * Create page
      * 
@@ -184,31 +289,30 @@ public class TemplateBuilder {
     private String createPage(TemplateDTO template, EmailData emailData, byte[] pageContent) {
         Map<String, Object> dataContext = new HashMap<String, Object>();
         String styles = template.getStyles();
-        
+
         if (styles == null) {
             styles = "";
         }
-                
+
         dataContext.put("tyylit", styles);
         dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
 
         if (emailData.getEmail().getBody() != null) {
             dataContext.put("sisalto", cleanHtmlFromApi((String) emailData.getEmail().getBody()));
         }
-        
+
         if (emailData.getEmail().getSourceRegister() != null) {
             Map<String, Boolean> sourceRegisters = new HashMap<String, Boolean>();
-            
+
             for (SourceRegister sourceRegister : emailData.getEmail().getSourceRegister()) {
                 sourceRegisters.put(sourceRegister.getName(), true);
             }
-            
+
             dataContext.put("sourceregisters", sourceRegisters);
         }
 
         StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(
-            new ByteArrayInputStream(pageContent)));
+        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(pageContent)));
         return writer.toString();
 
     }

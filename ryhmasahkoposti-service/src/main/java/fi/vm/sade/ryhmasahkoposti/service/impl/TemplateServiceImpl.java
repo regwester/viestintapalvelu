@@ -17,5 +17,13 @@ public class TemplateServiceImpl implements TemplateService {
     public TemplateDTO getTemplate(String templateName, String languageCode, String templateType, String applicationPeriod) {
         return templateComponent.getTemplateContent(templateName, languageCode, templateType, applicationPeriod);
     }
+    
+    @Override
+    public TemplateDTO getTemplate(String id) {
+        if (id != null) {
+            return templateComponent.getTemplateContent(id.toString());
+        }
+        return null;
+    }
 
 }

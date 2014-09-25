@@ -24,10 +24,10 @@ import com.google.common.base.Optional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
 import fi.vm.sade.ryhmasahkoposti.service.*;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
-
 import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.addToMappedList;
 import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.combine;
 import static fi.vm.sade.ryhmasahkoposti.util.OptionalHelper.as;
@@ -264,20 +264,17 @@ public class EmailServiceImpl implements EmailService {
         boolean success = false;
         if (rrService.startSending(emailRecipient)) {
             log.info("Handling really " + emailRecipient + " " + emailRecipient.getRecipientID());
-            Long messageId = emailRecipient.getEmailMessageID();
+            
+            
             try {
-                EmailMessageDTO message = getMessage(messageId);
+                // loads remote attachments if available 
                 loadReferencedAttachments(emailRecipient, emailSendQueState);
-
-                if (virusCheckRequired(message, emailRecipient)) {
-                    doVirusCheck(message, emailRecipient);
-                }
-
+                
+                // get recipient specific email message 
+                EmailRecipientMessage message = getVirusCheckedRecipientMessage(emailRecipient);
+                
                 if (virusCheckPassed(message)) {
-                    // TODO: XXX ?
-                    if (StringUtils.equalsIgnoreCase(message.getType(), ReportedMessage.TYPE_TEMPLATE)) {
-                        rebuildMessage(emailRecipient, messageId, message);
-                    }
+                    templateBuilder.applyTemplate(message);
                     emailSender.handleMail(message, emailRecipient.getEmail(), Optional.of(emailRecipient));
                 } else {
                     throw new Exception("Virus check problem. File infected: " + message.isInfected());
@@ -367,39 +364,28 @@ public class EmailServiceImpl implements EmailService {
         return failureCause;
     }
 
-    // TODO: XXX: breaks user psecific replacements,
+    private EmailRecipientMessage getVirusCheckedRecipientMessage(EmailRecipientDTO emailRecipient) {
+        Long messageId = emailRecipient.getEmailMessageID();
+        EmailMessageDTO message = getMessage(messageId);
+        
+        if (virusCheckRequired(message, emailRecipient)) {
+            // check message and recipient attachments 
+            doVirusCheck(message, emailRecipient);
+        }
+
+        EmailRecipientMessage recipientMessage = EmailRecipientMessage.getFromEmailMessageDTO(emailRecipient, message);
+        return recipientMessage;
+    }
+    
     private EmailMessageDTO getMessage(Long messageId) {
         EmailMessageDTO message = messageCache.get(messageId);
         if (message == null) {
             message = rrService.getMessage(messageId);
-            // TODO: and this breaks virus check onece / message
-//            messageCache.put(messageId, message);
+            messageCache.put(messageId, message);
         }
         return message;
     }
     
-    private void rebuildMessage(EmailRecipientDTO er, Long messageId, EmailMessageDTO message) throws Exception {
-        log.info("Build message content using template for messageId=" + messageId);
-        List<ReportedRecipientReplacementDTO> recipientReplacements = er.getRecipientReplacements();
-
-        String buildMessage = templateBuilder.buildTempleMessage(message.getBody(),
-                message.getMessageReplacements(), recipientReplacements);
-
-        if (!StringUtils.isEmpty(buildMessage)) {
-            message.setBody(buildMessage);
-        } else {
-            throw new Exception("Template build error. messageId=" + messageId);
-        }
-
-        String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), 
-            message.getMessageReplacements(), recipientReplacements);
-        if (!StringUtils.isEmpty(buildMessageSubject)) {
-            message.setSubject(buildMessageSubject);
-        } else {
-            throw new Exception("Message subject build error. messageId=" + messageId);
-        }
-    }
-
     private List<ReportedRecipientReplacementDTO> getRecipientReplacements(EmailRecipientDTO er) {
         List<ReportedRecipientReplacementDTO> recipientReplacements = null;
         try {
@@ -413,10 +399,10 @@ public class EmailServiceImpl implements EmailService {
 
     private boolean virusCheckRequired(EmailMessageDTO message, EmailRecipientDTO recipient) {
         return virusCheckRequired && (
-                    !message.isVirusChecked()
-                ||  (recipient.getAttachments() != null && !recipient.getAttachments().isEmpty())
-        );
-    }
+                !message.isVirusChecked()
+            ||  (recipient.getAttachments() != null && !recipient.getAttachments().isEmpty())
+    );
+}
 
     private void doVirusCheck(EmailMessageDTO message, EmailRecipientDTO recipient) {
         try {
@@ -425,8 +411,8 @@ public class EmailServiceImpl implements EmailService {
             log.error("Virus check failed" + e);
         }
     }
-
-    private boolean virusCheckPassed(EmailMessageDTO message) {
+    
+    private boolean virusCheckPassed(EmailRecipientMessage message) {
         return !virusCheckRequired || (message.isVirusChecked() && !message.isInfected());
     }
 

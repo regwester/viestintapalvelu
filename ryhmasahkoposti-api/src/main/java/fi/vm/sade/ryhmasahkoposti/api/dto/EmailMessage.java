@@ -1,16 +1,13 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailMessage implements AttachmentContainer {
@@ -30,9 +27,11 @@ public class EmailMessage implements AttachmentContainer {
     private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isValid = true;
     private String templateName;
+    private String templateId;
     private String languageCode;
     private List<SourceRegister> sourceRegister;
-
+    private String hakuOid; 
+    
     public EmailMessage() {
     }
 
@@ -143,7 +142,7 @@ public class EmailMessage implements AttachmentContainer {
     }
 
     @Override
-    public List<? extends EmailAttachment> getAttachments() {
+    public List<EmailAttachment> getAttachments() {
         return attachments;
     }
 
@@ -165,6 +164,22 @@ public class EmailMessage implements AttachmentContainer {
 
     public void setCallingProcess(String callingProcess) {
         this.callingProcess = callingProcess;
+    }
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     /**
