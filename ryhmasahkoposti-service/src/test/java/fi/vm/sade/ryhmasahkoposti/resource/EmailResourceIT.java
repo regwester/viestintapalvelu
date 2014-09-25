@@ -115,11 +115,13 @@ public class EmailResourceIT {
         );
         String attachmentUri = "viestinta://letterReceiverLetterAttachment/1",
                 attachment2Uri = "viestinta://letterReceiverLetterAttachment/2",
-                attachment3Uri = "viestinta://letterReceiverLetterAttachment/3";
+                attachment3Uri = "viestinta://letterReceiverLetterAttachment/3",
+                attachment4Uri = "viestinta://letterReceiverLetterAttachment/4";
         EmailAttachment
                 attachment = assumeAttachment(attachmentUri, "Liite.pdf", "test.pdf"),
                 attachment2 = assumeAttachment(attachment2Uri, "Liite2.pdf", "test2.pdf"),
                 attachment3 = assumeAttachment(attachment3Uri, "Liite3.pdf", "test.pdf"),
+                attachment4 = assumeAttachment(attachment4Uri, "Vastaanottajan2Liite.pdf", "test2.pdf"),
                 personalAttachment = produceAttachment("HenkKohtLiite.pdf", "test.pdf"),
                 commonAttachment = produceAttachment("Perusliite.pdf", "test2.pdf");
 
@@ -147,16 +149,26 @@ public class EmailResourceIT {
         recipient.setOidType("virkailija");
         recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
         recipient.getAttachments().add(personalAttachment);
-        recipient.getRecipientReplacements()
-                .add(new ReportedRecipientReplacementDTO("etunimi", "Milla"));
-        recipient.getRecipientReplacements()
-                .add(new ReportedRecipientReplacementDTO("lista", Arrays.asList(1,2,3)));
+        recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("etunimi", "Milla"));
+        recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("lista", Arrays.asList(1,2,3)));
         recipient.getRecipientReplacements()
                 .add(new ReportedRecipientReplacementDTO("additionalAttachmentUris",
                         Arrays.asList(attachmentUri, attachment2Uri)));
         recipient.getRecipientReplacements()
                 .add(new ReportedRecipientReplacementDTO("additionalAttachmentUri", attachment3Uri));
         emailData.getRecipient().add(recipient);
+
+        EmailRecipient recipient2 = new EmailRecipient();
+        recipient2.setEmail("varsinainen_vastaanottaja2@example.com");
+        recipient2.setLanguageCode("FI");
+        recipient2.setName("Matti Mallikas");
+        recipient2.setOid("vastaanottajaHenkiloOid.123456.7891");
+        recipient2.setOidType("virkailija");
+        recipient2.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
+        recipient2.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("etunimi", "Matti"));
+        recipient2.getRecipientReplacements()
+                .add(new ReportedRecipientReplacementDTO("additionalAttachmentUri", attachment4Uri));
+        emailData.getRecipient().add(recipient2);
 
         final List<String> urlsReportedForDeletion = new ArrayList<String>();
         AnswerChain<Void> answersForAttachmentDeletions = atFirst(new Answer<Void>() {
@@ -183,7 +195,7 @@ public class EmailResourceIT {
         assertTrue(duration < 1000l);
 
         // actually outgoing message at the javax.mail.Transport static send method:
-        assertEquals(1, mailerStatus.getMessages().size());
+        assertEquals(2, mailerStatus.getMessages().size());
         Message message = mailerStatus.getMessages().get(0);
         assertEquals("Varsinainen otsikko", message.getSubject());
         assertTrue(message.getContent() instanceof MimeMultipart);
@@ -191,7 +203,6 @@ public class EmailResourceIT {
         assertEquals(6, multipart.getCount());
 
         MimeBodyPart bodyPart = (MimeBodyPart) multipart.getBodyPart(0);
-        multipart.getBodyPart(1);
         String content = bodyPart.getContent().toString();
         assertEquals("<html><head><title>Otsikko</title>" +
                 "<style type=\"text/css\">body {padding:10px;}</style></head>" +
@@ -208,9 +219,22 @@ public class EmailResourceIT {
         verifyAttachment(attachment3, (MimeBodyPart) multipart.getBodyPart(5));
 
         assertEquals(1, answersForAttachmentDeletions.getTotalCallCount());
-        assertEquals(3, urlsReportedForDeletion.size());
+        assertEquals(4, urlsReportedForDeletion.size());
         assertTrue(urlsReportedForDeletion.containsAll(
-                Arrays.asList(attachmentUri, attachment2Uri, attachment3Uri)));
+                Arrays.asList(attachmentUri, attachment2Uri, attachment3Uri, attachment4Uri)));
+
+        // Verify message 2
+        Message message2 = mailerStatus.getMessages().get(1);
+        multipart = (MimeMultipart)message2.getContent();
+        assertEquals(3, multipart.getCount());
+        verifyAttachment(commonAttachment, (MimeBodyPart)multipart.getBodyPart(1));
+        verifyAttachment(attachment4, (MimeBodyPart)multipart.getBodyPart(2));
+        bodyPart = (MimeBodyPart) multipart.getBodyPart(0);
+        assertEquals("<html><head><title>Otsikko</title>" +
+                "<style type=\"text/css\">body {padding:10px;}</style></head>" +
+                "<body><p>Hei Matti,</p><p>Varsinainen viestin ssis&auml;lt&ouml;</p> " +
+                "<ul></ul> " +
+                "<p>Terveisin L&auml;hett&auml;j&auml;</p></body></html>", bodyPart.getContent().toString());
     }
 
     private void verifyAttachment(EmailAttachment attachment, MimeBodyPart mimePart) throws MessagingException, IOException {

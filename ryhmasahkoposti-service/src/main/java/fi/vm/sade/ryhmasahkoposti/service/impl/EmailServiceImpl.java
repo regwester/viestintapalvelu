@@ -367,11 +367,13 @@ public class EmailServiceImpl implements EmailService {
         return failureCause;
     }
 
+    // TODO: XXX: breaks user psecific replacements,
     private EmailMessageDTO getMessage(Long messageId) {
         EmailMessageDTO message = messageCache.get(messageId);
         if (message == null) {
             message = rrService.getMessage(messageId);
-            messageCache.put(messageId, message);
+            // TODO: and this breaks virus check onece / message
+//            messageCache.put(messageId, message);
         }
         return message;
     }
