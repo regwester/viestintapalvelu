@@ -40,4 +40,8 @@ public class TemplateComponent {
             throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);
         }
     }
+
+    public void setTemplateResourceClient(TemplateResource templateResourceClient) {
+        this.templateResourceClient = templateResourceClient;
+    }
 }

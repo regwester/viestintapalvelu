@@ -18,21 +18,29 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.util.List;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.service.EmailAttachmentDownloader;
 
 /**
+ * Viestintäpalvelu implementation of EmailAttachmentDownloader handling URIS
+ * with viestinta-scheme, such as. viesinta://letterReceiverLetterAttachment/123
+ *
  * User: ratamaa
  * Date: 24.9.2014
  * Time: 14:59
  */
 @Component
 public class ViestintapalveluEmailAttachmentDownloaderImpl implements EmailAttachmentDownloader {
-    public static final String URI_PREFIX = "viestinta://";
+    private static Logger logger = LoggerFactory.getLogger(TemplateComponent.class);
+
+    private static final String URI_PREFIX = "viestinta://";
 
     @Autowired
     private AttachmentComponent attachmentComponent;
@@ -52,6 +60,11 @@ public class ViestintapalveluEmailAttachmentDownloaderImpl implements EmailAttac
 
     @Override
     public void reportDownloaded(List<String> uris) {
-        attachmentComponent.markDownloaded(uris);
+        try {
+            attachmentComponent.markDownloaded(uris);
+        } catch (Exception e) {
+            logger.error("Failed to reportDownloaded URIs in ViestintapalveluEmailAttachmentDownloaderImpl.", e);
+            // no-throw
+        }
     }
 }
