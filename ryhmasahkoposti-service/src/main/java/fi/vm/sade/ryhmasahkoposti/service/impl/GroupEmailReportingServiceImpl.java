@@ -110,7 +110,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             // Template is used
             try {               
                 templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(),
-                    languageCode, TemplateDTO.TYPE_EMAIL);
+                    languageCode, TemplateDTO.TYPE_EMAIL, null);
                 log.debug("Loaded template: {} for {}", templateDTO, emailData.getEmail().getTemplateName());
             } catch (Exception e) {
                 log.error("Failed to load template for templateName: {}, languageCode={}",
