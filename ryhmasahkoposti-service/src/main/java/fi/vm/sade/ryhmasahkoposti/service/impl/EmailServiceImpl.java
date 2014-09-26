@@ -1,7 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -11,7 +10,6 @@ import javax.inject.Named;
 import javax.mail.internet.MimeMessage;
 import javax.persistence.OptimisticLockException;
 
-import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +21,14 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
-import fi.vm.sade.ryhmasahkoposti.service.*;
+import fi.vm.sade.ryhmasahkoposti.service.EmailAttachmentDownloader;
+import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
+import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailRecipientDtoConverter;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
+
 import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.addToMappedList;
 import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.combine;
 import static fi.vm.sade.ryhmasahkoposti.util.OptionalHelper.as;
@@ -51,9 +52,6 @@ public class EmailServiceImpl implements EmailService {
     private GroupEmailReportingService rrService;
 
     @Autowired
-    private ReportedAttachmentService liiteService;
-
-    @Autowired
     private EmailSender emailSender;
 
     @Autowired
@@ -61,6 +59,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private EmailAVChecker emailAVChecker;
+
+    @Autowired
+    private EmailRecipientDtoConverter emailRecipientDtoConverter;
 
     @Autowired
     private EmailSendQueueService emailQueueService;
@@ -72,7 +73,8 @@ public class EmailServiceImpl implements EmailService {
     @Autowired
     private List<EmailAttachmentDownloader> emailDownloaders;
 
-    private TemplateBuilder templateBuilder = new TemplateBuilder();
+    @Autowired
+    private TemplateBuilder templateBuilder;
 
     @Value("${ryhmasahkoposti.require.virus.check:true}")
     private boolean virusCheckRequired;
@@ -264,8 +266,7 @@ public class EmailServiceImpl implements EmailService {
         boolean success = false;
         if (rrService.startSending(emailRecipient)) {
             log.info("Handling really " + emailRecipient + " " + emailRecipient.getRecipientID());
-            
-            
+
             try {
                 // loads remote attachments if available 
                 loadReferencedAttachments(emailRecipient, emailSendQueState);
@@ -275,7 +276,7 @@ public class EmailServiceImpl implements EmailService {
                 
                 if (virusCheckPassed(message)) {
                     templateBuilder.applyTemplate(message);
-                    emailSender.handleMail(message, emailRecipient.getEmail(), Optional.of(emailRecipient));
+                    emailSender.handleMail(message, emailRecipient.getEmail(), optionalEmailRecipientAttachments(emailRecipient));
                 } else {
                     throw new Exception("Virus check problem. File infected: " + message.isInfected());
                 }
@@ -291,6 +292,11 @@ public class EmailServiceImpl implements EmailService {
         long took = System.currentTimeMillis() - vStart;
         log.info("Message handling took " + took);
         return success;
+    }
+
+    protected Optional<? extends AttachmentContainer> optionalEmailRecipientAttachments(EmailRecipientDTO emailRecipient) {
+        return emailRecipient.getAttachments() != null ? Optional.of(emailRecipient)
+                : Optional.<AttachmentContainer>absent();
     }
 
     /**
@@ -373,8 +379,7 @@ public class EmailServiceImpl implements EmailService {
             doVirusCheck(message, emailRecipient);
         }
 
-        EmailRecipientMessage recipientMessage = EmailRecipientMessage.getFromEmailMessageDTO(emailRecipient, message);
-        return recipientMessage;
+        return emailRecipientDtoConverter.convert(emailRecipient, new EmailRecipientMessage(), message);
     }
     
     private EmailMessageDTO getMessage(Long messageId) {
@@ -385,24 +390,13 @@ public class EmailServiceImpl implements EmailService {
         }
         return message;
     }
-    
-    private List<ReportedRecipientReplacementDTO> getRecipientReplacements(EmailRecipientDTO er) {
-        List<ReportedRecipientReplacementDTO> recipientReplacements = null;
-        try {
-            recipientReplacements = rrService.getRecipientReplacements(er.getRecipientID());
-        } catch (IOException e) {
-            log.error("Getting recipient replacements failed for receipientId:"
-                    + er.getRecipientID());
-        }
-        return recipientReplacements;
-    }
 
     private boolean virusCheckRequired(EmailMessageDTO message, EmailRecipientDTO recipient) {
         return virusCheckRequired && (
                 !message.isVirusChecked()
-            ||  (recipient.getAttachments() != null && !recipient.getAttachments().isEmpty())
-    );
-}
+                        || (recipient.getAttachments() != null && !recipient.getAttachments().isEmpty())
+        );
+    }
 
     private void doVirusCheck(EmailMessageDTO message, EmailRecipientDTO recipient) {
         try {
@@ -422,5 +416,9 @@ public class EmailServiceImpl implements EmailService {
 
     public void setVirusCheckRequired(boolean virusCheckRequired) {
         this.virusCheckRequired = virusCheckRequired;
+    }
+
+    public void setTemplateBuilder(TemplateBuilder templateBuilder) {
+        this.templateBuilder = templateBuilder;
     }
 }

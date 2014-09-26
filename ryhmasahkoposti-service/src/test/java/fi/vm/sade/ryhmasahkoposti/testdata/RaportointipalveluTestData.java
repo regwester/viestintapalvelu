@@ -426,6 +426,7 @@ public class RaportointipalveluTestData {
 
     public static TemplateDTO template(String templateName, String languageCode) throws IOException, DocumentException {
         TemplateDTO template = new TemplateDTO();
+        template.setId(123l);
         template.setName(templateName);
         template.setLanguage(languageCode);
         template.setVersionro("0");

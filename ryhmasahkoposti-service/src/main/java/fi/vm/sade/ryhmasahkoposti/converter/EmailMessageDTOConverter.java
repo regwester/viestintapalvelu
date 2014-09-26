@@ -85,6 +85,9 @@ public class EmailMessageDTOConverter {
         emailMessageDTO.setReplyTo(reportedMessage.getReplyToEmail());
         emailMessageDTO.setBody(reportedMessage.getMessage());
         emailMessageDTO.setType(reportedMessage.getType());
+        if (reportedMessage.getTemplateId() != null) {
+            emailMessageDTO.setTemplateId(""+reportedMessage.getTemplateId());
+        }
 
         if (reportedMessage.getHtmlMessage() == null || reportedMessage.getHtmlMessage().isEmpty()
                 || reportedMessage.getHtmlMessage().equalsIgnoreCase("html")) {

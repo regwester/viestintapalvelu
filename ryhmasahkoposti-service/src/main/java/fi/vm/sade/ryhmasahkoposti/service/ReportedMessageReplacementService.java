@@ -32,7 +32,7 @@ public interface ReportedMessageReplacementService {
     /**
      * Get reported message replacements
      * 
-     * @param messageID
+     * @param message
      * @return
      */
     public List<ReportedMessageReplacement> getReportedMessageReplacements(ReportedMessage message);

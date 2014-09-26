@@ -24,7 +24,6 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserCompone
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.model.*;
 import fi.vm.sade.ryhmasahkoposti.service.*;
-import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 @Service
 @Transactional(readOnly = true)
@@ -95,67 +94,37 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.debug("addSendingGroupEmail called");
 
         // Check email template is used
-        String templateContent = null;
         TemplateDTO templateDTO = null;
-        ReplacementDTO templateSubject = null;
-        ReplacementDTO templateSenderFromAddress = null;
-        ReplacementDTO templateSenderFromPersonal = null;
-        ReplacementDTO templateReplyToAddress = null;
-        ReplacementDTO templateReplyToPersonal = null;
 
-        if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
+        if (emailData.getEmail().getTemplateId() != null) {
+            // Template is used
+            try {
+                templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateId());
+                log.debug("Loaded template: {} by id {}", templateDTO, emailData.getEmail().getTemplateId());
+            } catch (Exception e) {
+                log.error("Failed to load template for id: "+ emailData.getEmail().getTemplateId(), e);
+            }
+        } else if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
-            if (!StringUtils.isEmpty(emailData.getEmail().getLanguageCode()))
+            if (!StringUtils.isEmpty(emailData.getEmail().getLanguageCode())) {
                 languageCode = emailData.getEmail().getLanguageCode();
-
+            }
             // Template is used
             try {               
                 templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(),
-                    languageCode, TemplateDTO.TYPE_EMAIL, null);
-                log.debug("Loaded template: {} for {}", templateDTO, emailData.getEmail().getTemplateName());
+                    languageCode, TemplateDTO.TYPE_EMAIL, emailData.getEmail().getHakuOid());
+                log.debug("Loaded template: {} for name {}", templateDTO, emailData.getEmail().getTemplateName());
             } catch (Exception e) {
-                log.error("Failed to load template for templateName: {}, languageCode={}",
-                        emailData.getEmail().getTemplateName(), emailData.getEmail().getLanguageCode(), e);
-            }
-
-            if (templateDTO != null) {
-                log.debug("Template found, processing: {}", templateDTO);
-
-                // Convert template
-                TemplateBuilder templateBuilder = new TemplateBuilder();
-                templateContent = templateBuilder.buildTemplate(templateDTO, emailData);
-
-                log.debug("Template content: {}", templateContent);
-
-                // Get sender replacements
-                templateSenderFromAddress = reportedMessageReplacementConverter.getEmailFieldFromReplacements(
-                        templateDTO.getReplacements(), emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SENDER_FROM);
-                log.debug("Sender from address: {}", templateSenderFromAddress);
-                templateSenderFromPersonal = reportedMessageReplacementConverter.getEmailFieldFromReplacements(
-                        templateDTO.getReplacements(), emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SENDER_FROM_PERSONAL);
-                log.debug("Sender from address personal: {}", templateSenderFromPersonal);
-
-                // Get reply-to replacements
-                templateReplyToAddress = reportedMessageReplacementConverter.getEmailFieldFromReplacements(
-                        templateDTO.getReplacements(), emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_REPLY_TO);
-                log.debug("Reply-to from address: {}", templateReplyToAddress);
-                templateReplyToPersonal = reportedMessageReplacementConverter.getEmailFieldFromReplacements(
-                        templateDTO.getReplacements(), emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL);
-                log.debug("Reply-to address personal: {}", templateReplyToPersonal);
-
-                // Subject
-                templateSubject = reportedMessageReplacementConverter.getEmailFieldFromReplacements(
-                        templateDTO.getReplacements(), emailData.getReplacements(), ReplacementDTO.NAME_EMAIL_SUBJECT);
-
-                log.debug("Subject: {}", templateSubject);
-
+                log.error("Failed to load template for templateName: "+emailData.getEmail().getTemplateName()
+                        +", languageCode="+emailData.getEmail().getLanguageCode(), e);
             }
         }
 
         log.debug("Converting email to reportedMessage");
-        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail(),
-                templateSenderFromAddress, templateSenderFromPersonal, templateReplyToAddress, templateReplyToPersonal,
-                templateSubject, templateContent);
+        ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail());
+        if (templateDTO != null) {
+            reportedMessage.setTemplateId(templateDTO.getId());
+        }
         log.debug("Saving message to db");
         ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
 

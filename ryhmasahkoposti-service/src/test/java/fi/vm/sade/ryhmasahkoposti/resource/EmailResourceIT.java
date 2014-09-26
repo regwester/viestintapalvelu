@@ -105,7 +105,7 @@ public class EmailResourceIT {
     @Test
     public void testEmailSendingWithReceiverSepcificDownloadedAttachments() throws Exception {
         TemplateDTO template = with(with(assumeTestTemplate("Testitemplate", "FI"),
-                content("Testitemplate",
+                content("email_body",
                         "<html><head><title>$title</title><style type=\"text/css\">$tyylit</style></head>" +
                         "<body><p>Hei $etunimi,</p>$sisalto <ul>#foreach ($v in $lista)<li>$v</li>#end</ul> $loppuosa</body></html>")
             ),
@@ -178,6 +178,8 @@ public class EmailResourceIT {
             }
         });
         doAnswer(answersForAttachmentDeletions).when(attachmentResource).deleteByUris(any(List.class));
+
+
         long start = System.currentTimeMillis();
         Response response = emailResource.sendEmail(emailData);
         assertNotNull(response);
@@ -189,6 +191,7 @@ public class EmailResourceIT {
         while (isSending(id.getId())) {
             Thread.sleep(10l);
         }
+
 
         long duration = System.currentTimeMillis()-start;
         logger.info("Duration: " + duration + " ms.");
@@ -207,9 +210,7 @@ public class EmailResourceIT {
         assertEquals("<html><head><title>Otsikko</title>" +
                 "<style type=\"text/css\">body {padding:10px;}</style></head>" +
                 "<body><p>Hei Milla,</p><p>Varsinainen viestin ssis&auml;lt&ouml;</p> " +
-                "<ul></ul> " +
-                // TODO: Should be:
-                //"<ul><li>1</li><li>2</li><li>3</li></ul> " +
+                "<ul><li>1</li><li>2</li><li>3</li></ul> " +
                 "<p>Terveisin L&auml;hett&auml;j&auml;</p></body></html>", content);
 
         verifyAttachment(commonAttachment, (MimeBodyPart)multipart.getBodyPart(1));
@@ -256,8 +257,9 @@ public class EmailResourceIT {
     private TemplateDTO assumeTestTemplate(String templateName, String languageCode) throws IOException, DocumentException {
         TemplateDTO template = RaportointipalveluTestData.template(templateName, languageCode);
         when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL),
-                    any(String.class)))
-                .thenReturn(template);
+                    any(String.class))).thenReturn(template);
+        when(templateClient.getTemplateByID(eq(""+template.getId()))).thenReturn(template);
+
         return template;
     }
 

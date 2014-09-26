@@ -1,19 +1,8 @@
 package fi.vm.sade.ryhmasahkoposti.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.text.AbstractDocument.Content;
+import java.util.*;
 
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -25,17 +14,14 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
 
 @Component
 public class TemplateBuilder {
+    public static final String EMAIL_BODY_TEMPLATE_CONTENT = "email_body";
+    public static final String VARIABLE_NAME_INLINE_STYLES = "tyylit";
+    public static final String VARIABLE_NAME_LETTER_DATE = "letterDate";
 
     private static Logger LOGGER = LoggerFactory.getLogger(TemplateBuilder.class);
 
@@ -44,13 +30,33 @@ public class TemplateBuilder {
     @Autowired
     private TemplateService templateService;
 
-    public TemplateDTO getTemplate(EmailRecipientMessage message) {
-        if (null != message.getTemplateId()) {
-            return getTemplate(message.getTemplateId());
-        } else if (null != message.getTemplateName()) {
-            return getTemplate(message.getTemplateName(), message.getLanguageCode(), TemplateDTO.TYPE_EMAIL, message.getHakuOid());
+    private static final int MAX_CACHE_ENTRIES = 10;
+    private Map<String, TemplateDTO> templateCacheById = new LinkedHashMap<String, TemplateDTO>() {
+        @Override
+        protected boolean removeEldestEntry(Map.Entry<String, TemplateDTO> eldest) {
+            return size() > MAX_CACHE_ENTRIES;
         }
-        return null;
+    };
+
+    public TemplateDTO getTemplate(EmailRecipientMessage message) {
+        TemplateDTO result = null;
+        if (null != message.getTemplateId()) {
+            // Is is necessary to fetch template for every receiver?
+            // Templates won't change (new versions will have new id), so this little optimization here:
+            result = templateCacheById.get(message.getTemplateId());
+            if (result != null) {
+                return result;
+            }
+            result = getTemplate(message.getTemplateId());
+            templateCacheById.put(message.getTemplateId(), result);
+        } else if (null != message.getTemplateName()) {
+            result = getTemplate(message.getTemplateName(), message.getLanguageCode(), TemplateDTO.TYPE_EMAIL, message.getHakuOid());
+            if (result != null && result.getId() != null) {
+                message.setTemplateId(""+result.getId());
+                templateCacheById.put(message.getTemplateId(), result);
+            }
+        }
+        return result;
     }
 
     public TemplateDTO getTemplate(EmailData emailData) {
@@ -111,35 +117,56 @@ public class TemplateBuilder {
         // Create page
         StringBuffer result = new StringBuffer();
         for (TemplateContentDTO tc : contentList) {
-
-            String page = createPage(template, emailData, tc.getContent().getBytes());
-            result.append(page);
+//            String page = createPage(template, emailData, tc.getContent().getBytes());
+            result.append(tc.getContent());
         }
 
         return result.toString();
     }
 
     public EmailRecipientMessage applyTemplate(EmailRecipientMessage message) {
-
         TemplateDTO template = getTemplate(message);
         if (template != null) {
             String content = null;
             for (TemplateContentDTO c : template.getContents()) {
-               if ("email_body".equalsIgnoreCase(c.getName())) {
+               if (EMAIL_BODY_TEMPLATE_CONTENT.equalsIgnoreCase(c.getName())) {
                    content = c.getContent();
+                   break;
                }
             }
             // is there anything to do
             if (content == null) {
+                LOGGER.warn("No {} part in template {}", EMAIL_BODY_TEMPLATE_CONTENT, template.getId());
                 return message;
             }
             Map<String,Object> dataContext = createDataContext(template, message);
             
-            dataContext.put("tyylit", template.getStyles());
-            dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-
-            if (message.getBody()!= null) {
-                dataContext.put("sisalto", cleanHtmlFromApi((String) message.getBody()));
+            dataContext.put(VARIABLE_NAME_INLINE_STYLES, template.getStyles());
+            dataContext.put(VARIABLE_NAME_LETTER_DATE, new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+            // Replace sisalto parameter with Email's body if there is one:
+            if (message.getBody() != null) {
+                dataContext.put(ReplacementDTO.NAME_EMAIL_BODY, cleanHtmlFromApi(message.getBody()));
+            }
+            // Replace Email's subject with otsikko parameter if there is one (always replaced)
+            if (dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT) != null) {
+                message.setSubject(dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT).toString());
+            }
+            // reply-to-personal overrides possible reply-to, default to email's replyTo
+            if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL) != null) {
+                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL).toString());
+            } else if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO) != null) {
+                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO).toString());
+            }
+            if (dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_NAME_PERSONAL) != null) {
+                message.setSender(dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_NAME_PERSONAL).toString());
+            }
+            if (dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_FROM) != null) {
+                message.setFrom(dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_FROM).toString());
+            }
+            if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL) != null) {
+                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL).toString());
+            } else if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO) != null) {
+                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO).toString());
             }
 
             if (message.getSourceRegister() != null) {
@@ -153,34 +180,12 @@ public class TemplateBuilder {
             }
             
             StringWriter writer = new StringWriter();
-            templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+            templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG",
+                    new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
             message.setBody(writer.toString());
-            
-
+        } else {
+            LOGGER.warn("No template used for message with templateId={}", message.getTemplateId());
         }
-        /**
-         * List<ReportedRecipientReplacementDTO> recipientReplacements =
-         * er.getRecipientReplacements();
-         * 
-         * String buildMessage =
-         * templateBuilder.buildTempleMessage(message.getBody(),
-         * message.getMessageReplacements(), recipientReplacements);
-         * 
-         * if (!StringUtils.isEmpty(buildMessage)) {
-         * message.setBody(buildMessage); } else { throw new
-         * Exception("Template build error. messageId=" + messageId); }
-         * 
-         * String buildMessageSubject = buildTempleMessage(message.getSubject(),
-         * message.getMessageReplacements(), recipientReplacements); if
-         * (!StringUtils.isEmpty(buildMessageSubject)) {
-         * message.setSubject(buildMessageSubject); } else { throw new
-         * Exception("Message subject build error. messageId=" + messageId); }
-         * 
-         * 
-         * 
-         * //TODO build message
-         * 
-         */
         return message;
     }
 
@@ -236,7 +241,6 @@ public class TemplateBuilder {
         }
         for (ReplacementDTO r : message.getMessageReplacements()) {
             replacements.put(r.getName(), r.getDefaultValue());
-            
         }
         for (ReportedRecipientReplacementDTO r : message.getRecipient().getRecipientReplacements()){
             replacements.put(r.getName(), r.getValue());
