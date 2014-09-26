@@ -459,6 +459,25 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     @Transactional
+    public void saveBatchErrorForReceiver(Long letterReceiverId, String message) {
+        LetterReceivers receiver = letterReceiverLetterDAO.read(letterReceiverId).getLetterReceivers();
+
+        LetterBatch batch = receiver.getLetterBatch();
+        batch.setBatchStatus(LetterBatch.Status.error);
+
+        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
+        LetterBatchProcessingError error = new LetterBatchProcessingError();
+        error.setErrorTime(new Date());
+        error.setLetterReceivers(receiver);
+        error.setLetterBatch(batch);
+        error.setErrorCause(message);
+        errors.add(error);
+        batch.setProcessingErrors(errors);
+        letterBatchDAO.update(batch);
+    }
+
+    @Override
+    @Transactional
     public void processLetterReceiver(long receiverId) throws Exception {
         LetterReceivers receiver = letterReceiverLetterDAO.read(receiverId).getLetterReceivers();
         LetterBatch batch = receiver.getLetterBatch();
@@ -561,6 +580,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     public LetterBuilder getLetterBuilder() {
+
         if (this.letterBuilder == null && this.applicationContext != null) {
             this.letterBuilder = applicationContext.getBean(LetterBuilder.class);
         }

@@ -32,6 +32,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -277,6 +278,26 @@ public class LetterServiceTest {
         assertEquals(1, statusDto.getErrors().size());
         assertEquals("Testing error", statusDto.getErrors().get(0).getErrorCause());
         assertNotNull("Letter receivers must not be null", statusDto.getErrors().get(0).getLetterReceivers());
+
+    }
+
+    @Test
+    public void saveBatchProcessingError() {
+
+        long batchId = 101l;
+        long letterReceiverId = 999l;
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(batchId);
+        Set<LetterReceivers> letterReceivers = DocumentProviderTestData.getLetterReceivers(letterReceiverId, batch);
+        LetterReceivers receivers = letterReceivers.iterator().next();
+        batch.setLetterReceivers(letterReceivers);
+        when(mockedLetterReceiverLetterDAO.read(eq(letterReceiverId))).thenReturn(receivers.getLetterReceiverLetter());
+
+
+        String msg = "test message";
+        letterService.saveBatchErrorForReceiver(999l, msg);
+        assertNotNull(batch.getProcessingErrors());
+        assertEquals(1,batch.getProcessingErrors().size());
+
 
     }
 }
