@@ -92,8 +92,9 @@ public class LetterBatch extends BaseEntity {
     private Set<LetterReplacement> letterReplacements;
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
     private List<LetterBatchProcessingError> processingErrors;
- 
+
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;

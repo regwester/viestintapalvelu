@@ -81,6 +81,7 @@ public class LetterBatchDAOTest {
     public void getBatchStatus() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.processing);
+        letterBatch.setProcessingErrors(null);
         long idA = letterBatchDAO.insert(letterBatch).getId();
 
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
@@ -94,6 +95,7 @@ public class LetterBatchDAOTest {
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
         error.setErrorTime(new Date());
+        error.setLetterReceivers(letterBatch.getLetterReceivers().iterator().next());
         errors.add(error);
         letterBatch.setProcessingErrors(errors);
         long idC = letterBatchDAO.insert(letterBatch).getId();

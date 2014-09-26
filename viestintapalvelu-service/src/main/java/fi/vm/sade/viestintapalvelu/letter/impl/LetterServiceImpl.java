@@ -516,23 +516,40 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional(readOnly = true)
     public LetterBatchStatusDto getBatchStatus(long batchId) {
+
         LetterBatchStatusDto batch = letterBatchDAO.getLetterBatchStatus(batchId);
+
         if(batch == null) {
-            batch = new LetterBatchStatusDto(null, null, null, null);
-            batch.setProcessingStatus(LetterBatch.Status.error);
-            batch.setMessage("Batch not found with id " + batchId);
+            batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error);
+            List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
+            LetterBatchProcessingError error = new LetterBatchProcessingError();
+            error.setErrorCause("Batch not found for id " + batchId);
+            error.setErrorTime(new Date());
+            errors.add(error);
+            batch.setErrors(errors);
             return batch;
         }
 
-        //todo needs VIES-207 implementation, the status should be readable from the database and not set here
-        if(batch.getTotal() == null || batch.getTotal() == null) {
-            batch.setProcessingStatus(LetterBatch.Status.error);
-            batch.setMessage("Batch was found but didn't didn't have all status data");
-        } else if(batch.getTotal() == batch.getSent()) {
-            batch.setProcessingStatus(LetterBatch.Status.ready);
-        } else {
-            batch.setProcessingStatus(LetterBatch.Status.processing);
+        //This happens when an earlier batch process has encountered an error when processing the batch
+        //with the given batchId.
+        //The error messages are stored in the actual model class, so we need to fetch that
+        //to get hold of the error messages and pass them to the DTO.
+        if(batch.getStatus().equals(LetterBatch.Status.error)) {
+            LetterBatch actualBatch = fetchById(batchId);
+            List<LetterBatchProcessingError> processingErrors = actualBatch.getProcessingErrors();
+            actualBatch.getLetterReceivers();
+            batch.setErrors(processingErrors);
+            return batch;
         }
+
+        if(batch.getSent().equals(batch.getTotal())) {
+            batch.setStatus(LetterBatch.Status.ready);
+        } else {
+            batch.setStatus(LetterBatch.Status.processing);
+        }
+        System.out.println("batchSent = " + batch.getSent());
+        System.out.println("batchTotal = " + batch.getTotal());
+
 
         return batch;
     }

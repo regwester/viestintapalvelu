@@ -17,6 +17,9 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
+
+import java.util.List;
 
 /**
  * User: ratamaa
@@ -28,20 +31,14 @@ public class LetterBatchStatusDto {
     private Long letterBatchId;
     private Integer sent;
     private Integer total;
-
-    /**
-     * A free form text field for telling a more verbose status of the batch.
-     * For example, if the batch processing status is in error, you might want
-     * to indicate here what the actual error is.
-     */
-    private String message;
-    private LetterBatch.Status processingStatus;
+    private List<LetterBatchProcessingError> errors;
+    private LetterBatch.Status status;
 
     public LetterBatchStatusDto(Long letterBatchId, Number sent, Number total, LetterBatch.Status status) {
         this.letterBatchId = letterBatchId;
         this.setSent(sent);
         this.setTotal(total);
-        this.processingStatus = status;
+        this.status = status;
 
     }
 
@@ -61,25 +58,19 @@ public class LetterBatchStatusDto {
         this.total = (total != null) ? total.intValue() : null;
     }
 
-    /**
-     * {@link fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto#message}
-     */
-    public String getMessage() {
-        return message;
+    public List<LetterBatchProcessingError> getErrors() {
+        return errors;
     }
 
-    /**
-     * {@link fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto#message}
-     */
-    public void setMessage(String message) {
-        this.message = message;
+    public void setErrors(List<LetterBatchProcessingError> errors) {
+        this.errors = errors;
     }
 
-    public LetterBatch.Status getProcessingStatus() {
-        return processingStatus;
+    public LetterBatch.Status getStatus() {
+        return status;
     }
 
-    public void setProcessingStatus(LetterBatch.Status processingStatus) {
-        this.processingStatus = processingStatus;
+    public void setStatus(LetterBatch.Status status) {
+        this.status = status;
     }
 }

@@ -11,6 +11,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
@@ -29,6 +30,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import static org.junit.Assert.*;
@@ -198,57 +200,83 @@ public class LetterServiceTest {
 
     @Test
     public void getBatchStatusSuccess() {
-        final long batchId = 123;
 
-        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(batchId, 0, 0, null);
-        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
-        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
+        System.out.println("getBatchStatusFailure");
 
-        assertEquals("Batch status should be ready when sent and total match", LetterBatch.Status.ready, batchStatus.getProcessingStatus());
+        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(123l, 0, 0, LetterBatch.Status.ready);
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(123l))).thenReturn(statusDto);
 
-        statusDto = new LetterBatchStatusDto(batchId, 456, 456, null);
-        batchStatus = letterService.getBatchStatus(batchId);
+        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(123l);
 
-        assertEquals("Batch status should be ready when sent and total match", LetterBatch.Status.ready, batchStatus.getProcessingStatus());
+        assertEquals("Batch status should be ready when sent and total match", LetterBatch.Status.ready, batchStatus.getStatus());
+        assertNull("Batch errors should be null when successful", batchStatus.getErrors());
+
+        statusDto = new LetterBatchStatusDto(1234l, 456, 456, LetterBatch.Status.ready);
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(1234l))).thenReturn(statusDto);
+        batchStatus = letterService.getBatchStatus(1234l);
+
+        System.out.println("batchStatus = " + batchStatus);
+        assertEquals("Batch status should be ready when sent and total match", LetterBatch.Status.ready, batchStatus.getStatus());
+        assertNull("Batch errors should be null when successful", batchStatus.getErrors());
     }
 
     @Test
     public void getBatchStatusSending() {
-        final long batchId = 123;
 
-        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(batchId, 45, 123, null);
-        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
-        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
+        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(1238l, 45, 123, LetterBatch.Status.processing);
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(1238l))).thenReturn(statusDto);
+        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(1238l);
 
-        assertEquals("Batch status should be sending when the process is still going", LetterBatch.Status.processing, batchStatus.getProcessingStatus());
+        assertEquals("Batch status should be sending when the process is still going", LetterBatch.Status.processing, batchStatus.getStatus());
     }
 
+    @Test
+    public void getBatchStatusBatchNotFound() {
+        final long batchId = 123;
+
+        LetterBatchProcessingError expectedError = new LetterBatchProcessingError();
+        expectedError.setErrorCause("Batch not found for id " + batchId);
+        expectedError.setErrorTime(new Date()); //can't check real time as the service just uses the current time in this case
+        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
+        errors.add(expectedError);
+
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(null);
+
+        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
+        assertEquals(LetterBatch.Status.error, batchStatus.getStatus());
+        assertEquals("Error message didn't match", expectedError.getErrorCause(), batchStatus.getErrors().get(0).getErrorCause());
+    }
 
 
     @Test
     public void getBatchStatusFailure() {
-        final long batchId = 123;
 
-        LetterBatchStatusDto statusDto = null;
-        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
+        final Date failDate = new Date();
 
-        LetterBatchStatusDto batchStatus = letterService.getBatchStatus(batchId);
-        assertEquals(LetterBatch.Status.error, batchStatus.getProcessingStatus().error);
-        assertEquals("Error message didn't match", "Batch not found with id " + 123, batchStatus.getMessage());
+        LetterBatch mockBatch = DocumentProviderTestData.getLetterBatch(1235l);
+        assertNotNull(mockBatch.getLetterReceivers());
+        LetterReceivers first = mockBatch.getLetterReceivers().iterator().next();
 
-        statusDto = new LetterBatchStatusDto(batchId, null, null, null);
-        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(statusDto);
+        List<LetterBatchProcessingError> processingErrors = new ArrayList<LetterBatchProcessingError>();
+        LetterBatchProcessingError error = new LetterBatchProcessingError();
+        error.setLetterBatch(mockBatch);
+        error.setErrorCause("Testing error");
+        error.setErrorTime(failDate);
+        error.setLetterReceivers(first);
+        processingErrors.add(error);
+        mockBatch.setProcessingErrors(processingErrors);
 
-        batchStatus = letterService.getBatchStatus(batchId);
-        assertEquals(LetterBatch.Status.error, batchStatus.getProcessingStatus().error);
-        assertEquals("Error message didn't specify that batch was found but with null sending counts", "Batch was found but didn't didn't have all status data", batchStatus.getMessage());
 
-        //halted sending process TODO, needs VIES-207
-        /*
-        statusDto = new LetterBatchStatusDto(batchId, 234, 500);
-        batchStatus = letterService.getBatchStatus(batchId);
-        assertEquals("Error occurred while sending batch, resulting in halting of the process. Status should be error then.", LetterBatchStatusDto.Status.error, batchStatus.getProcessingStatus().error);
-        assertEquals("Error occurred during batch sending ", batchStatus.getMessage());
-        */
+        LetterBatchStatusDto mockDto = new LetterBatchStatusDto(1235l, 235, 456, LetterBatch.Status.error);
+
+        when(mockedLetterBatchDAO.getLetterBatchStatus(eq(1235l))).thenReturn(mockDto);
+        when(mockedLetterBatchDAO.read(eq(1235l))).thenReturn(mockBatch);
+
+        LetterBatchStatusDto statusDto = letterService.getBatchStatus(1235l);
+        assertEquals("Batch processing should be indicated with an 'error' status", LetterBatch.Status.error, statusDto.getStatus());
+        assertEquals(1, statusDto.getErrors().size());
+        assertEquals("Testing error", statusDto.getErrors().get(0).getErrorCause());
+        assertNotNull("Letter receivers must not be null", statusDto.getErrors().get(0).getLetterReceivers());
+
     }
 }

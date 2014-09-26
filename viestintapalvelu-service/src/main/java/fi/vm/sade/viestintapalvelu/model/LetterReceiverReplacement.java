@@ -99,8 +99,7 @@ public class LetterReceiverReplacement extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "LetterReceiverReplacement [letterReceivers=" + letterReceivers
-				+ ", name=" + name + ", defaultValue=" + defaultValue
+		return "LetterReceiverReplacement [name=" + name + ", defaultValue=" + defaultValue
 				+ ", mandatory=" + mandatory + ", timestamp=" + timestamp + "]";
 	}
 
