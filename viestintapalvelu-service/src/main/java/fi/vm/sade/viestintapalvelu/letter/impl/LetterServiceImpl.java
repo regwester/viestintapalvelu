@@ -547,10 +547,6 @@ public class LetterServiceImpl implements LetterService {
         } else {
             batch.setStatus(LetterBatch.Status.processing);
         }
-        System.out.println("batchSent = " + batch.getSent());
-        System.out.println("batchTotal = " + batch.getTotal());
-
-
         return batch;
     }
 
