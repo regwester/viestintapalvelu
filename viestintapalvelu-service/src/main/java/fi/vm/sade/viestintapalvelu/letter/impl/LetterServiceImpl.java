@@ -534,7 +534,7 @@ public class LetterServiceImpl implements LetterService {
         //with the given batchId.
         //The error messages are stored in the actual model class, so we need to fetch that
         //to get hold of the error messages and pass them to the DTO.
-        if(batch.getStatus().equals(LetterBatch.Status.error)) {
+        if(LetterBatch.Status.error.equals(batch.getStatus())) {
             LetterBatch actualBatch = fetchById(batchId);
             List<LetterBatchProcessingError> processingErrors = actualBatch.getProcessingErrors();
             actualBatch.getLetterReceivers();
