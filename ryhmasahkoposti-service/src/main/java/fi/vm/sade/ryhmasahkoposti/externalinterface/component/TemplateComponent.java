@@ -34,7 +34,7 @@ public class TemplateComponent {
      */
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type, String applicationPeriod) {
         try {
-            return templateResourceClient.getTemplateContent(templateName, languageCode, type, applicationPeriod);
+            return templateResourceClient.getTemplateContent(""+templateName, ""+languageCode, ""+type, ""+applicationPeriod);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);

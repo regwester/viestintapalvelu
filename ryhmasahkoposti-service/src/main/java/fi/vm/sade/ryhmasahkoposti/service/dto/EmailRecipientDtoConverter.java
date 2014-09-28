@@ -18,20 +18,20 @@ package fi.vm.sade.ryhmasahkoposti.service.dto;
 
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
 
 /**
- * User: ratamaa
- * Date: 26.9.2014
- * Time: 15:14
+ * User: ratamaa Date: 26.9.2014 Time: 15:14
  */
 @Component
 public class EmailRecipientDtoConverter {
 
-    public EmailRecipientMessage convert(EmailRecipientDTO from, EmailRecipientMessage to,
-                                         EmailMessageDTO original) {
+    public EmailRecipientMessage convert(EmailRecipientDTO from, EmailRecipientMessage to, EmailMessageDTO original) {
         to.setMessageReplacements(original.getMessageReplacements());
         to.setAttachInfo(original.getAttachInfo());
         to.setAttachments(original.getAttachments());
@@ -55,4 +55,33 @@ public class EmailRecipientDtoConverter {
         to.setRecipient(from);
         return to;
     }
+
+    public EmailRecipientMessage convertPreview(EmailData from, String toAddress, EmailRecipientMessage to) {
+        EmailMessage original = from.getEmail();
+        to.setMessageReplacements(from.getReplacements());
+        to.setAttachInfo(original.getAttachInfo());
+        to.setAttachments(original.getAttachments());
+        to.setBody(original.getBody());
+        to.setCallingProcess(original.getCallingProcess());
+        to.setCharset(original.getCharset());
+        to.setFrom(original.getFrom());
+        to.setHtml(original.isHtml());
+        to.setInfected(false);
+        to.setLanguageCode(original.getLanguageCode());
+        to.setOrganizationOid(original.getOrganizationOid());
+        to.setReplyTo(original.getReplyTo());
+        to.setSender(original.getSender());
+        to.setSenderOid(original.getSenderOid());
+        to.setSourceRegister(original.getSourceRegister());
+        to.setSubject(original.getSubject());
+        to.setTemplateName(original.getTemplateName());
+        to.setTemplateId(original.getTemplateId());
+        to.setType((original.getTemplateName() != null || original.getTemplateId() != null) ? "T" : "E");
+        to.setVirusChecked(false);
+        EmailRecipientDTO recipient = new EmailRecipientDTO();
+        recipient.setEmail(toAddress);
+        to.setRecipient(recipient);
+        return to;
+    }
+
 }

@@ -93,8 +93,12 @@ public class EmailServiceImpl implements EmailService {
         return emailDao.findNumberOfUserMessages(oid);
     }
 
-    public String getEML(EmailMessage emailMessage, String emailAddress) throws Exception {
+    public String getEML(EmailData emailData, String emailAddress) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        EmailRecipientMessage emailMessage =new EmailRecipientMessage();
+        EmailRecipientMessage erm = emailRecipientDtoConverter.convertPreview(emailData, emailAddress,emailMessage);
+        templateBuilder.applyTemplate(emailMessage);
+        
         MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
                 Optional.<AttachmentContainer>absent());
         message.writeTo(baos);

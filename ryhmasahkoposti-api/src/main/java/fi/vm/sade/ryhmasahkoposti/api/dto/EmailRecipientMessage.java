@@ -50,4 +50,10 @@ public class EmailRecipientMessage extends EmailMessage {
         return recipient;
     }
 
+    @Override
+    public String toString() {
+        return "EmailRecipientMessage [isVirusChecked=" + isVirusChecked + ", isInfected=" + isInfected + ", type=" + type + ", recipient=" + recipient
+                + ", messageReplacements=" + messageReplacements + "]"+ super.toString();
+    }
+
 }

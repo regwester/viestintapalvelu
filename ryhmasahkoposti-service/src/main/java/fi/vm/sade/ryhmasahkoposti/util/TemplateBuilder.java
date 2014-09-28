@@ -242,8 +242,10 @@ public class TemplateBuilder {
         for (ReplacementDTO r : message.getMessageReplacements()) {
             replacements.put(r.getName(), r.getDefaultValue());
         }
-        for (ReportedRecipientReplacementDTO r : message.getRecipient().getRecipientReplacements()){
-            replacements.put(r.getName(), r.getValue());
+        if (message.getRecipient().getRecipientReplacements() != null) {
+            for (ReportedRecipientReplacementDTO r : message.getRecipient().getRecipientReplacements()){
+                replacements.put(r.getName(), r.getValue());
+            }
         }
         return createDataContext(replacements);
     }
@@ -256,7 +258,6 @@ public class TemplateBuilder {
      */
     private Map<String, Object> createDataContext(Map<String, Object>... replacementsList) {
         Map<String, Object> data = new HashMap<String, Object>();
-
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements == null) {
                 continue;
@@ -270,7 +271,7 @@ public class TemplateBuilder {
                 }
             }
         }
-
+        
         data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         return data;
     }

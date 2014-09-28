@@ -230,9 +230,10 @@ public class EmailMessage implements AttachmentContainer {
 
     @Override
     public String toString() {
-        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" +  replyTo + ", senderOid=" + senderOid + ", subject="
-                + subject + ", body=" + body + ", isHtml=" + isHtml + ", charset=" + charset + ", attachments=" + attachments
-                + ", attachInfo=" + attachInfo + "]";
+        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" + replyTo + ", senderOid=" + senderOid
+                + ", organizationOid=" + organizationOid + ", subject=" + subject + ", body=" + body + ", isHtml=" + isHtml + ", charset=" + charset
+                + ", attachments=" + attachments + ", attachInfo=" + attachInfo + ", isValid=" + isValid + ", templateName=" + templateName + ", templateId="
+                + templateId + ", languageCode=" + languageCode + ", sourceRegister=" + sourceRegister + ", hakuOid=" + hakuOid + "]";
     }
 
 }
