@@ -61,7 +61,7 @@ public class LetterBatchPDFProcessorTest {
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));
         doCallRealMethod().when(service).setLogger(any(Logger.class));
         doCallRealMethod().when(service).getLetterBuilder();
-        doCallRealMethod().when(service).findLetterReceiverIdsByBatch(any(long.class));
+        doCallRealMethod().when(service).findUnprocessedLetterReceiverIdsByBatch(any(long.class));
         service.setLetterBuilder(builder);
         service.setLetterBatchDAO(letterBatchDAO);
         service.setLogger(LoggerFactory.getLogger(LetterServiceImpl.class));

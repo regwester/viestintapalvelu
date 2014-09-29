@@ -103,5 +103,5 @@ public interface LetterService {
 
     void updateLetter(LetterReceiverLetter letter);
 
-    List<Long> findLetterReceiverIdsByBatch(long batchId);
+    List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId);
 }

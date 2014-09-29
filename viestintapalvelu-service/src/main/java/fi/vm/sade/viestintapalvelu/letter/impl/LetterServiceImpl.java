@@ -453,7 +453,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public List<Long> findLetterReceiverIdsByBatch(long batchId) {
+    public List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId) {
         return letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(batchId);
     }
 

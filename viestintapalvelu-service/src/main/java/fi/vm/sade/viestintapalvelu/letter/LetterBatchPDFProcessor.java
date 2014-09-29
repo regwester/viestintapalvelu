@@ -32,7 +32,7 @@ public class LetterBatchPDFProcessor {
 
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
-        BatchJob job = new BatchJob(letterBatchId, letterService.findLetterReceiverIdsByBatch(letterBatchId), THREADS);
+        BatchJob job = new BatchJob(letterBatchId, letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId), THREADS);
         return executorService.submit(job);
     }
 
