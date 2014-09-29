@@ -4,6 +4,8 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "raportoitavavastaanottaja")
 @Entity
@@ -56,6 +58,9 @@ public class ReportedRecipient extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jono", nullable = true)
     private SendQueue queue;
+
+    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ReportedMessageRecipientAttachment> attachments = new HashSet<ReportedMessageRecipientAttachment>(0);
 
     public ReportedMessage getReportedMessage() {
         return reportedMessage;
@@ -167,5 +172,13 @@ public class ReportedRecipient extends BaseEntity {
 
     public void setQueue(SendQueue queue) {
         this.queue = queue;
+    }
+
+    public Set<ReportedMessageRecipientAttachment> getAttachments() {
+        return attachments;
+    }
+
+    protected void setAttachments(Set<ReportedMessageRecipientAttachment> attachments) {
+        this.attachments = attachments;
     }
 }

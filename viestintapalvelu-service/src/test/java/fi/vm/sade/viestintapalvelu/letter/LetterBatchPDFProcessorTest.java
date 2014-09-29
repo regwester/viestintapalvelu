@@ -61,7 +61,7 @@ public class LetterBatchPDFProcessorTest {
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));
         doCallRealMethod().when(service).setLogger(any(Logger.class));
         doCallRealMethod().when(service).getLetterBuilder();
-        doCallRealMethod().when(service).findLetterReceiverIdsByBatch(any(long.class));
+        doCallRealMethod().when(service).findUnprocessedLetterReceiverIdsByBatch(any(long.class));
         service.setLetterBuilder(builder);
         service.setLetterBatchDAO(letterBatchDAO);
         service.setLogger(LoggerFactory.getLogger(LetterServiceImpl.class));
@@ -79,7 +79,7 @@ public class LetterBatchPDFProcessorTest {
     public void buildsPDFForAllReceivers() throws Exception {
         final int amountOfReceivers = 121;
         //doCallRealMethod().when(service).runBatch(any(long.class));
-        when(letterBatchDAO.findLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
+        when(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
         doCallRealMethod().when(service).processLetterReceiver(any(long.class));
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
         when(letterReceiverLetterDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
@@ -94,7 +94,7 @@ public class LetterBatchPDFProcessorTest {
     public void buildsPDFForAllReceiversWithFailure() throws Exception {
         final int amountOfReceivers = 121;
         //doCallRealMethod().when(service).runBatch(any(long.class));
-        when(letterBatchDAO.findLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
+        when(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
         doCallRealMethod().when(service).processLetterReceiver(any(long.class));
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
         when(letterReceiverLetterDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)

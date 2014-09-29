@@ -1,14 +1,10 @@
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import fi.vm.sade.generic.model.BaseEntity;
@@ -55,6 +51,8 @@ public class LetterReceiverLetter extends BaseEntity {
     @Column(name = "alkuperainensisaltotyyppi")
     private String originalContentType = "";
 
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "letterReceiverLetter", cascade = CascadeType.PERSIST)
+    private Set<LetterReceiverLetterAttachment> attachments = new HashSet<LetterReceiverLetterAttachment>();
 
     public Date getTimestamp() {
 		return timestamp;
@@ -96,7 +94,15 @@ public class LetterReceiverLetter extends BaseEntity {
 		this.letterReceivers = letterReceivers;
 	}
 
-	@Override
+    public Set<LetterReceiverLetterAttachment> getAttachments() {
+        return attachments;
+    }
+
+    protected void setAttachments(Set<LetterReceiverLetterAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    @Override
 	public String toString() {
 		return "LetterReceiverLetter [letter=" + letter + ", timestamp=" + timestamp + "]";
 	}

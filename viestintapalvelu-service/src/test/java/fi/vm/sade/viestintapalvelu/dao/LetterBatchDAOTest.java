@@ -3,6 +3,10 @@ package fi.vm.sade.viestintapalvelu.dao;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +22,7 @@ import javax.persistence.PersistenceException;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import com.google.common.base.Optional;
 
 import static org.junit.Assert.*;
 
@@ -36,7 +41,8 @@ public class LetterBatchDAOTest {
         letterBatchDAO.insert(letterBatch);
         
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
-            "test-templateName", "FI", "1.2.246.562.10.00000000001", "test-tag");
+            "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
+                Optional.<String>absent());
         
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getId() > 0);
@@ -45,6 +51,69 @@ public class LetterBatchDAOTest {
         assertNotNull(foundLetterBatch.getLetterReplacements());
         assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
         assertEquals("Status is 'processing' by default in the test data generator", LetterBatch.Status.processing, foundLetterBatch.getBatchStatus());
+    }
+
+    @Test
+    public void testFindLetterBatchByNameOrgTagAndApplicationPeriod() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setApplicationPeriod("period");
+        letterBatchDAO.insert(letterBatch);
+
+        LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
+                "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
+                Optional.of("period"));
+
+        assertNotNull(foundLetterBatch);
+        assertTrue(foundLetterBatch.getId() > 0);
+        assertNotNull(foundLetterBatch.getLetterReceivers());
+        assertTrue(foundLetterBatch.getLetterReceivers().size() > 0);
+        assertNotNull(foundLetterBatch.getLetterReplacements());
+        assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
+    }
+
+    @Test
+    public void testFindLetterBatchByNameOrgTagAndApplicationPeriodNotFoundByTag() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setTag("other-tag");
+        letterBatch.setApplicationPeriod("period");
+        letterBatchDAO.insert(letterBatch);
+
+        LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
+                "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
+                Optional.of("period"));
+
+        assertNull(foundLetterBatch);
+    }
+
+    @Test
+    public void testFindLetterBatchByNameOrgTagAndApplicationPeriodWithoutTag() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setApplicationPeriod("period");
+        letterBatchDAO.insert(letterBatch);
+
+        LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
+                "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.<String>absent(),
+                Optional.of("period"));
+
+        assertNotNull(foundLetterBatch);
+        assertTrue(foundLetterBatch.getId() > 0);
+        assertNotNull(foundLetterBatch.getLetterReceivers());
+        assertTrue(foundLetterBatch.getLetterReceivers().size() > 0);
+        assertNotNull(foundLetterBatch.getLetterReplacements());
+        assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
+    }
+
+    @Test
+    public void testFindLetterBatchByNameOrgTagAndApplicationPeriodNotFound() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setApplicationPeriod("period");
+        letterBatchDAO.insert(letterBatch);
+
+        LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
+                "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
+                Optional.of("other period"));
+
+        assertNull(foundLetterBatch);
     }
 
     @Test
@@ -74,7 +143,7 @@ public class LetterBatchDAOTest {
         error.setLetterBatch(letterBatch);
         errors.add(error);
         letterBatch.setProcessingErrors(errors);
-        long idC = letterBatchDAO.insert(letterBatch).getId();
+        letterBatchDAO.insert(letterBatch).getId();
     }
 
     @Test
@@ -112,6 +181,22 @@ public class LetterBatchDAOTest {
         assertEquals("Testing failure case", letterBatch.getProcessingErrors().get(0).getErrorCause());
 
     }
+    
+    @Test
+    public void returnsEmptyListWhenAllLettersAreProcessed() {
+        assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter("afeaf".getBytes())).isEmpty());
+    }
+    
+    @Test
+    public void returnsUnprocessedLetters() {
+        assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(null)).size());
+    }
 
+    private long givenLetterBatchWithLetter(byte[] letter) {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setBatchStatus(LetterBatch.Status.processing);
+        letterBatch.getLetterReceivers().iterator().next().getLetterReceiverLetter().setLetter(letter);
+        return letterBatchDAO.insert(letterBatch).getId();
+    }
 
 }

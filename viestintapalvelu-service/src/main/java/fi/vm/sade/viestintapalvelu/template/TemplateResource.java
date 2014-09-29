@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
@@ -127,6 +128,7 @@ public class TemplateResource extends AsynchronousResource {
         // return result;
     }
 
+    @Deprecated
     @GET
     @Path("/getById")
     @Produces("application/json")
@@ -140,6 +142,8 @@ public class TemplateResource extends AsynchronousResource {
         return templateService.findById(id);
     }
 
+
+    
     @GET
     @Path("/getAvailableExamples")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
@@ -356,6 +360,7 @@ public class TemplateResource extends AsynchronousResource {
 
         String templateName = request.getParameter("templateName");
         String languageCode = request.getParameter("languageCode");
+        String applicationPeriod = request.getParameter("applicationPeriod");
         String content = request.getParameter("content"); // If missing =>
                                                           // content excluded
         boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
@@ -363,14 +368,13 @@ public class TemplateResource extends AsynchronousResource {
         bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
 
         if ((oid != null) && !("".equals(oid))) {
-
             bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName,
-                languageCode, oid, null));
+                    languageCode, oid, Optional.<String>absent(), Optional.fromNullable(applicationPeriod)));
 
             String tag = request.getParameter("tag");
             if ((tag != null) && !("".equals(tag))) {
                 bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName,
-                    languageCode, oid, tag));
+                    languageCode, oid, Optional.fromNullable(tag), Optional.fromNullable(applicationPeriod)));
             }
         }
 
@@ -399,7 +403,8 @@ public class TemplateResource extends AsynchronousResource {
         @ApiImplicitParam(name = "oid", value = "Organisaation Oid", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "tag", value = "Vapaa teksti tunniste", required = false, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "applicationPeriod", value = "Haku", required = true, dataType = "string", paramType = "query"),
-        @ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query"), })
+        @ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query")
+    })
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to
         // organization
@@ -429,9 +434,17 @@ public class TemplateResource extends AsynchronousResource {
         templateRepl.put("templateReplacements", template.getReplacements());
         history.add(templateRepl);
 
+        // Drafts replacements
+        String applicationPeriod = request.getParameter("applicationPeriod"); // = Haku
+
         if ((oid != null) && !("".equals(oid))) {
+            // TODO: kummin tämä halutaan?
+            Optional<String> applicationPeriodForTagAndNonTagSeach = Optional.absent(); // käytännössä ollut näin
+            // Piitäisikö olla? Vai halutaanko ehkä tähän mäppiin omana kohtanaan?
+            // Optional.fromNullable(applicationPeriod);
+
             List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName,
-                languageCode, oid, null);
+                languageCode, oid, Optional.<String>absent(), applicationPeriodForTagAndNonTagSeach);
 
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
                 Map<String, Object> organisationRepl = new HashMap<String, Object>();
@@ -444,7 +457,8 @@ public class TemplateResource extends AsynchronousResource {
             // tag
             String tag = request.getParameter("tag");
             if ((tag != null) && !("".equals(tag))) {
-                templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, tag);
+                templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid,
+                        Optional.fromNullable(tag), applicationPeriodForTagAndNonTagSeach);
                 if (templateReplacements != null && !templateReplacements.isEmpty()) {
                     Map<String, Object> tagRepl = new HashMap<String, Object>();
                     tagRepl.put("name", "organizationLatestByTag");
@@ -453,12 +467,7 @@ public class TemplateResource extends AsynchronousResource {
                 }
             }
 
-            // Drafts replacements
-            String applicationPeriod = request.getParameter("applicationPeriod"); // =
-                                                                                  // Haku
-            String fetchTarget = request.getParameter("fetchTarget"); // =
-                                                                      // Hakukohde
-
+            String fetchTarget = request.getParameter("fetchTarget"); // = Hakukohde
             templateReplacements = templateService.findDraftReplacement(templateName, languageCode, oid,
                 applicationPeriod, fetchTarget, tag);
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
@@ -484,6 +493,17 @@ public class TemplateResource extends AsynchronousResource {
         return sb.toString();
     }
 
+    @GET
+    @Path("/{templateId}/getTemplateContent")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
+    public Template getTemplateByID(@PathParam("templateId") String templateId) {
+        Long id = Long.parseLong(templateId);
+        return templateService.findById(id);
+    }
+    
     @GET
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")

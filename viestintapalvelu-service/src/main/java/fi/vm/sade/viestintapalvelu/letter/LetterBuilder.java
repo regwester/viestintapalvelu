@@ -22,6 +22,7 @@ import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
@@ -123,7 +124,11 @@ public class LetterBuilder {
             // Letter language != template language
             if (languageIsDifferent(baseTemplate, letter)) {
                 // Get the template in user specific language
-                Template template = templateService.getTemplateByName(letterTemplate.getName(), letter.getLanguageCode());
+                Template template = templateService.getTemplateByName(
+                        new TemplateCriteriaImpl()
+                                .withName(letterTemplate.getName())
+                                .withLanguage(letter.getLanguageCode())
+                                .withApplicationPeriod(batch.getApplicationPeriod()), true);
                 if (template != null) {
                     letterTemplate = template;
                     letterReplacements = getTemplateReplacements(letterTemplate);
@@ -205,7 +210,10 @@ public class LetterBuilder {
 
         // Search template by name
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(batch.getTemplateName(), batch.getLanguageCode());
+            template = templateService.getTemplateByName(new TemplateCriteriaImpl()
+                    .withName(batch.getTemplateName())
+                    .withLanguage(batch.getLanguageCode())
+                    .withApplicationPeriod(batch.getApplicationPeriod()), true);
             batch.setTemplateId(template.getId()); // update template Id
         }
 
@@ -308,8 +316,7 @@ public class LetterBuilder {
         return documentBuilder.applyTextTemplate(pageContent, dataContext);
     }
 
-
-
+    
     public Map<String, Object> createDataContext(Template template,
                                                  AddressLabel addressLabel, Map<String, Object>... replacementsList) {
 
@@ -344,6 +351,10 @@ public class LetterBuilder {
             Map<String, Boolean> columns = distinctColumns(tulokset);
             data.put("tulokset", normalizeColumns(columns, tulokset));
             data.put("columns", columns);
+        }
+        if (data.containsKey("muut_hakukohteet")) {
+            List<String> muidenHakukohteidenNimet = (List<String>) data.get("muut_hakukohteet");
+            data.put("muut_hakukohteet", muidenHakukohteidenNimet);
         }
 
         data.put("tyylit", styles);

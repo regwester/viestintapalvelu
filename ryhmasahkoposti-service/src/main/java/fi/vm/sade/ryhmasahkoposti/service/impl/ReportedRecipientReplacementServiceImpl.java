@@ -23,13 +23,13 @@ public class ReportedRecipientReplacementServiceImpl implements ReportedRecipien
 
     /**
      * Reported message replacements
-     * 
+     *
      */
     private ReportedRecipientReplacementDAO reportedRecipientReplacementDAO;
 
     @Autowired
     public ReportedRecipientReplacementServiceImpl(ReportedRecipientReplacementDAO reportedRecipientReplacementDAO) {
-	this.reportedRecipientReplacementDAO = reportedRecipientReplacementDAO;
+        this.reportedRecipientReplacementDAO = reportedRecipientReplacementDAO;
     }
 
     /**
@@ -38,24 +38,24 @@ public class ReportedRecipientReplacementServiceImpl implements ReportedRecipien
      */
     @Override
     public List<ReportedRecipientReplacement> saveReportedRecipientReplacements(
-	    List<ReportedRecipientReplacement> reportedRecientReplacements) {
+            List<ReportedRecipientReplacement> reportedRecientReplacements) {
 
-	List<ReportedRecipientReplacement> result = new ArrayList<ReportedRecipientReplacement>();
-	if (reportedRecientReplacements != null) {
-	    for (ReportedRecipientReplacement receiverReplacement : reportedRecientReplacements) {
-		reportedRecipientReplacementDAO.insert(receiverReplacement);
-		result.add(receiverReplacement);
-	    }
-	}
-	return result;
+        List<ReportedRecipientReplacement> result = new ArrayList<ReportedRecipientReplacement>();
+        if (reportedRecientReplacements != null) {
+            for (ReportedRecipientReplacement receiverReplacement : reportedRecientReplacements) {
+                reportedRecipientReplacementDAO.insert(receiverReplacement);
+                result.add(receiverReplacement);
+            }
+        }
+        return result;
     }
 
     /**
      * Get reported recipient replacements
      */
     @Override
-    public List<ReportedRecipientReplacement> getReportedRecipientReplacements(ReportedRecipient recipient){
-	return reportedRecipientReplacementDAO.findBy("reportedRecipient", recipient);
+    public List<ReportedRecipientReplacement> getReportedRecipientReplacements(ReportedRecipient recipient) {
+        return reportedRecipientReplacementDAO.findBy("reportedRecipient", recipient);
     }
 
 }

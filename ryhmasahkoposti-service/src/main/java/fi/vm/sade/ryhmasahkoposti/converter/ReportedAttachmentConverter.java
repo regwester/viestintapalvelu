@@ -35,7 +35,8 @@ public class ReportedAttachmentConverter {
 	    attachment.setAttachmentName(emailAttachment.getName());
 	    attachment.setContentType(emailAttachment.getContentType());
 	    attachment.setAttachment(emailAttachment.getData());
-	    
+	    attachment.setTimestamp(new Date());
+
 	    return attachment;
 	}
 	

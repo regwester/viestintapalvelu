@@ -1,19 +1,16 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EmailMessage {
+public class EmailMessage implements AttachmentContainer {
     private final static Logger log = LoggerFactory.getLogger(EmailMessage.class);
 
     private String callingProcess = "";
@@ -30,9 +27,11 @@ public class EmailMessage {
     private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isValid = true;
     private String templateName;
+    private String templateId;
     private String languageCode;
     private List<SourceRegister> sourceRegister;
-
+    private String hakuOid; 
+    
     public EmailMessage() {
     }
 
@@ -142,10 +141,12 @@ public class EmailMessage {
         this.attachments = attachments;
     }
 
-    public List<? extends EmailAttachment> getAttachments() {
+    @Override
+    public List<EmailAttachment> getAttachments() {
         return attachments;
     }
 
+    @Override
     public void addAttachInfo(AttachmentResponse attachInfo) {
         if (this.attachInfo == null) {
             this.attachInfo = new LinkedList<AttachmentResponse>();
@@ -163,6 +164,22 @@ public class EmailMessage {
 
     public void setCallingProcess(String callingProcess) {
         this.callingProcess = callingProcess;
+    }
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     /**
@@ -213,9 +230,10 @@ public class EmailMessage {
 
     @Override
     public String toString() {
-        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" +  replyTo + ", senderOid=" + senderOid + ", subject="
-                + subject + ", body=" + body + ", isHtml=" + isHtml + ", charset=" + charset + ", attachments=" + attachments
-                + ", attachInfo=" + attachInfo + "]";
+        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" + replyTo + ", senderOid=" + senderOid
+                + ", organizationOid=" + organizationOid + ", subject=" + subject + ", body=" + body + ", isHtml=" + isHtml + ", charset=" + charset
+                + ", attachments=" + attachments + ", attachInfo=" + attachInfo + ", isValid=" + isValid + ", templateName=" + templateName + ", templateId="
+                + templateId + ", languageCode=" + languageCode + ", sourceRegister=" + sourceRegister + ", hakuOid=" + hakuOid + "]";
     }
 
 }

@@ -30,11 +30,32 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import org.apache.pdfbox.util.PDFMergerUtility;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Optional;
+
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.model.IPosti;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
+
 /**
  * @author migar1
  * 
  */
 @Service
+@Transactional
 public class LetterServiceImpl implements LetterService {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private LetterBatchDAO letterBatchDAO;
@@ -178,11 +199,12 @@ public class LetterServiceImpl implements LetterService {
     /* ------------------------------- */
     @Transactional(readOnly = true)
     public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
-        String languageCode, String organizationOid, String tag) {
+                          String languageCode, String organizationOid,
+                          Optional<String> tag, Optional<String> applicationPeriod) {
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
 
         LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode,
-            organizationOid, tag);
+            organizationOid, tag, applicationPeriod);
         if (letterBatch != null) {
 
             // kirjeet.kirjelahetys
@@ -207,14 +229,16 @@ public class LetterServiceImpl implements LetterService {
     /* ------------------------------- */
     @Transactional(readOnly = true)
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
-        String languageCode, String organizationOid, String tag) {
+                          String languageCode, String organizationOid,
+                          Optional<String> tag, Optional<String> applicationPeriod) {
 
         List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
         LetterBatch letterBatch = null;
-        if (tag == null) {
+        if (!tag.isPresent() && !applicationPeriod.isPresent()) {
             letterBatch = letterBatchDAO.findLetterBatchByNameOrg(templateName, languageCode, organizationOid);
         } else {
-            letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag);
+            letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag,
+                    applicationPeriod);
         }
         if (letterBatch != null) {
 
@@ -453,8 +477,9 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public List<Long> findLetterReceiverIdsByBatch(long batchId) {
-        return letterBatchDAO.findLetterReceiverIdsByBatch(batchId);
+    @Transactional(readOnly = true)
+    public List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId) {
+        return letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(batchId);
     }
 
     @Override

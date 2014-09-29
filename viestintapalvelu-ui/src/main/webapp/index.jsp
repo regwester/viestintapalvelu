@@ -1,3 +1,4 @@
+<%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="org.jsoup.*" %>
 <%@ page import="org.jsoup.safety.*" %>
 <%@ page import="org.apache.commons.lang.StringEscapeUtils" %>
@@ -50,6 +51,7 @@
     <script type="text/javascript" src="assets/lib/tinymce/ui-angular-tinymce.js"></script>
     
     <%
+        request.setCharacterEncoding("UTF-8");
         String emailData = request.getParameter("emailData");
         if (emailData != null) {
             // Sanitize data:

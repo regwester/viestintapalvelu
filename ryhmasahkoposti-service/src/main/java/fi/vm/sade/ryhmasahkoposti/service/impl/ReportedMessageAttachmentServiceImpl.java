@@ -5,31 +5,29 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
+import fi.vm.sade.ryhmasahkoposti.dao.ReportedAttachmentDAO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageAttachmentDAO;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.*;
 import fi.vm.sade.ryhmasahkoposti.service.ReportedMessageAttachmentService;
 
 @Service
 public class ReportedMessageAttachmentServiceImpl implements ReportedMessageAttachmentService {
 	private ReportedMessageAttachmentDAO reportedMessageAttachmentDAO;
+    private ReportedAttachmentDAO reportedAttachmentDAO;
 
 	@Autowired
-	public ReportedMessageAttachmentServiceImpl(ReportedMessageAttachmentDAO reportedMessageAttachmentDAO) {
+	public ReportedMessageAttachmentServiceImpl(ReportedMessageAttachmentDAO reportedMessageAttachmentDAO,
+                                                ReportedAttachmentDAO reportedAttachmentDAO) {
 		this.reportedMessageAttachmentDAO = reportedMessageAttachmentDAO;
-	}
-	
-	@Override
-	public List<ReportedMessageAttachment> getReportedMessageAttachments(Long messageID) {
-		// TODO Auto-generated method stub
-		return null;
+        this.reportedAttachmentDAO = reportedAttachmentDAO;
 	}
 
 	@Override
-	public void saveReportedMessageAttachments(ReportedMessage reportedMessage,	
-		List<ReportedAttachment> reportedAttachments) {		
+    @Transactional
+	public void saveReportedMessageAttachments(ReportedMessage reportedMessage,	 List<ReportedAttachment> reportedAttachments) {
 		for (ReportedAttachment reportedAttachment : reportedAttachments) {
 			ReportedMessageAttachment reportedMessageAttachment = new ReportedMessageAttachment();
 			reportedMessageAttachment.setReportedMessage(reportedMessage);
@@ -39,5 +37,18 @@ public class ReportedMessageAttachmentServiceImpl implements ReportedMessageAtta
 			reportedMessageAttachmentDAO.insert(reportedMessageAttachment);
 		}
 	}
+
+    @Override
+    @Transactional
+    public void saveReportedRecipientAttachments(ReportedRecipient emailRecipient, List<ReportedAttachment> reportedAttachments) {
+        for (ReportedAttachment reportedAttachment : reportedAttachments) {
+            ReportedMessageRecipientAttachment recipientAttachment = new ReportedMessageRecipientAttachment();
+            recipientAttachment.setRecipient(emailRecipient);
+            recipientAttachment.setAttachment(reportedAttachment);
+            recipientAttachment.setTimestamp(new Date());
+
+            reportedAttachmentDAO.insert(recipientAttachment);
+        }
+    }
 
 }

@@ -20,8 +20,8 @@ import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
 @Repository
-public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipient, Long> implements
-    ReportedRecipientDAO {
+public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipient, Long>
+        implements ReportedRecipientDAO {
 
     private QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 
@@ -110,11 +110,11 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
     }
 
     @Override
-    public List<ReportedRecipient> findRecipientsWithIncompleteInformation() {
+    public List<Long> findRecipientIdsWithIncompleteInformation() {
         JPAQuery query = new JPAQuery(getEntityManager());
         return query.from(reportedRecipient)
                     .where(reportedRecipient.detailsRetrieved.eq(false))
-                    .list(reportedRecipient);
+                    .list(reportedRecipient.id);
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

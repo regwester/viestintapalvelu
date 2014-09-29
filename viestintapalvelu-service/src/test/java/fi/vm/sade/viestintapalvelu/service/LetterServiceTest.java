@@ -29,6 +29,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Optional;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -104,10 +106,12 @@ public class LetterServiceTest {
     @Test
     public void testFindLetterBatchByNameOrgTag() {
         when(mockedLetterBatchDAO.findLetterBatchByNameOrgTag(any(String.class), eq("FI"), any(String.class), 
-            any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
+            any(Optional.class), any(Optional.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
         
         fi.vm.sade.viestintapalvelu.letter.LetterBatch foundLetterBatch = 
-            letterService.findLetterBatchByNameOrgTag("test-template", "FI", "1.2.246.562.10.00000000001", "test-tag");
+            letterService.findLetterBatchByNameOrgTag("test-template", "FI", "1.2.246.562.10.00000000001",
+                    Optional.of("test-tag"),
+                    Optional.<String>fromNullable(null));
         
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getTemplateId() == 1);
@@ -123,7 +127,9 @@ public class LetterServiceTest {
             any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
         
         List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = 
-            letterService.findReplacementByNameOrgTag("test-templateName", "FI", "1.2.246.562.10.00000000001", null);
+            letterService.findReplacementByNameOrgTag("test-templateName", "FI", "1.2.246.562.10.00000000001",
+                    Optional.<String>absent(),
+                    Optional.<String>absent());
         
         assertNotNull(replacements);
         assertTrue(replacements.size() > 0);
