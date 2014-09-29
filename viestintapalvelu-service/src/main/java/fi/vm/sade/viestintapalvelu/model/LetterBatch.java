@@ -67,7 +67,7 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
 
-    @Column(name = "käsittelyn_tila")
+    @Column(name = "kasittelyn_tila")
     @Enumerated(EnumType.STRING)
     private Status batchStatus;
     

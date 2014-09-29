@@ -1,18 +1,17 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import org.jgroups.util.ConcurrentLinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 public class LetterBatchPDFProcessor {
@@ -58,19 +57,20 @@ public class LetterBatchPDFProcessor {
                 executorService.execute(new Runnable() {
                     @Override
                     public void run() {
-                        Long nextId = unprocessedLetterReceivers.poll();
-                        while (okState.get() && nextId != null) {
+                        Long letterReceiverId = unprocessedLetterReceivers.poll();
+                        while (okState.get() && letterReceiverId != null) {
                             // To ensure that no id is processed twice, you could verify the output of:
                             // logger.debug("Thread : " + Thread.currentThread().getId() + " processing: " + nextId);
                             try {
                                 if (okState.get()) {
-                                    letterService.processLetterReceiver(nextId);
+                                    letterService.processLetterReceiver(letterReceiverId);
                                 }
                             } catch (Exception e) {
-                                logger.error("Error processing LetterReceiver " + nextId + " in patch " + letterBatchId, e);
+                                logger.error("Error processing LetterReceiver " + letterReceiverId + " in batch " + letterBatchId, e);
+                                letterService.saveBatchErrorForReceiver(letterReceiverId, e.getMessage());
                                 okState.set(false);
                             }
-                            nextId = unprocessedLetterReceivers.poll();
+                            letterReceiverId = unprocessedLetterReceivers.poll();
                         }
                     }
                 });
