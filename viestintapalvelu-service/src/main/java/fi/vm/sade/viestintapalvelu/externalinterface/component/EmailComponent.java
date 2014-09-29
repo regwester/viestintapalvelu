@@ -22,7 +22,12 @@ public class EmailComponent {
     
     @Autowired
     private EmailBuilder emailBuilder;
-    
+
+
+    public boolean sendEmail(EmailData data) {
+        return checkResponse(emailResourceClient.sendEmail(data));
+    }
+
     public boolean sendEmail(EmailSourceData source) {
         LOGGER.debug("Handling email for letter " + source);
         EmailData emailData;

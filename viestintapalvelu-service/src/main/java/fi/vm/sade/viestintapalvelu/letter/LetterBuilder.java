@@ -15,24 +15,28 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.email.TemplateEmailField;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
+import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
+import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
@@ -44,6 +48,7 @@ import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 @Service
 @Singleton
 public class LetterBuilder {
+    public static final String ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER = "additionalAttachmentUris";
 
     private final Logger LOG = LoggerFactory.getLogger(LetterBuilder.class);
 
@@ -57,7 +62,10 @@ public class LetterBuilder {
 
     @Autowired
     private EmailComponent emailComponent;
-    
+
+    @Autowired
+    private LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO;
+
     @Inject
     public LetterBuilder(DocumentBuilder documentBuilder) {
         this.documentBuilder = documentBuilder;
@@ -115,8 +123,9 @@ public class LetterBuilder {
         // For updating letters content with the generated PdfDocument
         List<Letter> updatedLetters = new LinkedList<Letter>();
 
-        for (Letter letter : batch.getLetters()) {
+        EmailSendDataDto emailSendData = new EmailSendDataDto();
 
+        for (Letter letter : batch.getLetters()) {
             // Use the base template and base replacements by default
             Template letterTemplate = baseTemplate;
             Map<String, Object> letterReplacements = baseReplacements;
@@ -134,6 +143,13 @@ public class LetterBuilder {
                     letterReplacements = getTemplateReplacements(letterTemplate);
                 }
             }
+            String languageCode = Optional.fromNullable(letter.getLanguageCode()).or(baseTemplate.getLanguage());
+
+            EmailData emailData = emailSendData.getEmailByLanguageCode(languageCode);
+            if (emailData == null) {
+                emailData = buildEmailData(letterTemplate, new EmailData(), languageCode, batch.getApplicationPeriod());
+                emailSendData.setEmailByLanguageCode(languageCode, emailData);
+            }
 
             @SuppressWarnings("unchecked")
             Map<String, Object> dataContext = createDataContext(baseTemplate, letter.getAddressLabel(),
@@ -141,10 +157,12 @@ public class LetterBuilder {
                     batch.getTemplateReplacements(),  // LetterBatch replacements common for all recipients
                     letter.getTemplateReplacements()); // Letter recipient level replacements
 
-            EmailSourceData emailSource = null;
+//            EmailSourceData emailSource = null;
+            EmailRecipient recipient = null;
             if (shouldReceiveEmail(letter)) {
                 try {
-                    emailSource = new EmailSourceData(letter, letterTemplate, dataContext);
+                    recipient = buildRecipient(letter);
+                    emailData.getRecipient().add(recipient);
                 } catch (Exception e) {
                     LOG.info("Could not handle email sending for {} reason {}", letter, e);
                     e.printStackTrace();
@@ -152,25 +170,39 @@ public class LetterBuilder {
             }
 
             if (letterTemplate != null) {
+                List<AttachmentUri> attachmentUris = new ArrayList<AttachmentUri>();
                 List<TemplateContent> contents = letterTemplate.getContents();
                 PdfDocument currentDocument = new PdfDocument(letter.getAddressLabel());
                 Collections.sort(contents);
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(letterTemplate, tc.getContent().getBytes(), dataContext);
-                    if (emailSource != null && tc.getName() != null && tc.getName().equalsIgnoreCase("liite")) {
-                        // Hardcoded template content name "liite" for emailed attachments.. works for current templates
-                        // in future templates should have "add as email attachment" -type property field which 
-                        // would be checked here. 
-                        emailSource.addAttachment("liite", page, "application/pdf");
+                    if (recipient != null && tc.getName() != null && tc.getName().equalsIgnoreCase("liite")) {
+                        LetterReceiverLetter receiverLetter = null; // TODO!
+                        LetterReceiverLetterAttachment receiverAttachment = new LetterReceiverLetterAttachment();
+                        receiverAttachment.setContents(page);
+                        receiverAttachment.setContentType("application/pdf");
+                        receiverAttachment.setLetterReceiverLetter(receiverLetter);
+                        letterReceiverLetterAttachmentDAO.insert(receiverAttachment);
+
+                        attachmentUris.add(AttachmentUri.getLetterReceiverLetterAttachment(receiverAttachment.getId()));
                     }
                     currentDocument.addContent(page);
+                }
+                if (recipient != null && !attachmentUris.isEmpty()) {
+                    recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
+                    recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO(
+                            ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER,
+                            AttachmentUri.uriStringsOfList(attachmentUris)));
                 }
                 source.add(currentDocument);
                 letter.setLetterContent(new LetterContent(documentBuilder.merge(currentDocument).toByteArray(), "application/pdf", new Date()));
             }
 
-            sendEmail(emailSource);
             updatedLetters.add(letter);
+        }
+
+        for (EmailData email : emailSendData.getEmails()) {
+            emailComponent.sendEmail(email);
         }
 
         // Write LetterBatch to DB
@@ -178,8 +210,44 @@ public class LetterBuilder {
         // letterService.createLetter(batch);
 
         return documentBuilder.merge(source);
-    }    
-    
+    }
+
+    private EmailRecipient buildRecipient(Letter letter) {
+        String emailAddress = letter.getEmailAddress();
+        if (emailAddress == null || emailAddress.isEmpty()) {
+            throw new IllegalArgumentException("Vastaanottajat puuttuu");
+        }
+        EmailRecipient recipient = new EmailRecipient();
+        recipient.setEmail(letter.getEmailAddress());
+        recipient.setLanguageCode(letter.getLanguageCode());
+        return recipient;
+    }
+
+    private EmailData buildEmailData(Template letterTemplate, EmailData emailData, String languageCode,
+                                     String applicationPeriod) {
+        EmailMessage message = emailData.getEmail();
+        message.setLanguageCode(languageCode);
+        message.setTemplateName(letterTemplate.getName());
+        message.setHakuOid(applicationPeriod);
+        message.setTemplateId("" + letterTemplate.getId());
+        message.setHtml(true);
+
+        for (Replacement replacement : letterTemplate.getReplacements()) {
+            if (TemplateEmailField.BODY.getFieldName().equals(replacement.getName())) {
+                message.setBody(replacement.getDefaultValue());
+            } else if (TemplateEmailField.SUBJECT.getFieldName().equals(replacement.getName())) {
+                message.setSubject(replacement.getDefaultValue());
+            }
+            ReplacementDTO replacementDto = new ReplacementDTO();
+            replacementDto.setDefaultValue(replacement.getDefaultValue());
+            replacementDto.setName(replacement.getName());
+            replacementDto.setMandatory(replacement.isMandatory());
+            replacementDto.setTimestamp(replacement.getTimestamp());
+            emailData.getReplacements().add(replacementDto);
+        }
+        return emailData;
+    }
+
     public void initTemplateId(LetterBatchDetails batch) {
         initTemplateId(batch, batch.getTemplate());
     }
@@ -188,9 +256,13 @@ public class LetterBuilder {
         if (template == null && batch.getTemplateName() != null
                 && batch.getLanguageCode() != null) {
             template = templateService.getTemplateByName(
-                    batch.getTemplateName(), batch.getLanguageCode());
-
-            batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
+                    new TemplateCriteriaImpl()
+                        .withName(batch.getTemplateName())
+                        .withLanguage(batch.getLanguageCode())
+                        .withApplicationPeriod(batch.getApplicationPeriod()), true);
+            if (template != null) {
+                batch.setTemplateId(template.getId()); // Search was by name ==> update also to template Id
+            }
         }
 
         if (template == null && batch.getTemplateId() != null) { // If not found by name

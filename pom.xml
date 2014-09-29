@@ -103,6 +103,7 @@
         <validation.version>1.0.0.GA</validation.version>
         <velocity.version>1.7</velocity.version>
         <includeBasicIntegrationTests>true</includeBasicIntegrationTests>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
     </properties>
 
     <dependencyManagement>
@@ -609,6 +610,12 @@
                 <artifactId>querydsl-core</artifactId>
                 <version>${querydsl.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
+            </dependency>
+
 
             <!-- Flyway DB migration-->
             <dependency>

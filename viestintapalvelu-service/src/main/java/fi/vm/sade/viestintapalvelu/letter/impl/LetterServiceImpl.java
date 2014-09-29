@@ -109,6 +109,7 @@ public class LetterServiceImpl implements LetterService {
         LetterBatch model = new LetterBatch();
         letterBatchDtoConverter.convert(letterBatch, model);
         model.setTimestamp(new Date());
+        model.setBatchStatus(LetterBatch.Status.ready);
         model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
 
         // kirjeet.vastaanottaja
@@ -424,7 +425,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private LetterBatch storeLetterBatch(LetterBatch letterB) {
-        return letterBatchDAO.insert(letterB);
+         return letterBatchDAO.insert(letterB);
     }
     
     private static byte[] unZip(byte[] content) throws IOException, DataFormatException {
