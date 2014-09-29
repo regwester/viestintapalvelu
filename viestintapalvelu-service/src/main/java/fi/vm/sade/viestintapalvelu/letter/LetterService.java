@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
+import java.util.Set;
 
 import com.google.common.base.Optional;
 
@@ -9,10 +10,6 @@ import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -21,8 +18,6 @@ import java.util.Set;
  *
  */
 public interface LetterService {
-
-
 
     public enum LetterBatchProcess {
         EMAIL, LETTER
@@ -42,7 +37,7 @@ public interface LetterService {
      * @param letterBatch Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
-    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch);
+    LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch);
 
     /**
      * Hakee kirjelähetyksen tiedot annetun avaimen perusteella
@@ -50,7 +45,7 @@ public interface LetterService {
      * @param id Kirjelähetyksen avain
      * @return Kirjelähetyksen tiedot
      */
-    public fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id);
+    fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id);
 
     /**
      * Hakee annettujen hakuparametrien mukaiset kirjelähetyksen tiedot
@@ -62,7 +57,7 @@ public interface LetterService {
      * @param applicationPeriod
      * @return Kirjelähetyksen tiedot
      */
-    public fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
+    fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
                       String languageCode, String organizationOid,
                       Optional<String> tag, Optional<String> applicationPeriod);
 
@@ -76,7 +71,7 @@ public interface LetterService {
      * @param applicationPeriod
      * @return Lista korvauskenttien tietoja
      */
-    public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
+    List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
                   String languageCode, String organizationOid, Optional<String> tag, Optional<String> applicationPeriod);
 
     /**
@@ -85,7 +80,7 @@ public interface LetterService {
      * @param id Vastaanottajan kirjeen avain
      * @return Kirjeen sisällön tiedot
      */
-    public fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
+    fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
     
     /**
      * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi PDF-dokumentiksi
@@ -94,11 +89,10 @@ public interface LetterService {
      * @return Kirjelähetyksen kirjeiden sisällöt
      * @throws Exception
      */
-    public byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
+    byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
 
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
-    @Transactional
     void processLetterReceiver(long receiverId) throws Exception;
 
     void updateBatchProcessingFinished(long id, LetterBatchProcess process);

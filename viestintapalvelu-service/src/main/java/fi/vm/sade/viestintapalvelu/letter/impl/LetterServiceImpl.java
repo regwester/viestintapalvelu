@@ -477,6 +477,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId) {
         return letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(batchId);
     }
