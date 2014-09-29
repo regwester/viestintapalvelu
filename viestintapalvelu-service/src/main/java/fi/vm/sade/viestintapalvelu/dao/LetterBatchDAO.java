@@ -75,5 +75,5 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      */
     LetterBatchStatusDto getLetterBatchStatus(long letterBatchId);
 
-    List<Long> findLetterReceiverIdsByBatch(long batchId);
+    List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId);
 }

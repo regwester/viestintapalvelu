@@ -74,7 +74,7 @@ public class LetterBatchDAOTest {
         error.setLetterBatch(letterBatch);
         errors.add(error);
         letterBatch.setProcessingErrors(errors);
-        long idC = letterBatchDAO.insert(letterBatch).getId();
+        letterBatchDAO.insert(letterBatch).getId();
     }
 
     @Test
@@ -112,6 +112,22 @@ public class LetterBatchDAOTest {
         assertEquals("Testing failure case", letterBatch.getProcessingErrors().get(0).getErrorCause());
 
     }
+    
+    @Test
+    public void returnsEmptyListWhenAllLettersAreProcessed() {
+        assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter("afeaf".getBytes())).isEmpty());
+    }
+    
+    @Test
+    public void returnsUnprocessedLetters() {
+        assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(null)).size());
+    }
 
+    private long givenLetterBatchWithLetter(byte[] letter) {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setBatchStatus(LetterBatch.Status.processing);
+        letterBatch.getLetterReceivers().iterator().next().getLetterReceiverLetter().setLetter(letter);
+        return letterBatchDAO.insert(letterBatch).getId();
+    }
 
 }
