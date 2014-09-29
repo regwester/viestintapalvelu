@@ -15,29 +15,29 @@ public interface ReportedAttachmentService {
 	 * @param attachmentID Liitteen tunniste
 	 * @return Tunnistetta vastaava raportoitava liite
 	 */
-	public ReportedAttachment getReportedAttachment(Long attachmentID); 
+	ReportedAttachment getReportedAttachment(Long attachmentID);
 	
 	/**
 	 * Hakee raportoitavat liitteet aiemmin tallennetujen liitteiden tietojen perusteella
 	 * 
-	 * @param lahetetytLiitteet Kokoelma lähetettävien liitteiden tietoja
+	 * @param attachmentResponses Kokoelma lähetettävien liitteiden tietoja
 	 * @return Kokoelma raportoitavia liitteitä
 	 */
-	public List<ReportedAttachment> getReportedAttachments(List<AttachmentResponse> attachmentResponses); 
+	List<ReportedAttachment> getReportedAttachments(List<AttachmentResponse> attachmentResponses);
 
 	/**
 	 * Hakee raportoitavat liitteet aiemmin tallennetujen liitteiden tietojen perusteella
 	 * 
-	 * @param viestinLiitteet Kokoelma lähetettävien viestin liitteiden avaintietoja
+	 * @param reportedMessageAttachments Kokoelma lähetettävien viestin liitteiden avaintietoja
 	 * @return Kokoelma raportoitavia liitteitä
 	 */
-	public List<ReportedAttachment> getReportedAttachments(Set<ReportedMessageAttachment> reportedMessageAttachments); 
+	List<ReportedAttachment> getReportedAttachments(Set<ReportedMessageAttachment> reportedMessageAttachments);
 
 	/**
 	 * Tallentaa ryhmäsähköpostin raportoitavat liitteet
 	 * 
-	 * @param Raportoitavan liitteen tiedot {@link ReportedAttachment}
+	 * @param reportedAttachment Raportoitavan liitteen tiedot {@link ReportedAttachment}
 	 * @return Liitteen generoitu avain
 	 */
-	public Long saveReportedAttachment(ReportedAttachment reportedAttachment);
+	Long saveReportedAttachment(ReportedAttachment reportedAttachment);
 }

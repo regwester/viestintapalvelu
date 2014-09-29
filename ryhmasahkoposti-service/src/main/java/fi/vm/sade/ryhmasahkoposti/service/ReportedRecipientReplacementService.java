@@ -24,7 +24,7 @@ public interface ReportedRecipientReplacementService {
     
     /**
      * Get reported recipient replacements
-     * @param recipientID
+     * @param recipient
      * @return
      */
     public List<ReportedRecipientReplacement> getReportedRecipientReplacements(ReportedRecipient recipient);

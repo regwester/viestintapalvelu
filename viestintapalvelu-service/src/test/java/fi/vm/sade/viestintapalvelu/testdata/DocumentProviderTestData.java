@@ -463,4 +463,14 @@ public class DocumentProviderTestData {
         
         return templateReplacements;
     }
- }
+
+    public static LetterReceiverLetterAttachment getLetterReceiverLetterAttachment(LetterReceiverLetter letter) {
+        LetterReceiverLetterAttachment attachment = new LetterReceiverLetterAttachment();
+        attachment.setLetterReceiverLetter(letter);
+        attachment.setName("Liite");
+        attachment.setContentType("application/pdf");
+        attachment.setContents("Test data".getBytes());
+        attachment.setVersion(1l);
+        return attachment;
+    }
+}

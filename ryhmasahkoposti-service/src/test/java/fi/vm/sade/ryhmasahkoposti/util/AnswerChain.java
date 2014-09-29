@@ -58,6 +58,13 @@ public class AnswerChain<T> implements Answer<T> {
         }
     }
 
+    protected static class DoNothingAnswer<Type> implements Answer<Type> {
+        @Override
+        public Type answer(InvocationOnMock invocation) throws Throwable {
+            return null;
+        }
+    }
+
     public AnswerChain(Answer<T> answer) {
         this.delegate = answer;
     }
@@ -68,6 +75,10 @@ public class AnswerChain<T> implements Answer<T> {
 
     public static<Type> AnswerChain<Type> atFirstReturn(Type answer) {
         return atFirst(new ReturnAnswer<Type>(answer));
+    }
+
+    public static<Void> AnswerChain<Void> atFirstDoNothing() {
+        return atFirst(new DoNothingAnswer<Void>());
     }
 
     public static<Type> AnswerChain<Type> atFirstThrow(Throwable exception) {
@@ -95,6 +106,10 @@ public class AnswerChain<T> implements Answer<T> {
 
     public AnswerChain<T> thenThrow(Throwable exception) {
         return then(new ThrowAnswer<T>(exception));
+    }
+
+    public AnswerChain<T> thenDoNothing() {
+        return then(new DoNothingAnswer<T>());
     }
 
     public T doAnswer(InvocationOnMock invocation) throws Throwable {

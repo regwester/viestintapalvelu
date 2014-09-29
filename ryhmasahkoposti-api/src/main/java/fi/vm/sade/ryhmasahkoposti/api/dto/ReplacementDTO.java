@@ -36,7 +36,7 @@ public class ReplacementDTO extends BaseDTO {
     /**
      * Replacement name of sender from personal field
      */
-    public final static String NAME_EMAIL_SENDER_FROM_PERSONAL = "sender-from-personal";
+    public final static String NAME_EMAIL_SENDER_NAME_PERSONAL = "sender-from-personal";
 
     /**
      * Replacement name of replay-to field

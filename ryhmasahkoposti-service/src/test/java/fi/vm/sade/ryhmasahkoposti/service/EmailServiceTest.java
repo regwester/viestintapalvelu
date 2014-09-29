@@ -16,19 +16,12 @@
 
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
-import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
-import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
-import fi.vm.sade.ryhmasahkoposti.service.impl.EmailAVChecker;
-import fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender;
-import fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
-import fi.vm.sade.ryhmasahkoposti.util.AnswerChain;
-import fi.vm.sade.ryhmasahkoposti.util.CallCounterVoidAnswer;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.persistence.OptimisticLockException;
+
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.InjectMocks;
@@ -42,9 +35,24 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import javax.persistence.OptimisticLockException;
-import java.util.ArrayList;
-import java.util.List;
+import com.google.common.base.Optional;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
+import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
+import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailRecipientDtoConverter;
+import fi.vm.sade.ryhmasahkoposti.service.impl.EmailAVChecker;
+import fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender;
+import fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import fi.vm.sade.ryhmasahkoposti.util.AnswerChain;
+import fi.vm.sade.ryhmasahkoposti.util.CallCounterVoidAnswer;
+import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirstReturn;
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirstThrow;
@@ -82,6 +90,16 @@ public class EmailServiceTest {
     private EmailAVChecker emailAVChecker;
     @Mock
     private ThreadPoolTaskExecutor emailExecutor;
+    @Mock
+    private EmailRecipientDtoConverter emailRecipientDtoConverter;
+
+
+    @Before
+    public void setup() {
+        when(emailRecipientDtoConverter.convert(any(EmailRecipientDTO.class), any(EmailRecipientMessage.class),
+                any(EmailMessageDTO.class))).thenCallRealMethod();
+        emailService.setTemplateBuilder(new TemplateBuilder());
+    }
 
     @Test
     public void testZeroNumberOfUnhandledQueues() {
@@ -134,7 +152,8 @@ public class EmailServiceTest {
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         CallCounterVoidAnswer handleMail = new CallCounterVoidAnswer();
-        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class));
+        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
+                any(Optional.class));
 
         AnswerChain<Boolean> successHandler = atFirstReturn(true);
         when(rrService.recipientHandledSuccess(eq(queue.getRecipients().get(0)),
@@ -172,7 +191,8 @@ public class EmailServiceTest {
         when(emailQueueService.continueQueueHandling(any(EmailQueueHandleDto.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         doThrow(new IllegalStateException("Email sending failed!"))
-                .when(emailSender).handleMail(any(EmailMessage.class), any(String.class));
+                .when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
+                any(Optional.class));
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.recipientHandledSuccess(any(EmailRecipientDTO.class), any(String.class)))
                 .thenThrow(new IllegalStateException("Should not be successful!"));

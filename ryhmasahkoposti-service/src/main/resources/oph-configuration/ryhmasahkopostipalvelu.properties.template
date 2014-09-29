@@ -3,6 +3,7 @@ ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://itest-virk
 ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://itest-virkailija.oph.ware.fi/authentication-service/services/resources
 ryhmasahkopostipalvelu.organisaatioService.rest.url=http://localhost:8080/organisaatio-service/rest
 ryhmasahkopostipalvelu.templateService.rest.url=http://localhost:8080/viestintapalvelu/api/v1
+ryhmasahkopostipalvelu.attachmentService.rest.url=http://localhost:8080/viestintapalvelu/api/v1
 
 # Palveluk�ytt�j�tunnukset
 ryhmasahkoposti.app.username.to.henkilopalvelu=ryhmasahkopostipalvelu

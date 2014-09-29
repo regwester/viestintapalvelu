@@ -33,10 +33,25 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
+import com.google.common.base.Optional;
+import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
+import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -58,7 +73,7 @@ public class LetterResource extends AsynchronousResource {
     @Qualifier
     private DokumenttiResource dokumenttiResource;
 
-
+    @Autowired
     private ExecutorService executor;
 
     @Autowired
@@ -245,11 +260,15 @@ public class LetterResource extends AsynchronousResource {
 
         String tag = request.getParameter("tag");
 
+        String applicationPeriod = request.getParameter("applicationPeriod");
+
         if ((tag == null) || ("".equals(tag))) {
             tag = "%%";
         }
 
-        return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid, tag)).build();
+        return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid,
+                Optional.fromNullable(tag),
+                Optional.fromNullable(applicationPeriod))).build();
     }
 
     @GET

@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.liite;
+package fi.vm.sade.viestintapalvelu.attachment;
 
 import java.io.IOException;
 import java.util.HashMap;
@@ -19,12 +19,12 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 
 @Service
 @Singleton
-public class LiiteBuilder {
+public class AttachmentBuilder {
 
     private DocumentBuilder documentBuilder;
 
     @Inject
-    public LiiteBuilder(DocumentBuilder documentBuilder) {
+    public AttachmentBuilder(DocumentBuilder documentBuilder) {
         this.documentBuilder = documentBuilder;
     }
 

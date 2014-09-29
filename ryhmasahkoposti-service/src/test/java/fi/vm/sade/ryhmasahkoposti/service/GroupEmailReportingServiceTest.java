@@ -1,19 +1,8 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.*;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
-import fi.vm.sade.ryhmasahkoposti.converter.*;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.commons.fileupload.FileItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +19,20 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import java.io.IOException;
-import java.util.*;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.converter.*;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -102,9 +103,7 @@ public class GroupEmailReportingServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testAddSendingGroupEmail() throws IOException {
-        when(mockedReportedMessageConverter.convert(any(EmailMessage.class), any(ReplacementDTO.class), any(ReplacementDTO.class), 
-                any(ReplacementDTO.class), any(ReplacementDTO.class), any(ReplacementDTO.class), eq("null"))).thenReturn(
-                        new ReportedMessage());
+        when(mockedReportedMessageConverter.convert(any(EmailMessage.class))).thenReturn(new ReportedMessage());
 
         ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
         savedReportedMessage.setId(new Long(2));
@@ -502,4 +501,5 @@ public class GroupEmailReportingServiceTest {
         assertTrue(organizationDTOs.get(0).getOid().equals("1.2.246.562.10.00000000001"));
         assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
     }
+
 }
