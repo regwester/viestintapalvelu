@@ -398,6 +398,16 @@ public class LetterResource extends AsynchronousResource {
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
     public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
         //needs to check that process has been finished
+        LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
+        if(status == null) {
+            return Response.status(Status.NOT_FOUND).build();
+        } else if(! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(status)) {
+            return Response.status(Status.OK).entity(status).build();
+        }
+
+        //if status is ready, create pdf and provide a link to it
+
+
         return null;
     }
 }
