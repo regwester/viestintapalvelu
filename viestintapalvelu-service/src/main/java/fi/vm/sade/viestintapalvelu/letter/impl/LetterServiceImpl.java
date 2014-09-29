@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
+import com.google.common.base.Optional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
@@ -14,6 +15,7 @@ import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.model.*;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,30 +27,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.*;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
-
-import org.apache.pdfbox.util.PDFMergerUtility;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Optional;
-
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.model.IPosti;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
 
 /**
  * @author migar1
@@ -78,6 +61,7 @@ public class LetterServiceImpl implements LetterService {
     	this.templateDAO = templateDAO;
         this.letterBatchDtoConverter = letterBatchDtoConverter;
     }
+
 
     /* ---------------------- */
     /* - Create LetterBatch - */
@@ -530,6 +514,7 @@ public class LetterServiceImpl implements LetterService {
     @Transactional
     public void updateBatchProcessingFinished(long id, LetterBatchProcess process) {
         LetterBatch batch = letterBatchDAO.read(id);
+        batch.setBatchStatus(LetterBatch.Status.ready);
         switch (process) {
         case EMAIL: 
             batch.setEmailHandlingFinished(new Date());
@@ -593,6 +578,45 @@ public class LetterServiceImpl implements LetterService {
         }
         return batch;
     }
+
+
+    @Override
+    public byte[] getMergedLetterPDF(Long letterBatchId) {
+        fi.vm.sade.viestintapalvelu.model.LetterBatch batch = fetchById(letterBatchId);
+        if(! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(batch.getBatchStatus())) {
+            return null;
+        }
+
+        //if status is ready, create pdf and provide a link to it
+        try {
+            byte[] pdf = new byte[0];
+            pdf = getMergedPDF(batch);
+            return pdf;
+        } catch (Exception e) {
+            logger.error("Error mergind pdfs", e);
+            return null;
+        }
+    }
+
+    private byte[] getMergedPDF(fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) throws IOException, COSVisitorException {
+        byte[] bytes = null;
+
+        PDFMergerUtility pdfMergerUtility = new PDFMergerUtility();
+
+        List<InputStream> letters = new ArrayList<InputStream>(letterBatch.getLetterReceivers().size());
+        for(LetterReceivers receiver : letterBatch.getLetterReceivers()) {
+            letters.add(new ByteArrayInputStream(receiver.getLetterReceiverLetter().getLetter()));
+        }
+
+        pdfMergerUtility.addSources(letters);
+        ByteArrayOutputStream out = new ByteArrayOutputStream();
+        pdfMergerUtility.setDestinationStream(out);
+        pdfMergerUtility.mergeDocuments();
+        bytes = out.toByteArray();
+        out.close();
+        return bytes;
+    }
+
 
     @Override
     @Transactional

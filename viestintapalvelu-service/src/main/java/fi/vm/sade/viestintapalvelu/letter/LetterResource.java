@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
@@ -33,25 +34,10 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
-import com.google.common.base.Optional;
-import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
-import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
-import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
-import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -416,17 +402,21 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
     public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+
+
+        latauspalvelu tähän
+
         //needs to check that process has been finished
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
-        if(status == null) {
+        if (status == null) {
             return Response.status(Status.NOT_FOUND).build();
-        } else if(! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(status)) {
-            return Response.status(Status.OK).entity(status).build();
+        } else if (!fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(status.getStatus())) {
+            return Response.status(Status.OK).build();
         }
 
-        //if status is ready, create pdf and provide a link to it
+        byte[] pdfs = letterService.getMergedLetterPDF(letterBatchId);
+        return Response.status(Status.OK).entity(pdfs).build();
 
-
-        return null;
     }
+
 }

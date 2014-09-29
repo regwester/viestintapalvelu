@@ -1,15 +1,14 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.List;
-import java.util.Set;
-
 import com.google.common.base.Optional;
-
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+
+import java.util.List;
+import java.util.Set;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -18,6 +17,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
  *
  */
 public interface LetterService {
+
+    byte[] getMergedLetterPDF(Long letterBatchId);
 
     public enum LetterBatchProcess {
         EMAIL, LETTER

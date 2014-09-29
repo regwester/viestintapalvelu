@@ -1,9 +1,8 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.lang.reflect.Field;
-
-import javax.ws.rs.core.Response.Status;
-
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -11,15 +10,12 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
-import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import javax.ws.rs.core.Response.Status;
+import java.lang.reflect.Field;
+
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 
 @ContextConfiguration(locations = "/test-application-context.xml")

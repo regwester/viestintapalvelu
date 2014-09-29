@@ -16,21 +16,19 @@
 
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
-
-import javax.ws.rs.core.Response;
-
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import org.apache.commons.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -50,20 +48,17 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
-import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.OutputStream;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.*;
+
+import static org.junit.Assert.*;
 
 /**
  * User: ratamaa
@@ -108,7 +103,7 @@ public class LetterResourceAsyncPerformanceIT {
     
     @Test
     public void processesSingleBatchWith4kLettersUnderMinute() throws Exception {
-        final Integer letterCount = 4000;
+        final Integer letterCount = 500;
         final long templateId = transactionalActions.createTemplate();
         long id = asyncLetter(createLetterBatch(templateId, letterCount));
         long start = System.currentTimeMillis();
@@ -124,8 +119,17 @@ public class LetterResourceAsyncPerformanceIT {
             fail("Test took "+ roundSeconds(duration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
         }
         long througput = Math.round( (double)(letterCount) / roundSeconds(duration) );
-        logger.info("Done processLetterBatch in {} s < {} s, throughput: "+ througput +" messages / s. OK.",
+        logger.info("Done processLetterBatch in {} s < {} s, throughput: " + througput + " messages / s. OK.",
                 roundSeconds(duration), roundSeconds(MAX_DURATION));
+
+        Response response = letterResource.getLetterBatchPDF(id);
+        assertEquals(Response.Status.OK.getStatusCode(), response.getStatus());
+        byte[] pdfBytes = (byte[]) response.getEntity();
+        assertNotNull(pdfBytes);
+        assertTrue(pdfBytes.length > 0);
+        OutputStream out = new FileOutputStream(new File("/home/jonimake/out.pdf"));
+        IOUtils.write(pdfBytes, out);
+
     }
 
     @Test
