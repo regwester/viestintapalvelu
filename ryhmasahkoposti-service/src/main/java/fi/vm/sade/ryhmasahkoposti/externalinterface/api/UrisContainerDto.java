@@ -14,22 +14,31 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.attachment;
+package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
 
+import java.io.Serializable;
 import java.util.List;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 
 /**
  * User: ratamaa
- * Date: 24.9.2014
- * Time: 15:06
+ * Date: 29.9.2014
+ * Time: 20:43
  */
-public interface AttachmentResource {
+public class UrisContainerDto implements Serializable {
+    private List<String> uris;
 
-    public EmailAttachment downloadByUri(String uri);
+    public UrisContainerDto() {
+    }
 
-    public void deleteByUris(UrisContainerDto urisContainer);
+    public UrisContainerDto(List<String> uris) {
+        this.uris = uris;
+    }
 
+    public List<String> getUris() {
+        return uris;
+    }
+
+    public void setUris(List<String> uris) {
+        this.uris = uris;
+    }
 }

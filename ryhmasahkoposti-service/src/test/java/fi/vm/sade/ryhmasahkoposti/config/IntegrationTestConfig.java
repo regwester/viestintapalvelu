@@ -124,8 +124,8 @@ public class IntegrationTestConfig {
                 throw new IllegalStateException("Please mock me when needed!");
             }
 
-//            @Override
-            public void deleteByUris(List<String> uris) {
+            @Override
+            public void deleteByUris(UrisContainerDto urisContainerDto) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };

@@ -39,8 +39,15 @@
     <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
 
     <!-- Authentication and authorization support -->
-    <bean id="ticketInterceptor" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptor"/>
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
+
+    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+    </bean>
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+        <property name="internal" value="true"/>
+    </bean>
 
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
                          accessDecisionManager="accessDecisionManager"
@@ -65,9 +72,16 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource"
                          address="${ryhmasahkopostipalvelu.attachmentService.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                <property name="webCasUrl" value="${web.url.cas}" />
-                <property name="targetService" value="${cas.service.viestintapalvelu}" />
+            <bean class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
+                <property name="target">
+                    <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+                        <property name="webCasUrl" value="${web.url.cas}" />
+                        <property name="targetService" value="${cas.service.viestintapalvelu}" />
+                        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+                        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+                    </bean>
+                </property>
+                <property name="internal" value="true"/>
                 <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
                 <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
             </bean>
@@ -119,7 +133,19 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource"
                          address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
+            <bean class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
+                <property name="target">
+                    <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+                        <property name="webCasUrl" value="${web.url.cas}" />
+                        <property name="targetService" value="${cas.service.viestintapalvelu}" />
+                        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+                        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+                    </bean>
+                </property>
+                <property name="internal" value="true"/>
+                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+            </bean>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>

@@ -20,8 +20,11 @@ import java.net.HttpURLConnection;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.codec.binary.Base64;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.AbstractPhaseInterceptor;
+import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -30,30 +33,29 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import fi.vm.sade.authentication.cas.CasClient;
-import fi.vm.sade.generic.ui.portlet.security.AbstractSecurityTicketOutInterceptor;
-import fi.vm.sade.generic.ui.portlet.security.ProxyAuthenticator;
 
 /**
  * User: ratamaa
  * Date: 29.9.2014
- * Time: 14:30
+ * Time: 20:04
  */
-@Deprecated // korvattava httpsessio/cookie pohjaisella ratkaisulla, esim: SessionBasedCxfAuthInterceptor
-// based on fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest
-public class SecurityTicketOutInterceptorRestWithUsernamePasswordFallback
-        extends AbstractSecurityTicketOutInterceptor<Message> {
+public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseInterceptor<Message> {
     private static final String CAS_HEADER  =  "CasSecurityTicket";
     private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Value("${auth.mode:cas}")
     private String authMode;
     @Value("${web.url.cas}")
-    protected String casService;
+    private String casService;
+    private boolean internal=false;
+    private AbstractPhaseInterceptor<Message> target;
 
-    private ProxyAuthenticator proxyAuthenticator = new ProxyAuthenticator();
+    public LocalDevModeSecurityTicketInterceptorAdapter() {
+        super(Phase.PRE_PROTOCOL);
+    }
 
     @Override
-    public void handleMessage(final Message message) throws Fault {
+    public void handleMessage(Message message) throws Fault {
         final String casTargetService = getCasTargetService((String) message.get(Message.ENDPOINT_ADDRESS));
 
         Authentication authentication  =  SecurityContextHolder.getContext().getAuthentication();
@@ -61,32 +63,30 @@ public class SecurityTicketOutInterceptorRestWithUsernamePasswordFallback
             // Development mode, this works provided that Spring Security's authentication manager has
             // erase-credientals = false: <authentication-manager alias = "authenticationManager"  erase-credentials = "false">
             UsernamePasswordAuthenticationToken token  =  (UsernamePasswordAuthenticationToken) authentication;
-            Map<String,String> headers = provideTicketHeaders(casTargetService, token.getName(), ""  +  token.getCredentials());
-            for (Map.Entry<String,String> header : headers.entrySet()) {
-                ((HttpURLConnection) message.get("http.connection")).setRequestProperty(header.getKey(), header.getValue());
+            if (!internal) {
+                Map<String,String> headers = provideTicketHeaders(casTargetService, token.getName(), ""  +  token.getCredentials());
+                for (Map.Entry<String,String> header : headers.entrySet()) {
+                    ((HttpURLConnection) message.get("http.connection")).setRequestProperty(header.getKey(), header.getValue());
+                }
+            } else {
+                ((HttpURLConnection) message.get("http.connection")).setRequestProperty("Authorization", "Basic "
+                        + getBasicAuthenticationEncoding(token.getName(), ""  +  token.getCredentials()));
             }
         } else {
-            proxyAuthenticator.proxyAuthenticate(casTargetService, authMode, new ProxyAuthenticator.Callback() {
-                @Override
-                public void setRequestHeader(String key, String value) {
-                    log.info("setRequestHeader: " + key + "=" + value + " (targetService: " + casTargetService + ")");
-                    ((HttpURLConnection) message.get("http.connection")).setRequestProperty(key, value);
-                }
-
-                @Override
-                public void gotNewTicket(Authentication authentication, String proxyTicket) {
-                    log.info("gotNewTicket, auth: " + authentication.getName() + ", proxyTicket: " + proxyTicket
-                            + ", (targetService: " + casTargetService + ")");
-                }
-            });
+            target.handleMessage(message);
         }
     }
 
     private Map<String, String> provideTicketHeaders(String serviceUrl, String username, String password) {
-        Map<String, String> headers  =  new HashMap<String, String>();
-        String casHeader  =  CasClient.getTicket(casService + "/v1/tickets", username, password, serviceUrl);
+        Map<String, String> headers = new HashMap<String, String>();
+        String casHeader = CasClient.getTicket(casService + "/v1/tickets", username, password, serviceUrl);
         headers.put(CAS_HEADER, casHeader);
         return headers;
+    }
+
+    private String getBasicAuthenticationEncoding(String username, String password) {
+        String userPassword = username + ":" + password;
+        return new String(Base64.encodeBase64(userPassword.getBytes()));
     }
 
     /**
@@ -98,5 +98,21 @@ public class SecurityTicketOutInterceptorRestWithUsernamePasswordFallback
      */
     private static String getCasTargetService(String url) {
         return url.replaceAll("(.*?//.*?/.*?)/.*", "$1") + "/j_spring_cas_security_check";
+    }
+
+    public boolean isInternal() {
+        return internal;
+    }
+
+    public void setInternal(boolean internal) {
+        this.internal = internal;
+    }
+
+    public AbstractPhaseInterceptor<Message> getTarget() {
+        return target;
+    }
+
+    public void setTarget(AbstractPhaseInterceptor<Message> target) {
+        this.target = target;
     }
 }

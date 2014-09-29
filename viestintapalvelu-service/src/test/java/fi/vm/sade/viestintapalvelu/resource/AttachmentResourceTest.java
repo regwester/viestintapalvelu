@@ -30,6 +30,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
+import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentResourceImpl;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
@@ -56,7 +57,8 @@ public class AttachmentResourceTest {
 
     @Before
     public void setup() {
-        this.attachmentResource = new AttachmentResourceImpl(letterReceiverLetterAttachmentDAO);
+        this.attachmentResource = new AttachmentResourceImpl();
+        this.attachmentResource.setLetterReceiverLetterAttachmentDAO(this.letterReceiverLetterAttachmentDAO);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -88,9 +90,9 @@ public class AttachmentResourceTest {
         when(letterReceiverLetterAttachmentDAO.read(eq(2l))).thenReturn(attachment);
 
         // Not found by still continued:
-        attachmentResource.deleteByUris(Arrays.asList(
+        attachmentResource.deleteByUris(new UrisContainerDto(Arrays.asList(
                 AttachmentUri.getLetterReceiverLetterAttachment(1l).toString(),
                 AttachmentUri.getLetterReceiverLetterAttachment(2l).toString()
-        ));
+        )));
     }
 }

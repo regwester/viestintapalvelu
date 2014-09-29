@@ -16,7 +16,8 @@
 
 package fi.vm.sade.viestintapalvelu.attachment.impl;
 
-import java.util.List;
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -25,10 +26,16 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
+import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentResource;
+import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
 
 /**
@@ -36,22 +43,27 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
  * Date: 24.9.2014
  * Time: 15:45
  */
+@Path(Urls.ATTACHMENT_RESOURCE_PATH)
+@Api(value = "/" + Urls.API_PATH + "/" + Urls.ATTACHMENT_RESOURCE_PATH,
+        description = "Liiterajapinta ryhmäsähköpostipalvelua varten")
 @Component
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 public class AttachmentResourceImpl implements AttachmentResource {
+    public static final String AttachmentByUri = "Palauttaa liitteen URI-tunnisteella";
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
+    @Autowired
     private LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO;
 
-    @Autowired
-    public AttachmentResourceImpl(LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO) {
-        this.letterReceiverLetterAttachmentDAO = letterReceiverLetterAttachmentDAO;
-    }
-
+    @GET
+    @Path("/getByUri")
+    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @ApiOperation(value = AttachmentByUri, notes = AttachmentByUri, response = EmailAttachment.class)
     @Override
     @Transactional(readOnly = true)
     @PreAuthorize(SecurityConstants.SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD)
-    public EmailAttachment downloadByUri(String uriStr) {
+    public EmailAttachment downloadByUri(@QueryParam("uri") @ApiParam(name="uri",
+            value = "Liitteen URI-tunniste") String uriStr) {
         AttachmentUri uri = new AttachmentUri(uriStr);
         switch (uri.getType()) {
             case LetterReceiverLetterAttachment:
@@ -72,11 +84,18 @@ public class AttachmentResourceImpl implements AttachmentResource {
         return attachment;
     }
 
+    @DELETE
+    @Path("/urisDownloaded")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @ApiOperation(value = AttachmentByUri, notes = AttachmentByUri, response = EmailAttachment.class)
     @Override
     @Transactional
     @PreAuthorize(SecurityConstants.SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD)
-    public void deleteByUris(List<String> uris) {
-        for (String uriStr : uris) {
+    public void deleteByUris(UrisContainerDto urisContainer) {
+        if (urisContainer == null || urisContainer.getUris() == null) {
+            return;
+        }
+        for (String uriStr : urisContainer.getUris()) {
             AttachmentUri uri = new AttachmentUri(uriStr);
             switch (uri.getType()) {
                 case LetterReceiverLetterAttachment:
@@ -97,4 +116,7 @@ public class AttachmentResourceImpl implements AttachmentResource {
         }
     }
 
+    public void setLetterReceiverLetterAttachmentDAO(LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO) {
+        this.letterReceiverLetterAttachmentDAO = letterReceiverLetterAttachmentDAO;
+    }
 }

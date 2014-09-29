@@ -16,20 +16,19 @@
 
 package fi.vm.sade.viestintapalvelu.attachment;
 
-import java.util.List;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
+import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 
 /**
  * User: ratamaa
- * Date: 24.9.2014
- * Time: 15:06
+ * Date: 29.9.2014
+ * Time: 17:38
  */
-public interface AttachmentResource {
+public interface AttachmentService {
 
-    public EmailAttachment downloadByUri(String uri);
-
-    public void deleteByUris(UrisContainerDto urisContainer);
+    /**
+     * @param dto to save
+     * @return id of the saved LetterReceiverLetterAttachment
+     */
+    long saveReceiverAttachment(LetterReceiverLEtterAttachmentSaveDto dto);
 
 }

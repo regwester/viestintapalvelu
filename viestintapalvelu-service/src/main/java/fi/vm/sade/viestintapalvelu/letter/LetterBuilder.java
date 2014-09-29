@@ -23,32 +23,35 @@ import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
+import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 import fi.vm.sade.viestintapalvelu.email.TemplateEmailField;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
-import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
-import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 
 
 @Service
 @Singleton
 public class LetterBuilder {
-    public static final String ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER = "additionalAttachmentUris";
+    public static final String ADDITIONAL_ATTACHMENT_URI_EMAIL_RECEIVER_PARAMETER = "additionalAttachmentUri";
 
     private final Logger LOG = LoggerFactory.getLogger(LetterBuilder.class);
 
@@ -64,14 +67,13 @@ public class LetterBuilder {
     private EmailComponent emailComponent;
 
     @Autowired
-    private LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO;
+    private AttachmentService attachmentService;
 
     @Inject
     public LetterBuilder(DocumentBuilder documentBuilder) {
         this.documentBuilder = documentBuilder;
     }
 
-    
     public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException, Exception {
         boolean valid = LetterBatchValidator.isValid(batch);
         LOG.debug("Validated batch result: " + valid);
@@ -102,7 +104,6 @@ public class LetterBuilder {
         return resultZip;
     }
 
-    
     public byte[] printPDF(LetterBatch batch) throws IOException, DocumentException, Exception {
         boolean valid = LetterBatchValidator.isValid(batch);
         LOG.debug("Validated batch result: " + valid);
@@ -170,29 +171,26 @@ public class LetterBuilder {
             }
 
             if (letterTemplate != null) {
-                List<AttachmentUri> attachmentUris = new ArrayList<AttachmentUri>();
+                AttachmentUri attachmentUri = null;
                 List<TemplateContent> contents = letterTemplate.getContents();
                 PdfDocument currentDocument = new PdfDocument(letter.getAddressLabel());
                 Collections.sort(contents);
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(letterTemplate, tc.getContent().getBytes(), dataContext);
                     if (recipient != null && tc.getName() != null && tc.getName().equalsIgnoreCase("liite")) {
-                        LetterReceiverLetter receiverLetter = null; // TODO!
-                        LetterReceiverLetterAttachment receiverAttachment = new LetterReceiverLetterAttachment();
-                        receiverAttachment.setContents(page);
-                        receiverAttachment.setContentType("application/pdf");
-                        receiverAttachment.setLetterReceiverLetter(receiverLetter);
-                        letterReceiverLetterAttachmentDAO.insert(receiverAttachment);
-
-                        attachmentUris.add(AttachmentUri.getLetterReceiverLetterAttachment(receiverAttachment.getId()));
+                        LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
+                        attachment.setName("liite");
+                        attachment.setContentType("application/pdf");
+                        attachment.setContents(page);
+                        attachment.setLetterReceiverLetterId(null); // TODO!
+                        long attachmentId = attachmentService.saveReceiverAttachment(attachment);
+                        attachmentUri = AttachmentUri.getLetterReceiverLetterAttachment(attachmentId);
                     }
                     currentDocument.addContent(page);
                 }
-                if (recipient != null && !attachmentUris.isEmpty()) {
-                    recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
+                if (recipient != null && attachmentUri != null) {
                     recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO(
-                            ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER,
-                            AttachmentUri.uriStringsOfList(attachmentUris)));
+                            ADDITIONAL_ATTACHMENT_URI_EMAIL_RECEIVER_PARAMETER, attachmentUri.toString()));
                 }
                 source.add(currentDocument);
                 letter.setLetterContent(new LetterContent(documentBuilder.merge(currentDocument).toByteArray(), "application/pdf", new Date()));
@@ -202,7 +200,9 @@ public class LetterBuilder {
         }
 
         for (EmailData email : emailSendData.getEmails()) {
-            emailComponent.sendEmail(email);
+            if (!email.getRecipient().isEmpty()) {
+                emailComponent.sendEmail(email);
+            }
         }
 
         // Write LetterBatch to DB
@@ -220,6 +220,20 @@ public class LetterBuilder {
         EmailRecipient recipient = new EmailRecipient();
         recipient.setEmail(letter.getEmailAddress());
         recipient.setLanguageCode(letter.getLanguageCode());
+
+        if (letter.getAddressLabel() != null
+                && letter.getAddressLabel().getFirstName() != null
+                && letter.getAddressLabel().getLastName() != null) {
+            recipient.setName(letter.getAddressLabel().getFirstName() + " "
+                    + letter.getAddressLabel().getLastName());
+        }
+
+        recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>());
+        if (letter.getTemplateReplacements() != null) {
+            for (Map.Entry<String,Object> kv :  letter.getTemplateReplacements().entrySet()) {
+                recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO(kv.getKey(), kv.getValue()));
+            }
+        }
         return recipient;
     }
 

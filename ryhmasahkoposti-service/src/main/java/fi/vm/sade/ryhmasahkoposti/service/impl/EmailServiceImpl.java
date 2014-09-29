@@ -21,12 +21,10 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
-import fi.vm.sade.ryhmasahkoposti.service.EmailAttachmentDownloader;
-import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.service.*;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailRecipientDtoConverter;
+import fi.vm.sade.ryhmasahkoposti.service.dto.ReportedRecipientAttachmentSaveDto;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.addToMappedList;
@@ -72,6 +70,9 @@ public class EmailServiceImpl implements EmailService {
 
     @Autowired
     private List<EmailAttachmentDownloader> emailDownloaders;
+
+    @Autowired
+    private ReportedMessageAttachmentService reportedMessageAttachmentService;
 
     @Autowired
     private TemplateBuilder templateBuilder;
@@ -346,6 +347,12 @@ public class EmailServiceImpl implements EmailService {
         log.info("Downloading attachment for EmailRecipientDTO={}, URI={}", er.getRecipientID(), uri);
         EmailAttachment attachment = downloaderForUri(uri).download(uri);
         if (attachment != null) {
+            ReportedRecipientAttachmentSaveDto dto = new ReportedRecipientAttachmentSaveDto();
+            dto.setAttachment(attachment.getData());
+            dto.setAttachmentName(attachment.getName());
+            dto.setContentType(attachment.getContentType());
+            dto.setReportedRecipientId(er.getRecipientID());
+            reportedMessageAttachmentService.saveReportedRecipientAttachment(dto);
             er.getAttachments().add(attachment);
         } else {
             throw new IllegalArgumentException("Attachment with URI="
