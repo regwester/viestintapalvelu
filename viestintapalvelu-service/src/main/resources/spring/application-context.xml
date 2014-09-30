@@ -31,7 +31,15 @@
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
 
     <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
+
+    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+    </bean>
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
+    </bean>
     
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
@@ -71,7 +79,7 @@
 
     <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
+            <ref bean="ticketInterceptorRestInternal"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>

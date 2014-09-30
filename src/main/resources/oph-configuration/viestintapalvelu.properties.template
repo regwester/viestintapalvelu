@@ -102,5 +102,6 @@ viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkai
 viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
 web.url.cas=https\://${host.cas}/cas
+viestintapalvelu.use.dev.basic.authentication=false
 
 viestintapalvelu.swagger.base.bath=/viestintapalvelu
