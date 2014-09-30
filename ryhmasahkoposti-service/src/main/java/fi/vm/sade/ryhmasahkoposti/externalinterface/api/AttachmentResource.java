@@ -34,7 +34,7 @@ public interface AttachmentResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public EmailAttachment downloadByUri(@QueryParam("uri") String uri);
 
-    @DELETE
+    @POST
     @Path("/urisDownloaded")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     public void deleteByUris(UrisContainerDto urisContainerDto);

@@ -174,7 +174,7 @@ public class EmailResourceIT {
         final List<String> urlsReportedForDeletion = new ArrayList<String>();
         AnswerChain<Void> answersForAttachmentDeletions = atFirst(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                urlsReportedForDeletion.addAll((List<String>) invocation.getArguments()[0]);
+                urlsReportedForDeletion.addAll(((UrisContainerDto) invocation.getArguments()[0]).getUris());
                 return null;
             }
         });

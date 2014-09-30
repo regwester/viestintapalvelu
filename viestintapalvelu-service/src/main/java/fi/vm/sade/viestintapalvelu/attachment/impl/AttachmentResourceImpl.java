@@ -84,7 +84,7 @@ public class AttachmentResourceImpl implements AttachmentResource {
         return attachment;
     }
 
-    @DELETE
+    @POST
     @Path("/urisDownloaded")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @ApiOperation(value = AttachmentByUri, notes = AttachmentByUri, response = EmailAttachment.class)

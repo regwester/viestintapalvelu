@@ -47,7 +47,7 @@ public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseI
     private String authMode;
     @Value("${web.url.cas}")
     private String casService;
-    private boolean internal=false;
+    private boolean basicAuthentication =false;
     private String appClientUsername;
     private String appClientPassword;
     private AbstractPhaseInterceptor<Message> target;
@@ -63,22 +63,22 @@ public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseI
         boolean systemUse = this.appClientUsername != null && this.appClientPassword != null;
         Authentication authentication  =  SecurityContextHolder.getContext().getAuthentication();
 
-        if (systemUse && internal && "dev".equals(authMode)) {
-            // auth.mode=dev and this is an internal target component with system account -> use HTTP Basic:
+        if (systemUse && basicAuthentication && "dev".equals(authMode)) {
+            // auth.mode=dev and this is an basicAuthentication target component with system account -> use HTTP Basic:
             ((HttpURLConnection) message.get("http.connection")).setRequestProperty("Authorization", "Basic "
                     + getBasicAuthenticationEncoding(this.appClientUsername, this.appClientPassword));
         } else if(authentication instanceof UsernamePasswordAuthenticationToken && "dev".equals(authMode)) {
             // Development mode, this works provided that Spring Security's authentication manager has
             // erase-credientals = false: <authentication-manager alias = "authenticationManager"  erase-credentials = "false">
             UsernamePasswordAuthenticationToken token  =  (UsernamePasswordAuthenticationToken) authentication;
-            if (!internal) {
+            if (!basicAuthentication) {
                 // External component, use CAS with service ticket by UsernamePasswordAuthenticationToken's credientals:
                 Map<String,String> headers = provideTicketHeaders(casTargetService, token.getName(), ""  +  token.getCredentials());
                 for (Map.Entry<String,String> header : headers.entrySet()) {
                     ((HttpURLConnection) message.get("http.connection")).setRequestProperty(header.getKey(), header.getValue());
                 }
             } else {
-                // This is an internal component, use HTTP Basic authentication:
+                // This is an basicAuthentication component, use HTTP Basic authentication:
                 ((HttpURLConnection) message.get("http.connection")).setRequestProperty("Authorization", "Basic "
                         + getBasicAuthenticationEncoding(token.getName(), ""  +  token.getCredentials()));
             }
@@ -111,12 +111,12 @@ public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseI
         return url.replaceAll("(.*?//.*?/.*?)/.*", "$1") + "/j_spring_cas_security_check";
     }
 
-    public boolean isInternal() {
-        return internal;
+    public boolean isBasicAuthentication() {
+        return basicAuthentication;
     }
 
-    public void setInternal(boolean internal) {
-        this.internal = internal;
+    public void setBasicAuthentication(boolean basicAuthentication) {
+        this.basicAuthentication = basicAuthentication;
     }
 
     public AbstractPhaseInterceptor<Message> getTarget() {

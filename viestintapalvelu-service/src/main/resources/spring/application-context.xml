@@ -38,7 +38,7 @@
     </bean>
     <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
-        <property name="internal" value="true"/>
+        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean>
 
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">

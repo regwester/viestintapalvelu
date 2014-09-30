@@ -178,13 +178,7 @@ public class LetterBuilder {
                 for (TemplateContent tc : contents) {
                     byte[] page = createPagePdf(letterTemplate, tc.getContent().getBytes(), dataContext);
                     if (recipient != null && tc.getName() != null && tc.getName().equalsIgnoreCase("liite")) {
-                        LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
-                        attachment.setName("liite");
-                        attachment.setContentType("application/pdf");
-                        attachment.setContents(page);
-                        attachment.setLetterReceiverLetterId(null); // TODO!
-                        long attachmentId = attachmentService.saveReceiverAttachment(attachment);
-                        attachmentUri = AttachmentUri.getLetterReceiverLetterAttachment(attachmentId);
+                        attachmentUri = getLetterReceiverAttachment(page);
                     }
                     currentDocument.addContent(page);
                 }
@@ -199,17 +193,32 @@ public class LetterBuilder {
             updatedLetters.add(letter);
         }
 
-        for (EmailData email : emailSendData.getEmails()) {
-            if (!email.getRecipient().isEmpty()) {
-                emailComponent.sendEmail(email);
-            }
-        }
+        sendEmails(emailSendData);
 
         // Write LetterBatch to DB
         batch.setLetters(updatedLetters); // Contains now the generated PdfDocuments
         // letterService.createLetter(batch);
 
         return documentBuilder.merge(source);
+    }
+
+    private AttachmentUri getLetterReceiverAttachment(byte[] page) {
+        AttachmentUri attachmentUri;LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
+        attachment.setName("liite.pdf"); // <-- TODO: ?
+        attachment.setContentType("application/pdf");
+        attachment.setContents(page);
+        attachment.setLetterReceiverLetterId(null); // TODO!
+        long attachmentId = attachmentService.saveReceiverAttachment(attachment);
+        attachmentUri = AttachmentUri.getLetterReceiverLetterAttachment(attachmentId);
+        return attachmentUri;
+    }
+
+    private void sendEmails(EmailSendDataDto emailSendData) {
+        for (EmailData email : emailSendData.getEmails()) {
+            if (!email.getRecipient().isEmpty()) {
+                emailComponent.sendEmail(email);
+            }
+        }
     }
 
     private EmailRecipient buildRecipient(Letter letter) {
@@ -220,6 +229,7 @@ public class LetterBuilder {
         EmailRecipient recipient = new EmailRecipient();
         recipient.setEmail(letter.getEmailAddress());
         recipient.setLanguageCode(letter.getLanguageCode());
+        // TODO: oidType, oid?
 
         if (letter.getAddressLabel() != null
                 && letter.getAddressLabel().getFirstName() != null

@@ -5,15 +5,9 @@ import java.util.*;
 
 import javax.persistence.*;
 
-import org.hibernate.annotations.Parameter;
-import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.TypeDefs;
-
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.viestintapalvelu.util.EnumUserType;
 
 /**
  *
@@ -34,12 +28,6 @@ import fi.vm.sade.viestintapalvelu.util.EnumUserType;
  * @author migar1
  *
  */
-@TypeDefs({
-    @TypeDef(name = "batchStatus", typeClass = EnumUserType.class,
-            parameters = @Parameter(
-                    name = "enumClassName",
-                    value = "fi.vm.sade.viestintapalvelu.model.LetterBatch$Status"))
-})
 @Table(name = "kirjelahetys", schema= "kirjeet")
 @Entity(name = "LetterBatch")
 public class LetterBatch extends BaseEntity {
@@ -73,8 +61,8 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
 
-    @Column(name = "kasittelyn_tila", columnDefinition = "kirjelahetyksentila")
-    @Type(type="batchStatus")
+    @Column(name = "kasittelyn_tila")
+    @Enumerated(EnumType.STRING)
     private Status batchStatus;
     
     @Column(name = "kasittely_aloitettu")

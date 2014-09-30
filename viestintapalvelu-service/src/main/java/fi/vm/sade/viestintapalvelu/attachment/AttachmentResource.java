@@ -28,8 +28,8 @@ import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
  */
 public interface AttachmentResource {
 
-    public EmailAttachment downloadByUri(String uri);
+    EmailAttachment downloadByUri(String uri);
 
-    public void deleteByUris(UrisContainerDto urisContainer);
+    void deleteByUris(UrisContainerDto urisContainer);
 
 }
