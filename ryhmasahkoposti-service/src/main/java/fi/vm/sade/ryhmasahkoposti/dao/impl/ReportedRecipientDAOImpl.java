@@ -42,7 +42,7 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
                                                                          PagingAndSortingDTO pagingAndSorting) {
 
         BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-        whereExpression = whereExpression.and(reportedRecipient.sendingSuccesful.eq("0"));
+        whereExpression = whereExpression.and(reportedRecipient.sendingSuccessful.eq("0"));
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 
         JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression)
@@ -81,18 +81,18 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
     }
 
     @Override
-    public Long findNumberOfRecipientsByMessageIDAndSendingSuccessful(Long messageID, boolean sendingSuccesful) {
+    public Long findNumberOfRecipientsByMessageIDAndSendingSuccessful(Long messageID, boolean sendingSuccessful) {
         EntityManager em = getEntityManager();
 
         String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a "
-            + "JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID AND a.sendingSuccesful = :sendingSuccesful";
+            + "JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID AND a.sendingSuccessful = :sendingSuccessful";
         TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
         query.setParameter("messageID", messageID);
 
-        if (sendingSuccesful) {
-            query.setParameter("sendingSuccesful", "1");
+        if (sendingSuccessful) {
+            query.setParameter("sendingSuccessful", "1");
         } else {
-            query.setParameter("sendingSuccesful", "0");
+            query.setParameter("sendingSuccessful", "0");
         }
 
         return query.getSingleResult();

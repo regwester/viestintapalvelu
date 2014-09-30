@@ -265,7 +265,7 @@ public class ReportedMessageDAOTest {
     }
 
     @Test
-    public void testReportedMessageUpdateIsSuccesful() {
+    public void testReportedMessageUpdateIsSuccessful() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 

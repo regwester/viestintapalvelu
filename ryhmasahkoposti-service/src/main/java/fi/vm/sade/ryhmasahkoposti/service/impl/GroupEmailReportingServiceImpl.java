@@ -282,12 +282,12 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     @Override
     public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID,
                                                                                  PagingAndSortingDTO pagingAndSorting) {
-        log.info("getReportedMessageAndRecipientsSendingUnsuccesful(" + messageID + ") called");
+        log.info("getReportedMessageAndRecipientsSendingUnsuccessful(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
         List<ReportedRecipient> reportedRecipients = reportedRecipientService
-                .getReportedRecipientsByStatusSendingUnsuccesful(messageID, pagingAndSorting);
+                .getReportedRecipientsByStatusSendingUnsuccessful(messageID, pagingAndSorting);
 
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
         sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
@@ -423,7 +423,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         ReportedRecipient reportedRecipient = reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
         reportedRecipient.setFailureReason(result);
-        reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_FAILED);
+        reportedRecipient.setSendingSuccessful(GroupEmailConstants.SENDING_FAILED);
         reportedRecipient.setSendingEnded(new Date());
         reportedRecipientService.updateReportedRecipient(reportedRecipient);
         return true;
@@ -435,7 +435,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("recipientHandledSuccess(" + recipient.getRecipientID() + ") called");
 
         ReportedRecipient reportedRecipient = reportedRecipientService.getReportedRecipient(recipient.getRecipientID());
-        reportedRecipient.setSendingSuccesful(GroupEmailConstants.SENDING_SUCCESFUL);
+        reportedRecipient.setSendingSuccessful(GroupEmailConstants.SENDING_SUCCESSFUL);
         reportedRecipient.setSendingEnded(new Date());
 
         reportedRecipientService.updateReportedRecipient(reportedRecipient);

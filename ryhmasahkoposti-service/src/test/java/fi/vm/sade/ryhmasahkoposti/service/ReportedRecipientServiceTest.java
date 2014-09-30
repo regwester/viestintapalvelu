@@ -55,8 +55,8 @@ public class ReportedRecipientServiceTest {
 		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(new Long(1));
 		
 		assertNotNull(sendingStatus);
-		assertTrue(sendingStatus.getNumberOfReciepients().longValue() == 10);
-		assertTrue(sendingStatus.getNumberOfSuccesfulSendings().longValue() == 8);
+		assertTrue(sendingStatus.getNumberOfRecipients().longValue() == 10);
+		assertTrue(sendingStatus.getNumberOfSuccessfulSendings().longValue() == 8);
 		assertTrue(sendingStatus.getNumberOfFailedSendings().longValue() == 2);
 		assertNotNull(sendingStatus.getSendingEnded());
 	}

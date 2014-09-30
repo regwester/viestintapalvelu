@@ -43,7 +43,7 @@ public class ReportedRecipient extends BaseEntity {
     private Date sendingEnded;
 
     @Column(name = "lahetysonnistui", nullable = true)
-    private String sendingSuccesful;
+    private String sendingSuccessful;
 
     @Column(name = "epaonnistumisensyy", nullable = true)
     private String failureReason;
@@ -134,12 +134,12 @@ public class ReportedRecipient extends BaseEntity {
         this.sendingEnded = sendingEnded;
     }
 
-    public String getSendingSuccesful() {
-        return sendingSuccesful;
+    public String getSendingSuccessful() {
+        return sendingSuccessful;
     }
 
-    public void setSendingSuccesful(String sendingSuccesful) {
-        this.sendingSuccesful = sendingSuccesful;
+    public void setSendingSuccessful(String sendingSuccessful) {
+        this.sendingSuccessful = sendingSuccessful;
     }
 
     public String getFailureReason() {

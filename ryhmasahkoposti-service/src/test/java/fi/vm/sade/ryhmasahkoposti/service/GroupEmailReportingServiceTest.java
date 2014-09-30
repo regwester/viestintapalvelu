@@ -197,9 +197,9 @@ public class GroupEmailReportingServiceTest {
         }).when(mockedReportedRecipientService).updateReportedRecipient(any(ReportedRecipient.class));
 
         EmailRecipientDTO recipient = RaportointipalveluTestData.getEmailRecipientDTO();
-        boolean succesful = groupEmailReportingService.startSending(recipient);
+        boolean successful = groupEmailReportingService.startSending(recipient);
 
-        assertTrue(succesful);
+        assertTrue(successful);
     }
 
     @Test
@@ -286,10 +286,10 @@ public class GroupEmailReportingServiceTest {
 
         assertNotNull(sendingStatus);
         assertNotNull(sendingStatus.getMessageID());
-        assertNotNull(sendingStatus.getNumberOfReciepients());
-        assertTrue(sendingStatus.getNumberOfReciepients().equals(new Long(10)));
-        assertNotNull(sendingStatus.getNumberOfSuccesfulSendings());
-        assertTrue(sendingStatus.getNumberOfSuccesfulSendings().equals(new Long(5)));
+        assertNotNull(sendingStatus.getNumberOfRecipients());
+        assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
+        assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
+        assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(5)));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
         assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
         assertNull(sendingStatus.getSendingEnded());
@@ -301,7 +301,7 @@ public class GroupEmailReportingServiceTest {
         reportedMessage.setId(new Long(1));
 
         SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
-        sendingStatusDTO.setNumberOfSuccesfulSendings(new Long(8));
+        sendingStatusDTO.setNumberOfSuccessfulSendings(new Long(8));
         sendingStatusDTO.setSendingEnded(new Date());
 
         when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
@@ -313,10 +313,10 @@ public class GroupEmailReportingServiceTest {
 
         assertNotNull(sendingStatus);
         assertNotNull(sendingStatus.getMessageID());
-        assertNotNull(sendingStatus.getNumberOfReciepients());
-        assertTrue(sendingStatus.getNumberOfReciepients().equals(new Long(10)));
-        assertNotNull(sendingStatus.getNumberOfSuccesfulSendings());
-        assertTrue(sendingStatus.getNumberOfSuccesfulSendings().equals(new Long(8)));
+        assertNotNull(sendingStatus.getNumberOfRecipients());
+        assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
+        assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
+        assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(8)));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
         assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
         assertNotNull(sendingStatus.getSendingEnded());

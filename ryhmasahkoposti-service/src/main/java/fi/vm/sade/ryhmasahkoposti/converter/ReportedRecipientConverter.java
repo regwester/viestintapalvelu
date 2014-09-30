@@ -28,7 +28,7 @@ public class ReportedRecipientConverter {
         reportedRecipient.setDetailsRetrieved(false);
         reportedRecipient.setSendingStarted(null);
         reportedRecipient.setSendingEnded(null);
-        reportedRecipient.setSendingSuccesful(null);
+        reportedRecipient.setSendingSuccessful(null);
         reportedRecipient.setFailureReason(null);
         reportedRecipient.setTimestamp(new Date());
 

@@ -159,7 +159,7 @@ public class ReportedRecipientReplacementDAOTest {
     }
 
     @Test
-    public void testReportedMessageDeletedIsSuccesful() {
+    public void testReportedMessageDeletedIsSuccessful() {
 
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);

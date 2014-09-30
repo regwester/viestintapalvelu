@@ -298,9 +298,9 @@ public class RaportointipalveluTestData {
     public static SendingStatusDTO getSendingStatusDTO() {
         SendingStatusDTO sendingStatusDTO = new SendingStatusDTO();
         sendingStatusDTO.setMessageID(new Long(1));
-        sendingStatusDTO.setNumberOfReciepients(new Long(10));
+        sendingStatusDTO.setNumberOfRecipients(new Long(10));
         sendingStatusDTO.setNumberOfFailedSendings(new Long(2));
-        sendingStatusDTO.setNumberOfSuccesfulSendings(new Long(5));
+        sendingStatusDTO.setNumberOfSuccessfulSendings(new Long(5));
         sendingStatusDTO.setSendingStarted(new Date());
 
         return sendingStatusDTO;
