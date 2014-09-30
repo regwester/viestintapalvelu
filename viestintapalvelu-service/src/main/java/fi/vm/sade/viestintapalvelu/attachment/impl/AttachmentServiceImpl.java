@@ -16,10 +16,13 @@
 
 package fi.vm.sade.viestintapalvelu.attachment.impl;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
@@ -34,6 +37,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
  */
 @Service
 public class AttachmentServiceImpl implements AttachmentService {
+    private final Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
 
@@ -54,4 +59,35 @@ public class AttachmentServiceImpl implements AttachmentService {
         return receiverAttachment.getId();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public EmailAttachment getLetterAttachment(Long attachmentId) {
+        LetterReceiverLetterAttachment letter = letterReceiverLetterAttachmentDAO.read(attachmentId);
+        if (letter == null) {
+            return null;
+        }
+        EmailAttachment attachment = new EmailAttachment();
+        attachment.setName(letter.getName());
+        attachment.setContentType(letter.getContentType());
+        attachment.setData(letter.getContents());
+        return attachment;
+    }
+
+    @Override
+    @Transactional
+    public void markLetterReceiverAttachmentDownloaded(Long letterReceiverLetterAttachmentId) {
+        LetterReceiverLetterAttachment attachment = letterReceiverLetterAttachmentDAO.read(letterReceiverLetterAttachmentId);
+        if (attachment != null) {
+            logger.debug("Removing LetterReceiverLetterAttachment={}", letterReceiverLetterAttachmentId);
+            letterReceiverLetterAttachmentDAO.remove(attachment);
+        }
+    }
+
+    public void setLetterReceiverLetterDAO(LetterReceiverLetterDAO letterReceiverLetterDAO) {
+        this.letterReceiverLetterDAO = letterReceiverLetterDAO;
+    }
+
+    public void setLetterReceiverLetterAttachmentDAO(LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO) {
+        this.letterReceiverLetterAttachmentDAO = letterReceiverLetterAttachmentDAO;
+    }
 }

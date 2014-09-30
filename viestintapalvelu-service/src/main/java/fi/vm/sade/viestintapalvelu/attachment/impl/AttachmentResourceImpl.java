@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.attachment.impl;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,6 +35,7 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentResource;
+import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
@@ -53,7 +55,7 @@ public class AttachmentResourceImpl implements AttachmentResource {
     private final Logger logger = LoggerFactory.getLogger(getClass());
 
     @Autowired
-    private LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO;
+    private AttachmentService attachmentService;
 
     @GET
     @Path("/getByUri")
@@ -67,22 +69,11 @@ public class AttachmentResourceImpl implements AttachmentResource {
         AttachmentUri uri = new AttachmentUri(uriStr);
         switch (uri.getType()) {
             case LetterReceiverLetterAttachment:
-                return getLetterAttachment(uri.getLongParameter(0));
+                return attachmentService.getLetterAttachment(uri.getLongParameter(0));
         default: return null;
         }
     }
 
-    private EmailAttachment getLetterAttachment(Long attachmentId) {
-        LetterReceiverLetterAttachment letter = letterReceiverLetterAttachmentDAO.read(attachmentId);
-        if (letter == null) {
-            return null;
-        }
-        EmailAttachment attachment = new EmailAttachment();
-        attachment.setName(letter.getName());
-        attachment.setContentType(letter.getContentType());
-        attachment.setData(letter.getContents());
-        return attachment;
-    }
 
     @POST
     @Path("/urisDownloaded")
@@ -91,32 +82,26 @@ public class AttachmentResourceImpl implements AttachmentResource {
     @Override
     @Transactional
     @PreAuthorize(SecurityConstants.SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD)
-    public void deleteByUris(UrisContainerDto urisContainer) {
+    public Response deleteByUris(UrisContainerDto urisContainer) {
         if (urisContainer == null || urisContainer.getUris() == null) {
-            return;
+            return Response.noContent().build();
         }
         for (String uriStr : urisContainer.getUris()) {
             AttachmentUri uri = new AttachmentUri(uriStr);
             switch (uri.getType()) {
                 case LetterReceiverLetterAttachment:
-                    markLetterReceiverAttachmentDownloaded(uri.getLongParameter(0));
-                    return;
+                    attachmentService.markLetterReceiverAttachmentDownloaded(uri.getLongParameter(0));
+                    break;
                 default:
                     // Continue to next one (not implemented / ignored):
                     logger.error("Unimplemented URI type: " + uri.getType());
                     break;
             }
         }
+        return Response.ok().build();
     }
 
-    private void markLetterReceiverAttachmentDownloaded(Long attachmentId) {
-        LetterReceiverLetterAttachment attachment = letterReceiverLetterAttachmentDAO.read(attachmentId);
-        if (attachment != null) {
-            letterReceiverLetterAttachmentDAO.remove(attachment);
-        }
-    }
-
-    public void setLetterReceiverLetterAttachmentDAO(LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO) {
-        this.letterReceiverLetterAttachmentDAO = letterReceiverLetterAttachmentDAO;
+    public void setAttachmentService(AttachmentService attachmentService) {
+        this.attachmentService = attachmentService;
     }
 }

@@ -16,6 +16,7 @@
 
 package fi.vm.sade.viestintapalvelu.attachment;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 
 /**
@@ -31,4 +32,14 @@ public interface AttachmentService {
      */
     long saveReceiverAttachment(LetterReceiverLEtterAttachmentSaveDto dto);
 
+    /**
+     * @param letterReceiverLetterAttachmentId the id of the LetterReceiverLetterAttachment to be removed
+     */
+    void markLetterReceiverAttachmentDownloaded(Long letterReceiverLetterAttachmentId);
+
+    /**
+     * @param letterReceiverLetterAttachmentId
+     * @return the attachment DTO for the given receiver attachment
+     */
+    EmailAttachment getLetterAttachment(Long letterReceiverLetterAttachmentId);
 }

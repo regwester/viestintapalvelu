@@ -18,6 +18,7 @@ package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 
@@ -32,11 +33,11 @@ public interface AttachmentResource {
     @GET
     @Path("/getByUri")
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-    public EmailAttachment downloadByUri(@QueryParam("uri") String uri);
+    EmailAttachment downloadByUri(@QueryParam("uri") String uri);
 
     @POST
     @Path("/urisDownloaded")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-    public void deleteByUris(UrisContainerDto urisContainerDto);
+    Response deleteByUris(UrisContainerDto urisContainerDto);
 
 }

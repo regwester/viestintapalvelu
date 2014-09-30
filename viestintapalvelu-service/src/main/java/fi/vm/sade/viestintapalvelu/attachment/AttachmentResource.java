@@ -18,6 +18,8 @@ package fi.vm.sade.viestintapalvelu.attachment;
 
 import java.util.List;
 
+import javax.ws.rs.core.Response;
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 
@@ -30,6 +32,6 @@ public interface AttachmentResource {
 
     EmailAttachment downloadByUri(String uri);
 
-    void deleteByUris(UrisContainerDto urisContainer);
+    Response deleteByUris(UrisContainerDto urisContainer);
 
 }
