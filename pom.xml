@@ -54,6 +54,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commonscodec.version>1.2</commonscodec.version>
         <commonsbean.version>1.8.3</commonsbean.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
         <cxf.version>3.0.1</cxf.version>
         <dom4j.version>1.6.1</dom4j.version>
         <generic.version>9.0-SNAPSHOT</generic.version>
@@ -336,6 +337,11 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commonsbean.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
             </dependency>
 
             <!-- Tomcat servlet api -->
