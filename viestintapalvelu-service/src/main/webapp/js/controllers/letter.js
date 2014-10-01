@@ -1,5 +1,5 @@
-angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template',
-  function ($scope, Generator, Printer, Template) {
+angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout',
+  function ($scope, Generator, Printer, Template, $timeout) {
     $scope.letters = [];
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
@@ -102,9 +102,38 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
     };
 
+    $scope.monitorStatus = null;
+    $scope.emailPossibleForId = null;
+    function startBatchMonitor(id) {
+        var monitor = function() {
+            Printer.asyncStatus(id).success(function(status) {
+                $scope.monitorStatus = status;
+                if ($scope.status == "ready") {
+                    $scope.monitorStatus = null;
+                    $scope.emailPossibleForId = id;
+                } else {
+                    $timeout(monitor, 100);
+                }
+            });
+        };
+        monitor();
+    }
+
+    $scope.sendEmail = function() {
+       if ($scope.emailPossibleForId) {
+           Printer.sendEmail(id).success(function() {
+               $scope.emailPossibleForId = null;
+               alert("Viesti lähti ryhmäsähköpostipalvelulle.")
+           });
+       }
+    };
+
     $scope.generateAsyncPDF = function() {
       Printer.asyncPDF($scope.letters,replacements(),
-          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          .success(function(id) {
+              startBatchMonitor(id);
+          });
     };
 
     $scope.generateZIP = function () {

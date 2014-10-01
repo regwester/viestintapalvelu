@@ -29,9 +29,14 @@
                min="{{select_min}}" max="{{select_max}}">
 
         <div class="run-action btn-group">
-            <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1">PDF</button>
-            <button class="btn" ng-click="generateZIP()" ng-disabled="getCount() < 1">ZIP</button>
-            <button class="btn" ng-click="generateAsyncPDF()" ng-disabled="getCount() < 1">Async PDF</button>
+            <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1 || monitorStatus">PDF</button>
+            <button class="btn" ng-click="generateZIP()" ng-disabled="getCount() < 1 || monitorStatus">ZIP</button>
+            <button class="btn" ng-click="generateAsyncPDF()" ng-disabled="getCount() < 1 || monitorStatus">Async PDF</button>
+            <button class="btn" ng-click="sendEmail()" ng-disabled="!emailPossibleForId">Lähetä sähköposti</button>
+
+            <div ng-show="monitorStatus">
+                Käsittely meneillään: {{monitorStatus.sent}} / {{moitorStatus.total}}
+            </div>
         </div>
 
         <h4>Alla on raakana HTML-koodina ylläolevan editorin sisältö</h4>

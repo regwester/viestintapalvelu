@@ -190,7 +190,35 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            alert("TODO");
+            return $http.post(letter+"/async/pdf", {
+                    "letters": letters,
+                    "templateReplacements" : replacements,
+                    "templateName" : tName,
+                    "languageCode" : tLang,
+                    "organizationOid" : oid,
+                    "applicationPeriod": applicationPeriod,
+                    "tag": tag
+                }).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async PDF-kutsu epäonnistui: " + data);
+                });
+        }
+
+        function asyncStatus(id) {
+            return $http.get(letter+"/async/letter/status/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async status -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function sendEmail(id) {
+            return $http.get(letter+"/emailLetterBatch/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Sähköpostiviestin lähetys kirjelähetykselle "+id+" epäonnistui: " + data);
+            });
         }
 
         function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
@@ -225,7 +253,9 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             letterPDF: letterPDF,
             letterZIP: letterZIP,
             printPDF: printPDF,
-            asyncPDF: asyncPDF
+            asyncPDF: asyncPDF,
+            asyncStatus: asyncStatus,
+            sendEmail: sendEmail
         }
     }()
 }])
