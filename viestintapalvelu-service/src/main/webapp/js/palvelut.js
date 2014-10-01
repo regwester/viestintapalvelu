@@ -188,7 +188,11 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         	print(letter + 'pdf', {
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
-        
+
+        function asyncPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            alert("TODO");
+        }
+
         function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
             print(letter + 'zip', {
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
@@ -220,7 +224,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             osoitetarratXLS: osoitetarratXLS,
             letterPDF: letterPDF,
             letterZIP: letterZIP,
-            printPDF: printPDF
+            printPDF: printPDF,
+            asyncPDF: asyncPDF
         }
     }()
 }])

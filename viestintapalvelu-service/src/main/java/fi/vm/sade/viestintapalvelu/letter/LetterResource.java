@@ -73,7 +73,12 @@ public class LetterResource extends AsynchronousResource {
 
     @Autowired
     private LetterBatchPDFProcessor letterPDFProcessor;
-    
+
+    @Autowired
+    private LetterEmailService letterEmailService;
+
+    private final static String ApiEmail = "Lähettää sähköpostiviestin annetun kirjelähetyksen vastaanottajille.";
+
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
@@ -133,6 +138,17 @@ public class LetterResource extends AsynchronousResource {
             return createFailureResponse(request);
         }
         return createResponse(request, documentId);
+    }
+
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/emailLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiEmail, notes = ApiEmail)
+    public Response emailByLetterBatch( @PathParam("letterBatchI") @ApiParam("Kirjelähetyksen ID") Long letterBatchId ) {
+        letterEmailService.sendEmail(letterBatchId);
+        return Response.ok().build();
     }
 
     /**
