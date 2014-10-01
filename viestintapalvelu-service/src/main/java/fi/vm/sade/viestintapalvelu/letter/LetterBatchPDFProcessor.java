@@ -1,14 +1,17 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+
 import org.jgroups.util.ConcurrentLinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -22,6 +25,8 @@ public class LetterBatchPDFProcessor {
     private final LetterService letterService;
 
     public static final int THREADS = 4;
+    
+    public static final ConcurrentLinkedQueue<Long> LETTER_BATCHS_BEING_PROCESSED = new ConcurrentLinkedQueue<Long>();
 
     @Autowired
     public LetterBatchPDFProcessor(ExecutorService executorService, LetterService letterService) {
@@ -31,8 +36,16 @@ public class LetterBatchPDFProcessor {
 
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
+        reserveJob(letterBatchId);
         BatchJob job = new BatchJob(letterBatchId, letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId), THREADS);
         return executorService.submit(job);
+    }
+
+    private void reserveJob(long letterBatchId) {
+        if (LETTER_BATCHS_BEING_PROCESSED.contains(letterBatchId)) {
+            throw new ConcurrentModificationException("Trying to process same letterbatch(id=" + letterBatchId + ") more than once");
+        }
+        LETTER_BATCHS_BEING_PROCESSED.add(letterBatchId);
     }
 
     /**
@@ -89,6 +102,7 @@ public class LetterBatchPDFProcessor {
             } else {
                 logger.error("Letter batch " + letterBatchId + " procsessing ended due to an error.");
             }
+            LETTER_BATCHS_BEING_PROCESSED.remove(letterBatchId);
             return okState.get();
         }
     }

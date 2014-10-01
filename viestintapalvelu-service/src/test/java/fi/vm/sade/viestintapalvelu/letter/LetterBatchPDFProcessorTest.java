@@ -1,13 +1,13 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -25,13 +25,12 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.AnswerChain;
-
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstDoNothing;
-import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -112,6 +111,27 @@ public class LetterBatchPDFProcessorTest {
         assertTrue(processCalls.getTotalCallCount() > okCount); // okCount + 1 at least + possible other threads
         assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + LetterBatchPDFProcessor.THREADS);
         assertEquals(okCount, updateCalls.getTotalCallCount());
+    }
+    
+    @Test (expected = ConcurrentModificationException.class)
+    public void preventsProcessingSameBatchSimultaneously() {
+        long id = 5l;
+        processor.processLetterBatch(id);
+        processor.processLetterBatch(id);
+    }
+    
+    @Test
+    public void storesLetterBatchIdBeingProcessedIntoQueue() {
+        long id = 7l;
+        processor.processLetterBatch(id);
+        assertTrue(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(id));
+    }
+    
+    @Test
+    public void removesLetterBatchIdFromQueueAfterProcessing() throws Exception {
+        processor.processLetterBatch(LETTERBATCH_ID);
+        Thread.sleep(100);
+        assertFalse(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(LETTERBATCH_ID));
     }
 
     private List<Long> listOfLongsUpTo(int amountOfReceivers) {
