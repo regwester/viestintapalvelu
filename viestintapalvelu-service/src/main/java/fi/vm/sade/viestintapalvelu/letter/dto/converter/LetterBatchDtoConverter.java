@@ -50,6 +50,7 @@ public class LetterBatchDtoConverter {
         to.setLanguage(from.getLanguageCode());
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTag(from.getTag());
+        to.setIposti(from.isIposti());
 
         // kirjeet.lahetyskorvauskentat
         to.setLetterReplacements(parseLetterReplacementsModels(from, to));
