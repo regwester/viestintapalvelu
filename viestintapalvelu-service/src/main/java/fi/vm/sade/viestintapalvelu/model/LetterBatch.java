@@ -61,6 +61,9 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
 
+    @Column(name= "iposti")
+    private Boolean iposti;
+
     @Column(name = "kasittelyn_tila")
     @Enumerated(EnumType.STRING)
     private Status batchStatus;
@@ -99,7 +102,15 @@ public class LetterBatch extends BaseEntity {
     
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<UsedTemplate> usedTemplates = new HashSet<UsedTemplate>();
-    
+
+    public void setIposti(boolean iposti) {
+        this.iposti = iposti;
+    }
+
+    public boolean isIposti() {
+        return iposti;
+    }
+
     public List<IPosti> getIposti() {
         return iposts;
     }
