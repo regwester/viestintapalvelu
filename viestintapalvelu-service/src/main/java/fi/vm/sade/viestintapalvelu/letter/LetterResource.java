@@ -141,12 +141,11 @@ public class LetterResource extends AsynchronousResource {
     }
 
     @POST
-    @Consumes("application/json")
     @Produces("text/plain")
     @Path("/emailLetterBatch/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiEmail, notes = ApiEmail)
-    public Response emailByLetterBatch( @PathParam("letterBatchI") @ApiParam("Kirjelähetyksen ID") Long letterBatchId ) {
+    public Response emailByLetterBatch( @PathParam("letterBatchId") @ApiParam("Kirjelähetyksen ID") Long letterBatchId ) {
         letterEmailService.sendEmail(letterBatchId);
         return Response.ok().build();
     }

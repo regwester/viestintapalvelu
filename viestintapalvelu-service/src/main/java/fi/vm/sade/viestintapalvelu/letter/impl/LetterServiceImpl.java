@@ -470,7 +470,6 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateBatchProcessingStarted(long id, LetterBatchProcess process) {
-        logger.info("Start processing batch {} {}", id, process);
         LetterBatch batch = letterBatchDAO.read(id);
         if (batch == null) {
             throw new NotFoundException("LetterBatch not found by id="+id);
@@ -485,6 +484,7 @@ public class LetterServiceImpl implements LetterService {
             break;
         case LETTER:
             batch.setHandlingStarted(new Date());
+            batch.setBatchStatus(LetterBatch.Status.processing);
             break;
         }
         letterBatchDAO.update(batch);
@@ -555,6 +555,7 @@ public class LetterServiceImpl implements LetterService {
             break;
         case LETTER:
             batch.setHandlingFinished(new Date());
+            batch.setBatchStatus(LetterBatch.Status.ready);
             break;
         }
         letterBatchDAO.update(batch);

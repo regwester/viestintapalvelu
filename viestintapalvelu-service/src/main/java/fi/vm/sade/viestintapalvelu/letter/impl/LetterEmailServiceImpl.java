@@ -113,10 +113,10 @@ public class LetterEmailServiceImpl implements LetterEmailService {
                 continue;
             }
 
-            String languageCode = Optional.fromNullable(letterReceiver.getWantedLanguage())
-                    .or(template.getLanguage());
+            String templateLanguage = Optional.fromNullable(template.getLanguage()).or("FI");
+            String languageCode = Optional.fromNullable(letterReceiver.getWantedLanguage()).or(templateLanguage);
 
-            if (!languageCode.equals(template.getLanguage())) {
+            if (!languageCode.equals(templateLanguage)) {
                 // Get the template in user specific language
                 Template languageTemplate = templateService.getTemplateByName( new TemplateCriteriaImpl()
                         .withName(template.getName())
@@ -154,7 +154,8 @@ public class LetterEmailServiceImpl implements LetterEmailService {
             }
             if (!attachmentUris.isEmpty()) {
                 recipient.getRecipientReplacements().add(new ReportedRecipientReplacementDTO(
-                        ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER, attachmentUris));
+                        ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER,
+                        AttachmentUri.uriStringsOfList(attachmentUris)));
             }
         }
     }
@@ -186,7 +187,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
     private boolean shouldReceiveEmail(LetterReceivers receiver) {
         return (receiver.getLetterReceiverEmail() == null
-                && receiver.getLetterReceiverAddress() != null);
+                && receiver.getEmailAddress() != null && !receiver.getEmailAddress().isEmpty());
     }
 
     private EmailRecipient buildRecipient(LetterReceivers letter, ObjectMapper mapper) throws IOException {

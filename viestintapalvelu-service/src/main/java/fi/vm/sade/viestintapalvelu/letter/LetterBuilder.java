@@ -476,19 +476,19 @@ public class LetterBuilder {
                     templReplacements, batchReplacements, letterReplacements);
             if (letter.getLetterReceivers().getEmailAddress() != null
                     && "liite".equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
-                saveLetterReceiverAttachment(tc.getName(), page, receiver.getId());
+                saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
             }
             currentDocument.addContent(page);
         }
         letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
     }
 
-    private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverId) {
-        AttachmentUri attachmentUri;LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
+    private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
+        LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
         attachment.setName(Optional.fromNullable(name).or("liite")+".pdf");
         attachment.setContentType("application/pdf");
         attachment.setContents(page);
-        attachment.setLetterReceiverLetterId(letterReceiverId);
+        attachment.setLetterReceiverLetterId(letterReceiverLetterId);
         return attachmentService.saveReceiverAttachment(attachment);
     }
 

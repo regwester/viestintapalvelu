@@ -190,7 +190,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(letter+"/async/letter", {
+            return $http.post(letter+"async/letter", {
                     "letters": letters,
                     "templateReplacements" : replacements,
                     "templateName" : tName,
@@ -206,7 +206,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncStatus(id) {
-            return $http.get(letter+"/async/letter/status/"+id).
+            return $http.get(letter+"async/letter/status/"+id).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async status -kutsu epäonnistui: " + data);
@@ -214,7 +214,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function sendEmail(id) {
-            return $http.get(letter+"/emailLetterBatch/"+id).
+            return $http.post(letter+"emailLetterBatch/"+id).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Sähköpostiviestin lähetys kirjelähetykselle "+id+" epäonnistui: " + data);

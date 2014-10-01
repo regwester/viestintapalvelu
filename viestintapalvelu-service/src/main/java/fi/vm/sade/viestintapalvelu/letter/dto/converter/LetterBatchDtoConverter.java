@@ -79,6 +79,7 @@ public class LetterBatchDtoConverter {
     public LetterReceivers convert(LetterDetails from, LetterReceivers to, ObjectMapper mapper)
             throws JsonProcessingException {
         to.setTimestamp(new Date());
+        to.setEmailAddress(from.getEmailAddress());
         to.setWantedLanguage(from.getLanguageCode());
 
         if (mapper == null) {

@@ -25,7 +25,7 @@ public class EmailComponent {
 
 
     public boolean sendEmail(EmailData data) {
-        return checkResponse(emailResourceClient.sendEmail(data));
+         return checkResponse(emailResourceClient.sendEmail(data));
     }
 
     public boolean sendEmail(EmailSourceData source) {

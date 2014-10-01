@@ -107,8 +107,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
         var monitor = function() {
             Printer.asyncStatus(id).success(function(status) {
                 $scope.monitorStatus = status;
-                if ($scope.status == "ready") {
-                    $scope.monitorStatus = null;
+                if (status.status == "ready") {
                     $scope.emailPossibleForId = id;
                 } else {
                     $timeout(monitor, 100);
@@ -120,7 +119,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
 
     $scope.sendEmail = function() {
        if ($scope.emailPossibleForId) {
-           Printer.sendEmail(id).success(function() {
+           Printer.sendEmail($scope.emailPossibleForId).success(function() {
                $scope.emailPossibleForId = null;
                alert("Viesti lähti ryhmäsähköpostipalvelulle.")
            });
