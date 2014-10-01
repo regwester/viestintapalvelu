@@ -1,20 +1,10 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
-import fi.vm.sade.viestintapalvelu.letter.LetterContent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
-import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
-import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Set;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -31,10 +21,19 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
+import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -53,6 +52,8 @@ public class LetterServiceTest {
     @Mock
     private LetterReceiverLetterDAO mockedLetterReceiverLetterDAO;
     @Mock
+    private LetterReceiversDAO mockedLetterReceiversDao;
+    @Mock
     private CurrentUserComponent mockedCurrentUserComponent;
     @Mock
     private TemplateDAO templateDAO;
@@ -63,7 +64,8 @@ public class LetterServiceTest {
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
-            mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter());
+            mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
+            mockedLetterReceiversDao, new ObjectMapperProvider());
         this.letterService.setLetterBuilder(letterBuilder);
     }
     
@@ -289,21 +291,17 @@ public class LetterServiceTest {
 
     @Test
     public void saveBatchProcessingError() {
-
         long batchId = 101l;
         long letterReceiverId = 999l;
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(batchId);
         Set<LetterReceivers> letterReceivers = DocumentProviderTestData.getLetterReceivers(letterReceiverId, batch);
         LetterReceivers receivers = letterReceivers.iterator().next();
         batch.setLetterReceivers(letterReceivers);
-        when(mockedLetterReceiverLetterDAO.read(eq(letterReceiverId))).thenReturn(receivers.getLetterReceiverLetter());
-
+        when(mockedLetterReceiversDao.read(eq(letterReceiverId))).thenReturn(receivers);
 
         String msg = "test message";
         letterService.saveBatchErrorForReceiver(999l, msg);
         assertNotNull(batch.getProcessingErrors());
         assertEquals(1,batch.getProcessingErrors().size());
-
-
     }
 }

@@ -18,6 +18,7 @@ public class Constants {
     public static final String ASIAKIRJAPALVELU_READ = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_READ')";
     public static final String ASIAKIRJAPALVELU_CREATE_TEMPLATE = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_CREATE_TEMPLATE')";
     public static final String ASIAKIRJAPALVELU_CREATE_LETTER = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_CREATE_LETTER')";
+    public static final String ASIAKIRJAPALVELU_SEND_LETTER_EMAIL = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_SEND_LETTER_EMAIL')";
     public static final String IPOSTI_READ = "hasRole('ROLE_APP_IPOSTI_READ')";
     public static final String IPOSTI_SEND = "hasRole('ROLE_APP_IPOSTI_SEND')";
     

@@ -188,7 +188,39 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         	print(letter + 'pdf', {
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
-        
+
+        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"/async/letter", {
+                    "letters": letters,
+                    "templateReplacements" : replacements,
+                    "templateName" : tName,
+                    "languageCode" : tLang,
+                    "organizationOid" : oid,
+                    "applicationPeriod": applicationPeriod,
+                    "tag": tag
+                }).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async PDF-kutsu epäonnistui: " + data);
+                });
+        }
+
+        function asyncStatus(id) {
+            return $http.get(letter+"/async/letter/status/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async status -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function sendEmail(id) {
+            return $http.get(letter+"/emailLetterBatch/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Sähköpostiviestin lähetys kirjelähetykselle "+id+" epäonnistui: " + data);
+            });
+        }
+
         function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
             print(letter + 'zip', {
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
@@ -220,7 +252,10 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             osoitetarratXLS: osoitetarratXLS,
             letterPDF: letterPDF,
             letterZIP: letterZIP,
-            printPDF: printPDF
+            printPDF: printPDF,
+            asyncLetter: asyncLetter,
+            asyncStatus: asyncStatus,
+            sendEmail: sendEmail
         }
     }()
 }])

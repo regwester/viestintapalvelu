@@ -20,8 +20,13 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
@@ -34,6 +39,8 @@ import fi.vm.sade.viestintapalvelu.model.*;
  */
 @Component
 public class LetterBatchDtoConverter {
+    @Autowired
+    private ObjectMapperProvider objectMapperProvider;
 
     public LetterBatch convert(LetterBatchDetails from, LetterBatch to) {
         to.setTemplateId(from.getTemplateId());
@@ -69,9 +76,14 @@ public class LetterBatchDtoConverter {
         return replacements;
     }
 
-    public LetterReceivers convert(LetterDetails from, LetterReceivers to) {
+    public LetterReceivers convert(LetterDetails from, LetterReceivers to, ObjectMapper mapper)
+            throws JsonProcessingException {
         to.setTimestamp(new Date());
         to.setWantedLanguage(from.getLanguageCode());
+
+        if (mapper == null) {
+            mapper = objectMapperProvider.getContext(getClass());
+        }
 
         // kirjeet.vastaanottajakorvauskentat
         if ((from.getTemplateReplacements() != null) || (from.getTemplateReplacements().isEmpty())) {
@@ -84,7 +96,15 @@ public class LetterBatchDtoConverter {
                 LetterReceiverReplacement repl = new LetterReceiverReplacement();
 
                 repl.setName(letReplKeys[i].toString());
-                repl.setDefaultValue(letReplVals[i].toString());
+                Object value = letReplVals[i];
+                if (value instanceof String || value == null) {
+                    repl.setDefaultValue((String) value);
+                    repl.setJsonValue(null);
+                } else {
+                    String json = mapper.writeValueAsString(value);
+                    repl.setJsonValue(json);
+                    repl.setDefaultValue(null);
+                }
                 // repl.setMandatory();
                 repl.setTimestamp(new Date());
                 repl.setLetterReceivers(to);

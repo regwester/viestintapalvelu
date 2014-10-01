@@ -52,6 +52,9 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "haluttukieli")
     private String wantedLanguage;
 
+    @Column(name = "email_osoite")
+    private String emailAddress;
+
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
@@ -122,7 +125,15 @@ public class LetterReceivers extends BaseEntity {
         this.wantedLanguage = wantedLanguage;
     }
 
-	@Override
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    @Override
     public String toString() {
         return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
                 + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="

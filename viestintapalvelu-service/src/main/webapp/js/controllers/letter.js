@@ -1,5 +1,5 @@
-angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template',
-  function ($scope, Generator, Printer, Template) {
+angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout',
+  function ($scope, Generator, Printer, Template, $timeout) {
     $scope.letters = [];
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
@@ -59,9 +59,9 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           },
           "templateReplacements": {"tulokset": tulokset,
             "koulu": tulokset[0]['organisaationNimi'],
-            "koulutus": tulokset[0]['hakukohteenNimi']
+            "koulutus": tulokset[0]['hakukohteenNimi'],
+            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"]
           }
-
         };
       }));
     }
@@ -85,28 +85,59 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
       });
     }
 
+   function replacements() {
+       return  {"sisalto": $scope.tinymceModel,
+           "hakukohde": "Tässä lukee hakukohde",
+           "tarjoaja": "Tässä tarjoajan nimi",
+           "koeaika": "12.12.2014 klo 12.12",
+           "koepaikka": "TTY sali TB2012",
+           "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
+           "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
+       };
+   }
+
     $scope.generatePDF = function () {
-      Printer.letterPDF($scope.letters, {"sisalto": $scope.tinymceModel,
-          "hakukohde": "Tässä lukee hakukohde",
-          "tarjoaja": "Tässä tarjoajan nimi",
-          "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
-          "koeaika": "12.12.2014 klo 12.12",
-          "koepaikka": "TTY sali TB2012",
-          "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
-          "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
-      }, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
+      Printer.letterPDF($scope.letters,replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
+    };
+
+    $scope.monitorStatus = null;
+    $scope.emailPossibleForId = null;
+    function startBatchMonitor(id) {
+        var monitor = function() {
+            Printer.asyncStatus(id).success(function(status) {
+                $scope.monitorStatus = status;
+                if ($scope.status == "ready") {
+                    $scope.monitorStatus = null;
+                    $scope.emailPossibleForId = id;
+                } else {
+                    $timeout(monitor, 100);
+                }
+            });
+        };
+        monitor();
+    }
+
+    $scope.sendEmail = function() {
+       if ($scope.emailPossibleForId) {
+           Printer.sendEmail(id).success(function() {
+               $scope.emailPossibleForId = null;
+               alert("Viesti lähti ryhmäsähköpostipalvelulle.")
+           });
+       }
+    };
+
+    $scope.generateAsyncLetter = function() {
+      Printer.asyncLetter($scope.letters,replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          .success(function(id) {
+              startBatchMonitor(id);
+          });
     };
 
     $scope.generateZIP = function () {
-      Printer.letterZIP($scope.letters, {"sisalto": $scope.tinymceModel,
-          "hakukohde": "Tässä lukee hakukohde",
-          "tarjoaja": "Tässä tarjoajan nimi",
-          "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
-          "koeaika": "12.12.2014 klo 12.12",
-          "koepaikka": "TTY sali TB2012",
-          "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
-          "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
-      }, $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
+      Printer.letterZIP($scope.letters, replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag);
     };
 
     $scope.updateGenerated = function () {

@@ -1,10 +1,31 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.*;
+import java.util.zip.DataFormatException;
+import java.util.zip.Deflater;
+import java.util.zip.Inflater;
+
+import javax.ws.rs.NotFoundException;
+
+import org.apache.pdfbox.util.PDFMergerUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.google.common.base.Optional;
+
 import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
@@ -14,41 +35,6 @@ import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.model.*;
-import org.apache.pdfbox.util.PDFMergerUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.*;
-import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
-
-import org.apache.pdfbox.util.PDFMergerUtility;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Optional;
-
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.model.IPosti;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
 
 /**
  * @author migar1
@@ -60,9 +46,11 @@ public class LetterServiceImpl implements LetterService {
     private Logger logger = LoggerFactory.getLogger(getClass());
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
+    private LetterReceiversDAO letterReceiversDAO;
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
     private LetterBatchDtoConverter letterBatchDtoConverter;
+    private ObjectMapperProvider objectMapperProvider;
     // Causes circular reference if autowired directly, through applicationContext laxily:
     private LetterBuilder letterBuilder;
     @Autowired
@@ -71,12 +59,16 @@ public class LetterServiceImpl implements LetterService {
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
             CurrentUserComponent currentUserComponent, TemplateDAO templateDAO,
-            LetterBatchDtoConverter letterBatchDtoConverter) {
+            LetterBatchDtoConverter letterBatchDtoConverter,
+            LetterReceiversDAO letterReceiversDAO,
+            ObjectMapperProvider objectMapperProvider) {
     	this.letterBatchDAO = letterBatchDAO;
-    	this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     	this.currentUserComponent = currentUserComponent;
-    	this.templateDAO = templateDAO;
+        this.templateDAO = templateDAO;
+        this.letterReceiversDAO = letterReceiversDAO;
+        this.letterReceiverLetterDAO = letterReceiverLetterDAO;
         this.letterBatchDtoConverter = letterBatchDtoConverter;
+        this.objectMapperProvider = objectMapperProvider;
     }
 
     /* ---------------------- */
@@ -90,9 +82,15 @@ public class LetterServiceImpl implements LetterService {
         letterBatchDtoConverter.convert(letterBatch, model);
         model.setTimestamp(new Date());
         model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        model.setBatchStatus(LetterBatch.Status.created);
 
         // kirjeet.vastaanottaja
-        model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model));
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
+        try {
+            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
+        }
         model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
 
         addIpostData(letterBatch, model);
@@ -109,11 +107,16 @@ public class LetterServiceImpl implements LetterService {
         LetterBatch model = new LetterBatch();
         letterBatchDtoConverter.convert(letterBatch, model);
         model.setTimestamp(new Date());
-        model.setBatchStatus(LetterBatch.Status.ready);
+        model.setBatchStatus(LetterBatch.Status.created);
         model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
 
         // kirjeet.vastaanottaja
-        model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model));
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
+        try {
+            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
+        }
         model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
 
         addIpostData(letterBatch, model);
@@ -331,11 +334,12 @@ public class LetterServiceImpl implements LetterService {
     /*
      * kirjeet.vastaanottaja
      */
-    private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
+    private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch,
+                                LetterBatch letterB, ObjectMapper mapper) throws JsonProcessingException {
         Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
         for (fi.vm.sade.viestintapalvelu.letter.Letter letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.
-                    convert(letter, new fi.vm.sade.viestintapalvelu.model.LetterReceivers());
+                    convert(letter, new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
             rec.setLetterBatch(letterB);
 
             // kirjeet.vastaanottajakirje
@@ -373,11 +377,12 @@ public class LetterServiceImpl implements LetterService {
         return receivers;
     }
 
-    private Set<LetterReceivers> parseLetterReceiversModels(AsyncLetterBatchDto letterBatch, LetterBatch letterB) {
+    private Set<LetterReceivers> parseLetterReceiversModels(AsyncLetterBatchDto letterBatch, LetterBatch letterB,
+                                                            ObjectMapper mapper) throws JsonProcessingException {
         Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.
-                    convert(letter, new fi.vm.sade.viestintapalvelu.model.LetterReceivers());
+                    convert(letter, new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
             rec.setLetterBatch(letterB);
 
             // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
@@ -463,16 +468,24 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateBatchProcessingStarted(long id, LetterBatchProcess process) {
         logger.info("Start processing batch {} {}", id, process);
         LetterBatch batch = letterBatchDAO.read(id);
+        if (batch == null) {
+            throw new NotFoundException("LetterBatch not found by id="+id);
+        }
         switch (process) {
-        case EMAIL: 
+        case EMAIL:
+            if (batch.getEmailHandlingStarted() != null) {
+                throw new IllegalStateException("Email handling already stated at "
+                        +batch.getEmailHandlingStarted()+" for LetterBatch="+batch.getTemplateId());
+            }
             batch.setEmailHandlingStarted(new Date());
             break;
         case LETTER:
             batch.setHandlingStarted(new Date());
+            break;
         }
         letterBatchDAO.update(batch);
     }
@@ -486,7 +499,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional
     public void saveBatchErrorForReceiver(Long letterReceiverId, String message) {
-        LetterReceivers receiver = letterReceiverLetterDAO.read(letterReceiverId).getLetterReceivers();
+        LetterReceivers receiver = letterReceiversDAO.read(letterReceiverId);
 
         LetterBatch batch = receiver.getLetterBatch();
         batch.setBatchStatus(LetterBatch.Status.error);
@@ -496,7 +509,7 @@ public class LetterServiceImpl implements LetterService {
         error.setErrorTime(new Date());
         error.setLetterReceivers(receiver);
         error.setLetterBatch(batch);
-        error.setErrorCause(message);
+        error.setErrorCause(Optional.fromNullable(message).or("Unknown (TODO)"));
         errors.add(error);
         batch.setProcessingErrors(errors);
         letterBatchDAO.update(batch);
@@ -505,9 +518,11 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional
     public void processLetterReceiver(long receiverId) throws Exception {
-        LetterReceivers receiver = letterReceiverLetterDAO.read(receiverId).getLetterReceivers();
+        LetterReceivers receiver = letterReceiversDAO.read(receiverId);
         LetterBatch batch = receiver.getLetterBatch();
-        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(receiver), formReplacementMap(batch));
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
+        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(batch),
+                formReplacementMap(receiver, mapper));
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
@@ -519,24 +534,28 @@ public class LetterServiceImpl implements LetterService {
         return replacements;
     }
 
-    private Map<String, Object> formReplacementMap(LetterReceivers receiver) {
+    private Map<String, Object> formReplacementMap(LetterReceivers receiver, ObjectMapper mapper) throws IOException {
         Map<String, Object> replacements = new HashMap<String, Object>();
         for (LetterReceiverReplacement repl : receiver.getLetterReceiverReplacement()) {
-            replacements.put(repl.getName(), repl.getDefaultValue());
+            replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
         return replacements;
     }
 
     @Override
-    @Transactional
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void updateBatchProcessingFinished(long id, LetterBatchProcess process) {
         LetterBatch batch = letterBatchDAO.read(id);
+        if (batch == null) {
+            throw new NotFoundException("LetterBatch not found by id="+id);
+        }
         switch (process) {
         case EMAIL: 
             batch.setEmailHandlingFinished(new Date());
             break;
         case LETTER:
             batch.setHandlingFinished(new Date());
+            break;
         }
         letterBatchDAO.update(batch);
     }
@@ -606,7 +625,6 @@ public class LetterServiceImpl implements LetterService {
     }
 
     public LetterBuilder getLetterBuilder() {
-
         if (this.letterBuilder == null && this.applicationContext != null) {
             this.letterBuilder = applicationContext.getBean(LetterBuilder.class);
         }
@@ -627,5 +645,13 @@ public class LetterServiceImpl implements LetterService {
 
     public void setCurrentUserComponent(CurrentUserComponent currentUserComponent) {
         this.currentUserComponent = currentUserComponent;
+    }
+
+    public void setLetterReceiversDAO(LetterReceiversDAO letterReceiversDAO) {
+        this.letterReceiversDAO = letterReceiversDAO;
+    }
+
+    public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
+        this.objectMapperProvider = objectMapperProvider;
     }
 }

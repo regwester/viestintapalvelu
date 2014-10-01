@@ -1,10 +1,12 @@
 package fi.vm.sade.viestintapalvelu;
 
+import org.junit.Ignore;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
 import static org.junit.Assert.assertTrue;
 
+@Ignore
 @RunWith(Enclosed.class)
 public class LiitePDFTest {
     //@ClassRule

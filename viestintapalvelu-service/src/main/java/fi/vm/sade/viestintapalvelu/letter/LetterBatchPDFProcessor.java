@@ -1,5 +1,11 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 
 import org.jgroups.util.ConcurrentLinkedBlockingQueue;

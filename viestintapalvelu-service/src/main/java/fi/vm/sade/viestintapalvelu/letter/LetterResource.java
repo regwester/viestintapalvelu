@@ -7,6 +7,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -16,7 +17,6 @@ import javax.ws.rs.core.Response.Status;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -59,8 +59,8 @@ public class LetterResource extends AsynchronousResource {
     @Autowired
     private LetterBuilder letterBuilder;
 
-    @Qualifier
-    private DokumenttiResource dokumenttiResource;
+    @Resource
+    private DokumenttiResource dokumenttipalveluRestClient;
 
     @Autowired
     private ExecutorService executor;
@@ -73,7 +73,12 @@ public class LetterResource extends AsynchronousResource {
 
     @Autowired
     private LetterBatchPDFProcessor letterPDFProcessor;
-    
+
+    @Autowired
+    private LetterEmailService letterEmailService;
+
+    private final static String ApiEmail = "Lähettää sähköpostiviestin annetun kirjelähetyksen vastaanottajille.";
+
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
@@ -135,6 +140,17 @@ public class LetterResource extends AsynchronousResource {
         return createResponse(request, documentId);
     }
 
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/emailLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiEmail, notes = ApiEmail)
+    public Response emailByLetterBatch( @PathParam("letterBatchI") @ApiParam("Kirjelähetyksen ID") Long letterBatchId ) {
+        letterEmailService.sendEmail(letterBatchId);
+        return Response.ok().build();
+    }
+
     /**
      * Varaudutaan viestintapalvelun klusterointiin. Ei tarvitse tietoturvaa
      * https:n lisäksi. Kutsuja antaa datat ja kutsuja saa kirjeen.
@@ -190,7 +206,7 @@ public class LetterResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] pdf = letterBuilder.printPDF(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("letter.pdf"), now()
+                    dokumenttipalveluRestClient.tallenna(null, filenamePrefixWithUsernameAndTimestamp("letter.pdf"), now()
                         .plusDays(1).toDate().getTime(), Arrays.asList("viestintapalvelu", "koekutsukirje", "pdf"),
                         "application/pdf;charset=utf-8", new ByteArrayInputStream(pdf));
                 } catch (Exception e) {
@@ -347,7 +363,7 @@ public class LetterResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] zip = letterBuilder.printZIP(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()
+                    dokumenttipalveluRestClient.tallenna(null, filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()
                                     + ".zip"), now().plusDays(1).toDate().getTime(),
                             Arrays.asList("viestintapalvelu", input.getTemplateName(), "zip"), "application/zip",
                             new ByteArrayInputStream(zip));

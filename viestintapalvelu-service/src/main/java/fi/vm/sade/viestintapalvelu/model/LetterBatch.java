@@ -31,6 +31,13 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Table(name = "kirjelahetys", schema= "kirjeet")
 @Entity(name = "LetterBatch")
 public class LetterBatch extends BaseEntity {
+    public enum Status {
+        created,
+        processing,
+        ready,
+        error
+    };
+
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "template_id")
@@ -63,7 +70,7 @@ public class LetterBatch extends BaseEntity {
 
     @Column(name = "kasittelyn_tila")
     @Enumerated(EnumType.STRING)
-    private Status batchStatus;
+    private Status batchStatus = Status.created;
     
     @Column(name = "kasittely_aloitettu")
     @Temporal(TemporalType.TIMESTAMP)
@@ -239,17 +246,6 @@ public class LetterBatch extends BaseEntity {
         this.emailHandlingFinished = emailHandlingFinished;
     }
 
-    @Override
-	public String toString() {
-		return "LetterBatch [templateId=" + templateId 
-				+ ", templateName=" + templateName 
-				+ ", applicationPeriod=" + applicationPeriod
-				+ ", fetchTarget=" + fetchTarget
-				+ ", timestamp=" + timestamp + ", language=" + language
-				+ ", storingOid=" + storingOid + ", organizationOid="
-				+ organizationOid + "]";
-	}
-
     public Status getBatchStatus() {
         return batchStatus;
     }
@@ -266,9 +262,14 @@ public class LetterBatch extends BaseEntity {
         this.processingErrors = processingErrors;
     }
 
-    public enum Status {
-        processing,
-        ready,
-        error
-    }
+    @Override
+	public String toString() {
+		return "LetterBatch [templateId=" + templateId 
+				+ ", templateName=" + templateName 
+				+ ", applicationPeriod=" + applicationPeriod
+				+ ", fetchTarget=" + fetchTarget
+				+ ", timestamp=" + timestamp + ", language=" + language
+				+ ", storingOid=" + storingOid + ", organizationOid="
+				+ organizationOid + "]";
+	}
 }
