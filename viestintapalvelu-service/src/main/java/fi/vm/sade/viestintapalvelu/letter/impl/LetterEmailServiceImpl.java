@@ -222,4 +222,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         }
     }
 
+    public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
+        this.objectMapperProvider = objectMapperProvider;
+    }
 }
