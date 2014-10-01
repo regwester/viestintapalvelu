@@ -50,6 +50,8 @@ public interface LetterBatchDetails {
 
     String getTag();
 
+    boolean isIposti();
+
     Map<String, byte[]> getIPostiData();
 
     void setTemplateId(Long id);
