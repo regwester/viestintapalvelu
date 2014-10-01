@@ -1,10 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.ArrayList;
-import java.util.ConcurrentModificationException;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -27,14 +23,12 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.AnswerChain;
+
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstDoNothing;
-import static org.junit.Assert.assertEquals;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
-
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
