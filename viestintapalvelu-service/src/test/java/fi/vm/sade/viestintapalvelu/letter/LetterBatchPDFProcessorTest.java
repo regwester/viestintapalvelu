@@ -127,11 +127,10 @@ public class LetterBatchPDFProcessorTest {
         assertTrue(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(id));
     }
     
-    @Test
+    @Test(timeout=100)
     public void removesLetterBatchIdFromQueueAfterProcessing() throws Exception {
         processor.processLetterBatch(LETTERBATCH_ID);
-        Thread.sleep(100);
-        assertFalse(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(LETTERBATCH_ID));
+        while(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(LETTERBATCH_ID));
     }
 
     private List<Long> listOfLongsUpTo(int amountOfReceivers) {

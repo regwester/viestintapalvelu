@@ -9,14 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ConcurrentModificationException;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.inject.Singleton;
+
 @Component
+@Singleton
 public class LetterBatchPDFProcessor {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
@@ -26,7 +30,7 @@ public class LetterBatchPDFProcessor {
 
     public static final int THREADS = 4;
     
-    public static final ConcurrentLinkedQueue<Long> LETTER_BATCHS_BEING_PROCESSED = new ConcurrentLinkedQueue<Long>();
+    public static final Set<Long> LETTER_BATCHS_BEING_PROCESSED = new HashSet<Long>();
 
     @Autowired
     public LetterBatchPDFProcessor(ExecutorService executorService, LetterService letterService) {
@@ -41,11 +45,10 @@ public class LetterBatchPDFProcessor {
         return executorService.submit(job);
     }
 
-    private void reserveJob(long letterBatchId) {
-        if (LETTER_BATCHS_BEING_PROCESSED.contains(letterBatchId)) {
+    private synchronized void reserveJob(long letterBatchId) {
+        if (!LETTER_BATCHS_BEING_PROCESSED.add(letterBatchId)) {
             throw new ConcurrentModificationException("Trying to process same letterbatch(id=" + letterBatchId + ") more than once");
         }
-        LETTER_BATCHS_BEING_PROCESSED.add(letterBatchId);
     }
 
     /**
