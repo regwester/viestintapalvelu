@@ -59,9 +59,9 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           },
           "templateReplacements": {"tulokset": tulokset,
             "koulu": tulokset[0]['organisaationNimi'],
-            "koulutus": tulokset[0]['hakukohteenNimi']
+            "koulutus": tulokset[0]['hakukohteenNimi'],
+            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"]
           }
-
         };
       }));
     }
@@ -89,7 +89,6 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
        return  {"sisalto": $scope.tinymceModel,
            "hakukohde": "Tässä lukee hakukohde",
            "tarjoaja": "Tässä tarjoajan nimi",
-           "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
            "koeaika": "12.12.2014 klo 12.12",
            "koepaikka": "TTY sali TB2012",
            "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
@@ -128,8 +127,8 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
        }
     };
 
-    $scope.generateAsyncPDF = function() {
-      Printer.asyncPDF($scope.letters,replacements(),
+    $scope.generateAsyncLetter = function() {
+      Printer.asyncLetter($scope.letters,replacements(),
           $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
           .success(function(id) {
               startBatchMonitor(id);

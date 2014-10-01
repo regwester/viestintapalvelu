@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 
@@ -32,6 +33,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
@@ -64,6 +66,9 @@ public class LetterBuilder {
 
     @Autowired
     private AttachmentService attachmentService;
+
+    @Autowired
+    private ObjectMapperProvider objectMapperProvider;
 
     @Inject
     public LetterBuilder(DocumentBuilder documentBuilder) {
@@ -388,6 +393,9 @@ public class LetterBuilder {
     }
 
     private List<Map<String, String>> normalizeColumns(Map<String, Boolean> columns, List<Map<String, String>> tulokset) {
+        if (tulokset == null) {
+            return null;
+        }
         for (Map<String, String> row : tulokset) {
             for (String column : columns.keySet()) {
                 if (!row.containsKey(column) || row.get(column) == null) {
@@ -401,7 +409,13 @@ public class LetterBuilder {
 
     private Map<String, Boolean> distinctColumns(List<Map<String, String>> tulokset) {
         Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
+        if (tulokset == null) {
+            return printedColumns;
+        }
         for (Map<String, String> haku : tulokset) {
+            if (haku == null) {
+                continue;
+            }
             for (String column : haku.keySet()) {
                 printedColumns.put(column, true);
             }
@@ -438,15 +452,19 @@ public class LetterBuilder {
         }
     }
 
-    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
-                                                    Map<String, Object> letterReplacements, Map<String, Object> batchReplacements) throws FileNotFoundException, IOException, DocumentException {
+    public void  constructPDFForLetterReceiverLetter(LetterReceivers receiver,
+                                 fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+                                 Map<String, Object> batchReplacements,
+                                 Map<String, Object> letterReplacements)
+            throws IOException, DocumentException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
 
         Template template = determineTemplate(receiver, batch);
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
 
-        templReplacements.putAll(formReplacementMap(letter.getLetterReceivers().getLetterReceiverReplacement()));
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
+        templReplacements.putAll(formReplacementMap(letter.getLetterReceivers().getLetterReceiverReplacement(), mapper));
 
         List<TemplateContent> contents = template.getContents();
         AddressLabel address = AddressLabelConverter.convert(letter.getLetterReceivers().getLetterReceiverAddress());
@@ -456,7 +474,8 @@ public class LetterBuilder {
         for (TemplateContent tc : contents) {
             byte[] page = createPagePdf(template, tc.getContent().getBytes(), address,
                     templReplacements, batchReplacements, letterReplacements);
-            if ("liite".equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
+            if (letter.getLetterReceivers().getEmailAddress() != null
+                    && "liite".equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
                 saveLetterReceiverAttachment(tc.getName(), page, receiver.getId());
             }
             currentDocument.addContent(page);
@@ -484,10 +503,10 @@ public class LetterBuilder {
         return templateService.findById(batch.getTemplateId());
     }
 
-    public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements) {
+    public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
         Map<String, Object> templReplacements = new HashMap<String, Object>();
         for (LetterReceiverReplacement replacement : replacements) {
-            templReplacements.put(replacement.getName(), replacement.getDefaultValue());
+            templReplacements.put(replacement.getName(), replacement.getEffectiveValue(mapper));
         }
         return templReplacements;
     }
@@ -498,5 +517,9 @@ public class LetterBuilder {
             templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
         }
         return templReplacements;
+    }
+
+    public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
+        this.objectMapperProvider = objectMapperProvider;
     }
 }

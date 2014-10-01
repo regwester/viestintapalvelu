@@ -189,8 +189,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
 
-        function asyncPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(letter+"/async/pdf", {
+        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"/async/letter", {
                     "letters": letters,
                     "templateReplacements" : replacements,
                     "templateName" : tName,
@@ -253,7 +253,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             letterPDF: letterPDF,
             letterZIP: letterZIP,
             printPDF: printPDF,
-            asyncPDF: asyncPDF,
+            asyncLetter: asyncLetter,
             asyncStatus: asyncStatus,
             sendEmail: sendEmail
         }

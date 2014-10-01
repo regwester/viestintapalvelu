@@ -130,7 +130,8 @@ public class LetterBatchDAOTest {
         assertTrue(foundLetterBatch.getLetterReceivers().size() > 0);
         assertNotNull(foundLetterBatch.getLetterReplacements());
         assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
-        assertEquals("Status is 'processing' by default in the test data generator", LetterBatch.Status.processing, foundLetterBatch.getBatchStatus());
+        assertEquals("Status is 'processing' by default in the test data generator",
+                LetterBatch.Status.processing, foundLetterBatch.getBatchStatus());
     }
 
     @Test(expected = PersistenceException.class)

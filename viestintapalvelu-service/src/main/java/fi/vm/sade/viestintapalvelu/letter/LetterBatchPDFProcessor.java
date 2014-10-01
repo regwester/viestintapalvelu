@@ -1,17 +1,18 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import java.util.List;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.jgroups.util.ConcurrentLinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 
 @Component
 public class LetterBatchPDFProcessor {

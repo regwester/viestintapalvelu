@@ -7,7 +7,6 @@ import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -18,6 +17,8 @@ import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -27,7 +28,6 @@ import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.AnswerChain;
 
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstDoNothing;
-import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
 import static junit.framework.Assert.assertEquals;
 import static junit.framework.Assert.assertTrue;
 import static org.junit.Assert.assertFalse;
@@ -49,6 +49,9 @@ public class LetterBatchPDFProcessorTest {
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
 
     @Mock
+    private LetterReceiversDAO letterReceiversDAO;
+
+    @Mock
     private LetterBuilder builder;
 
     private LetterBatchPDFProcessor processor;
@@ -59,6 +62,8 @@ public class LetterBatchPDFProcessorTest {
         doCallRealMethod().when(service).setLetterBatchDAO(any(LetterBatchDAO.class));
         doCallRealMethod().when(service).setLetterReceiverLetterDAO(any(LetterReceiverLetterDAO.class));
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));
+        doCallRealMethod().when(service).setLetterReceiversDAO(any(LetterReceiversDAO.class));
+        doCallRealMethod().when(service).setObjectMapperProvider(any(ObjectMapperProvider.class));
         doCallRealMethod().when(service).setLogger(any(Logger.class));
         doCallRealMethod().when(service).getLetterBuilder();
         doCallRealMethod().when(service).findUnprocessedLetterReceiverIdsByBatch(any(long.class));
@@ -66,6 +71,8 @@ public class LetterBatchPDFProcessorTest {
         service.setLetterBatchDAO(letterBatchDAO);
         service.setLogger(LoggerFactory.getLogger(LetterServiceImpl.class));
         service.setLetterReceiverLetterDAO(letterReceiverLetterDAO);
+        service.setLetterReceiversDAO(letterReceiversDAO);
+        service.setObjectMapperProvider(new ObjectMapperProvider());
     }
 
     @Test
@@ -82,8 +89,8 @@ public class LetterBatchPDFProcessorTest {
         when(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
         doCallRealMethod().when(service).processLetterReceiver(any(long.class));
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
-        when(letterReceiverLetterDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
-                .iterator().next().getLetterReceiverLetter());
+        when(letterReceiversDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
+                .iterator().next());
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
         assertTrue(state.get());
         verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
@@ -97,14 +104,14 @@ public class LetterBatchPDFProcessorTest {
         when(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(any(long.class))).thenReturn(listOfLongsUpTo(amountOfReceivers));
         doCallRealMethod().when(service).processLetterReceiver(any(long.class));
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
-        when(letterReceiverLetterDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
-                .iterator().next().getLetterReceiverLetter());
+        when(letterReceiversDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
+                .iterator().next());
         int okCount = 20;
         AnswerChain<Void> processCalls = atFirstDoNothing().times(okCount).thenThrow(new IllegalStateException("Something went wrong.")),
                 updateCalls = atFirstDoNothing();
         doAnswer(processCalls)
                 .when(builder).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class),
-                        any(Map.class), any(Map.class));
+                any(Map.class), any(Map.class));
         doAnswer(updateCalls).when(letterReceiverLetterDAO).update(any(LetterReceiverLetter.class));
 
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);

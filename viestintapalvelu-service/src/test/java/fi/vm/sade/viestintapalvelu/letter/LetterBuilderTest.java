@@ -12,6 +12,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
@@ -35,6 +36,7 @@ public class LetterBuilderTest {
     @Before
     public void init() throws Exception {
         builder = new LetterBuilder(docBuilder);
+        builder.setObjectMapperProvider(new ObjectMapperProvider());
         Field field = builder.getClass().getDeclaredField("templateService");
         field.setAccessible(true);
         field.set(builder, templateService);
