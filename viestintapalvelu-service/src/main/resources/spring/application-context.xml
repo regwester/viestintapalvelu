@@ -95,7 +95,7 @@
     </camelContext>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-    <task:executor id="batchJobExecutor" pool-size="4" />
+    <task:executor id="batchJobExecutor" pool-size="3" />
     <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
         <constructor-arg ref="batchJobExecutor"/>
     </bean>
