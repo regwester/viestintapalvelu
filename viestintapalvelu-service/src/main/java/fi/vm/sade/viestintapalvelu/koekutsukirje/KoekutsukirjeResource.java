@@ -1,15 +1,12 @@
 package fi.vm.sade.viestintapalvelu.koekutsukirje;
 
-import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
-import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
-import static org.joda.time.DateTime.now;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.POST;
@@ -28,17 +25,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+
+import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
+import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
+import static org.joda.time.DateTime.now;
 
 @Component
 @Path(Urls.KOEKUTSUKIRJE_RESOURCE_PATH)
@@ -56,7 +53,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 	private KoekutsukirjeBuilder koekutsukirjeBuilder;
 	@Qualifier
 	private DokumenttiResource dokumenttiResource;
-	@Autowired
+	@Resource(name="otherAsyncResourceJobsExecutorService")
 	private ExecutorService executor;
 
 	private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata koekutsukirjeen/kirjeet PDF-muodossa; synkroninen";

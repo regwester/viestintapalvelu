@@ -95,10 +95,21 @@
     </camelContext>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-    <!--Would make maxPoolSize = Integer.MAX_VALUE <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>-->
-    <task:executor id="executor" pool-size="12" />
-    <bean id="executorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-        <constructor-arg ref="executor"/>
+    <task:executor id="batchJobExecutor" pool-size="4" />
+    <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="batchJobExecutor"/>
+    </bean>
+    <task:executor id="receiverExecutor" pool-size="12" />
+    <bean id="letterReceiverExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="receiverExecutor"/>
+    </bean>
+    <task:executor id="otherAsyncResourceJobsExecutor" pool-size="5" />
+    <bean id="otherAsyncResourceJobsExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="otherAsyncResourceJobsExecutor"/>
+    </bean>
+    <task:executor id="recoveryHandlerExecutor" pool-size="1" />
+    <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="recoveryHandlerExecutor"/>
     </bean>
 
     <!-- enable spring annotation driven transactions -->

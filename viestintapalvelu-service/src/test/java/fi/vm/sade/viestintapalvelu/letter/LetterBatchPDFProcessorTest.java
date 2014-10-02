@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.*;
+import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -55,7 +56,8 @@ public class LetterBatchPDFProcessorTest {
 
     @Before
     public void init() {
-        processor = new LetterBatchPDFProcessor(Executors.newCachedThreadPool(), service);
+        processor = new LetterBatchPDFProcessor(Executors.newFixedThreadPool(4),
+                Executors.newFixedThreadPool(10), service);
         doCallRealMethod().when(service).setLetterBatchDAO(any(LetterBatchDAO.class));
         doCallRealMethod().when(service).setLetterReceiverLetterDAO(any(LetterReceiverLetterDAO.class));
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));

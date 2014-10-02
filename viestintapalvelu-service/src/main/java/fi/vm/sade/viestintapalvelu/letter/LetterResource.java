@@ -62,7 +62,7 @@ public class LetterResource extends AsynchronousResource {
     @Resource
     private DokumenttiResource dokumenttipalveluRestClient;
 
-    @Autowired
+    @Resource(name="otherAsyncResourceJobsExecutorService")
     private ExecutorService executor;
 
     @Autowired

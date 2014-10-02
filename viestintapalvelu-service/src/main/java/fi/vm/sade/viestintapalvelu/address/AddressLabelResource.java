@@ -4,8 +4,9 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.concurrent.Executor;
+import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -50,8 +51,8 @@ public class AddressLabelResource extends AsynchronousResource {
 	private AddressLabelBuilder labelBuilder;
 	@Qualifier
 	private DokumenttiResource dokumenttiResource;
-	@Autowired
-	private Executor executor;
+	@Resource(name="otherAsyncResourceJobsExecutorService")
+	private ExecutorService executor;
 
 	private final static String FixedTemplateNote = "Tarrapohjan malli on kiinteästi tiedostona jakelupaketissa. ";
 	private final static String ApiPDFSync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa synkronisesti. "

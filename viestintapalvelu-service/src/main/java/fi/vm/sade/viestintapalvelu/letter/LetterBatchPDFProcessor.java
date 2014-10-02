@@ -9,6 +9,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import javax.annotation.Resource;
 import javax.inject.Singleton;
 
 import org.jgroups.util.ConcurrentLinkedBlockingQueue;
@@ -18,31 +19,41 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 
 @Component
 @Singleton
 public class LetterBatchPDFProcessor {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
-    private final ExecutorService executorService;
+    @Resource(name="batchJobExecutorService")
+    private ExecutorService batchJobExecutorService;
+    @Resource(name="letterReceiverExecutorService")
+    private ExecutorService letterReceiverExecutorService;
 
-    private final LetterService letterService;
+    @Autowired
+    private LetterService letterService;
+
+    public LetterBatchPDFProcessor() {
+    }
+
+    public LetterBatchPDFProcessor(ExecutorService batchJobExecutorService,
+                                   ExecutorService letterReceiverExecutorService,
+                                   LetterServiceImpl letterService) {
+        this.batchJobExecutorService = batchJobExecutorService;
+        this.letterReceiverExecutorService = letterReceiverExecutorService;
+        this.letterService = letterService;
+    }
 
     public static final int THREADS = 4;
     
     public static final Set<Long> LETTER_BATCHS_BEING_PROCESSED = new HashSet<Long>();
 
-    @Autowired
-    public LetterBatchPDFProcessor(ExecutorService executorService, LetterService letterService) {
-        this.executorService = executorService;
-        this.letterService = letterService;
-    }
-
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
         reserveJob(letterBatchId);
         BatchJob job = new BatchJob(letterBatchId, letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId), THREADS);
-        return executorService.submit(job);
+        return batchJobExecutorService.submit(job);
     }
 
     private synchronized void reserveJob(long letterBatchId) {
@@ -70,7 +81,7 @@ public class LetterBatchPDFProcessor {
         @Override
         public Boolean call() throws Exception {
             for (int i = 0; i < threads; i++) {
-                executorService.execute(new Runnable() {
+                letterReceiverExecutorService.execute(new Runnable() {
                     @Override
                     public void run() {
                         Long letterReceiverId = unprocessedLetterReceivers.poll();
