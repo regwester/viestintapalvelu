@@ -3,9 +3,11 @@
        xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
        xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client" xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
        http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -93,7 +95,11 @@
     </camelContext>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-    <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+    <!--Would make maxPoolSize = Integer.MAX_VALUE <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>-->
+    <task:executor id="executor" pool-size="12" />
+    <bean id="executorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="executor"/>
+    </bean>
 
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />

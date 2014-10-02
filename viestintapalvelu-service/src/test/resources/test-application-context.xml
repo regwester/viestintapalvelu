@@ -2,14 +2,15 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context" xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:mockito="http://www.mockito.org/spring/mockito" xmlns:cxf="http://cxf.apache.org/core"
-       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd
            http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
-           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-           http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd" >
+
+           http://www.mockito.org/spring/mockito classpath:spring/mockito.xsd">
             
 	<context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
@@ -30,8 +31,11 @@
     -->
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-    <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
-
+    <!--Would make maxPoolSize = Integer.MAX_VALUE <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>-->
+    <task:executor id="executor" pool-size="12" />
+    <bean id="executorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="executor"/>
+    </bean>
 
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />
     <mockito:mock id="henkiloResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" />
