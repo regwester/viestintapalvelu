@@ -3,13 +3,6 @@ package fi.vm.sade.viestintapalvelu.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 
 import javax.persistence.PersistenceException;
 
@@ -26,15 +19,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-
 import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
@@ -240,8 +228,9 @@ public class LetterBatchDAOTest {
 
     private long givenLetterBatchWithDateModified(Status status, byte[] letter, Date modified) {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
-        letterBatch.setBatchStatus(LetterBatch.Status.processing);
+        letterBatch.setBatchStatus(status);
         letterBatch.getLetterReceivers().iterator().next().getLetterReceiverLetter().setLetter(letter);
+        letterBatch.setTimestamp(modified);
         return letterBatchDAO.insert(letterBatch).getId();
     }
 
