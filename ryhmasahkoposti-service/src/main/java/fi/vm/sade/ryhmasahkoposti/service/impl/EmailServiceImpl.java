@@ -94,14 +94,21 @@ public class EmailServiceImpl implements EmailService {
         return emailDao.findNumberOfUserMessages(oid);
     }
 
+    /**
+     * @param emailData
+     * @param emailAddress
+     * @return the EML file contents for preview
+     * @throws Exception
+     */
     public String getEML(EmailData emailData, String emailAddress) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        EmailRecipientMessage emailMessage =new EmailRecipientMessage();
-        EmailRecipientMessage erm = emailRecipientDtoConverter.convertPreview(emailData, emailAddress,emailMessage);
+        EmailRecipientMessage emailMessage
+                = emailRecipientDtoConverter.convertPreview(emailData, emailAddress,new EmailRecipientMessage());
+        loadReferencedAttachments(emailMessage.getRecipient(), new EmailSendQueState().withoutSavingAttachments());
         templateBuilder.applyTemplate(emailMessage);
-        
+
         MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
-                Optional.<AttachmentContainer>absent());
+                optionalEmailRecipientAttachments(emailMessage.getRecipient()));
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
@@ -347,12 +354,14 @@ public class EmailServiceImpl implements EmailService {
         log.info("Downloading attachment for EmailRecipientDTO={}, URI={}", er.getRecipientID(), uri);
         EmailAttachment attachment = downloaderForUri(uri).download(uri);
         if (attachment != null) {
-            ReportedRecipientAttachmentSaveDto dto = new ReportedRecipientAttachmentSaveDto();
-            dto.setAttachment(attachment.getData());
-            dto.setAttachmentName(attachment.getName());
-            dto.setContentType(attachment.getContentType());
-            dto.setReportedRecipientId(er.getRecipientID());
-            reportedMessageAttachmentService.saveReportedRecipientAttachment(dto);
+            if (emailSendQueState.isSaveAttachments()) {
+                ReportedRecipientAttachmentSaveDto dto = new ReportedRecipientAttachmentSaveDto();
+                dto.setAttachment(attachment.getData());
+                dto.setAttachmentName(attachment.getName());
+                dto.setContentType(attachment.getContentType());
+                dto.setReportedRecipientId(er.getRecipientID());
+                reportedMessageAttachmentService.saveReportedRecipientAttachment(dto);
+            }
             er.getAttachments().add(attachment);
         } else {
             throw new IllegalArgumentException("Attachment with URI="

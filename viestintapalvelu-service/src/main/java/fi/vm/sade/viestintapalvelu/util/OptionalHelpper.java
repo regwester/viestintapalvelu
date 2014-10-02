@@ -14,34 +14,34 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ryhmasahkoposti.service.impl;
+package fi.vm.sade.viestintapalvelu.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import javax.ws.rs.NotFoundException;
+
+import com.google.common.base.Supplier;
 
 /**
  * User: ratamaa
- * Date: 24.9.2014
- * Time: 17:02
+ * Date: 2.10.2014
+ * Time: 15:32
  */
-public class EmailSendQueState {
-    private List<String> downloadedAttachmentUris = new ArrayList<String>();
-    private boolean saveAttachments = true;
+public class OptionalHelpper {
 
-    public void addDownloadedAttachmentUri(String uri) {
-        this.downloadedAttachmentUris.add(uri);
+    public static<T> Supplier<T> notFound(final String message) throws NotFoundException {
+        return new Supplier<T>() {
+            public T get() {
+                throw new NotFoundException(message);
+            }
+        };
     }
 
-    public List<String> getDownloadedAttachmentUris() {
-        return downloadedAttachmentUris;
+    public static<T, E extends RuntimeException> Supplier<T> doThrow(final E e) throws E {
+        return new Supplier<T>() {
+            @Override
+            public T get() {
+                throw e;
+            }
+        };
     }
 
-    public boolean isSaveAttachments() {
-        return saveAttachments;
-    }
-
-    public EmailSendQueState withoutSavingAttachments() {
-        this.saveAttachments = false;
-        return this;
-    }
 }

@@ -1,10 +1,6 @@
 package fi.vm.sade.viestintapalvelu.externalinterface.api;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -24,7 +20,7 @@ public interface EmailResource {
     @JsonView(JsonViews.Basic.class)
     @Consumes("application/json")
     @Path("ok")
-    public Response ok();
+    Response ok();
     
     
     /**
@@ -38,5 +34,11 @@ public interface EmailResource {
     @Produces(MediaType.APPLICATION_JSON)
     @JsonView(JsonViews.Basic.class)
     @Consumes("application/json")
-    public Response sendEmail(EmailData emailData);
+    Response sendEmail(EmailData emailData);
+
+    @POST
+    @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("preview")
+    Response getPreview(EmailData emailData) throws Exception;
 }

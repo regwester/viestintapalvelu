@@ -77,6 +77,8 @@ public class LetterResource extends AsynchronousResource {
     @Autowired
     private LetterEmailService letterEmailService;
 
+    private final static String ApiEmailPreview = "Tuottaa esikatselun yhdestä kirjelähetykseen liittyvästä sähköpostiviestistä";
+    private final static String ApiLetterLanguageOptions = "Kertoo, mitä kieliä annetun kirjeen vastaanottajissa on";
     private final static String ApiEmail = "Lähettää sähköpostiviestin annetun kirjelähetyksen vastaanottajille.";
 
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
@@ -145,9 +147,35 @@ public class LetterResource extends AsynchronousResource {
     @Path("/emailLetterBatch/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiEmail, notes = ApiEmail)
-    public Response emailByLetterBatch( @PathParam("letterBatchId") @ApiParam("Kirjelähetyksen ID") Long letterBatchId ) {
+    public Response emailLetterBatch( @PathParam("letterBatchId") @ApiParam(name="Kirjelähetyksen ID", required = true)
+                                          Long letterBatchId ) {
         letterEmailService.sendEmail(letterBatchId);
         return Response.ok().build();
+    }
+
+    @GET
+    @Produces("message/rfc822")
+    @Path("/previewLetterBatchEmail/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiEmailPreview, notes = ApiEmailPreview)
+    public Response previewLetterBatchEmail(
+            @PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) Long letterBatchId,
+            @QueryParam("language") @ApiParam(value="Muodostuskieli (valinnainen)", required = false) String languageCode ) {
+        return Response.ok(
+                letterEmailService.getPreview(letterBatchId, Optional.fromNullable(languageCode))
+            ).header("Content-Disposition", "attachment; filename=\"preview.eml\"")
+            .build();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/languageOptions/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiLetterLanguageOptions, notes = ApiLetterLanguageOptions)
+    public Response getLanguageOptions(@PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) Long letterBatchId) {
+        return Response.ok(
+                letterEmailService.getLanguageCodeOptions(letterBatchId)
+        ).build();
     }
 
     /**
@@ -162,8 +190,7 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-    public InputStream syncPdf(
-        @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
+    public InputStream syncPdf( @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
         throws Exception {
         return new ByteArrayInputStream(letterBuilder.printPDF(input));
     }
@@ -394,10 +421,9 @@ public class LetterResource extends AsynchronousResource {
         fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
         Long id = letter.getId();
         letterPDFProcessor.processLetterBatch(id);
-        
         return Response.status(Status.OK).entity(id).build();
     }
-    
+
     @GET
     @Consumes("application/json")
     @Produces("application/json")

@@ -213,12 +213,33 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 });
         }
 
+        function languageOptions(id) {
+            return $http.get(letter+"languageOptions/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Kielivaihtoehtojen haku epäonnistui: " + data);
+                });
+        }
+
         function sendEmail(id) {
             return $http.post(letter+"emailLetterBatch/"+id).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Sähköpostiviestin lähetys kirjelähetykselle "+id+" epäonnistui: " + data);
             });
+        }
+
+        function previewEmail(id, langCode) {
+            if (langCode) {
+                var lc = langCode;
+                $http.get(letter+'previewLetterBatchEmail/'+id+"?language="+lc).success(function() {
+                    $window.location = letter+'previewLetterBatchEmail/'+id+"?language="+lc;
+                }).error(function() {
+                    $window.alert("Ei löytynyt kielellä " + lc);
+                });
+            } else {
+                $window.location = letter+'previewLetterBatchEmail/'+id;
+            }
         }
 
         function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
@@ -255,7 +276,9 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             printPDF: printPDF,
             asyncLetter: asyncLetter,
             asyncStatus: asyncStatus,
-            sendEmail: sendEmail
+            sendEmail: sendEmail,
+            previewEmail: previewEmail,
+            languageOptions: languageOptions
         }
     }()
 }])

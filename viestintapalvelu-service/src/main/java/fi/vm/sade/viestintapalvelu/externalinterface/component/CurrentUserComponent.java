@@ -4,10 +4,13 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource;
 
 /**
@@ -18,6 +21,8 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource;
  */
 @Component
 public class CurrentUserComponent {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Resource
     private OmattiedotResource omattiedotResourceClient;
     
@@ -27,7 +32,12 @@ public class CurrentUserComponent {
      * @return Henkilon tiedot
      */
     public Henkilo getCurrentUser() {
-        return omattiedotResourceClient.currentHenkiloTiedot();
+        try {
+            return omattiedotResourceClient.currentHenkiloTiedot();
+        } catch (Exception e) {
+            logger.error("Error getting current user: " + e.getMessage(), e);
+            throw new ExternalInterfaceException("error.msg.gettingCurrentUserFailed", e);
+        }
     }
 
     /**
@@ -36,6 +46,11 @@ public class CurrentUserComponent {
      * @return Lista henkilön organisaattiotietoja
      */
     public List<OrganisaatioHenkilo> getCurrentUserOrganizations() {
-        return omattiedotResourceClient.currentHenkiloOrganisaatioHenkiloTiedot();
+        try {
+            return omattiedotResourceClient.currentHenkiloOrganisaatioHenkiloTiedot();
+        } catch (Exception e) {
+            logger.error("Error getting current user's organizations: " + e.getMessage(), e);
+            throw new ExternalInterfaceException(e);
+        }
     }
 }

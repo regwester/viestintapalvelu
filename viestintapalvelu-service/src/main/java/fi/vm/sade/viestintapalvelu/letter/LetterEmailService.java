@@ -16,6 +16,12 @@
 
 package fi.vm.sade.viestintapalvelu.letter;
 
+import org.springframework.transaction.annotation.Transactional;
+
+import com.google.common.base.Optional;
+
+import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
+
 /**
  * User: ratamaa
  * Date: 30.9.2014
@@ -31,4 +37,19 @@ public interface LetterEmailService {
      */
     void sendEmail(long letterBatchId);
 
+    /**
+     * @param letterBatchId
+     * @return language options for the given letter batch
+     */
+    LanguageCodeOptionsDto getLanguageCodeOptions(long letterBatchId);
+
+    /**
+     * @param letterBatchId id of the LetterBatch to get email preview from
+     * @param languageCode the language to preview (if not given, Template's language will be used)
+     * @return the preview of one of the emails in the message
+     * @throws javax.ws.rs.NotFoundException if LetterBatch not found or template not found by id or no recipients
+     *          with email that are processed
+     * @throws java.lang.IllegalStateException if LetterBatch does not have templateId
+     */
+    String getPreview(Long letterBatchId, Optional<String> languageCode);
 }

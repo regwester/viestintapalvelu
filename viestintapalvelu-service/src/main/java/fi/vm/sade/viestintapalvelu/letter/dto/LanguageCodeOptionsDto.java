@@ -14,34 +14,25 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ryhmasahkoposti.service.impl;
+package fi.vm.sade.viestintapalvelu.letter.dto;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 /**
  * User: ratamaa
- * Date: 24.9.2014
- * Time: 17:02
+ * Date: 2.10.2014
+ * Time: 17:57
  */
-public class EmailSendQueState {
-    private List<String> downloadedAttachmentUris = new ArrayList<String>();
-    private boolean saveAttachments = true;
+public class LanguageCodeOptionsDto implements Serializable {
+    private List<String> options = new ArrayList<String>();
 
-    public void addDownloadedAttachmentUri(String uri) {
-        this.downloadedAttachmentUris.add(uri);
+    public List<String> getOptions() {
+        return options;
     }
 
-    public List<String> getDownloadedAttachmentUris() {
-        return downloadedAttachmentUris;
-    }
-
-    public boolean isSaveAttachments() {
-        return saveAttachments;
-    }
-
-    public EmailSendQueState withoutSavingAttachments() {
-        this.saveAttachments = false;
-        return this;
+    public void setOptions(List<String> options) {
+        this.options = options;
     }
 }

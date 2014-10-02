@@ -11,6 +11,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.historyList = [];
     $scope.oid = "1.2.246.562.10.00000000001";
     $scope.applicationPeriod = "K2014";
+    $scope.generalEmail = null;
 
     $scope.templateChanged = function () {
       $scope.template.applicationPeriod = $scope.applicationPeriod;
@@ -103,13 +104,26 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
 
     $scope.monitorStatus = null;
     $scope.emailPossibleForId = null;
+    $scope.emailPreviewPossibleForId = null;
+    $scope.languageOptions = [];
     function startBatchMonitor(id) {
         var monitor = function() {
             Printer.asyncStatus(id).success(function(status) {
+                if (!$scope.monitorStatus || status.sent != $scope.monitorStatus.sent) {
+                    Printer.languageOptions(id).success(function(opts) {
+                        $scope.languageOptions = opts.options;
+                    });
+                }
                 $scope.monitorStatus = status;
                 if (status.status == "ready") {
-                    $scope.emailPossibleForId = id;
+                    if (status.emailReviewable) {
+                        $scope.emailPossibleForId = id;
+                        $scope.emailPreviewPossibleForId = id;
+                    }
                 } else {
+                    if (status.emailReviewable) {
+                        $scope.emailPreviewPossibleForId = id;
+                    }
                     $timeout(monitor, 100);
                 }
             });
@@ -126,12 +140,24 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
        }
     };
 
+    $scope.previewEmail = function(langCode) {
+        if ($scope.emailPreviewPossibleForId) {
+            Printer.previewEmail($scope.emailPreviewPossibleForId, langCode);
+        }
+    };
+
     $scope.generateAsyncLetter = function() {
       Printer.asyncLetter($scope.letters,replacements(),
           $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
           .success(function(id) {
               startBatchMonitor(id);
           });
+    };
+
+    $scope.fillEmails = function() {
+       angular.forEach($scope.letters, function(letter) {
+          letter.emailAddress = $scope.generalEmail;
+       });
     };
 
     $scope.generateZIP = function () {

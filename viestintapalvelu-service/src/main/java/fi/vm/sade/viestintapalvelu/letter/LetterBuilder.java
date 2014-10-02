@@ -475,6 +475,7 @@ public class LetterBuilder {
             byte[] page = createPagePdf(template, tc.getContent().getBytes(), address,
                     templReplacements, batchReplacements, letterReplacements);
             if (letter.getLetterReceivers().getEmailAddress() != null
+                    && !letter.getLetterReceivers().getEmailAddress().isEmpty()
                     && "liite".equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
                 saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
             }
