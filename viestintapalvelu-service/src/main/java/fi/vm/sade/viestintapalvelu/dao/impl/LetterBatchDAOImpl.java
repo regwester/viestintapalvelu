@@ -23,11 +23,6 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import java.util.List;
 
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
@@ -190,6 +185,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                     + " where letter.letter is null"
                     + " order by lr.id", Long.class)
             .setParameter("batchId", batchId).getResultList();
+    }
+    
+    @Override
+    public List<Long> findUnfinishedLetterBatches() {
+        return getEntityManager().createQuery("SELECT lb.id FROM LetterBatch lb"
+                + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'"
+                + " ORDER BY lb.timestamp ASC", Long.class).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

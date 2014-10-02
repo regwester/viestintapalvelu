@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertNotNull;
@@ -19,9 +20,11 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.PersistenceException;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+
 import com.google.common.base.Optional;
 
 import static org.junit.Assert.*;
@@ -174,7 +177,7 @@ public class LetterBatchDAOTest {
         assertEquals(null, letterBatch.getProcessingErrors());
 
         letterBatch = letterBatchDAO.read(idB);
-        assertEquals(null, letterBatch.getProcessingErrors());
+        assertTrue(letterBatch.getProcessingErrors().isEmpty());
 
         letterBatch = letterBatchDAO.read(idC);
         assertEquals(1, letterBatch.getProcessingErrors().size());
@@ -185,18 +188,48 @@ public class LetterBatchDAOTest {
     
     @Test
     public void returnsEmptyListWhenAllLettersAreProcessed() {
-        assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter("afeaf".getBytes())).isEmpty());
+        assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(Status.processing, "afeaf".getBytes())).isEmpty());
     }
     
     @Test
     public void returnsUnprocessedLetters() {
-        assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(null)).size());
+        assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(Status.processing, null)).size());
+    }
+    
+    @Test
+    public void returnsUnfinishedBatches() {
+        givenLetterBatchWithLetter(Status.processing, null);
+        assertEquals(1, letterBatchDAO.findUnfinishedLetterBatches().size());        
+    }
+    
+    @Test
+    public void doesNotReturnFinishedBatches() {
+        givenLetterBatchWithLetter(Status.ready, null);
+        assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());   
     }
 
-    private long givenLetterBatchWithLetter(byte[] letter) {
+    @Test
+    public void doesNotReturnBatchesThatAreFaulty() {
+        givenLetterBatchWithLetter(Status.error, null);
+        assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());
+    }
+    
+    @Test
+    public void ordersBatchesByModified() throws Exception {
+        givenLetterBatchWithDateModified(Status.created, null, new Date());
+        Long first = givenLetterBatchWithDateModified(Status.processing, null, new Date(0));
+        assertEquals(first, letterBatchDAO.findUnfinishedLetterBatches().get(0));
+    }
+
+    private long givenLetterBatchWithLetter(Status status, byte[] letter) {
+        return givenLetterBatchWithDateModified(status, letter, new Date());
+    }
+
+    private long givenLetterBatchWithDateModified(Status status, byte[] letter, Date modified) {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
-        letterBatch.setBatchStatus(LetterBatch.Status.processing);
+        letterBatch.setBatchStatus(status);
         letterBatch.getLetterReceivers().iterator().next().getLetterReceiverLetter().setLetter(letter);
+        letterBatch.setTimestamp(modified);
         return letterBatchDAO.insert(letterBatch).getId();
     }
 
