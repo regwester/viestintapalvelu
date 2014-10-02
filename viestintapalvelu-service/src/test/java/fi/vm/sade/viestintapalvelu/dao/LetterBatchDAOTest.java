@@ -1,14 +1,15 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+
+import javax.persistence.PersistenceException;
 
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
@@ -18,11 +19,11 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.persistence.PersistenceException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 import com.google.common.base.Optional;
+
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
 
@@ -32,6 +33,8 @@ import static org.junit.Assert.*;
     DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
 public class LetterBatchDAOTest {
+    private Logger logger = LoggerFactory.getLogger(getClass());
+
     @Autowired
     private LetterBatchDAO letterBatchDAO;
 
@@ -158,6 +161,27 @@ public class LetterBatchDAOTest {
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         long idB = letterBatchDAO.insert(letterBatch).getId();
 
+        LetterBatchStatusDto statusA = letterBatchDAO.getLetterBatchStatus(idA),
+                statusB = letterBatchDAO.getLetterBatchStatus(idB);
+        assertNotNull(statusA);
+        assertNotNull(statusB);
+        assertEquals(LetterBatch.Status.processing, statusA.getStatus());
+        assertEquals(LetterBatch.Status.ready, statusB.getStatus());
+        assertNotNull(statusA.getSent());
+        assertNotNull(statusA.getTotal());
+        assertNotNull(statusA.getEmailsProcessed());
+        assertEquals(Integer.valueOf(1), statusA.getSent());
+        assertEquals(Integer.valueOf(0), statusA.getEmailsProcessed());
+        assertEquals(Integer.valueOf(1), statusA.getTotal());
+        assertEquals(Integer.valueOf(1), statusB.getSent());
+        assertEquals(Integer.valueOf(0), statusB.getEmailsProcessed());
+        assertEquals(Integer.valueOf(1), statusB.getTotal());
+
+        letterBatch.getLetterReceivers().iterator().next().setEmailAddress("foo@example.com");
+        letterBatchDAO.update(letterBatch);
+        statusB = letterBatchDAO.getLetterBatchStatus(idB);
+        assertEquals(Integer.valueOf(1), statusB.getEmailsProcessed());
+
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.error);
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
@@ -178,16 +202,15 @@ public class LetterBatchDAOTest {
 
         letterBatch = letterBatchDAO.read(idC);
         assertEquals(1, letterBatch.getProcessingErrors().size());
-        System.out.println(letterBatch.getProcessingErrors().toString());
+        logger.info(letterBatch.getProcessingErrors().toString());
         assertEquals("Testing failure case", letterBatch.getProcessingErrors().get(0).getErrorCause());
-
     }
     
     @Test
     public void returnsEmptyListWhenAllLettersAreProcessed() {
         assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter("afeaf".getBytes())).isEmpty());
     }
-    
+
     @Test
     public void returnsUnprocessedLetters() {
         assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(null)).size());

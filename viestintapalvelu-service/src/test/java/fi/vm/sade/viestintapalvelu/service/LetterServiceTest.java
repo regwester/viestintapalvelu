@@ -212,7 +212,7 @@ public class LetterServiceTest {
 
         System.out.println("getBatchStatusFailure");
 
-        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(123l, 0, 0, LetterBatch.Status.ready);
+        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(123l, 0, 0, LetterBatch.Status.ready, 0);
         when(mockedLetterBatchDAO.getLetterBatchStatus(eq(123l))).thenReturn(statusDto);
 
         LetterBatchStatusDto batchStatus = letterService.getBatchStatus(123l);
@@ -220,7 +220,7 @@ public class LetterServiceTest {
         assertEquals("Batch status should be ready when sent and total match", LetterBatch.Status.ready, batchStatus.getStatus());
         assertNull("Batch errors should be null when successful", batchStatus.getErrors());
 
-        statusDto = new LetterBatchStatusDto(1234l, 456, 456, LetterBatch.Status.ready);
+        statusDto = new LetterBatchStatusDto(1234l, 456, 456, LetterBatch.Status.ready, 456);
         when(mockedLetterBatchDAO.getLetterBatchStatus(eq(1234l))).thenReturn(statusDto);
         batchStatus = letterService.getBatchStatus(1234l);
 
@@ -232,7 +232,7 @@ public class LetterServiceTest {
     @Test
     public void getBatchStatusSending() {
 
-        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(1238l, 45, 123, LetterBatch.Status.processing);
+        LetterBatchStatusDto statusDto = new LetterBatchStatusDto(1238l, 45, 123, LetterBatch.Status.processing, 40);
         when(mockedLetterBatchDAO.getLetterBatchStatus(eq(1238l))).thenReturn(statusDto);
         LetterBatchStatusDto batchStatus = letterService.getBatchStatus(1238l);
 
@@ -276,7 +276,7 @@ public class LetterServiceTest {
         mockBatch.setProcessingErrors(processingErrors);
 
 
-        LetterBatchStatusDto mockDto = new LetterBatchStatusDto(1235l, 235, 456, LetterBatch.Status.error);
+        LetterBatchStatusDto mockDto = new LetterBatchStatusDto(1235l, 235, 456, LetterBatch.Status.error, 235);
 
         when(mockedLetterBatchDAO.getLetterBatchStatus(eq(1235l))).thenReturn(mockDto);
         when(mockedLetterBatchDAO.read(eq(1235l))).thenReturn(mockBatch);

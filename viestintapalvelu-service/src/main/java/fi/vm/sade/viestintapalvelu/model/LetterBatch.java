@@ -30,6 +30,27 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 @Table(name = "kirjelahetys", schema= "kirjeet")
 @Entity(name = "LetterBatch")
+@NamedQueries({
+        @NamedQuery(name = "letterBatchStatus",
+            query ="select new fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto(lb.id, " +
+                    " (select count(ltr1.id) from LetterBatch batch1 " +
+                    "       inner join batch1.letterReceivers receiver1" +
+                    "       inner join receiver1.letterReceiverLetter ltr1" +
+                    "       with ltr1.letter != null" +
+                    "   where batch1.id = lb.id), " +
+                    " (select count(ltr2.id) from LetterBatch batch2 " +
+                    "       inner join batch2.letterReceivers receiver2" +
+                    "       inner join receiver2.letterReceiverLetter ltr2" +
+                    "   where batch2.id = lb.id)," +
+                    " lb.batchStatus," +
+                    " (select count(ltr3.id) from LetterBatch batch3 " +
+                    "       inner join batch3.letterReceivers receiver3 " +
+                    "       inner join receiver3.letterReceiverLetter ltr3 " +
+                    "               with ltr3.letter != null" +
+                    "   where batch3.id = lb.id and length(receiver3.emailAddress) > 0 ))" +
+                    "from LetterBatch lb " +
+                    "where lb.id = :batchId ")
+})
 public class LetterBatch extends BaseEntity {
     public enum Status {
         created,

@@ -585,7 +585,7 @@ public class LetterServiceImpl implements LetterService {
         LetterBatchStatusDto batch = letterBatchDAO.getLetterBatchStatus(batchId);
 
         if(batch == null) {
-            batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error);
+            batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error, 0);
             List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
             LetterBatchProcessingError error = new LetterBatchProcessingError();
             error.setErrorCause("Batch not found for id " + batchId);

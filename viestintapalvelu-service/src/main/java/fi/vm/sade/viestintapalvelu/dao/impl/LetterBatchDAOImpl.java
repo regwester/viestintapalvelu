@@ -14,6 +14,7 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.PathBuilder;
+
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
@@ -23,11 +24,6 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
-import java.util.List;
 
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
@@ -158,21 +154,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
+    @SuppressWarnings({"unchecked"})
     public LetterBatchStatusDto getLetterBatchStatus(long letterBatchId) {
-        List<LetterBatchStatusDto> results = getEntityManager().createQuery(
-                "select new fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto(lb.id, " +
-                        " (select count(ltr1.id) from LetterBatch batch1 " +
-                        "       inner join batch1.letterReceivers receiver1" +
-                        "       inner join receiver1.letterReceiverLetter ltr1" +
-                        "       with ltr1.letter != null" +
-                        "   where batch1.id = lb.id), " +
-                        " (select count(ltr2.id) from LetterBatch batch2 " +
-                        "       inner join batch2.letterReceivers receiver2" +
-                        "       inner join receiver2.letterReceiverLetter ltr2" +
-                        "   where batch2.id = lb.id)," +
-                        " lb.batchStatus) from LetterBatch lb where lb.id = :batchId ",
-                    LetterBatchStatusDto.class)
-                .setParameter("batchId", letterBatchId)
+        List<LetterBatchStatusDto> results = (List<LetterBatchStatusDto>) getEntityManager()
+                .createNamedQuery("letterBatchStatus")
+                    .setParameter("batchId", letterBatchId)
                 .setMaxResults(1)
                 .getResultList();
         if (results.isEmpty()) {
@@ -187,7 +173,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                     "select lr.id from LetterReceivers lr"
                     + " inner join lr.letterBatch batch with batch.id = :batchId"
                     + " inner join lr.letterReceiverLetter letter"
-                    + " where letter.letter is null"
+                    + " where letter.letter = null"
                     + " order by lr.id", Long.class)
             .setParameter("batchId", batchId).getResultList();
     }
