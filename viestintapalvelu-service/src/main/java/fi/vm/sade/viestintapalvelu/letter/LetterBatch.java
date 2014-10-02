@@ -65,7 +65,7 @@ public class LetterBatch implements LetterBatchDetails {
     }
     
     
-    void setLetters(List<Letter> letters) {
+    public void setLetters(List<Letter> letters) {
         this.letters = letters;
     }
 
