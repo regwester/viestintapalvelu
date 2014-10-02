@@ -177,6 +177,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                     + " order by lr.id", Long.class)
             .setParameter("batchId", batchId).getResultList();
     }
+    
+    @Override
+    public List<Long> findUnfinishedLetterBatches() {
+        return getEntityManager().createQuery("SELECT lb.id FROM LetterBatch lb"
+                + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'"
+                + " ORDER BY lb.timestamp ASC", Long.class).getResultList();
+    }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);

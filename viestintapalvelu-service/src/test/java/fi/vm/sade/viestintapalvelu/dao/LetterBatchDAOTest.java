@@ -3,6 +3,13 @@ package fi.vm.sade.viestintapalvelu.dao;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import javax.persistence.PersistenceException;
 
@@ -18,6 +25,12 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import javax.persistence.PersistenceException;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
 
 import com.google.common.base.Optional;
 
@@ -161,27 +174,6 @@ public class LetterBatchDAOTest {
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         long idB = letterBatchDAO.insert(letterBatch).getId();
 
-        LetterBatchStatusDto statusA = letterBatchDAO.getLetterBatchStatus(idA),
-                statusB = letterBatchDAO.getLetterBatchStatus(idB);
-        assertNotNull(statusA);
-        assertNotNull(statusB);
-        assertEquals(LetterBatch.Status.processing, statusA.getStatus());
-        assertEquals(LetterBatch.Status.ready, statusB.getStatus());
-        assertNotNull(statusA.getSent());
-        assertNotNull(statusA.getTotal());
-        assertNotNull(statusA.getEmailsProcessed());
-        assertEquals(Integer.valueOf(1), statusA.getSent());
-        assertEquals(Integer.valueOf(0), statusA.getEmailsProcessed());
-        assertEquals(Integer.valueOf(1), statusA.getTotal());
-        assertEquals(Integer.valueOf(1), statusB.getSent());
-        assertEquals(Integer.valueOf(0), statusB.getEmailsProcessed());
-        assertEquals(Integer.valueOf(1), statusB.getTotal());
-
-        letterBatch.getLetterReceivers().iterator().next().setEmailAddress("foo@example.com");
-        letterBatchDAO.update(letterBatch);
-        statusB = letterBatchDAO.getLetterBatchStatus(idB);
-        assertEquals(Integer.valueOf(1), statusB.getEmailsProcessed());
-
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.error);
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
@@ -198,25 +190,55 @@ public class LetterBatchDAOTest {
         assertEquals(null, letterBatch.getProcessingErrors());
 
         letterBatch = letterBatchDAO.read(idB);
-        assertEquals(null, letterBatch.getProcessingErrors());
+        assertTrue(letterBatch.getProcessingErrors().isEmpty());
 
         letterBatch = letterBatchDAO.read(idC);
         assertEquals(1, letterBatch.getProcessingErrors().size());
-        logger.info(letterBatch.getProcessingErrors().toString());
+        System.out.println(letterBatch.getProcessingErrors().toString());
         assertEquals("Testing failure case", letterBatch.getProcessingErrors().get(0).getErrorCause());
+
     }
     
     @Test
     public void returnsEmptyListWhenAllLettersAreProcessed() {
-        assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter("afeaf".getBytes())).isEmpty());
+        assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(Status.processing, "afeaf".getBytes())).isEmpty());
     }
 
     @Test
     public void returnsUnprocessedLetters() {
-        assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(null)).size());
+        assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(Status.processing, null)).size());
+    }
+    
+    @Test
+    public void returnsUnfinishedBatches() {
+        givenLetterBatchWithLetter(Status.processing, null);
+        assertEquals(1, letterBatchDAO.findUnfinishedLetterBatches().size());        
+    }
+    
+    @Test
+    public void doesNotReturnFinishedBatches() {
+        givenLetterBatchWithLetter(Status.ready, null);
+        assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());   
     }
 
-    private long givenLetterBatchWithLetter(byte[] letter) {
+    @Test
+    public void doesNotReturnBatchesThatAreFaulty() {
+        givenLetterBatchWithLetter(Status.error, null);
+        assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());
+    }
+    
+    @Test
+    public void ordersBatchesByModified() throws Exception {
+        givenLetterBatchWithDateModified(Status.created, null, new Date());
+        Long first = givenLetterBatchWithDateModified(Status.processing, null, new Date(0));
+        assertEquals(first, letterBatchDAO.findUnfinishedLetterBatches().get(0));
+    }
+
+    private long givenLetterBatchWithLetter(Status status, byte[] letter) {
+        return givenLetterBatchWithDateModified(status, letter, new Date());
+    }
+
+    private long givenLetterBatchWithDateModified(Status status, byte[] letter, Date modified) {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.processing);
         letterBatch.getLetterReceivers().iterator().next().getLetterReceiverLetter().setLetter(letter);
