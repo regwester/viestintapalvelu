@@ -1,7 +1,7 @@
 package fi.vm.sade.viestintapalvelu.recovery;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
 
 import javax.inject.Singleton;
 
@@ -12,16 +12,19 @@ import org.springframework.stereotype.Component;
 @Component
 public class ServiceRecoveryHandler {
     
-    private final List<Recoverer> recoverers = new ArrayList<Recoverer>();
+    private final List<Recoverer> recoverers;
+    
+    private final ExecutorService executor;
     
     @Autowired
-    public ServiceRecoveryHandler(LetterPDFRecoverer letterPDFRecoverer) {
-        recoverers.add(letterPDFRecoverer);
+    public ServiceRecoveryHandler(ExecutorService executor, List<Recoverer> recoverers) {
+        this.recoverers = recoverers;
+        this.executor = executor;
     }
     
     public void recover() {
         for (Recoverer recoverer : recoverers) {
-            recoverer.recover();
+            executor.execute(recoverer.getTask());
         }
     }
 }
