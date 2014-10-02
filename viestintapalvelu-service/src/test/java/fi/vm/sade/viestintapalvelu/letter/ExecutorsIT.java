@@ -66,10 +66,10 @@ public class ExecutorsIT {
     @Test
     public void testExecutorServiceIsAnAdapterToExecutor() throws Exception {
         assertTrue(letterReceiverExecutorService instanceof ExecutorServiceAdapter);
-        assertEquals(readProperty(letterReceiverExecutorService, "taskExecutor"), receiverExecutor);
+        assertEquals(this.<Object>readProperty(letterReceiverExecutorService, "taskExecutor"), receiverExecutor);
 
         assertTrue(batchJobExecutorService instanceof ExecutorServiceAdapter);
-        assertEquals(readProperty(batchJobExecutorService, "taskExecutor"), batchJobExecutor);
+        assertEquals(this.<Object>readProperty(batchJobExecutorService, "taskExecutor"), batchJobExecutor);
 
         assertNotEquals(batchJobExecutor, receiverExecutor);
     }
