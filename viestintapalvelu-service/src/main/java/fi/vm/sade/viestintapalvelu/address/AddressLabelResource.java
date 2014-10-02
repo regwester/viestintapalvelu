@@ -1,17 +1,11 @@
 package fi.vm.sade.viestintapalvelu.address;
 
-import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
-import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
-import static org.joda.time.DateTime.now;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executor;
 
-import javax.annotation.Resource;
-import javax.inject.Inject;
 import javax.inject.Singleton;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -31,17 +25,17 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+
+import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
+import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
+import static org.joda.time.DateTime.now;
 
 @Service
 @Singleton
@@ -57,7 +51,7 @@ public class AddressLabelResource extends AsynchronousResource {
 	@Qualifier
 	private DokumenttiResource dokumenttiResource;
 	@Autowired
-	private ExecutorService executor;
+	private Executor executor;
 
 	private final static String FixedTemplateNote = "Tarrapohjan malli on kiinteästi tiedostona jakelupaketissa. ";
 	private final static String ApiPDFSync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa synkronisesti. "

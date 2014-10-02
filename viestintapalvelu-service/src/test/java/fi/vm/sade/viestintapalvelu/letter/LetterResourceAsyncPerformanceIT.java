@@ -20,14 +20,7 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
-import java.util.concurrent.LinkedBlockingDeque;
-import java.util.concurrent.ThreadPoolExecutor;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 import javax.ws.rs.core.Response;
 
@@ -62,6 +55,7 @@ import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
 
@@ -99,13 +93,13 @@ public class LetterResourceAsyncPerformanceIT {
         currentUserComponent.setAccessible(true);
         currentUserComponent.set(((Advised)letterService).getTargetSource().getTarget(),
                 new CurrentUserComponent() {
-            @Override
-            public Henkilo getCurrentUser() {
-                return testHenkilo;
-            }
-        });
+                    @Override
+                    public Henkilo getCurrentUser() {
+                        return testHenkilo;
+                    }
+                });
     }
-    
+
     @Test
     public void processesSingleBatchWith4kLettersUnderMinute() throws Exception {
         final Integer letterCount = 4000;
