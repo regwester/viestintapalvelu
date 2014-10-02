@@ -77,11 +77,11 @@ public class ExecutorsIT {
     @Test
     public void testExecutorNumberOfThreadsLimitedWithBatchJobExecutor() throws Exception {
         assertTrue(receiverExecutor instanceof ThreadPoolTaskExecutor);
-        ThreadPoolExecutor actualJavaExecutor = readProperty(batchJobExecutor, "threadPoolExecutor");
-        int maxPoolSize = readProperty(batchJobExecutor, "maxPoolSize"),
-                corePoolSize = readProperty(batchJobExecutor, "corePoolSize"),
-                actualMaxPoolSize = readProperty(actualJavaExecutor, "maximumPoolSize"),
-                actualCorePoolSize = readProperty(actualJavaExecutor, "corePoolSize");
+        ThreadPoolExecutor actualJavaExecutor = this.<ThreadPoolExecutor>readProperty(batchJobExecutor, "threadPoolExecutor");
+        int maxPoolSize = this.<Integer>readProperty(batchJobExecutor, "maxPoolSize"),
+                corePoolSize = this.<Integer>readProperty(batchJobExecutor, "corePoolSize"),
+                actualMaxPoolSize = this.<Integer>readProperty(actualJavaExecutor, "maximumPoolSize"),
+                actualCorePoolSize = this.<Integer>readProperty(actualJavaExecutor, "corePoolSize");
         logger.info("batchJobExecutor corePoolSize = {} / maxPoolSize = {}", corePoolSize, maxPoolSize);
         assertTrue(maxPoolSize <= 10);
         assertTrue(corePoolSize <= maxPoolSize);
@@ -92,11 +92,11 @@ public class ExecutorsIT {
     @Test
     public void testExecutorNumberOfThreadsLimitedWithReceiverExecutor() throws Exception {
         assertTrue(receiverExecutor instanceof ThreadPoolTaskExecutor);
-        ThreadPoolExecutor actualJavaExecutor = readProperty(receiverExecutor, "threadPoolExecutor");
-        int maxPoolSize = readProperty(receiverExecutor, "maxPoolSize"),
-            corePoolSize = readProperty(receiverExecutor, "corePoolSize"),
-            actualMaxPoolSize = readProperty(actualJavaExecutor, "maximumPoolSize"),
-            actualCorePoolSize = readProperty(actualJavaExecutor, "corePoolSize");
+        ThreadPoolExecutor actualJavaExecutor = this.<ThreadPoolExecutor>readProperty(receiverExecutor, "threadPoolExecutor");
+        int maxPoolSize = this.<Integer>readProperty(receiverExecutor, "maxPoolSize"),
+            corePoolSize = this.<Integer>readProperty(receiverExecutor, "corePoolSize"),
+            actualMaxPoolSize = this.<Integer>readProperty(actualJavaExecutor, "maximumPoolSize"),
+            actualCorePoolSize = this.<Integer>readProperty(actualJavaExecutor, "corePoolSize");
         logger.info("receiverExecutor corePoolSize = {} / maxPoolSize = {}", corePoolSize, maxPoolSize);
         assertTrue(maxPoolSize <= 50);
         assertTrue(corePoolSize <= maxPoolSize);
@@ -108,7 +108,7 @@ public class ExecutorsIT {
     public void testConcurrentTasks() throws Exception {
         int maxPoolSize = this.<Integer>readProperty(receiverExecutor, "maxPoolSize"),
             numberOfTasks = maxPoolSize*100;
-        ThreadPoolExecutor threadPoolExecutor = readProperty(receiverExecutor, "threadPoolExecutor");
+        ThreadPoolExecutor threadPoolExecutor = this.<ThreadPoolExecutor>readProperty(receiverExecutor, "threadPoolExecutor");
         List<ReleasableCallable> callables = new ArrayList<ReleasableCallable>();
         List<Future<Boolean>> futures = new ArrayList<Future<Boolean>>();
         for (int i = 0; i < numberOfTasks; ++i) {
@@ -117,10 +117,10 @@ public class ExecutorsIT {
             futures.add(letterReceiverExecutorService.submit(callable));
         }
         // Nasty read:
-        HashSet<?> workers = readProperty(threadPoolExecutor, "workers");
+        HashSet<?> workers = this.<HashSet<?>>readProperty(threadPoolExecutor, "workers");
         assertEquals(maxPoolSize, workers.size());
 
-        BlockingQueue<Runnable> queue = readProperty(threadPoolExecutor, "workQueue");
+        BlockingQueue<Runnable> queue = this.<BlockingQueue<Runnable>>readProperty(threadPoolExecutor, "workQueue");
         assertEquals(99*maxPoolSize, queue.size());
 
         for (int i = 0; i < maxPoolSize; ++i) {
