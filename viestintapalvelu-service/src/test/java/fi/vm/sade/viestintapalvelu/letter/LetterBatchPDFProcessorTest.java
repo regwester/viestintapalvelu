@@ -116,7 +116,7 @@ public class LetterBatchPDFProcessorTest {
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
         assertFalse(state.get());
         assertTrue(processCalls.getTotalCallCount() > okCount); // okCount + 1 at least + possible other threads
-        assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + LetterBatchPDFProcessor.THREADS);
+        assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + new LetterBatchPDFProcessor().getLetterBatchJobThreadCount());
         assertEquals(okCount, updateCalls.getTotalCallCount());
     }
     

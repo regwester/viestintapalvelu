@@ -16,6 +16,7 @@ import org.jgroups.util.ConcurrentLinkedBlockingQueue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
@@ -30,6 +31,8 @@ public class LetterBatchPDFProcessor {
     private ExecutorService batchJobExecutorService;
     @Resource(name="letterReceiverExecutorService")
     private ExecutorService letterReceiverExecutorService;
+    @Value("#{poolSizes['threadsPerBatchJob'] != null ? poolSizes['threadsPerBatchJob'] : 4}")
+    private int letterBatchJobThreadCount=4;
 
     @Autowired
     private LetterService letterService;
@@ -45,14 +48,12 @@ public class LetterBatchPDFProcessor {
         this.letterService = letterService;
     }
 
-    public static final int THREADS = 4;
-    
     public static final Set<Long> LETTER_BATCHS_BEING_PROCESSED = new HashSet<Long>();
 
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
         reserveJob(letterBatchId);
-        BatchJob job = new BatchJob(letterBatchId, letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId), THREADS);
+        BatchJob job = new BatchJob(letterBatchId, letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId), letterBatchJobThreadCount);
         return batchJobExecutorService.submit(job);
     }
 
@@ -121,4 +122,11 @@ public class LetterBatchPDFProcessor {
         }
     }
 
+    public void setLetterBatchJobThreadCount(int letterBatchJobThreadCount) {
+        this.letterBatchJobThreadCount = letterBatchJobThreadCount;
+    }
+
+    public int getLetterBatchJobThreadCount() {
+        return letterBatchJobThreadCount;
+    }
 }

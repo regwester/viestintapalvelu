@@ -29,6 +29,15 @@
         </property>
     </bean>
 
+    <util:map id="poolSizes" key-type="java.lang.String" value-type="java.lang.String">
+        <entry key="batchJobs" value="${viestintapalvelu.letter.batch.jobs.pool.size}"/>
+        <entry key="threadsPerBatchJob" value="${viestintapalvelu.letter.batch.job.thread.count}"/>
+        <entry key="reveiverJobs" value="${viestintapalvelu.letter.batch.receiver.job.pool.size}"/>
+        <entry key="otherAsync" value="${viestintapalvelu.other.async.resource.jobs.pool.size}"/>
+        <entry key="recoveryJobs" value="${viestintapalvelu.recovery.handler.jobs.pool.size}"/>
+    </util:map>
+    <import resource="classpath:spring/executors-config.xml"/>
+
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
 
@@ -95,19 +104,20 @@
     </camelContext>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-    <task:executor id="batchJobExecutor" pool-size="3" />
+
+    <task:executor id="batchJobExecutor" pool-size="#{poolSizes['batchJobs']}" />
     <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
         <constructor-arg ref="batchJobExecutor"/>
     </bean>
-    <task:executor id="receiverExecutor" pool-size="12" />
+    <task:executor id="receiverExecutor" pool-size="#{poolSizes['reveiverJobs']}" />
     <bean id="letterReceiverExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
         <constructor-arg ref="receiverExecutor"/>
     </bean>
-    <task:executor id="otherAsyncResourceJobsExecutor" pool-size="5" />
+    <task:executor id="otherAsyncResourceJobsExecutor" pool-size="#{poolSizes['otherAsync']}" />
     <bean id="otherAsyncResourceJobsExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
         <constructor-arg ref="otherAsyncResourceJobsExecutor"/>
     </bean>
-    <task:executor id="recoveryHandlerExecutor" pool-size="1" />
+    <task:executor id="recoveryHandlerExecutor" pool-size="#{poolSizes['recoveryJobs']}" />
     <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
         <constructor-arg ref="recoveryHandlerExecutor"/>
     </bean>
