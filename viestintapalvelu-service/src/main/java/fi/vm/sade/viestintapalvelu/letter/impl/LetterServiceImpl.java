@@ -621,6 +621,11 @@ public class LetterServiceImpl implements LetterService {
         letterReceiverLetterDAO.update(letter);
     }
 
+    @Override
+    public List<Long> findUnfinishedLetterBatches() {
+        return letterBatchDAO.findUnfinishedLetterBatches();
+    }
+    
     public void setLetterBuilder(LetterBuilder letterBuilder) {
         this.letterBuilder = letterBuilder;
     }
@@ -655,4 +660,5 @@ public class LetterServiceImpl implements LetterService {
     public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
         this.objectMapperProvider = objectMapperProvider;
     }
+
 }
