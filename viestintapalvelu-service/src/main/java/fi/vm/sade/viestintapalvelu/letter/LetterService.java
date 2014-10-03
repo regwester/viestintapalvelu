@@ -13,7 +13,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
- *  
+ * 
  * @author vehei1
  *
  */
@@ -26,7 +26,8 @@ public interface LetterService {
     /**
      * Luo kirjelähetyksen
      *
-     * @param letterBatch Annetun kirjelähetyksen tiedot
+     * @param letterBatch
+     *            Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
     LetterBatch createLetter(AsyncLetterBatchDto letterBatch);
@@ -34,7 +35,8 @@ public interface LetterService {
     /**
      * Luo kirjelähetyksen
      * 
-     * @param letterBatch Annetun kirjelähetyksen tiedot
+     * @param letterBatch
+     *            Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
     LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch);
@@ -42,7 +44,8 @@ public interface LetterService {
     /**
      * Hakee kirjelähetyksen tiedot annetun avaimen perusteella
      * 
-     * @param id Kirjelähetyksen avain
+     * @param id
+     *            Kirjelähetyksen avain
      * @return Kirjelähetyksen tiedot
      */
     fi.vm.sade.viestintapalvelu.letter.LetterBatch findById(long id);
@@ -50,42 +53,52 @@ public interface LetterService {
     /**
      * Hakee annettujen hakuparametrien mukaiset kirjelähetyksen tiedot
      * 
-     * @param templateName Kirjepohjan nimi
-     * @param languageCode Kielikoodi
-     * @param organizationOid Organisaation OID
-     * @param tag Tunniste
+     * @param templateName
+     *            Kirjepohjan nimi
+     * @param languageCode
+     *            Kielikoodi
+     * @param organizationOid
+     *            Organisaation OID
+     * @param tag
+     *            Tunniste
      * @param applicationPeriod
      * @return Kirjelähetyksen tiedot
      */
-    fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName,
-                      String languageCode, String organizationOid,
-                      Optional<String> tag, Optional<String> applicationPeriod);
+    fi.vm.sade.viestintapalvelu.letter.LetterBatch findLetterBatchByNameOrgTag(String templateName, String languageCode, String organizationOid,
+            Optional<String> tag, Optional<String> applicationPeriod);
 
     /**
      * Hakee annettujen hakuparametrien mukaiset korvauskentien tiedot
      * 
-     * @param templateName Kirjepohjan nimi
-     * @param languageCode Kielikoodi
-     * @param organizationOid organisaation OID
-     * @param tag Tunniste
+     * @param templateName
+     *            Kirjepohjan nimi
+     * @param languageCode
+     *            Kielikoodi
+     * @param organizationOid
+     *            organisaation OID
+     * @param tag
+     *            Tunniste
      * @param applicationPeriod
      * @return Lista korvauskenttien tietoja
      */
-    List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName,
-                  String languageCode, String organizationOid, Optional<String> tag, Optional<String> applicationPeriod);
+    List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String languageCode, String organizationOid,
+            Optional<String> tag, Optional<String> applicationPeriod);
 
     /**
      * Hakee vastaanottajan kirjeen sisällön
      * 
-     * @param id Vastaanottajan kirjeen avain
+     * @param id
+     *            Vastaanottajan kirjeen avain
      * @return Kirjeen sisällön tiedot
      */
     fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
-    
+
     /**
-     * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi PDF-dokumentiksi
+     * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi
+     * PDF-dokumentiksi
      * 
-     * @param letterBatchID Kirjelähetyksen avain
+     * @param letterBatchID
+     *            Kirjelähetyksen avain
      * @return Kirjelähetyksen kirjeiden sisällöt
      * @throws Exception
      */
@@ -99,7 +112,7 @@ public interface LetterService {
 
     LetterBatch fetchById(long id);
 
-    List<LetterReceiverLetter> getReceiverLetters (Set<LetterReceivers> letterReceivers);
+    List<LetterReceiverLetter> getReceiverLetters(Set<LetterReceivers> letterReceivers);
 
     LetterBatchStatusDto getBatchStatus(long batchId);
 
@@ -107,7 +120,9 @@ public interface LetterService {
 
     List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId);
 
+    List<Long> findAllReceiversIdsByBatch(long batchId);
+
     void saveBatchErrorForReceiver(Long letterReceiverId, String message);
-    
+
     List<Long> findUnfinishedLetterBatches();
 }

@@ -179,6 +179,15 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
     
     @Override
+    public List<Long> findAllLetterReceiverIdsByBatch(long batchId) {
+        return getEntityManager().createQuery(
+                    "select lr.id from LetterReceivers lr"
+                    + " inner join lr.letterBatch batch with batch.id = :batchId"
+                    + " order by lr.id", Long.class)
+            .setParameter("batchId", batchId).getResultList();
+    }
+    
+    @Override
     public List<Long> findUnfinishedLetterBatches() {
         return getEntityManager().createQuery("SELECT lb.id FROM LetterBatch lb"
                 + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'"

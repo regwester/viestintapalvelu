@@ -497,6 +497,13 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
+    @Transactional(readOnly = true)
+    public List<Long> findAllReceiversIdsByBatch(long batchId) {
+        return letterBatchDAO.findAllLetterReceiverIdsByBatch(batchId);
+    }
+
+    
+    @Override
     @Transactional
     public void saveBatchErrorForReceiver(Long letterReceiverId, String message) {
         LetterReceivers receiver = letterReceiversDAO.read(letterReceiverId);
