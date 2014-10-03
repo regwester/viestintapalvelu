@@ -537,6 +537,20 @@ public class LetterServiceImpl implements LetterService {
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
+    public void processIpostiBatchForLetterReceivers(List<Long> batchReceivers, int index) throws Exception {
+        
+        List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverID(
+                batchReceivers);
+        if (receiverLetters.size() > 0) {
+            LetterReceiverLetter letter = receiverLetters.get(0);
+            LetterBatch batch = letter.getLetterReceivers().getLetterBatch();
+            String templateName = batch.getTemplateName();
+            String lang = batch.getLanguage();
+            String zipName = templateName + "_" + lang + "_" + index + ".zip";
+            getLetterBuilder().printZIP(receiverLetters, templateName, zipName);
+        }
+    }
+
     private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
         Map<String, Object> replacements = new HashMap<String, Object>();
         for (LetterReplacement repl : batch.getLetterReplacements()) {
