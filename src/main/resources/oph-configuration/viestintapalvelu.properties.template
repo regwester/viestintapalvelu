@@ -111,6 +111,12 @@ viestintapalvelu.letter.batch.receiver.job.pool.size=12
 viestintapalvelu.other.async.resource.jobs.pool.size=5
 # kuinka monta toipumisajoa (sovellus sammutettu kesken kaiken) sallitaan yhtä aikaa:
 viestintapalvelu.recovery.handler.jobs.pool.size=1
+# kuinka usein toipumisajoa ajetaan
+viestintapalvelu.recovery.fixed.rate=3600000
+# kuinka kauan palvelun käynnistämisestä toipumisajo ekan kerran ajetaan
+viestintapalvelu.recovery.initial.delay=5000
+
+
 web.url.cas=https\://${host.cas}/cas
 viestintapalvelu.use.dev.basic.authentication=false
 

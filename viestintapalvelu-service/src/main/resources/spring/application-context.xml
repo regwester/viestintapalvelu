@@ -121,6 +121,12 @@
     <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
         <constructor-arg ref="recoveryHandlerExecutor"/>
     </bean>
+    
+    <!-- Recovery scheduling -->
+    <bean id="recoveryHandler" class="fi.vm.sade.viestintapalvelu.recovery.ServiceRecoveryHandler" />
+    <task:scheduled-tasks>
+      <task:scheduled ref="recoveryHandler" method="recover" fixed-rate="${viestintapalvelu.recovery.fixed.rate:3600000}" initial-delay="${viestintapalvelu.recovery.initial.delay:5000}"/>
+    </task:scheduled-tasks>
 
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />
