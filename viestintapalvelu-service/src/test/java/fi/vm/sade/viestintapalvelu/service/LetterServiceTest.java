@@ -304,4 +304,10 @@ public class LetterServiceTest {
         assertNotNull(batch.getProcessingErrors());
         assertEquals(1,batch.getProcessingErrors().size());
     }
+    
+    @Test
+    public void usesLetterBatchDaoForFetchingUnfinishedLetterBatches() {
+        letterService.findUnfinishedLetterBatches();
+        verify(mockedLetterBatchDAO).findUnfinishedLetterBatches();
+    }
 }
