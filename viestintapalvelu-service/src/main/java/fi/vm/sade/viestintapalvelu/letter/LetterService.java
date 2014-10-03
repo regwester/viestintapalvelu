@@ -20,7 +20,9 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 public interface LetterService {
 
     public enum LetterBatchProcess {
-        EMAIL, LETTER
+        EMAIL,
+        LETTER,
+        IPOST
     }
 
     /**
@@ -108,7 +110,12 @@ public interface LetterService {
 
     void processLetterReceiver(long receiverId) throws Exception;
 
-    void updateBatchProcessingFinished(long id, LetterBatchProcess process);
+    /**
+     * @param id of the batch job to mark finished
+     * @param process to mark finished
+     * @return the next process
+     */
+    Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process);
 
     LetterBatch fetchById(long id);
 

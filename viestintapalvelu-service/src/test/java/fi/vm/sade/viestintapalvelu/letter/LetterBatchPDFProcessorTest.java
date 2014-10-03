@@ -1,7 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.*;
-import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
@@ -12,6 +11,8 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
@@ -90,6 +91,8 @@ public class LetterBatchPDFProcessorTest {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID);
         when(letterReceiversDAO.read(any(long.class))).thenReturn(DocumentProviderTestData.getLetterReceivers(1l, batch)
                 .iterator().next());
+        when(service.updateBatchProcessingFinished(eq(LETTERBATCH_ID), eq(LetterBatchProcess.LETTER)))
+                .thenReturn(Optional.<LetterBatchProcess>absent());
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
         assertTrue(state.get());
         verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
@@ -131,13 +134,15 @@ public class LetterBatchPDFProcessorTest {
     public void storesLetterBatchIdBeingProcessedIntoQueue() {
         long id = 7l;
         processor.processLetterBatch(id);
-        assertTrue(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(id));
+        assertTrue(processor.isProcessingLetterBatch(id));
     }
     
     @Test(timeout=100)
     public void removesLetterBatchIdFromQueueAfterProcessing() throws Exception {
+        when(service.updateBatchProcessingFinished(eq(LETTERBATCH_ID), eq(LetterBatchProcess.LETTER)))
+                .thenReturn(Optional.<LetterBatchProcess>absent());
         processor.processLetterBatch(LETTERBATCH_ID);
-        while(LetterBatchPDFProcessor.LETTER_BATCHS_BEING_PROCESSED.contains(LETTERBATCH_ID));
+        while(processor.isProcessingLetterBatch(LETTERBATCH_ID)) Thread.sleep(1);
     }
 
     private List<Long> listOfLongsUpTo(int amountOfReceivers) {

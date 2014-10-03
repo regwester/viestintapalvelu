@@ -486,6 +486,10 @@ public class LetterServiceImpl implements LetterService {
             batch.setHandlingStarted(new Date());
             batch.setBatchStatus(LetterBatch.Status.processing);
             break;
+        case IPOST:
+            batch.setIpostHandlingFinished(new Date());
+            batch.setBatchStatus(LetterBatch.Status.processing_ipost);
+            break;
         }
         letterBatchDAO.update(batch);
     }
@@ -551,7 +555,8 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void updateBatchProcessingFinished(long id, LetterBatchProcess process) {
+    public Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process) {
+        LetterBatchProcess nextProcess = null;
         LetterBatch batch = letterBatchDAO.read(id);
         if (batch == null) {
             throw new NotFoundException("LetterBatch not found by id="+id);
@@ -562,10 +567,20 @@ public class LetterServiceImpl implements LetterService {
             break;
         case LETTER:
             batch.setHandlingFinished(new Date());
+            if (batch.isIposti()) {
+                batch.setBatchStatus(LetterBatch.Status.waiting_for_ipost_processing);
+                nextProcess = LetterBatchProcess.IPOST;
+            } else {
+                batch.setBatchStatus(LetterBatch.Status.ready);
+            }
+            break;
+        case IPOST:
+            batch.setIpostHandlingFinished(new Date());
             batch.setBatchStatus(LetterBatch.Status.ready);
             break;
         }
         letterBatchDAO.update(batch);
+        return Optional.fromNullable(nextProcess);
     }
 
     @Override

@@ -174,7 +174,7 @@ public class LetterEmailServiceImplTest {
         assertEquals("FI", data.getEmail().getLanguageCode());
 
         assertEquals(1, data.getRecipient().size());
-        assertEquals(1, data.getReplacements().size());
+        assertEquals(2, data.getReplacements().size());
         EmailRecipient recipient = data.getRecipient().get(0);
         assertEquals("test@example.com", recipient.getEmail());
         assertEquals(1, recipient.getRecipientReplacements().size());
