@@ -27,6 +27,7 @@ import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
@@ -112,6 +113,7 @@ public class LetterBuilder {
         context.put("filename", templateName + ".pdf");
         byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
         Map<String, byte[]> documents = new HashMap<String, byte[]>();
+        pdf.flush();
         documents.put(templateName + ".pdf", pdf.toByteArray());
         documents.put(templateName + ".xml", ipostXml);
         byte[] zip = documentBuilder.zip(documents);
@@ -490,14 +492,18 @@ public class LetterBuilder {
         Collections.sort(contents);
 
         for (TemplateContent tc : contents) {
-            byte[] page = createPagePdf(template, tc.getContent().getBytes(), address, templReplacements, batchReplacements, letterReplacements);
-            if (letter.getLetterReceivers().getEmailAddress() != null && !letter.getLetterReceivers().getEmailAddress().isEmpty()
-                    && "liite".equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
-                saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
+            if (!tc.getName().equalsIgnoreCase("email_body")) {
+                byte[] page = createPagePdf(template, tc.getContent().getBytes(), address, templReplacements, batchReplacements, letterReplacements);
+                if (letter.getLetterReceivers().getEmailAddress() != null && !letter.getLetterReceivers().getEmailAddress().isEmpty()
+                        && "liite".equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
+                    saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
+                }
+                currentDocument.addContent(page);
             }
-            currentDocument.addContent(page);
         }
         letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
+        letter.setContentType("application/pdf");
+       
     }
 
     private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {

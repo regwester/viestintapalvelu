@@ -34,7 +34,6 @@ import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
-
 import static fi.vm.sade.viestintapalvelu.util.CollectionHelper.extractIds;
 
 /**
@@ -327,15 +326,18 @@ public class LetterServiceImpl implements LetterService {
     }
     
     private IPosti createIPosti(LetterBatch letterB, Map.Entry<String, byte[]> data) {
+        return createIPosti(letterB, data.getKey(), data.getValue());
+    }
+    
+    private IPosti createIPosti(LetterBatch letterB, String name, byte[] data) {
         IPosti iPosti = new IPosti();
         iPosti.setLetterBatch(letterB);
-        iPosti.setContent(data.getValue());
-        iPosti.setContentName(data.getKey());
+        iPosti.setContent(data);
+        iPosti.setContentName(name);
         iPosti.setContentType("application/zip");
         iPosti.setCreateDate(new Date());
         return iPosti;
     }
-    
     /*
      * kirjeet.vastaanottaja
      */
@@ -542,17 +544,26 @@ public class LetterServiceImpl implements LetterService {
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
-    public void processIpostiBatchForLetterReceivers(List<Long> batchReceivers, int index) throws Exception {
-        
-        List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverID(
-                batchReceivers);
+    public void processIpostiBatchForLetterReceivers(List<LetterReceivers> batchReceivers, int index) throws Exception {
+        List<Long> batchReceiversIds = new ArrayList<Long>();
+        for (LetterReceivers l: batchReceivers) {
+            batchReceiversIds.add(l.getId());
+        }
+        List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverID(batchReceiversIds);
         if (receiverLetters.size() > 0) {
             LetterReceiverLetter letter = receiverLetters.get(0);
             LetterBatch batch = letter.getLetterReceivers().getLetterBatch();
             String templateName = batch.getTemplateName();
             String lang = batch.getLanguage();
             String zipName = templateName + "_" + lang + "_" + index + ".zip";
-            getLetterBuilder().printZIP(receiverLetters, templateName, zipName);
+            IPosti iposti = createIPosti(batch, zipName, getLetterBuilder().printZIP(receiverLetters, templateName, zipName));
+            batch.addIPosti(iposti);
+            for (LetterReceivers receiver : batchReceivers) {
+                receiver.setContainedInIposti(iposti);
+                letterReceiversDAO.update(receiver);
+            }
+            letterBatchDAO.update(batch);
+          
         }
     }
 
@@ -675,38 +686,23 @@ public class LetterServiceImpl implements LetterService {
         LetterBatchSplitedIpostDto job = new LetterBatchSplitedIpostDto();
         List<List<LetterReceivers>> splitted = CollectionHelper.split(batch.getLetterReceivers(),
                 MAX_IPOST_CHUNK_SIZE);
-        Template template = templateDAO.read(batch.getTemplateId());
-
         int orderNumber = 1;
         for (List<LetterReceivers> receivers : splitted) {
-            IPosti iposti = new IPosti();
-            iposti.setLetterBatch(batch);
-            String zipName = template.getName() + "_" + batch.getLanguage() + "_" + orderNumber + ".zip";
-            iposti.setContentName(zipName);
-            iposti.setContentType("application/zip");
-            iposti.setCreateDate(new Date());
-            iposti.setOrderNumber(orderNumber);
-            IPostiProcessable processable = new IPostiProcessable(letterBatchId, orderNumber);
-            processable.addLetterReceiverLetterIds(
-                    letterReceiverLetterDAO.findLetterReceiverLetterIdsByLetterReceiverIds(extractIds(receivers)));
+            IPostiProcessable processable = new IPostiProcessable(letterBatchId, orderNumber++);
+            processable.addLetterReceiverIds(receivers);
             job.add(processable);
-            for (LetterReceivers receiver : receivers) {
-                receiver.setContainedInIposti(iposti);
-            }
-            ++orderNumber;
         }
-
         return job;
     }
 
     @Override
     @Transactional
     public void processIposti(IPostiProcessable processable) {
-        IPosti iPosti = iPostiDAO.read(processable.getiPostiId());
-        String templateName = iPosti.getLetterBatch().getTemplateName();
-        List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.findByIds(processable.getLetterRreceiverLetterIds());
-        byte[] data = letterBuilder.printZIP(receiverLetters, templateName, iPosti.getContentName());
-        iPosti.setContent(data);
+        try {
+            processIpostiBatchForLetterReceivers(processable.getLetterReceiverIds(), processable.getOrderNumber());
+        } catch (Exception e) {
+            logger.error("iposti processing failed ", e);
+        }
     }
 
     public void setLetterBuilder(LetterBuilder letterBuilder) {

@@ -92,7 +92,7 @@ public class LetterBatch extends BaseEntity {
     private String organizationOid;
 
     @Column(name= "iposti")
-    private Boolean iposti;
+    private boolean iposti;
 
     @Column(name = "kasittelyn_tila")
     @Enumerated(EnumType.STRING)
@@ -146,10 +146,7 @@ public class LetterBatch extends BaseEntity {
     }
 
     public boolean isIposti() {
-        if (this.iposti == null) {
-            return false;
-        }
-        return iposti;
+       return iposti;
     }
 
     public List<IPosti> getIposti() {

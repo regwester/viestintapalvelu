@@ -20,35 +20,39 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+
 /**
  * User: ratamaa
  * Date: 3.10.2014
  * Time: 13:48
  */
 public class IPostiProcessable implements Processable {
-    private final long iPostiId;
+    private static final long serialVersionUID = 1L;
+    
+    private final long letterBatchId;
     private final int orderNumber;
-    private final List<Long> letterRreceiverLetterIds = new ArrayList<Long>();
+    private final List<LetterReceivers> letterReceivers = new ArrayList<LetterReceivers>();
 
-    public IPostiProcessable(long iPostiId, int orderNumber) {
-        this.iPostiId = iPostiId;
+    public IPostiProcessable(long letterBatchId, int orderNumber) {
+        this.letterBatchId = letterBatchId;
         this.orderNumber = orderNumber;
     }
 
-    public void addLetterReceiverLetterIds(Collection<Long> letterReceiverLetterIds) {
-        this.letterRreceiverLetterIds.addAll(letterReceiverLetterIds);
+    public void addLetterReceiverIds(Collection<LetterReceivers> letterReceivers) {
+        this.letterReceivers.addAll(letterReceivers);
     }
 
-    public void addLetterReceiverLetterId(Long letterReceiverLetterId) {
-        this.letterRreceiverLetterIds.add(letterReceiverLetterId);
+    public void addLetterReceiver(LetterReceivers letterReceiverLetterId) {
+        this.letterReceivers.add(letterReceiverLetterId);
     }
 
-    public List<Long> getLetterRreceiverLetterIds() {
-        return letterRreceiverLetterIds;
+    public List<LetterReceivers> getLetterReceiverIds() {
+        return letterReceivers;
     }
 
-    public long getiPostiId() {
-        return iPostiId;
+    public long getLetterBatchId() {
+        return letterBatchId;
     }
 
     public int getOrderNumber() {

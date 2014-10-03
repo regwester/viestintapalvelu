@@ -31,7 +31,9 @@ public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiv
     public List<Long> findLetterReceiverLetterIdsByLetterReceiverIds(List<Long> letterReceiverIds) {
         return getEntityManager().createQuery(
                 "select lrl.id from LetterReceivers lr" +
-                "       inner join lr.letterReceiverLetter lrl " +
+                "       inner join lr.letterReceiverLetter lrl "+
+                "       inner join fetch lrl.letterReceivers lr" +
+                "       inner join fetch lr.letterBatch batch " +
                 "where lr.id in (:ids)", Long.class)
             .setParameter("ids", letterReceiverIds).getResultList();
     }

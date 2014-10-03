@@ -112,7 +112,7 @@ public interface LetterService {
 
     void processLetterReceiver(long receiverId) throws Exception;
 
-    void processIpostiBatchForLetterReceivers(List<Long> batchReceivers, int batchIndex) throws Exception;
+    void processIpostiBatchForLetterReceivers(List<LetterReceivers> batchReceivers, int batchIndex) throws Exception;
 
     /**
      * @param id of the batch job to mark finished
