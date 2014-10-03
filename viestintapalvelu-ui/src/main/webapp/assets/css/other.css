@@ -330,7 +330,7 @@ ul.normal-margin {
 }
 
 .limited-content {
-    height: 400px;
+    /*height: 400px;*/
     overflow: hidden;
 }
 
