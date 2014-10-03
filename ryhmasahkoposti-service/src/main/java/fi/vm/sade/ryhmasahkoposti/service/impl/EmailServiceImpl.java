@@ -21,12 +21,10 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
-import fi.vm.sade.ryhmasahkoposti.service.EmailAttachmentDownloader;
-import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.service.*;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailRecipientDtoConverter;
+import fi.vm.sade.ryhmasahkoposti.service.dto.ReportedRecipientAttachmentSaveDto;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
 import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.addToMappedList;
@@ -74,6 +72,9 @@ public class EmailServiceImpl implements EmailService {
     private List<EmailAttachmentDownloader> emailDownloaders;
 
     @Autowired
+    private ReportedMessageAttachmentService reportedMessageAttachmentService;
+
+    @Autowired
     private TemplateBuilder templateBuilder;
 
     @Value("${ryhmasahkoposti.require.virus.check:true}")
@@ -93,14 +94,21 @@ public class EmailServiceImpl implements EmailService {
         return emailDao.findNumberOfUserMessages(oid);
     }
 
+    /**
+     * @param emailData
+     * @param emailAddress
+     * @return the EML file contents for preview
+     * @throws Exception
+     */
     public String getEML(EmailData emailData, String emailAddress) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        EmailRecipientMessage emailMessage =new EmailRecipientMessage();
-        EmailRecipientMessage erm = emailRecipientDtoConverter.convertPreview(emailData, emailAddress,emailMessage);
+        EmailRecipientMessage emailMessage
+                = emailRecipientDtoConverter.convertPreview(emailData, emailAddress,new EmailRecipientMessage());
+        loadReferencedAttachments(emailMessage.getRecipient(), new EmailSendQueState().withoutSavingAttachments());
         templateBuilder.applyTemplate(emailMessage);
-        
+
         MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
-                Optional.<AttachmentContainer>absent());
+                optionalEmailRecipientAttachments(emailMessage.getRecipient()));
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
@@ -346,6 +354,14 @@ public class EmailServiceImpl implements EmailService {
         log.info("Downloading attachment for EmailRecipientDTO={}, URI={}", er.getRecipientID(), uri);
         EmailAttachment attachment = downloaderForUri(uri).download(uri);
         if (attachment != null) {
+            if (emailSendQueState.isSaveAttachments()) {
+                ReportedRecipientAttachmentSaveDto dto = new ReportedRecipientAttachmentSaveDto();
+                dto.setAttachment(attachment.getData());
+                dto.setAttachmentName(attachment.getName());
+                dto.setContentType(attachment.getContentType());
+                dto.setReportedRecipientId(er.getRecipientID());
+                reportedMessageAttachmentService.saveReportedRecipientAttachment(dto);
+            }
             er.getAttachments().add(attachment);
         } else {
             throw new IllegalArgumentException("Attachment with URI="

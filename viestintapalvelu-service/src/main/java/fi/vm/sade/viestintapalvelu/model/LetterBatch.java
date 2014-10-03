@@ -1,12 +1,7 @@
 package fi.vm.sade.viestintapalvelu.model;
 
 
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -33,10 +28,37 @@ import fi.vm.sade.generic.model.BaseEntity;
  * @author migar1
  *
  */
-
 @Table(name = "kirjelahetys", schema= "kirjeet")
 @Entity(name = "LetterBatch")
+@NamedQueries({
+        @NamedQuery(name = "letterBatchStatus",
+            query ="select new fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto(lb.id, " +
+                    " (select count(ltr1.id) from LetterBatch batch1 " +
+                    "       inner join batch1.letterReceivers receiver1" +
+                    "       inner join receiver1.letterReceiverLetter ltr1" +
+                    "       with ltr1.letter != null" +
+                    "   where batch1.id = lb.id), " +
+                    " (select count(ltr2.id) from LetterBatch batch2 " +
+                    "       inner join batch2.letterReceivers receiver2" +
+                    "       inner join receiver2.letterReceiverLetter ltr2" +
+                    "   where batch2.id = lb.id)," +
+                    " lb.batchStatus," +
+                    " (select count(ltr3.id) from LetterBatch batch3 " +
+                    "       inner join batch3.letterReceivers receiver3 " +
+                    "       inner join receiver3.letterReceiverLetter ltr3 " +
+                    "               with ltr3.letter != null" +
+                    "   where batch3.id = lb.id and length(receiver3.emailAddress) > 0 ))" +
+                    "from LetterBatch lb " +
+                    "where lb.id = :batchId ")
+})
 public class LetterBatch extends BaseEntity {
+    public enum Status {
+        created,
+        processing,
+        ready,
+        error
+    };
+
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "template_id")
@@ -67,9 +89,12 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
 
+    @Column(name= "iposti")
+    private Boolean iposti;
+
     @Column(name = "kasittelyn_tila")
     @Enumerated(EnumType.STRING)
-    private Status batchStatus;
+    private Status batchStatus = Status.created;
     
     @Column(name = "kasittely_aloitettu")
     @Temporal(TemporalType.TIMESTAMP)
@@ -93,7 +118,7 @@ public class LetterBatch extends BaseEntity {
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<LetterBatchProcessingError> processingErrors;
+    private List<LetterBatchProcessingError> processingErrors = new ArrayList<LetterBatchProcessingError>();
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -105,7 +130,15 @@ public class LetterBatch extends BaseEntity {
     
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<UsedTemplate> usedTemplates = new HashSet<UsedTemplate>();
-    
+
+    public void setIposti(boolean iposti) {
+        this.iposti = iposti;
+    }
+
+    public boolean isIposti() {
+        return iposti;
+    }
+
     public List<IPosti> getIposti() {
         return iposts;
     }
@@ -245,17 +278,6 @@ public class LetterBatch extends BaseEntity {
         this.emailHandlingFinished = emailHandlingFinished;
     }
 
-    @Override
-	public String toString() {
-		return "LetterBatch [templateId=" + templateId 
-				+ ", templateName=" + templateName 
-				+ ", applicationPeriod=" + applicationPeriod
-				+ ", fetchTarget=" + fetchTarget
-				+ ", timestamp=" + timestamp + ", language=" + language
-				+ ", storingOid=" + storingOid + ", organizationOid="
-				+ organizationOid + "]";
-	}
-
     public Status getBatchStatus() {
         return batchStatus;
     }
@@ -271,10 +293,19 @@ public class LetterBatch extends BaseEntity {
     public void setProcessingErrors(List<LetterBatchProcessingError> processingErrors) {
         this.processingErrors = processingErrors;
     }
-
-    public enum Status {
-        processing,
-        ready,
-        error
+    
+    public void addProcessingErrors(LetterBatchProcessingError processingError) {
+        processingErrors.add(processingError);
     }
+
+    @Override
+	public String toString() {
+		return "LetterBatch [templateId=" + templateId 
+				+ ", templateName=" + templateName 
+				+ ", applicationPeriod=" + applicationPeriod
+				+ ", fetchTarget=" + fetchTarget
+				+ ", timestamp=" + timestamp + ", language=" + language
+				+ ", storingOid=" + storingOid + ", organizationOid="
+				+ organizationOid + "]";
+	}
 }

@@ -101,6 +101,17 @@ user.webservice.url.backend=https\://${host.virkailija}/authentication-service/s
 viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
+# kuinka monta LetterBatch-käsittelyä sallitaan rinnakkain:
+viestintapalvelu.letter.batch.jobs.pool.size=3
+# kuinka monta vastaanottajan prosessointisäiettä yksi LetterBatch-käsittelijä käynnistää:
+viestintapalvelu.letter.batch.job.thread.count=4
+# kuinka monta yhtäaikaista vastaanottajakäsittelijäsäiettä sallitaan:
+viestintapalvelu.letter.batch.receiver.job.pool.size=12
+# kuinka monta muun async-tyyppisen rajapintapyynnön käynnistämää tausta-ajoa sallitaan yhtä aikaa ajoon:
+viestintapalvelu.other.async.resource.jobs.pool.size=5
+# kuinka monta toipumisajoa (sovellus sammutettu kesken kaiken) sallitaan yhtä aikaa:
+viestintapalvelu.recovery.handler.jobs.pool.size=1
 web.url.cas=https\://${host.cas}/cas
+viestintapalvelu.use.dev.basic.authentication=false
 
 viestintapalvelu.swagger.base.bath=/viestintapalvelu

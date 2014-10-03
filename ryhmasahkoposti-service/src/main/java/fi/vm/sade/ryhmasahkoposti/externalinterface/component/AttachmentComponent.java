@@ -27,6 +27,7 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.UrisContainerDto;
 
 /**
  * User: ratamaa
@@ -58,7 +59,7 @@ public class AttachmentComponent {
      */
     public void markDownloaded(List<String> uris) {
         try {
-            attachmentResourceClient.deleteByUris(uris);
+            attachmentResourceClient.deleteByUris(new UrisContainerDto(uris));
         } catch (Exception e) {
             logger.error(e.getMessage());
             throw new ExternalInterfaceException("AttachmentComponent.markDownloaded(uris="+uris+") failed.", e);

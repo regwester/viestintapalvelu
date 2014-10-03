@@ -18,39 +18,20 @@ package fi.vm.sade.viestintapalvelu.attachment;
 
 import java.util.List;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.MediaType;
-
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
+import javax.ws.rs.core.Response;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 
 /**
  * User: ratamaa
  * Date: 24.9.2014
  * Time: 15:06
  */
-@Path(Urls.ATTACHMENT_RESOURCE_PATH)
-@Api(value = "/" + Urls.API_PATH + "/" + Urls.ATTACHMENT_RESOURCE_PATH,
-        description = "Liiterajapinta ryhmäsähköpostipalvelua varten")
 public interface AttachmentResource {
-    public static final String AttachmentByUri = "Palauttaa liitteen URI-tunnisteella";
 
-    @GET
-    @Path("/getByUri")
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-    @ApiOperation(value = AttachmentByUri, notes = AttachmentByUri, response = EmailAttachment.class)
-    public EmailAttachment downloadByUri(@QueryParam("uri") @ApiParam(name="uri",
-            value = "Liitteen URI-tunniste") String uri);
+    EmailAttachment downloadByUri(String uri);
 
-    @DELETE
-    @Path("/urisDownloaded")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
-    @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
-    @ApiOperation(value = AttachmentByUri, notes = AttachmentByUri, response = EmailAttachment.class)
-    public void deleteByUris(List<String> uris);
+    Response deleteByUris(UrisContainerDto urisContainer);
 
 }

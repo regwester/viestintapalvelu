@@ -44,7 +44,7 @@ public class LetterReceiverLetter extends BaseEntity {
     
     @Column(name = "kirje", length = 10 * 1024 * 1024)
 	private byte[] letter;    
-            
+
     @Column(name = "sisaltotyyppi")
     private String contentType = "";
 

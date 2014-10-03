@@ -31,15 +31,19 @@ public class LetterBatchStatusDto {
     private Long letterBatchId;
     private Integer sent;
     private Integer total;
+    private Integer emailsProcessed;
     private List<LetterBatchProcessingError> errors;
     private LetterBatch.Status status;
 
-    public LetterBatchStatusDto(Long letterBatchId, Number sent, Number total, LetterBatch.Status status) {
+    public LetterBatchStatusDto(Long letterBatchId,
+                                Number sent, Number total,
+                                LetterBatch.Status status,
+                                Number emailsProcessed) {
         this.letterBatchId = letterBatchId;
         this.setSent(sent);
         this.setTotal(total);
         this.status = status;
-
+        this.setEmailsProcessed(emailsProcessed);
     }
 
     public Integer getSent() {
@@ -72,5 +76,17 @@ public class LetterBatchStatusDto {
 
     public void setStatus(LetterBatch.Status status) {
         this.status = status;
+    }
+
+    public Integer getEmailsProcessed() {
+        return emailsProcessed;
+    }
+
+    public void setEmailsProcessed(Number emailsProcessed) {
+        this.emailsProcessed = emailsProcessed != null ? emailsProcessed.intValue() : null;
+    }
+
+    public boolean isEmailReviewable() {
+        return this.emailsProcessed != null && this.emailsProcessed > 0;
     }
 }

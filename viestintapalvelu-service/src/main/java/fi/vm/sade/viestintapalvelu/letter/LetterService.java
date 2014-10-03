@@ -109,4 +109,6 @@ public interface LetterService {
     List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId);
 
     void saveBatchErrorForReceiver(Long letterReceiverId, String message);
+    
+    List<Long> findUnfinishedLetterBatches();
 }

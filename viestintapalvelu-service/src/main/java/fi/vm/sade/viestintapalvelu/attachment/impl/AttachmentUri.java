@@ -16,6 +16,9 @@
 
 package fi.vm.sade.viestintapalvelu.attachment.impl;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * User: ratamaa
  * Date: 24.9.2014
@@ -53,6 +56,14 @@ public class AttachmentUri {
 
     public static AttachmentUri getLetterReceiverLetterAttachment(Long attachmentId) {
         return new AttachmentUri(SCHEME_PREFIX + TargetType.LetterReceiverLetterAttachment.getPrefix() + "/" + attachmentId);
+    }
+
+    public static List<String> uriStringsOfList(List<AttachmentUri> attachmentUris) {
+        List<String> uris = new ArrayList<String>();
+        for (AttachmentUri uri : attachmentUris) {
+            uris.add(uri.getUri());
+        }
+        return uris;
     }
 
     private String uri;

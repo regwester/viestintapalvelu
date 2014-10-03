@@ -46,6 +46,9 @@ public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
 
+    @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
+    private boolean iposti = false;
+    
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
     
     public Map<String, Object> getTemplateReplacements() {
@@ -56,6 +59,12 @@ public class LetterBatch implements LetterBatchDetails {
         this.templateReplacements = templateReplacements;
     }
 
+    @Override
+    public boolean isIposti() {
+        return this.iposti;
+    }
+    
+    
     public void setLetters(List<Letter> letters) {
         this.letters = letters;
     }

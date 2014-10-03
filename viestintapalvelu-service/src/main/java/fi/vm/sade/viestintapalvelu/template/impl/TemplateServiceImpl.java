@@ -230,6 +230,7 @@ public class TemplateServiceImpl implements TemplateService {
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
+        result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
         result.setStyles(searchResult.getStyles());
         result.setContents(parseContentDTOs(searchResult.getContents()));

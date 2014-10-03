@@ -65,12 +65,20 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     @ApiModelProperty(value = "Hakukohde id")
     private String fetchTarget;
 
-    @ApiModelProperty(value = "Vapaa teksti tunniste")
+    @ApiModelProperty(value = "Vapaateksti tunniste")
     private String tag;
 
+    @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
+    private boolean iposti = false;
+    
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
 
 
+    @Override
+    public boolean isIposti() {
+        return iposti;
+    }
+    
     @Override
     public List<AsyncLetterBatchLetterDto> getLetters() {
         return letters;
@@ -80,6 +88,10 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
         this.letters = letters;
     }
 
+    public void setIposti(boolean iposti) {
+        this.iposti = iposti;
+    }
+    
     @Override
     public Template getTemplate() {
         return template;
