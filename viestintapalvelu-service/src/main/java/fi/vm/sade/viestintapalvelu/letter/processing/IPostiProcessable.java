@@ -17,6 +17,7 @@
 package fi.vm.sade.viestintapalvelu.letter.processing;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -25,21 +26,32 @@ import java.util.List;
  * Time: 13:48
  */
 public class IPostiProcessable implements Processable {
-    private Long iPostiId;
+    private final long iPostiId;
+    private final int orderNumber;
+    private final List<Long> letterRreceiverLetterIds = new ArrayList<Long>();
 
-    public IPostiProcessable(Long iPostiId) {
+    public IPostiProcessable(long iPostiId, int orderNumber) {
         this.iPostiId = iPostiId;
+        this.orderNumber = orderNumber;
     }
 
-    public static List<IPostiProcessable> forIds(List<Long> ids) {
-        List<IPostiProcessable> processables = new ArrayList<IPostiProcessable>();
-        for (Long id : ids) {
-            processables.add(new IPostiProcessable(id));
-        }
-        return processables;
+    public void addLetterReceiverLetterIds(Collection<Long> letterReceiverLetterIds) {
+        this.letterRreceiverLetterIds.addAll(letterReceiverLetterIds);
     }
 
-    public Long getiPostiId() {
+    public void addLetterReceiverLetterId(Long letterReceiverLetterId) {
+        this.letterRreceiverLetterIds.add(letterReceiverLetterId);
+    }
+
+    public List<Long> getLetterRreceiverLetterIds() {
+        return letterRreceiverLetterIds;
+    }
+
+    public long getiPostiId() {
         return iPostiId;
+    }
+
+    public int getOrderNumber() {
+        return orderNumber;
     }
 }

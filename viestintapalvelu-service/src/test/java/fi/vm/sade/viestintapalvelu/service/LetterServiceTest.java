@@ -60,12 +60,14 @@ public class LetterServiceTest {
     private LetterServiceImpl letterService;
     @Mock
     private LetterBuilder letterBuilder;
+    @Mock
+    private IPostiDAO iPostiDAO;
 
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
             mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
-            mockedLetterReceiversDao, new ObjectMapperProvider());
+            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO);
         this.letterService.setLetterBuilder(letterBuilder);
     }
     

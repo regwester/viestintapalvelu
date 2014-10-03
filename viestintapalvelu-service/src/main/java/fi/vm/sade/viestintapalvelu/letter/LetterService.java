@@ -7,6 +7,8 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
+import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
@@ -134,4 +136,8 @@ public interface LetterService {
     void saveBatchErrorForReceiver(Long letterReceiverId, String message);
 
     List<Long> findUnfinishedLetterBatches();
+
+    LetterBatchSplitedIpostDto splitBatchForIpostProcessing(long letterBatchId);
+
+    void processIposti(IPostiProcessable processable);
 }

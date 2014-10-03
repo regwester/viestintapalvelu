@@ -3,17 +3,7 @@ package fi.vm.sade.viestintapalvelu.model;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -67,7 +57,11 @@ public class LetterReceivers extends BaseEntity {
 
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverLetter letterReceiverLetter;
-  
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="iposti")
+    private IPosti containedInIposti;
+
     public LetterBatch getLetterBatch() {
 		return letterBatch;
 	}
@@ -131,6 +125,14 @@ public class LetterReceivers extends BaseEntity {
 
     public void setEmailAddress(String emailAddress) {
         this.emailAddress = emailAddress;
+    }
+
+    public IPosti getContainedInIposti() {
+        return containedInIposti;
+    }
+
+    public void setContainedInIposti(IPosti containedInIposti) {
+        this.containedInIposti = containedInIposti;
     }
 
     @Override

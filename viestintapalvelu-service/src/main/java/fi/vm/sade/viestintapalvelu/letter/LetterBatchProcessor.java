@@ -1,6 +1,8 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.*;
+import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -20,6 +22,7 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.letter.processing.*;
 
@@ -105,14 +108,14 @@ public class LetterBatchProcessor {
 
         @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) {
-            Optional<LetterBatchProcess> nextToDo = letterService
-                    .updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
+            Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
+                    letterBatchId, LetterBatchProcess.LETTER);
             if (nextToDo.isPresent()) {
                 switch (nextToDo.get()) {
                     case IPOSTI:
+                        LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
                         JobDescription<IPostiProcessable> job = new JobDescription<IPostiProcessable>(
-                                new IPostJob(this.letterBatchId),
-                                IPostiProcessable.forIds(Arrays.asList(new Long[0])), // TODO: <<
+                                new IPostJob(this.letterBatchId), splitted.getProcessables(),
                                 iPostZipProcessingJobThreadCount);
                         return Optional.of(job);
                     default: throw new IllegalStateException(this+" can not start next job " + nextToDo.get());
@@ -167,8 +170,8 @@ public class LetterBatchProcessor {
         }
 
         @Override
-        public void process(IPostiProcessable letterReceiverProcessable) throws Exception {
-            // TODO
+        public void process(IPostiProcessable processable) throws Exception {
+            letterService.processIposti(processable);
         }
 
         @Override
@@ -178,8 +181,8 @@ public class LetterBatchProcessor {
 
         @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) {
-            Optional<LetterBatchProcess> nextToDo = letterService
-                    .updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.IPOSTI);
+            Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
+                    letterBatchId, LetterBatchProcess.IPOSTI);
             if (nextToDo.isPresent()) {
                 throw new IllegalStateException(this+" don't know how to start next job " + nextToDo.get());
             }
@@ -203,7 +206,7 @@ public class LetterBatchProcessor {
 
         public BatchJob(JobDescription<T> jobDescription) {
             this.jobDescription = jobDescription;
-            this.threads = jobDescription.getThreads();
+            this.threads = Math.max(1, Math.min(jobDescription.getThreads(), jobDescription.getProcessables().size()));
             this.unprocessed = new ConcurrentLinkedBlockingQueue<T>(jobDescription.getProcessables().size());
             this.unprocessed.addAll(jobDescription.getProcessables());
         }
