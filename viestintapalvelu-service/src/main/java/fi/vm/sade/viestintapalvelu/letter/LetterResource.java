@@ -417,11 +417,17 @@ public class LetterResource extends AsynchronousResource {
             LOG.error("Validation error", e);
             return Response.status(Status.BAD_REQUEST).build();
         }
-        letterBuilder.initTemplateId(input);
-        fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
-        Long id = letter.getId();
-        letterPDFProcessor.processLetterBatch(id);
-        return Response.status(Status.OK).entity(id).build();
+        
+        try {
+            letterBuilder.initTemplateId(input);
+            fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
+            Long id = letter.getId();
+            letterPDFProcessor.processLetterBatch(id);
+            return Response.status(Status.OK).entity(id).build();
+        } catch (Exception e) {
+            LOG.error("Letter async failed", e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GET
