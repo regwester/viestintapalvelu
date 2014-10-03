@@ -65,6 +65,7 @@ public class RecipientService {
         OrganisaatioRDTO organisaatio = organizationComponent.getOrganization(recipient.getRecipientOid());
         String nameOfOrganisation = organizationComponent.getNameOfOrganisation(organisaatio);
         recipient.setSearchName(nameOfOrganisation);
+        recipient.setDetailsRetrieved(true);
         updateRecipient(recipient);
     }
 
@@ -73,6 +74,7 @@ public class RecipientService {
         Henkilo henkilo = personComponent.getPerson(recipient.getRecipientOid());
         recipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
         recipient.setSocialSecurityID(henkilo.getHetu());
+        recipient.setDetailsRetrieved(true);
         updateRecipient(recipient);
     }
 
