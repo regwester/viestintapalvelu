@@ -59,6 +59,7 @@ public class LetterBatchProcessor {
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
+        @SuppressWarnings({"unchecked"})
         BatchJob batchJob = new BatchJob(new JobDescription<LetterReceiverProcessable>(job,
             LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
             letterBatchJobThreadCount));
