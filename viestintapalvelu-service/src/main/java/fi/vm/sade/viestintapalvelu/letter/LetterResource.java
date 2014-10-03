@@ -433,7 +433,7 @@ public class LetterResource extends AsynchronousResource {
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
         if(status == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.status(Status.BAD_REQUEST).build();
         }
 
         return Response.status(Status.OK).entity(status).build();
