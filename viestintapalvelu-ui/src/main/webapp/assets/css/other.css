@@ -329,6 +329,11 @@ ul.normal-margin {
     word-wrap: break-word;
 }
 
+.limited-content {
+    height: 400px;
+    overflow: hidden;
+}
+
 .reported-message-progress-bar {
     position: relative;
 }
