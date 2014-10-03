@@ -74,16 +74,14 @@ public class LetterBuilder {
         this.documentBuilder = documentBuilder;
     }
 
-    public byte[] printZIP(List<LetterReceiverLetter> receivers) {
+    public byte[] printZIP(List<LetterReceiverLetter> receivers, String templateName, String zipName) {
         MergedPdfDocument pdf = getMergedPDFDocument(receivers);
-        
         try {
-            return getIpostiZip(pdf, "name ", "zipName") ;
+            return getIpostiZip(pdf, templateName, zipName);
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            LOG.error("Iposti generation failed ", e);
         }
-        
+
         return null;
     }
     
@@ -98,17 +96,8 @@ public class LetterBuilder {
             MergedPdfDocument pdf = buildPDF(subBatch);
             batch.setTemplateId(subBatch.getTemplateId()); // buildPDF fetches
                                                            // template id
-
-            //Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
             String templateName = batch.getTemplateName();
-            //context.put("filename", templateName + ".pdf");
-            //byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
-
-            //Map<String, byte[]> documents = new HashMap<String, byte[]>();
-            //documents.put(templateName + ".pdf", pdf.toByteArray());
-            //documents.put(templateName + ".xml", ipostXml);
             String zipName = templateName + "_" + batch.getLanguageCode() + "_" + (i + 1) + ".zip";
-            //byte[] zip = documentBuilder.zip(documents);
             byte[] zip = getIpostiZip(pdf, templateName, zipName);
             subZips.put(zipName, zip);
             batch.addIPostiData(zipName, zip);
