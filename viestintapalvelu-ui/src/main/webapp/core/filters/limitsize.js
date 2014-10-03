@@ -5,7 +5,7 @@
 * e.g. invoking the filter with a filename "example_long_file_name_with_extension.txt" and a limit of 15
 * would return example...sion.txt
 */
-angular.module('viestintapalvelu')
+angular.module('core.filters')
   .filter('limitSizeWithMiddleEllipsis', function() {
     return function(filename, limit) {
       //regex for getting the file extension

@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('viestintapalvelu')
+angular.module('core.filters')
 .filter('i18n', ['Global',
   function(Global) {
 

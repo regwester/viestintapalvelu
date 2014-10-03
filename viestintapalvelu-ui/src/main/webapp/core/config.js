@@ -1,7 +1,7 @@
 'use strict';
 
-angular.module('viestintapalvelu')
-.config(['paginationConfig', function(paginationConfig){
+angular.module('core')
+.config(function(){
 
   //Override bootstrap pagination
   $paginationConfig.boundaryLinks = false;
@@ -13,4 +13,4 @@ angular.module('viestintapalvelu')
   $paginationConfig.previousText = 'Edellinen';
   $paginationConfig.rotate = true;
 
-}]);
+});

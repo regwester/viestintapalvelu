@@ -69,15 +69,16 @@
     <!-- Initialize modules -->
     <script type="text/javascript" src="email/init.js"></script>
     <script type="text/javascript" src="report/init.js"></script>
-    <script type="text/javascript" src="system/init.js"></script>
+    <script type="text/javascript" src="core/init.js"></script>
+    <script type="text/javascript" src="init.js"></script>
 
     <!-- Filters-->
     <script type="text/javascript" src="report/filters/listpaging.js"></script>
-    <script type="text/javascript" src="system/filters/localization.js"></script>
-    <script type="text/javascript" src="system/filters/html2text.js"></script>
-    <script type="text/javascript" src="system/filters/bytes2size.js"></script>
-    <script type="text/javascript" src="system/filters/limitsize.js"></script>
-    <script type="text/javascript" src="system/filters/trustAsHtml.js"></script>
+    <script type="text/javascript" src="core/filters/localization.js"></script>
+    <script type="text/javascript" src="core/filters/html2text.js"></script>
+    <script type="text/javascript" src="core/filters/bytes2size.js"></script>
+    <script type="text/javascript" src="core/filters/limitsize.js"></script>
+    <script type="text/javascript" src="core/filters/trustAsHtml.js"></script>
 
     <!-- Services -->
     <script type="text/javascript" src="email/services/email.js"></script>
@@ -88,7 +89,7 @@
     <script type="text/javascript" src="report/services/loading.js"></script>
     <script type="text/javascript" src="report/services/reportedMessage.js"></script>
     <script type="text/javascript" src="report/services/sharedVariables.js"></script>
-    <script type="text/javascript" src="system/services/global.js"></script>
+    <script type="text/javascript" src="core/services/global.js"></script>
     
     <!-- Directives -->
     <script type="text/javascript" src="email/directives/upload.js"></script>
@@ -112,6 +113,6 @@
     <script type="text/javascript" src="report/controllers/reportedLetterView.js"></script>
 
     <!-- Routes -->
-    <script type="text/javascript" src="system/routes.js"></script>
+    <script type="text/javascript" src="core/routes.js"></script>
 
 </body>

@@ -1,5 +1,4 @@
-angular.module('report').directive('limitedParagraph', function() {
-	
+angular.module('report').directive('limitedParagraph',[function() {
   return {
     restrict: 'E',
     replace: true,
@@ -19,14 +18,6 @@ angular.module('report').directive('limitedParagraph', function() {
       scope.showAll = false; // hide extra text initially
       scope.isLimited = scope.content.length > scope.limit;
 
-      scope.getLimit= function() {
-        if (scope.isLimited && !scope.showAll) {
-          return scope.limit;
-        } else {
-          return scope.content.length;
-        }
-      };
-
       scope.toggleShowAll = function() {
         scope.showAll ? elem.find('div').css('height', '400px') : elem.find('div').css('height', 'auto');
         scope.showAll = !scope.showAll;
@@ -38,5 +29,4 @@ angular.module('report').directive('limitedParagraph', function() {
 
     }
   };
-
-});
+}]);

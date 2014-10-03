@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('viestintapalvelu')
+angular.module('core.filters')
 .filter('bytesToSize', function() {
   return function(bytes) {
     var s = ['Bytes', 'KB', 'MB', 'GB', 'TB']; //localize these?

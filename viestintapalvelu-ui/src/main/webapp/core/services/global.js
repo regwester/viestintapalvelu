@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('viestintapalvelu').factory('Global', function() {
+angular.module('core.services').factory('Global', function() {
   return {
     getUserLanguage: function() {
       var i, lang, max;
