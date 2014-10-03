@@ -104,17 +104,19 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
         Set<String> options = new TreeSet<String>();
         String templateLanguage = Optional.fromNullable(template.getLanguage()).or(DEFAULT_LANGUAGE);
-        options.add(templateLanguage);
         // Add all recipient's wanted languages to has set:
         for (LetterReceivers receiver : letterBatch.getLetterReceivers()) {
             if (receiver.getWantedLanguage() != null) {
-                options.add(receiver.getWantedLanguage());
+                options.add(receiver.getWantedLanguage().toUpperCase());
+            } else {
+                options.add(templateLanguage.toUpperCase());
             }
         }
         // Ensure template exists for each language:
         for (String language : new HashSet<String>(options)) {
             if (templateService.getTemplateByName( new TemplateCriteriaImpl()
-                        .withName(template.getName()).withLanguage(language)
+                        .withName(template.getName())
+                        .withLanguage(language.toUpperCase())
                         .withApplicationPeriod(letterBatch.getApplicationPeriod()), false) == null) {
                 options.remove(language);
             }
