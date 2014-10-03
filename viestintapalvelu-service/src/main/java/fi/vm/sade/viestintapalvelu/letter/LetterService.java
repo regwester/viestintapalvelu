@@ -17,9 +17,6 @@ import java.util.Set;
  *
  */
 public interface LetterService {
-
-    byte[] getMergedLetterPDF(Long letterBatchId);
-
     public enum LetterBatchProcess {
         EMAIL, LETTER
     }
