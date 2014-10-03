@@ -73,7 +73,7 @@ public class LetterResourceAsyncPerformanceIT {
     protected static final Logger logger = LoggerFactory.getLogger(LetterResourceAsyncPerformanceIT.class);
 
     private static final long MILLIS_IN_SECOND = 1000;
-    private static final int RECEIVERS_COUNT = 200;
+    private static final int RECEIVERS_COUNT = 2000;
     private static final int CONCURRENT_BATCHES = 3;
     private static final long MAX_DURATION = 60 * MILLIS_IN_SECOND;
 
