@@ -34,7 +34,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
-public class LetterBatchPDFProcessorTest {
+public class LetterBatchProcessorTest {
 
     private static final long LETTERBATCH_ID = 1l;
 
@@ -53,11 +53,11 @@ public class LetterBatchPDFProcessorTest {
     @Mock
     private LetterBuilder builder;
 
-    private LetterBatchPDFProcessor processor;
+    private LetterBatchProcessor processor;
 
     @Before
     public void init() {
-        processor = new LetterBatchPDFProcessor(Executors.newFixedThreadPool(4),
+        processor = new LetterBatchProcessor(Executors.newFixedThreadPool(4),
                 Executors.newFixedThreadPool(10), service);
         doCallRealMethod().when(service).setLetterBatchDAO(any(LetterBatchDAO.class));
         doCallRealMethod().when(service).setLetterReceiverLetterDAO(any(LetterReceiverLetterDAO.class));
@@ -76,8 +76,9 @@ public class LetterBatchPDFProcessorTest {
     }
 
     @Test
-    public void updatesProcessStartedOnLetterBatch() {
+    public void updatesProcessStartedOnLetterBatch() throws InterruptedException {
         processor.processLetterBatch(LETTERBATCH_ID);
+        Thread.sleep(100);
         verify(service, times(1)).updateBatchProcessingStarted(1l, LetterBatchProcess.LETTER);
     }
 
@@ -119,7 +120,7 @@ public class LetterBatchPDFProcessorTest {
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
         assertFalse(state.get());
         assertTrue(processCalls.getTotalCallCount() > okCount); // okCount + 1 at least + possible other threads
-        assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + new LetterBatchPDFProcessor().getLetterBatchJobThreadCount());
+        assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + new LetterBatchProcessor().getLetterBatchJobThreadCount());
         assertEquals(okCount, updateCalls.getTotalCallCount());
     }
     

@@ -22,7 +22,7 @@ public interface LetterService {
     public enum LetterBatchProcess {
         EMAIL,
         LETTER,
-        IPOST
+        IPOSTI
     }
 
     /**

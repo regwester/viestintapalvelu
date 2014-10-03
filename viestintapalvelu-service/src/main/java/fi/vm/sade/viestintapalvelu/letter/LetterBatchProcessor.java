@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.Serializable;
 import java.util.*;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
@@ -22,10 +21,11 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.letter.processing.*;
 
 @Component
 @Singleton
-public class LetterBatchPDFProcessor {
+public class LetterBatchProcessor {
     private Logger logger = LoggerFactory.getLogger(getClass());
 
     @Resource(name="batchJobExecutorService")
@@ -34,31 +34,31 @@ public class LetterBatchPDFProcessor {
     private ExecutorService letterReceiverExecutorService;
     @Value("#{poolSizes['threadsPerBatchJob'] != null ? poolSizes['threadsPerBatchJob'] : 4}")
     private int letterBatchJobThreadCount=4;
+    @Value("#{poolSizes['threadsPerBatchJob'] != null ? poolSizes['threadsPerBatchJob'] : 4}")
+    private int iPostZipProcessingJobThreadCount=4;
 
     private volatile Set<Job<?>> jobsBeingProcessed = new HashSet<Job<?>>();
 
     @Autowired
     private LetterService letterService;
 
-    public LetterBatchPDFProcessor() {
+    public LetterBatchProcessor() {
     }
 
-    public LetterBatchPDFProcessor(ExecutorService batchJobExecutorService,
-                                   ExecutorService letterReceiverExecutorService,
-                                   LetterServiceImpl letterService) {
+    public LetterBatchProcessor(ExecutorService batchJobExecutorService,
+                                ExecutorService letterReceiverExecutorService,
+                                LetterServiceImpl letterService) {
         this.batchJobExecutorService = batchJobExecutorService;
         this.letterReceiverExecutorService = letterReceiverExecutorService;
         this.letterService = letterService;
     }
 
     public Future<Boolean> processLetterBatch(long letterBatchId) {
-        letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
-
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
         BatchJob batchJob = new BatchJob(new JobDescription<LetterReceiverProcessable>(job,
-            receiverProcessablesForIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId))),
-            letterBatchJobThreadCount);
+            LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
+            letterBatchJobThreadCount));
         return batchJobExecutorService.submit(batchJob);
     }
 
@@ -72,84 +72,6 @@ public class LetterBatchPDFProcessor {
             throw new ConcurrentModificationException("Trying to process same job "+job+" more than once");
         }
         logger.info("Reserved job={}", job);
-    }
-
-    /**
-     * A processable for a given job. Implementation specific.
-     */
-    public static interface Processable extends Serializable {
-    }
-
-    /**
-     * MUST implement {@link Object#equals(Object)} and {@link Object#hashCode()}
-     *
-     * @param <T> the type of Processable this Job is cabable of handling
-     */
-    public static interface Job<T extends Processable> {
-        /**
-         * @param processable to process
-         * @throws Exception
-         */
-        void process(T processable) throws Exception;
-
-        /**
-         * @param e exception occured
-         * @param processable the processable with which the exception occured
-         */
-        void handleFailure(Exception e, T processable);
-
-        /**
-         * @return the possible next job to do
-         */
-        Optional<JobDescription<?>> jobFinished();
-    }
-
-    /**
-     * Describes a job and it's processables
-     *
-     * @param <T> the type of processable for the job
-     */
-    public static class JobDescription<T extends Processable> {
-        private final Job<T> job;
-        private final List<T> processables;
-
-        public JobDescription(Job<T> job, List<T> processables) {
-            this.job = job;
-            this.processables = processables;
-        }
-
-        public Job<T> getJob() {
-            return job;
-        }
-
-        public List<T> getProcessables() {
-            return processables;
-        }
-    }
-
-    public static List<LetterReceiverProcessable> receiverProcessablesForIds(List<Long> ids) {
-        List<LetterReceiverProcessable> processables = new ArrayList<LetterReceiverProcessable>();
-        for (Long id : ids) {
-            processables.add(new LetterReceiverProcessable(id));
-        }
-        return processables;
-    }
-
-    public static class LetterReceiverProcessable implements Processable {
-        private Long id;
-
-        public LetterReceiverProcessable(Long id) {
-            this.id = id;
-        }
-
-        public Long getId() {
-            return id;
-        }
-
-        @Override
-        public String toString() {
-            return "LetterBatchReceiver="+id;
-        }
     }
 
     /**
@@ -167,6 +89,11 @@ public class LetterBatchPDFProcessor {
         }
 
         @Override
+        public void start(JobDescription<LetterReceiverProcessable> description) {
+            letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
+        }
+
+        @Override
         public void process(LetterReceiverProcessable letterReceiverProcessable) throws Exception {
             letterService.processLetterReceiver(letterReceiverProcessable.getId());
         }
@@ -177,12 +104,19 @@ public class LetterBatchPDFProcessor {
         }
 
         @Override
-        public Optional<JobDescription<?>> jobFinished() {
+        public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) {
             Optional<LetterBatchProcess> nextToDo = letterService
                     .updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
             if (nextToDo.isPresent()) {
-                // TODO
-//                return new JobDescription<>()
+                switch (nextToDo.get()) {
+                    case IPOSTI:
+                        JobDescription<IPostiProcessable> job = new JobDescription<IPostiProcessable>(
+                                new IPostJob(this.letterBatchId),
+                                IPostiProcessable.forIds(Arrays.asList(new Long[0])), // TODO: <<
+                                iPostZipProcessingJobThreadCount);
+                        return Optional.of(job);
+                    default: throw new IllegalStateException(this+" can not start next job " + nextToDo.get());
+                }
             }
             return Optional.absent();
         }
@@ -214,6 +148,51 @@ public class LetterBatchPDFProcessor {
     }
 
     /**
+     * IPOSTI type job
+     */
+    public class IPostJob implements Job<IPostiProcessable> {
+        private long letterBatchId;
+
+        public IPostJob(long letterBatchId) {
+            this.letterBatchId = letterBatchId;
+        }
+
+        public long getLetterBatchId() {
+            return letterBatchId;
+        }
+
+        @Override
+        public void start(JobDescription<IPostiProcessable> description) {
+            letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.IPOSTI);
+        }
+
+        @Override
+        public void process(IPostiProcessable letterReceiverProcessable) throws Exception {
+            // TODO
+        }
+
+        @Override
+        public void handleFailure(Exception e, IPostiProcessable processable) {
+            // TODO
+        }
+
+        @Override
+        public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) {
+            Optional<LetterBatchProcess> nextToDo = letterService
+                    .updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.IPOSTI);
+            if (nextToDo.isPresent()) {
+                throw new IllegalStateException(this+" don't know how to start next job " + nextToDo.get());
+            }
+            return Optional.absent();
+        }
+
+        @Override
+        public String toString() {
+            return "LetterBatch="+this.letterBatchId+" IPOSTI processsing";
+        }
+    }
+
+    /**
      * Queue per job
      */
     protected class BatchJob<T extends Processable> implements Callable<Boolean> {
@@ -222,15 +201,17 @@ public class LetterBatchPDFProcessor {
         private volatile ConcurrentLinkedBlockingQueue<T> unprocessed;
         private volatile AtomicBoolean okState = new AtomicBoolean(true);
 
-        public BatchJob(JobDescription<T> jobDescription, int threads) {
+        public BatchJob(JobDescription<T> jobDescription) {
             this.jobDescription = jobDescription;
+            this.threads = jobDescription.getThreads();
             this.unprocessed = new ConcurrentLinkedBlockingQueue<T>(jobDescription.getProcessables().size());
             this.unprocessed.addAll(jobDescription.getProcessables());
-            this.threads = threads;
         }
 
         @Override
         public Boolean call() throws Exception {
+            this.jobDescription.getJob().start(this.jobDescription);
+
             final CountDownLatch latch = new CountDownLatch(threads);
             for (int i = 0; i < threads; i++) {
                 letterReceiverExecutorService.execute(new Runnable() {
@@ -261,12 +242,12 @@ public class LetterBatchPDFProcessor {
 
             if (okState.get()) {
                 logger.info("Job ended successfully: {}", jobDescription.getJob());
-                Optional<JobDescription<?>> nextJob = jobDescription.getJob().jobFinished();
+                Optional<? extends JobDescription<?>> nextJob = jobDescription.getJob().jobFinished(this.jobDescription);
                 if (nextJob.isPresent()) {
                     JobDescription<?> job = nextJob.get();
                     logger.info("Next processing: {}", job);
                     @SuppressWarnings({"unchecked","rawtypes"})
-                    BatchJob<?> batchJob = new BatchJob(job, this.threads);
+                    BatchJob<?> batchJob = new BatchJob(job);
                     batchJobExecutorService.submit(batchJob);
                 }
             } else {

@@ -72,7 +72,7 @@ public class LetterResource extends AsynchronousResource {
     private UserRightsValidator userRightsValidator;
 
     @Autowired
-    private LetterBatchPDFProcessor letterPDFProcessor;
+    private LetterBatchProcessor letterPDFProcessor;
 
     @Autowired
     private LetterEmailService letterEmailService;

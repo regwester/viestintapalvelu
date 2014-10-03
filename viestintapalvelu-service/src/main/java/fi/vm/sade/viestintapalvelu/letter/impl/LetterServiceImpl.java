@@ -486,7 +486,7 @@ public class LetterServiceImpl implements LetterService {
             batch.setHandlingStarted(new Date());
             batch.setBatchStatus(LetterBatch.Status.processing);
             break;
-        case IPOST:
+        case IPOSTI:
             batch.setIpostHandlingFinished(new Date());
             batch.setBatchStatus(LetterBatch.Status.processing_ipost);
             break;
@@ -569,12 +569,12 @@ public class LetterServiceImpl implements LetterService {
             batch.setHandlingFinished(new Date());
             if (batch.isIposti()) {
                 batch.setBatchStatus(LetterBatch.Status.waiting_for_ipost_processing);
-                nextProcess = LetterBatchProcess.IPOST;
+                nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 batch.setBatchStatus(LetterBatch.Status.ready);
             }
             break;
-        case IPOST:
+        case IPOSTI:
             batch.setIpostHandlingFinished(new Date());
             batch.setBatchStatus(LetterBatch.Status.ready);
             break;

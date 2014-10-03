@@ -13,14 +13,14 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
-import fi.vm.sade.viestintapalvelu.letter.LetterBatchPDFProcessor;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchProcessor;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LetterPDFRecovererTest {
 
     @Mock
-    private LetterBatchPDFProcessor processor;
+    private LetterBatchProcessor processor;
     
     @Mock
     private LetterService service;

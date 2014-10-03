@@ -37,7 +37,7 @@ public class LetterResourceTest {
     private LetterBuilder builder;
     
     @Mock
-    private LetterBatchPDFProcessor processor;
+    private LetterBatchProcessor processor;
     
     @Before
     public void init() throws Exception {
