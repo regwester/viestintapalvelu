@@ -100,7 +100,7 @@ public class TemplateResource extends AsynchronousResource {
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         int order = 1;
         for (String file : fileNames) {
-            String templateName = Utils.resolveTemplateName("/" + file + "_{LANG}{TYPE}.html", language, type);
+            String templateName = Utils.resolveTemplateName("/templates/" + file + "_{LANG}{TYPE}.html", language, type);
             BufferedReader buff = new BufferedReader(
                 new InputStreamReader(getClass().getResourceAsStream(templateName)));
             StringBuilder sb = new StringBuilder();
@@ -124,8 +124,8 @@ public class TemplateResource extends AsynchronousResource {
         rList.add(replacement);
         result.setReplacements(rList);
 
-        return new Template();
-        // return result;
+        //return new Template();
+        return result;
     }
 
     @Deprecated
@@ -483,7 +483,7 @@ public class TemplateResource extends AsynchronousResource {
 
     private String getStyle(String styleFile) throws IOException {
         BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(
-            "/" + styleFile + ".css")));
+            "/template_styles/" + styleFile + ".css")));
         StringBuilder sb = new StringBuilder();
         String line = buf.readLine();
         while (line != null) {
