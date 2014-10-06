@@ -189,6 +189,6 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     }
 
     public void setIPostiData(Map<String, byte[]> IPostiData) {
-        this.iPostiData = iPostiData;
+        this.iPostiData = IPostiData;
     }
 }
