@@ -1,6 +1,10 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.List;
+import java.util.Set;
+
 import com.google.common.base.Optional;
+
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
@@ -8,9 +12,6 @@ import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
-
-import java.util.List;
-import java.util.Set;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -110,8 +111,6 @@ public interface LetterService {
 
     void processLetterReceiver(long receiverId) throws Exception;
 
-    void processIpostiBatchForLetterReceivers(List<LetterReceivers> batchReceivers, int batchIndex) throws Exception;
-
     /**
      * @param id of the batch job to mark finished
      * @param process to mark finished
@@ -120,8 +119,6 @@ public interface LetterService {
     Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process);
 
     LetterBatch fetchById(long id);
-
-    List<LetterReceiverLetter> getReceiverLetters(Set<LetterReceivers> letterReceivers);
 
     LetterBatchStatusDto getBatchStatus(long batchId);
 

@@ -32,23 +32,19 @@ public class IPostiProcessable implements Processable {
     
     private final long letterBatchId;
     private final int orderNumber;
-    private final List<LetterReceivers> letterReceivers = new ArrayList<LetterReceivers>();
+    private final List<Long> letterReceiverIds = new ArrayList<Long>();
 
     public IPostiProcessable(long letterBatchId, int orderNumber) {
         this.letterBatchId = letterBatchId;
         this.orderNumber = orderNumber;
     }
 
-    public void addLetterReceiverIds(Collection<LetterReceivers> letterReceivers) {
-        this.letterReceivers.addAll(letterReceivers);
+    public void addLetterReceiverIds(Collection<Long> letterReceivers) {
+        this.letterReceiverIds.addAll(letterReceivers);
     }
 
-    public void addLetterReceiver(LetterReceivers letterReceiverLetterId) {
-        this.letterReceivers.add(letterReceiverLetterId);
-    }
-
-    public List<LetterReceivers> getLetterReceiverIds() {
-        return letterReceivers;
+    public List<Long> getLetterReceiverIds() {
+        return letterReceiverIds;
     }
 
     public long getLetterBatchId() {
@@ -57,5 +53,10 @@ public class IPostiProcessable implements Processable {
 
     public int getOrderNumber() {
         return orderNumber;
+    }
+
+    @Override
+    public String toString() {
+        return "IPosti "+orderNumber + " for letterBatch="+letterBatchId;
     }
 }

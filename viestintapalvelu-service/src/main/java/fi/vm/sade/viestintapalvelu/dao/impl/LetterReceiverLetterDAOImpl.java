@@ -18,34 +18,14 @@ public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiv
             implements LetterReceiverLetterDAO {
 
     @Override
-    public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverID(List<Long> letterReceiverIDs) {
+    public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverIds(List<Long> letterReceiverIDs) {
         QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
-        
+
         BooleanExpression whereExpression = letterReceiverLetter.letterReceivers.id.in(letterReceiverIDs);
-        JPAQuery findLetterReceiverLetter = from(letterReceiverLetter).where(whereExpression);
+        JPAQuery findLetterReceiverLetter = from(letterReceiverLetter)
+                .where(whereExpression);
         
         return findLetterReceiverLetter.list(letterReceiverLetter);
-    }
-
-    @Override
-    public List<Long> findLetterReceiverLetterIdsByLetterReceiverIds(List<Long> letterReceiverIds) {
-        return getEntityManager().createQuery(
-                "select lrl.id from LetterReceivers lr" +
-                "       inner join lr.letterReceiverLetter lrl "+
-                "       inner join fetch lrl.letterReceivers lr" +
-                "       inner join fetch lr.letterBatch batch " +
-                "where lr.id in (:ids)", Long.class)
-            .setParameter("ids", letterReceiverIds).getResultList();
-    }
-
-    @Override
-    public List<LetterReceiverLetter> findByIds(List<Long> letterRreceiverLetterIds) {
-        return getEntityManager().createQuery(
-                "select lrl from LetterReceiverLetter lrl" +
-                        "       inner join fetch lrl.letterReceivers lr" +
-                        "       inner join fetch lr.letterBatch batch " +
-                        "where lrl.id in (:ids)", LetterReceiverLetter.class)
-                .setParameter("ids", letterRreceiverLetterIds).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

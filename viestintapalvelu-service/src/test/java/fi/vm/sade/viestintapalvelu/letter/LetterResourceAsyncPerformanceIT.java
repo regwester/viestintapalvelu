@@ -106,7 +106,7 @@ public class LetterResourceAsyncPerformanceIT {
         final long templateId = transactionalActions.createTemplate();
         long id = asyncLetter(createLetterBatch(templateId, letterCount));
         long start = System.currentTimeMillis();
-        while (isProcessing(id, false)) {
+        while (isProcessing(id, true)) {
             long currentDuration = System.currentTimeMillis() - start;
             if (currentDuration > MAX_DURATION) {
                 fail("Test took " + roundSeconds(currentDuration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
@@ -237,10 +237,6 @@ public class LetterResourceAsyncPerformanceIT {
         private long batchId;
         private boolean waitForDone=false;
 
-        public ProcessMonitor(long batchId) {
-            this.batchId = batchId;
-        }
-
         public ProcessMonitor(long batchId, boolean waitForDone) {
             this.batchId = batchId;
             this.waitForDone = waitForDone;
@@ -259,8 +255,8 @@ public class LetterResourceAsyncPerformanceIT {
     protected boolean isProcessing(long id, boolean waitForDone) {
         Response response = letterResource.letterBatchStatus(id);
         LetterBatchStatusDto entity = (LetterBatchStatusDto) response.getEntity();
-        logger.info("  > Batch "+id+" status: {} / {}",
-                entity.getSent(), entity.getTotal());
+        logger.info("  > Batch "+id+" status: {} / {}, {}",
+                entity.getSent(), entity.getTotal(), entity.getStatus());
         if (waitForDone) {
             return entity.getStatus() != LetterBatch.Status.ready;
         }

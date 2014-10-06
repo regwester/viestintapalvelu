@@ -45,4 +45,9 @@ public class JobDescription<T extends Processable> {
     public int getThreads() {
         return threads;
     }
+
+    @Override
+    public String toString() {
+        return "JOB: " + this.job;
+    }
 }

@@ -59,10 +59,10 @@ public class LetterBatchProcessor {
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
-        @SuppressWarnings({"unchecked"})
-        BatchJob batchJob = new BatchJob(new JobDescription<LetterReceiverProcessable>(job,
-            LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
-            letterBatchJobThreadCount));
+        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<LetterReceiverProcessable>(
+                new JobDescription<LetterReceiverProcessable>(job,
+                    LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
+                    letterBatchJobThreadCount));
         return batchJobExecutorService.submit(batchJob);
     }
 
@@ -118,6 +118,7 @@ public class LetterBatchProcessor {
                         JobDescription<IPostiProcessable> job = new JobDescription<IPostiProcessable>(
                                 new IPostJob(this.letterBatchId), splitted.getProcessables(),
                                 iPostZipProcessingJobThreadCount);
+                        logger.info("Next: {}", job);
                         return Optional.of(job);
                     default: throw new IllegalStateException(this+" can not start next job " + nextToDo.get());
                 }
@@ -192,7 +193,27 @@ public class LetterBatchProcessor {
 
         @Override
         public String toString() {
-            return "LetterBatch="+this.letterBatchId+" IPOSTI processsing";
+            return "LetterBatch="+this.letterBatchId+" IPOSTI";
+        }
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (!(o instanceof IPostJob)) {
+                return false;
+            }
+            IPostJob iPostJob = (IPostJob) o;
+            if (letterBatchId != iPostJob.letterBatchId) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return (int) (letterBatchId ^ (letterBatchId >>> 32));
         }
     }
 
@@ -214,6 +235,7 @@ public class LetterBatchProcessor {
 
         @Override
         public Boolean call() throws Exception {
+            logger.info("{} starting", this.jobDescription);
             this.jobDescription.getJob().start(this.jobDescription);
 
             final CountDownLatch latch = new CountDownLatch(threads);
@@ -262,6 +284,7 @@ public class LetterBatchProcessor {
                 logger.warn("Did not remove processing state of job={}", jobDescription.getJob());
             }
 
+            logger.info("{} ended", this.jobDescription);
             return okState.get();
         }
     }

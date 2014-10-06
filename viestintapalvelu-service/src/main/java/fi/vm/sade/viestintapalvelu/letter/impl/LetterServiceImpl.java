@@ -34,7 +34,6 @@ import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
-import static fi.vm.sade.viestintapalvelu.util.CollectionHelper.extractIds;
 
 /**
  * @author migar1
@@ -513,7 +512,6 @@ public class LetterServiceImpl implements LetterService {
         return letterBatchDAO.findAllLetterReceiverIdsByBatch(batchId);
     }
 
-    
     @Override
     @Transactional
     public void saveBatchErrorForReceiver(Long letterReceiverId, String message) {
@@ -544,26 +542,24 @@ public class LetterServiceImpl implements LetterService {
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
-    public void processIpostiBatchForLetterReceivers(List<LetterReceivers> batchReceivers, int index) throws Exception {
-        List<Long> batchReceiversIds = new ArrayList<Long>();
-        for (LetterReceivers l: batchReceivers) {
-            batchReceiversIds.add(l.getId());
-        }
-        List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverID(batchReceiversIds);
-        if (receiverLetters.size() > 0) {
-            LetterReceiverLetter letter = receiverLetters.get(0);
-            LetterBatch batch = letter.getLetterReceivers().getLetterBatch();
-            String templateName = batch.getTemplateName();
-            String lang = batch.getLanguage();
-            String zipName = templateName + "_" + lang + "_" + index + ".zip";
-            IPosti iposti = createIPosti(batch, zipName, getLetterBuilder().printZIP(receiverLetters, templateName, zipName));
-            batch.addIPosti(iposti);
-            for (LetterReceivers receiver : batchReceivers) {
-                receiver.setContainedInIposti(iposti);
-                letterReceiversDAO.update(receiver);
-            }
-            letterBatchDAO.update(batch);
-          
+    protected void processIpostiBatchForLetterReceivers(long letterBatchId,
+                            List<Long> batchReceiversIds, int index) throws Exception {
+        logger.info("Processing IPosti {} for LetterBatch={} with {} receivers", index, letterBatchId,
+                batchReceiversIds.size());
+        LetterBatch batch = letterBatchDAO.read(letterBatchId);
+        List<LetterReceiverLetter> receiverLetters =
+                letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverIds(batchReceiversIds);
+        String templateName = batch.getTemplateName();
+        String lang = batch.getLanguage();
+        String zipName = templateName + "_" + lang + "_" + index + ".zip";
+        byte[] iPostZipBytes = getLetterBuilder().printZIP(receiverLetters, templateName, zipName);
+        IPosti iposti = createIPosti(batch, zipName, iPostZipBytes);
+        iPostiDAO.insert(iposti);
+
+        for (LetterReceiverLetter letter : receiverLetters) {
+            LetterReceivers receiver = letter.getLetterReceivers();
+            receiver.setContainedInIposti(iposti);
+            letterReceiversDAO.update(receiver);
         }
     }
 
@@ -592,24 +588,31 @@ public class LetterServiceImpl implements LetterService {
             throw new NotFoundException("LetterBatch not found by id="+id);
         }
         switch (process) {
-        case EMAIL: 
+        case EMAIL:
+            logger.info("EMAIL processing finished for  letter batch {}", id);
             batch.setEmailHandlingFinished(new Date());
             break;
         case LETTER:
             batch.setHandlingFinished(new Date());
             if (batch.isIposti()) {
+                logger.info("LETTER processing finished for IPosti letter batch {}", id);
                 batch.setBatchStatus(LetterBatch.Status.waiting_for_ipost_processing);
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
+                logger.info("LETTER processing finished for  letter batch {}", id);
                 batch.setBatchStatus(LetterBatch.Status.ready);
             }
             break;
         case IPOSTI:
+            logger.info("IPOSTI processing finished for  letter batch {}", id);
             batch.setIpostHandlingFinished(new Date());
             batch.setBatchStatus(LetterBatch.Status.ready);
             break;
         }
         letterBatchDAO.update(batch);
+        if (nextProcess != null) {
+            logger.info("Current status {}, next process: {}", batch.getBatchStatus(), nextProcess);
+        }
         return Optional.fromNullable(nextProcess);
     }
 
@@ -621,19 +624,7 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     @Transactional(readOnly = true)
-    public List<LetterReceiverLetter> getReceiverLetters(Set<LetterReceivers> letterReceivers) {
-        List<Long> receiverIds = new ArrayList<Long>(letterReceivers.size());
-        for (LetterReceivers res : letterReceivers) {
-            receiverIds.add(res.getId());
-        }
-
-        return letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverID(receiverIds);
-    }
-
-    @Override
-    @Transactional(readOnly = true)
     public LetterBatchStatusDto getBatchStatus(long batchId) {
-
         LetterBatchStatusDto batch = letterBatchDAO.getLetterBatchStatus(batchId);
 
         if(batch == null) {
@@ -659,11 +650,6 @@ public class LetterServiceImpl implements LetterService {
             return batch;
         }
 
-        if(batch.getSent().equals(batch.getTotal())) {
-            batch.setStatus(LetterBatch.Status.ready);
-        } else {
-            batch.setStatus(LetterBatch.Status.processing);
-        }
         return batch;
     }
 
@@ -681,16 +667,19 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional
     public LetterBatchSplitedIpostDto splitBatchForIpostProcessing(long letterBatchId) {
+        logger.info("splitBatchForIpostProcessing {}", letterBatchId);
         LetterBatch batch = letterBatchDAO.read(letterBatchId);
 
         LetterBatchSplitedIpostDto job = new LetterBatchSplitedIpostDto();
-        List<List<LetterReceivers>> splitted = CollectionHelper.split(batch.getLetterReceivers(),
-                MAX_IPOST_CHUNK_SIZE);
+        List<Long> allReceiverIds = letterReceiversDAO.findLetterRecieverIdsByLetterBatchId(letterBatchId);
+        List<List<Long>> splitted = CollectionHelper.split(allReceiverIds, MAX_IPOST_CHUNK_SIZE);
         int orderNumber = 1;
-        for (List<LetterReceivers> receivers : splitted) {
-            IPostiProcessable processable = new IPostiProcessable(letterBatchId, orderNumber++);
-            processable.addLetterReceiverIds(receivers);
+        for (List<Long> receiverIds : splitted) {
+            logger.info("Total {} receivers in letterBatch's {} IPosti {}", receiverIds.size(), letterBatchId, orderNumber);
+            IPostiProcessable processable = new IPostiProcessable(letterBatchId, orderNumber);
+            processable.addLetterReceiverIds(receiverIds);
             job.add(processable);
+            orderNumber++;
         }
         return job;
     }
@@ -699,7 +688,9 @@ public class LetterServiceImpl implements LetterService {
     @Transactional
     public void processIposti(IPostiProcessable processable) {
         try {
-            processIpostiBatchForLetterReceivers(processable.getLetterReceiverIds(), processable.getOrderNumber());
+            processIpostiBatchForLetterReceivers(
+                    processable.getLetterBatchId(),
+                    processable.getLetterReceiverIds(), processable.getOrderNumber());
         } catch (Exception e) {
             logger.error("iposti processing failed ", e);
         }
