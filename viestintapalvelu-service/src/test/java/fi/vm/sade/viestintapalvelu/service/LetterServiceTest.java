@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 import fi.vm.sade.viestintapalvelu.dao.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
@@ -64,7 +65,7 @@ public class LetterServiceTest {
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
             mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
-            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO);
+            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO, new LetterBatchStatusLegalityChecker());
         this.letterService.setLetterBuilder(letterBuilder);
     }
     
