@@ -1,5 +1,6 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
@@ -21,6 +22,8 @@ import java.io.UnsupportedEncodingException;
 import java.sql.Timestamp;
 import java.util.Properties;
 
+import com.google.common.base.Optional;
+
 @Service
 public class EmailSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class);
@@ -30,9 +33,10 @@ public class EmailSender {
     @Value("${ryhmasahkoposti.smtp.port}")
     String smtpPort;
     
-    public void handleMail(EmailMessage emailMessage, String emailAddress) throws Exception {
+    public void handleMail(EmailMessage emailMessage, String emailAddress,
+                           Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
         try {
-            MimeMessage message = createMail(emailMessage, emailAddress);
+            MimeMessage message = createMail(emailMessage, emailAddress, additionalAttachments);
             if (EmailConstants.TEST_MODE.equals("NO")) {
                 LOGGER.debug("Sending message: " + message.toString());
                 long start = System.currentTimeMillis();
@@ -40,7 +44,7 @@ public class EmailSender {
                 long took = System.currentTimeMillis() -start;
                 LOGGER.debug("Message sent took: " + took);
             } else {
-                mockSendMail(emailMessage, emailAddress); //just log the message
+                mockSendMail(emailMessage, emailAddress, additionalAttachments); //just log the message
             }
         } catch (Exception e) {
             LOGGER.error("Failed to send message to " + emailAddress + ": " + emailMessage.getBody(), e);
@@ -48,7 +52,9 @@ public class EmailSender {
         }
     }
 
-    public MimeMessage createMail(EmailMessage emailMessage, String emailAddress) throws MessagingException, UnsupportedEncodingException {
+    public MimeMessage createMail(EmailMessage emailMessage, String emailAddress,
+                                  Optional<? extends AttachmentContainer> additionalAttachments)
+            throws MessagingException, UnsupportedEncodingException {
         Session session = createSession();
         MimeMessage msg = new MimeMessage(session);
 
@@ -65,12 +71,16 @@ public class EmailSender {
         bodyPart.setContent(getContent(emailMessage), getContentType(emailMessage) + ";charset=" + emailMessage.getCharset());
         bodyPart.setHeader("Content-Transfer-Encoding", getContentTransferEncoding());
         msgContent.addBodyPart(bodyPart);
-        
-        if (emailMessage.getAttachments() != null) {
-            insertAttachments(emailMessage, msgContent);
+
+        boolean valid = emailMessage.isValid();
+        if (valid && emailMessage.getAttachments() != null) {
+            valid = insertAttachments(emailMessage, msgContent);
+        }
+        if (valid && additionalAttachments.isPresent() && additionalAttachments.get().getAttachments() != null) {
+            valid = insertAttachments(additionalAttachments.get(), msgContent);
         }
 
-        if (emailMessage.isValid()) {
+        if (valid) {
             msg.setContent(msgContent);
             msg.setHeader("Content-Transfer-Encoding", getContentTransferEncoding());
             msg.saveChanges(); //updates changes to headers
@@ -99,8 +109,8 @@ public class EmailSender {
         return emailMessage.isHtml() ? "text/html" : "text/plain";
     }
 
-    private void insertAttachments(EmailMessage emailMessage, MimeMultipart multipart) throws MessagingException {
-        for (EmailAttachment attachment : emailMessage.getAttachments()) {
+    private boolean insertAttachments(AttachmentContainer container, MimeMultipart multipart) throws MessagingException {
+        for (EmailAttachment attachment : container.getAttachments()) {
             if ((attachment.getData() != null) && (attachment.getName() != null)) {
                 ByteArrayDataSource ds = new ByteArrayDataSource(attachment.getData(), attachment.getContentType());
 
@@ -112,10 +122,10 @@ public class EmailSender {
 
             } else {
                 LOGGER.error("Failed to insert attachment - it is not valid " + attachment.getName());
-                emailMessage.setInvalid();
-                break;
+                return false;
             }
         }
+        return true;
     }
 
     private Session createSession() {
@@ -126,7 +136,8 @@ public class EmailSender {
         return session;
     }
 
-    private void mockSendMail(EmailMessage emailMessage, String emailAddress) {
+    private void mockSendMail(EmailMessage emailMessage, String emailAddress,
+                              Optional<? extends AttachmentContainer> additionalAttachments) {
         // Log the content of the message
         StringBuffer sb = new StringBuffer("Email dummysender:");
         sb.append("\nFROM:    ");
@@ -138,6 +149,16 @@ public class EmailSender {
         if (emailMessage.getAttachments() != null && emailMessage.getAttachments().size() > 0) {
             sb.append("\nATTACHMENTS:");
             for (EmailAttachment attachment : emailMessage.getAttachments()) {
+                sb.append(" ");
+                sb.append(attachment.getName());
+                sb.append("(");
+                sb.append(attachment.getContentType());
+                sb.append(")");
+            }
+        }
+        if (additionalAttachments.isPresent()) {
+            sb.append("\nADDITIONAL ATTACHMENTS:");
+            for (EmailAttachment attachment : additionalAttachments.get().getAttachments()) {
                 sb.append(" ");
                 sb.append(attachment.getName());
                 sb.append("(");

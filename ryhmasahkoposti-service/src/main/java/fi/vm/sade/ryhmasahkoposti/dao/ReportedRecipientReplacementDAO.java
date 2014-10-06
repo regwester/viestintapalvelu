@@ -20,6 +20,6 @@ public interface ReportedRecipientReplacementDAO extends JpaDAO<ReportedRecipien
      * @param reportedRecipient
      * @return List of reported recipient replacements
      */
-    public List<ReportedRecipientReplacement> findReportedRecipientReplacements(ReportedRecipient reportedRecipient);
+    List<ReportedRecipientReplacement> findReportedRecipientReplacements(ReportedRecipient reportedRecipient);
 
 }

@@ -3,9 +3,11 @@
        xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
        xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client" xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:task="http://www.springframework.org/schema/task"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
        http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
        http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
@@ -27,12 +29,28 @@
         </property>
     </bean>
 
+    <util:map id="poolSizes" key-type="java.lang.String" value-type="java.lang.String">
+        <entry key="batchJobs" value="${viestintapalvelu.letter.batch.jobs.pool.size}"/>
+        <entry key="threadsPerBatchJob" value="${viestintapalvelu.letter.batch.job.thread.count}"/>
+        <entry key="reveiverJobs" value="${viestintapalvelu.letter.batch.receiver.job.pool.size}"/>
+        <entry key="otherAsync" value="${viestintapalvelu.other.async.resource.jobs.pool.size}"/>
+        <entry key="recoveryJobs" value="${viestintapalvelu.recovery.handler.jobs.pool.size}"/>
+    </util:map>
+    <import resource="classpath:spring/executors-config.xml"/>
+
     <context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
 
     <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest"/>
-    
+
+    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+    </bean>
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
+    </bean>
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
@@ -71,7 +89,7 @@
 
     <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
+            <ref bean="ticketInterceptorRestInternal"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
@@ -85,7 +103,29 @@
     </camelContext>
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
-    <bean id="executorService" class="java.util.concurrent.Executors" factory-method="newCachedThreadPool"/>
+
+    <task:executor id="batchJobExecutor" pool-size="#{poolSizes['batchJobs']}" />
+    <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="batchJobExecutor"/>
+    </bean>
+    <task:executor id="receiverExecutor" pool-size="#{poolSizes['reveiverJobs']}" />
+    <bean id="letterReceiverExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="receiverExecutor"/>
+    </bean>
+    <task:executor id="otherAsyncResourceJobsExecutor" pool-size="#{poolSizes['otherAsync']}" />
+    <bean id="otherAsyncResourceJobsExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="otherAsyncResourceJobsExecutor"/>
+    </bean>
+    <task:executor id="recoveryHandlerExecutor" pool-size="#{poolSizes['recoveryJobs']}" />
+    <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+        <constructor-arg ref="recoveryHandlerExecutor"/>
+    </bean>
+    
+    <!-- Recovery scheduling -->
+    <bean id="recoveryHandler" class="fi.vm.sade.viestintapalvelu.recovery.ServiceRecoveryHandler" />
+    <task:scheduled-tasks>
+      <task:scheduled ref="recoveryHandler" method="recover" fixed-rate="${viestintapalvelu.recovery.fixed.rate:3600000}" initial-delay="${viestintapalvelu.recovery.initial.delay:5000}"/>
+    </task:scheduled-tasks>
 
     <!-- enable spring annotation driven transactions -->
     <tx:annotation-driven transaction-manager="transactionManager" />

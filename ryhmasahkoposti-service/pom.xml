@@ -176,6 +176,10 @@
             <groupId>org.springframework.security</groupId>
             <artifactId>spring-security-ldap</artifactId>
         </dependency>
+        <dependency>
+            <groupId>commons-httpclient</groupId>
+            <artifactId>commons-httpclient</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.quartz-scheduler</groupId>
@@ -418,11 +422,19 @@
             <artifactId>powermock-api-mockito</artifactId>
             <scope>test</scope>
         </dependency>
+        <!--<dependency>-->
+            <!--<groupId>org.powermock</groupId>-->
+            <!--<artifactId>powermock-api-easymock</artifactId>-->
+            <!--<scope>test</scope>-->
+        <!--</dependency>-->
         <dependency>
-            <groupId>org.powermock</groupId>
-            <artifactId>powermock-api-easymock</artifactId>
+            <groupId>com.googlecode.jmockit</groupId>
+            <artifactId>jmockit</artifactId>
+            <version>1.0</version>
             <scope>test</scope>
         </dependency>
+
+
 
         <!-- Javax Mail -->
         <dependency>

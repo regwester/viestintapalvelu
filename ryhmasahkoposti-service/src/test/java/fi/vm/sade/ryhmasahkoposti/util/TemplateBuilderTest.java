@@ -5,10 +5,7 @@ import static org.junit.Assert.assertNotNull;
 
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -213,6 +210,22 @@ public class TemplateBuilderTest {
         assertNotNull(buildMessage);
         assertEquals(buildMessage, "test-content- " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         
+    }
+
+    @Test
+    public void testTemplateMessageBuilderWithCustomValue() throws IOException {
+        TemplateBuilder builder = new TemplateBuilder();
+        String message = "test-content- $letterDate <ul>#foreach( $v in $list )<li>$v</li>#end</ul>";
+
+        List<ReportedRecipientReplacementDTO> recipientReplacements = new ArrayList<ReportedRecipientReplacementDTO>();
+        recipientReplacements.add(new ReportedRecipientReplacementDTO("list", Arrays.asList("a","b","c")));
+        List<ReplacementDTO> messageReplacements = null;
+
+        String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
+
+        assertNotNull(buildMessage);
+        assertEquals("test-content- " + new SimpleDateFormat("dd.MM.yyyy").format(new Date())
+            + " <ul><li>a</li><li>b</li><li>c</li></ul>", buildMessage);
     }
 
 }

@@ -54,6 +54,7 @@
         <commons-lang.version>2.6</commons-lang.version>
         <commonscodec.version>1.2</commonscodec.version>
         <commonsbean.version>1.8.3</commonsbean.version>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
         <cxf.version>3.0.1</cxf.version>
         <dom4j.version>1.6.1</dom4j.version>
         <generic.version>9.0-SNAPSHOT</generic.version>
@@ -102,6 +103,8 @@
         <tomcat.version>7.0.26</tomcat.version>
         <validation.version>1.0.0.GA</validation.version>
         <velocity.version>1.7</velocity.version>
+        <includeBasicIntegrationTests>true</includeBasicIntegrationTests>
+        <commons-httpclient.version>3.1</commons-httpclient.version>
     </properties>
 
     <dependencyManagement>
@@ -336,6 +339,11 @@
                 <groupId>commons-beanutils</groupId>
                 <artifactId>commons-beanutils</artifactId>
                 <version>${commonsbean.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
             </dependency>
 
             <!-- Tomcat servlet api -->
@@ -608,6 +616,12 @@
                 <artifactId>querydsl-core</artifactId>
                 <version>${querydsl.version}</version>
             </dependency>
+            <dependency>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <version>${commons-httpclient.version}</version>
+            </dependency>
+
 
             <!-- Flyway DB migration-->
             <dependency>
@@ -767,33 +781,6 @@
                         <perCoreThreadCount>false</perCoreThreadCount>
                         <threadCount>1</threadCount>
                         <argLine>-Dfile.encoding=UTF-8</argLine>
-                    </configuration>
-                </plugin>
-                <!-- Integration tests -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <version>2.17</version>
-                    <executions>
-                        <execution>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
-                        </execution>
-                    </executions>
-                    <!-- Exclude all CXF related artifacts from classpath -->
-                    <configuration>
-                        <includes>
-                            <include>**/IT*.java</include>
-                            <include>**/*IT.java</include>
-                            <include>**/*ITCase.java</include>
-                        </includes>
-                        <classpathDependencyExcludes>
-                            <classpathDependencyExcludes>org.apache.cxf:cxf-rt-rs-client</classpathDependencyExcludes>
-                            <classpathDependencyExcludes>org.apache.cxf:cxf-rt-frontend-jaxrs</classpathDependencyExcludes>
-                            <classpathDependencyExcludes>org.apache.camel:camel-cxf</classpathDependencyExcludes>
-                        </classpathDependencyExcludes>
                     </configuration>
                 </plugin>
                 <plugin>
@@ -1029,6 +1016,51 @@
     <!-- Some of these profiles are apparently needed by bamboo -->
     <!-- Copied from build-parent, TODO: clean unneeded profiles -->
     <profiles>
+        <profile>
+            <id>integration-tests-included</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+                <property>
+                    <name>includeBasicIntegrationTests</name>
+                    <value>true</value>
+                </property>
+            </activation>
+
+            <build>
+                <plugins>
+                    <!-- Integration tests -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.17</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <!-- Exclude all CXF related artifacts from classpath -->
+                        <configuration>
+                            <includes>
+                                <include>**/IT*.java</include>
+                                <include>**/*IT.java</include>
+                                <include>**/*ITCase.java</include>
+                            </includes>
+                            <excludes>
+                                <exclude>**/*PerformanceIT.java</exclude>
+                            </excludes>
+                            <classpathDependencyExcludes>
+                                <classpathDependencyExcludes>org.apache.cxf:cxf-rt-rs-client</classpathDependencyExcludes>
+                                <classpathDependencyExcludes>org.apache.cxf:cxf-rt-frontend-jaxrs</classpathDependencyExcludes>
+                                <classpathDependencyExcludes>org.apache.camel:camel-cxf</classpathDependencyExcludes>
+                            </classpathDependencyExcludes>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
         <profile>
             <id>checkstyle</id>
             <build>
@@ -1730,6 +1762,43 @@
                                 </exclusions>
                             </dependency>
                         </dependencies>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+
+        <profile>
+            <id>performance-tests</id>
+            <properties>
+                <includeBasicIntegrationTests>false</includeBasicIntegrationTests>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-failsafe-plugin</artifactId>
+                        <version>2.17</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                    <goal>verify</goal>
+                                </goals>
+                            </execution>
+                        </executions>
+                        <configuration>
+                            <includes>
+                                <include>**/IT*.java</include>
+                                <include>**/*IT.java</include>
+                                <include>**/*ITCase.java</include>
+                                <include>**/*PerformanceIT.java</include>
+                            </includes>
+                            <classpathDependencyExcludes>
+                                <classpathDependencyExcludes>org.apache.cxf:cxf-rt-rs-client</classpathDependencyExcludes>
+                                <classpathDependencyExcludes>org.apache.cxf:cxf-rt-frontend-jaxrs</classpathDependencyExcludes>
+                                <classpathDependencyExcludes>org.apache.camel:camel-cxf</classpathDependencyExcludes>
+                            </classpathDependencyExcludes>
+                        </configuration>
                     </plugin>
                 </plugins>
             </build>

@@ -16,11 +16,11 @@
 
 package fi.vm.sade.ryhmasahkoposti.dao;
 
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
-import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,8 +32,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Date;
-import java.util.List;
+import fi.vm.sade.ryhmasahkoposti.model.*;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 import static org.junit.Assert.*;
 
@@ -56,6 +56,9 @@ public class EmailSendQueueDAOTest {
 
     @Autowired
     private ReportedRecipientDAO reportedRecipientDAO;
+
+    @Autowired
+    private ReportedAttachmentDAO reportedAttachmentDAO;
 
     @Test
     public void testGetQueueByIdAndVersion() {
@@ -124,7 +127,7 @@ public class EmailSendQueueDAOTest {
     }
 
     @Test
-    public void testGetUnhandledRecipeientsInQueue() {
+    public void testFindUnhandledRecipeientsInQueue() {
         ReportedMessage message = RaportointipalveluTestData.getReportedMessage();
         reportedMessageDAO.insert(message);
         ReportedRecipient recipient1 = RaportointipalveluTestData.getReportedRecipient(message),
@@ -151,7 +154,7 @@ public class EmailSendQueueDAOTest {
         reportedRecipientDAO.update(recipient3);
         reportedRecipientDAO.update(recipient4);
 
-        List<ReportedRecipient> recipients = sendQueueDAO.getUnhandledRecipeientsInQueue(queue.getId());
+        List<ReportedRecipient> recipients = sendQueueDAO.findUnhandledRecipeientsInQueue(queue.getId());
         assertNotNull(recipients);
         assertEquals(2, recipients.size());
         assertEquals(recipient1.getId(), recipients.get(0).getId());
@@ -177,5 +180,59 @@ public class EmailSendQueueDAOTest {
         sendQueueDAO.insert(queue5);
 
         assertEquals(2, sendQueueDAO.getNumberOfUnhandledQueues());
+    }
+
+    @Test
+    public void testFindRecipientAttachmentsWithEmptyIdList() {
+        assertEquals(0, sendQueueDAO.findRecipientAttachments(new ArrayList<Long>()).size());
+    }
+
+    @Test
+    public void testFindRecipientAttachments() {
+        assertEquals(0, sendQueueDAO.findRecipientAttachments(Arrays.asList(1l)).size());
+
+        ReportedMessage message = RaportointipalveluTestData.getReportedMessage();
+        reportedMessageDAO.insert(message);
+        ReportedAttachment attachment1 = RaportointipalveluTestData.getReportedAttachment(),
+                    attachment2 = RaportointipalveluTestData.getReportedAttachment();
+        reportedAttachmentDAO.saveReportedAttachments(Arrays.asList(attachment1, attachment2));
+
+        ReportedRecipient recipient1 = RaportointipalveluTestData.getReportedRecipient(message),
+                recipient2 = RaportointipalveluTestData.getReportedRecipient(message),
+                recipient3 = RaportointipalveluTestData.getReportedRecipient(message),
+                recipient4 = RaportointipalveluTestData.getReportedRecipient(message);
+        reportedRecipientDAO.insert(recipient1);
+        reportedRecipientDAO.insert(recipient2);
+        reportedRecipientDAO.insert(recipient3);
+        reportedRecipientDAO.insert(recipient4);
+
+        // Not found yet:
+        assertEquals(0, sendQueueDAO.findRecipientAttachments(Arrays.asList(recipient1.getId())).size());
+
+        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient1, attachment1));
+        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient1, attachment2));
+        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient2, attachment1));
+        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient4, attachment1));
+
+        List<RecipientReportedAttachmentQueryResult> results = sendQueueDAO
+                .findRecipientAttachments(Arrays.asList(recipient1.getId(), recipient2.getId(), recipient3.getId()));
+
+        // Should not contain the attachment from recipient4 or any row for recipient3
+        assertEquals(3, results.size());
+
+        // Should contain the correct results in recipient, attachment pk order:
+        assertEquals(attachment1.getId(), results.get(0).getAttachment().getId());
+        assertEquals(recipient1.getId(), results.get(0).getReportedRecipientId());
+
+        assertEquals(attachment2.getId(), results.get(1).getAttachment().getId());
+        assertEquals(recipient1.getId(), results.get(1).getReportedRecipientId());
+
+        assertEquals(attachment1.getId(), results.get(2).getAttachment().getId());
+        assertEquals(recipient2.getId(), results.get(2).getReportedRecipientId());
+    }
+
+    @Test
+    public void testFindRecipientReplacements() {
+        // TODO
     }
 }

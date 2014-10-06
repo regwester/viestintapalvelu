@@ -20,99 +20,99 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
     @Autowired
     public ReportedRecipientServiceImpl(ReportedRecipientDAO reportedRecipientDAO) {
-	this.reportedRecipientDAO = reportedRecipientDAO;
+        this.reportedRecipientDAO = reportedRecipientDAO;
     }
 
     @Override
     public Date getLatestReportedRecipientsSendingEndedDate(Long messageID) {
-	return reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
+        return reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
     }
 
     @Override
     public Long getNumberOfSendingFailed(Long messageID) {
-	return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
+        return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
     }
 
     @Override
     public ReportedRecipient getReportedRecipient(Long id) {
-	return reportedRecipientDAO.findByRecipientID(id);
+        return reportedRecipientDAO.findByRecipientID(id);
     }
 
     @Override
     public List<ReportedRecipient> getReportedRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting) {
-	return reportedRecipientDAO.findByMessageId(messageID, pagingAndSorting);
+        return reportedRecipientDAO.findByMessageId(messageID, pagingAndSorting);
     }
 
     @Override
-    public List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccesful(Long messageID, 
-	    PagingAndSortingDTO pagingAndSorting) {
-	return reportedRecipientDAO.findByMessageIdAndSendingUnsuccessful(messageID, pagingAndSorting);
+    public List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccessful(Long messageID,
+                                                                                    PagingAndSortingDTO pagingAndSorting) {
+        return reportedRecipientDAO.findByMessageIdAndSendingUnsuccessful(messageID, pagingAndSorting);
     }
 
     @Override
     public List<ReportedRecipient> getReportedRecipients() {
-	// TODO Auto-generated method stub
-	return null;
+        // TODO Auto-generated method stub
+        return null;
     }
 
     @Override
     public SendingStatusDTO getSendingStatusOfRecipients(Long messageID) {
-	SendingStatusDTO sendingStatus = new SendingStatusDTO();
+        SendingStatusDTO sendingStatus = new SendingStatusDTO();
 
-	long nbrOfSuccesfulAndFailed = 0;
+        long nbrOfSuccessfulAndFailed = 0;
 
-	Long nbrOfRecipients = reportedRecipientDAO.findNumberOfRecipientsByMessageID(messageID);
-	sendingStatus.setNumberOfReciepients(nbrOfRecipients);
+        Long nbrOfRecipients = reportedRecipientDAO.findNumberOfRecipientsByMessageID(messageID);
+        sendingStatus.setNumberOfRecipients(nbrOfRecipients);
 
-	Long nbrOfSuccesful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, true);
-	if (nbrOfSuccesful != null) {
-	    nbrOfSuccesfulAndFailed += nbrOfSuccesful.longValue();
-	}
-	sendingStatus.setNumberOfSuccesfulSendings(nbrOfSuccesful);
+        Long nbrOfSuccessful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, true);
+        if (nbrOfSuccessful != null) {
+            nbrOfSuccessfulAndFailed += nbrOfSuccessful.longValue();
+        }
+        sendingStatus.setNumberOfSuccessfulSendings(nbrOfSuccessful);
 
-	Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
-	if (nbrOfFailed != null) {
-	    nbrOfSuccesfulAndFailed += nbrOfFailed.longValue();
-	} 	
-	sendingStatus.setNumberOfFailedSendings(nbrOfFailed);
+        Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
+        if (nbrOfFailed != null) {
+            nbrOfSuccessfulAndFailed += nbrOfFailed.longValue();
+        }
+        sendingStatus.setNumberOfFailedSendings(nbrOfFailed);
 
-	if (nbrOfSuccesfulAndFailed == nbrOfRecipients.longValue()) {
-	    Date latestSendingEnded = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
-	    sendingStatus.setSendingEnded(latestSendingEnded);
-	}
+        if (nbrOfSuccessfulAndFailed == nbrOfRecipients.longValue()) {
+            Date latestSendingEnded = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
+            sendingStatus.setSendingEnded(latestSendingEnded);
+        }
 
-	return sendingStatus;
+        return sendingStatus;
     }
 
     @Override
-    public List<ReportedRecipient> getUnhandledReportedRecipients(int listSize) {		
-	List<ReportedRecipient> reportedRecipients = reportedRecipientDAO.findUnhandled();
+    public List<ReportedRecipient> getUnhandledReportedRecipients(int listSize) {
+        List<ReportedRecipient> reportedRecipients = reportedRecipientDAO.findUnhandled();
 
-	if (reportedRecipients == null || reportedRecipients.isEmpty()) {
-	    return new ArrayList<ReportedRecipient>();
-	}
+        if (reportedRecipients == null || reportedRecipients.isEmpty()) {
+            return new ArrayList<ReportedRecipient>();
+        }
 
-	if (listSize > reportedRecipients.size()) {
-	    return reportedRecipients;
-	}
+        if (listSize > reportedRecipients.size()) {
+            return reportedRecipients;
+        }
 
-	return reportedRecipients.subList(0, listSize);
+        return reportedRecipients.subList(0, listSize);
     }
 
     @Override
     public void saveReportedRecipients(Set<ReportedRecipient> reportedRecipients) {
-	for (ReportedRecipient reportedRecipient : reportedRecipients) {
-	    reportedRecipientDAO.insert(reportedRecipient);
-	}
+        for (ReportedRecipient reportedRecipient : reportedRecipients) {
+            reportedRecipientDAO.insert(reportedRecipient);
+        }
     }
 
     @Override
     public void saveReportedRecipient(ReportedRecipient reportedRecipient) {
-	reportedRecipientDAO.insert(reportedRecipient);
+        reportedRecipientDAO.insert(reportedRecipient);
     }
 
     @Override
     public void updateReportedRecipient(ReportedRecipient reportedRecipient) {
-	reportedRecipientDAO.update(reportedRecipient);
+        reportedRecipientDAO.update(reportedRecipient);
     }
 }

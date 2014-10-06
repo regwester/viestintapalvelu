@@ -1,12 +1,10 @@
 package fi.vm.sade.ryhmasahkoposti.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-
+import java.io.IOException;
+import java.util.Arrays;
 import java.util.List;
 
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -20,10 +18,15 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
@@ -43,6 +46,14 @@ public class ReportedRecipientReplacementDAOTest {
 
     @Autowired
     private ReportedRecipientReplacementDAO reportedRecipientReplacementDAO;
+
+    private ReportedRecipientReplacementConverter replacementConverter;
+
+    @Before
+    public void setup() {
+        replacementConverter = new ReportedRecipientReplacementConverter();
+        replacementConverter.setObjectMapperProvider(new ObjectMapperProvider());
+    }
 
     @Test
     public void testReportedRecipientReplacementInsertWasSuccessful() {
@@ -148,7 +159,7 @@ public class ReportedRecipientReplacementDAOTest {
     }
 
     @Test
-    public void testReportedMessageDeletedIsSuccesful() {
+    public void testReportedMessageDeletedIsSuccessful() {
 
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
@@ -175,4 +186,98 @@ public class ReportedRecipientReplacementDAOTest {
         assertNull(reportedRecipientReplacement);
     }
 
+    @Test
+    public void testJsonListValue() throws IOException {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
+        ReportedRecipient recipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+        reportedRecipientDAO.insert(recipient);
+
+        ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
+        replacementDTO.setName("testi");
+        replacementDTO.setValue(Arrays.asList("a","b","c"));
+        List<ReportedRecipientReplacement> replacements = replacementConverter.convert(recipient, Arrays.asList(replacementDTO));
+        assertEquals(1, replacements.size());
+        ReportedRecipientReplacement replacement = replacements.get(0);
+        reportedRecipientReplacementDAO.insert(replacement);
+
+        assertNull(replacement.getValue());
+        assertNotNull(replacement.getJsonValue());
+        assertEquals("[\"a\",\"b\",\"c\"]", replacement.getJsonValue());
+
+        List<ReportedRecipientReplacementDTO> dtos = replacementConverter.convertDTO(replacements);
+        assertEquals(1, dtos.size());
+        ReportedRecipientReplacementDTO dto = dtos.get(0);
+        assertNull(dto.getDefaultValue());
+        assertNotNull(dto.getValue());
+        assertNotNull(dto.getEffectiveValue());
+        assertTrue(dto.getEffectiveValue() instanceof List);
+        List<?> list = (List<?>) dto.getEffectiveValue();
+        assertEquals(3, list.size());
+        assertEquals("a", list.get(0));
+        assertEquals("b", list.get(1));
+        assertEquals("c", list.get(2));
+    }
+
+    @Test
+    public void testJsonStringValue() throws IOException {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
+        ReportedRecipient recipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+        reportedRecipientDAO.insert(recipient);
+
+        ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
+        replacementDTO.setName("testi");
+
+        replacementDTO.setDefaultValue("foo");
+        assertEquals("foo", replacementDTO.getEffectiveValue());
+        replacementDTO.setValue("TEST \"with\" some \\ data");
+        assertEquals("TEST \"with\" some \\ data", replacementDTO.getEffectiveValue());
+        assertNull(replacementDTO.getDefaultValue());
+
+        List<ReportedRecipientReplacement> replacements = replacementConverter.convert(recipient, Arrays.asList(replacementDTO));
+        assertEquals(1, replacements.size());
+        ReportedRecipientReplacement replacement = replacements.get(0);
+        reportedRecipientReplacementDAO.insert(replacement);
+        assertNull(replacement.getValue());
+        assertNotNull(replacement.getJsonValue());
+        assertEquals("\"TEST \\\"with\\\" some \\\\ data\"", replacement.getJsonValue());
+
+        List<ReportedRecipientReplacementDTO> dtos = replacementConverter.convertDTO(replacements);
+        assertEquals(1, dtos.size());
+        ReportedRecipientReplacementDTO dto = dtos.get(0);
+        assertNull(dto.getDefaultValue());
+        assertNotNull(dto.getValue());
+        assertNotNull(dto.getEffectiveValue());
+        assertTrue(dto.getEffectiveValue() instanceof String);
+        assertEquals("TEST \"with\" some \\ data", dto.getEffectiveValue());
+    }
+
+    @Test
+    public void testDefaultValueDtoConversion() throws IOException {
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
+        ReportedRecipient recipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
+        reportedRecipientDAO.insert(recipient);
+
+        ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
+        replacementDTO.setName("test");
+        replacementDTO.setDefaultValue("plain old string");
+
+        List<ReportedRecipientReplacement> replacements = replacementConverter.convert(recipient, Arrays.asList(replacementDTO));
+        assertEquals(1, replacements.size());
+        ReportedRecipientReplacement replacement = replacements.get(0);
+        reportedRecipientReplacementDAO.insert(replacement);
+
+        assertNull(replacement.getJsonValue());
+        assertNotNull(replacement.getValue());
+
+        List<ReportedRecipientReplacementDTO> dtos = replacementConverter.convertDTO(replacements);
+        assertEquals(1, dtos.size());
+        ReportedRecipientReplacementDTO dto = dtos.get(0);
+        assertNull(dto.getValue());
+        assertNotNull(dto.getDefaultValue());
+        assertNotNull(dto.getEffectiveValue());
+        assertEquals("plain old string", dto.getEffectiveValue());
+    }
 }

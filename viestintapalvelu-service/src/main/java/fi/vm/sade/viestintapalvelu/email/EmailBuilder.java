@@ -48,7 +48,7 @@ public class EmailBuilder {
         Map<TemplateEmailField, Object> emailContext = source.getEmailContext();
         message.setBody((String)emailContext.get(TemplateEmailField.BODY));
         message.setSubject(StringEscapeUtils.unescapeHtml((String)emailContext.get(TemplateEmailField.SUBJECT)));
-        
+
         Map<String, byte[]> attachments = source.getAttachmentData();
         if (attachments != null) {
             Map<String, String> attachmentContentTypes = source.getAttachmentContentType();

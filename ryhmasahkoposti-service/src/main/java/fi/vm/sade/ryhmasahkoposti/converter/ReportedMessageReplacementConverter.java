@@ -33,12 +33,14 @@ public class ReportedMessageReplacementConverter {
      * Convert message specific replacements
      * 
      * @param reportedMessage
-     * @param reportedRecipientReplacements
+     * @param templateReplacements
+     * @param emailReplacements
      * @return
      * @throws IOException
      */
-    public List<ReportedMessageReplacement> convert(ReportedMessage reportedMessage, 
-        Set<ReplacementDTO> templateReplacements, List<ReplacementDTO> emailReplacements) throws IOException {
+    public List<ReportedMessageReplacement> convert(ReportedMessage reportedMessage,
+                    Set<ReplacementDTO> templateReplacements, List<ReplacementDTO> emailReplacements)
+            throws IOException {
         List<ReportedMessageReplacement> reportedMessageReplacements = new ArrayList<ReportedMessageReplacement>();	
 
         for (ReplacementDTO replacement : templateReplacements) {
@@ -67,34 +69,34 @@ public class ReportedMessageReplacementConverter {
      * @param replacementName
      * @return {@link ReplacementDTO}
      */
-    public ReplacementDTO getEmailFieldFromReplacements(Set<ReplacementDTO> templateReplacements, 
-        List<ReplacementDTO> emailReplacements, String replacementName) {
-        if (templateReplacements == null && emailReplacements == null)
+    public ReplacementDTO getEmailFieldFromReplacements(Set<ReplacementDTO> templateReplacements,
+                            List<ReplacementDTO> emailReplacements, String replacementName) {
+        if (templateReplacements == null && emailReplacements == null) {
             return null;
+        }
 
         for (ReplacementDTO replacement : templateReplacements) {
-
-            if (!StringUtils.equalsIgnoreCase(replacement.getName(), replacementName)) 
+            if (!StringUtils.equalsIgnoreCase(replacement.getName(), replacementName))  {
                 continue;
+            }
 
             // Check if not send from the email
             ReplacementDTO _replacement = getReplacement(emailReplacements, replacement.getName());
-            if (_replacement != null)
+            if (_replacement != null) {
                 return _replacement;
-            else
+            } else {
                 return replacement;
+            }
         }
 
         return null;
-
     }
-
 
     /**
      * Return the replacement from list if found or null if not found
      * 
      * @param replacements
-     * @param replacement
+     * @param replacementName
      * @return {@link ReplacementDTO}
      */
     private ReplacementDTO getReplacement(List<ReplacementDTO> replacements, String replacementName) {

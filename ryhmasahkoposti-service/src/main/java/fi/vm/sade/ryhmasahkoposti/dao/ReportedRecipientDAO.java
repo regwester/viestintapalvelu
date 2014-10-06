@@ -74,10 +74,10 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
     public List<ReportedRecipient> findUnhandled();
 
     /**
-     * Hakee raportoitavat vastaanottajat, joilta ei ole vielä haettu henkilö- tai organisaatiotietoja.
+     * Hakee raportoitavien vastaanottajien id:t, joilta ei ole vielä haettu henkilö- tai organisaatiotietoja.
      *
-     * @return Listan vastaanottajista
+     * @return Listan vastaanottajien id:istä
      */
-    public List<ReportedRecipient> findRecipientsWithIncompleteInformation();
+    public List<Long> findRecipientIdsWithIncompleteInformation();
 
 }

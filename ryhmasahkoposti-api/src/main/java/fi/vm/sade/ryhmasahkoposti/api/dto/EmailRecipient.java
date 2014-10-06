@@ -1,32 +1,39 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
+import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  *
  * @author migar1
  */
-public class EmailRecipient {
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class EmailRecipient implements AttachmentContainer {
     private String oid = "";
     private String oidType = "";
     private String email = "";
     private String languageCode = "FI";
-    
+    private String name;
     /**
      * List of recipient replacements
      */
     private List<ReportedRecipientReplacementDTO> recipientReplacements;
-    
+    private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
+
     public void setOid(String oid) {
-	this.oid = oid;
+        this.oid = oid;
     }
 
     public void setOidType(String oidType) {
-	this.oidType = oidType;
+        this.oidType = oidType;
     }
 
     public void setLanguageCode(String languageCode) {
-	this.languageCode = languageCode;
+        this.languageCode = languageCode;
     }
 
     public EmailRecipient() {
@@ -34,53 +41,53 @@ public class EmailRecipient {
     }
 
     public EmailRecipient(String oid) {
-	super();
-	this.oid = oid;
+        super();
+        this.oid = oid;
     }
 
     public EmailRecipient(String oid, String email) {
-	super();
-	this.oid = oid;
-	this.email = email;
+        super();
+        this.oid = oid;
+        this.email = email;
     }
 
     public EmailRecipient(String oid, String oidType, String email, String languageCode) {
-	super();
-	this.oid = oid;
-	this.oidType = oidType;
-	this.email = email;
-	this.languageCode = languageCode;
+        super();
+        this.oid = oid;
+        this.oidType = oidType;
+        this.email = email;
+        this.languageCode = languageCode;
     }
-    
-        public EmailRecipient(String oid, String oidType, String email,
-	    String languageCode,
-	    List<ReportedRecipientReplacementDTO> recipientReplacements) {
-	super();
-	this.oid = oid;
-	this.oidType = oidType;
-	this.email = email;
-	this.languageCode = languageCode;
-	this.recipientReplacements = recipientReplacements;
+
+    public EmailRecipient(String oid, String oidType, String email,
+                          String languageCode,
+                          List<ReportedRecipientReplacementDTO> recipientReplacements) {
+        super();
+        this.oid = oid;
+        this.oidType = oidType;
+        this.email = email;
+        this.languageCode = languageCode;
+        this.recipientReplacements = recipientReplacements;
     }
 
     public String getOid() {
-	return oid;
+        return oid;
     }
 
     public String getOidType() {
-	return oidType;
+        return oidType;
     }
 
     public String getLanguageCode() {
-	return languageCode;
+        return languageCode;
     }
 
     public String getEmail() {
-	return email;
+        return email;
     }
 
     public void setEmail(String email) {
-	this.email = email;
+        this.email = email;
     }
 
     
@@ -94,18 +101,50 @@ public class EmailRecipient {
     /**
      * @param recipientReplacements the recipientReplacements to set
      */
-    public void setRecipientReplacements(
-    	List<ReportedRecipientReplacementDTO> recipientReplacements) {
+    public void setRecipientReplacements(List<ReportedRecipientReplacementDTO> recipientReplacements) {
         this.recipientReplacements = recipientReplacements;
     }
 
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+       this.name = name;
+    }
+
+    public List<EmailAttachment> getAttachments() {
+        return attachments;
+    }
+
+    @Override
+    public void addAttachInfo(AttachmentResponse attachInfo) {
+        if (this.attachInfo == null) {
+            this.attachInfo = new ArrayList<AttachmentResponse>();
+        }
+        this.attachInfo.add(attachInfo);
+    }
+
+    public void setAttachments(List<EmailAttachment> attachments) {
+        this.attachments = attachments;
+    }
+
+    public List<AttachmentResponse> getAttachInfo() {
+        return attachInfo;
+    }
+
+    public void setAttachInfo(List<AttachmentResponse> attachInfo) {
+        this.attachInfo = attachInfo;
+    }
+
     /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
+                 * @see java.lang.Object#toString()
+                 */
     @Override
     public String toString() {
-	return "EmailRecipient [oid=" + oid + ", oidType=" + oidType
-		+ ", email=" + email + ", languageCode=" + languageCode
-		+ ", recipientReplacements=" + recipientReplacements + "]";
+        return "EmailRecipient [oid=" + oid + ", oidType=" + oidType
+                + ", email=" + email + ", languageCode=" + languageCode
+                + ", name=" + name
+                + ", recipientReplacements=" + recipientReplacements + "]";
     }
 }

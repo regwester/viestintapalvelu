@@ -16,8 +16,8 @@ public interface ReportedMessageAttachmentDAO extends JpaDAO<ReportedMessageAtta
 	/**
 	 * Hakee raportoitavan ryhmäsähköpostiviestin liitteiden avaimet
 	 * 
-	 * @param viestinID Ryhmäsähköpostiviestin avain
+	 * @param messageID Ryhmäsähköpostiviestin avain
 	 * @return Lista raportoitavan viestin liitteiden avaimet
 	 */
-	public List<ReportedMessageAttachment> findReportedMessageAttachments(Long messageID);
+	List<ReportedMessageAttachment> findReportedMessageAttachments(Long messageID);
 }

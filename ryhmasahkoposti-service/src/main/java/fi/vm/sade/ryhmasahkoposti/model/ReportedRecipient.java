@@ -4,6 +4,8 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 import javax.persistence.*;
 import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 
 @Table(name = "raportoitavavastaanottaja")
 @Entity
@@ -41,7 +43,7 @@ public class ReportedRecipient extends BaseEntity {
     private Date sendingEnded;
 
     @Column(name = "lahetysonnistui", nullable = true)
-    private String sendingSuccesful;
+    private String sendingSuccessful;
 
     @Column(name = "epaonnistumisensyy", nullable = true)
     private String failureReason;
@@ -56,6 +58,9 @@ public class ReportedRecipient extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "jono", nullable = true)
     private SendQueue queue;
+
+    @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ReportedMessageRecipientAttachment> attachments = new HashSet<ReportedMessageRecipientAttachment>(0);
 
     public ReportedMessage getReportedMessage() {
         return reportedMessage;
@@ -129,12 +134,12 @@ public class ReportedRecipient extends BaseEntity {
         this.sendingEnded = sendingEnded;
     }
 
-    public String getSendingSuccesful() {
-        return sendingSuccesful;
+    public String getSendingSuccessful() {
+        return sendingSuccessful;
     }
 
-    public void setSendingSuccesful(String sendingSuccesful) {
-        this.sendingSuccesful = sendingSuccesful;
+    public void setSendingSuccessful(String sendingSuccessful) {
+        this.sendingSuccessful = sendingSuccessful;
     }
 
     public String getFailureReason() {
@@ -167,5 +172,13 @@ public class ReportedRecipient extends BaseEntity {
 
     public void setQueue(SendQueue queue) {
         this.queue = queue;
+    }
+
+    public Set<ReportedMessageRecipientAttachment> getAttachments() {
+        return attachments;
+    }
+
+    protected void setAttachments(Set<ReportedMessageRecipientAttachment> attachments) {
+        this.attachments = attachments;
     }
 }

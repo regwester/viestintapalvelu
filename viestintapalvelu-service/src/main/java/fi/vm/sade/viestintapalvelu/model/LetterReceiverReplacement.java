@@ -1,17 +1,14 @@
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.io.IOException;
 import java.util.Date;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -49,15 +46,18 @@ public class LetterReceiverReplacement extends BaseEntity {
     @Column(name = "oletus_arvo")
     private String defaultValue = null;
 
+    @Column(name = "json_arvo")
+    private String jsonValue = null;
+
     @Column(name = "pakollinen")
     private boolean mandatory = false;
 
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-            
 
-	public LetterReceivers getLetterReceivers() {
+
+    public LetterReceivers getLetterReceivers() {
 		return letterReceivers;
 	}
 
@@ -97,11 +97,25 @@ public class LetterReceiverReplacement extends BaseEntity {
         this.timestamp = timestamp;
     }
 
-	@Override
+    public String getJsonValue() {
+        return jsonValue;
+    }
+
+    public void setJsonValue(String jsonValue) {
+        this.jsonValue = jsonValue;
+    }
+
+    @Override
 	public String toString() {
-		return "LetterReceiverReplacement [letterReceivers=" + letterReceivers
-				+ ", name=" + name + ", defaultValue=" + defaultValue
+		return "LetterReceiverReplacement [name=" + name + ", defaultValue=" + defaultValue
 				+ ", mandatory=" + mandatory + ", timestamp=" + timestamp + "]";
 	}
 
+    @Transient
+    public Object getEffectiveValue(ObjectMapper mapper) throws IOException {
+        if (this.jsonValue != null) {
+            return mapper.readValue(this.jsonValue, Object.class);
+        }
+        return this.defaultValue;
+    }
 }

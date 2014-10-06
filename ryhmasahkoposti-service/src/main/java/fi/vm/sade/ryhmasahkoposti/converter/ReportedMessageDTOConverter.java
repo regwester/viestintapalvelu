@@ -98,7 +98,7 @@ public class ReportedMessageDTOConverter {
 
             emailRecipientDTO.setRecipientID(reportedRecipient.getId());
             emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
-            emailRecipientDTO.setSendSuccessfull(reportedRecipient.getSendingSuccesful());
+            emailRecipientDTO.setSendSuccessful(reportedRecipient.getSendingSuccessful());
             emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
             emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
             setRecipientName(emailRecipientDTO, reportedRecipient);
@@ -126,8 +126,8 @@ public class ReportedMessageDTOConverter {
 
     private void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
         Long numberOfSuccessfulSendings = new Long(0);
-        if (sendingStatusDTO.getNumberOfSuccesfulSendings() != null) {
-            numberOfSuccessfulSendings = sendingStatusDTO.getNumberOfSuccesfulSendings();
+        if (sendingStatusDTO.getNumberOfSuccessfulSendings() != null) {
+            numberOfSuccessfulSendings = sendingStatusDTO.getNumberOfSuccessfulSendings();
         }
 
         Long numberOfFailedSendings = new Long(0);
@@ -140,15 +140,15 @@ public class ReportedMessageDTOConverter {
     }
 
     private void setStatusReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatus) {
-        if (sendingStatus.getNumberOfReciepients() != null && sendingStatus.getNumberOfSuccesfulSendings() != null) {
-            if (sendingStatus.getNumberOfReciepients().compareTo(sendingStatus.getNumberOfSuccesfulSendings()) == 0) {
+        if (sendingStatus.getNumberOfRecipients() != null && sendingStatus.getNumberOfSuccessfulSendings() != null) {
+            if (sendingStatus.getNumberOfRecipients().compareTo(sendingStatus.getNumberOfSuccessfulSendings()) == 0) {
                 reportedMessageDTO.setStatusReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_onnistui"));
                 return;
             }
         }
 
-        if (sendingStatus.getNumberOfReciepients() != null && sendingStatus.getNumberOfSuccesfulSendings() != null) {
-            if (sendingStatus.getNumberOfReciepients().compareTo(sendingStatus.getNumberOfSuccesfulSendings()) > 0) {
+        if (sendingStatus.getNumberOfRecipients() != null && sendingStatus.getNumberOfSuccessfulSendings() != null) {
+            if (sendingStatus.getNumberOfRecipients().compareTo(sendingStatus.getNumberOfSuccessfulSendings()) > 0) {
                 reportedMessageDTO.setStatusReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_kesken"));
                 return;
             }

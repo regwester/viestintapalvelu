@@ -34,7 +34,7 @@ public interface GroupEmailReportingService {
      * @return Tallenetun ryhmäsköpostiviestin avain
      * @throws IOException
      */
-    public Long addSendingGroupEmail(EmailData emailData) throws IOException;
+    Long addSendingGroupEmail(EmailData emailData) throws IOException;
 
     /**
      * Hakee viestintunnuksella lähetettävän ryhmäsähköpostiviestin  
@@ -42,7 +42,7 @@ public interface GroupEmailReportingService {
      * @param messageID Viestintunnus 
      * @return Lähetettävän ryhmäsähköpostiviestin tiedot
      */
-    public EmailMessageDTO getMessage(Long messageID);
+    EmailMessageDTO getMessage(Long messageID);
 
     /**
      * Get recipient replacements
@@ -50,7 +50,7 @@ public interface GroupEmailReportingService {
      * @param recipientId
      * @return
      */
-    public List<ReportedRecipientReplacementDTO> getRecipientReplacements(long recipientId) throws IOException;
+    List<ReportedRecipientReplacementDTO> getRecipientReplacements(long recipientId) throws IOException;
 
     /**
      * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin  
@@ -58,7 +58,7 @@ public interface GroupEmailReportingService {
      * @param messageID Viestintunnus 
      * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
      */
-    public ReportedMessageDTO getReportedMessage(Long messageID);
+    ReportedMessageDTO getReportedMessage(Long messageID);
 
     /**
      * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
@@ -67,7 +67,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Raportoitavan ryhmäsähköpostiviestin tiedot ja sen lähetysraportin
      */
-    public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
+    ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja vastaanottajat, joille lähetys epäonnistui   
@@ -76,7 +76,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
      */
-    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID,
+    ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID,
 	    PagingAndSortingDTO pagingAndSorting);
 
     /**
@@ -86,7 +86,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
      * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
      */
-    public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, 
+    ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, 
 	    PagingAndSortingDTO pagingAndSorting);
     
     /**
@@ -96,7 +96,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
      * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
      */
-    public ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, String process, PagingAndSortingDTO pagingAndSorting);
+    ReportedMessagesDTO getReportedMessagesBySenderOid(String senderOid, String process, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee hakuparametrien mukaiset käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -105,7 +105,7 @@ public interface GroupEmailReportingService {
      * @param pagingAndSorting Mahdolliset sivutus- ja lajittelutiedot
      * @return Haluttu määrä raportoitavia ryhmäsähköpostiviestejä
      */
-    public ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO reportedMessageQueryDTO, 
+    ReportedMessagesDTO getReportedMessages(ReportedMessageQueryDTO reportedMessageQueryDTO, 
 	    PagingAndSortingDTO pagingAndSorting);
 
     /**
@@ -114,7 +114,7 @@ public interface GroupEmailReportingService {
      * @param messageID Halutun viestin tunnus
      * @return Lähetyksen tulostiedot, missä näkyy esim. lähetettyjen viestin lukumäärä {@link SendingStatusDTO}
      */
-    public SendingStatusDTO getSendingStatus(Long messageID);
+    SendingStatusDTO getSendingStatus(Long messageID);
 
     /**
      * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
@@ -122,21 +122,21 @@ public interface GroupEmailReportingService {
      * @param listSize Palautettavien vastaanottajien lukumaara
      * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
-    public List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
+    List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
     
     /**
      * Palauttaa käyttäjän oid:n
      * 
      * @return Käyttäjän oid
      */
-    public String getCurrentUserOid();
+    String getCurrentUserOid();
 
     /**
      * Palauttaa käyttäjän organisaatiotiedot
      * 
      * @return Lista käyttäjän organisaatioita
      */
-    public List<OrganizationDTO> getUserOrganizations();
+    List<OrganizationDTO> getUserOrganizations();
 
     /**
      * Päivittää tiedon, että sähköpostin lähetys vastaanottajalle ei onnistunut
@@ -145,7 +145,7 @@ public interface GroupEmailReportingService {
      * @param result Tieto, miksi lähetys ei onnistunut
      * @return true, päivitys on tehty.
      */	
-    public boolean recipientHandledFailure(EmailRecipientDTO recipient, String result);
+    boolean recipientHandledFailure(EmailRecipientDTO recipient, String result);
 
     /**
      * Päivittää tiedon, että sähköpostin lähetys vastaanottajalle on onnistunut
@@ -154,7 +154,7 @@ public interface GroupEmailReportingService {
      * @param result Tieto, että lähetys onnistui
      * @return true, päivitys on tehty.
      */
-    public boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
+    boolean recipientHandledSuccess(EmailRecipientDTO recipient, String result);
     
     /**
      * Hakee ryhmäsähköpostin liitteen tietokannasta
@@ -162,7 +162,7 @@ public interface GroupEmailReportingService {
      * @param attachmentID Liitetiedoston tunniste
      * @return Liitteen tiedot
      */
-    public ReportedAttachment getAttachment(Long attachmentID) throws IOException;
+    ReportedAttachment getAttachment(Long attachmentID) throws IOException;
 
     /**
      * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
@@ -170,7 +170,7 @@ public interface GroupEmailReportingService {
      * @param fileItem Liitetiedoston tiedot
      * @return Liitteelle generoitu avain
      */
-    public Long saveAttachment(FileItem fileItem) throws IOException;
+    Long saveAttachment(FileItem fileItem) throws IOException;
 
     /**
      * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten
@@ -178,7 +178,7 @@ public interface GroupEmailReportingService {
      * @param emailAttachment Sähköpostiin liitetty tiedosto
      * @return Tallennetun liitteen tiedot
      */
-    public AttachmentResponse saveAttachment(EmailAttachment emailAttachment);
+    AttachmentResponse saveAttachment(EmailAttachment emailAttachment);
 
     /**
      * Merkitsee sähköpostin lähetyksen vastaanottajalle alkaneeksi
@@ -186,5 +186,5 @@ public interface GroupEmailReportingService {
      * @param recipient Ryhmäsähköpostin vastaanottajan tiedot
      * @return true, jos merkintä lähettäjälle onnistui. false, jos lähetys on jo aloitettu toisen säikeen toimesta
      */
-    public boolean startSending(EmailRecipientDTO recipient);
+    boolean startSending(EmailRecipientDTO recipient);
 }

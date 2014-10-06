@@ -1,28 +1,29 @@
-angular.module('report').directive('limitedParagraph', function() {
-	
+angular.module('report').directive('limitedParagraph',[function() {
   return {
     restrict: 'E',
     replace: true,
-    template: '<p class="limited-paragraph">{{ content | limitTo : getLimit() }}<span ng-if="isLimited"><span ng-if="!showAll">...</span> <a ng-click="toggleShowAll()">{{ getToggleButtonText() }}</a></span></p>',
+    template: '<div class="limited-paragraph">' +
+                '<div class="limited-content" ng-bind-html="content | trustAsHtml"/>' +
+                '<span ng-if="isLimited">' +
+                  '<a ng-click="toggleShowAll()">{{ getToggleButtonText() }}</a>' +
+                '</span>' +
+              '</div>',
     scope: {
       'content': '=',
       'showButtonText': '@',
       'hideButtonText': '@',
       'limit': '='
     },
-    link: function(scope) {
+    link: function(scope, elem, attrs) {
       scope.showAll = false; // hide extra text initially
       scope.isLimited = scope.content.length > scope.limit;
-
-      scope.getLimit= function() {
-        if (scope.isLimited && !scope.showAll) {
-          return scope.limit;
-        } else {
-          return scope.content.length;
-        }
-      };
+      scope.contentDiv = elem.find('div');
+      if(scope.isLimited) {
+        scope.contentDiv.css('height', scope.limit)
+      }
 
       scope.toggleShowAll = function() {
+        scope.showAll ? scope.contentDiv.css('height', scope.limit) : scope.contentDiv.css('height', 'auto');
         scope.showAll = !scope.showAll;
       };
 
@@ -32,5 +33,4 @@ angular.module('report').directive('limitedParagraph', function() {
 
     }
   };
-
-});
+}]);
