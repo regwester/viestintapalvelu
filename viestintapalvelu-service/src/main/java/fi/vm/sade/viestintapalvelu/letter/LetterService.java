@@ -135,7 +135,7 @@ public interface LetterService {
 
     LetterBatchSplitedIpostDto splitBatchForIpostProcessing(long letterBatchId);
 
-    void processIposti(IPostiProcessable processable);
+    void processIposti(IPostiProcessable processable) throws Exception;
 
     void handleIpostError(IPostiProcessable letterBatchId, Exception e);
 }

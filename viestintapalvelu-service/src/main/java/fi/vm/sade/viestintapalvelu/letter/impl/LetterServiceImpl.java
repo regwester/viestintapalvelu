@@ -690,15 +690,11 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    @Transactional
-    public void processIposti(IPostiProcessable processable) {
-        try {
-            processIpostiBatchForLetterReceivers(
-                    processable.getLetterBatchId(),
-                    processable.getLetterReceiverIds(), processable.getOrderNumber());
-        } catch (Exception e) {
-            logger.error("iposti processing failed ", e);
-        }
+    @Transactional(rollbackFor = Exception.class)
+    public void processIposti(IPostiProcessable processable) throws Exception {
+        processIpostiBatchForLetterReceivers(
+                processable.getLetterBatchId(),
+                processable.getLetterReceiverIds(), processable.getOrderNumber());
     }
 
     @Override

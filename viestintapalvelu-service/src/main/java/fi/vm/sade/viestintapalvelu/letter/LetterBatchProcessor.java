@@ -114,12 +114,12 @@ public class LetterBatchProcessor {
             if (nextToDo.isPresent()) {
                 switch (nextToDo.get()) {
                     case IPOSTI:
+                        IPostJob job = new IPostJob(this.letterBatchId);
+                        reserveJob(job);
                         LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
-                        JobDescription<IPostiProcessable> job = new JobDescription<IPostiProcessable>(
-                                new IPostJob(this.letterBatchId), splitted.getProcessables(),
+                        JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job , splitted.getProcessables(),
                                 iPostZipProcessingJobThreadCount);
-                        logger.info("Next: {}", job);
-                        return Optional.of(job);
+                        return Optional.of(jobDescription);
                     default: throw new IllegalStateException(this+" can not start next job " + nextToDo.get());
                 }
             }
