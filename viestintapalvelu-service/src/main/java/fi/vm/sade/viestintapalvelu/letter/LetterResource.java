@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
+import fi.vm.sade.valinta.dokumenttipalvelu.dto.MetaData;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
@@ -10,6 +11,7 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.download.DownloadResource;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
@@ -33,6 +35,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.ExecutorService;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
@@ -442,18 +445,25 @@ public class LetterResource extends AsynchronousResource {
     @Path("/async/letter/pdf/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
-    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId, @Context final HttpServletRequest request) {
         try {
             LetterBatchStatusDto batchStatus = letterService.getBatchStatus(letterBatchId);
             if(batchStatus == null || ! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(batchStatus.getStatus())) {
-                return Response.status(Status.NOT_FOUND).build();
+                return Response.status(Status.BAD_REQUEST).build();
             }
 
+            String documentId = "mergedLetterBatch"+letterBatchId;
 
-            byte[] bytes = letterService.getLetterContentsByLetterBatchID(letterBatchId);
-
-
-            return Response.status(Status.OK).entity(bytes).build();
+            Collection<MetaData> documents = dokumenttipalveluRestClient.hae(Arrays.asList(documentId));
+            if(documents.isEmpty()) {
+                byte[] bytes = letterService.getLetterContentsByLetterBatchID(letterBatchId);
+                dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
+                        now().plusDays(1).toDate().getTime(),
+                        Arrays.asList("viestintapalvelu", "mergedletters.pdf" ,"pdf"),
+                        "application/pdf",
+                        new ByteArrayInputStream(bytes));
+            }
+            return dokumenttipalveluRestClient.lataa(documentId);
 
         } catch (Exception e) {
             LOG.error("Error getting merged pdf for batch " + letterBatchId, e);
