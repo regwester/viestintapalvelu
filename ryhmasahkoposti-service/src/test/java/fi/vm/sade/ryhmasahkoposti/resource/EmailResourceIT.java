@@ -74,7 +74,7 @@ import static org.mockito.Mockito.*;
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class})
 public class EmailResourceIT {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(EmailResourceIT.class);
 
     @Autowired
     private EmailResourceImpl emailResource;

@@ -29,7 +29,7 @@ import fi.vm.sade.viestintapalvelu.letter.processing.*;
 @Component
 @Singleton
 public class LetterBatchProcessor {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(LetterBatchProcessor.class);
 
     @Resource(name="batchJobExecutorService")
     private ExecutorService batchJobExecutorService;

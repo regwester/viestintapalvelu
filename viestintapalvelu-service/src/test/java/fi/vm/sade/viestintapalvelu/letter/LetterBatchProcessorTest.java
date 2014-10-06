@@ -9,8 +9,6 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import com.google.common.base.Optional;
 
@@ -64,12 +62,10 @@ public class LetterBatchProcessorTest {
         doCallRealMethod().when(service).setLetterBuilder(any(LetterBuilder.class));
         doCallRealMethod().when(service).setLetterReceiversDAO(any(LetterReceiversDAO.class));
         doCallRealMethod().when(service).setObjectMapperProvider(any(ObjectMapperProvider.class));
-        doCallRealMethod().when(service).setLogger(any(Logger.class));
         doCallRealMethod().when(service).getLetterBuilder();
         doCallRealMethod().when(service).findUnprocessedLetterReceiverIdsByBatch(any(long.class));
         service.setLetterBuilder(builder);
         service.setLetterBatchDAO(letterBatchDAO);
-        service.setLogger(LoggerFactory.getLogger(LetterServiceImpl.class));
         service.setLetterReceiverLetterDAO(letterReceiverLetterDAO);
         service.setLetterReceiversDAO(letterReceiversDAO);
         service.setObjectMapperProvider(new ObjectMapperProvider());

@@ -34,7 +34,7 @@ import static org.junit.Assert.*;
     DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
 public class LetterBatchDAOTest {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(LetterBatchDAOTest.class);
 
     @Autowired
     private LetterBatchDAO letterBatchDAO;

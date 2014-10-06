@@ -21,7 +21,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource;
  */
 @Component
 public class CurrentUserComponent {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(CurrentUserComponent.class);
 
     @Resource
     private OmattiedotResource omattiedotResourceClient;

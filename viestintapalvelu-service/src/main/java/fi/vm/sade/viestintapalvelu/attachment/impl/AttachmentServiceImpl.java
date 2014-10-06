@@ -37,7 +37,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
  */
 @Service
 public class AttachmentServiceImpl implements AttachmentService {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(AttachmentServiceImpl.class);
 
     @Autowired
     private LetterReceiverLetterDAO letterReceiverLetterDAO;

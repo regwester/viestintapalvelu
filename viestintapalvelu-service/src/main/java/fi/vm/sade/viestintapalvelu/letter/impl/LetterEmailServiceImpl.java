@@ -57,7 +57,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
     public static final String ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER = "additionalAttachmentUris";
     public static final String DEFAULT_LANGUAGE = "FI";
 
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(LetterEmailServiceImpl.class);
 
     @Autowired
     private LetterBatchDAO letterBatchDAO;

@@ -25,8 +25,6 @@ import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -41,7 +39,6 @@ import fi.vm.sade.authentication.cas.CasClient;
  */
 public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseInterceptor<Message> {
     private static final String CAS_HEADER  =  "CasSecurityTicket";
-    private final Logger log = LoggerFactory.getLogger(getClass());
 
     @Value("${auth.mode:cas}")
     private String authMode;

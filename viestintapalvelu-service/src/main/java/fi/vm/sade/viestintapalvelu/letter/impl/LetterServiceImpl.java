@@ -44,7 +44,10 @@ import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
 public class LetterServiceImpl implements LetterService {
     private static final int MAX_IPOST_CHUNK_SIZE = 500;
     public static final String APPLICATION_ZIP = "application/zip";
-    private Logger logger = LoggerFactory.getLogger(getClass());
+
+    private static final Logger logger = LoggerFactory.getLogger(LetterServiceImpl.class);
+
+
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
     private LetterReceiversDAO letterReceiversDAO;
@@ -711,10 +714,6 @@ public class LetterServiceImpl implements LetterService {
 
     public void setLetterBatchDAO(LetterBatchDAO letterBatchDAO) {
         this.letterBatchDAO = letterBatchDAO;
-    }
-
-    public void setLogger(Logger logger) {
-        this.logger = logger;
     }
 
     public void setLetterReceiverLetterDAO(LetterReceiverLetterDAO letterReceiverLetterDAO) {

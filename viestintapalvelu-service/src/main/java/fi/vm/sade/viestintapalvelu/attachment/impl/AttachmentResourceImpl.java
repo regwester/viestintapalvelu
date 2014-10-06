@@ -37,8 +37,6 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentResource;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
 
 /**
  * User: ratamaa
@@ -52,7 +50,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 public class AttachmentResourceImpl implements AttachmentResource {
     public static final String AttachmentByUri = "Palauttaa liitteen URI-tunnisteella";
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(AttachmentResourceImpl.class);
 
     @Autowired
     private AttachmentService attachmentService;

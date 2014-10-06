@@ -49,7 +49,7 @@ import static org.junit.Assert.*;
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class})
 public class ExecutorsIT {
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger logger = LoggerFactory.getLogger(ExecutorsIT.class);
 
     @Resource(name="receiverExecutor")
     private Executor receiverExecutor;
