@@ -36,6 +36,7 @@ import java.io.InputStream;
 import java.security.NoSuchAlgorithmException;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
@@ -460,12 +461,14 @@ public class LetterResource extends AsynchronousResource {
 
             String documentId = "mergedLetterBatch"+letterBatchId;
 
-            Collection<MetaData> documents = dokumenttipalveluRestClient.hae(Arrays.asList(documentId));
+            List<String> tags = Arrays.asList("viestintapalvelu", "mergedletters.pdf", "pdf", documentId);
+
+            Collection<MetaData> documents = dokumenttipalveluRestClient.hae(tags);
             if(documents.isEmpty()) {
                 byte[] bytes = letterService.getLetterContentsByLetterBatchID(letterBatchId);
                 dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
                         now().plusDays(1).toDate().getTime(),
-                        Arrays.asList("viestintapalvelu", "mergedletters.pdf" ,"pdf"),
+                        tags,
                         "application/pdf",
                         new ByteArrayInputStream(bytes));
             }
