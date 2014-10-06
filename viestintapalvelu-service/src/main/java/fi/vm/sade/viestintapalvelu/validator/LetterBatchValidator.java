@@ -1,6 +1,8 @@
 package fi.vm.sade.viestintapalvelu.validator;
 
 import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
@@ -14,6 +16,8 @@ import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
  */
 
 public class LetterBatchValidator {
+    
+    private final static Logger LOGGER = LoggerFactory.getLogger(LetterBatchValidator.class);
 
     /**
      * Validoi annetun <code>LetterBatch</code>:n.
@@ -21,29 +25,35 @@ public class LetterBatchValidator {
      * @param letters
      */
     public static void validate(LetterBatchDetails letters) throws Exception {
-        if (letters == null) {
-            throw new IllegalArgumentException("Letter to be validated was null");
-        }
+        validateLetterBatch(letters);
         for (LetterDetails letter : letters.getLetters()) {
             validate(letter);
         }
     }
 
+
     public static boolean isValid(LetterBatchDetails letters) {
-        if (letters == null) {
+        try {
+            validate(letters);
+        } catch (Exception e) {
+            LOGGER.error("Invalid LetterBatchDetails: " + e.getMessage(), e);
             return false;
-        }
-        for (LetterDetails letter : letters.getLetters()) {
-            try {
-                validate(letter);
-            } catch (Exception e) {
-                return false;
-            }
         }
         return true;
     }
 
-    public static void validate(LetterDetails letter) throws Exception {
+    private static void validateLetterBatch(LetterBatchDetails letters) {
+        if (letters == null) {
+            throw new IllegalArgumentException("Letter to be validated was null");
+        }
+        if (letters.getTemplateId() == null && letters.getTemplate() == null 
+                && (StringUtils.isBlank(letters.getTemplateName()) || StringUtils.isBlank(letters.getLanguageCode()))) {
+            throw new IllegalArgumentException("Invalid template parameters, name of template " + letters.getTemplateName()
+                    + ", language code: " + letters.getLanguageCode());
+        }
+    }
+
+    private static void validate(LetterDetails letter) throws Exception {
         validateAddress(letter.getAddressLabel());
     }
 
