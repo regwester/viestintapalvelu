@@ -30,7 +30,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
+import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentResourceImpl;
+import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentServiceImpl;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterAttachmentDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment;
@@ -53,10 +55,14 @@ public class AttachmentResourceTest {
     @Mock
     private LetterReceiverLetterAttachmentDAO letterReceiverLetterAttachmentDAO;
     private AttachmentResourceImpl attachmentResource;
+    private AttachmentServiceImpl attachmentService;
 
     @Before
     public void setup() {
-        this.attachmentResource = new AttachmentResourceImpl(letterReceiverLetterAttachmentDAO);
+        this.attachmentResource = new AttachmentResourceImpl();
+        this.attachmentService = new AttachmentServiceImpl();
+        this.attachmentService.setLetterReceiverLetterAttachmentDAO(this.letterReceiverLetterAttachmentDAO);
+        this.attachmentResource.setAttachmentService(this.attachmentService);
     }
 
     @Test(expected = IllegalArgumentException.class)
@@ -88,9 +94,9 @@ public class AttachmentResourceTest {
         when(letterReceiverLetterAttachmentDAO.read(eq(2l))).thenReturn(attachment);
 
         // Not found by still continued:
-        attachmentResource.deleteByUris(Arrays.asList(
+        attachmentResource.deleteByUris(new UrisContainerDto(Arrays.asList(
                 AttachmentUri.getLetterReceiverLetterAttachment(1l).toString(),
                 AttachmentUri.getLetterReceiverLetterAttachment(2l).toString()
-        ));
+        )));
     }
 }

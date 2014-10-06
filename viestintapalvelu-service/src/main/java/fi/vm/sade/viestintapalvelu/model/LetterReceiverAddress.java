@@ -164,8 +164,7 @@ public class LetterReceiverAddress extends BaseEntity {
 
 	@Override
 	public String toString() {
-		return "LetterReceiverAddress [letterReceivers=" + letterReceivers
-				+ ", firstName=" + firstName + ", lastName=" + lastName
+		return "LetterReceiverAddress [firstName=" + firstName + ", lastName=" + lastName
 				+ ", addressline=" + addressline + ", addressline2="
 				+ addressline2 + ", addressline3=" + addressline3
 				+ ", postalCode=" + postalCode + ", city=" + city + ", region="

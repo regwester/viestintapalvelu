@@ -24,6 +24,7 @@ import javax.mail.Address;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Transport;
+import javax.ws.rs.core.Response;
 
 import org.dom4j.DocumentException;
 import org.springframework.context.annotation.Bean;
@@ -124,8 +125,8 @@ public class IntegrationTestConfig {
                 throw new IllegalStateException("Please mock me when needed!");
             }
 
-//            @Override
-            public void deleteByUris(List<String> uris) {
+            @Override
+            public Response deleteByUris(UrisContainerDto urisContainerDto) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };

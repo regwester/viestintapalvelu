@@ -17,6 +17,7 @@ import com.mysema.query.types.path.PathBuilder;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -150,6 +151,47 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
         
     	return findBySearchCriteria.count();
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public LetterBatchStatusDto getLetterBatchStatus(long letterBatchId) {
+        List<LetterBatchStatusDto> results = (List<LetterBatchStatusDto>) getEntityManager()
+                .createNamedQuery("letterBatchStatus")
+                    .setParameter("batchId", letterBatchId)
+                .setMaxResults(1)
+                .getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
+    }
+
+    @Override
+    public List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId) {
+        return getEntityManager().createQuery(
+                    "select lr.id from LetterReceivers lr"
+                    + " inner join lr.letterBatch batch with batch.id = :batchId"
+                    + " inner join lr.letterReceiverLetter letter"
+                    + " where letter.letter = null"
+                    + " order by lr.id", Long.class)
+            .setParameter("batchId", batchId).getResultList();
+    }
+    
+    @Override
+    public List<Long> findAllLetterReceiverIdsByBatch(long batchId) {
+        return getEntityManager().createQuery(
+                    "select lr.id from LetterReceivers lr"
+                    + " inner join lr.letterBatch batch with batch.id = :batchId"
+                    + " order by lr.id", Long.class)
+            .setParameter("batchId", batchId).getResultList();
+    }
+    
+    @Override
+    public List<Long> findUnfinishedLetterBatches() {
+        return getEntityManager().createQuery("SELECT lb.id FROM LetterBatch lb"
+                + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'"
+                + " ORDER BY lb.timestamp ASC", Long.class).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

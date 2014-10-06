@@ -8,8 +8,10 @@ import javax.validation.constraints.Size;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
+
 @ApiModel(value = "Kirjeen vastaanottajan osoitetiedot")
-public class AddressLabel {
+public class AddressLabel implements AddressLabelDetails {
     public AddressLabel() {
     }
 
@@ -66,42 +68,52 @@ public class AddressLabel {
     @ApiModelProperty(value = "The two letter country code using the ISO3166 standard. If the country code is unknown then use XX. They consist of two characters written in CAPITAL letters,", required=true)
     private String countryCode;
 
+    @Override
     public String getFirstName() {
         return capitalize(firstName);
     }
 
+    @Override
     public String getLastName() {
         return capitalize(lastName);
     }
 
+    @Override
     public String getAddressline() {
         return capitalizeAddress(addressline);
     }
 
+    @Override
     public String getAddressline2() {
         return capitalizeAddress(addressline2);
     }
 
+    @Override
     public String getAddressline3() {
         return capitalizeAddress(addressline3);
     }
 
+    @Override
     public String getPostalCode() {
         return postalCode;
     }
 
+    @Override
     public String getCity() {
         return  uppercase(city);
     }
 
+    @Override
     public String getRegion() {
         return uppercase(region);
     }
 
+    @Override
     public String getCountry() {
         return uppercase(country);
     }
 
+    @Override
     public String getCountryCode() {
         return countryCode;
     }

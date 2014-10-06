@@ -49,6 +49,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.config.IntegrationTestConfig;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.UrisContainerDto;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
@@ -173,12 +174,11 @@ public class EmailResourceIT {
         final List<String> urlsReportedForDeletion = new ArrayList<String>();
         AnswerChain<Void> answersForAttachmentDeletions = atFirst(new Answer<Void>() {
             public Void answer(InvocationOnMock invocation) throws Throwable {
-                urlsReportedForDeletion.addAll((List<String>) invocation.getArguments()[0]);
+                urlsReportedForDeletion.addAll(((UrisContainerDto) invocation.getArguments()[0]).getUris());
                 return null;
             }
         });
-        doAnswer(answersForAttachmentDeletions).when(attachmentResource).deleteByUris(any(List.class));
-
+        doAnswer(answersForAttachmentDeletions).when(attachmentResource).deleteByUris(any(UrisContainerDto.class));
 
         long start = System.currentTimeMillis();
         Response response = emailResource.sendEmail(emailData);

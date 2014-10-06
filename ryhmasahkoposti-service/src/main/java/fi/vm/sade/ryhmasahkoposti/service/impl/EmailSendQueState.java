@@ -26,6 +26,7 @@ import java.util.List;
  */
 public class EmailSendQueState {
     private List<String> downloadedAttachmentUris = new ArrayList<String>();
+    private boolean saveAttachments = true;
 
     public void addDownloadedAttachmentUri(String uri) {
         this.downloadedAttachmentUris.add(uri);
@@ -33,5 +34,14 @@ public class EmailSendQueState {
 
     public List<String> getDownloadedAttachmentUris() {
         return downloadedAttachmentUris;
+    }
+
+    public boolean isSaveAttachments() {
+        return saveAttachments;
+    }
+
+    public EmailSendQueState withoutSavingAttachments() {
+        this.saveAttachments = false;
+        return this;
     }
 }

@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.testdata;
 
+import java.util.*;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
@@ -8,9 +10,9 @@ import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
-
-import java.util.*;
 
 public class DocumentProviderTestData {
     public static AddressLabel getAddressLabel() {
@@ -33,21 +35,26 @@ public class DocumentProviderTestData {
     }
 
     public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) {
+        return getIPosti(id, letterBatch, 1);
+    }
+
+    public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch, int count) {
         List<IPosti> iPostis = new ArrayList<IPosti>();
-        
-        IPosti iposti = new IPosti();
-        
-        byte[] content = {'i','p','o', 's','t','c','o','n','t','e','n','t'};
-        iposti.setContent(content);
-        iposti.setContentName("Iposti content");
-        iposti.setContentType("application/pdf");
-        iposti.setCreateDate(new Date());
-        iposti.setId(id);
-        iposti.setLetterBatch(letterBatch);
-        iposti.setSentDate(new Date());
-        iposti.setVersion(new Long(0));
-        
-        iPostis.add(iposti);
+        for (int i = 0; i < count; ++i) {
+            IPosti iposti = new IPosti();
+
+            byte[] content = {'i', 'p', 'o', 's', 't', 'c', 'o', 'n', 't', 'e', 'n', 't'};
+            iposti.setContent(content);
+            iposti.setContentName("Iposti content");
+            iposti.setContentType("application/pdf");
+            iposti.setCreateDate(new Date());
+            iposti.setId(id);
+            iposti.setLetterBatch(letterBatch);
+            iposti.setSentDate(new Date());
+            iposti.setVersion(new Long(0));
+
+            iPostis.add(iposti);
+        }
         return iPostis;
     }
     
@@ -69,7 +76,49 @@ public class DocumentProviderTestData {
         return letterBatch;
     }
 
+    public static AsyncLetterBatchDto getAsyncLetterBatch() {
+        AsyncLetterBatchDto letterBatch = new AsyncLetterBatchDto();
+        letterBatch.setApplicationPeriod("Test-2014");
+        letterBatch.setFetchTarget("test-fetchTarget");
+        letterBatch.setLanguageCode("FI");
+        letterBatch.setOrganizationOid("1.2.246.562.10.00000000001");
+        letterBatch.setStoringOid("1.2.246.562.24.00000000001");
+        letterBatch.setTag("test-tag");
+        letterBatch.setTemplateId(new Long(1));
+        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTemplate(getTemplate());
+        letterBatch.setTemplateReplacements(getTemplateReplacements());
+        letterBatch.setLetters(getAsyncLetterBatchLetters());
+
+        return letterBatch;
+    }
+
+
     public static fi.vm.sade.viestintapalvelu.model.LetterBatch getLetterBatch(Long id) {
+        fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
+        letterBatch.setApplicationPeriod("Tradenomi 2014");
+        letterBatch.setFetchTarget("fetchTarget");
+
+        if (id != null) {
+            letterBatch.setId(id);
+        }
+
+        letterBatch.setLanguage("FI");
+        letterBatch.setOrganizationOid("1.2.246.562.10.00000000001");
+        letterBatch.setStoringOid("1.2.246.562.24.00000000001");
+        letterBatch.setTag("test-tag");
+        letterBatch.setTemplateId(new Long(1));
+        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTimestamp(new Date());
+        letterBatch.setVersion(new Long(0));
+        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
+        letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
+        letterBatch.setBatchStatus(fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.processing);
+
+        return letterBatch;
+    }
+
+    public static fi.vm.sade.viestintapalvelu.model.LetterBatch getLetterBatch(Long id, int count) {
         fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
         
         letterBatch.setApplicationPeriod("Tradenomi 2014");
@@ -170,6 +219,28 @@ public class DocumentProviderTestData {
         return letterReceiverReplacements;
     }
 
+    public static Set<LetterReceivers> getLetterReceivers(Long id,
+                                                          fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch, int count) {
+        Set<LetterReceivers> letterReceiversSet = new HashSet<LetterReceivers>();
+        for (int i = 0; i < count ; i++) {
+            LetterReceivers letterReceivers = new LetterReceivers();
+
+            if (id != null) {
+                letterReceivers.setId(id+i);
+            }
+
+            letterReceivers.setLetterBatch(letterBatch);
+            letterReceivers.setTimestamp(new Date());
+            letterReceivers.setVersion(new Long(0));
+            letterReceivers.setLetterReceiverAddress(getLetterReceiverAddress(id, letterReceivers));
+            letterReceivers.setLetterReceiverLetter(getLetterReceiverLetter(null, letterReceivers));
+            letterReceivers.setLetterReceiverReplacement(getLetterReceiverReplacement(id ,letterReceivers));
+
+            letterReceiversSet.add(letterReceivers);
+        }
+        return letterReceiversSet;
+    }
+
     public static Set<LetterReceivers> getLetterReceivers(Long id, 
         fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) {
         Set<LetterReceivers> letterReceiversSet = new HashSet<LetterReceivers>();
@@ -225,6 +296,19 @@ public class DocumentProviderTestData {
         
         letters.add(letter);
         
+        return letters;
+    }
+
+    public static List<AsyncLetterBatchLetterDto> getAsyncLetterBatchLetters() {
+        List<AsyncLetterBatchLetterDto> letters = new ArrayList<AsyncLetterBatchLetterDto>();
+
+        AsyncLetterBatchLetterDto letter = new AsyncLetterBatchLetterDto();
+        letter.setAddressLabel(getAddressLabel());
+        letter.setLanguageCode("FI");
+        letter.setTemplateReplacements(getTemplateReplacements());
+
+        letters.add(letter);
+
         return letters;
     }
 

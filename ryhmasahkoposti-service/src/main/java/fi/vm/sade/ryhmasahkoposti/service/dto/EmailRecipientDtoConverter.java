@@ -16,14 +16,11 @@
 
 package fi.vm.sade.ryhmasahkoposti.service.dto;
 
+import java.util.ArrayList;
+
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 
 /**
  * User: ratamaa Date: 26.9.2014 Time: 15:14
@@ -79,6 +76,13 @@ public class EmailRecipientDtoConverter {
         to.setType((original.getTemplateName() != null || original.getTemplateId() != null) ? "T" : "E");
         to.setVirusChecked(false);
         EmailRecipientDTO recipient = new EmailRecipientDTO();
+        EmailRecipient firstRecipient = from.getRecipient().isEmpty() ? null : from.getRecipient().get(0);
+        if (firstRecipient != null) {
+            recipient.setAttachments(firstRecipient.getAttachments());
+            recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>(
+                    firstRecipient.getRecipientReplacements()));
+            recipient.setName(firstRecipient.getName());
+        }
         recipient.setEmail(toAddress);
         to.setRecipient(recipient);
         return to;

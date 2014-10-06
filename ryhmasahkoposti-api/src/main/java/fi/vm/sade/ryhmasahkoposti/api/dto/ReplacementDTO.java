@@ -2,8 +2,11 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import fi.vm.sade.generic.common.BaseDTO;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReplacementDTO extends BaseDTO {
 
     private static final long serialVersionUID = 8136375073148653926L;

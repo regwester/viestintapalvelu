@@ -49,7 +49,8 @@ public class LetterReceiverLetterAttachment extends BaseEntity {
     private static final long serialVersionUID = 8512814336232572709L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="vastaanottajakirje", nullable = false)
+    // TODO: should be nullable=false but due to LetterBuilder.buildPDF email sending, LetterReceiverLetter is not in the DB yet
+    @JoinColumn(name="vastaanottajakirje")
     private LetterReceiverLetter letterReceiverLetter;
 
     @Column(name = "nimi", nullable = false)

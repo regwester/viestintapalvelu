@@ -1,11 +1,15 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 /**
  * Reported recipient replacement data transfer object.
  * 
  * @author ovmol1
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReportedRecipientReplacementDTO {
     /**
      * Name
@@ -14,6 +18,7 @@ public class ReportedRecipientReplacementDTO {
     /**
      * Value of the replacement
      */
+//    @JsonDeserialize(using = JacksonReplacementValueDeserializaer.class)
     private Object value;
     /**
      * Default value
@@ -48,6 +53,7 @@ public class ReportedRecipientReplacementDTO {
     /**
      * @return value if set, defaultValue otherwise
      */
+    @JsonIgnore
     public Object getEffectiveValue() {
         if (this.value!= null) {
             return this.value;
@@ -69,7 +75,9 @@ public class ReportedRecipientReplacementDTO {
      *              (replaces defaultValue if set)
      */
     public void setValue(Object value) {
-        this.defaultValue = null;
+        if (value != null && this.defaultValue != null) {
+            this.defaultValue = null;
+        }
         this.value = value;
     }
 
@@ -90,7 +98,9 @@ public class ReportedRecipientReplacementDTO {
      */
     @Deprecated
     public void setDefaultValue(String defaultValue) {
-        this.value = null;
+        if (defaultValue != null && this.value != null) {
+            this.value = null;
+        }
         this.defaultValue = defaultValue;
     }
 

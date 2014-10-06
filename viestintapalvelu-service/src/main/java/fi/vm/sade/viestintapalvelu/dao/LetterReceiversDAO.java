@@ -29,4 +29,6 @@ public interface LetterReceiversDAO extends JpaDAO<LetterReceivers, Long> {
      * @return Kirjelähetysten vastaanottajien lukumäärä
      */
     Long findNumberOfReciversByLetterBatchID(Long letterBatchID);
+
+    List<Long> findLetterRecieverIdsByLetterBatchId(long letterBatchId);
 }

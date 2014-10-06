@@ -113,7 +113,7 @@ public class IPostiResource {
             return Response.ok(zip).build();
         } catch(Exception e) {
             return Response.status(400).build();
-        }       
+        }
     }
     
     @GET

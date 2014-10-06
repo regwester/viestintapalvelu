@@ -5,6 +5,7 @@ import java.util.List;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.service.dto.ReportedRecipientAttachmentSaveDto;
 
 /**
  * Rajapinta raportoitavan ryhmäsähköpostiviestin liittyvien liitteiden käsittelyä varten
@@ -31,4 +32,11 @@ public interface ReportedMessageAttachmentService {
      */
     void saveReportedRecipientAttachments(ReportedRecipient emailRecipient, List<ReportedAttachment> reportedAttachments);
 
+    /**
+     * Tallentaa raportoitavan ryhmäsähköpostiviestin vastaanottajan liitteen
+     *
+     * @param attachmentSaveDto
+     * @return tallennetun ReportedMessageRecipientAttachment käsitteen id
+     */
+    long saveReportedRecipientAttachment(ReportedRecipientAttachmentSaveDto attachmentSaveDto);
 }
