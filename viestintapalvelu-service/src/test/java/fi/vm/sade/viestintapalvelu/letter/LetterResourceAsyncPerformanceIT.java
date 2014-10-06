@@ -52,12 +52,12 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserCompon
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.fail;
+import static org.junit.Assert.*;
 
 /**
  * User: ratamaa
@@ -257,6 +257,7 @@ public class LetterResourceAsyncPerformanceIT {
         LetterBatchStatusDto entity = (LetterBatchStatusDto) response.getEntity();
         logger.info("  > Batch "+id+" status: {} / {}, {}",
                 entity.getSent(), entity.getTotal(), entity.getStatus());
+        assertNotEquals(LetterBatch.Status.error, entity.getStatus());
         if (waitForDone) {
             return entity.getStatus() != LetterBatch.Status.ready;
         }
