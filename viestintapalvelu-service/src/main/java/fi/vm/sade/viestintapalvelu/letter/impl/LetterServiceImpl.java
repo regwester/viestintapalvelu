@@ -537,7 +537,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    @Transactional
+    @Transactional(rollbackFor = Exception.class)
     public void processLetterReceiver(long receiverId) throws Exception {
         LetterReceivers receiver = letterReceiversDAO.read(receiverId);
         LetterBatch batch = receiver.getLetterBatch();
