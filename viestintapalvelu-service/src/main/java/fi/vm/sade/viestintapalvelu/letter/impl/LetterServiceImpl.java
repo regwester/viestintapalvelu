@@ -44,6 +44,7 @@ import static fi.vm.sade.viestintapalvelu.util.CollectionHelper.extractIds;
 @Transactional
 public class LetterServiceImpl implements LetterService {
     private static final int MAX_IPOST_CHUNK_SIZE = 500;
+    public static final String APPLICATION_ZIP = "application/zip";
     private Logger logger = LoggerFactory.getLogger(getClass());
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
@@ -281,7 +282,7 @@ public class LetterServiceImpl implements LetterService {
             content.setContentType(lb.getOriginalContentType());
             content.setTimestamp(lb.getTimestamp());
 
-            if ("application/zip".equals(lb.getContentType())) {
+            if (APPLICATION_ZIP.equals(lb.getContentType())) {
                 try {
                     content.setContent(unZip(lb.getLetter()));
 
@@ -312,11 +313,12 @@ public class LetterServiceImpl implements LetterService {
         Set<LetterReceivers> letterReceivers = letterBatch.getLetterReceivers();
         for (LetterReceivers letterReceiver : letterReceivers) {
             LetterReceiverLetter letter = letterReceiver.getLetterReceiverLetter();
-            
-            if (letter.getContentType().equals("application/zip")) {
-                byte[] content = unZip(letter.getLetter());
-                merger.addSource(new ByteArrayInputStream(content));
+
+            byte[] content = letter.getLetter();
+            if (letter.getContentType().equals(APPLICATION_ZIP)) {
+                content = unZip(content);
             }
+            merger.addSource(new ByteArrayInputStream(content));
         }
         
         merger.setDestinationStream(contentsOutputStream);
@@ -334,7 +336,7 @@ public class LetterServiceImpl implements LetterService {
         iPosti.setLetterBatch(letterB);
         iPosti.setContent(data);
         iPosti.setContentName(name);
-        iPosti.setContentType("application/zip");
+        iPosti.setContentType(APPLICATION_ZIP);
         iPosti.setCreateDate(new Date());
         return iPosti;
     }
@@ -359,7 +361,7 @@ public class LetterServiceImpl implements LetterService {
                 if (zippaa) { // ZIP
                     try {
                         lrl.setLetter(zip(letter.getLetterContent().getContent()));
-                        lrl.setContentType("application/zip"); // application/zip
+                        lrl.setContentType(APPLICATION_ZIP); // application/zip
                         lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
 
                     } catch (IOException e) {
