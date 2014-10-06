@@ -29,10 +29,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
@@ -245,7 +242,7 @@ public class LetterServiceTest {
     public void getBatchStatusBatchNotFound() {
         final long batchId = 123;
 
-        LetterBatchProcessingError expectedError = new LetterBatchProcessingError();
+        LetterBatchLetterProcessingError expectedError = new LetterBatchLetterProcessingError();
         expectedError.setErrorCause("Batch not found for id " + batchId);
         expectedError.setErrorTime(new Date()); //can't check real time as the service just uses the current time in this case
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
@@ -261,7 +258,6 @@ public class LetterServiceTest {
 
     @Test
     public void getBatchStatusFailure() {
-
         final Date failDate = new Date();
 
         LetterBatch mockBatch = DocumentProviderTestData.getLetterBatch(1235l);
@@ -269,14 +265,13 @@ public class LetterServiceTest {
         LetterReceivers first = mockBatch.getLetterReceivers().iterator().next();
 
         List<LetterBatchProcessingError> processingErrors = new ArrayList<LetterBatchProcessingError>();
-        LetterBatchProcessingError error = new LetterBatchProcessingError();
+        LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setLetterBatch(mockBatch);
         error.setErrorCause("Testing error");
         error.setErrorTime(failDate);
         error.setLetterReceivers(first);
         processingErrors.add(error);
         mockBatch.setProcessingErrors(processingErrors);
-
 
         LetterBatchStatusDto mockDto = new LetterBatchStatusDto(1235l, 235, 456, LetterBatch.Status.error, 235);
 
@@ -287,8 +282,9 @@ public class LetterServiceTest {
         assertEquals("Batch processing should be indicated with an 'error' status", LetterBatch.Status.error, statusDto.getStatus());
         assertEquals(1, statusDto.getErrors().size());
         assertEquals("Testing error", statusDto.getErrors().get(0).getErrorCause());
-        assertNotNull("Letter receivers must not be null", statusDto.getErrors().get(0).getLetterReceivers());
-
+        assertTrue(statusDto.getErrors().get(0) instanceof LetterBatchLetterProcessingError);
+        assertNotNull("Letter receivers must not be null", ((LetterBatchLetterProcessingError)statusDto.getErrors().get(0))
+                .getLetterReceivers());
     }
 
     @Test

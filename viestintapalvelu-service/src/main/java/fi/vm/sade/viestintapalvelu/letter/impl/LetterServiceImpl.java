@@ -526,7 +526,7 @@ public class LetterServiceImpl implements LetterService {
         batch.setBatchStatus(LetterBatch.Status.error);
 
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
-        LetterBatchProcessingError error = new LetterBatchProcessingError();
+        LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorTime(new Date());
         error.setLetterReceivers(receiver);
         error.setLetterBatch(batch);
@@ -635,7 +635,7 @@ public class LetterServiceImpl implements LetterService {
         if(batch == null) {
             batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error, 0);
             List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
-            LetterBatchProcessingError error = new LetterBatchProcessingError();
+            LetterBatchProcessingError error = new LetterBatchLetterProcessingError();
             error.setErrorCause("Batch not found for id " + batchId);
             error.setErrorTime(new Date());
             errors.add(error);
@@ -699,6 +699,23 @@ public class LetterServiceImpl implements LetterService {
         } catch (Exception e) {
             logger.error("iposti processing failed ", e);
         }
+    }
+
+    @Override
+    @Transactional
+    public void handleIpostError(IPostiProcessable iPostiProcessable, Exception e) {
+        logger.error("Error processing IPostiProcessable: "+iPostiProcessable+". Message: "+e.getMessage(), e);
+
+        LetterBatch batch = letterBatchDAO.read(iPostiProcessable.getLetterBatchId());
+        batch.setBatchStatus(LetterBatch.Status.error);
+
+        LetterBatchIPostProcessingError error = new LetterBatchIPostProcessingError();
+        error.setOrderNumber(iPostiProcessable.getOrderNumber());
+        error.setLetterBatch(batch);
+        error.setErrorTime(new Date());
+        error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
+        batch.getProcessingErrors().add(error);
+        letterBatchDAO.update(batch);
     }
 
     public void setLetterBuilder(LetterBuilder letterBuilder) {

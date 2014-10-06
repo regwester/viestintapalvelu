@@ -23,6 +23,7 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
@@ -143,7 +144,7 @@ public class LetterBatchDAOTest {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.error);
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
-        LetterBatchProcessingError error = new LetterBatchProcessingError();
+        LetterBatchProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
         errors.add(error);
@@ -165,7 +166,7 @@ public class LetterBatchDAOTest {
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.error);
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
-        LetterBatchProcessingError error = new LetterBatchProcessingError();
+        LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
         error.setErrorTime(new Date());
@@ -184,7 +185,6 @@ public class LetterBatchDAOTest {
         assertEquals(1, letterBatch.getProcessingErrors().size());
         System.out.println(letterBatch.getProcessingErrors().toString());
         assertEquals("Testing failure case", letterBatch.getProcessingErrors().get(0).getErrorCause());
-
     }
     
     @Test

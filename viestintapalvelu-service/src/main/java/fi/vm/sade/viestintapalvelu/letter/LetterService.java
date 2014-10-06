@@ -20,6 +20,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
  *
  */
 public interface LetterService {
+
     public enum LetterBatchProcess {
         EMAIL,
         LETTER,
@@ -135,4 +136,6 @@ public interface LetterService {
     LetterBatchSplitedIpostDto splitBatchForIpostProcessing(long letterBatchId);
 
     void processIposti(IPostiProcessable processable);
+
+    void handleIpostError(IPostiProcessable letterBatchId, Exception e);
 }

@@ -178,7 +178,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void handleFailure(Exception e, IPostiProcessable processable) {
-            // TODO
+            letterService.handleIpostError(processable, e);
         }
 
         @Override
