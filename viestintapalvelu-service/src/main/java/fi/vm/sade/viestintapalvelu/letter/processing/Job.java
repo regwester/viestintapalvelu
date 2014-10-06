@@ -38,10 +38,22 @@ public interface Job<T extends Processable> {
     void process(T processable) throws Exception;
 
     /**
-     * @param e exception occured
+     * @param e exception occurred
      * @param processable the processable with which the exception occured
      */
     void handleFailure(Exception e, T processable);
+
+    /**
+     * @param e exception occurred
+     * @param description of the job at hand
+     */
+    void handleJobFinnishedError(Exception e, JobDescription<T> description);
+
+    /**
+     * @param e exception occurred
+     * @param description of the job at hand
+     */
+    void handleJobStartedError(Exception e, JobDescription<T> description);
 
     /**
      * Called when processing has successfully ended

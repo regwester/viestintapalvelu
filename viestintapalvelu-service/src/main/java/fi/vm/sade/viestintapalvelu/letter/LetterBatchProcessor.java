@@ -108,6 +108,16 @@ public class LetterBatchProcessor {
         }
 
         @Override
+        public void handleJobFinnishedError(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
+        }
+
+        @Override
+        public void handleJobStartedError(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
+        }
+
+        @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) {
             Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
                     letterBatchId, LetterBatchProcess.LETTER);
@@ -182,6 +192,16 @@ public class LetterBatchProcessor {
         @Override
         public void handleFailure(Exception e, IPostiProcessable processable) {
             letterService.handleIpostError(processable, e);
+        }
+
+        @Override
+        public void handleJobFinnishedError(Exception e, JobDescription<IPostiProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
+        }
+
+        @Override
+        public void handleJobStartedError(Exception e, JobDescription<IPostiProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
@@ -271,13 +291,17 @@ public class LetterBatchProcessor {
 
             if (okState.get()) {
                 logger.info("Job ended successfully: {}", jobDescription.getJob());
-                Optional<? extends JobDescription<?>> nextJob = jobDescription.getJob().jobFinished(this.jobDescription);
-                if (nextJob.isPresent()) {
-                    JobDescription<?> job = nextJob.get();
-                    logger.info("Next processing: {}", job);
-                    @SuppressWarnings({"unchecked","rawtypes"})
-                    BatchJob<?> batchJob = new BatchJob(job);
-                    batchJobExecutorService.submit(batchJob);
+                try {
+                    Optional<? extends JobDescription<?>> nextJob = jobDescription.getJob().jobFinished(this.jobDescription);
+                    if (nextJob.isPresent()) {
+                        JobDescription<?> job = nextJob.get();
+                        logger.info("Next processing: {}", job);
+                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        BatchJob<?> batchJob = new BatchJob(job);
+                        batchJobExecutorService.submit(batchJob);
+                    }
+                } catch(Exception e) {
+                    logger.error("Error during jobFinished with " +this.jobDescription+". Error: "+e.getMessage(), e);
                 }
             } else {
                 logger.error("Job " + jobDescription.getJob() + " procsessing ended due to an error.");

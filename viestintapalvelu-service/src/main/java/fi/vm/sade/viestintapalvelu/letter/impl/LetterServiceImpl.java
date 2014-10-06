@@ -530,6 +530,8 @@ public class LetterServiceImpl implements LetterService {
         LetterReceivers receiver = letterReceiversDAO.read(letterReceiverId);
 
         LetterBatch batch = receiver.getLetterBatch();
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(batch.getId(), batch.getBatchStatus(),
+                LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
@@ -717,10 +719,30 @@ public class LetterServiceImpl implements LetterService {
         logger.error("Error processing IPostiProcessable: "+iPostiProcessable+". Message: "+e.getMessage(), e);
 
         LetterBatch batch = letterBatchDAO.read(iPostiProcessable.getLetterBatchId());
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(iPostiProcessable.getLetterBatchId(),
+                batch.getBatchStatus(), LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
         LetterBatchIPostProcessingError error = new LetterBatchIPostProcessingError();
         error.setOrderNumber(iPostiProcessable.getOrderNumber());
+        error.setLetterBatch(batch);
+        error.setErrorTime(new Date());
+        error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
+        batch.getProcessingErrors().add(error);
+        letterBatchDAO.update(batch);
+    }
+
+    @Override
+    @Transactional
+    public void errorProcessingBatch(long letterBatchId, Exception e) {
+        LetterBatch batch = letterBatchDAO.read(letterBatchId);
+        logger.error("Error processing LetterBatch: "+letterBatchId+" in status "+batch.getBatchStatus()
+                +". Message: "+e.getMessage(), e);
+
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(letterBatchId, batch.getBatchStatus(), LetterBatch.Status.error);
+        batch.setBatchStatus(LetterBatch.Status.error);
+
+        LetterBatchGeneralProcessingError error = new LetterBatchGeneralProcessingError();
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
@@ -759,4 +781,7 @@ public class LetterServiceImpl implements LetterService {
         this.objectMapperProvider = objectMapperProvider;
     }
 
+    public void setLetterBatchStatusLegalityChecker(LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker) {
+        this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
+    }
 }

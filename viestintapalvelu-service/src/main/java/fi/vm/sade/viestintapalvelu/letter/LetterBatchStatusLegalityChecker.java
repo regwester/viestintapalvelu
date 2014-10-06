@@ -47,7 +47,8 @@ public class LetterBatchStatusLegalityChecker {
         switch (status) {
             case error:                         return list(); // no change allowed
             case ready:                         return list(); // no change allowed
-            case created:                       return list(Status.processing);
+            case created:                       return list(Status.processing,
+                                                            Status.error);
             case processing:                    return list(Status.ready,
                                                             Status.waiting_for_ipost_processing,
                                                             Status.error);
