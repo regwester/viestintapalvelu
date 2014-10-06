@@ -289,6 +289,13 @@ public class LetterEmailServiceImplTest {
         assertTrue(options.getOptions().containsAll(Arrays.asList("FI", "EN")));
     }
 
+    @Test(expected = NotFoundException.class)
+    public void getNonExistentLetterBatchLangOptions() {
+        long id = 123l;
+        when(letterBatchDAO.read(eq(id))).thenReturn(null);
+        letterEmailService.getLanguageCodeOptions(123l);
+    }
+
 
     private LetterBatch expectLetterBatch(Long id, Optional<String> receiverLanguage) {
         Template template = expectTemplate(1l, "test_template", "FI");
