@@ -42,7 +42,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
 import fi.vm.sade.viestintapalvelu.model.*;
-import fi.vm.sade.viestintapalvelu.template.Replacement;
+import fi.vm.sade.viestintapalvelu.template.ReadableReplacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
@@ -104,17 +104,19 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
         Set<String> options = new TreeSet<String>();
         String templateLanguage = Optional.fromNullable(template.getLanguage()).or(DEFAULT_LANGUAGE);
-        options.add(templateLanguage);
         // Add all recipient's wanted languages to has set:
         for (LetterReceivers receiver : letterBatch.getLetterReceivers()) {
             if (receiver.getWantedLanguage() != null) {
-                options.add(receiver.getWantedLanguage());
+                options.add(receiver.getWantedLanguage().toUpperCase());
+            } else {
+                options.add(templateLanguage.toUpperCase());
             }
         }
         // Ensure template exists for each language:
         for (String language : new HashSet<String>(options)) {
             if (templateService.getTemplateByName( new TemplateCriteriaImpl()
-                        .withName(template.getName()).withLanguage(language)
+                        .withName(template.getName())
+                        .withLanguage(language.toUpperCase())
                         .withApplicationPeriod(letterBatch.getApplicationPeriod()), false) == null) {
                 options.remove(language);
             }
@@ -228,7 +230,14 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
             EmailData emailData = emailSendData.getEmailByLanguageCode(languageCode);
             if (emailData == null) {
-                emailData = buildEmailData(template, new EmailData(), languageCode, letterBatch.getApplicationPeriod());
+                Set<LetterReplacement> batchReplacementsToUse;
+                if (template == baseTemplate) {
+                    batchReplacementsToUse = letterBatch.getLetterReplacements();
+                } else {
+                    batchReplacementsToUse = new HashSet<LetterReplacement>();
+                }
+                emailData = buildEmailData(template, batchReplacementsToUse, new EmailData(),
+                        languageCode, letterBatch.getApplicationPeriod());
                 emailSendData.setEmailByLanguageCode(languageCode, emailData);
             }
 
@@ -260,8 +269,8 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         return emailSendData;
     }
 
-    private EmailData buildEmailData(Template letterTemplate, EmailData emailData, String languageCode,
-                                     String applicationPeriod) {
+    private EmailData buildEmailData(Template letterTemplate, Set<LetterReplacement> batchReplacements,
+            EmailData emailData, String languageCode, String applicationPeriod) {
         EmailMessage message = emailData.getEmail();
         message.setLanguageCode(languageCode);
         message.setTemplateName(letterTemplate.getName());
@@ -269,7 +278,10 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         message.setTemplateId("" + letterTemplate.getId());
         message.setHtml(true);
 
-        for (Replacement replacement : letterTemplate.getReplacements()) {
+        List<ReadableReplacement> replacements = new ArrayList<ReadableReplacement>();
+        replacements.addAll(letterTemplate.getReplacements());
+        replacements.addAll(batchReplacements);
+        for (ReadableReplacement replacement : replacements) {
             if (TemplateEmailField.BODY.getFieldName().equals(replacement.getName())) {
                 message.setBody(replacement.getDefaultValue());
             } else if (TemplateEmailField.SUBJECT.getFieldName().equals(replacement.getName())) {

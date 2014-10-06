@@ -33,7 +33,7 @@ public class LetterResourceTest {
     private LetterBuilder builder;
     
     @Mock
-    private LetterBatchPDFProcessor processor;
+    private LetterBatchProcessor processor;
     
     @Before
     public void init() throws Exception {
@@ -70,6 +70,13 @@ public class LetterResourceTest {
     @Test
     public void startsProcessingLetters() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity();
+        verify(processor).processLetterBatch(any(Integer.class));
+    }
+    
+    @Test
+    public void returnsServerErrorWhenExceptionIsThrownDuringAsyncLetter() {
+        when(service.createLetter(any(AsyncLetterBatchDto.class))).thenThrow(new NullPointerException());
+        assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getStatus());
     }
 
     private void injectObject(String field, Object object) throws NoSuchFieldException, IllegalAccessException {

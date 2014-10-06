@@ -55,7 +55,9 @@ public class LetterBatch extends BaseEntity {
     public enum Status {
         created,
         processing,
-        ready,
+        waiting_for_ipost_processing,
+        processing_ipost,
+        ready, // iPost ready
         error
     };
 
@@ -90,7 +92,7 @@ public class LetterBatch extends BaseEntity {
     private String organizationOid;
 
     @Column(name= "iposti")
-    private Boolean iposti;
+    private boolean iposti;
 
     @Column(name = "kasittelyn_tila")
     @Enumerated(EnumType.STRING)
@@ -103,6 +105,14 @@ public class LetterBatch extends BaseEntity {
     @Column(name = "kasittely_valmis")
     @Temporal(TemporalType.TIMESTAMP)
     private Date handlingFinished;
+
+    @Column(name = "ipost_kasittely_aloitettu")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ipostHandlingStarted;
+
+    @Column(name = "ipost_kasittely_valmis")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ipostHandlingFinished;
     
     @Column(name = "email_kasittely_aloitettu")
     @Temporal(TemporalType.TIMESTAMP)
@@ -136,7 +146,7 @@ public class LetterBatch extends BaseEntity {
     }
 
     public boolean isIposti() {
-        return iposti;
+       return iposti;
     }
 
     public List<IPosti> getIposti() {
@@ -296,6 +306,22 @@ public class LetterBatch extends BaseEntity {
     
     public void addProcessingErrors(LetterBatchProcessingError processingError) {
         processingErrors.add(processingError);
+    }
+
+    public Date getIpostHandlingStarted() {
+        return ipostHandlingStarted;
+    }
+
+    public void setIpostHandlingStarted(Date ipostHandlingStarted) {
+        this.ipostHandlingStarted = ipostHandlingStarted;
+    }
+
+    public Date getIpostHandlingFinished() {
+        return ipostHandlingFinished;
+    }
+
+    public void setIpostHandlingFinished(Date ipostHandlingFinished) {
+        this.ipostHandlingFinished = ipostHandlingFinished;
     }
 
     @Override

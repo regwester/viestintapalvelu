@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
+import java.util.Collection;
 import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
@@ -18,5 +19,9 @@ public interface LetterReceiverLetterDAO extends JpaDAO<LetterReceiverLetter, Lo
      * @param letterReceiverIDs Lista vasttanottajien tunnuksia
      * @return Lista vastaanottajille lähetettyjä kirjeitä
      */
-    public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverID(List<Long> letterReceiverIDs);
+    List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverID(List<Long> letterReceiverIDs);
+
+    List<Long> findLetterReceiverLetterIdsByLetterReceiverIds(List<Long> letterReceiverIds);
+
+    List<LetterReceiverLetter> findByIds(List<Long> letterRreceiverLetterIds);
 }

@@ -72,7 +72,7 @@ public class LetterResource extends AsynchronousResource {
     private UserRightsValidator userRightsValidator;
 
     @Autowired
-    private LetterBatchPDFProcessor letterPDFProcessor;
+    private LetterBatchProcessor letterPDFProcessor;
 
     @Autowired
     private LetterEmailService letterEmailService;
@@ -417,11 +417,17 @@ public class LetterResource extends AsynchronousResource {
             LOG.error("Validation error", e);
             return Response.status(Status.BAD_REQUEST).build();
         }
-        letterBuilder.initTemplateId(input);
-        fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
-        Long id = letter.getId();
-        letterPDFProcessor.processLetterBatch(id);
-        return Response.status(Status.OK).entity(id).build();
+        
+        try {
+            letterBuilder.initTemplateId(input);
+            fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
+            Long id = letter.getId();
+            letterPDFProcessor.processLetterBatch(id);
+            return Response.status(Status.OK).entity(id).build();
+        } catch (Exception e) {
+            LOG.error("Letter async failed", e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 
     @GET
@@ -433,7 +439,7 @@ public class LetterResource extends AsynchronousResource {
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
         if(status == null) {
-            return Response.status(Status.NOT_FOUND).build();
+            return Response.status(Status.BAD_REQUEST).build();
         }
 
         return Response.status(Status.OK).entity(status).build();

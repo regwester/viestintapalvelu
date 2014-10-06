@@ -16,18 +16,14 @@
 
 package fi.vm.sade.viestintapalvelu.letter;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
-import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.concurrent.*;
+
+import javax.ws.rs.core.Response;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -47,12 +43,18 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import javax.ws.rs.core.Response;
-import java.lang.reflect.Field;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.concurrent.*;
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.fail;
@@ -104,7 +106,7 @@ public class LetterResourceAsyncPerformanceIT {
         final long templateId = transactionalActions.createTemplate();
         long id = asyncLetter(createLetterBatch(templateId, letterCount));
         long start = System.currentTimeMillis();
-        while (isProcessing(id)) {
+        while (isProcessing(id, false)) {
             long currentDuration = System.currentTimeMillis() - start;
             if (currentDuration > MAX_DURATION) {
                 fail("Test took " + roundSeconds(currentDuration) + " s > " + roundSeconds(MAX_DURATION) + "s.");
@@ -154,7 +156,7 @@ public class LetterResourceAsyncPerformanceIT {
         // Starting concurrent monitoring:
         List<Future<Boolean>> monitors = new ArrayList<Future<Boolean>>();
         for (int i = 0; i < CONCURRENT_BATCHES; ++i) {
-            monitors.add(exec.submit(new ProcessMonitor(batchModelIds[i])));
+            monitors.add(exec.submit(new ProcessMonitor(batchModelIds[i], true)));
         }
 
         // Wait for all monitors to be done and meanwhile check that max time is not exceeded:
@@ -204,6 +206,7 @@ public class LetterResourceAsyncPerformanceIT {
         template.setId(templateId);
         batch.setTemplate(template);
         batch.setLanguageCode("FI");
+        batch.setIposti(true);
         batch.setTemplateId(templateId);
         List<AsyncLetterBatchLetterDto> letters = new ArrayList<AsyncLetterBatchLetterDto>();
         for (int i = 0; i < letterCount; ++i) {
@@ -232,14 +235,20 @@ public class LetterResourceAsyncPerformanceIT {
 
     protected class ProcessMonitor implements Callable<Boolean> {
         private long batchId;
+        private boolean waitForDone=false;
 
         public ProcessMonitor(long batchId) {
             this.batchId = batchId;
         }
 
+        public ProcessMonitor(long batchId, boolean waitForDone) {
+            this.batchId = batchId;
+            this.waitForDone = waitForDone;
+        }
+
         @Override
         public Boolean call() throws Exception {
-            while (isProcessing(this.batchId)) {
+            while (isProcessing(this.batchId, this.waitForDone)) {
                 Thread.sleep(500l);
             }
             return false;
@@ -247,11 +256,14 @@ public class LetterResourceAsyncPerformanceIT {
     }
 
     @SuppressWarnings("unchecked")
-    protected boolean isProcessing(long id) {
+    protected boolean isProcessing(long id, boolean waitForDone) {
         Response response = letterResource.letterBatchStatus(id);
         LetterBatchStatusDto entity = (LetterBatchStatusDto) response.getEntity();
         logger.info("  > Batch "+id+" status: {} / {}",
                 entity.getSent(), entity.getTotal());
+        if (waitForDone) {
+            return entity.getStatus() != LetterBatch.Status.ready;
+        }
         return entity.getSent().compareTo(entity.getTotal()) < 0;
     }
 

@@ -61,7 +61,10 @@ public class IPosti extends BaseEntity {
     
     @Column(name = "sisaltotyyppi")
     private String contentType = "";
-    
+
+    @Column(name = "jarjestysnumero")
+    private Integer orderNumber;
+
     public IPosti() {}
     
 ///"SELECT p.id, p.version, p.kirjelahetys_id, p.luotu from IPosti p where p.sentDate is null",
@@ -121,4 +124,11 @@ public class IPosti extends BaseEntity {
         this.contentName = contentName;
     }
 
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 }

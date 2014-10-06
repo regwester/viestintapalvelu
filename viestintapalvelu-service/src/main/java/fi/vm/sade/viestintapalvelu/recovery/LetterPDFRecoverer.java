@@ -9,7 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.viestintapalvelu.letter.LetterBatchPDFProcessor;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchProcessor;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Singleton
@@ -19,7 +19,7 @@ public class LetterPDFRecoverer implements Recoverer {
     private Logger logger = LoggerFactory.getLogger(getClass());
     
     @Autowired
-    private LetterBatchPDFProcessor letterPDFProcessor;
+    private LetterBatchProcessor letterPDFProcessor;
     
     @Autowired
     private LetterService letterService;

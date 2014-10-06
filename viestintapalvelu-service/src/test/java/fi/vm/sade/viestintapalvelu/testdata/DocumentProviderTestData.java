@@ -226,7 +226,7 @@ public class DocumentProviderTestData {
             LetterReceivers letterReceivers = new LetterReceivers();
 
             if (id != null) {
-                letterReceivers.setId(id);
+                letterReceivers.setId(id+i);
             }
 
             letterReceivers.setLetterBatch(letterBatch);
