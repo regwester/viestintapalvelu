@@ -692,6 +692,9 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void processIposti(IPostiProcessable processable) throws Exception {
+        if (processable.getLetterReceiverIds().isEmpty()) {
+            return;
+        }
         processIpostiBatchForLetterReceivers(
                 processable.getLetterBatchId(),
                 processable.getLetterReceiverIds(), processable.getOrderNumber());

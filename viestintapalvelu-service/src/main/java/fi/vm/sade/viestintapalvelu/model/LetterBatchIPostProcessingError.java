@@ -18,12 +18,14 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * User: ratamaa
  * Date: 6.10.2014
  * Time: 12:32
  */
+@Entity
 @DiscriminatorValue("IPOSTI")
 public class LetterBatchIPostProcessingError extends LetterBatchProcessingError {
     private static final long serialVersionUID = -721331642198243867L;

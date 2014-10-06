@@ -16,10 +16,7 @@
 
 package fi.vm.sade.viestintapalvelu.model;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
@@ -28,6 +25,7 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
  * Date: 6.10.2014
  * Time: 12:30
  */
+@Entity
 @DiscriminatorValue("LETTER")
 public class LetterBatchLetterProcessingError extends LetterBatchProcessingError {
     private static final long serialVersionUID = 1756908028928846781L;

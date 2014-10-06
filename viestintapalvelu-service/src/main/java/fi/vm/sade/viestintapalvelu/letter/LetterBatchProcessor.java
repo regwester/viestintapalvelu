@@ -117,6 +117,9 @@ public class LetterBatchProcessor {
                         IPostJob job = new IPostJob(this.letterBatchId);
                         reserveJob(job);
                         LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
+                        if (splitted.getProcessables().isEmpty()) {
+                            return Optional.absent();
+                        }
                         JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job , splitted.getProcessables(),
                                 iPostZipProcessingJobThreadCount);
                         return Optional.of(jobDescription);
