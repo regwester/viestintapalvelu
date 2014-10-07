@@ -452,7 +452,7 @@ public class LetterResource extends AsynchronousResource {
     @Path("/async/letter/pdf/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
-    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId, @Context final HttpServletRequest request) {
+    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
         try {
             LetterBatchStatusDto batchStatus = letterService.getBatchStatus(letterBatchId);
             if(batchStatus == null || ! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(batchStatus.getStatus())) {
