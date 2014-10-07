@@ -23,6 +23,7 @@ import java.util.Map;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
@@ -30,6 +31,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
+
+import com.google.common.base.Optional;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
@@ -46,6 +52,7 @@ import static org.joda.time.DateTime.now;
 @Component
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.OPTIONS_PATH)
+@Api(value=Urls.OPTIONS_PATH, description = "Käyttöliittymässä käytettävät valinnat")
 public class OptionsResource {
     protected enum CacheType {
         hakus
@@ -63,17 +70,22 @@ public class OptionsResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/hakus")
-    public List<HakuDetailsDto> listHakus() {
+    @ApiOperation(value="Palauttaa julkaistut haut",
+            responseContainer = "List", response = HakuDetailsDto.class)
+    public List<HakuDetailsDto> listHakus(
+            @ApiParam("Pakota päivitys (vapaaehtoinen, ilman tätä vastaus voidaan ladata kätköstä)")
+            @QueryParam("forceRefresh") Boolean forceRefresh) {
         return cached(CacheType.hakus, new Cacheable<List<HakuDetailsDto>>() {
             public List<HakuDetailsDto> resolve() {
                 return tarjontaComponent.findPublisehedHakus();
             }
-        });
+        }, Optional.fromNullable(forceRefresh).or(false));
     }
 
-    protected<T> T cached(CacheType type, Cacheable<T> resolver) {
+    protected<T> T cached(CacheType type, Cacheable<T> resolver, boolean forceRefresh) {
         CacheEntry<T> entry = (CacheEntry<T>) cache.get(type);
-        if (entry != null && entry.getCreatedAt().plus(optionsCacheValidMillis).isAfter(now())) {
+        if (entry != null && entry.getCreatedAt().plus(optionsCacheValidMillis).isAfter(now())
+                && !forceRefresh) {
             return entry.getData();
         } else {
             entry = new CacheEntry<T>(resolver.resolve());
