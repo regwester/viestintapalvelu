@@ -1,5 +1,5 @@
-angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout',
-  function ($scope, Generator, Printer, Template, $timeout) {
+angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout', 'Options',
+  function ($scope, Generator, Printer, Template, $timeout, Options) {
     $scope.letters = [];
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
@@ -12,6 +12,11 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.oid = "1.2.246.562.10.00000000001";
     $scope.applicationPeriod = "K2014";
     $scope.generalEmail = null;
+    $scope.haut = [{nimi: {kieli_fi: "Listaa hauista ladatan..."}, oid:null}];
+
+    Options.hakus(function(haut) {
+        $scope.haut = haut;
+    });
 
     $scope.templateChanged = function () {
       $scope.template.applicationPeriod = $scope.applicationPeriod;

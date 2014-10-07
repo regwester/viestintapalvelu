@@ -96,6 +96,17 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
+    <jaxrs-client:client id="tarjontaHakuResourceClient"
+                    serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
+                    address="${viestintapalvelu.tarjontapalvelu.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
     <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">

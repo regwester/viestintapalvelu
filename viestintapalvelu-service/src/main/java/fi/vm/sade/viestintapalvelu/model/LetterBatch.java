@@ -32,7 +32,7 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Entity(name = "LetterBatch")
 @NamedQueries({
         @NamedQuery(name = "letterBatchStatus",
-            query ="select new fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto(lb.id, " +
+            query ="select new fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto(lb.id, " +
                     " (select count(ltr1.id) from LetterBatch batch1 " +
                     "       inner join batch1.letterReceivers receiver1" +
                     "       inner join receiver1.letterReceiverLetter ltr1" +

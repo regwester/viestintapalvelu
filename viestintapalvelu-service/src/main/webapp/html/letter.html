@@ -18,7 +18,10 @@
             </tr>
             <tr>
                 <td>
-                    Haku: <input ng-model="applicationPeriod" ng-change="templateChanged()"/>
+                    Haku: <select class="form-control ng-scope ng-valid ng-dirty"
+                            ng-options="haku.oid as haku.nimi.kieli_fi for haku in haut | orderBy:'nimi.kieli_fi'"
+                            ng-model="applicationPeriod"
+                            ng-change="templateChanged()"></select>
                 </td>
             </tr>
         </table>

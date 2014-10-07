@@ -22,6 +22,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
@@ -284,9 +286,9 @@ public class LetterServiceTest {
         assertEquals("Batch processing should be indicated with an 'error' status", LetterBatch.Status.error, statusDto.getStatus());
         assertEquals(1, statusDto.getErrors().size());
         assertEquals("Testing error", statusDto.getErrors().get(0).getErrorCause());
-        assertTrue(statusDto.getErrors().get(0) instanceof LetterBatchLetterProcessingError);
-        assertNotNull("Letter receivers must not be null", ((LetterBatchLetterProcessingError)statusDto.getErrors().get(0))
-                .getLetterReceivers());
+        assertTrue(statusDto.getErrors().get(0) instanceof LetterBatchStatusErrorDto);
+        assertNotNull("Letter receivers must not be null", ((LetterBatchStatusErrorDto)statusDto.getErrors().get(0))
+                .getRecipientId());
     }
 
     @Test

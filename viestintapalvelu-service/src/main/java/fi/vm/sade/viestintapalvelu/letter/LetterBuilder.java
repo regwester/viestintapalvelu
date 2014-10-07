@@ -27,7 +27,6 @@ import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
-import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
@@ -36,7 +35,6 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
-import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
@@ -156,8 +154,6 @@ public class LetterBuilder {
         // For updating letters content with the generated PdfDocument
         List<Letter> updatedLetters = new LinkedList<Letter>();
 
-        EmailSendDataDto emailSendData = new EmailSendDataDto();
-
         for (Letter letter : batch.getLetters()) {
             // Use the base template and base replacements by default
             Template letterTemplate = baseTemplate;
@@ -174,7 +170,6 @@ public class LetterBuilder {
                     letterReplacements = getTemplateReplacements(letterTemplate);
                 }
             }
-            String languageCode = Optional.fromNullable(letter.getLanguageCode()).or(baseTemplate.getLanguage());
 
             @SuppressWarnings("unchecked")
             Map<String, Object> dataContext = createDataContext(baseTemplate, letter.getAddressLabel(), letterReplacements, // Template

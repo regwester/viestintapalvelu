@@ -25,6 +25,8 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
@@ -647,8 +649,8 @@ public class LetterServiceImpl implements LetterService {
 
         if(batch == null) {
             batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error, 0);
-            List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
-            LetterBatchProcessingError error = new LetterBatchLetterProcessingError();
+            List<LetterBatchStatusErrorDto> errors = new ArrayList<LetterBatchStatusErrorDto>();
+            LetterBatchStatusErrorDto error = new LetterBatchStatusErrorDto();
             error.setErrorCause("Batch not found for id " + batchId);
             error.setErrorTime(new Date());
             errors.add(error);
@@ -662,8 +664,17 @@ public class LetterServiceImpl implements LetterService {
         //to get hold of the error messages and pass them to the DTO.
         if(LetterBatch.Status.error.equals(batch.getStatus())) {
             LetterBatch actualBatch = fetchById(batchId);
-            List<LetterBatchProcessingError> processingErrors = actualBatch.getProcessingErrors();
-            actualBatch.getLetterReceivers();
+            List<LetterBatchStatusErrorDto> processingErrors = new ArrayList<LetterBatchStatusErrorDto>();
+            for (LetterBatchProcessingError error: actualBatch.getProcessingErrors()) {
+                LetterBatchStatusErrorDto errorDto = new LetterBatchStatusErrorDto();
+                errorDto.setErrorCause(error.getErrorCause());
+                errorDto.setErrorTime(error.getErrorTime());
+                if (error instanceof LetterBatchLetterProcessingError
+                        && ((LetterBatchLetterProcessingError) error).getLetterReceivers() != null) {
+                    errorDto.setRecipientId(((LetterBatchLetterProcessingError) error).getLetterReceivers().getId());
+                }
+                processingErrors.add(errorDto);
+            }
             batch.setErrors(processingErrors);
             return batch;
         }

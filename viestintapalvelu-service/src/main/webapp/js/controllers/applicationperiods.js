@@ -14,7 +14,8 @@
  * European Union Public Licence for more details.
  */
 
-angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Template', function($scope, Template) {
+angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Template', 'Options',
+            function($scope, Template, Options) {
     $scope.templates = [];
     $scope.versions = [];
     $scope.contents = "";
@@ -22,6 +23,11 @@ angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Tem
     $scope.version = null;
     $scope.applicationPeriods = [];
     $scope.usedAsDefault = false;
+    $scope.haut = [{nimi: {kieli_fi: "Listaa hauista ladatan..."}, oid:null}];
+
+    Options.hakus(function(haut) {
+        $scope.haut = haut;
+    });
 
     Template.getNames().success(function (data) {
         $scope.templates = data;
@@ -89,5 +95,7 @@ angular.module('app').controller('ApplicationPeriodsController', ['$scope', 'Tem
     $scope.versionDescription = function(version) {
         return version.timestamp + (version.description != null ? "("+version.description+")":"");
     };
+
+
 
 }]);
