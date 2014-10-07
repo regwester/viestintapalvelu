@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
 import org.junit.Test;
@@ -21,10 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
@@ -37,6 +38,8 @@ import static org.junit.Assert.*;
 public class LetterBatchDAOTest {
     private static final Logger logger = LoggerFactory.getLogger(LetterBatchDAOTest.class);
 
+    @PersistenceContext
+    private EntityManager entityManager;
     @Autowired
     private LetterBatchDAO letterBatchDAO;
 
@@ -56,6 +59,52 @@ public class LetterBatchDAOTest {
         assertNotNull(foundLetterBatch.getLetterReplacements());
         assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
         assertEquals("Status is 'processing' by default in the test data generator", LetterBatch.Status.processing, foundLetterBatch.getBatchStatus());
+    }
+
+    @Test
+    public void testPersistGeneralError() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatchDAO.insert(letterBatch);
+
+        LetterBatchGeneralProcessingError error = new LetterBatchGeneralProcessingError();
+        error.setLetterBatch(letterBatch);
+        error.setErrorTime(new Date());
+        error.setErrorCause("cause");
+        letterBatch.getProcessingErrors().add(error);
+        entityManager.flush();
+        assertEquals(1, letterBatchDAO.read(letterBatch.getId()).getProcessingErrors().size());
+    }
+
+    @Test
+    public void testPersistIpostError() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatchDAO.insert(letterBatch);
+
+        LetterBatchIPostProcessingError error = new LetterBatchIPostProcessingError();
+        error.setLetterBatch(letterBatch);
+        error.setErrorTime(new Date());
+        error.setErrorCause("cause");
+        error.setOrderNumber(1);
+        letterBatch.getProcessingErrors().add(error);
+        entityManager.flush();
+        assertEquals(1, letterBatchDAO.read(letterBatch.getId()).getProcessingErrors().size());
+    }
+
+    @Test
+    public void testPersistReceiverError() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatchDAO.insert(letterBatch);
+        LetterReceivers receiver = letterBatch.getLetterReceivers().iterator().next();
+        assertNotNull(receiver);
+
+        LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
+        error.setLetterBatch(letterBatch);
+        error.setErrorTime(new Date());
+        error.setErrorCause("cause");
+        error.setLetterReceivers(receiver);
+        letterBatch.getProcessingErrors().add(error);
+        entityManager.flush();
+        assertEquals(1, letterBatchDAO.read(letterBatch.getId()).getProcessingErrors().size());
     }
 
     @Test

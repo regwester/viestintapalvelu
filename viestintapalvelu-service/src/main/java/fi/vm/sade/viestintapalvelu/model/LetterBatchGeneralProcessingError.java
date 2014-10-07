@@ -16,30 +16,15 @@
 
 package fi.vm.sade.viestintapalvelu.model;
 
-import javax.persistence.*;
-
-import com.fasterxml.jackson.annotation.JsonBackReference;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
 
 /**
  * User: ratamaa
  * Date: 6.10.2014
- * Time: 12:30
+ * Time: 17:19
  */
 @Entity
-@DiscriminatorValue("LETTER")
-public class LetterBatchLetterProcessingError extends LetterBatchProcessingError {
-    private static final long serialVersionUID = 1756908028928846781L;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vastaanottaja_id", nullable = false)
-    @JsonBackReference
-    private LetterReceivers letterReceivers;
-
-    public LetterReceivers getLetterReceivers() {
-        return letterReceivers;
-    }
-
-    public void setLetterReceivers(LetterReceivers letterReceivers) {
-        this.letterReceivers = letterReceivers;
-    }
+@DiscriminatorValue("GENERAL")
+public class LetterBatchGeneralProcessingError extends LetterBatchProcessingError {
 }

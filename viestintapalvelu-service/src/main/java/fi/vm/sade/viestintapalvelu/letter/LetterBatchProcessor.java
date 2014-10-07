@@ -98,6 +98,11 @@ public class LetterBatchProcessor {
         }
 
         @Override
+        public void handleJobStartedFailure(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            // Ignore at this point. Handling not started.
+        }
+
+        @Override
         public void process(LetterReceiverProcessable letterReceiverProcessable) throws Exception {
             letterService.processLetterReceiver(letterReceiverProcessable.getId());
         }
@@ -117,6 +122,9 @@ public class LetterBatchProcessor {
                         IPostJob job = new IPostJob(this.letterBatchId);
                         reserveJob(job);
                         LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
+                        if (splitted.getProcessables().isEmpty()) {
+                            return Optional.absent();
+                        }
                         JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job , splitted.getProcessables(),
                                 iPostZipProcessingJobThreadCount);
                         return Optional.of(jobDescription);
@@ -124,6 +132,11 @@ public class LetterBatchProcessor {
                 }
             }
             return Optional.absent();
+        }
+
+        @Override
+        public void handleJobFinnishedFailure(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
@@ -172,6 +185,11 @@ public class LetterBatchProcessor {
         }
 
         @Override
+        public void handleJobStartedFailure(Exception e, JobDescription<IPostiProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
+        }
+
+        @Override
         public void process(IPostiProcessable processable) throws Exception {
             letterService.processIposti(processable);
         }
@@ -189,6 +207,11 @@ public class LetterBatchProcessor {
                 throw new IllegalStateException(this+" don't know how to start next job " + nextToDo.get());
             }
             return Optional.absent();
+        }
+
+        @Override
+        public void handleJobFinnishedFailure(Exception e, JobDescription<IPostiProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
@@ -236,45 +259,59 @@ public class LetterBatchProcessor {
         @Override
         public Boolean call() throws Exception {
             logger.info("{} starting", this.jobDescription);
-            this.jobDescription.getJob().start(this.jobDescription);
-
-            final CountDownLatch latch = new CountDownLatch(threads);
-            for (int i = 0; i < threads; i++) {
-                letterReceiverExecutorService.execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        T nextProcessable = unprocessed.poll();
-                        while (okState.get() && nextProcessable != null) {
-                            // To ensure that no id is processed twice, you could verify the output of:
-                            // logger.debug("Thread : " + Thread.currentThread().getId() + " processing: " + nextId);
-                            try {
-                                if (okState.get()) {
-                                    jobDescription.getJob().process(nextProcessable);
-                                }
-                            } catch (Exception e) {
-                                logger.error("Error processing processable " + nextProcessable + " in job "
-                                        + jobDescription.getJob(), e);
-                                jobDescription.getJob().handleFailure(e, nextProcessable);
-                                okState.set(false);
-                            }
-                            nextProcessable = unprocessed.poll();
-                        }
-                        latch.countDown();
-                    }
-                });
+            try {
+                this.jobDescription.getJob().start(this.jobDescription);
+            } catch(Exception e) {
+                logger.error("Error during start with " +this.jobDescription+". Error: "+e.getMessage(), e);
+                this.jobDescription.getJob().handleJobStartedFailure(e, this.jobDescription);
+                this.okState.set(false);
             }
-            // Sync, wait for all processors finnish:
-            latch.await();
+
+            if (this.okState.get()) {
+                final CountDownLatch latch = new CountDownLatch(threads);
+                for (int i = 0; i < threads; i++) {
+                    letterReceiverExecutorService.execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            T nextProcessable = unprocessed.poll();
+                            while (okState.get() && nextProcessable != null) {
+                                // To ensure that no id is processed twice, you could verify the output of:
+                                // logger.debug("Thread : " + Thread.currentThread().getId() + " processing: " + nextId);
+                                try {
+                                    if (okState.get()) {
+                                        jobDescription.getJob().process(nextProcessable);
+                                    }
+                                } catch (Exception e) {
+                                    logger.error("Error processing processable " + nextProcessable + " in job "
+                                            + jobDescription.getJob(), e);
+                                    jobDescription.getJob().handleFailure(e, nextProcessable);
+                                    okState.set(false);
+                                }
+                                nextProcessable = unprocessed.poll();
+                            }
+                            latch.countDown();
+                        }
+                    });
+                }
+                // Sync, wait for all processors finnish:
+                latch.await();
+            }
 
             if (okState.get()) {
                 logger.info("Job ended successfully: {}", jobDescription.getJob());
-                Optional<? extends JobDescription<?>> nextJob = jobDescription.getJob().jobFinished(this.jobDescription);
-                if (nextJob.isPresent()) {
-                    JobDescription<?> job = nextJob.get();
-                    logger.info("Next processing: {}", job);
-                    @SuppressWarnings({"unchecked","rawtypes"})
-                    BatchJob<?> batchJob = new BatchJob(job);
-                    batchJobExecutorService.submit(batchJob);
+                try {
+                    Optional<? extends JobDescription<?>> nextJob = jobDescription.getJob().jobFinished(this.jobDescription);
+                    if (nextJob.isPresent()) {
+                        JobDescription<?> job = nextJob.get();
+                        logger.info("Next processing: {}", job);
+                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        BatchJob<?> batchJob = new BatchJob(job);
+                        batchJobExecutorService.submit(batchJob);
+                    }
+                } catch(Exception e) {
+                    logger.error("Error during jobFinished with " +this.jobDescription+". Error: "+e.getMessage(), e);
+                    this.jobDescription.getJob().handleJobFinnishedFailure(e, this.jobDescription);
+                    this.okState.set(false);
                 }
             } else {
                 logger.error("Job " + jobDescription.getJob() + " procsessing ended due to an error.");
