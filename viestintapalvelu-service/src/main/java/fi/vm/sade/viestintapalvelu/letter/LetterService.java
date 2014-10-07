@@ -138,4 +138,10 @@ public interface LetterService {
     void processIposti(IPostiProcessable processable) throws Exception;
 
     void handleIpostError(IPostiProcessable letterBatchId, Exception e);
+
+    /**
+     * @param letterBatchId id of the LetterBatch to set to error-status
+     * @param e the exception
+     */
+    void errorProcessingBatch(long letterBatchId, Exception e);
 }

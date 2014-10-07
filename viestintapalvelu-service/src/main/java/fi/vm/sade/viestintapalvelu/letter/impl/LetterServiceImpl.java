@@ -27,6 +27,7 @@ import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.*;
@@ -58,6 +59,7 @@ public class LetterServiceImpl implements LetterService {
     private ObjectMapperProvider objectMapperProvider;
     // Causes circular reference if autowired directly, through applicationContext laxily:
     private LetterBuilder letterBuilder;
+    private LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker;
     @Autowired
     private ApplicationContext applicationContext;
 
@@ -67,7 +69,7 @@ public class LetterServiceImpl implements LetterService {
             LetterBatchDtoConverter letterBatchDtoConverter,
             LetterReceiversDAO letterReceiversDAO,
             ObjectMapperProvider objectMapperProvider,
-            IPostiDAO iPostiDAO) {
+            IPostiDAO iPostiDAO, LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.currentUserComponent = currentUserComponent;
         this.templateDAO = templateDAO;
@@ -76,6 +78,7 @@ public class LetterServiceImpl implements LetterService {
         this.letterBatchDtoConverter = letterBatchDtoConverter;
         this.objectMapperProvider = objectMapperProvider;
         this.iPostiDAO = iPostiDAO;
+        this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
     }
 
     /* ---------------------- */
@@ -485,6 +488,8 @@ public class LetterServiceImpl implements LetterService {
         if (batch == null) {
             throw new NotFoundException("LetterBatch not found by id="+id);
         }
+        LetterBatch.Status status = batch.getBatchStatus(),
+                newStatus = status;
         switch (process) {
         case EMAIL:
             if (batch.getEmailHandlingStarted() != null) {
@@ -495,13 +500,15 @@ public class LetterServiceImpl implements LetterService {
             break;
         case LETTER:
             batch.setHandlingStarted(new Date());
-            batch.setBatchStatus(LetterBatch.Status.processing);
+            newStatus = LetterBatch.Status.processing;
             break;
         case IPOSTI:
             batch.setIpostHandlingFinished(new Date());
-            batch.setBatchStatus(LetterBatch.Status.processing_ipost);
+            newStatus = LetterBatch.Status.processing_ipost;
             break;
         }
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(id, status, newStatus);
+        batch.setBatchStatus(newStatus);
         letterBatchDAO.update(batch);
     }
 
@@ -523,6 +530,8 @@ public class LetterServiceImpl implements LetterService {
         LetterReceivers receiver = letterReceiversDAO.read(letterReceiverId);
 
         LetterBatch batch = receiver.getLetterBatch();
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(batch.getId(), batch.getBatchStatus(),
+                LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
         List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
@@ -592,6 +601,8 @@ public class LetterServiceImpl implements LetterService {
         if (batch == null) {
             throw new NotFoundException("LetterBatch not found by id="+id);
         }
+        LetterBatch.Status status = batch.getBatchStatus(),
+            newStatus = status;
         switch (process) {
         case EMAIL:
             logger.info("EMAIL processing finished for  letter batch {}", id);
@@ -601,19 +612,21 @@ public class LetterServiceImpl implements LetterService {
             batch.setHandlingFinished(new Date());
             if (batch.isIposti()) {
                 logger.info("LETTER processing finished for IPosti letter batch {}", id);
-                batch.setBatchStatus(LetterBatch.Status.waiting_for_ipost_processing);
+                newStatus = LetterBatch.Status.waiting_for_ipost_processing;
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 logger.info("LETTER processing finished for  letter batch {}", id);
-                batch.setBatchStatus(LetterBatch.Status.ready);
+                newStatus = LetterBatch.Status.ready;
             }
             break;
         case IPOSTI:
             logger.info("IPOSTI processing finished for  letter batch {}", id);
             batch.setIpostHandlingFinished(new Date());
-            batch.setBatchStatus(LetterBatch.Status.ready);
+            newStatus = LetterBatch.Status.ready;
             break;
         }
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(id, status, newStatus);
+        batch.setBatchStatus(newStatus);
         letterBatchDAO.update(batch);
         if (nextProcess != null) {
             logger.info("Current status {}, next process: {}", batch.getBatchStatus(), nextProcess);
@@ -692,6 +705,9 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional(rollbackFor = Exception.class)
     public void processIposti(IPostiProcessable processable) throws Exception {
+        if (processable.getLetterReceiverIds().isEmpty()) {
+            return;
+        }
         processIpostiBatchForLetterReceivers(
                 processable.getLetterBatchId(),
                 processable.getLetterReceiverIds(), processable.getOrderNumber());
@@ -703,10 +719,30 @@ public class LetterServiceImpl implements LetterService {
         logger.error("Error processing IPostiProcessable: "+iPostiProcessable+". Message: "+e.getMessage(), e);
 
         LetterBatch batch = letterBatchDAO.read(iPostiProcessable.getLetterBatchId());
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(iPostiProcessable.getLetterBatchId(),
+                batch.getBatchStatus(), LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
         LetterBatchIPostProcessingError error = new LetterBatchIPostProcessingError();
         error.setOrderNumber(iPostiProcessable.getOrderNumber());
+        error.setLetterBatch(batch);
+        error.setErrorTime(new Date());
+        error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
+        batch.getProcessingErrors().add(error);
+        letterBatchDAO.update(batch);
+    }
+
+    @Override
+    @Transactional
+    public void errorProcessingBatch(long letterBatchId, Exception e) {
+        LetterBatch batch = letterBatchDAO.read(letterBatchId);
+        logger.error("Error processing LetterBatch: "+letterBatchId+" in status "+batch.getBatchStatus()
+                +". Message: "+e.getMessage(), e);
+
+        letterBatchStatusLegalityChecker.ensureLegalStateChange(letterBatchId, batch.getBatchStatus(), LetterBatch.Status.error);
+        batch.setBatchStatus(LetterBatch.Status.error);
+
+        LetterBatchGeneralProcessingError error = new LetterBatchGeneralProcessingError();
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
@@ -745,4 +781,7 @@ public class LetterServiceImpl implements LetterService {
         this.objectMapperProvider = objectMapperProvider;
     }
 
+    public void setLetterBatchStatusLegalityChecker(LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker) {
+        this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
+    }
 }

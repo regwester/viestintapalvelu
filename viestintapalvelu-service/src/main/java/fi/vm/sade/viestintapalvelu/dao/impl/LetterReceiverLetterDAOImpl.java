@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -19,6 +20,9 @@ public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiv
 
     @Override
     public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverIds(List<Long> letterReceiverIDs) {
+        if (letterReceiverIDs.isEmpty()) {
+            return new ArrayList<LetterReceiverLetter>();
+        }
         QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
 
         BooleanExpression whereExpression = letterReceiverLetter.letterReceivers.id.in(letterReceiverIDs);

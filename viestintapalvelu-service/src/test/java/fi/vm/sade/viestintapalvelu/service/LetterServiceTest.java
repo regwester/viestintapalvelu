@@ -24,11 +24,13 @@ import com.google.common.base.Optional;
 import fi.vm.sade.viestintapalvelu.dao.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
@@ -64,7 +66,7 @@ public class LetterServiceTest {
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
             mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
-            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO);
+            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO, new LetterBatchStatusLegalityChecker());
         this.letterService.setLetterBuilder(letterBuilder);
     }
     
@@ -307,5 +309,52 @@ public class LetterServiceTest {
     public void usesLetterBatchDaoForFetchingUnfinishedLetterBatches() {
         letterService.findUnfinishedLetterBatches();
         verify(mockedLetterBatchDAO).findUnfinishedLetterBatches();
+    }
+
+    @Test
+    public void testGeneralError() {
+        long batchId = 101l;
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(batchId);
+        when(mockedLetterBatchDAO.read(eq(batchId))).thenReturn(batch);
+
+        letterService.errorProcessingBatch(batchId, new Exception("test_msg"));
+        assertEquals(LetterBatch.Status.error, batch.getBatchStatus());
+        assertEquals(1, batch.getProcessingErrors().size());
+        assertTrue(batch.getProcessingErrors().iterator().next() instanceof LetterBatchGeneralProcessingError);
+        assertEquals("test_msg", batch.getProcessingErrors().iterator().next().getErrorCause());
+    }
+
+    @Test
+    public void testIpostiError() {
+        long batchId = 101l;
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(batchId);
+        batch.setIposti(true);
+        batch.setBatchStatus(LetterBatch.Status.processing_ipost);
+        when(mockedLetterBatchDAO.read(eq(batchId))).thenReturn(batch);
+
+        letterService.handleIpostError(new IPostiProcessable(batchId, 1), new Exception("test_msg"));
+        assertEquals(LetterBatch.Status.error, batch.getBatchStatus());
+        assertEquals(1, batch.getProcessingErrors().size());
+        assertTrue(batch.getProcessingErrors().iterator().next() instanceof LetterBatchIPostProcessingError);
+        assertEquals("test_msg", batch.getProcessingErrors().iterator().next().getErrorCause());
+    }
+
+    @Test
+    public void testReceiverError() {
+        long batchId = 101l,
+            receiverId = 23l;
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(batchId);
+        batch.setBatchStatus(LetterBatch.Status.processing);
+        LetterReceivers receiver = DocumentProviderTestData.getLetterReceivers(receiverId, batch).iterator().next();
+        when(mockedLetterReceiversDao.read(eq(receiverId))).thenReturn(receiver);
+
+        letterService.saveBatchErrorForReceiver(receiverId, "test_msg");
+        assertEquals(LetterBatch.Status.error, batch.getBatchStatus());
+        assertEquals(1, batch.getProcessingErrors().size());
+        assertTrue(batch.getProcessingErrors().iterator().next() instanceof LetterBatchLetterProcessingError);
+        assertEquals("test_msg", batch.getProcessingErrors().iterator().next().getErrorCause());
+        LetterBatchLetterProcessingError error = ((LetterBatchLetterProcessingError)batch.getProcessingErrors().iterator().next());
+        assertNotNull(error.getLetterReceivers());
+        assertEquals(Long.valueOf(receiverId), error.getLetterReceivers().getId());
     }
 }

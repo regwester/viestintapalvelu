@@ -45,6 +45,7 @@ import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterEmailServiceImpl;
@@ -90,7 +91,9 @@ public class LetterEmailServiceImplTest {
     public void setup() {
         letterEmailService.setObjectMapperProvider(new ObjectMapperProvider());
         doCallRealMethod().when(letterService).setLetterBatchDAO(any(LetterBatchDAO.class));
+        doCallRealMethod().when(letterService).setLetterBatchStatusLegalityChecker(any(LetterBatchStatusLegalityChecker.class));
         letterService.setLetterBatchDAO(letterBatchDAO);
+        letterService.setLetterBatchStatusLegalityChecker(new LetterBatchStatusLegalityChecker());
     }
 
     @Test(expected = IllegalStateException.class)
@@ -287,6 +290,13 @@ public class LetterEmailServiceImplTest {
         LanguageCodeOptionsDto options = letterEmailService.getLanguageCodeOptions(1l);
         assertEquals(2, options.getOptions().size());
         assertTrue(options.getOptions().containsAll(Arrays.asList("FI", "EN")));
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void getNonExistentLetterBatchLangOptions() {
+        long id = 123l;
+        when(letterBatchDAO.read(eq(id))).thenReturn(null);
+        letterEmailService.getLanguageCodeOptions(123l);
     }
 
 
