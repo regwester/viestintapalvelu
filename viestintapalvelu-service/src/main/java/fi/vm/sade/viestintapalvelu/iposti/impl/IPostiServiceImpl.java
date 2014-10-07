@@ -22,12 +22,14 @@ public class IPostiServiceImpl implements IPostiService {
     }
     
     @Override
+    @Transactional(readOnly = true)
     public IPosti findBatchById(Long ipostiId) {
         List<IPosti> results = iPostiDAO.findBy("id", ipostiId);
         return (results != null && results.size() > 0) ? results.get(0) : null;
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<IPosti> findUnsent() {
         return iPostiDAO.findUnSent();
    }
@@ -38,6 +40,7 @@ public class IPostiServiceImpl implements IPostiService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public List<IPosti> findMailById(Long mailId) {
         return iPostiDAO.findMailById(mailId);
     }

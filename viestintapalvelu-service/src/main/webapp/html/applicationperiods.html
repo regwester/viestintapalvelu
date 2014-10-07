@@ -93,7 +93,9 @@
         </table>
         <ol>
             <li ng-repeat="applicationPeriod in applicationPeriods | filter:{deleted:false}">
-                <input ng-model="applicationPeriod.oid"/>
+                <select class="form-control ng-scope ng-valid ng-dirty"
+                        ng-options="haku.oid as haku.nimi.kieli_fi for haku in haut | orderBy:'nimi.kieli_fi'"
+                        ng-model="applicationPeriod.oid"></select>
                 <button ng-click="delete(applicationPeriod)" class="btn btn-danger">Poista</button>
             </li>
         </ol>
