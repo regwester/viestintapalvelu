@@ -61,7 +61,7 @@ public class OptionsResource {
     @Autowired
     private TarjontaComponent tarjontaComponent;
 
-    @Value("${viestintapalvelu.options.cache.valid.millis}")
+    @Value("#{optionsCacheConfig['timeoutMillis'] != null ? optionsCacheConfig['timeoutMillis'] : 3600000}")
     private long optionsCacheValidMillis = 3600*1000l;
 
     protected Map<CacheType, CacheEntry<?>> cache = new HashMap<CacheType, CacheEntry<?>>();

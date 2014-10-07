@@ -40,13 +40,17 @@
     -->
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+    
+    <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
+    </util:map>
 
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />
     <mockito:mock id="henkiloResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" />
     <mockito:mock id="omattiedotResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource"/>
     <mockito:mock id="organisaatioResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource"/>
     <mockito:mock id="emailResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource"/>
-    
+    <mockito:mock id="tarjontaHakuResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"/>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <contextScan/>
     </camelContext>
