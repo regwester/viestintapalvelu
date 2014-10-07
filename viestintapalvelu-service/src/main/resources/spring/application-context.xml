@@ -43,6 +43,10 @@
 
     <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
 
+    <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
+        <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
+    </util:map>
+
     <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
     <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
