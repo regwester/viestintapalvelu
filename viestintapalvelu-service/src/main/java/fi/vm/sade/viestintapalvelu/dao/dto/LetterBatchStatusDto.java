@@ -14,7 +14,7 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.dao;
+package fi.vm.sade.viestintapalvelu.dao.dto;
 
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
@@ -27,12 +27,11 @@ import java.util.List;
  * Time: 16:12
  */
 public class LetterBatchStatusDto {
-
     private Long letterBatchId;
     private Integer sent;
     private Integer total;
     private Integer emailsProcessed;
-    private List<LetterBatchProcessingError> errors;
+    private List<LetterBatchStatusErrorDto> errors;
     private LetterBatch.Status status;
 
     public LetterBatchStatusDto(Long letterBatchId,
@@ -44,6 +43,14 @@ public class LetterBatchStatusDto {
         this.setTotal(total);
         this.status = status;
         this.setEmailsProcessed(emailsProcessed);
+    }
+
+    public Long getLetterBatchId() {
+        return letterBatchId;
+    }
+
+    public void setLetterBatchId(Long letterBatchId) {
+        this.letterBatchId = letterBatchId;
     }
 
     public Integer getSent() {
@@ -62,11 +69,11 @@ public class LetterBatchStatusDto {
         this.total = (total != null) ? total.intValue() : null;
     }
 
-    public List<LetterBatchProcessingError> getErrors() {
+    public List<LetterBatchStatusErrorDto> getErrors() {
         return errors;
     }
 
-    public void setErrors(List<LetterBatchProcessingError> errors) {
+    public void setErrors(List<LetterBatchStatusErrorDto> errors) {
         this.errors = errors;
     }
 

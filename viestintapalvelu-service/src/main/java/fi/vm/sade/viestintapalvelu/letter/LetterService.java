@@ -1,17 +1,15 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
-import java.util.Set;
 
 import com.google.common.base.Optional;
 
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten

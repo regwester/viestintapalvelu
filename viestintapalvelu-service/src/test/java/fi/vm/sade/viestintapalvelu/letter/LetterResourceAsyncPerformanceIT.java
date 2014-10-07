@@ -46,7 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
