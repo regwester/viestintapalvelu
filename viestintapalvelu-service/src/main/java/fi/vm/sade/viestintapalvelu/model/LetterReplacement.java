@@ -13,6 +13,7 @@ import javax.persistence.TemporalType;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import fi.vm.sade.generic.model.BaseEntity;
+import fi.vm.sade.viestintapalvelu.template.ReadableReplacement;
 
 /**
  * @author migar1
@@ -34,7 +35,7 @@ CREATE TABLE kirjeet.lahetyskorvauskentat(
 
 @Table(name = "lahetyskorvauskentat", schema= "kirjeet")
 @Entity()
-public class LetterReplacement extends BaseEntity {
+public class LetterReplacement extends BaseEntity implements ReadableReplacement {
     private static final long serialVersionUID = 1L;
 
     @ManyToOne(fetch = FetchType.EAGER)
@@ -64,6 +65,7 @@ public class LetterReplacement extends BaseEntity {
 		this.letterBatch = letterBatch;
 	}
 
+    @Override
 	public String getName() {
         return name;
     }
@@ -72,6 +74,7 @@ public class LetterReplacement extends BaseEntity {
         this.name = name;
     }
 
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -80,6 +83,7 @@ public class LetterReplacement extends BaseEntity {
         this.defaultValue = defaultValue;
     }
 
+    @Override
     public boolean isMandatory() {
         return mandatory;
     }
@@ -88,6 +92,7 @@ public class LetterReplacement extends BaseEntity {
         this.mandatory = mandatory;
     }
 
+    @Override
     public Date getTimestamp() {
         return timestamp;
     }

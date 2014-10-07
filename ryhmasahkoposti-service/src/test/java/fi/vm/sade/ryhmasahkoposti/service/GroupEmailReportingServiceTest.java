@@ -1,19 +1,8 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.*;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
-import fi.vm.sade.ryhmasahkoposti.converter.*;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import java.io.IOException;
+import java.util.*;
+
 import org.apache.commons.fileupload.FileItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -30,8 +19,20 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import java.io.IOException;
-import java.util.*;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.converter.*;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -102,9 +103,7 @@ public class GroupEmailReportingServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testAddSendingGroupEmail() throws IOException {
-        when(mockedReportedMessageConverter.convert(any(EmailMessage.class), any(ReplacementDTO.class), any(ReplacementDTO.class), 
-                any(ReplacementDTO.class), any(ReplacementDTO.class), any(ReplacementDTO.class), eq("null"))).thenReturn(
-                        new ReportedMessage());
+        when(mockedReportedMessageConverter.convert(any(EmailMessage.class))).thenReturn(new ReportedMessage());
 
         ReportedMessage savedReportedMessage = RaportointipalveluTestData.getReportedMessage();
         savedReportedMessage.setId(new Long(2));
@@ -198,9 +197,9 @@ public class GroupEmailReportingServiceTest {
         }).when(mockedReportedRecipientService).updateReportedRecipient(any(ReportedRecipient.class));
 
         EmailRecipientDTO recipient = RaportointipalveluTestData.getEmailRecipientDTO();
-        boolean succesful = groupEmailReportingService.startSending(recipient);
+        boolean successful = groupEmailReportingService.startSending(recipient);
 
-        assertTrue(succesful);
+        assertTrue(successful);
     }
 
     @Test
@@ -287,10 +286,10 @@ public class GroupEmailReportingServiceTest {
 
         assertNotNull(sendingStatus);
         assertNotNull(sendingStatus.getMessageID());
-        assertNotNull(sendingStatus.getNumberOfReciepients());
-        assertTrue(sendingStatus.getNumberOfReciepients().equals(new Long(10)));
-        assertNotNull(sendingStatus.getNumberOfSuccesfulSendings());
-        assertTrue(sendingStatus.getNumberOfSuccesfulSendings().equals(new Long(5)));
+        assertNotNull(sendingStatus.getNumberOfRecipients());
+        assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
+        assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
+        assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(5)));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
         assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
         assertNull(sendingStatus.getSendingEnded());
@@ -302,7 +301,7 @@ public class GroupEmailReportingServiceTest {
         reportedMessage.setId(new Long(1));
 
         SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
-        sendingStatusDTO.setNumberOfSuccesfulSendings(new Long(8));
+        sendingStatusDTO.setNumberOfSuccessfulSendings(new Long(8));
         sendingStatusDTO.setSendingEnded(new Date());
 
         when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
@@ -314,10 +313,10 @@ public class GroupEmailReportingServiceTest {
 
         assertNotNull(sendingStatus);
         assertNotNull(sendingStatus.getMessageID());
-        assertNotNull(sendingStatus.getNumberOfReciepients());
-        assertTrue(sendingStatus.getNumberOfReciepients().equals(new Long(10)));
-        assertNotNull(sendingStatus.getNumberOfSuccesfulSendings());
-        assertTrue(sendingStatus.getNumberOfSuccesfulSendings().equals(new Long(8)));
+        assertNotNull(sendingStatus.getNumberOfRecipients());
+        assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
+        assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
+        assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(8)));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
         assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
         assertNotNull(sendingStatus.getSendingEnded());
@@ -502,4 +501,5 @@ public class GroupEmailReportingServiceTest {
         assertTrue(organizationDTOs.get(0).getOid().equals("1.2.246.562.10.00000000001"));
         assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
     }
+
 }

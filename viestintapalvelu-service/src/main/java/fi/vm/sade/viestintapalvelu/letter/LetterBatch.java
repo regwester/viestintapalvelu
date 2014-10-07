@@ -8,10 +8,11 @@ import java.util.Map;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 @ApiModel(value = "Kerralla muodostettavien kirjeiden joukko")
-public class LetterBatch {
+public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
     private List<Letter> letters;
 
@@ -44,6 +45,9 @@ public class LetterBatch {
     
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
+
+    @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
+    private boolean iposti = false;
     
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
     
@@ -55,6 +59,12 @@ public class LetterBatch {
         this.templateReplacements = templateReplacements;
     }
 
+    @Override
+    public boolean isIposti() {
+        return this.iposti;
+    }
+    
+    
     public void setLetters(List<Letter> letters) {
         this.letters = letters;
     }
@@ -192,5 +202,13 @@ public class LetterBatch {
 
     public void addIPostiData(String name, byte[] content) {
         iPostiData.put(name, content);
+    }
+
+    public int getLetterCount() {
+        return 0;
+    }
+
+    public int getSentLetterCount() {
+        return 0;
     }
 }

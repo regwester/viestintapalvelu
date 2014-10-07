@@ -1,22 +1,10 @@
 package fi.vm.sade.viestintapalvelu;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.testdata.Generator;
-
-import org.junit.BeforeClass;
-import org.junit.ClassRule;
-import org.junit.Test;
+import org.junit.Ignore;
 import org.junit.experimental.runners.Enclosed;
 import org.junit.runner.RunWith;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.util.List;
-
-import static org.junit.Assert.assertEquals;
-
+@Ignore
 @RunWith(Enclosed.class)
 public class AddressLabelsInXLSFormatTest {
     //public static TomcatRule tomcat = new TomcatRule();

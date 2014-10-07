@@ -6,14 +6,14 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
-public interface ReportedMessageService {  
+public interface ReportedMessageService {
     /**
      * Hakee hakuparameterejä vastaavien raportoitavien ryhmäsähköpostien lukumäärän
      * 
      * @param query Hakuparametrit
      * @return Raportoitavien ryhmäsähköpostien lukumäärän
      */
-    public Long getNumberOfReportedMessages(ReportedMessageQueryDTO query);
+    Long getNumberOfReportedMessages(ReportedMessageQueryDTO query);
 
     /**
      * Hakee raportoitavien ryhmäsähköpostien lukumäärän
@@ -21,7 +21,7 @@ public interface ReportedMessageService {
      * @param organizationOid Organisaation oid-tunnus
      * @return Raportoitavien ryhmäsähköpostien lukumäärän
      */
-    public Long getNumberOfReportedMessages(String organizationOid);
+    Long getNumberOfReportedMessages(String organizationOid);
 
     /**
      * Hakee raportoitavan viestin viestin avaimella
@@ -29,7 +29,7 @@ public interface ReportedMessageService {
      * @param id Raportoitavan viestin avain
      * @return Raportoitavan viestin tiedot {@link ReportedMessage}
      */
-    public ReportedMessage getReportedMessage(Long id);
+    ReportedMessage getReportedMessage(Long id);
 
     /**
      * Hakee annettujen parametrien mukaiset raportoitavat viestit
@@ -38,7 +38,7 @@ public interface ReportedMessageService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Lists raportoitavia viestejä {@link ReportedMessage}
      */
-    public List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
+    List<ReportedMessage> getReportedMessages(ReportedMessageQueryDTO query, 
 	    PagingAndSortingDTO pagingAndSorting);
 
     /**
@@ -48,7 +48,7 @@ public interface ReportedMessageService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return
      */
-    public List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedMessage> getReportedMessages(String organizationOid, PagingAndSortingDTO pagingAndSorting);
     
     /**
      * Hakee määritellyn lähettäjän tietyn prosessin sisällä lähettämät raportoitavat viestit
@@ -57,7 +57,7 @@ public interface ReportedMessageService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return
      */
-    public List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedMessage> getUserMessages(String senderOid, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee määritellyn lähettäjän tietyn prosessin sisällä lähettämät raportoitavat viestit
@@ -67,7 +67,7 @@ public interface ReportedMessageService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return
      */
-    public List<ReportedMessage> getUserMessages(String senderOid, String process, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedMessage> getUserMessages(String senderOid, String process, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Tallentaa raportoitvan ryhmäsähköpostin viestin
@@ -75,11 +75,11 @@ public interface ReportedMessageService {
      * @param reportedMessage Ryhmäsähköpostin raportoitavaviesti
      * @return Tallennetu raportoitava viesti
      */
-    public ReportedMessage saveReportedMessage(ReportedMessage reportedMessage);
+    ReportedMessage saveReportedMessage(ReportedMessage reportedMessage);
 
     /**
      * Päivittää raportoitavan viestin tietoja tietokantaan
      * @param reportedMessage Päivittetävä raportoitava viesti
      */
-    public void updateReportedMessage(ReportedMessage reportedMessage);
+    void updateReportedMessage(ReportedMessage reportedMessage);
 }

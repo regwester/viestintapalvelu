@@ -1,8 +1,12 @@
 package fi.vm.sade.viestintapalvelu.validator;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.letter.Letter;
-import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 
 /**
  * Tarkistaa LetterBatchin
@@ -12,35 +16,63 @@ import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
  */
 
 public class LetterBatchValidator {
+    
+    private final static Logger LOGGER = LoggerFactory.getLogger(LetterBatchValidator.class);
 
     /**
      * Validoi annetun <code>LetterBatch</code>:n.
      * 
      * @param letters
-     * @return <code>true</code> mikäli kaikki on kunnossa.
      */
-    public static boolean validate(LetterBatch letters) throws Exception {
-        if (letters != null) {
-            for (Letter letter : letters.getLetters()) {
-                isValid(letter);
-            }
+    public static void validate(LetterBatchDetails letters) throws Exception {
+        validateLetterBatch(letters);
+        for (LetterDetails letter : letters.getLetters()) {
+            validate(letter);
+        }
+    }
+
+
+    public static boolean isValid(LetterBatchDetails letters) {
+        try {
+            validate(letters);
+        } catch (Exception e) {
+            LOGGER.error("Invalid LetterBatchDetails: " + e.getMessage(), e);
+            return false;
         }
         return true;
     }
 
-    private static boolean isValid(Letter letter) throws Exception {
-        if (letter != null) {
-            isValid(letter.getAddressLabel());
+    private static void validateLetterBatch(LetterBatchDetails letters) {
+        if (letters == null) {
+            throw new IllegalArgumentException("Letter to be validated was null");
         }
-        return true;
+        if (letters.getTemplateId() == null && letters.getTemplate() == null 
+                && (StringUtils.isBlank(letters.getTemplateName()) || StringUtils.isBlank(letters.getLanguageCode()))) {
+            throw new IllegalArgumentException("Invalid template parameters, name of template " + letters.getTemplateName()
+                    + ", language code: " + letters.getLanguageCode());
+        }
     }
 
-    private static boolean isValid(AddressLabel address) throws Exception {
-        if (address != null) {
-            if (address.getPostalCode().length() > 10) {
-                throw new Exception("Viallinen postinumero " + address);
-            }
+    private static void validate(LetterDetails letter) throws Exception {
+        validateAddress(letter.getAddressLabel());
+    }
+
+    private static void validateAddress(AddressLabelDetails address) throws Exception {
+        if (address == null) {
+            throw new IllegalArgumentException("AddressLabel of the letter to be validated was null");
         }
-        return true;
+        if (StringUtils.isBlank(address.getPostalCode()) || address.getPostalCode().length() > 10) {
+            throw new IllegalArgumentException("Viallinen postinumero " + address);
+        }
+        validateAddressLabelField("City", address.getCity());
+        validateAddressLabelField("Adressline", address.getAddressline());
+        validateAddressLabelField("Firstname", address.getFirstName());
+        validateAddressLabelField("Lastname", address.getLastName());
+    }
+
+    private static void validateAddressLabelField(String fieldName, String fieldValue) {
+        if (StringUtils.isBlank(fieldValue)) {
+            throw new IllegalArgumentException(fieldName + " in addresslabel was blank");
+        }
     }
 }

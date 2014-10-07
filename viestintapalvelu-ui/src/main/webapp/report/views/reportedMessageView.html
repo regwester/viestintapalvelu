@@ -77,11 +77,11 @@
                 {{'reportedmessageview.text.vastaanottajaa' | i18n}} 
             </div>
             <div class="span8">
-                {{reportedMessageDTO.sendingStatus.numberOfReciepients}}
+                {{reportedMessageDTO.sendingStatus.numberOfRecipients}}
             </div>
             <div class="span2" ng-if="reportedMessageDTO.sendingStatus.numberOfFailedSendings > 0">
-                <a href ng-if="showSendingUnsuccesfulClicked == false" ng-click="showSendingUnsuccesful()">{{'reportedmessageview.text.naytaepaonnistuneet' | i18n}}</a>
-                <a href ng-if="showSendingUnsuccesfulClicked == true" ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki' | i18n}}</a>              
+                <a href ng-if="showSendingUnsuccessfulClicked == false" ng-click="showSendingUnsuccessful()">{{'reportedmessageview.text.naytaepaonnistuneet' | i18n}}</a>
+                <a href ng-if="showSendingUnsuccessfulClicked == true" ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki' | i18n}}</a>
             </div>
         </div>
         <table class="table table-striped">
@@ -98,14 +98,14 @@
 	                <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
 	                <td>{{emailRecipient.oid}}</td>
 	                <td>{{emailRecipient.email}}</td>
-	                <td ng-if="emailRecipient.sendSuccessfull === '1'">
+	                <td ng-if="emailRecipient.sendSuccessful === '1'">
 	                    {{'reportedmessageview.text.lahetys_vastaanottajalle_onnistui' | i18n}}
 	                </td>
-	                <td ng-if="emailRecipient.sendSuccessfull === '0'">
-	                    <img style="margin-right:10px;" src="./assets/img/alert-icon28x29.png">
+	                <td ng-if="emailRecipient.sendSuccessful === '0'">
+	                    <img style="margin-right:10px;" src="./assets/img/error-icon28x29.png">
 	                    {{'reportedmessageview.text.lahetys_vastaanottajalle_epaonnistui' | i18n}}
 	                </td>
-	                <td ng-if="emailRecipient.sendSuccessfull === null">
+	                <td ng-if="emailRecipient.sendSuccessful === null">
 	                    {{'reportedmessageview.text.lahetys_vastaanottajalle_kesken' | i18n}}
 	                </td>
 	            </tr>
@@ -113,7 +113,7 @@
         </table>
     </div>
     
-    <div class="pagination" ng-if="reportedMessageDTO.sendingStatus.numberOfReciepients > pagination.pageSize">
-        <pagination ng-model="pagination.page" total-items="reportedMessageDTO.sendingStatus.numberOfReciepients" items-per-page="{{pagination.pageSize}}" ng-change="fetch()" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+    <div class="pagination" ng-if="reportedMessageDTO.sendingStatus.numberOfRecipients > pagination.pageSize">
+        <pagination ng-model="pagination.page" total-items="reportedMessageDTO.sendingStatus.numberOfRecipients" items-per-page="{{pagination.pageSize}}" ng-change="fetch()" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
     </div>
 </div>

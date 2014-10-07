@@ -4,7 +4,7 @@ public interface GroupEmailConstants {
 	// Raportoitavien ryhmäsähköpostien vakioita
 	public static final String HTML_MESSAGE = "html";
 	public static final String NOT_HTML_MESSAGE = "";	
-	public static final String SENDING_SUCCESFUL = "1";
+	public static final String SENDING_SUCCESSFUL = "1";
 	public static final String SENDING_FAILED = "0";	
 	
 	// OID-vakiot

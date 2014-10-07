@@ -6,7 +6,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 @ApiModel(value = "Replacement", description = "Korvaukentät, nimi / arvo -parit")
-public class Replacement {
+public class Replacement implements ReadableReplacement {
 
 	@ApiModelProperty(value = "ID")
     private long id;
@@ -23,6 +23,7 @@ public class Replacement {
 	@ApiModelProperty(value = "Pakollinen (True/False)")
     private boolean mandatory = false;
 
+    @Override
     public String getName() {
         return name;
     }
@@ -31,6 +32,7 @@ public class Replacement {
         this.name = name;
     }
 
+    @Override
     public String getDefaultValue() {
         return defaultValue;
     }
@@ -39,6 +41,7 @@ public class Replacement {
         this.defaultValue = defaultValue;
     }
 
+    @Override
     public boolean isMandatory() {
         return mandatory;
     }
@@ -47,6 +50,7 @@ public class Replacement {
         this.mandatory = mandatory;
     }
 
+    @Override
     public Date getTimestamp() {
         return timestamp;
     }

@@ -1,18 +1,15 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
-import fi.vm.sade.ryhmasahkoposti.service.ReportedAttachmentService;
-import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
-import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
-import org.apache.commons.lang.StringUtils;
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
+
+import javax.inject.Named;
+import javax.mail.internet.MimeMessage;
+import javax.persistence.OptimisticLockException;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,19 +17,25 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Service;
 
-import javax.inject.Named;
-import javax.mail.internet.MimeMessage;
-import javax.persistence.OptimisticLockException;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Date;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import com.google.common.base.Optional;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
+import fi.vm.sade.ryhmasahkoposti.service.*;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
+import fi.vm.sade.ryhmasahkoposti.service.dto.EmailRecipientDtoConverter;
+import fi.vm.sade.ryhmasahkoposti.service.dto.ReportedRecipientAttachmentSaveDto;
+import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
+
+import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.addToMappedList;
+import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.combine;
+import static fi.vm.sade.ryhmasahkoposti.util.OptionalHelper.as;
 
 @Service
 public class EmailServiceImpl implements EmailService {
-    
+    public static final String ADDITIONAL_ATTACHMENT_URI_PARAMETER = "additionalAttachmentUri";
+    public static final String ADDITIONAL_ATTACHMENT_URIS_PARAMETER = "additionalAttachmentUris";
+
     private static final Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl.class);
 
     private static final int MAX_CACHE_ENTRIES = 10;
@@ -47,9 +50,6 @@ public class EmailServiceImpl implements EmailService {
     private GroupEmailReportingService rrService;
 
     @Autowired
-    private ReportedAttachmentService liiteService;
-
-    @Autowired
     private EmailSender emailSender;
 
     @Autowired
@@ -59,13 +59,23 @@ public class EmailServiceImpl implements EmailService {
     private EmailAVChecker emailAVChecker;
 
     @Autowired
+    private EmailRecipientDtoConverter emailRecipientDtoConverter;
+
+    @Autowired
     private EmailSendQueueService emailQueueService;
 
     @Named("emailExecutor")
     @Autowired
     private ThreadPoolTaskExecutor emailExecutor;
 
-    private TemplateBuilder templateBuilder = new TemplateBuilder();
+    @Autowired
+    private List<EmailAttachmentDownloader> emailDownloaders;
+
+    @Autowired
+    private ReportedMessageAttachmentService reportedMessageAttachmentService;
+
+    @Autowired
+    private TemplateBuilder templateBuilder;
 
     @Value("${ryhmasahkoposti.require.virus.check:true}")
     private boolean virusCheckRequired;
@@ -73,6 +83,7 @@ public class EmailServiceImpl implements EmailService {
     private Map<Long, EmailMessageDTO> messageCache = new LinkedHashMap<Long, EmailMessageDTO>(MAX_CACHE_ENTRIES + 1) {
         private static final long serialVersionUID = 1L;
 
+        @Override
         protected boolean removeEldestEntry(Map.Entry<Long, EmailMessageDTO> eldest) {
             return size() > MAX_CACHE_ENTRIES;
         };
@@ -83,18 +94,45 @@ public class EmailServiceImpl implements EmailService {
         return emailDao.findNumberOfUserMessages(oid);
     }
 
-    public String getEML(EmailMessage emailMessage, String emailAddress) throws Exception {
+    /**
+     * @param emailData
+     * @param emailAddress
+     * @return the EML file contents for preview
+     * @throws Exception
+     */
+    public String getEML(EmailData emailData, String emailAddress) throws Exception {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        MimeMessage message = emailSender.createMail(emailMessage, emailAddress);
+        EmailRecipientMessage emailMessage
+                = emailRecipientDtoConverter.convertPreview(emailData, emailAddress,new EmailRecipientMessage());
+        loadReferencedAttachments(emailMessage.getRecipient(), new EmailSendQueState().withoutSavingAttachments());
+        templateBuilder.applyTemplate(emailMessage);
+
+        MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
+                optionalEmailRecipientAttachments(emailMessage.getRecipient()));
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
 
+    /**
+     * Called after an email is registered to be send in async manner and
+     * additionally scheduled as a cron job.
+     *
+     * Triggers handleEmailQueue tasks into emailExecutor (where 10 tasks are
+     * run simultaneously and the rest are queued)
+     * @see #handleEmailQueue()
+     */
     @Override
     public void checkEmailQueues() {
+        // Check if there are any stopped processes (no updates in a long time) to transfer them from
+        // PROCESSING state back to WAITING_FOR_HANDLER state:
         emailQueueService.checkForStoppedProcesses();
+
         int numberOfQueues = emailQueueService.getNumberOfUnhandledQueues();
         if (numberOfQueues > 0) {
+            // If there are queues, make maximum of maxTasksToStartAtOnce
+            // handleEmailQueue tasks, since additional tasks are to be added
+            // in the becoming cron job as well (if there are too many, some of them just do nothing
+            // but of course we will want to avoid those):
             int numberOfProcessesToStart = Math.min(maxTasksToStartAtOnce, numberOfQueues);
             log.info("Found {} unhandled queues. Starting {} new handleEmailQueue processes.",
                     numberOfQueues, numberOfProcessesToStart);
@@ -111,10 +149,70 @@ public class EmailServiceImpl implements EmailService {
         }
     }
 
+    /**
+     * Reserves and handles a single {@link fi.vm.sade.ryhmasahkoposti.model.SendQueue} if unhandled
+     * (WAITING_FOR_HANDLER state) EmailSendQueues exists
+     *
+     * Before each recipient, ensures that the handling of the queue can still be continued and writes a new
+     * updated timestamp to the EmailQueue. (If this timestamp is too old the scheduled background task may interpret
+     * the queue as stopped (due to an error or power outage, that is) and put it back to WAITING_FOR_HANDLER state)
+     *
+     * After the queue is handled, calls {@link fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService#queueHandled(long)}
+     * to mark this EmailSendQuee to
+     */
     public void handleEmailQueue() {
         long start = System.currentTimeMillis();
+
+        EmailQueueHandleDto queue = reserveQueue();
+        if (queue != null) {
+            log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
+            int sent = 0,
+                errors = 0,
+                queueSize = queue.getRecipients().size();
+            EmailSendQueState state = new EmailSendQueState();
+
+            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
+                long recipientStart = System.currentTimeMillis();
+
+                if (!emailQueueService.continueQueueHandling(queue)) {
+                    long took = System.currentTimeMillis() - start;
+                    log.error("Email send queue handler for SendQueue={} stopped." +
+                            "Queue size: {}, sent: {}, errors: {}, took: {} ms.",
+                            queueSize, sent, errors, took, queue.getId());
+                    return;
+                }
+
+                if (handleRecipient(emailRecipient, state)) {
+                    sent++;
+                } else {
+                    errors++;
+                }
+
+                long singleRecipientTook = System.currentTimeMillis()-recipientStart;
+                log.debug("Handled single recipient in {} ms.", singleRecipientTook);
+            }
+            emailQueueService.queueHandled(queue.getId());
+            cleanupEmailSendQueueAfterHandled(state);
+
+            long took = System.currentTimeMillis() - start;
+            log.info("Sending emails done. SendQueue={}: size: {}, sent: {}, errors: {}, took: {} ms.",
+                    queue.getId(), queueSize, sent, errors, took);
+        } else {
+            log.info("Checked for open email sending queues and found none.");
+        }
+    }
+
+    /**
+     * Reserves an unhandled (WAITING_FOR_HANDLER state) {@link fi.vm.sade.ryhmasahkoposti.model.SendQueue}
+     * for the calling processes assuring that no other process has the same email queue by calling
+     * {@link fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService#reserveNextQueueToHandle()}. Retries the
+     * reservation if it leads to an {@link javax.persistence.OptimisticLockException}
+     *
+     * @return the email queue to handle or null if none (NOTE: same queue may contain recipients for different emails)
+     */
+    private EmailQueueHandleDto reserveQueue() {
         int maxConcurrentLockFailures = maxTasksToStartAtOnce -1,
-            triedTimes = 0;
+                triedTimes = 0;
         EmailQueueHandleDto queue = null;
         while (queue == null && triedTimes++ < maxConcurrentLockFailures) {
             try {
@@ -127,65 +225,79 @@ public class EmailServiceImpl implements EmailService {
         if (triedTimes > 0 && queue == null) {
             log.warn("Exeeced max number of OptimisticLockExceptions while trying to reserveNextQueueToHandle. Gave up.");
         }
-        if (queue != null) {
-            log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
-            int sent = 0;
-            int errors = 0;
-            int queueSize = queue.getRecipients().size();
-            Date lastHandledAt = new Date();
-            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
-                long recipientStart = System.currentTimeMillis();
-                if (!emailQueueService.continueQueueHandling(queue)) {
-                    long took = System.currentTimeMillis() - start;
-                    log.error("Email send queue handler for SendQueue={} stopped." +
-                            "Queue size: {}, sent: {}, errors: {}, took: {} ms.",
-                            queueSize, sent, errors, took, queue.getId());
-                    return;
-                }
-                if (handleRecipient(emailRecipient)) {
-                    sent++;
-                } else {
-                    errors++;
-                }
-                long singleRecipientTook = System.currentTimeMillis()-recipientStart;
-                log.debug("Handled single recipient in {} ms.", singleRecipientTook);
+        return queue;
+    }
+
+    /**
+     * Called after the handling of an email send queue.
+     *
+     * Cleans up the downloaded attachments from external services by collecting the downloaded URIs for
+     * each service and calling the cleanup as a batch.
+     *
+     * @param state of the send queue
+     */
+    private void cleanupEmailSendQueueAfterHandled(EmailSendQueState state) {
+        // We don't want to store beans nor expect them to implement hashCode/equals, but each have an unique class:
+        Map<Class<? extends EmailAttachmentDownloader>, EmailAttachmentDownloader> downloaders
+                = new HashMap<Class<? extends EmailAttachmentDownloader>, EmailAttachmentDownloader>();
+        Map<Class<? extends EmailAttachmentDownloader>, List<String>> urisByDownloaders
+                = new HashMap<Class<? extends EmailAttachmentDownloader>, List<String>>();
+        for (String uri : state.getDownloadedAttachmentUris()) {
+            EmailAttachmentDownloader downloader = downloaderForUri(uri);
+            if (addToMappedList(urisByDownloaders, downloader.getClass(), uri)) {
+                downloaders.put(downloader.getClass(), downloader);
             }
-            emailQueueService.queueHandled(queue.getId());
-            long took = System.currentTimeMillis() - start;
-            log.info("Sending emails done. SendQueue={}: size: {}, sent: {}, errors: {}, took: {} ms.",
-                    queue.getId(), queueSize, sent, errors, took);
-        } else {
-            log.info("Checked for open email sending queues and found none.");
+        }
+        // Now for each different downloader, mark their URIs downloaded:
+        for (Map.Entry<EmailAttachmentDownloader, List<String>> entry
+                : combine(downloaders, urisByDownloaders).entrySet()) {
+            entry.getKey().reportDownloaded(entry.getValue());
         }
     }
 
-    private boolean handleRecipient(EmailRecipientDTO er) {
+    /**
+     * Processes a single recipient of an email message.
+     *
+     * No-throw.
+     *
+     * Downloads the possible recipient related attachments from external services.
+     *
+     * Does a virus check if required (generally and) by the message (not already virus checked) or
+     * if message contains recipient specific attachments. If virus check fails will lead to failure
+     * and the message not being send.
+     *
+     * For email sending, calls {@link fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender#handleMail(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage, String, com.google.common.base.Optional)}
+     *
+     * @param emailRecipient the recipient to send email to (NOTE: same queue may contain recipients for different emails)
+     * @param emailSendQueState state of the send queue
+     * @return true on success, false on failure
+     */
+    private boolean handleRecipient(EmailRecipientDTO emailRecipient, EmailSendQueState emailSendQueState) {
         long vStart = System.currentTimeMillis();
-        log.info("Handling " + er + " " + er.getRecipientID());
+        log.info("Handling " + emailRecipient + " " + emailRecipient.getRecipientID());
         boolean success = false;
-        if (rrService.startSending(er)) {
-            log.info("Handling really " + er + " " + er.getRecipientID());
-            Long messageId = er.getEmailMessageID();
+        if (rrService.startSending(emailRecipient)) {
+            log.info("Handling really " + emailRecipient + " " + emailRecipient.getRecipientID());
 
             try {
-                EmailMessageDTO message = getMessage(messageId);
-                if (virusCheckRequired(message)) {
-                    doVirusCheck(message);
-                }
+                // loads remote attachments if available 
+                loadReferencedAttachments(emailRecipient, emailSendQueState);
+                
+                // get recipient specific email message 
+                EmailRecipientMessage message = getVirusCheckedRecipientMessage(emailRecipient);
                 
                 if (virusCheckPassed(message)) {
-                    if (StringUtils.equalsIgnoreCase(message.getType(), ReportedMessage.TYPE_TEMPLATE)) {
-                        rebuildMessage(er, messageId, message);
-                    }
-                    emailSender.handleMail(message, er.getEmail());
+                    templateBuilder.applyTemplate(message);
+                    emailSender.handleMail(message, emailRecipient.getEmail(), optionalEmailRecipientAttachments(emailRecipient));
                 } else {
                     throw new Exception("Virus check problem. File infected: " + message.isInfected());
                 }
-                rrService.recipientHandledSuccess(er, ""); // result is left empty in OK situations
+                rrService.recipientHandledSuccess(emailRecipient, ""); // result is left empty in OK situations
                 success = true;
             } catch (Exception e) {
                 String failureCause = getFailureCause(e);
-                rrService.recipientHandledFailure(er, failureCause);
+                log.error("Failure when handling EmailRecipient="+emailRecipient.getRecipientID()+": "+e.getMessage(), e);
+                rrService.recipientHandledFailure(emailRecipient, failureCause);
                 success = false;
             }
         }
@@ -194,17 +306,102 @@ public class EmailServiceImpl implements EmailService {
         return success;
     }
 
+    protected Optional<? extends AttachmentContainer> optionalEmailRecipientAttachments(EmailRecipientDTO emailRecipient) {
+        return emailRecipient.getAttachments() != null ? Optional.of(emailRecipient)
+                : Optional.<AttachmentContainer>absent();
+    }
+
+    /**
+     * Loads possible external attachments by EmailAttachmentDownloader
+     *
+     * @see fi.vm.sade.ryhmasahkoposti.service.EmailAttachmentDownloader
+     * @param emailRecipient the recipient
+     * @param emailSendQueState the email send queue state to report any downloaded attachment URIs
+     * @throws Exception if downloading an attachment failed
+     */
+    private void loadReferencedAttachments(EmailRecipientDTO emailRecipient, EmailSendQueState emailSendQueState)
+            throws Exception {
+        Optional<List> attachmentReferences = as(
+                effectiveReplacementField(emailRecipient, ADDITIONAL_ATTACHMENT_URIS_PARAMETER), List.class);
+        if (attachmentReferences.isPresent()) {
+            List uris = attachmentReferences.get();
+            for (Object uri : uris) {
+                downloadAttachment(emailRecipient, emailSendQueState, uri.toString());
+            }
+        }
+        Optional<String> attachmentReference = as(
+                effectiveReplacementField(emailRecipient, ADDITIONAL_ATTACHMENT_URI_PARAMETER), String.class);
+        if (attachmentReference.isPresent()) {
+            String uri = attachmentReference.get();
+            downloadAttachment(emailRecipient, emailSendQueState, uri);
+        }
+    }
+
+    private Optional<Object> effectiveReplacementField(EmailRecipient recipient, String key) {
+        if (recipient.getRecipientReplacements() == null || key == null) {
+            return Optional.absent();
+        }
+        for (ReportedRecipientReplacementDTO replacement : recipient.getRecipientReplacements()) {
+            if (replacement.getName() != null && key.equals(replacement.getName())) {
+                return Optional.fromNullable(replacement.getEffectiveValue());
+            }
+        }
+        return Optional.absent();
+    }
+
+    private void downloadAttachment(EmailRecipientDTO er, EmailSendQueState emailSendQueState, String uri)
+            throws Exception {
+        log.info("Downloading attachment for EmailRecipientDTO={}, URI={}", er.getRecipientID(), uri);
+        EmailAttachment attachment = downloaderForUri(uri).download(uri);
+        if (attachment != null) {
+            if (emailSendQueState.isSaveAttachments()) {
+                ReportedRecipientAttachmentSaveDto dto = new ReportedRecipientAttachmentSaveDto();
+                dto.setAttachment(attachment.getData());
+                dto.setAttachmentName(attachment.getName());
+                dto.setContentType(attachment.getContentType());
+                dto.setReportedRecipientId(er.getRecipientID());
+                reportedMessageAttachmentService.saveReportedRecipientAttachment(dto);
+            }
+            er.getAttachments().add(attachment);
+        } else {
+            throw new IllegalArgumentException("Attachment with URI="
+                    + uri + " for EmailRecipient="+er.getRecipientID()+" not found.");
+        }
+        emailSendQueState.addDownloadedAttachmentUri(uri);
+        log.debug("Downloaded attachment URI={}", uri);
+    }
+
+    protected EmailAttachmentDownloader downloaderForUri(String uri) {
+        for (EmailAttachmentDownloader downloader : emailDownloaders) {
+            if (downloader.isApplicableForUri(uri)) {
+                return downloader;
+            }
+        }
+        throw new IllegalArgumentException("Unknown attachment URI: " + uri);
+    }
+
     private String getFailureCause(Exception e) {
         String failureCause = e.getMessage();
         if (failureCause == null) {
             failureCause = "e.getMessage() == null";
-        } else {
-            if (failureCause.length() > 250)
-                failureCause = failureCause.substring(0, 250);
+        } else if (failureCause.length() > 250) {
+            failureCause = failureCause.substring(0, 250);
         }
         return failureCause;
     }
 
+    private EmailRecipientMessage getVirusCheckedRecipientMessage(EmailRecipientDTO emailRecipient) {
+        Long messageId = emailRecipient.getEmailMessageID();
+        EmailMessageDTO message = getMessage(messageId);
+        
+        if (virusCheckRequired(message, emailRecipient)) {
+            // check message and recipient attachments 
+            doVirusCheck(message, emailRecipient);
+        }
+
+        return emailRecipientDtoConverter.convert(emailRecipient, new EmailRecipientMessage(), message);
+    }
+    
     private EmailMessageDTO getMessage(Long messageId) {
         EmailMessageDTO message = messageCache.get(messageId);
         if (message == null) {
@@ -213,53 +410,23 @@ public class EmailServiceImpl implements EmailService {
         }
         return message;
     }
-    
-    private void rebuildMessage(EmailRecipientDTO er, Long messageId, EmailMessageDTO message) throws Exception {
-        log.info("Build message content using template for messageId=" + messageId);
-        List<ReportedRecipientReplacementDTO> recipientReplacements = getRecipientReplacements(er);
 
-        String buildMessage = templateBuilder.buildTempleMessage(message.getBody(),
-                message.getMessageReplacements(), recipientReplacements);
-
-        if (!StringUtils.isEmpty(buildMessage)) {
-            message.setBody(buildMessage);
-        } else
-            throw new Exception("Template build error. messageId=" + messageId);
-
-        String buildMessageSubject = templateBuilder.buildTempleMessage(message.getSubject(), 
-            message.getMessageReplacements(), recipientReplacements);
-        if (!StringUtils.isEmpty(buildMessageSubject)) {
-            message.setSubject(buildMessageSubject);
-        } else
-            throw new Exception("Message subject build error. messageId=" + messageId);
-        
-
+    private boolean virusCheckRequired(EmailMessageDTO message, EmailRecipientDTO recipient) {
+        return virusCheckRequired && (
+                !message.isVirusChecked()
+                        || (recipient.getAttachments() != null && !recipient.getAttachments().isEmpty())
+        );
     }
 
-    private List<ReportedRecipientReplacementDTO> getRecipientReplacements(EmailRecipientDTO er) {
-        List<ReportedRecipientReplacementDTO> recipientReplacements = null;
+    private void doVirusCheck(EmailMessageDTO message, EmailRecipientDTO recipient) {
         try {
-            recipientReplacements = rrService.getRecipientReplacements(er.getRecipientID());
-        } catch (IOException e) {
-            log.error("Getting recipient replacements failed for receipientId:"
-                    + er.getRecipientID());
-        }
-        return recipientReplacements;
-    }
-
-    private boolean virusCheckRequired(EmailMessageDTO message) {
-        return virusCheckRequired && !message.isVirusChecked();
-    }
-
-    private void doVirusCheck(EmailMessageDTO message) {
-        try {
-            emailAVChecker.checkMessage(emailSender, message);
+            emailAVChecker.checkMessage(emailSender, message, Optional.fromNullable(recipient));
         } catch (Exception e) {
             log.error("Virus check failed" + e);
         }
     }
-
-    private boolean virusCheckPassed(EmailMessageDTO message) {
+    
+    private boolean virusCheckPassed(EmailRecipientMessage message) {
         return !virusCheckRequired || (message.isVirusChecked() && !message.isInfected());
     }
 
@@ -269,5 +436,9 @@ public class EmailServiceImpl implements EmailService {
 
     public void setVirusCheckRequired(boolean virusCheckRequired) {
         this.virusCheckRequired = virusCheckRequired;
+    }
+
+    public void setTemplateBuilder(TemplateBuilder templateBuilder) {
+        this.templateBuilder = templateBuilder;
     }
 }

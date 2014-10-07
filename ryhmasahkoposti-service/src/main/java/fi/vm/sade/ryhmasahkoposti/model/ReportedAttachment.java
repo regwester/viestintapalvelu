@@ -26,7 +26,7 @@ public class ReportedAttachment extends BaseEntity {
 	
 	@Column(name="aikaleima", nullable=false)
 	@Temporal(TemporalType.TIMESTAMP)
-	private Date timestamp;
+	private Date timestamp = new Date();
 
 	public String getAttachmentName() {
 		return attachmentName;

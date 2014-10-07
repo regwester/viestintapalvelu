@@ -7,7 +7,7 @@ public class EmailRecipientDTO extends EmailRecipient {
     private String firstName;
     private String lastName;
     private String organizationName;
-    private String sendSuccessfull;
+    private String sendSuccessful;
     private String timestamp;
     
     public Long getRecipientID() {
@@ -57,12 +57,12 @@ public class EmailRecipientDTO extends EmailRecipient {
         this.organizationName = organizationName;
     }
 
-    public String getSendSuccessfull() {
-        return sendSuccessfull;
+    public String getSendSuccessful() {
+        return sendSuccessful;
     }
 
-    public void setSendSuccessfull(String sendSuccessfull) {
-        this.sendSuccessfull = sendSuccessfull;
+    public void setSendSuccessful(String sendSuccessful) {
+        this.sendSuccessful = sendSuccessful;
     }
 
     public String getTimestamp() {

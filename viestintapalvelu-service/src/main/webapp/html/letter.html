@@ -18,7 +18,10 @@
             </tr>
             <tr>
                 <td>
-                    Haku: <input ng-model="applicationPeriod" ng-change="templateChanged()"/>
+                    Haku: <select class="form-control ng-scope ng-valid ng-dirty"
+                            ng-options="haku.oid as haku.nimi.kieli_fi for haku in haut | orderBy:'nimi.kieli_fi'"
+                            ng-model="applicationPeriod"
+                            ng-change="templateChanged()"></select>
                 </td>
             </tr>
         </table>
@@ -26,12 +29,25 @@
         <textarea ui-tinymce ng-model="tinymceModel"></textarea>
 
         <input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi"
-               min="{{select_min}}" max="{{select_max}}">
+               ng-show="template" min="{{select_min}}" max="{{select_max}}">
 
         <div class="run-action btn-group">
             <button class="btn" ng-click="generatePDF()" ng-disabled="getCount() < 1">PDF</button>
             <button class="btn" ng-click="generateZIP()" ng-disabled="getCount() < 1">ZIP</button>
+            <button class="btn" ng-click="generateAsyncLetter()" ng-disabled="getCount() < 1 || (monitorStatus &amp;&amp; monitorStatus.status != 'ready')">Async Letter</button><br/>
+            <button class="btn" ng-click="previewEmail()" ng-disabled="!emailPreviewPossibleForId">Esikatsele sähköposti</button>
+            <button class="btn" ng-click="sendEmail()" ng-disabled="!emailPossibleForId">Lähetä sähköposti</button><br/>
+            <button class="btn" ng-click="previewEmail('FI')" ng-disabled="!emailPreviewPossibleForId" ng-show="languageOptions.indexOf('FI') >= 0">Esikatsele FI</button>
+            <button class="btn" ng-click="previewEmail('SV')" ng-disabled="!emailPreviewPossibleForId" ng-show="languageOptions.indexOf('SV') >= 0">Esikatsele SV</button>
+            <button class="btn" ng-click="previewEmail('EN')" ng-disabled="!emailPreviewPossibleForId" ng-show="languageOptions.indexOf('EN') >= 0">Esikatsele EN</button>
         </div>
+        <div ng-show="monitorStatus">
+            Käsittely: {{monitorStatus.sent}} / {{monitorStatus.total}}
+        </div>
+
+        <input ng-show="getCount() > 0" class="input-large input-pile" type="text" ng-model="generalEmail"
+               placeholder="Email address"><button ng-show="getCount() > 0"
+                        class="btn" ng-click="fillEmails()">Täytä email-kentät</button>
 
         <h4>Alla on raakana HTML-koodina ylläolevan editorin sisältö</h4>
 

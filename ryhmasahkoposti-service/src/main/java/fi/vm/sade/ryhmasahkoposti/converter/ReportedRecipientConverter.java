@@ -5,15 +5,13 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Optional;
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedRecipientConverter {
@@ -26,11 +24,11 @@ public class ReportedRecipientConverter {
         reportedRecipient.setSocialSecurityID("");
         reportedRecipient.setRecipientEmail(emailRecipient.getEmail());
         reportedRecipient.setLanguageCode(emailRecipient.getLanguageCode());
-        reportedRecipient.setSearchName("");
+        reportedRecipient.setSearchName(Optional.fromNullable(emailRecipient.getName()).or(""));
         reportedRecipient.setDetailsRetrieved(false);
         reportedRecipient.setSendingStarted(null);
         reportedRecipient.setSendingEnded(null);
-        reportedRecipient.setSendingSuccesful(null);
+        reportedRecipient.setSendingSuccessful(null);
         reportedRecipient.setFailureReason(null);
         reportedRecipient.setTimestamp(new Date());
 

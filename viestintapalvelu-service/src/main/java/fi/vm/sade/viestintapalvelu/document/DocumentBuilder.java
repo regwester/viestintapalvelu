@@ -1,14 +1,6 @@
 package fi.vm.sade.viestintapalvelu.document;
 
-import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
-
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
+import java.io.*;
 import java.util.List;
 import java.util.Map;
 import java.util.zip.ZipEntry;
@@ -27,6 +19,8 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.FlyingSaucerReplaceElementFactory;
 import fi.vm.sade.viestintapalvelu.OPHUserAgent;
 import fi.vm.sade.viestintapalvelu.SLF4JLogChute;
+
+import static fi.vm.sade.viestintapalvelu.Constants.UTF_8;
 
 @Service
 @Singleton
@@ -62,7 +56,6 @@ public class DocumentBuilder {
         mergedPDFDocument.flush();
         return mergedPDFDocument;
     }
-
     
     public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {
         MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();

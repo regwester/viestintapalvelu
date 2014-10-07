@@ -1,22 +1,12 @@
 package fi.vm.sade.viestintapalvelu.model;
 
 
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
-
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -38,10 +28,39 @@ import fi.vm.sade.generic.model.BaseEntity;
  * @author migar1
  *
  */
-
 @Table(name = "kirjelahetys", schema= "kirjeet")
 @Entity(name = "LetterBatch")
+@NamedQueries({
+        @NamedQuery(name = "letterBatchStatus",
+            query ="select new fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto(lb.id, " +
+                    " (select count(ltr1.id) from LetterBatch batch1 " +
+                    "       inner join batch1.letterReceivers receiver1" +
+                    "       inner join receiver1.letterReceiverLetter ltr1" +
+                    "       with ltr1.letter != null" +
+                    "   where batch1.id = lb.id), " +
+                    " (select count(ltr2.id) from LetterBatch batch2 " +
+                    "       inner join batch2.letterReceivers receiver2" +
+                    "       inner join receiver2.letterReceiverLetter ltr2" +
+                    "   where batch2.id = lb.id)," +
+                    " lb.batchStatus," +
+                    " (select count(ltr3.id) from LetterBatch batch3 " +
+                    "       inner join batch3.letterReceivers receiver3 " +
+                    "       inner join receiver3.letterReceiverLetter ltr3 " +
+                    "               with ltr3.letter != null" +
+                    "   where batch3.id = lb.id and length(receiver3.emailAddress) > 0 ))" +
+                    "from LetterBatch lb " +
+                    "where lb.id = :batchId ")
+})
 public class LetterBatch extends BaseEntity {
+    public enum Status {
+        created,
+        processing,
+        waiting_for_ipost_processing,
+        processing_ipost,
+        ready, // iPost ready
+        error
+    };
+
 	private static final long serialVersionUID = 1L;
 
 	@Column(name = "template_id")
@@ -71,18 +90,64 @@ public class LetterBatch extends BaseEntity {
 
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
+
+    @Column(name= "iposti")
+    private boolean iposti;
+
+    @Column(name = "kasittelyn_tila")
+    @Enumerated(EnumType.STRING)
+    private Status batchStatus = Status.created;
     
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @Column(name = "kasittely_aloitettu")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date handlingStarted;
+    
+    @Column(name = "kasittely_valmis")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date handlingFinished;
+
+    @Column(name = "ipost_kasittely_aloitettu")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ipostHandlingStarted;
+
+    @Column(name = "ipost_kasittely_valmis")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date ipostHandlingFinished;
+    
+    @Column(name = "email_kasittely_aloitettu")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date emailHandlingStarted;
+    
+    @Column(name = "email_kasittely_valmis")
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date emailHandlingFinished;
+    
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
- 
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private List<LetterBatchProcessingError> processingErrors = new ArrayList<LetterBatchProcessingError>();
+
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceivers> letterReceivers;
  
-    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private List<IPosti> iposts = new ArrayList<IPosti>();
+    
+    @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<UsedTemplate> usedTemplates = new HashSet<UsedTemplate>();
+
+    public void setIposti(boolean iposti) {
+        this.iposti = iposti;
+    }
+
+    public boolean isIposti() {
+       return iposti;
+    }
 
     public List<IPosti> getIposti() {
         return iposts;
@@ -90,6 +155,18 @@ public class LetterBatch extends BaseEntity {
 
     public void addIPosti(IPosti iposti) {
         iposts.add(iposti);
+    }
+    
+    public Set<UsedTemplate> getUsedTemplates() {
+        return usedTemplates;
+    }
+    
+    public void addUsedTemplate(UsedTemplate template) {
+        usedTemplates.add(template);
+    }
+    
+    public void setUsedTemplates(Set<UsedTemplate> usedTemplates) {
+        this.usedTemplates = usedTemplates;
     }
 
     public Long getTemplateId() {
@@ -177,7 +254,75 @@ public class LetterBatch extends BaseEntity {
     
     public String getTag() {
         return tag;
-    }    
+    }
+    
+    public Date getHandlingFinished() {
+        return handlingFinished;
+    }
+    
+    public void setHandlingFinished(Date handlingFinished) {
+        this.handlingFinished = handlingFinished;
+    }
+    
+    public Date getHandlingStarted() {
+        return handlingStarted;
+    }
+    
+    public void setHandlingStarted(Date handlingStarted) {
+        this.handlingStarted = handlingStarted;
+    }
+    
+    public Date getEmailHandlingStarted() {
+        return emailHandlingStarted;
+    }
+    
+    public void setEmailHandlingStarted(Date emailHandlingStarted) {
+        this.emailHandlingStarted = emailHandlingStarted;
+    }
+    
+    public Date getEmailHandlingFinished() {
+        return emailHandlingFinished;
+    }
+    
+    public void setEmailHandlingFinished(Date emailHandlingFinished) {
+        this.emailHandlingFinished = emailHandlingFinished;
+    }
+
+    public Status getBatchStatus() {
+        return batchStatus;
+    }
+
+    public void setBatchStatus(Status batchStatus) {
+        this.batchStatus = batchStatus;
+    }
+
+    public List<LetterBatchProcessingError> getProcessingErrors() {
+        return processingErrors;
+    }
+
+    public void setProcessingErrors(List<LetterBatchProcessingError> processingErrors) {
+        this.processingErrors = processingErrors;
+    }
+    
+    public void addProcessingErrors(LetterBatchProcessingError processingError) {
+        processingErrors.add(processingError);
+    }
+
+    public Date getIpostHandlingStarted() {
+        return ipostHandlingStarted;
+    }
+
+    public void setIpostHandlingStarted(Date ipostHandlingStarted) {
+        this.ipostHandlingStarted = ipostHandlingStarted;
+    }
+
+    public Date getIpostHandlingFinished() {
+        return ipostHandlingFinished;
+    }
+
+    public void setIpostHandlingFinished(Date ipostHandlingFinished) {
+        this.ipostHandlingFinished = ipostHandlingFinished;
+    }
 
     @Override
 	public String toString() {

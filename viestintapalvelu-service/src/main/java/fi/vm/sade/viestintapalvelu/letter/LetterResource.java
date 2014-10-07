@@ -1,52 +1,46 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
-import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
-import static org.joda.time.DateTime.now;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.concurrent.ExecutorService;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.google.common.base.Optional;
+import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.*;
+import fi.vm.sade.valinta.dokumenttipalvelu.dto.MetaData;
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
+import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.security.NoSuchAlgorithmException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
 
-import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
-import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
-import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
-import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
+import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
+import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
+import static org.joda.time.DateTime.now;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -65,10 +59,10 @@ public class LetterResource extends AsynchronousResource {
     @Autowired
     private LetterBuilder letterBuilder;
 
-    @Qualifier
-    private DokumenttiResource dokumenttiResource;
+    @Resource
+    private DokumenttiResource dokumenttipalveluRestClient;
 
-    @Autowired
+    @Resource(name="otherAsyncResourceJobsExecutorService")
     private ExecutorService executor;
 
     @Autowired
@@ -76,7 +70,17 @@ public class LetterResource extends AsynchronousResource {
 
     @Autowired
     private UserRightsValidator userRightsValidator;
-    
+
+    @Autowired
+    private LetterBatchProcessor letterPDFProcessor;
+
+    @Autowired
+    private LetterEmailService letterEmailService;
+
+    private final static String ApiEmailPreview = "Tuottaa esikatselun yhdestä kirjelähetykseen liittyvästä sähköpostiviestistä";
+    private final static String ApiLetterLanguageOptions = "Kertoo, mitä kieliä annetun kirjeen vastaanottajissa on";
+    private final static String ApiEmail = "Lähettää sähköpostiviestin annetun kirjelähetyksen vastaanottajille.";
+
     private final static String ApiPDFSync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; synkroninen";
     private final static String ApiPDFAsync = "Palauttaa URLin, josta voi ladata kirjeen/kirjeet PDF-muodossa; asynkroninen";
     private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
@@ -124,8 +128,8 @@ public class LetterResource extends AsynchronousResource {
         String documentId;
         try {
             
-            boolean valid = LetterBatchValidator.validate(input);
-            LOG.debug("Validated input got " + valid);
+            LetterBatchValidator.validate(input);
+            LOG.debug("Validated input");
             
             byte[] pdf = letterBuilder.printPDF(input);
             
@@ -136,6 +140,42 @@ public class LetterResource extends AsynchronousResource {
             return createFailureResponse(request);
         }
         return createResponse(request, documentId);
+    }
+
+    @POST
+    @Produces("text/plain")
+    @Path("/emailLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiEmail, notes = ApiEmail)
+    public Response emailLetterBatch( @PathParam("letterBatchId") @ApiParam(name="Kirjelähetyksen ID", required = true)
+                                          Long letterBatchId ) {
+        letterEmailService.sendEmail(letterBatchId);
+        return Response.ok().build();
+    }
+
+    @GET
+    @Produces("message/rfc822")
+    @Path("/previewLetterBatchEmail/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiEmailPreview, notes = ApiEmailPreview)
+    public Response previewLetterBatchEmail(
+            @PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) Long letterBatchId,
+            @QueryParam("language") @ApiParam(value="Muodostuskieli (valinnainen)", required = false) String languageCode ) {
+        return Response.ok(
+                letterEmailService.getPreview(letterBatchId, Optional.fromNullable(languageCode))
+            ).header("Content-Disposition", "attachment; filename=\"preview.eml\"")
+            .build();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/languageOptions/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
+    @ApiOperation(value = ApiLetterLanguageOptions, notes = ApiLetterLanguageOptions)
+    public Response getLanguageOptions(@PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) Long letterBatchId) {
+        return Response.ok(
+                letterEmailService.getLanguageCodeOptions(letterBatchId)
+        ).build();
     }
 
     /**
@@ -150,8 +190,7 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-    public InputStream syncPdf(
-        @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
+    public InputStream syncPdf( @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
         throws Exception {
         return new ByteArrayInputStream(letterBuilder.printPDF(input));
     }
@@ -193,7 +232,7 @@ public class LetterResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] pdf = letterBuilder.printPDF(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("letter.pdf"), now()
+                    dokumenttipalveluRestClient.tallenna(null, filenamePrefixWithUsernameAndTimestamp("letter.pdf"), now()
                         .plusDays(1).toDate().getTime(), Arrays.asList("viestintapalvelu", "koekutsukirje", "pdf"),
                         "application/pdf;charset=utf-8", new ByteArrayInputStream(pdf));
                 } catch (Exception e) {
@@ -252,11 +291,15 @@ public class LetterResource extends AsynchronousResource {
 
         String tag = request.getParameter("tag");
 
+        String applicationPeriod = request.getParameter("applicationPeriod");
+
         if ((tag == null) || ("".equals(tag))) {
             tag = "%%";
         }
 
-        return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid, tag)).build();
+        return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid,
+                Optional.fromNullable(tag),
+                Optional.fromNullable(applicationPeriod))).build();
     }
 
     @GET
@@ -346,10 +389,10 @@ public class LetterResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] zip = letterBuilder.printZIP(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()
-                        + ".zip"), now().plusDays(1).toDate().getTime(),
-                        Arrays.asList("viestintapalvelu", input.getTemplateName(), "zip"), "application/zip",
-                        new ByteArrayInputStream(zip));
+                    dokumenttipalveluRestClient.tallenna(null, filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()
+                                    + ".zip"), now().plusDays(1).toDate().getTime(),
+                            Arrays.asList("viestintapalvelu", input.getTemplateName(), "zip"), "application/zip",
+                            new ByteArrayInputStream(zip));
                 } catch (Exception e) {
                     e.printStackTrace();
                     LOG.error("letter ZIP async failed: {}", e.getMessage());
@@ -357,5 +400,82 @@ public class LetterResource extends AsynchronousResource {
             }
         });
         return createResponse(request, documentId);
+    }
+    
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/async/letter")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
+        notes = "")
+    public Response asyncLetter( @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
+                                     final AsyncLetterBatchDto input) {
+        try {
+            LetterBatchValidator.validate(input);
+        } catch (Exception e) {
+            LOG.error("Validation error", e);
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+        
+        try {
+            letterBuilder.initTemplateId(input);
+            fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
+            Long id = letter.getId();
+            letterPDFProcessor.processLetterBatch(id);
+            return Response.status(Status.OK).entity(id).build();
+        } catch (Exception e) {
+            LOG.error("Letter async failed", e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GET
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/async/letter/status/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
+    public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+        LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
+        if(status == null) {
+            return Response.status(Status.BAD_REQUEST).build();
+        }
+
+        return Response.status(Status.OK).entity(status).build();
+    }
+    
+    @GET
+    @Consumes("application/json")
+    @Produces("application/pdf")
+    @Path("/async/letter/pdf/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
+    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+        try {
+            LetterBatchStatusDto batchStatus = letterService.getBatchStatus(letterBatchId);
+            if(batchStatus == null || ! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(batchStatus.getStatus())) {
+                return Response.status(Status.BAD_REQUEST).build();
+            }
+
+            String documentId = "mergedLetterBatch"+letterBatchId;
+
+            List<String> tags = Arrays.asList("viestintapalvelu", "mergedletters.pdf", "pdf", documentId);
+
+            Collection<MetaData> documents = dokumenttipalveluRestClient.hae(tags);
+            if(documents.isEmpty()) {
+                byte[] bytes = letterService.getLetterContentsByLetterBatchID(letterBatchId);
+                dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
+                        now().plusDays(1).toDate().getTime(),
+                        tags,
+                        "application/pdf",
+                        new ByteArrayInputStream(bytes));
+            }
+            return dokumenttipalveluRestClient.lataa(documentId);
+
+        } catch (Exception e) {
+            LOG.error("Error getting merged pdf for batch " + letterBatchId, e);
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
     }
 }

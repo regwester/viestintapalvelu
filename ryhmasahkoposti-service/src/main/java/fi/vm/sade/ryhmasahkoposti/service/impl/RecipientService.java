@@ -11,6 +11,7 @@ import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,29 +20,27 @@ import java.util.List;
 
 @Service
 public class RecipientService {
-
     private static Logger log = LoggerFactory.getLogger(RecipientService.class);
 
-    private PersonComponent personComponent;
-    private OrganizationComponent organizationComponent;
-    private ReportedRecipientDAO recipientDAO;
-
     @Autowired
-    public RecipientService(PersonComponent personComponent, OrganizationComponent organizationComponent, ReportedRecipientDAO recipientDAO) {
-        this.personComponent = personComponent;
-        this.organizationComponent = organizationComponent;
-        this.recipientDAO = recipientDAO;
-    }
+    private PersonComponent personComponent;
+    @Autowired
+    private OrganizationComponent organizationComponent;
+    @Autowired
+    private ReportedRecipientDAO recipientDAO;
+    @Autowired
+    private ApplicationContext applicationContext;
 
     //TODO: request the recipient entities as batch from Henkilöpalvelu and Organisaatiopalvelu
     //e.g. give a list of oids and receive a list of Henkilö or organization objects
-    @Scheduled(cron = "0 0/5 * * * ?") // Run every 5 minutes
+    @Scheduled(cron = "0 0/1 * * * ?") // Run every 5 minutes
     public void retrieveMissingInformation() {
         log.debug("Started retrieving missing recipient information");
+        RecipientService self = applicationContext.getBean(RecipientService.class);
         try {
-            List<ReportedRecipient> recipients = recipientDAO.findRecipientsWithIncompleteInformation();
-            for(ReportedRecipient recipient : recipients) {
-                updateRecipientInformation(recipient);
+            List<Long> recipientIds = recipientDAO.findRecipientIdsWithIncompleteInformation();
+            for(Long recipientId : recipientIds) {
+                self.updateRecipientInformation(recipientId);
             }
         } catch (Exception e) {
             log.error("JPA Exception: {}", e);
@@ -49,7 +48,8 @@ public class RecipientService {
     }
 
     @Transactional
-    private void updateRecipientInformation(ReportedRecipient recipient) {
+    public void updateRecipientInformation(Long recipientId) {
+        ReportedRecipient recipient = recipientDAO.findByRecipientID(recipientId);
         if (OidValidator.isHenkiloOID(recipient.getRecipientOid())) {
             updatePerson(recipient);
         } else if(OidValidator.isOrganisaatioOID(recipient.getRecipientOid())) {
@@ -65,6 +65,7 @@ public class RecipientService {
         OrganisaatioRDTO organisaatio = organizationComponent.getOrganization(recipient.getRecipientOid());
         String nameOfOrganisation = organizationComponent.getNameOfOrganisation(organisaatio);
         recipient.setSearchName(nameOfOrganisation);
+        recipient.setDetailsRetrieved(true);
         updateRecipient(recipient);
     }
 
@@ -73,6 +74,7 @@ public class RecipientService {
         Henkilo henkilo = personComponent.getPerson(recipient.getRecipientOid());
         recipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
         recipient.setSocialSecurityID(henkilo.getHetu());
+        recipient.setDetailsRetrieved(true);
         updateRecipient(recipient);
     }
 

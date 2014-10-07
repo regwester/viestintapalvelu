@@ -3,20 +3,11 @@ package fi.vm.sade.viestintapalvelu.model;
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
@@ -39,7 +30,7 @@ CREATE TABLE kirjeet.vastaanottaja (
 public class LetterReceivers extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kirjelahetys_id")
     @JsonBackReference
     private LetterBatch letterBatch;
@@ -47,20 +38,30 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-        
-    @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    
+    @Column(name = "haluttukieli")
+    private String wantedLanguage;
+
+    @Column(name = "email_osoite")
+    private String emailAddress;
+
+    @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
      
-    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverAddress letterReceiverAddress;
 
-    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverEmail letterReceiverEmail;
 
-    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverLetter letterReceiverLetter;
-  
+
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
+    @JoinColumn(name="iposti")
+    private IPosti containedInIposti;
+
     public LetterBatch getLetterBatch() {
 		return letterBatch;
 	}
@@ -109,8 +110,32 @@ public class LetterReceivers extends BaseEntity {
 	public void setLetterReceiverLetter(LetterReceiverLetter letterReceiverLetter) {
 		this.letterReceiverLetter = letterReceiverLetter;
 	}
+	
+	public String getWantedLanguage() {
+        return wantedLanguage;
+    }
+	
+	public void setWantedLanguage(String wantedLanguage) {
+        this.wantedLanguage = wantedLanguage;
+    }
 
-	@Override
+    public String getEmailAddress() {
+        return emailAddress;
+    }
+
+    public void setEmailAddress(String emailAddress) {
+        this.emailAddress = emailAddress;
+    }
+
+    public IPosti getContainedInIposti() {
+        return containedInIposti;
+    }
+
+    public void setContainedInIposti(IPosti containedInIposti) {
+        this.containedInIposti = containedInIposti;
+    }
+
+    @Override
     public String toString() {
         return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
                 + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
