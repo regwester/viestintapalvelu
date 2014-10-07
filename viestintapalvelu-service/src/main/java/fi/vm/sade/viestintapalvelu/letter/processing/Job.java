@@ -32,6 +32,12 @@ public interface Job<T extends Processable> {
     void start(JobDescription<T> description);
 
     /**
+     * @param e exception occurred
+     * @param description of the job at hand
+     */
+    void handleJobStartedFailure(Exception e, JobDescription<T> description);
+
+    /**
      * @param processable to process
      * @throws Exception
      */
@@ -44,22 +50,16 @@ public interface Job<T extends Processable> {
     void handleFailure(Exception e, T processable);
 
     /**
-     * @param e exception occurred
-     * @param description of the job at hand
-     */
-    void handleJobFinnishedError(Exception e, JobDescription<T> description);
-
-    /**
-     * @param e exception occurred
-     * @param description of the job at hand
-     */
-    void handleJobStartedError(Exception e, JobDescription<T> description);
-
-    /**
      * Called when processing has successfully ended
      *
      * @param  description of the job
      * @return the possible next job to do
      */
     Optional<? extends JobDescription<?>> jobFinished(JobDescription<T> description);
+
+    /**
+     * @param e exception occurred
+     * @param description of the job at hand
+     */
+    void handleJobFinnishedFailure(Exception e, JobDescription<T> description);
 }

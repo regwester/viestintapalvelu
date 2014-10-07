@@ -98,6 +98,11 @@ public class LetterBatchProcessor {
         }
 
         @Override
+        public void handleJobStartedFailure(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            // Ignore at this point. Handling not started.
+        }
+
+        @Override
         public void process(LetterReceiverProcessable letterReceiverProcessable) throws Exception {
             letterService.processLetterReceiver(letterReceiverProcessable.getId());
         }
@@ -105,16 +110,6 @@ public class LetterBatchProcessor {
         @Override
         public void handleFailure(Exception e, LetterReceiverProcessable processable) {
             letterService.saveBatchErrorForReceiver(processable.getId(), e.getMessage());
-        }
-
-        @Override
-        public void handleJobFinnishedError(Exception e, JobDescription<LetterReceiverProcessable> description) {
-            letterService.errorProcessingBatch(letterBatchId, e);
-        }
-
-        @Override
-        public void handleJobStartedError(Exception e, JobDescription<LetterReceiverProcessable> description) {
-            letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
@@ -137,6 +132,11 @@ public class LetterBatchProcessor {
                 }
             }
             return Optional.absent();
+        }
+
+        @Override
+        public void handleJobFinnishedFailure(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
@@ -185,6 +185,11 @@ public class LetterBatchProcessor {
         }
 
         @Override
+        public void handleJobStartedFailure(Exception e, JobDescription<IPostiProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
+        }
+
+        @Override
         public void process(IPostiProcessable processable) throws Exception {
             letterService.processIposti(processable);
         }
@@ -195,16 +200,6 @@ public class LetterBatchProcessor {
         }
 
         @Override
-        public void handleJobFinnishedError(Exception e, JobDescription<IPostiProcessable> description) {
-            letterService.errorProcessingBatch(letterBatchId, e);
-        }
-
-        @Override
-        public void handleJobStartedError(Exception e, JobDescription<IPostiProcessable> description) {
-            letterService.errorProcessingBatch(letterBatchId, e);
-        }
-
-        @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) {
             Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
                     letterBatchId, LetterBatchProcess.IPOSTI);
@@ -212,6 +207,11 @@ public class LetterBatchProcessor {
                 throw new IllegalStateException(this+" don't know how to start next job " + nextToDo.get());
             }
             return Optional.absent();
+        }
+
+        @Override
+        public void handleJobFinnishedFailure(Exception e, JobDescription<IPostiProcessable> description) {
+            letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
@@ -263,7 +263,7 @@ public class LetterBatchProcessor {
                 this.jobDescription.getJob().start(this.jobDescription);
             } catch(Exception e) {
                 logger.error("Error during start with " +this.jobDescription+". Error: "+e.getMessage(), e);
-                this.jobDescription.getJob().handleJobStartedError(e, this.jobDescription);
+                this.jobDescription.getJob().handleJobStartedFailure(e, this.jobDescription);
                 this.okState.set(false);
             }
 
@@ -310,7 +310,7 @@ public class LetterBatchProcessor {
                     }
                 } catch(Exception e) {
                     logger.error("Error during jobFinished with " +this.jobDescription+". Error: "+e.getMessage(), e);
-                    this.jobDescription.getJob().handleJobFinnishedError(e, this.jobDescription);
+                    this.jobDescription.getJob().handleJobFinnishedFailure(e, this.jobDescription);
                     this.okState.set(false);
                 }
             } else {
