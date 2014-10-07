@@ -21,18 +21,24 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
  * User: ratamaa
  * Date: 7.10.2014
  * Time: 14:08
  */
+@ApiModel("Haun tiedot")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HakuDetailsDto implements Serializable {
     private static final long serialVersionUID = 6049610210699613479L;
 
+    @ApiModelProperty("Haun oid")
     private String oid;
+    @ApiModelProperty("Haun tila")
     private String tila;
+    @ApiModelProperty("Haun nimi (avaimilla kieli_[koodi])")
     // in format: kieli_<code> -> nimi
     private Map<String,String> nimi = new HashMap<String, String>();
 
