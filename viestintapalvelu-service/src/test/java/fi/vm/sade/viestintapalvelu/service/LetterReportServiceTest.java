@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
@@ -24,6 +25,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
@@ -76,7 +78,7 @@ public class LetterReportServiceTest {
             mockedLetterReceiverLetterDAO, mockedIPostiDAO, mockedTemplateService, mockedCurrentUserComponent, 
             mockedOrganizationComponent, mockedHenkiloComponent);
     }
-    /*
+    
     @Test
     public void testGetLetterBatchReport() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
@@ -92,7 +94,7 @@ public class LetterReportServiceTest {
         
         List<IPosti> mockedIPostis = DocumentProviderTestData.getIPosti(new Long(3), letterBatch);
         when(mockedIPostiDAO.findMailById(any(Long.class))).thenReturn(mockedIPostis);
-        
+        when(mockedHenkiloComponent.getHenkilo(any(String.class))).thenReturn(new Henkilo());
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
         
         LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(new Long(1), pagingAndSorting);
@@ -104,7 +106,7 @@ public class LetterReportServiceTest {
         assertTrue(letterBatchReport.getLetterReceivers().size() == 1);
         assertTrue(letterBatchReport.getiPostis().size() > 0);
     }
-    */
+    
     @Test
     public void testGetLetterBatchesBySearchArgument() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));

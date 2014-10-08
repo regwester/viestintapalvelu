@@ -82,7 +82,7 @@ public class TemplateServiceImpl implements TemplateService {
         }
         result.setContents(contents);
         Replacement replacement = new Replacement();
-        replacement.setName("$letterBodyText");
+        replacement.setName("$sisalto");
         replacement.setDefaultValue("default value");
         Set<Replacement> replacements = new HashSet<Replacement>();
         replacement.setTemplate(result);
@@ -336,7 +336,7 @@ public class TemplateServiceImpl implements TemplateService {
         contents.add(content);
 
         Replacement replacement = new Replacement();
-        replacement.setName("$letterBodyText");
+        replacement.setName("$sisalto");
         ArrayList<Replacement> rList = new ArrayList<Replacement>();
         rList.add(replacement);
         return result;

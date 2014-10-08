@@ -119,7 +119,7 @@ public class TemplateResource extends AsynchronousResource {
         }
         result.setContents(contents);
         Replacement replacement = new Replacement();
-        replacement.setName("$letterBodyText");
+        replacement.setName("$sisalto");
         ArrayList<Replacement> rList = new ArrayList<Replacement>();
         rList.add(replacement);
         result.setReplacements(rList);

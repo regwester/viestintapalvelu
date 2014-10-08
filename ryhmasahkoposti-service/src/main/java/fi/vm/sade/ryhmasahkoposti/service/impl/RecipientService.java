@@ -43,7 +43,7 @@ public class RecipientService {
                 self.updateRecipientInformation(recipientId);
             }
         } catch (Exception e) {
-            log.error("JPA Exception: {}", e);
+            log.error("Information retrieval failed", e);
         }
     }
 
@@ -61,7 +61,7 @@ public class RecipientService {
     }
 
     private void updateOrganization(ReportedRecipient recipient) {
-        log.debug("Updating organization recipient");
+        log.debug("Updating organization recipient with oid {} ", recipient.getRecipientOid());
         OrganisaatioRDTO organisaatio = organizationComponent.getOrganization(recipient.getRecipientOid());
         String nameOfOrganisation = organizationComponent.getNameOfOrganisation(organisaatio);
         recipient.setSearchName(nameOfOrganisation);
@@ -70,7 +70,7 @@ public class RecipientService {
     }
 
     private void updatePerson(ReportedRecipient recipient) {
-        log.debug("Updating person recipient");
+        log.debug("Updating person recipient with oid {} ", recipient.getRecipientOid());
         Henkilo henkilo = personComponent.getPerson(recipient.getRecipientOid());
         recipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
         recipient.setSocialSecurityID(henkilo.getHetu());
@@ -83,7 +83,7 @@ public class RecipientService {
             log.debug("Updating recipient to db: {}", recipient);
             recipientDAO.update(recipient);
         } catch(Exception e) {
-            log.error("JPA Exception: {}", e);
+            log.error("Reciepient update failed", e);
         }
     }
 

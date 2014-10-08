@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="Content-Style-Type" content="text/css"/>
-    <link rel="stylesheet" type="text/css" href="classpath:/template_styles/ipost_pdf.css"/>
+    <style type="text/css">$tyylit</style>
     <title>Opiskelupaikan vastaanottaminen</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class='osoitetarra'>
         <div>$osoite</div>
     </div>
-    [hakijan nimi]
+    <p>$addressLabel.firstName $addressLabel.lastName</p>
     <p>$koulu</p>
     <p>$koulutus</p>
 </div>
@@ -48,8 +48,8 @@
 
     <p><b>OPISKELUPAIKAN VASTAANOTTAMISILMOITUS KEVÄTLUKUKAUDELLE 2015</b></p>
 
-    [Hakijan nimi]
-    [Hakijan hetu tai hetuttomalla syntymäaika]
+    <p>$addressLabel.firstName $addressLabel.lastName</p>
+    <p>$henkilotunnus</p>
     <p>$koulu</p>
     <p>$koulutus</p>
 
@@ -64,9 +64,9 @@
 
     <p><b>_</b>  En ota vastaan yllä mainittua opiskelupaikkaa.</p>
 
-    <p>Allekirjoitus ja päiväys:</p>
+    <p>Allekirjoitus ja päiväys:</p><br/>
 
-    <p><b><i>Palauta ilmoitus osoitteeseen XXX, XXXXXX viimeistään 9.12.2014</i></b></p>
+    <p><b><i>Palauta ilmoitus osoitteeseen $hakijapalveluidenOsoite viimeistään 9.12.2014</i></b></p>
 </div>
 
 </body>

@@ -32,7 +32,7 @@ public class PersonComponent {
         try {
             return henkiloResourceClient.findByOid(oid);
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error(e.getMessage(), e);
             throw new ExternalInterfaceException("error.msg.gettingPersonDataFailed", e);
         }
     }
