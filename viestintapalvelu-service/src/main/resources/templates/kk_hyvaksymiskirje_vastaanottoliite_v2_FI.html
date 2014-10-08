@@ -4,7 +4,7 @@
 <head lang="fi">
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="Content-Style-Type" content="text/css"/>
-    <link rel="stylesheet" type="text/css" href="classpath:/template_styles/ipost_pdf.css"/>
+    <style type="text/css">$tyylit</style>
     <title>Opiskelupaikan vastaanottaminen</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class='osoitetarra'>
         <div>$osoite</div>
     </div>
-    [hakijan nimi]
+    <p>$addressLabel.firstName $addressLabel.lastName</p>
     <p>$koulu</p>
     <p>$koulutus</p>
 </div>
@@ -51,10 +51,9 @@
 
     <p><b>OPISKELUPAIKAN VASTAANOTTAMISILMOITUS KEVÄTLUKUKAUDELLE 2015</b></p>
 
-    [Hakijan nimi]
+    <p>$addressLabel.firstName $addressLabel.lastName</p>
     [Hakijan hetu tai hetuttomalla syntymäaika]
     <p>$koulu</p>
-
     <p>$koulutus</p>
 
     <p><b>Ilmoitan sitovasti seuraavaa (X):</b></p>

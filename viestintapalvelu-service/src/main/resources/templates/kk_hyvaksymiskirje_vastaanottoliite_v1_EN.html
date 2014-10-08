@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="Content-Style-Type" content="text/css"/>
-    <link rel="stylesheet" type="text/css" href="classpath:/template_styles/ipost_pdf.css"/>
+    <style type="text/css">$tyylit</style>
     <title>Accepting a study place</title>
 </head>
 <body>
@@ -13,7 +13,7 @@
     <div class='osoitetarra'>
         <div>$osoite</div>
     </div>
-    [hakijan nimi]
+    <p>$addressLabel.firstName $addressLabel.lastName</p>
     <p>$koulu</p>
     <p>$koulutus</p>
 </div>
@@ -41,8 +41,8 @@
 
     <p><b>ACCEPTANCE NOTIFICATION TO STUDY PROGRAMME IN SPRING 2015</b></p>
 
-    [Hakijan nimi]
-    [Hakijan hetu tai hetuttomalla syntymäaika]
+    <p>$addressLabel.firstName $addressLabel.lastName</p>
+    <p>$henkilotunnus</p>
     <p>$koulu</p>
     <p>$koulutus</p>
 
@@ -57,9 +57,9 @@
 
     <p><b>_</b> I do not accept the study place mentioned above.</p>
 
-    <p>Signature and date:</p>
+    <p>Signature and date:</p><br/>
 
-    <p><b><i>Return to the address xxx,xxxxxx at the latest on 9 December 2014.</i></b></p>
+    <p><b><i>Return to the address $hakijapalveluidenOsoite at the latest on 9 December 2014.</i></b></p>
 </div>
 
 </body>
