@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <meta http-equiv="Content-Style-Type" content="text/css"/>
-    <link rel="stylesheet" type="text/css" href="classpath:/template_styles/ipost_pdf.css"/>
+    <style type="text/css">$tyylit</style>
     <title>Table attachment</title>
 </head>
 <body>
@@ -18,30 +18,21 @@
         <tr>
             <th class="hakutoive">Your study options and priority order</th>
             <th>Accepted / all applicants</th>
-            #if($columns.valinnanTulos)
             <th>Selection result</th>
-            #end
-            #if($columns.hylkaysperuste)
             <th>Basis for rejection</th>
-            #end
             <th>Your placement by selection way / Accepted by selection way</th>
             <th>Your points / the lowest accepted point amount by selection way</th>
         </tr>
         </thead>
         <tbody>
-        #foreach( $haku in $tulokset )
+        #foreach( $tulos in $tulokset )
         <tr>
-            <td class="hakutoive">$foreach.count. $haku.organisaationNimi, $haku.oppilaitoksenNimi<br/>$haku.hakukohteenNimi
-            </td>
-            <td>$haku.hyvaksytyt / $haku.hakeneet</td>
-            #if($columns.valinnanTulos)
-            <td>$haku.valinnanTulos</td>
-            #end
-            #if($columns.hylkaysperuste)
-            <td>$haku.hylkaysperuste</td>
-            #end
-            <td>$haku.sijoitus / $haku.hyvaksytyt</td>
-            <td>$haku.omatPisteet / $haku.alinHyvaksytty</td>
+            <td class="hakutoive">$foreach.count. $tulos.organisaationNimi, $tulos.oppilaitoksenNimi<br/>$tulos.hakukohteenNimi</td>
+            <td>$tulos.hyvaksytyt / $tulos.hakeneet</td>
+            <td>$tulos.valinnanTulos</td>
+            <td>$tulos.hylkaysperuste</td>
+            <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.kaikki</p>#end</td>
+            <td>#foreach($pisteet in $tulos.pisteet)<p>$pisteet.nimi $pisteet.oma / $pisteet.minimi</p>#end</td>
         </tr>
         #end
         </tbody>
@@ -103,6 +94,6 @@
         offices.
     </p>
 </div>
-<p><b>[Lähettävän korkeakoulun hakijapalveluiden osoite]</b></p>
+<p><b>$hakijapalveluidenOsoite</b></p>
 </body>
 </html>
