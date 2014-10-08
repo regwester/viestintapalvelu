@@ -7,6 +7,7 @@ import java.util.zip.DataFormatException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
@@ -35,6 +36,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
+@Transactional(readOnly=true)
 @Service
 public class LetterReportServiceImpl implements LetterReportService {
     private LetterBatchDAO letterBatchDAO;
@@ -59,7 +61,6 @@ public class LetterReportServiceImpl implements LetterReportService {
         this.organizationComponent = organizationComponent;
         this.henkiloComponent = henkiloComponent;
     }
-
     
     @Override
     public LetterBatchReportDTO getLetterBatchReport(Long letterBatchID, PagingAndSortingDTO pagingAndSorting) {               
