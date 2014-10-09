@@ -16,6 +16,8 @@
 
 package fi.vm.sade.viestintapalvelu.letter;
 
+import javax.ws.rs.NotFoundException;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -38,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 public class DokumenttiIdProviderImplTest {
     private DokumenttiIdProviderImpl dokumenttiIdProvider = new DokumenttiIdProviderImpl();
     private Henkilo henkilo = DocumentProviderTestData.getHenkilo();
-    private String testSalt;
+    private String testSalt="TEST-SALT";
 
     @Before
     public void before() {
@@ -58,6 +60,13 @@ public class DokumenttiIdProviderImplTest {
     }
 
     @Test
+    public void testGenerateDocumentIdForLetterBatchIdByGivenOid() {
+        ShaPasswordEncoder enc = new ShaPasswordEncoder();
+        String id = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(54321l, "prefix-t-", "HOID");
+        assertEquals("prefix-t-54321-" + enc.encodePassword(testSalt + "prefix-t-54321-HOID", ""), id);
+    }
+
+    @Test
     public void testParseLetterBatchIdByDokumenttiId() {
         ShaPasswordEncoder enc = new ShaPasswordEncoder();
         long id = dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-1-"
@@ -65,4 +74,33 @@ public class DokumenttiIdProviderImplTest {
                 "prefix-t-");
         assertEquals(1l, id);
     }
+
+    @Test
+    public void testParseLetterBatchIdByDokumenttiIdByGivenOid() {
+        ShaPasswordEncoder enc = new ShaPasswordEncoder();
+        long id = dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-54321-"
+                        + enc.encodePassword(testSalt + "prefix-t-54321-henkiloOid", ""),
+                "prefix-t-", "henkiloOid");
+        assertEquals(54321l, id);
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void testIllegalIdByDifferingHash() {
+        dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-54321-abcdefgh", "prefix-t-");
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void testIllegalIdByDifferingPrefix() {
+        ShaPasswordEncoder enc = new ShaPasswordEncoder();
+        dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-different-54321-"
+                        + enc.encodePassword(testSalt + "prefix-t-54321-henkiloOid", ""),  "prefix-t-", "henkiloOid");
+    }
+
+    @Test(expected = NotFoundException.class)
+    public void testIllegalIdByDifferingOid() {
+        ShaPasswordEncoder enc = new ShaPasswordEncoder();
+        dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-54321-"
+                + enc.encodePassword(testSalt + "prefix-t-54321-oidDifferent", ""),  "prefix-t-", "henkiloOid");
+    }
+
 }
