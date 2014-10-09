@@ -111,7 +111,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.emailPossibleForId = null;
     $scope.emailPreviewPossibleForId = null;
     $scope.languageOptions = [];
-    function startBatchMonitor(id) {
+    function startBatchMonitor(id, whenDone) {
         var monitor = function() {
             Printer.asyncStatus(id).success(function(status) {
                 if (!$scope.monitorStatus || status.sent != $scope.monitorStatus.sent) {
@@ -124,6 +124,9 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
                     if (status.emailReviewable) {
                         $scope.emailPossibleForId = id;
                         $scope.emailPreviewPossibleForId = id;
+                    }
+                    if (whenDone) {
+                        whenDone();
                     }
                 } else {
                     if (status.emailReviewable) {
@@ -149,6 +152,22 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
         if ($scope.emailPreviewPossibleForId) {
             Printer.previewEmail($scope.emailPreviewPossibleForId, langCode);
         }
+    };
+
+    $scope.generateAsyncPdf = function() {
+      Printer.asyncPdf($scope.letters,replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          .success(function(id) {
+              startBatchMonitor(id, Printer.doDownload(id));
+        });
+    };
+
+    $scope.generateAsyncZip = function() {
+      Printer.asyncZip($scope.letters,replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          .success(function(id) {
+              startBatchMonitor(id, Printer.doDownload(id));
+          });
     };
 
     $scope.generateAsyncLetter = function() {

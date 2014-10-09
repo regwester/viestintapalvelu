@@ -51,6 +51,7 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.impl.DokumenttiIdProviderImpl;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.Template;
@@ -86,18 +87,22 @@ public class LetterResourceAsyncPerformanceIT {
     @Autowired
     private LetterService letterService;
 
+    @Autowired
+    private DokumenttiIdProviderImpl dokumenttiIdProvider;
+
     @Before
     public void before() throws Exception {
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
-        Field currentUserComponent = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
-        currentUserComponent.setAccessible(true);
-        currentUserComponent.set(((Advised)letterService).getTargetSource().getTarget(),
-                new CurrentUserComponent() {
-                    @Override
-                    public Henkilo getCurrentUser() {
-                        return testHenkilo;
-                    }
-                });
+        CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
+            @Override
+            public Henkilo getCurrentUser() {
+                return testHenkilo;
+            }
+        };
+        Field currentUserComponentField = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
+        currentUserComponentField.setAccessible(true);
+        currentUserComponentField.set(((Advised)letterService).getTargetSource().getTarget(), currentUserComponent);
+        dokumenttiIdProvider.setCurrentUserComponent(currentUserComponent);
     }
 
     @Test
@@ -186,10 +191,10 @@ public class LetterResourceAsyncPerformanceIT {
 
     private long parseId(String s) {
         if (s.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
-            return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length()));
+            return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length()).split("-")[0]);
         }
         if (s.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
-            return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_ZIP.length()));
+            return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_ZIP.length()).split("-")[0]);
         }
         throw new IllegalStateException("Unknown id response: "+s);
     }
@@ -263,7 +268,8 @@ public class LetterResourceAsyncPerformanceIT {
 
     @SuppressWarnings("unchecked")
     protected boolean isProcessing(long id, boolean waitForDone) {
-        Response response = letterResource.letterBatchStatus(LetterService.DOKUMENTTI_ID_PREFIX_PDF+id);
+        Response response = letterResource.letterBatchStatus(
+                dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF));
         LetterBatchStatusDto entity = (LetterBatchStatusDto) response.getEntity();
         logger.info("  > Batch "+id+" status: {} / {}, {}",
                 entity.getSent(), entity.getTotal(), entity.getStatus());

@@ -4,6 +4,12 @@ window.CONFIG = {};
 window.CONFIG.env = {};
 window.CONFIG.app = {};
 
+function getCurrentHost() {
+    var url = window.location.href;
+    var arr = url.split("/");
+    return arr[0] + "//" + arr[2]; // should return e.g. http(s)://host:port
+}
+
 app.value("globalConfig", window.CONFIG || {});
 
 app.config(function ($locationProvider) {
