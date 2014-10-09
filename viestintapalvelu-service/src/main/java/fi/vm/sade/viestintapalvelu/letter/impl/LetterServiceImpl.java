@@ -657,16 +657,18 @@ public class LetterServiceImpl implements LetterService {
         logger.info("Saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
         String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(),
                 LetterService.DOKUMENTTI_ID_PREFIX_ZIP, batch.getStoringOid());
-        List<String> tags = Arrays.asList("viestintapalvelu", "mergedZips.zip", "zip", documentId);
+        String fileName = Optional.fromNullable(batch.getTemplateName()).or("mergedZips")
+                + "_" + Optional.fromNullable(batch.getLanguage()).or("FI")+ ".zip";
+        List<String> tags = Arrays.asList("viestintapalvelu", fileName, "zip", documentId);
         byte[] resultZip = mergeIpostiZips(batch);
         logger.info("Stroring ZIP with documentId={}", documentId);
-        dokumenttipalveluRestClient.tallenna(documentId, "mergedZips.zip",
+        dokumenttipalveluRestClient.tallenna(documentId, fileName,
                 now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(),
                 tags, DOCUMENT_TYPE_APPLICATION_ZIP,
                 new ByteArrayInputStream(resultZip));
         logger.info("Done saving zip document to Dokumenttipalvelu for LetterBatch={}", batch.getId());
     }
-
+    
     private byte[] mergeIpostiZips(LetterBatch batch) throws IOException {
         Map<String, byte[]> subZips = new TreeMap<String, byte[]>();
         for (IPosti iposti : batch.getIposti()) {
@@ -679,10 +681,12 @@ public class LetterServiceImpl implements LetterService {
         logger.info("Saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
         String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(),
                 LetterService.DOKUMENTTI_ID_PREFIX_PDF, batch.getStoringOid());
-        List<String> tags = Arrays.asList("viestintapalvelu", "mergedletters.pdf", "pdf", documentId);
+        String fileName = Optional.fromNullable(batch.getTemplateName()).or("mergedletters")
+                + "_" + Optional.fromNullable(batch.getLanguage()).or("FI")+ ".pdf";
+        List<String> tags = Arrays.asList("viestintapalvelu", fileName, "pdf", documentId);
         byte[] bytes = getLetterContentsByLetterBatchID(batch.getId());
         logger.info("Stroring PDF with documentId={}", documentId);
-        dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
+        dokumenttipalveluRestClient.tallenna(documentId, fileName,
                 now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(),
                 tags, DOCUMENT_TYPE_APPLICATION_PDF,
                 new ByteArrayInputStream(bytes));
