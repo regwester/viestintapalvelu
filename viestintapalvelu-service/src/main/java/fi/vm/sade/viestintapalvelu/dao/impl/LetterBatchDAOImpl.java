@@ -7,6 +7,7 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.google.common.base.Optional;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
@@ -16,6 +17,7 @@ import com.mysema.query.types.path.PathBuilder;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -26,21 +28,32 @@ import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
 
-    public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid, String tag) {
+    public LetterBatch findLetterBatchByNameOrgTag(String templateName, String language, String organizationOid,
+                                                   Optional<String> tag, Optional<String> applicationPeriod) {
         EntityManager em = getEntityManager();
 
         String findTemplate = "SELECT a FROM LetterBatch a WHERE "
             + "a.templateName=:templateName AND "
             + "a.organizationOid=:organizationOid AND "
-            + "a.language=:language AND "
-            + "a.tag LIKE :tag "
-            + "ORDER BY a.timestamp DESC";
+            + "a.language=:language  ";
+        if (tag.isPresent()) {
+            findTemplate += " AND a.tag LIKE :tag ";
+        }
+        if (applicationPeriod.isPresent()) {
+            findTemplate += " AND a.applicationPeriod = :applicationPeriod ";
+        }
+        findTemplate +=  "ORDER BY a.timestamp DESC";
 
         TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
         query.setParameter("templateName", templateName);
         query.setParameter("language", language);
         query.setParameter("organizationOid", organizationOid);
-        query.setParameter("tag", tag);
+        if (tag.isPresent()) {
+            query.setParameter("tag", tag.get());
+        }
+        if (applicationPeriod.isPresent()) {
+            query.setParameter("applicationPeriod", applicationPeriod.get());
+        }
         query.setFirstResult(0);	// LIMIT 1
         query.setMaxResults(1);  	//
 
@@ -138,6 +151,47 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
         
     	return findBySearchCriteria.count();
+    }
+
+    @Override
+    @SuppressWarnings({"unchecked"})
+    public LetterBatchStatusDto getLetterBatchStatus(long letterBatchId) {
+        List<LetterBatchStatusDto> results = (List<LetterBatchStatusDto>) getEntityManager()
+                .createNamedQuery("letterBatchStatus")
+                    .setParameter("batchId", letterBatchId)
+                .setMaxResults(1)
+                .getResultList();
+        if (results.isEmpty()) {
+            return null;
+        }
+        return results.get(0);
+    }
+
+    @Override
+    public List<Long> findUnprocessedLetterReceiverIdsByBatch(long batchId) {
+        return getEntityManager().createQuery(
+                    "select lr.id from LetterReceivers lr"
+                    + " inner join lr.letterBatch batch with batch.id = :batchId"
+                    + " inner join lr.letterReceiverLetter letter"
+                    + " where letter.letter = null"
+                    + " order by lr.id", Long.class)
+            .setParameter("batchId", batchId).getResultList();
+    }
+    
+    @Override
+    public List<Long> findAllLetterReceiverIdsByBatch(long batchId) {
+        return getEntityManager().createQuery(
+                    "select lr.id from LetterReceivers lr"
+                    + " inner join lr.letterBatch batch with batch.id = :batchId"
+                    + " order by lr.id", Long.class)
+            .setParameter("batchId", batchId).getResultList();
+    }
+    
+    @Override
+    public List<Long> findUnfinishedLetterBatches() {
+        return getEntityManager().createQuery("SELECT lb.id FROM LetterBatch lb"
+                + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'"
+                + " ORDER BY lb.timestamp ASC", Long.class).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

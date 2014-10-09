@@ -23,11 +23,8 @@ public class ReportedMessageConverter {
         this.currentUserComponent = currentUserComponent;
     }
 
-    public ReportedMessage convert(EmailMessage emailMessage, ReplacementDTO senderFrom, ReplacementDTO senderFromPersonal, 
-        ReplacementDTO replyTo, ReplacementDTO replyToPersonal, ReplacementDTO subject, String templateContent) 
-        throws IOException {
+    public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
         ReportedMessage reportedMessage = new ReportedMessage();
-
         Henkilo henkilo = currentUserComponent.getCurrentUser();
         String senderName = getPersonName(henkilo);
 
@@ -35,52 +32,20 @@ public class ReportedMessageConverter {
         reportedMessage.setSenderOid(henkilo.getOidHenkilo());
         reportedMessage.setSenderName(senderName);
         reportedMessage.setSenderOrganizationOid(emailMessage.getOrganizationOid());
-
-        // Set subject
-        if (subject != null)
-            reportedMessage.setSubject(subject.getDefaultValue());
-        else
-            reportedMessage.setSubject(emailMessage.getSubject());
-
-        // Set From
-        if (senderFrom != null) 
-            reportedMessage.setSenderEmail(senderFromPersonal.getDefaultValue() + senderFrom.getDefaultValue());
-        else
-            reportedMessage.setSenderEmail(emailMessage.getFrom());
-
-        // Set personal name
-        if(senderFromPersonal != null)
-            reportedMessage.setSenderDisplayText(senderFromPersonal.getDefaultValue());
-        else
-            reportedMessage.setSenderDisplayText(emailMessage.getSender()); //TODO: resolve mismatch in naming
-
-        // Set reply-to
-        if (senderFrom != null) 
-            reportedMessage.setReplyToEmail(replyToPersonal.getDefaultValue() + replyTo.getDefaultValue());
-        else
-            reportedMessage.setReplyToEmail(emailMessage.getReplyTo());
-
-        if (!StringUtils.isEmpty(templateContent)) {
-            reportedMessage.setMessage(templateContent);
-            reportedMessage.setType(ReportedMessage.TYPE_TEMPLATE);
-            if (templateContent.matches(".*\\<[^>]+>.*"))
-                reportedMessage.setHtmlMessage(GroupEmailConstants.HTML_MESSAGE);
-            else
-                reportedMessage.setHtmlMessage(GroupEmailConstants.NOT_HTML_MESSAGE);
+        reportedMessage.setSubject(emailMessage.getSubject());
+        reportedMessage.setSenderEmail(emailMessage.getFrom());
+        reportedMessage.setSenderDisplayText(emailMessage.getSender());
+        reportedMessage.setReplyToEmail(emailMessage.getReplyTo());
+        reportedMessage.setMessage(emailMessage.getBody());
+        reportedMessage.setType(ReportedMessage.TYPE_EMAIL);
+        if (emailMessage.isHtml()) {
+            reportedMessage.setHtmlMessage(GroupEmailConstants.HTML_MESSAGE);
         } else {
-            reportedMessage.setMessage(emailMessage.getBody());
-            reportedMessage.setType(ReportedMessage.TYPE_EMAIL);
-            if (emailMessage.isHtml()) {
-                reportedMessage.setHtmlMessage(GroupEmailConstants.HTML_MESSAGE);
-            } else {
-                reportedMessage.setHtmlMessage(GroupEmailConstants.NOT_HTML_MESSAGE);
-            }
+            reportedMessage.setHtmlMessage(GroupEmailConstants.NOT_HTML_MESSAGE);
         }
-
         reportedMessage.setCharacterSet(emailMessage.getCharset());
         reportedMessage.setSendingStarted(new Date());
         reportedMessage.setTimestamp(new Date());
-
         return reportedMessage;
     }
 

@@ -1,19 +1,16 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class EmailMessage {
+public class EmailMessage implements AttachmentContainer {
     private final static Logger log = LoggerFactory.getLogger(EmailMessage.class);
 
     private String callingProcess = "";
@@ -24,16 +21,17 @@ public class EmailMessage {
     private String organizationOid;
     private String subject;
     private String body;
-    private String footer;
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
     private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
     private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
     private boolean isValid = true;
     private String templateName;
+    private String templateId;
     private String languageCode;
     private List<SourceRegister> sourceRegister;
-
+    private String hakuOid; 
+    
     public EmailMessage() {
     }
 
@@ -92,19 +90,6 @@ public class EmailMessage {
         return body;
     }
 
-    public String getFooter() {
-        return footer;
-    }
-
-    public void setFooter(String languageCode) {
-        this.footer = generateFooter(EmailConstants.EMAIL_FOOTER, languageCode);
-        addFooterToBody();
-    }
-
-    private void addFooterToBody() {
-        this.body = this.body + "\n" + this.footer;
-    }
-
     public void setSubject(String subject) {
         this.subject = subject;
     }
@@ -156,10 +141,12 @@ public class EmailMessage {
         this.attachments = attachments;
     }
 
-    public List<? extends EmailAttachment> getAttachments() {
+    @Override
+    public List<EmailAttachment> getAttachments() {
         return attachments;
     }
 
+    @Override
     public void addAttachInfo(AttachmentResponse attachInfo) {
         if (this.attachInfo == null) {
             this.attachInfo = new LinkedList<AttachmentResponse>();
@@ -177,6 +164,22 @@ public class EmailMessage {
 
     public void setCallingProcess(String callingProcess) {
         this.callingProcess = callingProcess;
+    }
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
+
+    public String getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(String templateId) {
+        this.templateId = templateId;
     }
 
     /**
@@ -209,41 +212,6 @@ public class EmailMessage {
         this.languageCode = languageCode;
     }
 
-    private String generateFooter(String emailFooter, String lang) {
-        String footer = "";
-
-        if ((lang == null) || ("".equals(lang)) || ("FI".equalsIgnoreCase(lang))) {
-            lang = "FI";
-
-        } else if ("SE".equalsIgnoreCase(lang) || "SV".equalsIgnoreCase(lang)) {
-            // should be SV
-            lang = "SE";
-        } else {
-            lang = "EN";
-        }
-
-        String footerFileName = emailFooter.replace("{LANG}", lang.toUpperCase());
-
-        try {
-            footer = readFooter(footerFileName);
-
-        } catch (FileNotFoundException e) {
-            log.error("Failed to find footer file:  " + footerFileName + ", " + e.getMessage());
-        } catch (IOException e) {
-            log.error("Failed to insert footer - it is not valid " + footerFileName + ", " + e.getMessage());
-        }
-
-        return footer;
-    }
-
-    private String readFooter(String footer) throws FileNotFoundException, IOException {
-        InputStream in = getClass().getResourceAsStream(footer);
-        if (in == null) {
-            throw new FileNotFoundException("Template " + footer + " not found");
-        }
-        return new String(IOUtils.toByteArray(in), "UTF-8");
-    }
-
     public boolean isValid() {
         return this.isValid;
     }
@@ -262,9 +230,10 @@ public class EmailMessage {
 
     @Override
     public String toString() {
-        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" +  replyTo + ", senderOid=" + senderOid + ", subject="
-                + subject + ", body=" + body + ", footer=" + footer + ", isHtml=" + isHtml + ", charset=" + charset + ", attachments=" + attachments
-                + ", attachInfo=" + attachInfo + "]";
+        return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" + replyTo + ", senderOid=" + senderOid
+                + ", organizationOid=" + organizationOid + ", subject=" + subject + ", body=" + body + ", isHtml=" + isHtml + ", charset=" + charset
+                + ", attachments=" + attachments + ", attachInfo=" + attachInfo + ", isValid=" + isValid + ", templateName=" + templateName + ", templateId="
+                + templateId + ", languageCode=" + languageCode + ", sourceRegister=" + sourceRegister + ", hakuOid=" + hakuOid + "]";
     }
 
 }

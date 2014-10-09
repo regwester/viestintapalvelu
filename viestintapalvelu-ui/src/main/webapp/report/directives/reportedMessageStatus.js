@@ -15,7 +15,7 @@ angular.module('report').directive('reportedMessageStatus', function() {
 
     scope.getTotalSendings = function() {
       var status = scope.status;
-      return status.numberOfSuccesfulSendings + status.numberOfFailedSendings;
+      return status.numberOfSuccessfulSendings + status.numberOfFailedSendings;
     };
   }
 

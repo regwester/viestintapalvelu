@@ -7,7 +7,7 @@ angular.module('report')
 })
 
 // Hakee REST-rajapinnan avulla raportoitavan viestin tiedot vastaanottajineen, joille viestin lähetys epäonnistui
-.factory('ReportedMessageAndRecipientsSendingUnsuccesful', function($resource) {
+.factory('ReportedMessageAndRecipientsSendingUnsuccessful', function($resource) {
     return $resource("/ryhmasahkoposti-service/reportMessages/failed/:messageID", {messageID: '@messageID'});
 })
 
@@ -32,21 +32,21 @@ angular.module('report')
         ReportedMessageAndRecipients.get({messageID: $route.current.params.messageID}, function(reportedMessage) {
           delay.resolve(reportedMessage);
         }, function() {
-          delay.reject('Unable to get reportted message ' + $route.current.params.messageID);
+          delay.reject('Unable to get reported message ' + $route.current.params.messageID);
         });
         return delay.promise;
     };
 })
 
 // Hae raportoitava viesti ja vastaanottajat, joille lähetys on epäonnistunut
-.factory('GetReportedMessageAndRecipientsSendingUnsuccesful', function($route, $q, 
-    ReportedMessageAndRecipientsSendingUnsuccesful) {
+.factory('GetReportedMessageAndRecipientsSendingUnsuccessful', function($route, $q,
+    ReportedMessageAndRecipientsSendingUnsuccessful) {
     return function() {
         var delay = $q.defer();
-        ReportedMessageAndRecipientsSendingUnsuccesful.get({messageID: $route.current.params.messageID}, function(reportedMessage) {
+        ReportedMessageAndRecipientsSendingUnsuccessful.get({messageID: $route.current.params.messageID}, function(reportedMessage) {
           delay.resolve(reportedMessage);
         }, function() {
-          delay.reject('Unable to get reportted message ' + $route.current.params.messageID);
+          delay.reject('Unable to get reported message ' + $route.current.params.messageID);
         });
         return delay.promise;
     };

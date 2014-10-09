@@ -31,7 +31,7 @@ public interface HenkiloResource {
      */
     @Produces(MediaType.APPLICATION_JSON)
     @JsonView(JsonViews.Basic.class)
-    @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ', 'ROLE_APP_HENKILONHALLINTA_READ_UPDATE', 'ROLE_APP_HENKILONHALLINTA_CRUD')")
+   // @PreAuthorize("hasAnyRole('ROLE_APP_HENKILONHALLINTA_READ', 'ROLE_APP_HENKILONHALLINTA_READ_UPDATE', 'ROLE_APP_HENKILONHALLINTA_CRUD')")
     @Path("{oid}")
     @GET
     public Henkilo findByOid(@PathParam("oid") String oid);

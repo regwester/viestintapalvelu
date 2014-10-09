@@ -56,6 +56,16 @@ public class LetterReceiversDAOImpl extends AbstractJpaDAOImpl<LetterReceivers, 
         return query.getSingleResult();    
     }
 
+    @Override
+    public List<Long> findLetterRecieverIdsByLetterBatchId(long letterBatchId) {
+        return getEntityManager().createQuery(
+                "select receiver.id from LetterReceivers receiver " +
+                "       inner join receiver.letterBatch lb with lb.id = :letterBatchId " +
+                "order by receiver.id", Long.class)
+            .setParameter("letterBatchId", letterBatchId)
+            .getResultList();
+    }
+
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }

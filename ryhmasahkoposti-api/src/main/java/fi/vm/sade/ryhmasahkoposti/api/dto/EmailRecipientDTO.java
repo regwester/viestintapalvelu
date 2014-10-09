@@ -1,13 +1,13 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 public class EmailRecipientDTO extends EmailRecipient {
-
     private Long recipientID;
+    private Long recipientVersion;
     private Long emailMessageID;
     private String firstName;
     private String lastName;
     private String organizationName;
-    private String sendSuccessfull;
+    private String sendSuccessful;
     private String timestamp;
     
     public Long getRecipientID() {
@@ -17,7 +17,15 @@ public class EmailRecipientDTO extends EmailRecipient {
     public void setRecipientID(Long recipientID) {
         this.recipientID = recipientID;
     }
-    
+
+    public Long getRecipientVersion() {
+        return recipientVersion;
+    }
+
+    public void setRecipientVersion(Long recipientVersion) {
+        this.recipientVersion = recipientVersion;
+    }
+
     public Long getEmailMessageID() {
         return emailMessageID;
     }
@@ -49,12 +57,12 @@ public class EmailRecipientDTO extends EmailRecipient {
         this.organizationName = organizationName;
     }
 
-    public String getSendSuccessfull() {
-        return sendSuccessfull;
+    public String getSendSuccessful() {
+        return sendSuccessful;
     }
 
-    public void setSendSuccessfull(String sendSuccessfull) {
-        this.sendSuccessfull = sendSuccessfull;
+    public void setSendSuccessful(String sendSuccessful) {
+        this.sendSuccessful = sendSuccessful;
     }
 
     public String getTimestamp() {

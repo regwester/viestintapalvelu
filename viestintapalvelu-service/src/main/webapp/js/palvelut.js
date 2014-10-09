@@ -122,12 +122,26 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         function getExamples() {
 		    return $http.get(template+'getAvailableExamples');
         }
-        
-        
+
         function getByName(t) {
-		    return $http.get(template+'getByName?templateName='+t.name+'&languageCode='+t.lang);
+            var url = template+'getByName?templateName='+t.name+'&languageCode='+t.lang;
+            if (t.applicationPeriod) {
+                url += "&applicationPeriod="+ t.applicationPeriod;
+            }
+		    return $http.get(url);
         }
-        
+
+        function listVersionsByName(t, getContents, getPeriods) {
+            var url = template+'listVersionsByName?templateName='+t.name+'&languageCode='+t.lang;
+            if (getContents) {
+                url += "&content=YES";
+            }
+            if (getPeriods) {
+                url += "&periods=YES";
+            }
+            return $http.get(url);
+        }
+
         function getHistory(t, oid, applicationPeriod, tag){
         	if (tag != null && tag != "") {
         		return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid+"&applicationPeriod="+applicationPeriod+"&tag="+tag);
@@ -135,12 +149,22 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         	 	return $http.get(template+'getHistory?templateName='+t.name+'&languageCode='+t.lang+'&oid='+oid);
         	}
         }
-        
+
+        function saveAttachedApplicationPeriods(templateId, applicationPeriods, useAsDefault) {
+            return $http.put(template+"saveAttachedApplicationPeriods", {
+                templateId: templateId,
+                applicationPeriods: applicationPeriods,
+                useAsDefault: useAsDefault
+            });
+        }
+
         return {
             getNames: getNames,
             getExamples: getExamples,
             getByName: getByName,
-            getHistory: getHistory
+            getHistory: getHistory,
+            listVersionsByName: listVersionsByName,
+            saveAttachedApplicationPeriods: saveAttachedApplicationPeriods
         };
 	}();
 }]);
@@ -150,6 +174,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
     var letter = 'api/v1/letter/';
     var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
+    // TODO: get this URL from properties:
+    var _dokumenttiServiceLocation = getCurrentHost()+"/dokumenttipalvelu-service/resources/dokumentit";
 
     return function () {
         function osoitetarratPDF(labels) {
@@ -164,7 +190,84 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         	print(letter + 'pdf', {
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
-        
+
+        function buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return {
+                "letters": letters,
+                "templateReplacements" : replacements,
+                "templateName" : tName,
+                "languageCode" : tLang,
+                "organizationOid" : oid,
+                "applicationPeriod": applicationPeriod,
+                "tag": tag
+            };
+        }
+
+        function asyncPdf(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"async/pdf", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
+                .error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async PDF -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function doDownload(id) {
+            $window.location.href = _dokumenttiServiceLocation+"/lataa/"+id;
+        }
+
+        function asyncZip(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"async/zip", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
+                .error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async zip -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"async/letter", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag)).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async letter -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function asyncStatus(id) {
+            return $http.get(letter+"async/letter/status/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async status -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function languageOptions(id) {
+            return $http.get(letter+"languageOptions/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Kielivaihtoehtojen haku epäonnistui: " + data);
+                });
+        }
+
+        function sendEmail(id) {
+            return $http.post(letter+"emailLetterBatch/"+id).
+                error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Sähköpostiviestin lähetys kirjelähetykselle "+id+" epäonnistui: " + data);
+            });
+        }
+
+        function previewEmail(id, langCode) {
+            if (langCode) {
+                var lc = langCode;
+                $http.get(letter+'previewLetterBatchEmail/'+id+"?language="+lc).success(function() {
+                    $window.location = letter+'previewLetterBatchEmail/'+id+"?language="+lc;
+                }).error(function() {
+                    $window.alert("Ei löytynyt kielellä " + lc);
+                });
+            } else {
+                $window.location = letter+'previewLetterBatchEmail/'+id;
+            }
+        }
+
         function letterZIP(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
             print(letter + 'zip', {
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
@@ -196,7 +299,15 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             osoitetarratXLS: osoitetarratXLS,
             letterPDF: letterPDF,
             letterZIP: letterZIP,
-            printPDF: printPDF
+            printPDF: printPDF,
+            asyncLetter: asyncLetter,
+            asyncPdf: asyncPdf,
+            asyncZip: asyncZip,
+            asyncStatus: asyncStatus,
+            doDownload: doDownload,
+            sendEmail: sendEmail,
+            previewEmail: previewEmail,
+            languageOptions: languageOptions
         }
     }()
 }])

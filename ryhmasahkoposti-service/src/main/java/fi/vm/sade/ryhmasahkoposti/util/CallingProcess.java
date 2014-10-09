@@ -4,7 +4,8 @@ public enum CallingProcess {
 
     OSOITETIETOJARJESTELMA("Osoitetietojarjestelma"),
     HENKILOPALVELU("Henkilopalvelu"),
-    VALINTA("Valinta");
+    VALINTA("Valinta"),
+    VIESTINTAPALVELU("Viestintapalvelu");
     
     private String name;
     

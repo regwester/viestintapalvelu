@@ -1,70 +1,66 @@
 package fi.vm.sade.ryhmasahkoposti.model;
 
+import fi.vm.sade.generic.model.BaseEntity;
+
+import javax.persistence.*;
+
 import java.util.Date;
 import java.util.Set;
 
-import javax.persistence.CascadeType;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.OneToMany;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import fi.vm.sade.generic.model.BaseEntity;
-
-@Table(name="raportoitavaviesti")
-@Entity()
+@Table(name = "raportoitavaviesti")
+@Entity
 public class ReportedMessage extends BaseEntity {
     private static final long serialVersionUID = 7511140604535983187L;
 
-    @Column(name="prosessi", nullable=false)
+    @Column(name = "prosessi", nullable = false)
     private String process;
 
-    @Column(name="lahettajan_oid", nullable=true)
+    @Column(name = "lahettajan_oid", nullable = true)
     private String senderOid;
 
-    @Column(name="lahettajan_nimi", nullable=true)
+    @Column(name = "lahettajan_nimi", nullable = true)
     private String senderName;
 
-    @Column(name="lahettajan_sahkopostiosoite", nullable=false)
+    @Column(name = "lahettajan_sahkopostiosoite", nullable = false)
     private String senderEmail;
 
-    @Column(name="lahettajan_näyttöteksti")
+    @Column(name = "lahettajan_näyttöteksti")
     private String senderDisplayText;
 
-    @Column(name="lahettajan_organisaatio_oid", nullable=true)
+    @Column(name = "viestipohja_id")
+    private Long templateId;
+
+    @Column(name = "lahettajan_organisaatio_oid", nullable = true)
     private String senderOrganizationOid;
 
-    @Column(name="vastaus_sahkopostiosoite", nullable=true)
+    @Column(name = "vastaus_sahkopostiosoite", nullable = true)
     private String replyToEmail;
 
-    @Column(name="aihe", nullable=false)
+    @Column(name = "aihe", nullable = false)
     private String subject;
 
-    @Column(name="viesti", nullable=false)
+    @Column(name = "viesti", nullable = false)
     private String message;
 
-    @Column(name="htmlviesti", nullable=false)
+    @Column(name = "htmlviesti", nullable = false)
     private String htmlMessage;
 
-    @Column(name="merkisto", nullable=false)
+    @Column(name = "merkisto", nullable = false)
     private String characterSet;
 
-    @OneToMany(mappedBy="reportedMessage", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
+    @OneToMany(mappedBy = "reportedMessage", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<ReportedRecipient> reportedRecipients;
 
-    @OneToMany(mappedBy="reportedMessage", fetch=FetchType.EAGER, cascade=CascadeType.ALL)
-    private Set<ReportedMessageAttachment> reportedMessageAttachments;	
+    @OneToMany(mappedBy = "reportedMessage", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    private Set<ReportedMessageAttachment> reportedMessageAttachments;
 
-    @Column(name="lahetysalkoi", nullable=false)
+    @Column(name = "lahetysalkoi", nullable = false)
     private Date sendingStarted;
 
-    @Column(name="lahetyspaattyi", nullable=true)
+    @Column(name = "lahetyspaattyi", nullable = true)
     private Date sendingEnded;
 
-    @Column(name="aikaleima", nullable=false)
+    @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
 
@@ -72,35 +68,35 @@ public class ReportedMessage extends BaseEntity {
     private String type;
 
     public String getProcess() {
-	return process;
+        return process;
     }
 
     public void setProcess(String process) {
-	this.process = process;
+        this.process = process;
     }
 
     public String getSenderOid() {
-	return senderOid;
+        return senderOid;
     }
 
     public void setSenderOid(String senderOid) {
-	this.senderOid = senderOid;
+        this.senderOid = senderOid;
     }
 
     public String getSenderName() {
-	return senderName;
+        return senderName;
     }
 
     public void setSenderName(String senderName) {
-	this.senderName = senderName;
+        this.senderName = senderName;
     }
 
     public String getSenderEmail() {
-	return senderEmail;
+        return senderEmail;
     }
 
     public void setSenderEmail(String senderEmail) {
-	this.senderEmail = senderEmail;
+        this.senderEmail = senderEmail;
     }
 
     public String getSenderDisplayText() {
@@ -112,117 +108,125 @@ public class ReportedMessage extends BaseEntity {
     }
 
     public String getSenderOrganizationOid() {
-	return senderOrganizationOid;
+        return senderOrganizationOid;
     }
 
     public void setSenderOrganizationOid(String senderOrganizationOid) {
-	this.senderOrganizationOid = senderOrganizationOid;
+        this.senderOrganizationOid = senderOrganizationOid;
     }
 
     public String getReplyToEmail() {
-	return replyToEmail;
+        return replyToEmail;
     }
 
     public void setReplyToEmail(String replyToEmail) {
-	this.replyToEmail = replyToEmail;
+        this.replyToEmail = replyToEmail;
     }
 
     public String getSubject() {
-	return subject;
+        return subject;
     }
 
     public void setSubject(String subject) {
-	this.subject = subject;
+        this.subject = subject;
     }
 
     public String getMessage() {
-	return message;
+        return message;
     }
 
     public void setMessage(String message) {
-	this.message = message;
+        this.message = message;
     }
 
     public String getHtmlMessage() {
-	return htmlMessage;
+        return htmlMessage;
     }
 
     public void setHtmlMessage(String htmlMessage) {
-	this.htmlMessage = htmlMessage;
+        this.htmlMessage = htmlMessage;
     }
 
     public String getCharacterSet() {
-	return characterSet;
+        return characterSet;
     }
 
     public void setCharacterSet(String characterSet) {
-	this.characterSet = characterSet;
+        this.characterSet = characterSet;
     }
 
     public Set<ReportedRecipient> getReportedRecipients() {
-	return reportedRecipients;
+        return reportedRecipients;
     }
 
     public void setReportedRecipients(Set<ReportedRecipient> reportedRecipients) {
-	this.reportedRecipients = reportedRecipients;
+        this.reportedRecipients = reportedRecipients;
     }
 
     public Set<ReportedMessageAttachment> getReportedMessageAttachments() {
-	return reportedMessageAttachments;
+        return reportedMessageAttachments;
     }
 
     public void setReportedMessageAttachments(Set<ReportedMessageAttachment> reportedMessageAttachments) {
-	this.reportedMessageAttachments = reportedMessageAttachments;
+        this.reportedMessageAttachments = reportedMessageAttachments;
     }
 
     public Date getSendingStarted() {
-	return sendingStarted;
+        return sendingStarted;
     }
 
     public void setSendingStarted(Date sendingStarted) {
-	this.sendingStarted = sendingStarted;
+        this.sendingStarted = sendingStarted;
     }
 
     public Date getSendingEnded() {
-	return sendingEnded;
+        return sendingEnded;
     }
 
     public void setSendingEnded(Date sendingEnded) {
-	this.sendingEnded = sendingEnded;
+        this.sendingEnded = sendingEnded;
     }
 
     public Date getTimestamp() {
-	return timestamp;
+        return timestamp;
     }
 
     public void setTimestamp(Date timestamp) {
-	this.timestamp = timestamp;
+        this.timestamp = timestamp;
+    }
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
     }
 
     /**
      * @return the type
      */
     public String getType() {
-	return type;
+        return type;
     }
 
     /**
      * @param type the type to set
      */
     public void setType(String type) {
-	this.type = type;
+        this.type = type;
     }
 
     /**
      * Email content is created using template
      */
-    public static final String TYPE_TEMPLATE  = "T";
+    public static final String TYPE_TEMPLATE = "T";
 
 
     /**
      * Email content is in email body
      */
-    public static final String TYPE_EMAIL  = "E";
+    public static final String TYPE_EMAIL = "E";
 
 
     /* (non-Javadoc)
@@ -233,6 +237,7 @@ public class ReportedMessage extends BaseEntity {
         return "ReportedMessage{" +
                 "process='" + process + '\'' +
                 ", senderOid='" + senderOid + '\'' +
+                ", templateId='" + templateId + '\'' +
                 ", senderName='" + senderName + '\'' +
                 ", senderEmail='" + senderEmail + '\'' +
                 ", senderDisplayText='" + senderDisplayText + '\'' +

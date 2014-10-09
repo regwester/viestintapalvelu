@@ -6,9 +6,8 @@ import fi.vm.sade.generic.common.BaseDTO;
 
 /**
  * Template content transfer object class
- * 
- * @author ovmol1
  *
+ * @author ovmol1
  */
 public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateContentDTO> {
 
@@ -43,7 +42,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @return the name
      */
     public String getName() {
-	return name;
+        return name;
     }
 
 
@@ -51,7 +50,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @param name the name to set
      */
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
 
@@ -59,7 +58,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @return the order
      */
     public int getOrder() {
-	return order;
+        return order;
     }
 
 
@@ -67,7 +66,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @param order the order to set
      */
     public void setOrder(int order) {
-	this.order = order;
+        this.order = order;
     }
 
 
@@ -75,7 +74,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @return the content
      */
     public String getContent() {
-	return content;
+        return content;
     }
 
 
@@ -83,7 +82,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @param content the content to set
      */
     public void setContent(String content) {
-	this.content = content;
+        this.content = content;
     }
 
 
@@ -91,7 +90,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @return the contentType
      */
     public String getContentType() {
-	return contentType;
+        return contentType;
     }
 
 
@@ -99,7 +98,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @param contentType the contentType to set
      */
     public void setContentType(String contentType) {
-	this.contentType = contentType;
+        this.contentType = contentType;
     }
 
 
@@ -107,7 +106,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @return the timestamp
      */
     public Date getTimestamp() {
-	return timestamp;
+        return timestamp;
     }
 
 
@@ -115,7 +114,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      * @param timestamp the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
-	this.timestamp = timestamp;
+        this.timestamp = timestamp;
     }
 
 
@@ -124,9 +123,9 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      */
     @Override
     public String toString() {
-	return "TemplateContentDTO [name=" + name + ", order=" + order
-		+ ", content=" + content + ", contentType=" + contentType
-		+ ", timestamp=" + timestamp + ", getId()=" + getId() + "]";
+        return "TemplateContentDTO [name=" + name + ", order=" + order
+                + ", content=" + content + ", contentType=" + contentType
+                + ", timestamp=" + timestamp + ", getId()=" + getId() + "]";
     }
 
 
@@ -135,7 +134,7 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
      */
     @Override
     public int compareTo(TemplateContentDTO o) {
-	Integer ord = new Integer(order);
-	return ord.compareTo(o.order);
+        Integer ord = new Integer(order);
+        return ord.compareTo(o.order);
     }
 }

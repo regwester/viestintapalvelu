@@ -11,7 +11,9 @@
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement</class>
         <class>fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement</class>
-        
+        <class>fi.vm.sade.ryhmasahkoposti.model.SendQueue</class>
+        <class>fi.vm.sade.ryhmasahkoposti.model.ReportedMessageRecipientAttachment</class>
+
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="update"/>
             <property name="hibernate.show_sql" value="false"/>

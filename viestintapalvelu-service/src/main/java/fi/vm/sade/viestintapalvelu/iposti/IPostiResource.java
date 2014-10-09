@@ -1,16 +1,9 @@
 package fi.vm.sade.viestintapalvelu.iposti;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
@@ -18,18 +11,12 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.fileupload.*;
-import org.apache.commons.fileupload.disk.DiskFileItemFactory;
-import org.apache.commons.fileupload.servlet.ServletFileUpload;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
@@ -40,11 +27,9 @@ import fi.vm.sade.viestintapalvelu.model.IPosti;
 @Component
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.IPOSTI_RESOURCE_PATH)
-
 //Use HTML-entities instead of scandinavian letters in @Api-description, since
 //swagger-ui.js treats model's description as HTML and does not escape it
 //properly
-
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.IPOSTI_RESOURCE_PATH, description = "IPostien lähetys- ja hakurajapinnat.")
 public class IPostiResource {
     
@@ -79,6 +64,7 @@ public class IPostiResource {
     @Path("/unSentItems")
     @PreAuthorize(Constants.IPOSTI_READ)
     @Produces("application/json")
+    @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadUnSentItems, notes = ApiReadUnSentItems)
     @ApiResponses(@ApiResponse(code = 400, message = UnSentItemsResponse400))
     public List<Map<String,String>> unsentIPostiItems(@Context HttpServletRequest request) {
@@ -104,6 +90,7 @@ public class IPostiResource {
     @Path("/getBatchById/{ipostiId}")
     @PreAuthorize(Constants.IPOSTI_READ)
     @Produces("application/zip")
+    @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
     public Response getBatchById(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
@@ -113,13 +100,14 @@ public class IPostiResource {
             return Response.ok(zip).build();
         } catch(Exception e) {
             return Response.status(400).build();
-        }       
+        }
     }
     
     @GET
     @Path("/getIPostiById/{mailId}")
     @PreAuthorize(Constants.IPOSTI_READ)
     @Produces("application/zip")
+    @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
     public Response getIPostiById(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request) throws Exception {
@@ -147,6 +135,7 @@ public class IPostiResource {
     @Path("/sendBatch/{ipostiId}")
     @PreAuthorize(Constants.IPOSTI_SEND)
     @Produces("application/json")
+    @Transactional
     @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
     public Map<String,String> uploadExistingBatch(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
@@ -168,6 +157,7 @@ public class IPostiResource {
     @Path("/sendMail/{mailId}")
     @PreAuthorize(Constants.IPOSTI_SEND)
     @Produces("application/json")
+    @Transactional
     @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
     @ApiResponses({@ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200)})
     public Response uploadExistingMail(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request) throws Exception {

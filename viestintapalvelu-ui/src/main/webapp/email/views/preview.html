@@ -1,0 +1,51 @@
+<div class="row">
+    <div class="span8">
+        <div class="row button-group">
+            <div class="span8">
+                <button type="button" class="btn" ui-sref="email">Takaisin muokkaukseen</button>
+                <button type="button" class="btn" ng-click="cancelEmail()">Peruuta viestin lähetys</button>
+                <!--[if (gt IE 9)|!(IE)]><!-->
+                <button type="button" class="btn" ng-if="downloadSupported()" ng-click="downloadEmail()">Lataa sähköposti</button>
+                <!--<![endif]-->
+                <button type="button" class="btn btn-primary" ng-disabled="sendingInProgress" ng-click="sendEmail()">Lähetä</button>
+            </div>
+        </div>
+        <h3 ng-bind="'preview.header' | i18n"/>
+        <div class="row">
+            <div class="span2" ng-bind="'email.label.sender' | i18n"/>
+            <div class="span6" ng-bind="email.sender"/>
+        </div>
+        <div class="row">
+            <div class="span2" ng-bind="'email.label.replyto' | i18n"/>
+            <div class="span6" ng-bind="email.replyTo"/>
+        </div>
+        <recipient-list recipients="recipients" form="false" limit="30"></recipient-list>
+        <div class="row">
+            <div class="span2" ng-bind="'email.label.subject' | i18n"/>
+            <div class="span6" ng-bind="email.subject"/>
+        </div>
+        <div class="row html-content">
+            <div class="span8" ng-bind-html="email.body | trustAsHtml"/>
+        </div>
+        <div class="row view-attachments">
+            <div class="span2" ng-bind="'email.label.attachments' | i18n"/>
+            <div class="span6">
+                <span class="bold" ng-show="!email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span>
+                <ul class="filelist">
+                    <li ng-repeat="attachment in email.attachInfo">{{attachment.fileName | limitSizeWithMiddleEllipsis : 15}} ({{attachment.fileSize | bytesToSize}})
+                    </li>
+                </ul>
+            </div>
+        </div>
+        <div class="row button-group">
+            <div class="span8">
+                <button type="button" class="btn" ui-sref="email">Takaisin muokkaukseen</button>
+                <button type="button" class="btn" ng-click="cancelEmail()">Peruuta viestin lähetys</button>
+                <!--[if (gt IE 9)|!(IE)]><!-->
+                <button type="button" class="btn" ng-if="downloadSupported()" ng-click="downloadEmail()">Lataa sähköposti</button>
+                <!--<![endif]-->
+                <button type="button" class="btn btn-primary" ng-disabled="sendingInProgress" ng-click="sendEmail()">Lähetä</button>
+            </div>
+        </div>
+    </div>
+</div>

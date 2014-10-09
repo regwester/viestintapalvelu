@@ -2,8 +2,11 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.Date;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import fi.vm.sade.generic.common.BaseDTO;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReplacementDTO extends BaseDTO {
 
     private static final long serialVersionUID = 8136375073148653926L;
@@ -36,7 +39,7 @@ public class ReplacementDTO extends BaseDTO {
     /**
      * Replacement name of sender from personal field
      */
-    public final static String NAME_EMAIL_SENDER_FROM_PERSONAL = "sender-from-personal";
+    public final static String NAME_EMAIL_SENDER_NAME_PERSONAL = "sender-from-personal";
 
     /**
      * Replacement name of replay-to field

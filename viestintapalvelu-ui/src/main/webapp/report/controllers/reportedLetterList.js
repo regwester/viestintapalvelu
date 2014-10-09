@@ -1,86 +1,86 @@
 'use strict';
 
 angular.module('report')
-.controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', function($scope, $state, $http) {
-  var reportedLettersListUrl = '/viestintapalvelu/api/v1/reporting/list',
+  .controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', function ($scope, $state, $http) {
+    var reportedLettersListUrl = '/viestintapalvelu/api/v1/reporting/list',
       reportedLettersSearchUrl = '/viestintapalvelu/api/v1/reporting/search';
 
-  $scope.sortAndOrder = {
-    sortedby: 'timestamp',
-    order: 'desc'
-  };
+    $scope.sortAndOrder = {
+      sortedby: 'timestamp',
+      order: 'desc'
+    };
 
-  $scope.pagination = {
-    page: 1,
-    pageSize: 10
-  };
+    $scope.pagination = {
+      page: 1,
+      pageSize: 10
+    };
 
-  $scope.form = {
-	organization: ''	  
-  };
-  
-  $scope.fetch = function() {
-    var params = {}, url = reportedLettersListUrl;
-    if ($scope.form.organization) {
-      params.orgOid = $scope.form.organization.oid;
-    }
-    if ($scope.searchArgument) {
-      params.searchArgument = $scope.searchArgument;
-      url = reportedLettersSearchUrl;
-    }
+    $scope.form = {
+      organization: ''
+    };
 
-    angular.extend(params, {
-      page: $scope.pagination.page,
-      nbrofrows: $scope.pagination.pageSize
-    }, $scope.sortAndOrder);
+    $scope.fetch = function () {
+      var params = {}, url = reportedLettersListUrl;
+      if ($scope.form.organization) {
+        params.orgOid = $scope.form.organization.oid;
+      }
+      if ($scope.searchArgument) {
+        params.searchArgument = $scope.searchArgument;
+        url = reportedLettersSearchUrl;
+      }
 
-    $http.get(url, {params: params})
-      .success(function(reportedLettersDTO) {
-        $scope.reportedLettersDTO = reportedLettersDTO;
-      })
-      .error(function(err) {
-        console.log(err);
-      });
-  };
+      angular.extend(params, {
+        page: $scope.pagination.page,
+        nbrofrows: $scope.pagination.pageSize
+      }, $scope.sortAndOrder);
 
-  $scope.search = function() {
-    // reset page for fetch
-    $scope.pagination.page = 1;
-    $scope.fetch(); 
-  };
+      $http.get(url, {params: params})
+        .success(function (reportedLettersDTO) {
+          $scope.reportedLettersDTO = reportedLettersDTO;
+        })
+        .error(function (err) {
+          console.log(err);
+        });
+    };
 
-  $scope.sortBy = function(headerName) {
-    var sortAndOrder = $scope.sortAndOrder;
+    $scope.search = function () {
+      // reset page for fetch
+      $scope.pagination.page = 1;
+      $scope.fetch();
+    };
 
-    if (sortAndOrder.sortedby !== headerName) {
-      sortAndOrder.sortedby = headerName;
-      sortAndOrder.order = 'asc';
-    } else {
-      sortAndOrder.order = sortAndOrder.order === 'asc' ? 'desc' : 'asc';
-    }
+    $scope.sortBy = function (headerName) {
+      var sortAndOrder = $scope.sortAndOrder;
 
-    $scope.pagination.page = 1;
+      if (sortAndOrder.sortedby !== headerName) {
+        sortAndOrder.sortedby = headerName;
+        sortAndOrder.order = 'asc';
+      } else {
+        sortAndOrder.order = sortAndOrder.order === 'asc' ? 'desc' : 'asc';
+      }
+
+      $scope.pagination.page = 1;
+      $scope.fetch();
+    };
+
+    $scope.showReportedLetter = function (reportedLetter) {
+      $state.go('letter_batch_view', {letterBatchID: reportedLetter.letterBatchID});
+    };
+
+    $scope.emptySearch = function () {
+      $scope.searchArgument = '';
+      $scope.pagination.page = 1;
+      $scope.fetch();
+    };
+
+    $scope.getSortClass = function (headerName) {
+      var className = '';
+      if ($scope.sortAndOrder.sortedby === headerName) {
+        className = 'sort-' + $scope.sortAndOrder.order;
+      }
+      return className;
+    };
+
     $scope.fetch();
-  };
 
-  $scope.showReportedLetter = function(reportedLetter) {
-    $state.go('letter_batch_view', {letterBatchID: reportedLetter.letterBatchID});
-  };
-
-  $scope.emptySearch = function() {
-    $scope.searchArgument = '';
-    $scope.pagination.page = 1;
-    $scope.fetch();
-  };
-
-  $scope.getSortClass = function(headerName) {
-    var className = '';
-    if ($scope.sortAndOrder.sortedby === headerName) {
-      className = 'sort-' + $scope.sortAndOrder.order;
-    }
-    return className;
-  };
-
-  $scope.fetch();
-
-}]);
+  }]);

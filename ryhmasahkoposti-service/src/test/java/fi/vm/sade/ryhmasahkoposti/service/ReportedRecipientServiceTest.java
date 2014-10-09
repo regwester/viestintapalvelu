@@ -46,17 +46,17 @@ public class ReportedRecipientServiceTest {
 	@Test
 	public void testGetSendingStatusOfNumberOfRecipients() {
 		when(mockedReportedRecipientDAO.findNumberOfRecipientsByMessageID(any(Long.class))).thenReturn(new Long(10));
-		when(mockedReportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(
-			any(Long.class), eq(true))).thenReturn(new Long(8));
-		when(mockedReportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccesful(
-			any(Long.class), eq(false))).thenReturn(new Long(2));
+		when(mockedReportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(
+                any(Long.class), eq(true))).thenReturn(new Long(8));
+		when(mockedReportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(
+                any(Long.class), eq(false))).thenReturn(new Long(2));
 		when(mockedReportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(any(Long.class))).thenReturn(new Date());
 		
 		SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(new Long(1));
 		
 		assertNotNull(sendingStatus);
-		assertTrue(sendingStatus.getNumberOfReciepients().longValue() == 10);
-		assertTrue(sendingStatus.getNumberOfSuccesfulSendings().longValue() == 8);
+		assertTrue(sendingStatus.getNumberOfRecipients().longValue() == 10);
+		assertTrue(sendingStatus.getNumberOfSuccessfulSendings().longValue() == 8);
 		assertTrue(sendingStatus.getNumberOfFailedSendings().longValue() == 2);
 		assertNotNull(sendingStatus.getSendingEnded());
 	}

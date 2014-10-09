@@ -2,20 +2,11 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
 
-import javax.persistence.Basic;
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import fi.vm.sade.generic.model.BaseEntity;
-import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 
 /*
  * CREATE TABLE kirjeet.iposti
@@ -39,16 +30,16 @@ import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 public class IPosti extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "kirjelahetys_id")
     @JsonBackReference
     private LetterBatch letterBatch;
 
     @Column(name = "luotu", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date createDate;
+    private Date createDate=new Date();
 
-    @Column(name = "lahetetty", nullable = false)
+    @Column(name = "lahetetty")
     @Temporal(TemporalType.TIMESTAMP)
     private Date sentDate;
     
@@ -61,7 +52,10 @@ public class IPosti extends BaseEntity {
     
     @Column(name = "sisaltotyyppi")
     private String contentType = "";
-    
+
+    @Column(name = "jarjestysnumero")
+    private Integer orderNumber;
+
     public IPosti() {}
     
 ///"SELECT p.id, p.version, p.kirjelahetys_id, p.luotu from IPosti p where p.sentDate is null",
@@ -121,4 +115,11 @@ public class IPosti extends BaseEntity {
         this.contentName = contentName;
     }
 
+    public void setOrderNumber(Integer orderNumber) {
+        this.orderNumber = orderNumber;
+    }
+
+    public Integer getOrderNumber() {
+        return orderNumber;
+    }
 }

@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.stereotype.Repository;
@@ -14,19 +15,23 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverLetter;
 
 @Repository
-public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiverLetter, Long> implements 
-    LetterReceiverLetterDAO {
+public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiverLetter, Long>
+            implements LetterReceiverLetterDAO {
 
     @Override
-    public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverID(List<Long> letterReceiverIDs) {
+    public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverIds(List<Long> letterReceiverIDs) {
+        if (letterReceiverIDs.isEmpty()) {
+            return new ArrayList<LetterReceiverLetter>();
+        }
         QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
-        
+
         BooleanExpression whereExpression = letterReceiverLetter.letterReceivers.id.in(letterReceiverIDs);
-        JPAQuery findLetterReceiverLetter = from(letterReceiverLetter).where(whereExpression);
+        JPAQuery findLetterReceiverLetter = from(letterReceiverLetter)
+                .where(whereExpression);
         
         return findLetterReceiverLetter.list(letterReceiverLetter);
     }
-    
+
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }

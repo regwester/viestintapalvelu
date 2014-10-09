@@ -1,40 +1,16 @@
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.apache.commons.fileupload.FileItem;
-
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
+import fi.vm.sade.ryhmasahkoposti.model.*;
+import org.apache.commons.fileupload.FileItem;
+import org.dom4j.DocumentException;
+
+import java.io.IOException;
+import java.util.*;
 
 public class RaportointipalveluTestData {
 
@@ -68,6 +44,7 @@ public class RaportointipalveluTestData {
         emailRecipient.setLanguageCode("vastaanottajan kielikoodi");
         emailRecipient.setOid("vastaanottajan oid-tunnus");
         emailRecipient.setOidType("arvoksi tyhja");
+        emailData.setRecipient(new ArrayList<EmailRecipient>(Arrays.asList(emailRecipient)));
 
         return emailData;
     }
@@ -78,18 +55,17 @@ public class RaportointipalveluTestData {
         emailMessage.setBody("Tämä on koekutsu");
         emailMessage.setCallingProcess("Hakuprosessi");
         emailMessage.setCharset("utf-8");
-        emailMessage.setFooter("");
         emailMessage.setHtml(false);
         emailMessage.setReplyTo("vastaus.oppilaitos@sposti.fi");
         emailMessage.setFrom("lahettaja.oppilaitos@sposti.fi");
         emailMessage.setSenderOid("1.2.246.562.24.42645159413");
         emailMessage.setSubject("Koekutsu");
-        
+
         List<SourceRegister> sourceRegisters = new ArrayList<SourceRegister>();
         SourceRegister sourceRegister = new SourceRegister();
         sourceRegister.setName("opintopolku");
         sourceRegisters.add(sourceRegister);
-        
+
         emailMessage.setSourceRegister(sourceRegisters);
 
         return emailMessage;
@@ -102,7 +78,6 @@ public class RaportointipalveluTestData {
         emailMessageDTO.setBody("Tämä on koekutsu");
         emailMessageDTO.setCallingProcess("Hakuprosessi");
         emailMessageDTO.setCharset("utf-8");
-        emailMessageDTO.setFooter("");
         emailMessageDTO.setHtml(false);
         emailMessageDTO.setReplyTo("vastaus.oppilaitos@sposti.fi");
         emailMessageDTO.setFrom("lahettaja.oppilaitos@sposti.fi");
@@ -119,7 +94,7 @@ public class RaportointipalveluTestData {
 
         emailAttachment.setData(attachment);
         emailAttachment.setName("koekutsu.doc");
-        emailAttachment.setContentType("application/pdf");		
+        emailAttachment.setContentType("application/pdf");
 
         return emailAttachment;
     }
@@ -146,6 +121,12 @@ public class RaportointipalveluTestData {
         return emailRecipientDTO;
     }
 
+    public static EmailRecipientDTO getEmailRecipientDTO(EmailMessageDTO message) {
+        EmailRecipientDTO recipient = getEmailRecipientDTO();
+        recipient.setEmailMessageID(message.getMessageID());
+        return recipient;
+    }
+
     public static Henkilo getHenkilo() {
         Henkilo henkilo = new Henkilo();
 
@@ -157,17 +138,17 @@ public class RaportointipalveluTestData {
 
         return henkilo;
     }
-    
+
     public static Henkilo getSender() {
-    	Henkilo sender = new Henkilo();
-    	
-    	sender.setOidHenkilo("1.2.246.562.24.42645159413"); // matches sender oid
-    	sender.setHetu("081181-9984");
-    	sender.setEtunimet("Etunimi");
-    	sender.setSukunimi("Sukunimi");
-    	sender.setKutsumanimi("Kutsumanimi");
-    	
-    	return sender;
+        Henkilo sender = new Henkilo();
+
+        sender.setOidHenkilo("1.2.246.562.24.42645159413"); // matches sender oid
+        sender.setHetu("081181-9984");
+        sender.setEtunimet("Etunimi");
+        sender.setSukunimi("Sukunimi");
+        sender.setKutsumanimi("Kutsumanimi");
+
+        return sender;
     }
 
     public static OrganisaatioRDTO getOrganisaatioRDTO() {
@@ -253,7 +234,7 @@ public class RaportointipalveluTestData {
         return query;
     }
 
-    public static ReportedMessageAttachment getReportedMessageAttachment() {		
+    public static ReportedMessageAttachment getReportedMessageAttachment() {
         ReportedMessageAttachment reportedMessageAttachment = new ReportedMessageAttachment();
 
         reportedMessageAttachment.setId(new Long(400));
@@ -274,6 +255,7 @@ public class RaportointipalveluTestData {
         raportoitavaVastaanottaja.setRecipientEmail("testi.vastaanottaja@sposti.fi");
         raportoitavaVastaanottaja.setLanguageCode("FI");
         raportoitavaVastaanottaja.setSearchName("Testi Oppilas");
+        raportoitavaVastaanottaja.setDetailsRetrieved(true);
         raportoitavaVastaanottaja.setSendingStarted(new Date());
         raportoitavaVastaanottaja.setSendingEnded(new Date());
         raportoitavaVastaanottaja.setFailureReason("");
@@ -291,6 +273,7 @@ public class RaportointipalveluTestData {
         reportedRecipient.setRecipientEmail("testi.vastaanottaja@sposti.fi");
         reportedRecipient.setLanguageCode("FI");
         reportedRecipient.setSearchName("Testi,Oppilas");
+        reportedRecipient.setDetailsRetrieved(true);
         reportedRecipient.setSendingStarted(null);
         reportedRecipient.setSendingEnded(null);
         reportedRecipient.setFailureReason("");
@@ -309,15 +292,15 @@ public class RaportointipalveluTestData {
         raportoitavaLiite.setAttachment(sisalto);
         raportoitavaLiite.setTimestamp(new Date());
 
-        return raportoitavaLiite; 		
+        return raportoitavaLiite;
     }
 
     public static SendingStatusDTO getSendingStatusDTO() {
         SendingStatusDTO sendingStatusDTO = new SendingStatusDTO();
         sendingStatusDTO.setMessageID(new Long(1));
-        sendingStatusDTO.setNumberOfReciepients(new Long(10));
+        sendingStatusDTO.setNumberOfRecipients(new Long(10));
         sendingStatusDTO.setNumberOfFailedSendings(new Long(2));
-        sendingStatusDTO.setNumberOfSuccesfulSendings(new Long(5));
+        sendingStatusDTO.setNumberOfSuccessfulSendings(new Long(5));
         sendingStatusDTO.setSendingStarted(new Date());
 
         return sendingStatusDTO;
@@ -335,7 +318,7 @@ public class RaportointipalveluTestData {
 
     /**
      * Get test {@link ReportedRecipientReplacement} object
-     * 
+     *
      * @param reportedRecipient
      * @return Test object
      */
@@ -345,7 +328,7 @@ public class RaportointipalveluTestData {
 
         reportedRecipientReplacement.setReportedRecipient(reportedRecipient);
         reportedRecipientReplacement.setName("test-replacement-key");
-        reportedRecipientReplacement.setDefaultValue("default-value");
+        reportedRecipientReplacement.setValue("default-value");
         reportedRecipientReplacement.setTimestamp(new Date());
 
         return reportedRecipientReplacement;
@@ -354,7 +337,7 @@ public class RaportointipalveluTestData {
 
     /**
      * Get test {@link ReportedMessageReplacement}
-     * 
+     *
      * @param reportedMessage
      * @return Test object
      */
@@ -372,9 +355,9 @@ public class RaportointipalveluTestData {
 
 
     /**
-     * Generate replacements data. 
-     * 
-     * @param count
+     * Generate replacements data.
+     *
+     * @param ids
      * @return Test object
      */
     public static List<ReplacementDTO> getEmailReplacements(int... ids) {
@@ -382,7 +365,7 @@ public class RaportointipalveluTestData {
 
         List<ReplacementDTO> reportedReplacements = new ArrayList<ReplacementDTO>();
 
-        for(int id: ids) { 
+        for (int id : ids) {
             ReplacementDTO replacement = new ReplacementDTO();
             replacement.setName("key-" + id);
             replacement.setDefaultValue("email-" + id);
@@ -392,9 +375,9 @@ public class RaportointipalveluTestData {
     }
 
     /**
-     * Generate replacements data. 
-     * 
-     * @param count
+     * Generate replacements data.
+     *
+     * @param ids
      * @return Test object
      */
     public static Set<ReplacementDTO> getTemplateReplacements(int... ids) {
@@ -402,7 +385,7 @@ public class RaportointipalveluTestData {
 
         Set<ReplacementDTO> reportedReplacements = new HashSet<ReplacementDTO>();
 
-        for(int id: ids) { 
+        for (int id : ids) {
             ReplacementDTO replacement = new ReplacementDTO();
             replacement.setName("key-" + id);
             replacement.setDefaultValue("template-" + id);
@@ -413,9 +396,9 @@ public class RaportointipalveluTestData {
 
 
     /**
-     * Generate reported recipient replacements data. 
-     * 
-     * @param count
+     * Generate reported recipient replacements data.
+     *
+     * @param ids
      * @return Test object
      */
     public static List<ReportedRecipientReplacementDTO> getReportedReceientReplacements(int... ids) {
@@ -423,7 +406,7 @@ public class RaportointipalveluTestData {
 
         List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacementDTO>();
 
-        for(int id: ids) { 
+        for (int id : ids) {
             ReportedRecipientReplacementDTO replacement = new ReportedRecipientReplacementDTO();
             replacement.setName("key-" + id);
             replacement.setDefaultValue("recipient-" + id);
@@ -432,5 +415,61 @@ public class RaportointipalveluTestData {
         return reportedRecipientReplacements;
     }
 
+    public static SendQueue sendQueue(Long id, SendQueueState state) {
+        SendQueue queue = new SendQueue();
+        queue.setId(id);
+        queue.setVersion(1l);
+        queue.setState(state);
+        return queue;
+    }
 
+
+    public static TemplateDTO template(String templateName, String languageCode) throws IOException, DocumentException {
+        TemplateDTO template = new TemplateDTO();
+        template.setId(123l);
+        template.setName(templateName);
+        template.setLanguage(languageCode);
+        template.setVersionro("0");
+        template.setOrganizationOid("123.456.789");
+        template.setStoringOid("123");
+        template.setType("email");
+        template.setStyles("body {padding:10px;}");
+        return template;
+    }
+
+    public static TemplateDTO with(TemplateDTO template, TemplateContentDTO... contents) {
+        Set<TemplateContentDTO> templateContents = new HashSet<TemplateContentDTO>();
+        for (TemplateContentDTO content : contents) {
+            templateContents.add(content);
+        }
+        template.setContents(templateContents);
+        return template;
+    }
+
+    public static TemplateDTO with(TemplateDTO template, ReplacementDTO... replacements) {
+        Set<ReplacementDTO> replacementsSet = new HashSet<ReplacementDTO>();
+        for (ReplacementDTO replacement : replacements) {
+            replacementsSet.add(replacement);
+        }
+        template.setReplacements(replacementsSet);
+        return template;
+    }
+
+    public static TemplateContentDTO content(String name, String contentStr) {
+        TemplateContentDTO content = new TemplateContentDTO();
+        content.setName(name);
+        content.setContentType("text/html");
+        content.setOrder(1);
+        content.setTimestamp(new Date());
+        content.setContent(contentStr);
+        return content;
+    }
+
+    public static ReplacementDTO replacement(String name, String defaultValue) {
+        ReplacementDTO loppuOsa = new ReplacementDTO();
+        loppuOsa.setName(name);
+        loppuOsa.setDefaultValue(defaultValue);
+        loppuOsa.setMandatory(true);
+        return loppuOsa;
+    }
 }

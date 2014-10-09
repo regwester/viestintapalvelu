@@ -20,7 +20,7 @@ public interface LetterReceiversDAO extends JpaDAO<LetterReceivers, Long> {
      * @param pagingAndSorting Sivutus- ja lajittelutiedot
      * @return Lista kirjelähetyksen vastaanottajatietoja
      */
-    public List<LetterReceivers> findLetterReceiversByLetterBatchID(Long letterBatchID, PagingAndSortingDTO pagingAndSorting);
+    List<LetterReceivers> findLetterReceiversByLetterBatchID(Long letterBatchID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee kirjelähetysten vastaanottajien lukumäärän 
@@ -28,5 +28,7 @@ public interface LetterReceiversDAO extends JpaDAO<LetterReceivers, Long> {
      * @param letterBatchID Kirjelähetyksen tunnus
      * @return Kirjelähetysten vastaanottajien lukumäärä
      */
-    public Long findNumberOfReciversByLetterBatchID(Long letterBatchID);
+    Long findNumberOfReciversByLetterBatchID(Long letterBatchID);
+
+    List<Long> findLetterRecieverIdsByLetterBatchId(long letterBatchId);
 }

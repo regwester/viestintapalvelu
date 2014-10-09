@@ -21,6 +21,8 @@ ryhmasahkoposti.app.username.to.henkilopalvelu={{ryhmasahkoposti_app_username_to
 ryhmasahkoposti.app.password.to.henkilopalvelu={{ryhmasahkoposti_app_password_to_henkilopalvelu}}
 ryhmasahkoposti.app.username.to.organisaatiopalvelu={{ryhmasahkoposti_app_username_to_organisaatiopalvelu}}
 ryhmasahkoposti.app.password.to.organisaatiopalvelu={{ryhmasahkoposti_app_password_to_organisaatiopalvelu}}
+ryhmasahkoposti.app.username.to.viestintapalvelu={{ryhmasahkoposti_app_username_to_viestintapalvelu}}
+ryhmasahkoposti.app.password.to.viestintapalvelu={{ryhmasahkoposti_app_password_to_viestintapalvelu}}
 ryhmasahkoposti.smtp.host={{ryhmasahkoposti_smtp_host}}
 ryhmasahkoposti.smtp.port={{ryhmasahkoposti_smtp_port}}
 ryhmasahkoposti.antivirus.host={{ryhmasahkoposti_antivirus_host}}
@@ -79,15 +81,47 @@ log4j.properties.file=${user.home.conf}/log4j.properties
 oid.rest.url.backend=${host.ilb}/oid-service/rest/oid
 oid.webservice.url.backend=${host.ilb}/services/oidService
 root.organisaatio.oid=1.2.246.562.10.00000000001
-ryhmasahkoposti.queue.handle.size=99
+ryhmasahkoposti.queue.handle.size=250
+ryhmasahkoposti.max.sendqueue.tasks.to.add=42
 ryhmasahkoposti.sender.cron=0 * * * * *
+ryhmasahkoposti.max.email.recipient.handle.time.millis = 180000
 ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://${host.virkailija}/authentication-service/resources
+ryhmasahkopostipalvelu.authenticationService.henkilo.cas.url=https://${host.virkailija}/authentication-service/j_spring_cas_security_check
 ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 ryhmasahkopostipalvelu.templateService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
+ryhmasahkopostipalvelu.attachmentService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
+ryhmasahkoposti.from=opintopolku@oph.fi
+# Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
+ryhmasahkoposti.default.template.name=osoitepalvelu_email
+ryhmasahkoposti.default.template.language=FI
+
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
 viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
 viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
+viestintapalvelu.tarjontapalvelu.rest.url = https://${host.virkailija}/tarjonta-service/rest
+viestintapalvelu.options.cache.valid.millis=3600000
+# kuinka monta LetterBatch-käsittelyä sallitaan rinnakkain:
+viestintapalvelu.letter.batch.jobs.pool.size=3
+# kuinka monta vastaanottajan prosessointisäiettä yksi LetterBatch-käsittelijä käynnistää:
+viestintapalvelu.letter.batch.job.thread.count=4
+# kuinka monta yhtäaikaista vastaanottajakäsittelijäsäiettä sallitaan:
+viestintapalvelu.letter.batch.receiver.job.pool.size=12
+# kuinka monta muun async-tyyppisen rajapintapyynnön käynnistämää tausta-ajoa sallitaan yhtä aikaa ajoon:
+viestintapalvelu.other.async.resource.jobs.pool.size=5
+# kuinka monta toipumisajoa (sovellus sammutettu kesken kaiken) sallitaan yhtä aikaa:
+viestintapalvelu.recovery.handler.jobs.pool.size=1
+# kuinka usein toipumisajoa ajetaan
+viestintapalvelu.recovery.fixed.rate=3600000
+# kuinka kauan palvelun käynnistämisestä toipumisajo ekan kerran ajetaan
+viestintapalvelu.recovery.initial.delay=5000
+viestintapalvelu.app.username.to.dokumenttipalvelu={{ryhmasahkoposti_app_username_to_henkilopalvelu}}
+viestintapalvelu.app.password.to.dokumenttipalvelu={{ryhmasahkoposti_app_password_to_henkilopalvelu}}
+viestintapalvelu.dokumentti.id.salt = {{viestintapalvelu_dokumentti_id_salt}}
+
 web.url.cas=https\://${host.cas}/cas
+viestintapalvelu.use.dev.basic.authentication=false
+
+viestintapalvelu.swagger.base.bath=/viestintapalvelu

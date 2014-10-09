@@ -20,7 +20,9 @@ public class Urls {
     public static final String REPORTING_SEARCH_PATH = "search";
     public static final String REPORTING_VIEW_PATH = "view";
     public static final String REPORTING_LETTER_PATH = "letter";
-    public static final String REPORTING_CONTENTS_PATH = "contents";    
+    public static final String REPORTING_CONTENTS_PATH = "contents";
+    public static final String ATTACHMENT_RESOURCE_PATH = "attachment";
+    public static final String OPTIONS_PATH = "options";
 
     public static RestServer localhost() {
         return new Localhost();
