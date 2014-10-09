@@ -268,7 +268,7 @@ public class LetterResource extends AsynchronousResource {
             fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
             Long id = letter.getId();
             letterPDFProcessor.processLetterBatch(id);
-            return Response.status(Status.OK).entity(id).build();
+            return Response.status(Status.OK).entity(getPrefixedLetterBatchID(id, input.isIposti())).build();
         } catch (Exception e) {
             LOG.error("Letter async failed", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
@@ -281,7 +281,8 @@ public class LetterResource extends AsynchronousResource {
     @Path("/async/letter/status/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
-    public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+    public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id")  String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
         if(status == null) {
             return Response.status(Status.BAD_REQUEST).build();
@@ -296,7 +297,8 @@ public class LetterResource extends AsynchronousResource {
     @Path("/async/letter/pdf/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
-    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         try {
             LetterBatchStatusDto batchStatus = letterService.getBatchStatus(letterBatchId);
             if(batchStatus == null || ! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(batchStatus.getStatus())) {
@@ -321,6 +323,26 @@ public class LetterResource extends AsynchronousResource {
         } catch (Exception e) {
             LOG.error("Error getting merged pdf for batch " + letterBatchId, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    private long getLetterBatchId(String prefixed) {
+        if (prefixed.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
+           String id = prefixed.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length());
+           return Long.parseLong(id);
+       } else if(prefixed.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
+           String id = prefixed.substring(LetterService.DOKUMENTTI_ID_PREFIX_ZIP.length());
+           return Long.parseLong(id);
+       } else {
+           return Long.parseLong(prefixed);
+       }
+       
+    }
+    
+    private String getPrefixedLetterBatchID(long id, boolean isZip) {
+        if (isZip) {
+            return LetterService.DOKUMENTTI_ID_PREFIX_ZIP + id;
+        } else {
+            return LetterService.DOKUMENTTI_ID_PREFIX_PDF + id;
         }
     }
 }
