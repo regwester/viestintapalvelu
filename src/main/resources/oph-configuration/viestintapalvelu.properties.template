@@ -117,8 +117,6 @@ viestintapalvelu.recovery.handler.jobs.pool.size=1
 viestintapalvelu.recovery.fixed.rate=3600000
 # kuinka kauan palvelun käynnistämisestä toipumisajo ekan kerran ajetaan
 viestintapalvelu.recovery.initial.delay=5000
-viestintapalvelu.app.username.to.dokumenttipalvelu={{ryhmasahkoposti_app_username_to_henkilopalvelu}}
-viestintapalvelu.app.password.to.dokumenttipalvelu={{ryhmasahkoposti_app_password_to_henkilopalvelu}}
 viestintapalvelu.dokumentti.id.salt = {{viestintapalvelu_dokumentti_id_salt}}
 
 web.url.cas=https\://${host.cas}/cas

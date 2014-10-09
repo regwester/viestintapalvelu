@@ -57,14 +57,6 @@
     </bean>
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
                          address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                <property name="webCasUrl" value="${web.url.cas}" />
-                <property name="targetService" value="${cas.service.viestintapalvelu}" />
-                <property name="appClientUsername" value="${viestintapalvelu.app.username.to.dokumenttipalvelu}" />
-                <property name="appClientPassword" value="${viestintapalvelu.app.password.to.dokumenttipalvelu}" />
-            </bean>
-        </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
