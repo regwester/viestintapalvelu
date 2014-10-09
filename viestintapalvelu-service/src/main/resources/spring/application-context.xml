@@ -55,10 +55,8 @@
         <property name="target" ref="ticketInterceptorTarget"/>
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean>
-    <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:outInterceptors>
+    <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
+                         address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>

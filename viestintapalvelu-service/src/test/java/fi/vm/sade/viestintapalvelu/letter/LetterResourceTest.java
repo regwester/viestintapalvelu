@@ -1,8 +1,9 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
-import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import java.lang.reflect.Field;
+
+import javax.ws.rs.core.Response.Status;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -10,8 +11,9 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-import javax.ws.rs.core.Response.Status;
-import java.lang.reflect.Field;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
@@ -55,11 +57,6 @@ public class LetterResourceTest {
     public void initializesTemplateId() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
         verify(builder, times(1)).initTemplateId(any(LetterBatchDetails.class));
-    }
-    
-    @Test
-    public void returnsLetterBatchIdFromResource() {
-        assertEquals(LETTERBATCH_ID, (Long)resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity());
     }
     
     @Test

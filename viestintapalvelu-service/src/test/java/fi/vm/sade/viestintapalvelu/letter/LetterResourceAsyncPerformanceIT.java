@@ -46,11 +46,12 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
-import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.impl.DokumenttiIdProviderImpl;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.Template;
@@ -86,25 +87,29 @@ public class LetterResourceAsyncPerformanceIT {
     @Autowired
     private LetterService letterService;
 
+    @Autowired
+    private DokumenttiIdProviderImpl dokumenttiIdProvider;
+
     @Before
     public void before() throws Exception {
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
-        Field currentUserComponent = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
-        currentUserComponent.setAccessible(true);
-        currentUserComponent.set(((Advised)letterService).getTargetSource().getTarget(),
-                new CurrentUserComponent() {
-                    @Override
-                    public Henkilo getCurrentUser() {
-                        return testHenkilo;
-                    }
-                });
+        CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
+            @Override
+            public Henkilo getCurrentUser() {
+                return testHenkilo;
+            }
+        };
+        Field currentUserComponentField = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
+        currentUserComponentField.setAccessible(true);
+        currentUserComponentField.set(((Advised)letterService).getTargetSource().getTarget(), currentUserComponent);
+        dokumenttiIdProvider.setCurrentUserComponent(currentUserComponent);
     }
 
     @Test
     public void processesSingleBatchWith4kLettersUnderMinute() throws Exception {
         final Integer letterCount = 4000;
         final long templateId = transactionalActions.createTemplate();
-        long id = asyncLetter(createLetterBatch(templateId, letterCount));
+        long id = parseId(asyncLetter(createLetterBatch(templateId, letterCount)));
         long start = System.currentTimeMillis();
         while (isProcessing(id, true)) {
             long currentDuration = System.currentTimeMillis() - start;
@@ -138,7 +143,7 @@ public class LetterResourceAsyncPerformanceIT {
         for (int i = 0; i < CONCURRENT_BATCHES; ++i) {
             futures.add(exec.submit(new Callable<Long>() {
                 public Long call() throws Exception {
-                    long id = asyncLetter(createLetterBatch(templateId, RECEIVERS_COUNT));
+                    long id = parseId(asyncLetter(createLetterBatch(templateId, RECEIVERS_COUNT)));
                     logger.info("Letter batch {} created.", id);
                     return id;
                 }
@@ -184,6 +189,16 @@ public class LetterResourceAsyncPerformanceIT {
                 roundSeconds(duration), roundSeconds(MAX_DURATION));
     }
 
+    private long parseId(String s) {
+        if (s.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
+            return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length()).split("-")[0]);
+        }
+        if (s.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
+            return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_ZIP.length()).split("-")[0]);
+        }
+        throw new IllegalStateException("Unknown id response: "+s);
+    }
+
     private double roundSeconds(long millis) {
         return Math.round((double) millis / (double) MILLIS_IN_SECOND * 10d) / 10d;
     }
@@ -225,12 +240,12 @@ public class LetterResourceAsyncPerformanceIT {
         return batch;
     }
 
-    protected long asyncLetter(AsyncLetterBatchDto letterBatchDto) {
+    protected String asyncLetter(AsyncLetterBatchDto letterBatchDto) {
         Response response = letterResource.asyncLetter(letterBatchDto);
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             throw new IllegalStateException("Response status not OK: " + response.getStatus());
         }
-        return (Long) response.getEntity();
+        return (String) response.getEntity();
     }
 
     protected class ProcessMonitor implements Callable<Boolean> {
@@ -253,7 +268,8 @@ public class LetterResourceAsyncPerformanceIT {
 
     @SuppressWarnings("unchecked")
     protected boolean isProcessing(long id, boolean waitForDone) {
-        Response response = letterResource.letterBatchStatus(id);
+        Response response = letterResource.letterBatchStatus(
+                dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF));
         LetterBatchStatusDto entity = (LetterBatchStatusDto) response.getEntity();
         logger.info("  > Batch "+id+" status: {} / {}, {}",
                 entity.getSent(), entity.getTotal(), entity.getStatus());

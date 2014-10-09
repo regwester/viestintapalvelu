@@ -113,7 +113,7 @@ public class LetterBatchProcessor {
         }
 
         @Override
-        public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) {
+        public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) throws Exception {
             Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
                     letterBatchId, LetterBatchProcess.LETTER);
             if (nextToDo.isPresent()) {
@@ -200,7 +200,7 @@ public class LetterBatchProcessor {
         }
 
         @Override
-        public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) {
+        public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) throws Exception {
             Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
                     letterBatchId, LetterBatchProcess.IPOSTI);
             if (nextToDo.isPresent()) {

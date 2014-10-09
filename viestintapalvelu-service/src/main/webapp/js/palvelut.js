@@ -174,6 +174,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
     var letter = 'api/v1/letter/';
     var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
+    // TODO: get this URL from properties:
+    var _dokumenttiServiceLocation = getCurrentHost()+"/dokumenttipalvelu-service/resources/dokumentit";
 
     return function () {
         function osoitetarratPDF(labels) {
@@ -189,19 +191,49 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
 
-        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(letter+"async/letter", {
-                    "letters": letters,
-                    "templateReplacements" : replacements,
-                    "templateName" : tName,
-                    "languageCode" : tLang,
-                    "organizationOid" : oid,
-                    "applicationPeriod": applicationPeriod,
-                    "tag": tag
-                }).
+        function buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
+            var letter = {
+                "letters": letters,
+                "templateReplacements" : replacements,
+                "templateName" : tName,
+                "languageCode" : tLang,
+                "organizationOid" : oid,
+                "applicationPeriod": applicationPeriod,
+                "tag": tag
+            };
+            if (iposti) {
+                letter.iposti = true;
+            }
+            return letter;
+        }
+
+        function asyncPdf(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"async/pdf", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
+                .error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async PDF -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function doDownload(id) {
+            return function() {
+                $window.location.href = _dokumenttiServiceLocation+"/lataa/"+id;
+            }
+        }
+
+        function asyncZip(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
+            return $http.post(letter+"async/zip", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
+                .error(function (data) {
+                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
+                    $window.alert("Async zip -kutsu epäonnistui: " + data);
+                });
+        }
+
+        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
+            return $http.post(letter+"async/letter", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
-                    $window.alert("Async PDF-kutsu epäonnistui: " + data);
+                    $window.alert("Async letter -kutsu epäonnistui: " + data);
                 });
         }
 
@@ -275,7 +307,10 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             letterZIP: letterZIP,
             printPDF: printPDF,
             asyncLetter: asyncLetter,
+            asyncPdf: asyncPdf,
+            asyncZip: asyncZip,
             asyncStatus: asyncStatus,
+            doDownload: doDownload,
             sendEmail: sendEmail,
             previewEmail: previewEmail,
             languageOptions: languageOptions

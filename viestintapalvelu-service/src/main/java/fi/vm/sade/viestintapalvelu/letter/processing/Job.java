@@ -55,7 +55,7 @@ public interface Job<T extends Processable> {
      * @param  description of the job
      * @return the possible next job to do
      */
-    Optional<? extends JobDescription<?>> jobFinished(JobDescription<T> description);
+    Optional<? extends JobDescription<?>> jobFinished(JobDescription<T> description) throws Exception;
 
     /**
      * @param e exception occurred

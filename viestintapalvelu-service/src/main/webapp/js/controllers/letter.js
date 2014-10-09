@@ -111,7 +111,15 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.emailPossibleForId = null;
     $scope.emailPreviewPossibleForId = null;
     $scope.languageOptions = [];
-    function startBatchMonitor(id) {
+    $scope.downloadAllowedForId = null;
+    $scope.iposti = true;
+    function startBatchMonitor(id, whenDone) {
+        $scope.monitorStatus = null;
+        $scope.emailPossibleForId = null;
+        $scope.emailPreviewPossibleForId = null;
+        $scope.languageOptions = [];
+        $scope.downloadAllowedForId = null;
+
         var monitor = function() {
             Printer.asyncStatus(id).success(function(status) {
                 if (!$scope.monitorStatus || status.sent != $scope.monitorStatus.sent) {
@@ -121,9 +129,13 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
                 }
                 $scope.monitorStatus = status;
                 if (status.status == "ready") {
+                    $scope.downloadAllowedForId = id;
                     if (status.emailReviewable) {
                         $scope.emailPossibleForId = id;
                         $scope.emailPreviewPossibleForId = id;
+                    }
+                    if (whenDone) {
+                        whenDone();
                     }
                 } else {
                     if (status.emailReviewable) {
@@ -151,9 +163,32 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
         }
     };
 
+    $scope.generateAsyncPdf = function() {
+      Printer.asyncPdf($scope.letters,replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          .success(function(id) {
+              startBatchMonitor(id, Printer.doDownload(id));
+        });
+    };
+
+    $scope.download = function() {
+        if ($scope.downloadAllowedForId) {
+            Printer.doDownload($scope.downloadAllowedForId)();
+        }
+    };
+
+    $scope.generateAsyncZip = function() {
+      Printer.asyncZip($scope.letters,replacements(),
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          .success(function(id) {
+              startBatchMonitor(id, Printer.doDownload(id));
+          });
+    };
+
     $scope.generateAsyncLetter = function() {
       Printer.asyncLetter($scope.letters,replacements(),
-          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
+          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag,
+                $scope.iposti)
           .success(function(id) {
               startBatchMonitor(id);
           });
