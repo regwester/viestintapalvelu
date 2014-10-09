@@ -118,7 +118,7 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiEmail, notes = ApiEmail)
     public Response emailLetterBatch( @PathParam("letterBatchId") @ApiParam(name="Kirjelähetyksen ID", required = true)
-                                          Long letterBatchId ) {
+                                          Long letterBatchId ) throws Exception {
         letterEmailService.sendEmail(letterBatchId);
         return Response.ok().build();
     }
@@ -274,6 +274,9 @@ public class LetterResource extends AsynchronousResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    // /aync/pdf -> /async/letter
+    // /async/zip -> iposti=true
 
     @GET
     @Consumes("application/json")

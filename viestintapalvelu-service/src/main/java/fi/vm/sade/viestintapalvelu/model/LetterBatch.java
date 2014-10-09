@@ -57,7 +57,7 @@ public class LetterBatch extends BaseEntity {
         processing,
         waiting_for_ipost_processing,
         processing_ipost,
-        ready, // iPost ready
+        ready, // possible iPost ready and document in dokumenttipalvelu
         error
     };
 

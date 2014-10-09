@@ -76,7 +76,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
     @Override
     @Transactional
-    public void sendEmail(long letterBatchId) {
+    public void sendEmail(long letterBatchId) throws Exception {
         LetterBatch letterBatch = foundLetterBatch(letterBatchId);
         if (letterBatch.getBatchStatus() == null || letterBatch.getBatchStatus() != LetterBatch.Status.ready) {
             throw new IllegalStateException("Can not send email to LetterBatch="+letterBatch.getTemplateId()

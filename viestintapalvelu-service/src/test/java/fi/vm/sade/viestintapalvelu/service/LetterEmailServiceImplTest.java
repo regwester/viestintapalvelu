@@ -41,11 +41,13 @@ import com.google.common.base.Optional;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterEmailServiceImpl;
@@ -84,6 +86,10 @@ public class LetterEmailServiceImplTest {
     private TemplateService templateService;
     @Mock
     private LetterServiceImpl letterService;
+    @Mock
+    private LetterBuilder letterBuilder;
+    @Mock
+    private DokumenttiResource dokumenttiResource;
     @InjectMocks
     private LetterEmailServiceImpl letterEmailService;
 
@@ -97,7 +103,7 @@ public class LetterEmailServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testSendEmailInvalidStatus() {
+    public void testSendEmailInvalidStatus() throws Exception {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         letterBatch.setBatchStatus(LetterBatch.Status.processing);
         when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
@@ -105,7 +111,7 @@ public class LetterEmailServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testSendEmailInvalidEmailHandlingStatus() {
+    public void testSendEmailInvalidEmailHandlingStatus() throws Exception {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         letterBatch.setEmailHandlingStarted(new Date());
@@ -114,7 +120,7 @@ public class LetterEmailServiceImplTest {
     }
 
     @Test(expected = IllegalStateException.class)
-    public void testSendEmailNoTemplate() {
+    public void testSendEmailNoTemplate() throws Exception {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         letterBatch.setTemplateId(null);
@@ -123,7 +129,7 @@ public class LetterEmailServiceImplTest {
     }
 
     @Test(expected = NotFoundException.class)
-    public void testSendEmailTemplateNotFound() {
+    public void testSendEmailTemplateNotFound() throws Exception {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
@@ -131,7 +137,7 @@ public class LetterEmailServiceImplTest {
     }
 
     @Test
-    public void testSendEmailNoRecipients() {
+    public void testSendEmailNoRecipients() throws Exception {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
@@ -149,7 +155,7 @@ public class LetterEmailServiceImplTest {
     }
 
     @Test
-    public void testSendEmail() {
+    public void testSendEmail() throws Exception {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         LetterReceivers receiver = letterBatch.getLetterReceivers().iterator().next();
         receiver.setEmailAddress("test@example.com");

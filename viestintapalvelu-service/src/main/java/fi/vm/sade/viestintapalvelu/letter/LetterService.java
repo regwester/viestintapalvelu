@@ -117,7 +117,7 @@ public interface LetterService {
      * @param process to mark finished
      * @return the next process
      */
-    Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process);
+    Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process) throws Exception;
 
     LetterBatch fetchById(long id);
 

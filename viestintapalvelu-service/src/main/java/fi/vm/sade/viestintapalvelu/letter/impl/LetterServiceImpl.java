@@ -8,6 +8,7 @@ import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
+import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
 
 import org.apache.pdfbox.util.PDFMergerUtility;
@@ -24,9 +25,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
 import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.*;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
+import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
@@ -38,6 +41,8 @@ import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
 
+import static org.joda.time.DateTime.now;
+
 /**
  * @author migar1
  * 
@@ -45,9 +50,10 @@ import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
 @Service
 @Transactional
 public class LetterServiceImpl implements LetterService {
+    public static final int STORE_DOKUMENTTIS_DAYS = 1;
     private static final int MAX_IPOST_CHUNK_SIZE = 500;
-    public static final String APPLICATION_ZIP = "application/zip";
-
+    public static final String DOCUMENT_TYPE_APPLICATION_ZIP = "application/zip";
+    public static final String DOCUMENT_TYPE_APPLICATION_PDF = "application/pdf";
     private static final Logger logger = LoggerFactory.getLogger(LetterServiceImpl.class);
 
 
@@ -62,8 +68,11 @@ public class LetterServiceImpl implements LetterService {
     // Causes circular reference if autowired directly, through applicationContext laxily:
     private LetterBuilder letterBuilder;
     private LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker;
+    @Resource
+    private DokumenttiResource dokumenttipalveluRestClient;
     @Autowired
     private ApplicationContext applicationContext;
+    private DocumentBuilder documentBuilder;
 
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
@@ -71,7 +80,8 @@ public class LetterServiceImpl implements LetterService {
             LetterBatchDtoConverter letterBatchDtoConverter,
             LetterReceiversDAO letterReceiversDAO,
             ObjectMapperProvider objectMapperProvider,
-            IPostiDAO iPostiDAO, LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker) {
+            IPostiDAO iPostiDAO, LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker,
+            DocumentBuilder documentBuilder) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.currentUserComponent = currentUserComponent;
         this.templateDAO = templateDAO;
@@ -81,6 +91,7 @@ public class LetterServiceImpl implements LetterService {
         this.objectMapperProvider = objectMapperProvider;
         this.iPostiDAO = iPostiDAO;
         this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
+        this.documentBuilder = documentBuilder;
     }
 
     /* ---------------------- */
@@ -289,7 +300,7 @@ public class LetterServiceImpl implements LetterService {
             content.setContentType(lb.getOriginalContentType());
             content.setTimestamp(lb.getTimestamp());
 
-            if (APPLICATION_ZIP.equals(lb.getContentType())) {
+            if (DOCUMENT_TYPE_APPLICATION_ZIP.equals(lb.getContentType())) {
                 try {
                     content.setContent(unZip(lb.getLetter()));
 
@@ -322,7 +333,7 @@ public class LetterServiceImpl implements LetterService {
             LetterReceiverLetter letter = letterReceiver.getLetterReceiverLetter();
 
             byte[] content = letter.getLetter();
-            if (letter.getContentType().equals(APPLICATION_ZIP)) {
+            if (letter.getContentType().equals(DOCUMENT_TYPE_APPLICATION_ZIP)) {
                 content = unZip(content);
             }
             merger.addSource(new ByteArrayInputStream(content));
@@ -343,7 +354,7 @@ public class LetterServiceImpl implements LetterService {
         iPosti.setLetterBatch(letterB);
         iPosti.setContent(data);
         iPosti.setContentName(name);
-        iPosti.setContentType(APPLICATION_ZIP);
+        iPosti.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP);
         iPosti.setCreateDate(new Date());
         return iPosti;
     }
@@ -368,7 +379,7 @@ public class LetterServiceImpl implements LetterService {
                 if (zippaa) { // ZIP
                     try {
                         lrl.setLetter(zip(letter.getLetterContent().getContent()));
-                        lrl.setContentType(APPLICATION_ZIP); // application/zip
+                        lrl.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP); // application/zip
                         lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
 
                     } catch (IOException e) {
@@ -597,7 +608,7 @@ public class LetterServiceImpl implements LetterService {
 
     @Override
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process) {
+    public Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process) throws Exception {
         LetterBatchProcess nextProcess = null;
         LetterBatch batch = letterBatchDAO.read(id);
         if (batch == null) {
@@ -618,12 +629,14 @@ public class LetterServiceImpl implements LetterService {
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 logger.info("LETTER processing finished for  letter batch {}", id);
+                savePdfDocument(id);
                 newStatus = LetterBatch.Status.ready;
             }
             break;
         case IPOSTI:
             logger.info("IPOSTI processing finished for  letter batch {}", id);
             batch.setIpostHandlingFinished(new Date());
+            saveZipDocument(batch);
             newStatus = LetterBatch.Status.ready;
             break;
         }
@@ -634,6 +647,38 @@ public class LetterServiceImpl implements LetterService {
             logger.info("Current status {}, next process: {}", batch.getBatchStatus(), nextProcess);
         }
         return Optional.fromNullable(nextProcess);
+    }
+
+    private void saveZipDocument(LetterBatch batch) throws Exception{
+        logger.info("Saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+        String documentId = DOKUMENTTI_ID_PREFIX_ZIP+batch.getId();
+        List<String> tags = Arrays.asList("viestintapalvelu", "mergedZips.zip", "zip", documentId);
+        byte[] resultZip = mergeIpostiZips(batch);
+        dokumenttipalveluRestClient.tallenna(documentId, "mergedZips.zip",
+                now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(),
+                tags, DOCUMENT_TYPE_APPLICATION_ZIP,
+                new ByteArrayInputStream(resultZip));
+        logger.info("Done saving zip document to Dokumenttipalvelu for LetterBatch={}", batch.getId());
+    }
+
+    private byte[] mergeIpostiZips(LetterBatch batch) throws IOException {
+        Map<String, byte[]> subZips = new TreeMap<String, byte[]>();
+        for (IPosti iposti : batch.getIposti()) {
+            subZips.put(iposti.getContentName(), iposti.getContent());
+        }
+        return documentBuilder.zip(subZips);
+    }
+
+    private void savePdfDocument(long letterBatchId) throws Exception {
+        logger.info("Saving pdf document to Dokumenttipalvelu for LetterBatch={}...", letterBatchId);
+        String documentId = DOKUMENTTI_ID_PREFIX_PDF+letterBatchId;
+        List<String> tags = Arrays.asList("viestintapalvelu", "mergedletters.pdf", "pdf", documentId);
+        byte[] bytes = getLetterContentsByLetterBatchID(letterBatchId);
+        dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
+                now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(),
+                tags, DOCUMENT_TYPE_APPLICATION_PDF,
+                new ByteArrayInputStream(bytes));
+        logger.info("Done saving pdf document to Dokumenttipalvelu for LetterBatch={}", letterBatchId);
     }
 
     @Override
@@ -794,5 +839,9 @@ public class LetterServiceImpl implements LetterService {
 
     public void setLetterBatchStatusLegalityChecker(LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker) {
         this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
+    }
+
+    public void setDokumenttipalveluRestClient(DokumenttiResource dokumenttipalveluRestClient) {
+        this.dokumenttipalveluRestClient = dokumenttipalveluRestClient;
     }
 }
