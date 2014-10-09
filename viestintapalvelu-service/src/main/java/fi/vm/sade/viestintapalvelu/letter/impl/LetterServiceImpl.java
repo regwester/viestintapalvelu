@@ -32,6 +32,7 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
@@ -68,11 +69,12 @@ public class LetterServiceImpl implements LetterService {
     // Causes circular reference if autowired directly, through applicationContext laxily:
     private LetterBuilder letterBuilder;
     private LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker;
+    private DocumentBuilder documentBuilder;
+    private DokumenttiIdProvider dokumenttiIdProvider;
     @Resource
     private DokumenttiResource dokumenttipalveluRestClient;
     @Autowired
     private ApplicationContext applicationContext;
-    private DocumentBuilder documentBuilder;
 
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
@@ -81,7 +83,8 @@ public class LetterServiceImpl implements LetterService {
             LetterReceiversDAO letterReceiversDAO,
             ObjectMapperProvider objectMapperProvider,
             IPostiDAO iPostiDAO, LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker,
-            DocumentBuilder documentBuilder) {
+            DocumentBuilder documentBuilder,
+            DokumenttiIdProvider dokumenttiIdProvider) {
     	this.letterBatchDAO = letterBatchDAO;
     	this.currentUserComponent = currentUserComponent;
         this.templateDAO = templateDAO;
@@ -92,6 +95,7 @@ public class LetterServiceImpl implements LetterService {
         this.iPostiDAO = iPostiDAO;
         this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
         this.documentBuilder = documentBuilder;
+        this.dokumenttiIdProvider = dokumenttiIdProvider;
     }
 
     /* ---------------------- */
@@ -629,7 +633,7 @@ public class LetterServiceImpl implements LetterService {
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 logger.info("LETTER processing finished for  letter batch {}", id);
-                savePdfDocument(id);
+                savePdfDocument(batch);
                 newStatus = LetterBatch.Status.ready;
             }
             break;
@@ -651,9 +655,11 @@ public class LetterServiceImpl implements LetterService {
 
     private void saveZipDocument(LetterBatch batch) throws Exception{
         logger.info("Saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
-        String documentId = DOKUMENTTI_ID_PREFIX_ZIP+batch.getId();
+        String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(),
+                LetterService.DOKUMENTTI_ID_PREFIX_ZIP, batch.getStoringOid());
         List<String> tags = Arrays.asList("viestintapalvelu", "mergedZips.zip", "zip", documentId);
         byte[] resultZip = mergeIpostiZips(batch);
+        logger.info("Stroring ZIP with documentId={}", documentId);
         dokumenttipalveluRestClient.tallenna(documentId, "mergedZips.zip",
                 now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(),
                 tags, DOCUMENT_TYPE_APPLICATION_ZIP,
@@ -669,16 +675,18 @@ public class LetterServiceImpl implements LetterService {
         return documentBuilder.zip(subZips);
     }
 
-    private void savePdfDocument(long letterBatchId) throws Exception {
-        logger.info("Saving pdf document to Dokumenttipalvelu for LetterBatch={}...", letterBatchId);
-        String documentId = DOKUMENTTI_ID_PREFIX_PDF+letterBatchId;
+    private void savePdfDocument(LetterBatch batch) throws Exception {
+        logger.info("Saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+        String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(),
+                LetterService.DOKUMENTTI_ID_PREFIX_PDF, batch.getStoringOid());
         List<String> tags = Arrays.asList("viestintapalvelu", "mergedletters.pdf", "pdf", documentId);
-        byte[] bytes = getLetterContentsByLetterBatchID(letterBatchId);
+        byte[] bytes = getLetterContentsByLetterBatchID(batch.getId());
+        logger.info("Stroring PDF with documentId={}", documentId);
         dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
                 now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(),
                 tags, DOCUMENT_TYPE_APPLICATION_PDF,
                 new ByteArrayInputStream(bytes));
-        logger.info("Done saving pdf document to Dokumenttipalvelu for LetterBatch={}", letterBatchId);
+        logger.info("Done saving pdf document to Dokumenttipalvelu for LetterBatch={}", batch.getId());
     }
 
     @Override
@@ -843,5 +851,9 @@ public class LetterServiceImpl implements LetterService {
 
     public void setDokumenttipalveluRestClient(DokumenttiResource dokumenttipalveluRestClient) {
         this.dokumenttipalveluRestClient = dokumenttipalveluRestClient;
+    }
+
+    public void setDokumenttiIdProvider(DokumenttiIdProvider dokumenttiIdProvider) {
+        this.dokumenttiIdProvider = dokumenttiIdProvider;
     }
 }

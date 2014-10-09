@@ -40,6 +40,7 @@ import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
+import fi.vm.sade.viestintapalvelu.util.DummyDokumenttiIdProvder;
 
 import static fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers.catchAllParameters;
 import static org.junit.Assert.*;
@@ -76,7 +77,7 @@ public class LetterServiceTest {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
             mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
             mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO, new LetterBatchStatusLegalityChecker(),
-            new DocumentBuilder());
+            new DocumentBuilder(), new DummyDokumenttiIdProvder());
         this.letterService.setLetterBuilder(letterBuilder);
         this.letterService.setDokumenttipalveluRestClient(dokumenttipalveluRestClient);
     }
@@ -204,7 +205,7 @@ public class LetterServiceTest {
         assertEquals(LetterBatch.Status.ready, batch.getBatchStatus());
         assertNotNull(batch.getHandlingFinished());
         assertEquals(1, catchParameter.getInvocationCount());
-        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_PDF+batch.getId(), catchParameter.getArguments().get(0).get(0).toString());
+        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_PDF+batch.getId()+"-dummy", catchParameter.getArguments().get(0).get(0).toString());
         assertEquals("application/pdf", catchParameter.getArguments().get(0).get(4).toString());
         assertTrue(catchParameter.getArguments().get(0).get(5) instanceof InputStream);
         PDDocument doc = PDDocument.load((InputStream) catchParameter.getArguments().get(0).get(5));
@@ -249,7 +250,7 @@ public class LetterServiceTest {
         assertEquals(LetterBatch.Status.ready, batch.getBatchStatus());
         assertNotNull(batch.getIpostHandlingFinished());
         assertEquals(1, catchParameter.getInvocationCount());
-        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_ZIP+batch.getId(), catchParameter.getArguments().get(0).get(0).toString());
+        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_ZIP+batch.getId()+"-dummy", catchParameter.getArguments().get(0).get(0).toString());
         assertEquals("application/zip", catchParameter.getArguments().get(0).get(4).toString());
         assertTrue(catchParameter.getArguments().get(0).get(5) instanceof InputStream);
     }

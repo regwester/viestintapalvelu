@@ -46,6 +46,7 @@ import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
+import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
@@ -59,6 +60,7 @@ import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.CatchSingleParameterAnswer;
+import fi.vm.sade.viestintapalvelu.util.DummyDokumenttiIdProvder;
 
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
 import static fi.vm.sade.viestintapalvelu.util.CatchSingleParameterAnswer.catchParameters;
@@ -98,8 +100,10 @@ public class LetterEmailServiceImplTest {
         letterEmailService.setObjectMapperProvider(new ObjectMapperProvider());
         doCallRealMethod().when(letterService).setLetterBatchDAO(any(LetterBatchDAO.class));
         doCallRealMethod().when(letterService).setLetterBatchStatusLegalityChecker(any(LetterBatchStatusLegalityChecker.class));
+        doCallRealMethod().when(letterService).setDokumenttiIdProvider(any(DokumenttiIdProvider.class));
         letterService.setLetterBatchDAO(letterBatchDAO);
         letterService.setLetterBatchStatusLegalityChecker(new LetterBatchStatusLegalityChecker());
+        letterService.setDokumenttiIdProvider(new DummyDokumenttiIdProvder());
     }
 
     @Test(expected = IllegalStateException.class)

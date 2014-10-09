@@ -1,7 +1,5 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
-import static org.joda.time.DateTime.now;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.Arrays;
@@ -11,13 +9,7 @@ import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-import javax.ws.rs.QueryParam;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
@@ -31,11 +23,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-import com.wordnik.swagger.annotations.ApiResponse;
-import com.wordnik.swagger.annotations.ApiResponses;
+import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.dto.MetaData;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
@@ -43,10 +31,11 @@ import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
+
+import static org.joda.time.DateTime.now;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -56,11 +45,7 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 // properly
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
 public class LetterResource extends AsynchronousResource {
-
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
-
-    @Autowired
-    private DownloadCache downloadCache;
 
     @Autowired
     private LetterBuilder letterBuilder;
@@ -82,6 +67,9 @@ public class LetterResource extends AsynchronousResource {
 
     @Autowired
     private LetterEmailService letterEmailService;
+
+    @Autowired
+    private DokumenttiIdProvider dokumenttiIdProvider;
 
     private final static String ApiEmailPreview = "Tuottaa esikatselun yhdestä kirjelähetykseen liittyvästä sähköpostiviestistä";
     private final static String ApiLetterLanguageOptions = "Kertoo, mitä kieliä annetun kirjeen vastaanottajissa on";
@@ -142,9 +130,10 @@ public class LetterResource extends AsynchronousResource {
     @Path("/languageOptions/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiLetterLanguageOptions, notes = ApiLetterLanguageOptions)
-    public Response getLanguageOptions(@PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) Long letterBatchId) {
+    public Response getLanguageOptions(@PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true)
+                                           String letterBatchId) {
         return Response.ok(
-                letterEmailService.getLanguageCodeOptions(letterBatchId)
+                letterEmailService.getLanguageCodeOptions(getLetterBatchId(letterBatchId))
         ).build();
     }
 
@@ -328,24 +317,23 @@ public class LetterResource extends AsynchronousResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-    private long getLetterBatchId(String prefixed) {
-        if (prefixed.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
-           String id = prefixed.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length());
-           return Long.parseLong(id);
-       } else if(prefixed.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
-           String id = prefixed.substring(LetterService.DOKUMENTTI_ID_PREFIX_ZIP.length());
-           return Long.parseLong(id);
-       } else {
-           return Long.parseLong(prefixed);
-       }
-       
+
+    private long getLetterBatchId(String id) {
+        // Expect format: VIES-<tyyppi>-id-<HASH(suola+"VIES-"+tyyppi+id+tallentaja-oid)>
+        if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
+            return dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
+        } else if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
+            return dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId(id, LetterService.DOKUMENTTI_ID_PREFIX_ZIP);
+        } else {
+            return Long.parseLong(id);
+        }
     }
-    
+
     private String getPrefixedLetterBatchID(long id, boolean isZip) {
         if (isZip) {
-            return LetterService.DOKUMENTTI_ID_PREFIX_ZIP + id;
+            return dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_ZIP);
         } else {
-            return LetterService.DOKUMENTTI_ID_PREFIX_PDF + id;
+            return dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
         }
     }
 }
