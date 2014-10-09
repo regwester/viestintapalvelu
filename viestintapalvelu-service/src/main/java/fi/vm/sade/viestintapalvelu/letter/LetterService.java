@@ -18,6 +18,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
  *
  */
 public interface LetterService {
+    public static final String DOKUMENTTI_ID_PREFIX_PDF = "VIES-1-";
+    public static final String DOKUMENTTI_ID_PREFIX_ZIP = "VIES-2-";
 
     public enum LetterBatchProcess {
         EMAIL,
