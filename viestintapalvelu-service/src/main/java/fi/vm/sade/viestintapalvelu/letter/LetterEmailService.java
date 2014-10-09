@@ -35,7 +35,7 @@ public interface LetterEmailService {
      * @throws javax.ws.rs.NotFoundException if LetterBatch not found or template not found by id
      * @throws java.lang.IllegalStateException if LetterBatch does not have templateId or processing already started
      */
-    void sendEmail(long letterBatchId);
+    void sendEmail(long letterBatchId) throws Exception;
 
     /**
      * @param letterBatchId

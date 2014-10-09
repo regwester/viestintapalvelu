@@ -1,46 +1,52 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import static org.joda.time.DateTime.now;
+
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.ExecutorService;
+
+import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.GET;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.*;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+
 import fi.vm.sade.valinta.dokumenttipalvelu.dto.MetaData;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.annotation.Resource;
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.security.NoSuchAlgorithmException;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.ExecutorService;
-
-import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
-import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
-import static org.joda.time.DateTime.now;
 
 @Component
 @Path(Urls.LETTER_PATH)
@@ -106,49 +112,13 @@ public class LetterResource extends AsynchronousResource {
         return "alive";
     }
 
-    /**
-     * Koekutsukirje PDF sync
-     * 
-     * @param input
-     * @param request
-     * @return
-     * @throws IOException
-     * @throws DocumentException
-     */
-    @POST
-    @Consumes("application/json")
-    @Produces("text/plain")
-    @Path("/pdf")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-    public Response pdf(
-        @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input,
-        @Context HttpServletRequest request) throws IOException, DocumentException {
-        String documentId;
-        try {
-            
-            LetterBatchValidator.validate(input);
-            LOG.debug("Validated input");
-            
-            byte[] pdf = letterBuilder.printPDF(input);
-            
-            documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "letter.pdf", pdf));
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Koekutsukirje PDF failed: {}", e.getMessage());
-            return createFailureResponse(request);
-        }
-        return createResponse(request, documentId);
-    }
-
     @POST
     @Produces("text/plain")
     @Path("/emailLetterBatch/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiEmail, notes = ApiEmail)
     public Response emailLetterBatch( @PathParam("letterBatchId") @ApiParam(name="Kirjelähetyksen ID", required = true)
-                                          Long letterBatchId ) {
+                                          Long letterBatchId ) throws Exception {
         letterEmailService.sendEmail(letterBatchId);
         return Response.ok().build();
     }
@@ -176,72 +146,6 @@ public class LetterResource extends AsynchronousResource {
         return Response.ok(
                 letterEmailService.getLanguageCodeOptions(letterBatchId)
         ).build();
-    }
-
-    /**
-     * Varaudutaan viestintapalvelun klusterointiin. Ei tarvitse tietoturvaa
-     * https:n lisäksi. Kutsuja antaa datat ja kutsuja saa kirjeen.
-     * @throws Exception 
-     */
-    @POST
-    @Consumes("application/json")
-    @Produces("application/octet-stream")
-    @Path("/sync/pdf")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-    public InputStream syncPdf( @ApiParam(value = "Muodostettavien koekutsukirjeiden tiedot (1-n)", required = true) final LetterBatch input)
-        throws Exception {
-        return new ByteArrayInputStream(letterBuilder.printPDF(input));
-    }
-
-    /**
-     * Kirje PDF async
-     * 
-     * @param input
-     * @param request
-     * @return
-     * @throws IOException
-     * @throws DocumentException
-     */
-    @POST
-    @Consumes("application/json")
-    @Produces("text/plain")
-    @Path("/async/pdf")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync + AsyncResponseLogicDocumentation)
-    public Response asyncPdf(
-        @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final LetterBatch input,
-        @Context final HttpServletRequest request) throws IOException, DocumentException {
-        if (input == null || input.getLetters().isEmpty()) {
-            LOG.error("Batch was empty! {}", input);
-            return Response.serverError().entity("Batch was empty!").build();
-        }
-        LOG.info("Creating koekutsukirjeet for {} people", input.getLetters().size());
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        try {
-            LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}",
-                new Object[] { auth.getName(), auth.getPrincipal() });
-
-        } catch (Exception e) {
-            LOG.error("No authentication!!!");
-        }
-        final String documentId = globalRandomId();
-        executor.execute(new Runnable() {
-            public void run() {
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                try {
-                    byte[] pdf = letterBuilder.printPDF(input);
-                    dokumenttipalveluRestClient.tallenna(null, filenamePrefixWithUsernameAndTimestamp("letter.pdf"), now()
-                        .plusDays(1).toDate().getTime(), Arrays.asList("viestintapalvelu", "koekutsukirje", "pdf"),
-                        "application/pdf;charset=utf-8", new ByteArrayInputStream(pdf));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LOG.error("Koekutsukirje PDF async failed: {}", e.getMessage());
-                }
-            }
-        });
-        return createResponse(request, documentId);
     }
 
     @GET
@@ -303,7 +207,7 @@ public class LetterResource extends AsynchronousResource {
     }
 
     @GET
-    // @PreAuthorize("isAuthenticated()")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @Transactional
     @Produces("application/json")
     @Path("/getLetter")
@@ -317,89 +221,30 @@ public class LetterResource extends AsynchronousResource {
         return letterService.getLetter(id);
     }
 
-    /**
-     * Kirjeiden itella ZIP sync
-     * 
-     * @param input
-     * @param request
-     * @return
-     * @throws IOException
-     * @throws DocumentException
-     * @throws NoSuchAlgorithmException
-     */
     @POST
     @Consumes("application/json")
-    @Produces("text/plain")
-    @Path("/zip")
+    @Produces("application/json")
+    @Path("/async/pdf")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
-    @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
-    public Response zip(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) LetterBatch input,
-        @Context HttpServletRequest request) throws IOException, DocumentException, NoSuchAlgorithmException {
-        String documentId;
-        try {
-            byte[] zip = letterBuilder.printZIP(input);
-            documentId = downloadCache.addDocument(new Download("application/zip", input.getTemplateName() + ".zip",
-                zip));
-        } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Letter ZIP failed: {}", e.getMessage());
-            return createFailureResponse(request);
-        }
-        return createResponse(request, documentId);
+    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
+        notes = "")
+    public Response asyncPdf(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
+                                     final AsyncLetterBatchDto input) {
+        input.setIposti(false);
+        return asyncLetter(input);
     }
-
+    
     @POST
     @Consumes("application/json")
-    @Produces("application/octet-stream")
-    @Path("/sync/zip")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = ApiZIPSync, notes = ApiZIPSync)
-    @ApiResponses(@ApiResponse(code = 404, message = ZIPResponse400))
-    public InputStream syncZip(
-        @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) LetterBatch input,
-        @Context HttpServletRequest request) throws Exception {
-        return new ByteArrayInputStream(letterBuilder.printZIP(input));
-    }
-
-    /**
-     * Jalkihohjauskirje ZIP async
-     * 
-     * @param input
-     * @param request
-     * @return
-     * @throws IOException
-     * @throws DocumentException
-     * @throws NoSuchAlgorithmException
-     */
-    @POST
-    @Consumes("application/json")
-    @Produces("text/plain")
+    @Produces("application/json")
     @Path("/async/zip")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = ApiZIPAsync, notes = ApiZIPAsync
-        + ". Toistaiseksi kirjeen malli on kiinteästi tiedostona jakelupaketissa. " + AsyncResponseLogicDocumentation)
-    public Response asynczip(
-        @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final LetterBatch input,
-        @Context final HttpServletRequest request) throws IOException, DocumentException, NoSuchAlgorithmException {
-        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
-        final String documentId = globalRandomId();
-        executor.execute(new Runnable() {
-            public void run() {
-                SecurityContextHolder.getContext().setAuthentication(auth);
-                try {
-                    byte[] zip = letterBuilder.printZIP(input);
-                    dokumenttipalveluRestClient.tallenna(null, filenamePrefixWithUsernameAndTimestamp(input.getTemplateName()
-                                    + ".zip"), now().plusDays(1).toDate().getTime(),
-                            Arrays.asList("viestintapalvelu", input.getTemplateName(), "zip"), "application/zip",
-                            new ByteArrayInputStream(zip));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    LOG.error("letter ZIP async failed: {}", e.getMessage());
-                }
-            }
-        });
-        return createResponse(request, documentId);
+    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
+        notes = "")
+    public Response asyncZip(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
+                                     final AsyncLetterBatchDto input) {
+        input.setIposti(true);
+        return asyncLetter(input);
     }
     
     @POST
@@ -409,7 +254,7 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
         notes = "")
-    public Response asyncLetter( @ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
+    public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
         try {
             LetterBatchValidator.validate(input);
@@ -423,12 +268,15 @@ public class LetterResource extends AsynchronousResource {
             fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
             Long id = letter.getId();
             letterPDFProcessor.processLetterBatch(id);
-            return Response.status(Status.OK).entity(id).build();
+            return Response.status(Status.OK).entity(getPrefixedLetterBatchID(id, input.isIposti())).build();
         } catch (Exception e) {
             LOG.error("Letter async failed", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
+
+    // /aync/pdf -> /async/letter
+    // /async/zip -> iposti=true
 
     @GET
     @Consumes("application/json")
@@ -436,7 +284,8 @@ public class LetterResource extends AsynchronousResource {
     @Path("/async/letter/status/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
-    public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+    public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id")  String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
         if(status == null) {
             return Response.status(Status.BAD_REQUEST).build();
@@ -451,7 +300,8 @@ public class LetterResource extends AsynchronousResource {
     @Path("/async/letter/pdf/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
-    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") Long letterBatchId) {
+    public Response getLetterBatchPDF(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         try {
             LetterBatchStatusDto batchStatus = letterService.getBatchStatus(letterBatchId);
             if(batchStatus == null || ! fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(batchStatus.getStatus())) {
@@ -476,6 +326,26 @@ public class LetterResource extends AsynchronousResource {
         } catch (Exception e) {
             LOG.error("Error getting merged pdf for batch " + letterBatchId, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+    private long getLetterBatchId(String prefixed) {
+        if (prefixed.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
+           String id = prefixed.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length());
+           return Long.parseLong(id);
+       } else if(prefixed.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
+           String id = prefixed.substring(LetterService.DOKUMENTTI_ID_PREFIX_ZIP.length());
+           return Long.parseLong(id);
+       } else {
+           return Long.parseLong(prefixed);
+       }
+       
+    }
+    
+    private String getPrefixedLetterBatchID(long id, boolean isZip) {
+        if (isZip) {
+            return LetterService.DOKUMENTTI_ID_PREFIX_ZIP + id;
+        } else {
+            return LetterService.DOKUMENTTI_ID_PREFIX_PDF + id;
         }
     }
 }

@@ -7,6 +7,7 @@ import java.util.zip.Deflater;
 import java.util.zip.Inflater;
 
 public class LetterZipUtil {
+
     public static byte[] unZip(byte[] content) throws IOException, DataFormatException {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
     

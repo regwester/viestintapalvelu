@@ -1,10 +1,11 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.io.InputStream;
+import java.util.*;
 
+import org.apache.cxf.helpers.IOUtils;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.util.PDFTextStripper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -21,26 +22,30 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.*;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
+import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
 
+import static fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers.catchAllParameters;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-application-context.xml")
@@ -63,13 +68,17 @@ public class LetterServiceTest {
     private LetterBuilder letterBuilder;
     @Mock
     private IPostiDAO iPostiDAO;
+    @Mock
+    private DokumenttiResource dokumenttipalveluRestClient;
 
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
             mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
-            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO, new LetterBatchStatusLegalityChecker());
+            mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO, new LetterBatchStatusLegalityChecker(),
+            new DocumentBuilder());
         this.letterService.setLetterBuilder(letterBuilder);
+        this.letterService.setDokumenttipalveluRestClient(dokumenttipalveluRestClient);
     }
     
     @Test
@@ -99,7 +108,7 @@ public class LetterServiceTest {
     @Test
     public void testFindById() {
         List<LetterBatch> mockedLetterBatchList = new ArrayList<LetterBatch>();
-        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(new Long(1)));
+        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(1l));
         when(mockedLetterBatchDAO.findBy(any(String.class), any(Object.class))).thenReturn(mockedLetterBatchList);
         
         fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatchFindById = letterService.findById(new Long(1));
@@ -109,9 +118,10 @@ public class LetterServiceTest {
     }
 
     @Test
+    @SuppressWarnings({"unchecked"})
     public void testFindLetterBatchByNameOrgTag() {
-        when(mockedLetterBatchDAO.findLetterBatchByNameOrgTag(any(String.class), eq("FI"), any(String.class), 
-            any(Optional.class), any(Optional.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
+        when(mockedLetterBatchDAO.findLetterBatchByNameOrgTag(any(String.class), eq("FI"), any(String.class),
+                any(Optional.class), any(Optional.class))).thenReturn(DocumentProviderTestData.getLetterBatch(1l));
         
         fi.vm.sade.viestintapalvelu.letter.LetterBatch foundLetterBatch = 
             letterService.findLetterBatchByNameOrgTag("test-template", "FI", "1.2.246.562.10.00000000001",
@@ -129,7 +139,7 @@ public class LetterServiceTest {
     @Test
     public void testFindReplacementByNameOrgTag() {
         when(mockedLetterBatchDAO.findLetterBatchByNameOrg(any(String.class), eq("FI"), 
-            any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(new Long(1)));
+            any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(1l));
         
         List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = 
             letterService.findReplacementByNameOrgTag("test-templateName", "FI", "1.2.246.562.10.00000000001",
@@ -146,7 +156,7 @@ public class LetterServiceTest {
     @Test
     public void testGetLetter() {
         List<LetterBatch> mockedLetterBatchList = new ArrayList<LetterBatch>();
-        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(new Long(1)));
+        mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(1l));
         
         List<LetterReceivers> mockedLetterReceiversList = 
             new ArrayList<LetterReceivers>(mockedLetterBatchList.get(0).getLetterReceivers());
@@ -174,13 +184,76 @@ public class LetterServiceTest {
     }
     
     @Test
-    public void setsHandlingFinishedWhenFinishingProcessIsCalled() {
+    public void testHandleLetterProcessesFinished() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        InputStream pdfIs = this.getClass().getResourceAsStream("/testfiles/test.pdf"),
+                pdf2Is = this.getClass().getResourceAsStream("/testfiles/test2.pdf");
+        batch.getLetterReceivers().iterator().next()
+                .getLetterReceiverLetter().setLetter((IOUtils.readBytesFromStream(pdfIs)));
+        LetterReceivers anotherReceiver = DocumentProviderTestData.getLetterReceivers(20l, batch).iterator().next();
+        anotherReceiver.getLetterReceiverLetter().setLetter(IOUtils.readBytesFromStream(pdf2Is));
+        batch.getLetterReceivers().add(anotherReceiver);
+
         when(mockedLetterBatchDAO.read(any(Long.class))).thenReturn(batch);
+        CatchParametersAnswers<Void> catchParameter = catchAllParameters();
+        doAnswer(catchParameter).when(dokumenttipalveluRestClient)
+                .tallenna(any(String.class), any(String.class), any(Long.class),
+                        any(List.class), any(String.class), any(InputStream.class));
         letterService.updateBatchProcessingFinished(1l, LetterBatchProcess.LETTER);
+
+        assertEquals(LetterBatch.Status.ready, batch.getBatchStatus());
         assertNotNull(batch.getHandlingFinished());
+        assertEquals(1, catchParameter.getInvocationCount());
+        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_PDF+batch.getId(), catchParameter.getArguments().get(0).get(0).toString());
+        assertEquals("application/pdf", catchParameter.getArguments().get(0).get(4).toString());
+        assertTrue(catchParameter.getArguments().get(0).get(5) instanceof InputStream);
+        PDDocument doc = PDDocument.load((InputStream) catchParameter.getArguments().get(0).get(5));
+        String contents = new PDFTextStripper().getText(doc);
+        assertTrue(contents.contains("Testitiedosto test.pdf"));
+        assertTrue(contents.contains("Testitiedosto test2.pdf"));
     }
-    
+
+    @Test
+    public void testHandleIpostiProcessesFinished() throws Exception {
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        batch.setIposti(true);
+        batch.setBatchStatus(LetterBatch.Status.processing_ipost);
+        InputStream pdfIs = this.getClass().getResourceAsStream("/testfiles/test.pdf"),
+                pdf2Is = this.getClass().getResourceAsStream("/testfiles/test2.pdf");
+        batch.getLetterReceivers().iterator().next()
+                .getLetterReceiverLetter().setLetter((IOUtils.readBytesFromStream(pdfIs)));
+        LetterReceivers anotherReceiver = DocumentProviderTestData.getLetterReceivers(20l, batch).iterator().next();
+        anotherReceiver.getLetterReceiverLetter().setLetter(IOUtils.readBytesFromStream(pdf2Is));
+        batch.getLetterReceivers().add(anotherReceiver);
+
+        Map<String,byte[]> zipMap = new HashMap<String, byte[]>();
+        DocumentBuilder builder = new DocumentBuilder();
+        zipMap.put("testpdf.pdf", IOUtils.readBytesFromStream(this.getClass().getResourceAsStream("/testfiles/test.pdf")));
+        byte[] zipContent = new DocumentBuilder().zip(zipMap);
+        assertNotNull(zipContent);
+        IPosti ipost = new IPosti();
+        ipost.setContent(zipContent);
+        ipost.setContentName("zip1.zip");
+        ipost.setContentType("application/zip");
+        ipost.setLetterBatch(batch);
+        ipost.setOrderNumber(1);
+        batch.addIPosti(ipost);
+
+        when(mockedLetterBatchDAO.read(eq(batch.getId()))).thenReturn(batch);
+        CatchParametersAnswers<Void> catchParameter = catchAllParameters();
+        doAnswer(catchParameter).when(dokumenttipalveluRestClient)
+                .tallenna(any(String.class), any(String.class), any(Long.class),
+                        any(List.class), any(String.class), any(InputStream.class));
+        letterService.updateBatchProcessingFinished(1l, LetterBatchProcess.IPOSTI);
+
+        assertEquals(LetterBatch.Status.ready, batch.getBatchStatus());
+        assertNotNull(batch.getIpostHandlingFinished());
+        assertEquals(1, catchParameter.getInvocationCount());
+        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_ZIP+batch.getId(), catchParameter.getArguments().get(0).get(0).toString());
+        assertEquals("application/zip", catchParameter.getArguments().get(0).get(4).toString());
+        assertTrue(catchParameter.getArguments().get(0).get(5) instanceof InputStream);
+    }
+
     @Test
     public void setsEmailHandlingStartedWhenStartingProcessIsCalled() {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
@@ -190,7 +263,7 @@ public class LetterServiceTest {
     }
     
     @Test
-    public void setsEmailHandlingFinishedWhenFinishingProcessIsCalled() {
+    public void setsEmailHandlingFinishedWhenFinishingProcessIsCalled() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
         when(mockedLetterBatchDAO.read(any(Long.class))).thenReturn(batch);
         letterService.updateBatchProcessingFinished(1l, LetterBatchProcess.EMAIL);
@@ -249,8 +322,6 @@ public class LetterServiceTest {
         LetterBatchLetterProcessingError expectedError = new LetterBatchLetterProcessingError();
         expectedError.setErrorCause("Batch not found for id " + batchId);
         expectedError.setErrorTime(new Date()); //can't check real time as the service just uses the current time in this case
-        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
-        errors.add(expectedError);
 
         when(mockedLetterBatchDAO.getLetterBatchStatus(eq(batchId))).thenReturn(null);
 
@@ -286,7 +357,7 @@ public class LetterServiceTest {
         assertEquals("Batch processing should be indicated with an 'error' status", LetterBatch.Status.error, statusDto.getStatus());
         assertEquals(1, statusDto.getErrors().size());
         assertEquals("Testing error", statusDto.getErrors().get(0).getErrorCause());
-        assertTrue(statusDto.getErrors().get(0) instanceof LetterBatchStatusErrorDto);
+        assertTrue(statusDto.getErrors().get(0) != null);
         assertNotNull("Letter receivers must not be null", ((LetterBatchStatusErrorDto)statusDto.getErrors().get(0))
                 .getRecipientId());
     }

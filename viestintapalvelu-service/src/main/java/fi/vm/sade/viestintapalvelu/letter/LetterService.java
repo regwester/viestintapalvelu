@@ -18,6 +18,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
  *
  */
 public interface LetterService {
+    public static final String DOKUMENTTI_ID_PREFIX_PDF = "VIES-1-";
+    public static final String DOKUMENTTI_ID_PREFIX_ZIP = "VIES-2-";
 
     public enum LetterBatchProcess {
         EMAIL,
@@ -115,7 +117,7 @@ public interface LetterService {
      * @param process to mark finished
      * @return the next process
      */
-    Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process);
+    Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process) throws Exception;
 
     LetterBatch fetchById(long id);
 

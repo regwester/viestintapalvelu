@@ -59,7 +59,8 @@ public class LetterResourceTest {
     
     @Test
     public void returnsLetterBatchIdFromResource() {
-        assertEquals(LETTERBATCH_ID, (Long)resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity());
+        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_PDF
+                +LETTERBATCH_ID, (String)resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity());
     }
     
     @Test
