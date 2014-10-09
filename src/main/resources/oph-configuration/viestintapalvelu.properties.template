@@ -123,5 +123,4 @@ viestintapalvelu.dokumentti.id.salt = {{viestintapalvelu_dokumentti_id_salt}}
 
 web.url.cas=https\://${host.cas}/cas
 viestintapalvelu.use.dev.basic.authentication=false
-
 viestintapalvelu.swagger.base.bath=/viestintapalvelu
