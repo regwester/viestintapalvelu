@@ -106,8 +106,8 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiEmail, notes = ApiEmail)
     public Response emailLetterBatch( @PathParam("letterBatchId") @ApiParam(name="Kirjelähetyksen ID", required = true)
-                                          Long letterBatchId ) throws Exception {
-        letterEmailService.sendEmail(letterBatchId);
+                                          String letterBatchId ) throws Exception {
+        letterEmailService.sendEmail(getLetterBatchId(letterBatchId));
         return Response.ok().build();
     }
 
@@ -117,10 +117,10 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     @ApiOperation(value = ApiEmailPreview, notes = ApiEmailPreview)
     public Response previewLetterBatchEmail(
-            @PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) Long letterBatchId,
+            @PathParam("letterBatchId") @ApiParam(value="Kirjelähetyksen ID", required = true) String letterBatchId,
             @QueryParam("language") @ApiParam(value="Muodostuskieli (valinnainen)", required = false) String languageCode ) {
         return Response.ok(
-                letterEmailService.getPreview(letterBatchId, Optional.fromNullable(languageCode))
+                letterEmailService.getPreview(getLetterBatchId(letterBatchId), Optional.fromNullable(languageCode))
             ).header("Content-Disposition", "attachment; filename=\"preview.eml\"")
             .build();
     }
