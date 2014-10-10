@@ -191,8 +191,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "letters": letters, "templateReplacements" : replacements, "templateName" : tName, "languageCode" : tLang, "organizationOid" : oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
 
-        function buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return {
+        function buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
+            var letter = {
                 "letters": letters,
                 "templateReplacements" : replacements,
                 "templateName" : tName,
@@ -201,6 +201,10 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 "applicationPeriod": applicationPeriod,
                 "tag": tag
             };
+            if (iposti) {
+                letter.iposti = true;
+            }
+            return letter;
         }
 
         function asyncPdf(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
@@ -212,7 +216,9 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function doDownload(id) {
-            $window.location.href = _dokumenttiServiceLocation+"/lataa/"+id;
+            return function() {
+                $window.location.href = _dokumenttiServiceLocation+"/lataa/"+id;
+            }
         }
 
         function asyncZip(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
@@ -223,8 +229,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
                 });
         }
 
-        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(letter+"async/letter", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag)).
+        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
+            return $http.post(letter+"async/letter", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async letter -kutsu epäonnistui: " + data);

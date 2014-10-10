@@ -87,4 +87,8 @@ public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
     public void setEncoder(ShaPasswordEncoder encoder) {
         this.encoder = encoder;
     }
+
+    public void setDokumenttiIdSalt(String dokumenttiIdSalt) {
+        this.dokumenttiIdSalt = dokumenttiIdSalt;
+    }
 }
