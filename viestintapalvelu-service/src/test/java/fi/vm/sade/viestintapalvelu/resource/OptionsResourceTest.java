@@ -37,6 +37,7 @@ import fi.vm.sade.viestintapalvelu.options.OptionsResource;
 
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.when;
 
 /**
@@ -56,7 +57,7 @@ public class OptionsResourceTest {
 
     @Test
     public void testCache() {
-        when(tarjontaComponent.findPublisehedHakus()).thenAnswer(atFirstReturn(testAnswer("1234"))
+        when(tarjontaComponent.findPublisehedHakus(any(Integer.class))).thenAnswer(atFirstReturn(testAnswer("1234"))
                 .thenThrow(new IllegalStateException("Should not be called twice!")));
 
         List<HakuDetailsDto> results = optionsResource.listHakus(null);
@@ -78,7 +79,7 @@ public class OptionsResourceTest {
 
     @Test
     public void testForceCacheRefresh() {
-        when(tarjontaComponent.findPublisehedHakus()).thenAnswer(atFirstReturn(testAnswer("1234"))
+        when(tarjontaComponent.findPublisehedHakus(any(Integer.class))).thenAnswer(atFirstReturn(testAnswer("1234"))
                 .thenReturn(testAnswer("5432"))
                 .thenThrow(new IllegalStateException("Should not be called third time!")));
         List<HakuDetailsDto> results = optionsResource.listHakus(null);
