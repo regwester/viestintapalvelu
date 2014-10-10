@@ -18,10 +18,7 @@ package fi.vm.sade.viestintapalvelu.externalinterface.api;
 
 import java.util.List;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Component;
@@ -41,7 +38,7 @@ public interface TarjontaHakuResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("")
-    List<HakuListDto> hakus() throws Exception;
+    List<HakuListDto> hakus(@QueryParam(value="count") Integer count) throws Exception;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

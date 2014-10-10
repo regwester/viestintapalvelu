@@ -39,7 +39,8 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuListDto;
  */
 @Component
 public class TarjontaComponent {
-    public static final String PUBLISHED_STATE = "JULKAISTU";
+    public static final String DELETED_STATE = "POISTETTU";
+    private static final Integer HUGE_COUNT = 9999999;
     private static final Comparator<? super HakuDetailsDto> HAKUS_IN_FINNISH_ORDER = new Comparator<HakuDetailsDto>() {
         public int compare(HakuDetailsDto o1, HakuDetailsDto o2) {
             return Optional.fromNullable(o1.getNimi().get("kieli_fi")).or("")
@@ -50,13 +51,13 @@ public class TarjontaComponent {
     @Resource
     private TarjontaHakuResource tarjontaHakuResourceClient;
 
-    public List<HakuDetailsDto> findPublisehedHakus() {
+    public List<HakuDetailsDto> findPublisehedHakus(Integer countLimit) {
         try {
-            List<HakuListDto> hakus = tarjontaHakuResourceClient.hakus();
+            List<HakuListDto> hakus = tarjontaHakuResourceClient.hakus(Optional.fromNullable(countLimit).or(HUGE_COUNT));
             List<HakuDetailsDto> hakuDetails = new ArrayList<HakuDetailsDto>();
             for (HakuListDto haku : hakus) {
                 HakuDetailsDto details = tarjontaHakuResourceClient.hakuByOid(haku.getOid());
-                if (PUBLISHED_STATE.equals(details.getTila())) {
+                if (!DELETED_STATE.equals(details.getTila())) {
                     hakuDetails.add(details);
                 }
             }
