@@ -123,6 +123,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     @Override
     public Response getPreview(EmailData emailData) throws Exception {
         log.debug("getPreview called with EmailData: {}", emailData);
+        overrideFromAddress(emailData);
         chooseTemplate(emailData);
         log.debug("getPreview called with EmailData: after template choosing {}", emailData);
         String email = emailService.getEML(emailData, "vastaanottaja@example.com");
