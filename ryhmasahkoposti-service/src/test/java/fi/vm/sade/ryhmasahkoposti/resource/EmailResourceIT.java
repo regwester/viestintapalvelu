@@ -23,6 +23,7 @@ import java.util.List;
 
 import javax.mail.Message;
 import javax.mail.MessagingException;
+import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMultipart;
 import javax.ws.rs.core.Response;
@@ -54,6 +55,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponen
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.util.AnswerChain;
+import junit.framework.TestCase;
 
 import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirst;
@@ -106,13 +108,14 @@ public class EmailResourceIT {
     @Test
     public void testEmailSendingWithReceiverSepcificDownloadedAttachments() throws Exception {
         TemplateDTO template = with(with(assumeTestTemplate("Testitemplate", "FI"),
-                content("email_body",
-                        "<html><head><title>$title</title><style type=\"text/css\">$tyylit</style></head>" +
-                        "<body><p>Hei $etunimi,</p>$sisalto <ul>#foreach ($v in $lista)<li>$v</li>#end</ul> $loppuosa</body></html>")
-            ),
-            replacement("loppuosa", "<p>Terveisin Lähettäjä</p>"),
-            replacement("title", "Otsikko"),
-            replacement("etunimi", "")
+                        content("email_body",
+                                "<html><head><title>$title</title><style type=\"text/css\">$tyylit</style></head>" +
+                                        "<body><p>Hei $etunimi,</p>$sisalto <ul>#foreach ($v in $lista)<li>$v</li>#end</ul> $loppuosa</body></html>")
+                ),
+                replacement("loppuosa", "<p>Terveisin Lähettäjä</p>"),
+                replacement("title", "Otsikko"),
+                replacement("etunimi", ""),
+                replacement("sender-from", "overwritten-from@example.com")
         );
         String attachmentUri = "viestinta://letterReceiverLetterAttachment/1",
                 attachment2Uri = "viestinta://letterReceiverLetterAttachment/2",
@@ -169,6 +172,8 @@ public class EmailResourceIT {
         recipient2.getRecipientReplacements().add(new ReportedRecipientReplacementDTO("etunimi", "Matti"));
         recipient2.getRecipientReplacements()
                 .add(new ReportedRecipientReplacementDTO("additionalAttachmentUri", attachment4Uri));
+        recipient2.getRecipientReplacements()
+                .add(new ReportedRecipientReplacementDTO("sender-from", "special-from@example.com"));
         emailData.getRecipient().add(recipient2);
 
         final List<String> urlsReportedForDeletion = new ArrayList<String>();
@@ -200,6 +205,8 @@ public class EmailResourceIT {
         // actually outgoing message at the javax.mail.Transport static send method:
         assertEquals(2, mailerStatus.getMessages().size());
         Message message = mailerStatus.getMessages().get(0);
+        assertEquals(1, message.getFrom().length);
+        assertEquals(new InternetAddress("overwritten-from@example.com"), message.getFrom()[0]);
         assertEquals("Varsinainen otsikko", message.getSubject());
         assertTrue(message.getContent() instanceof MimeMultipart);
         MimeMultipart multipart = (MimeMultipart)message.getContent();
@@ -228,6 +235,9 @@ public class EmailResourceIT {
         Message message2 = mailerStatus.getMessages().get(1);
         multipart = (MimeMultipart)message2.getContent();
         assertEquals(3, multipart.getCount());
+        assertEquals(1, message2.getFrom().length);
+        assertEquals(new InternetAddress("special-from@example.com"), message2.getFrom()[0]);
+
         verifyAttachment(commonAttachment, (MimeBodyPart)multipart.getBodyPart(1));
         verifyAttachment(attachment4, (MimeBodyPart)multipart.getBodyPart(2));
         bodyPart = (MimeBodyPart) multipart.getBodyPart(0);
@@ -257,7 +267,7 @@ public class EmailResourceIT {
     private TemplateDTO assumeTestTemplate(String templateName, String languageCode) throws IOException, DocumentException {
         TemplateDTO template = RaportointipalveluTestData.template(templateName, languageCode);
         when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL),
-                    any(String.class))).thenReturn(template);
+                any(String.class))).thenReturn(template);
         when(templateClient.getTemplateByID(eq(""+template.getId()))).thenReturn(template);
 
         return template;
