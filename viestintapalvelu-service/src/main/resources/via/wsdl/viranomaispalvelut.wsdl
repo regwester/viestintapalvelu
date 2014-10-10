@@ -1,0 +1,276 @@
+<?xml version="1.0" encoding="utf-8"?>
+<wsdl:definitions name="Viranomaispalvelut" targetNamespace="http://www.suomi.fi/asiointitili"
+                  xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
+                  xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+                  xmlns:tns="http://www.suomi.fi/asiointitili"
+                  xmlns:wsaw="http://www.w3.org/2006/05/addressing/wsdl">
+    <wsdl:types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.suomi.fi/asiointitili">
+            <xsd:element name="HaeAsiakkaita">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="Viranomainen" type="tns:Viranomainen"/>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="Kysely" type="tns:Kysely_WS1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Viranomainen">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="ViranomaisTunnus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="PalveluTunnus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="KayttajaTunnus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="SanomaTunniste" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="SanomaVersio" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="SanomaVarmenneNimi" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Kysely_WS1">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="KyselyLaji" type="xsd:string"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="KyselyAlku" nillable="true" type="xsd:dateTime"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="KyselyLoppu" nillable="true" type="xsd:dateTime"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Asiakkaat" type="tns:ArrayOfAsiakas"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfAsiakas">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Asiakas" nillable="true" type="tns:Asiakas"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Asiakas">
+                <xsd:attribute name="AsiakasTunnus" type="xsd:string"/>
+                <xsd:attribute name="TunnusTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:element name="HaeAsiakkaitaResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="HaeAsiakkaitaResult" type="tns:Vastaus_WS1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Vastaus_WS1">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TilaKoodi" type="tns:TilaKoodi_WS"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Asiakkaat" type="tns:ArrayOfAsiakasJaTila_WS1"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="TilaKoodi_WS">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="TilaKoodi" type="xsd:int"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TilaKoodiKuvaus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="SanomaTunniste" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfAsiakasJaTila_WS1">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Asiakas" nillable="true"
+                                 type="tns:AsiakasJaTila_WS1"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="AsiakasJaTila_WS1">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="Tila" type="xsd:int"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="TilaPvm" type="xsd:dateTime"/>
+                </xsd:sequence>
+                <xsd:attribute name="AsiakasTunnus" type="xsd:string"/>
+                <xsd:attribute name="TunnusTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:element name="LisaaKohteita">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="Viranomainen" type="tns:Viranomainen"/>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="Kysely" type="tns:Kysely_WS2"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Kysely_WS2">
+                <xsd:sequence>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="KohdeMaara" type="xsd:int"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Kohteet" type="tns:ArrayOfKohde_WS2"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfKohde_WS2">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Kohde" nillable="true" type="tns:Kohde_WS2"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Kohde_WS2">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Asiakas" type="tns:Asiakas"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="ViranomaisTunniste" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Viittaus" type="tns:Viittaus_WS"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="VahvistusVaatimus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="AsiaNumero" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Nimeke" type="xsd:string"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="LahetysPvm" type="xsd:dateTime"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="LahettajaNimi" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="KuvausTeksti" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Maksullisuus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="MaksamisKuvausTeksti" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Tila" type="tns:Tila_WS2"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Tiedostot" type="tns:ArrayOfTiedosto"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Viittaus_WS">
+                <xsd:attribute name="ViittausTunniste" type="xsd:string"/>
+                <xsd:attribute name="ViittausTunnisteTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:complexType name="Tila_WS2">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TilaKoodi" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Tila" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TilaKuvaus" type="xsd:string"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="TilaPvm" nillable="true" type="xsd:dateTime"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfTiedosto">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Tiedosto" nillable="true"
+                                 type="tns:Tiedosto"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Tiedosto">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TiedostonKuvaus" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TiedostoURL" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TiedostoSisalto" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TiedostoKoko" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TiedostoMuoto" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TiedostoNimi" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="LisaaKohteitaResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="LisaaKohteitaResult" type="tns:Vastaus_WS2"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Vastaus_WS2">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TilaKoodi" type="tns:TilaKoodi_WS"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="KohdeMaara" type="xsd:int"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="Kohteet" type="tns:ArrayOfKohdeJaAsiakasTila_WS2_V"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfKohdeJaAsiakasTila_WS2_V">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Kohde" nillable="true"
+                                 type="tns:KohdeJaAsiakasTila_WS2_V"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="KohdeJaAsiakasTila_WS2_V">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="ViranomaisTunniste" type="xsd:string"/>
+                    <xsd:element minOccurs="0" maxOccurs="unbounded" name="Asiakas" type="tns:AsiakasJaKohteenTila"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="AsiakasJaKohteenTila">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="AsiointitiliTunniste" type="xsd:string"/>
+                    <xsd:element minOccurs="1" maxOccurs="1" name="KohteenTila" type="xsd:int"/>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="KohteenTilaKuvaus" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:attribute name="AsiakasTunnus" type="xsd:string"/>
+                <xsd:attribute name="TunnusTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:element name="HaeTilaTieto">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="Viranomainen" type="tns:Viranomainen"/>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="Kysely" type="tns:Kysely_WS10"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Kysely_WS10"/>
+            <xsd:element name="HaeTilaTietoResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element minOccurs="0" maxOccurs="1" name="HaeTilaTietoResult" type="tns:Vastaus_WS10"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Vastaus_WS10">
+                <xsd:sequence>
+                    <xsd:element minOccurs="0" maxOccurs="1" name="TilaKoodi" type="tns:TilaKoodi_WS"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </wsdl:types>
+    <wsdl:message name="Viranomaispalvelut_HaeAsiakkaita_InputMessage">
+        <wsdl:part name="parameters" element="tns:HaeAsiakkaita"/>
+    </wsdl:message>
+    <wsdl:message name="Viranomaispalvelut_HaeAsiakkaita_OutputMessage">
+        <wsdl:part name="parameters" element="tns:HaeAsiakkaitaResponse"/>
+    </wsdl:message>
+    <wsdl:message name="Viranomaispalvelut_LisaaKohteita_InputMessage">
+        <wsdl:part name="parameters" element="tns:LisaaKohteita"/>
+    </wsdl:message>
+    <wsdl:message name="Viranomaispalvelut_LisaaKohteita_OutputMessage">
+        <wsdl:part name="parameters" element="tns:LisaaKohteitaResponse"/>
+    </wsdl:message>
+    <wsdl:message name="Viranomaispalvelut_HaeTilaTieto_InputMessage">
+        <wsdl:part name="parameters" element="tns:HaeTilaTieto"/>
+    </wsdl:message>
+    <wsdl:message name="Viranomaispalvelut_HaeTilaTieto_OutputMessage">
+        <wsdl:part name="parameters" element="tns:HaeTilaTietoResponse"/>
+    </wsdl:message>
+    <wsdl:portType name="Viranomaispalvelut">
+        <wsdl:operation name="HaeAsiakkaita">
+            <wsdl:input wsaw:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeAsiakkaita"
+                        message="tns:Viranomaispalvelut_HaeAsiakkaita_InputMessage"/>
+            <wsdl:output wsaw:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeAsiakkaitaResponse"
+                         message="tns:Viranomaispalvelut_HaeAsiakkaita_OutputMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="LisaaKohteita">
+            <wsdl:input wsaw:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/LisaaKohteita"
+                        message="tns:Viranomaispalvelut_LisaaKohteita_InputMessage"/>
+            <wsdl:output wsaw:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/LisaaKohteitaResponse"
+                         message="tns:Viranomaispalvelut_LisaaKohteita_OutputMessage"/>
+        </wsdl:operation>
+        <wsdl:operation name="HaeTilaTieto">
+            <wsdl:input wsaw:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeTilaTieto"
+                        message="tns:Viranomaispalvelut_HaeTilaTieto_InputMessage"/>
+            <wsdl:output wsaw:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeTilaTietoResponse"
+                         message="tns:Viranomaispalvelut_HaeTilaTieto_OutputMessage"/>
+        </wsdl:operation>
+    </wsdl:portType>
+    <wsdl:binding name="ViranomaispalvelutSoap" type="tns:Viranomaispalvelut">
+        <soap:binding transport="http://schemas.xmlsoap.org/soap/http"/>
+        <wsdl:operation name="HaeAsiakkaita">
+            <soap:operation soapAction="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeAsiakkaita"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="LisaaKohteita">
+            <soap:operation soapAction="http://www.suomi.fi/asiointitili/Viranomaispalvelut/LisaaKohteita"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+        <wsdl:operation name="HaeTilaTieto">
+            <soap:operation soapAction="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeTilaTieto"
+                            style="document"/>
+            <wsdl:input>
+                <soap:body use="literal"/>
+            </wsdl:input>
+            <wsdl:output>
+                <soap:body use="literal"/>
+            </wsdl:output>
+        </wsdl:operation>
+    </wsdl:binding>
+    <wsdl:service name="Viranomaispalvelut">
+        <wsdl:port name="ViranomaispalvelutSoap" binding="tns:ViranomaispalvelutSoap">
+            <soap:address location="http://localhost:59587/Viranomaispalvelut.svc"/>
+        </wsdl:port>
+    </wsdl:service>
+</wsdl:definitions>

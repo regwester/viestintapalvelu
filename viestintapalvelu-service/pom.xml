@@ -613,6 +613,25 @@
                 <artifactId>hibernate4-maven-plugin</artifactId>
             </plugin>
 
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>fi.suomi.asiointitili</packageName>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/src/main/resources/via/wsdl/viranomaispaluukanava.wsdl</wsdlFile>
+                                <wsdlFile>${basedir}/src/main/resources/via/wsdl/viranomaispalvelut.wsdl</wsdlFile>
+                            </wsdlFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
