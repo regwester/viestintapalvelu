@@ -123,3 +123,8 @@ web.url.cas=https\://${host.cas}/cas
 viestintapalvelu.use.dev.basic.authentication=false
 
 viestintapalvelu.swagger.base.bath=/viestintapalvelu
+
+viestintapalvelu.asiointitili.service.location=http://localhost:8080/viestintapalvelu/api/v1/test/wsdl
+viestintapalvelu.asiointitili.wss.keystore.file=keystore.jks
+viestintapalvelu.asiointitili.wss.keystore.password=1234
+viestintapalvelu.asiointitili.wss.keystore.alias=asiointitili

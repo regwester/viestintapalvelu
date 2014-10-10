@@ -29,6 +29,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.core.task.support.ExecutorServiceAdapter;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.test.context.ContextConfiguration;
@@ -63,8 +65,12 @@ public class ExecutorsIT {
     @Resource(name="batchJobExecutorService")
     private ExecutorService batchJobExecutorService;
 
+    @Autowired
+    private ApplicationContext applicationContext;
+
     @Test
     public void testExecutorServiceIsAnAdapterToExecutor() throws Exception {
+        batchJobExecutorService.shutdown();
         assertTrue(letterReceiverExecutorService instanceof ExecutorServiceAdapter);
         assertEquals(this.<Object>readProperty(letterReceiverExecutorService, "taskExecutor"), receiverExecutor);
 
