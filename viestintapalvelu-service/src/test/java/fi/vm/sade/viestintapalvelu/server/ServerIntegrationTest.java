@@ -9,6 +9,7 @@ import org.apache.catalina.startup.Tomcat;
 import org.apache.commons.io.FileUtils;
 import org.jboss.shrinkwrap.api.ShrinkWrap;
 import org.jboss.shrinkwrap.api.spec.WebArchive;
+import org.jboss.shrinkwrap.impl.base.exporter.ExplodedExporterImpl;
 import org.jboss.shrinkwrap.impl.base.exporter.zip.ZipExporterImpl;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -38,9 +39,9 @@ public class ServerIntegrationTest {
     @Before
     public void startServer() throws Exception {
         File webApp = createWar();
-        String contextPath = "/viestintapalvelu-service/src/test/resources";
+        String contextPath = "/viestintapalvelu-service";
         tomcat = new Tomcat();
-        tomcat.addWebapp(tomcat.getHost(), contextPath, workingDir + "/viestintapalvelu-service.war");   
+        tomcat.addWebapp(tomcat.getHost(), contextPath, workingDir + "/viestintapalvelu-service");   
         tomcat.setPort(9096);
         tomcat.setBaseDir(workingDir);
         tomcat.setHostname("localhost");
@@ -97,15 +98,15 @@ public class ServerIntegrationTest {
         this.getClass().getClassLoader().loadClass(LetterResource.class.getName());
         File contextFile = new File("src/test/resources/test-application-context.xml");
         WebArchive war = ShrinkWrap.create(WebArchive.class, "viestintapalvelu-service")
-                .setWebXML(new File(WEBAPP_SRC, "WEB-INF/web.xml"))
-                .addAsWebResource(contextFile, "WEB-INF/spring/application-context.xml")
+                .setWebXML(new File("src/test/resources/web.xml"))
+                .addAsResource(contextFile, "spring/application-context.xml")
                 .addPackages(true, java.lang.Package.getPackage("fi.vm.sade.viestintapalvelu"));
         File webApp = new File(workingDir, "viestintapalvelu-service");
         File oldWebApp = new File(webApp.getAbsolutePath());
         try {
             FileUtils.deleteDirectory(oldWebApp);
         } catch(IOException e){}
-        new ZipExporterImpl(war).exportTo(new File(workingDir + "/viestintapalvelu-service.war"), true);
+        new ExplodedExporterImpl(war).exportExploded(new File(workingDir));
         return webApp;
     }
 }
