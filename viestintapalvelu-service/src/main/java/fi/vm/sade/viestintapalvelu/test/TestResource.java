@@ -16,22 +16,18 @@
 
 package fi.vm.sade.viestintapalvelu.test;
 
-import java.io.InputStream;
-
-import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
-import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
-import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import fi.suomi.asiointitili.VastausWS2;
 import fi.vm.sade.viestintapalvelu.asiointitili.AsiointitiliService;
 
 /**
@@ -41,6 +37,7 @@ import fi.vm.sade.viestintapalvelu.asiointitili.AsiointitiliService;
  */
 @Component
 @Path("test")
+@PreAuthorize("isAuthenticated()")
 public class TestResource {
     private static final Logger logger = LoggerFactory.getLogger(TestResource.class);
 
@@ -48,29 +45,10 @@ public class TestResource {
     private AsiointitiliService asiointitiliService;
 
     @GET
-    @Produces("text/xml")
-    @Path("/wsdl")
-    public Response wsdl( @Context HttpServletRequest request ) throws Exception {
-        InputStream wsdl = getClass().getResourceAsStream("/via/wsdl/viranomaispalvelut.wsdl");
-        String result = IOUtils.toString(wsdl);
-        result = result.replace("http://localhost:59587/Viranomaispalvelut.svc", "http://localhost:8080/api/v1/test/logPost");
-        return Response.ok().entity(result).build();
-    }
-
-    @POST
-    @Produces("text/plain")
-    @Path("/logPost")
-    public Response logPost( @Context HttpServletRequest request ) throws Exception {
-        String msg = IOUtils.toString(request.getReader());
-        logger.info("request: {}", msg);
-        return Response.ok().build();
-    }
-
-    @GET
-    @Produces("text/plain")
-    @Path("/doSome")
+    @Produces("text/json")
+    @Path("/testKysely")
     public Response testSome() {
-        asiointitiliService.doSome();
-        return Response.ok().build();
+        VastausWS2 vastaus = asiointitiliService.kysely();
+        return Response.ok().entity(vastaus).build();
     }
 }

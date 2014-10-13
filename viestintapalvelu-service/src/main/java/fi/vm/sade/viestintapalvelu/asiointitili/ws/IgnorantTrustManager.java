@@ -14,15 +14,14 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.asiointitili;
+package fi.vm.sade.viestintapalvelu.asiointitili.ws;
 
-import fi.suomi.asiointitili.VastausWS2;
+import javax.net.ssl.TrustManager;
 
 /**
  * User: ratamaa
- * Date: 10.10.2014
- * Time: 15:45
+ * Date: 13.10.2014
+ * Time: 14:27
  */
-public interface AsiointitiliService {
-    VastausWS2 kysely();
+public class IgnorantTrustManager implements TrustManager {
 }

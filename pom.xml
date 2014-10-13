@@ -530,6 +530,11 @@
                 <artifactId>cxf-rt-databinding-jaxb</artifactId>
                 <version>${cxf.version}</version>
             </dependency>
+            <dependency>
+                <groupId>org.apache.cxf</groupId>
+                <artifactId>cxf-rt-ws-security</artifactId>
+                <version>${cxf.version}</version>
+            </dependency>
             <!-- For some reason jaxb versions sometimes resolve to 2.1.4 and sometimes the latest version.
                  Having two different versions in class path causes problems, so we define our own version. -->
             <dependency>

@@ -65,32 +65,32 @@ public class SOAPSigningHanlder implements LogicalHandler<LogicalMessageContext>
                 Source source = smc.getMessage().getPayload();
                 Node root = ((DOMSource) source).getNode();
 
-                XMLSignatureFactory fac = XMLSignatureFactory.getInstance("DOM");
+                XMLSignatureFactory signatureFactory = XMLSignatureFactory.getInstance("DOM");
 
-                Reference ref = fac.newReference("",
-                        fac.newDigestMethod(DigestMethod.SHA1, null),
-                            Collections.singletonList(fac.newTransform(Transform.ENVELOPED,
+                Reference ref = signatureFactory.newReference("",
+                        signatureFactory.newDigestMethod(DigestMethod.SHA1, null),
+                            Collections.singletonList(signatureFactory.newTransform(Transform.ENVELOPED,
                                     (TransformParameterSpec) null)), null, null);
-                SignedInfo si = fac.newSignedInfo(fac.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
-                                (C14NMethodParameterSpec) null), fac
-                                .newSignatureMethod(SignatureMethod.RSA_SHA1, null),
+                SignedInfo signedInfo = signatureFactory.newSignedInfo(
+                        signatureFactory.newCanonicalizationMethod(CanonicalizationMethod.INCLUSIVE,
+                            (C14NMethodParameterSpec) null), signatureFactory.newSignatureMethod(SignatureMethod.RSA_SHA1, null),
                         Collections.singletonList(ref));
-                KeyStore ks = KeyStore.getInstance(keystoreInstance);
-                ks.load(new FileInputStream(keystoreFile), keystorePw.toCharArray());
-                KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry) ks
-                        .getEntry(keystoreAlias, new KeyStore.PasswordProtection(keystorePw.toCharArray()));
+                KeyStore keyStore = KeyStore.getInstance(keystoreInstance);
+                keyStore.load(new FileInputStream(keystoreFile), keystorePw.toCharArray());
+                KeyStore.PrivateKeyEntry keyEntry = (KeyStore.PrivateKeyEntry)
+                        keyStore.getEntry(keystoreAlias, new KeyStore.PasswordProtection(keystorePw.toCharArray()));
                 X509Certificate cert = (X509Certificate) keyEntry.getCertificate();
 
-                KeyInfoFactory kif2 = fac.getKeyInfoFactory();
+                KeyInfoFactory keyInfoFactory = signatureFactory.getKeyInfoFactory();
                 List<Object> x509Content = new ArrayList<Object>();
                 x509Content.add(cert.getSubjectX500Principal().getName());
                 x509Content.add(cert);
-                X509Data xd = kif2.newX509Data(x509Content);
-                KeyInfo ki = kif2.newKeyInfo(Collections.singletonList(xd));
+                X509Data x509data = keyInfoFactory.newX509Data(x509Content);
+                KeyInfo keyInfo = keyInfoFactory.newKeyInfo(Collections.singletonList(x509data));
 
                 Element header = DOMUtils.getFirstChildElement(root);
                 DOMSignContext dsc = new DOMSignContext(keyEntry.getPrivateKey(), header);
-                XMLSignature signature = fac.newXMLSignature(si, ki);
+                XMLSignature signature = signatureFactory.newXMLSignature(signedInfo, keyInfo);
                 signature.sign(dsc);
             }
         } catch (Exception e) {
