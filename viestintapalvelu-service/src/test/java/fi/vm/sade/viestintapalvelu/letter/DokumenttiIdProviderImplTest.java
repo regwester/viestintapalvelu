@@ -21,54 +21,81 @@ import javax.ws.rs.NotFoundException;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.junit.runners.JUnit4;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.letter.impl.DokumenttiIdProviderImpl;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 /**
  * User: ratamaa
  * Date: 9.10.2014
  * Time: 14:22
  */
-@RunWith(JUnit4.class)
+@RunWith(MockitoJUnitRunner.class)
 public class DokumenttiIdProviderImplTest {
     private DokumenttiIdProviderImpl dokumenttiIdProvider = new DokumenttiIdProviderImpl();
     private String testSalt="TEST-SALT";
 
+    @Mock
+    private LetterBatchDAO letterBatchDAO;
+
     @Before
     public void before() {
         dokumenttiIdProvider.setDokumenttiIdSalt(testSalt);
+        dokumenttiIdProvider.setLetterBatchDAO(letterBatchDAO);
     }
 
     @Test
     public void testGenerateDocumentIdForLetterBatchId() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
+        when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
+
         ShaPasswordEncoder enc = new ShaPasswordEncoder();
         String id = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(1l, "prefix-t-");
-        assertEquals("prefix-t-1-" + enc.encodePassword(testSalt + "prefix-t-1", ""), id);
+        assertEquals("prefix-t-1-" + enc.encodePassword(testSalt + "prefix-t-1-"
+                +letterBatch.getTimestamp().getTime(), ""), id);
     }
 
     @Test
     public void testParseLetterBatchIdByDokumenttiId() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
+        when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
+
         ShaPasswordEncoder enc = new ShaPasswordEncoder();
         long id = dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-1-"
-                    + enc.encodePassword(testSalt + "prefix-t-1", ""),
-                "prefix-t-");
+                    + enc.encodePassword(testSalt + "prefix-t-1-"+letterBatch.getTimestamp().getTime(), ""), "prefix-t-");
         assertEquals(1l, id);
     }
 
     @Test(expected = NotFoundException.class)
     public void testIllegalIdByDifferingHash() {
+        when(letterBatchDAO.read(eq(Long.valueOf(54321l)))).thenReturn(DocumentProviderTestData.getLetterBatch(54321l));
         dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-54321-abcdefgh", "prefix-t-");
     }
 
     @Test(expected = NotFoundException.class)
     public void testIllegalIdByDifferingPrefix() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(54321l);
+        when(letterBatchDAO.read(eq(Long.valueOf(54321l)))).thenReturn(letterBatch);
         ShaPasswordEncoder enc = new ShaPasswordEncoder();
         dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-different-54321-"
-                        + enc.encodePassword(testSalt + "prefix-t-54321", ""),  "prefix-t-");
+                        + enc.encodePassword(testSalt + "prefix-t-54321-"+letterBatch.getTimestamp().getTime(), ""),  "prefix-t-");
     }
 
+    @Test(expected = NotFoundException.class)
+    public void testLetterBatchNotFound() {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(54321l);
+        when(letterBatchDAO.read(eq(Long.valueOf(54321l)))).thenReturn(null);
+        ShaPasswordEncoder enc = new ShaPasswordEncoder();
+        dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId("prefix-t-54321-"
+                + enc.encodePassword(testSalt + "prefix-t-54321-"+letterBatch.getTimestamp().getTime(), ""),  "prefix-t-");
+    }
 }
