@@ -14,7 +14,7 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.asiointitili.impl;
+package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.impl;
 
 import java.util.UUID;
 
@@ -22,11 +22,13 @@ import javax.annotation.Resource;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import fi.suomi.asiointitili.*;
-import fi.vm.sade.viestintapalvelu.asiointitili.AsiointitiliService;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliService;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.KyselyWS2Dto;
 
-import static fi.vm.sade.viestintapalvelu.asiointitili.ws.XMLTypeHelper.dateTime;
+import static fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws.XMLTypeHelper.dateTime;
 import static org.joda.time.DateTime.now;
 
 /**
@@ -48,6 +50,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
 
     @Resource
     private Viranomaispalvelut asiointitiliViranomaispalvelutClient;
+
     protected Viranomainen createViranomainen() {
         Viranomainen virnaomainen = new Viranomainen();
         virnaomainen.setViranomaisTunnus(viranomainenTunnus);
@@ -60,25 +63,18 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     }
 
     @Override
-    public VastausWS2 kysely() {
+    @Transactional
+    public VastausWS2 kyselyWS2(KyselyWS2Dto dto) {
+        // TODO: Use DTOs in service interface
+        // TODO: Validate
+        // TODO: Save to database
         KyselyWS2 kysely = new KyselyWS2();
-        kysely.setKohdeMaara(1);
-        ArrayOfKohdeWS2 kohteet = new ArrayOfKohdeWS2();
-        KohdeWS2 kohde = new KohdeWS2();
-        Asiakas asiakas = new Asiakas();
-        asiakas.setAsiakasTunnus("010101-123N");
-        asiakas.setTunnusTyyppi("SSN");
-        kohde.getAsiakas().add(asiakas);
-        kohde.setViranomaisTunniste(UUID.randomUUID().toString());
-        kohde.setVahvistusVaatimus("0");
-        kohde.setAsiaNumero(null);
-        kohde.setNimeke("testi kaksirivi");
-        kohde.setLahetysPvm(dateTime(now()));
-        kohde.setLahettajaNimi("Teppo Tallaaja");
-        kohde.setKuvausTeksti("Tommin testiviesti");
-        kohde.setMaksullisuus("0");
-        kohteet.getKohde().add(kohde);
-        kysely.setKohteet(kohteet);
+        kysely.setKohteet(new ArrayOfKohdeWS2());
+        kysely.getKohteet().getKohde().addAll(dto.getKohteet());
+        for (KohdeWS2 kohde : kysely.getKohteet().getKohde()) {
+            kohde.setLahetysPvm(dateTime(now()));
+        }
+        kysely.setKohdeMaara(kysely.getKohteet().getKohde().size());
         return asiointitiliViranomaispalvelutClient.lisaaKohteita(createViranomainen(), kysely);
     }
 

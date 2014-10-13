@@ -14,9 +14,10 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.asiointitili;
+package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili;
 
 import fi.suomi.asiointitili.VastausWS2;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.KyselyWS2Dto;
 
 /**
  * User: ratamaa
@@ -24,5 +25,7 @@ import fi.suomi.asiointitili.VastausWS2;
  * Time: 15:45
  */
 public interface AsiointitiliService {
-    VastausWS2 kysely();
+
+    VastausWS2 kyselyWS2(KyselyWS2Dto kyselyWS2);
+
 }

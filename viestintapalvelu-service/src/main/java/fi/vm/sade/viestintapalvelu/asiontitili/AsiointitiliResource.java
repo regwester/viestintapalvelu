@@ -14,9 +14,10 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.test;
+package fi.vm.sade.viestintapalvelu.asiontitili;
 
-import javax.ws.rs.GET;
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
@@ -27,8 +28,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+
+import fi.suomi.asiointitili.KyselyWS2;
 import fi.suomi.asiointitili.VastausWS2;
-import fi.vm.sade.viestintapalvelu.asiointitili.AsiointitiliService;
+import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliService;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.KyselyWS2Dto;
 
 /**
  * User: ratamaa
@@ -36,19 +45,23 @@ import fi.vm.sade.viestintapalvelu.asiointitili.AsiointitiliService;
  * Time: 16:15
  */
 @Component
-@Path("test")
+@Api(value=Urls.ASIOINTITILI, description = "Kansalaisen asiointitilin tominnot")
+@Path(Urls.ASIOINTITILI)
 @PreAuthorize("isAuthenticated()")
-public class TestResource {
-    private static final Logger logger = LoggerFactory.getLogger(TestResource.class);
+public class AsiointitiliResource {
+    private static final Logger logger = LoggerFactory.getLogger(AsiointitiliResource.class);
 
     @Autowired
     private AsiointitiliService asiointitiliService;
 
-    @GET
+    @POST
+    @PreAuthorize(SecurityConstants.ASIOINTITILI)
+    @Consumes("text/json")
     @Produces("text/json")
-    @Path("/testKysely")
-    public Response testSome() {
-        VastausWS2 vastaus = asiointitiliService.kysely();
+    @Path("/kyselyWS2")
+    @ApiOperation(value="Asiointilikyely WS2", response = VastausWS2.class)
+    public Response kyselyWs2(@ApiParam("Kysely") KyselyWS2Dto kyselyWS2) {
+        VastausWS2 vastaus = asiointitiliService.kyselyWS2(kyselyWS2);
         return Response.ok().entity(vastaus).build();
     }
 }

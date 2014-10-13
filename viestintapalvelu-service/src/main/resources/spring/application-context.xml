@@ -150,7 +150,7 @@
         <prop key="org.apache.ws.security.crypto.merlin.keystore.password">${viestintapalvelu.asiointitili.wss.keystore.password}</prop>
         <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${viestintapalvelu.asiointitili.wss.keystore.alias}</prop>
     </util:properties>
-    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.asiointitili.ws.PrivateKeyPasswordCallbackHandler">
+    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws.PrivateKeyPasswordCallbackHandler">
         <property name="privateKeyPassword" value="${viestintapalvelu.asiointitili.wss.certificate.password}"/>
     </bean>
     <util:map id="securityParams" key-type="java.lang.String" value-type="java.lang.String">

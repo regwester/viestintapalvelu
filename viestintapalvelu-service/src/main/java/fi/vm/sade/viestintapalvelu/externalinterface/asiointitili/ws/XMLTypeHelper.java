@@ -14,7 +14,7 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.asiointitili.ws;
+package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws;
 
 import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
