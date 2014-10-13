@@ -18,12 +18,10 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import javax.ws.rs.NotFoundException;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 
 /**
@@ -33,8 +31,6 @@ import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
  */
 @Component
 public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
-    @Autowired
-    private CurrentUserComponent currentUserComponent;
     // SHA-1, internally calls MessageDigest.getInstance(algorithm) for each encodePassword call (thus thread-safe):
     private ShaPasswordEncoder encoder = new ShaPasswordEncoder();
 
@@ -43,16 +39,11 @@ public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
 
     @Override
     public String generateDocumentIdForLetterBatchId(long id, String prefix) {
-        return generateDocumentIdForLetterBatchId(id, prefix, currentUserComponent.getCurrentUser().getOidHenkilo());
+        return prefix+id+"-"+generateHash(prefix, id);
     }
 
     @Override
-    public String generateDocumentIdForLetterBatchId(long id, String prefix, String oid) {
-        return prefix+id+"-"+generateHash(prefix, id, oid);
-    }
-
-    @Override
-    public long parseLetterBatchIdByDokumenttiId(String idStr, String prefix, String oid) {
+    public long parseLetterBatchIdByDokumenttiId(String idStr, String prefix) {
         // Expect format: <prefix>-id-<HASH(suola+prefix+id+tallentaja-oid)>
         if (!idStr.startsWith(prefix)) {
             throw new NotFoundException();
@@ -64,24 +55,15 @@ public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
         }
         Long id = Long.parseLong(prts[0]);
         String hash = prts[1];
-        String generedHash = generateHash(prefix, id, oid);
+        String generedHash = generateHash(prefix, id);
         if (!hash.equals(generedHash)) {
             throw new NotFoundException();
         }
         return id;
     }
 
-    @Override
-    public long parseLetterBatchIdByDokumenttiId(String idStr, String prefix) {
-        return parseLetterBatchIdByDokumenttiId(idStr, prefix, currentUserComponent.getCurrentUser().getOidHenkilo());
-    }
-
-    private String generateHash(String prefix, long id, String oid) {
-        return encoder.encodePassword(dokumenttiIdSalt + prefix + id + "-" + oid, null);
-    }
-
-    public void setCurrentUserComponent(CurrentUserComponent currentUserComponent) {
-        this.currentUserComponent = currentUserComponent;
+    private String generateHash(String prefix, long id) {
+        return encoder.encodePassword(dokumenttiIdSalt + prefix + id, null);
     }
 
     public void setEncoder(ShaPasswordEncoder encoder) {

@@ -656,7 +656,7 @@ public class LetterServiceImpl implements LetterService {
     private void saveZipDocument(LetterBatch batch) throws Exception{
         logger.info("Saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
         String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(),
-                LetterService.DOKUMENTTI_ID_PREFIX_ZIP, batch.getStoringOid());
+                LetterService.DOKUMENTTI_ID_PREFIX_ZIP);
         String fileName = Optional.fromNullable(batch.getTemplateName()).or("mergedZips")
                 + "_" + Optional.fromNullable(batch.getLanguage()).or("FI")+ ".zip";
         List<String> tags = Arrays.asList("viestintapalvelu", fileName, "zip", documentId);
@@ -680,7 +680,7 @@ public class LetterServiceImpl implements LetterService {
     private void savePdfDocument(LetterBatch batch) throws Exception {
         logger.info("Saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
         String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(),
-                LetterService.DOKUMENTTI_ID_PREFIX_PDF, batch.getStoringOid());
+                LetterService.DOKUMENTTI_ID_PREFIX_PDF);
         String fileName = Optional.fromNullable(batch.getTemplateName()).or("mergedletters")
                 + "_" + Optional.fromNullable(batch.getLanguage()).or("FI")+ ".pdf";
         List<String> tags = Arrays.asList("viestintapalvelu", fileName, "pdf", documentId);
