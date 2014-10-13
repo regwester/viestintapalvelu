@@ -124,11 +124,13 @@ viestintapalvelu.use.dev.basic.authentication=false
 
 viestintapalvelu.swagger.base.bath=/viestintapalvelu
 
-viestintapalvelu.asiointitili.service.location=http://localhost:8080/viestintapalvelu/api/v1/test/wsdl
+viestintapalvelu.asiointitili.service.location= {{viestintapalvelu_asiointitili_service_location}}
 viestintapalvelu.asiointitili.wss.keystore.instance = JKS
-viestintapalvelu.asiointitili.wss.keystore.file=keystore.jks
-viestintapalvelu.asiointitili.wss.keystore.password=1234
-viestintapalvelu.asiointitili.wss.keystore.alias=asiointitili
-viestintapalvelu.asiointitili.viranomainen.kayttajatunnus = kayttajatunnus
-viestintapalvelu.asiointitili.viranomainen.palvelutunnus = palvelutunnus
-viestintapalvelu.asiointitili.viranomainen.sanoma.varmenne = varmennenimi
+viestintapalvelu.asiointitili.wss.keystore.file= {{viestintapalvelu_asiointitili_wss_keystore_file}}
+viestintapalvelu.asiointitili.wss.keystore.password= {{viestintapalvelu_asiointitili_wss_keystore_password}
+viestintapalvelu.asiointitili.wss.certificate.password= {{viestintapalvelu_asiointitili_wss_certificate_password}}
+viestintapalvelu.asiointitili.wss.keystore.alias= {{viestintapalvelu_asiointitili_wss_keystore_alias}}
+viestintapalvelu.asiointitili.viranomainen.viranomaistunnus = {{viestintapalvelu_asiointitili_viranomainen_viranomaistunnus}}
+viestintapalvelu.asiointitili.viranomainen.kayttajatunnus = {{viestintapalvelu_asiointitili_viranomainen_kayttajatunnus}}
+viestintapalvelu.asiointitili.viranomainen.palvelutunnus = {{viestintapalvelu_asiointitili_viranomainen_palvelutunnus}}
+viestintapalvelu.asiointitili.viranomainen.sanoma.varmenne = {{viestintapalvelu_asiointitili_viranomainen_sanoma_varmenne}}

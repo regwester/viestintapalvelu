@@ -117,8 +117,7 @@
     </jaxrs-client:client>
 
     <jaxws:client id="asiointitiliViranomaispalvelutClient" serviceClass="fi.suomi.asiointitili.Viranomaispalvelut"
-            address="${viestintapalvelu.asiointitili.service.location}"
-            wsdlLocation="${viestintapalvelu.asiointitili.service.location}?wsdl">
+            address="${viestintapalvelu.asiointitili.service.location}">
         <jaxws:inInterceptors>
             <bean id="asiointitiliViranomaispalvelutLoggingInInterceptor"
                         class="org.apache.cxf.interceptor.LoggingInInterceptor" >
@@ -131,7 +130,10 @@
                     <map>
                         <entry key="action" value="Timestamp Signature"/>
                         <entry key="signaturePropRefId" value="xmlSignatureProperties"/>
+                        <entry key="user" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
+                        <entry key="signatureUser" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
                         <entry key="xmlSignatureProperties" value-ref="asiointitiliViranomaispalvelutCrytoProperties"/>
+                        <entry key="passwordCallbackRef" value-ref="privateKeyPasswordHandler"/>
                     </map>
                 </constructor-arg>
             </bean>
@@ -148,6 +150,9 @@
         <prop key="org.apache.ws.security.crypto.merlin.keystore.password">${viestintapalvelu.asiointitili.wss.keystore.password}</prop>
         <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${viestintapalvelu.asiointitili.wss.keystore.alias}</prop>
     </util:properties>
+    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.asiointitili.ws.PrivateKeyPasswordCallbackHandler">
+        <property name="privateKeyPassword" value="${viestintapalvelu.asiointitili.wss.certificate.password}"/>
+    </bean>
     <util:map id="securityParams" key-type="java.lang.String" value-type="java.lang.String">
         <entry key="authMode" value="${auth.mode}"/>
     </util:map>
@@ -160,8 +165,6 @@
             <sec:certAlias>${viestintapalvelu.asiointitili.wss.keystore.alias}</sec:certAlias>
         </http:tlsClientParameters>
     </http:conduit>
-
-
 
     <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 

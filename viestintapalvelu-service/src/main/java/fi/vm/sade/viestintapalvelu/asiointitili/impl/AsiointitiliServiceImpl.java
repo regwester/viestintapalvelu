@@ -37,17 +37,8 @@ import static org.joda.time.DateTime.now;
 @Service
 public class AsiointitiliServiceImpl implements AsiointitiliService {
     public static final String SANOMA_VERSIO = "1.0";
-
-//    @Value("${viestintapalvelu.asiointitili.service.location}")
-//    private String serviceLocation;
-//    @Value("${viestintapalvelu.asiointitili.wss.keystore.instance:JKS}")
-//    private String keystoreInstance;
-//    @Value("${viestintapalvelu.asiointitili.wss.keystore.file}")
-//    private String keystoreFile;
-//    @Value("${viestintapalvelu.asiointitili.wss.keystore.password}")
-//    private String keystorePw;
-//    @Value("${viestintapalvelu.asiointitili.wss.keystore.alias}")
-//    private String keystoreAlias;
+    @Value("${viestintapalvelu.asiointitili.viranomainen.viranomaistunnus}")
+    private String viranomainenTunnus;
     @Value("${viestintapalvelu.asiointitili.viranomainen.kayttajatunnus}")
     private String viranomainenKayttajatunnus;
     @Value("${viestintapalvelu.asiointitili.viranomainen.palvelutunnus}")
@@ -57,35 +48,9 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
 
     @Resource
     private Viranomaispalvelut asiointitiliViranomaispalvelutClient;
-
-//    private Viranomaispalvelut service;
-//
-//    public Viranomaispalvelut getService() {
-//        if (this.service == null) {
-//            Viranomaispalvelut_Service service = null;
-//            try {
-//                service = new Viranomaispalvelut_Service(new URL(serviceLocation));
-//            } catch (MalformedURLException e) {
-//                throw new IllegalArgumentException(e);
-//            }
-//            service.setHandlerResolver(new HandlerResolver() {
-//                @Override
-//                public List<Handler> getHandlerChain(PortInfo portInfo) {
-//                    return Arrays.asList((Handler) new SOAPSigningHanlder(
-//                            keystoreInstance,
-//                            keystoreFile,
-//                            keystorePw,
-//                            keystoreAlias
-//                    ));
-//                }
-//            });
-//            this.service = service.getViranomaispalvelutSoap();
-//        }
-//        return this.service;
-//    }
-
     protected Viranomainen createViranomainen() {
         Viranomainen virnaomainen = new Viranomainen();
+        virnaomainen.setViranomaisTunnus(viranomainenTunnus);
         virnaomainen.setKayttajaTunnus(viranomainenKayttajatunnus);
         virnaomainen.setPalveluTunnus(virnaomainenPalvelutunnus);
         virnaomainen.setSanomaVersio(SANOMA_VERSIO);
@@ -104,7 +69,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
         asiakas.setAsiakasTunnus("010101-123N");
         asiakas.setTunnusTyyppi("SSN");
         kohde.getAsiakas().add(asiakas);
-        kohde.setViranomaisTunniste("13f35ca5-b892-48e3-bc0c-3c1ac5413i4x");
+        kohde.setViranomaisTunniste(UUID.randomUUID().toString());
         kohde.setVahvistusVaatimus("0");
         kohde.setAsiaNumero(null);
         kohde.setNimeke("testi kaksirivi");
