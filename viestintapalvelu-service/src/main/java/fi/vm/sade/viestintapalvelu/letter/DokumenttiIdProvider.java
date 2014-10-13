@@ -30,23 +30,6 @@ public interface DokumenttiIdProvider {
     String generateDocumentIdForLetterBatchId(long id, String prefix);
 
     /**
-     * @param id of LetterBatch to make document id from
-     * @param prefix for the id
-     * @param oid Henkilo OID of the user
-     * @return the genrated id
-     */
-    String generateDocumentIdForLetterBatchId(long id, String prefix, String oid);
-
-    /**
-     * @param idStr id string to parse
-     * @param prefix the prefix expected
-     * @param oid the expected Henkilo OID of the current user
-     * @return the valid id of a LetterBatch
-     * @throws javax.ws.rs.NotFoundException if ID was invalid
-     */
-    long parseLetterBatchIdByDokumenttiId(String idStr, String prefix, String oid);
-
-    /**
      * @param idStr id string to parse
      * @param prefix the prefix expected
      * @return the valid id of a LetterBatch

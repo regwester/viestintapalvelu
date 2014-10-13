@@ -102,7 +102,6 @@ public class LetterResourceAsyncPerformanceIT {
         Field currentUserComponentField = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);
         currentUserComponentField.set(((Advised)letterService).getTargetSource().getTarget(), currentUserComponent);
-        dokumenttiIdProvider.setCurrentUserComponent(currentUserComponent);
     }
 
     @Test

@@ -31,16 +31,6 @@ public class DummyDokumenttiIdProvder implements DokumenttiIdProvider {
     }
 
     @Override
-    public String generateDocumentIdForLetterBatchId(long id, String prefix, String oid) {
-        return generateDocumentIdForLetterBatchId(id, prefix);
-    }
-
-    @Override
-    public long parseLetterBatchIdByDokumenttiId(String idStr, String prefix, String oid) {
-        return parseLetterBatchIdByDokumenttiId(idStr, prefix, oid);
-    }
-
-    @Override
     public long parseLetterBatchIdByDokumenttiId(String idStr, String prefix) {
         return Long.parseLong(idStr.substring(prefix.length()).split("-")[0]);
     }
