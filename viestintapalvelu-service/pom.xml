@@ -646,6 +646,10 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
                 <executions>
@@ -657,14 +661,11 @@
                         <configuration>
                             <sources>
                                 <source>${project.build.directory}/generated-sources/wsimport</source>
+                                <source>${project.build.directory}/generated-sources/java</source>
                             </sources>
                         </configuration>
                     </execution>
                 </executions>
-            </plugin>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
             </plugin>
         </plugins>
         <pluginManagement>
