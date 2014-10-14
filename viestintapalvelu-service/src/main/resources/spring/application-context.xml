@@ -1,17 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xmlns:context="http://www.springframework.org/schema/context" xmlns:util="http://www.springframework.org/schema/util"
-       xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client" xmlns:http="http://cxf.apache.org/transports/http/configuration"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client"
+       xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:tx="http://www.springframework.org/schema/tx"
        xmlns:task="http://www.springframework.org/schema/task"
+       xmlns:jaxws="http://cxf.apache.org/jaxws"
+       xmlns:sec="http://cxf.apache.org/configuration/security"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
-       http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
-       http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
-       http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
-       http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
-       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-       http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd
+           http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
+           http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
+           http://cxf.apache.org/jaxws http://cxf.apache.org/schemas/jaxws.xsd
+           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+           http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
     <context:property-placeholder
             location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
@@ -55,6 +61,7 @@
         <property name="target" ref="ticketInterceptorTarget"/>
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean>
+
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
                          address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:providers>
@@ -108,6 +115,56 @@
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
+
+    <jaxws:client id="asiointitiliViranomaispalvelutClient" serviceClass="fi.suomi.asiointitili.Viranomaispalvelut"
+            address="${viestintapalvelu.asiointitili.service.location}">
+        <jaxws:inInterceptors>
+            <bean id="asiointitiliViranomaispalvelutLoggingInInterceptor"
+                        class="org.apache.cxf.interceptor.LoggingInInterceptor" >
+                <property name="prettyLogging" value="true" />
+            </bean>
+        </jaxws:inInterceptors>
+        <jaxws:outInterceptors>
+            <bean id="soapSigningInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+                <constructor-arg>
+                    <map>
+                        <entry key="action" value="Timestamp Signature"/>
+                        <entry key="signaturePropRefId" value="xmlSignatureProperties"/>
+                        <entry key="user" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
+                        <entry key="signatureUser" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
+                        <entry key="xmlSignatureProperties" value-ref="asiointitiliViranomaispalvelutCrytoProperties"/>
+                        <entry key="passwordCallbackRef" value-ref="privateKeyPasswordHandler"/>
+                    </map>
+                </constructor-arg>
+            </bean>
+            <bean id="asiointitiliViranomaispalvelutLoggingOutInterceptor"
+                  class="org.apache.cxf.interceptor.LoggingOutInterceptor" >
+                <property name="prettyLogging" value="true" />
+            </bean>
+        </jaxws:outInterceptors>
+    </jaxws:client>
+    <util:properties id="asiointitiliViranomaispalvelutCrytoProperties">
+        <prop key="org.apache.ws.security.crypto.provider">org.apache.ws.security.components.crypto.Merlin</prop>
+        <prop key="org.apache.ws.security.crypto.merlin.keystore.type">${viestintapalvelu.asiointitili.wss.keystore.instance}</prop>
+        <prop key="org.apache.ws.security.crypto.merlin.keystore.file">${viestintapalvelu.asiointitili.wss.keystore.file}</prop>
+        <prop key="org.apache.ws.security.crypto.merlin.keystore.password">${viestintapalvelu.asiointitili.wss.keystore.password}</prop>
+        <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${viestintapalvelu.asiointitili.wss.keystore.alias}</prop>
+    </util:properties>
+    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws.PrivateKeyPasswordCallbackHandler">
+        <property name="privateKeyPassword" value="${viestintapalvelu.asiointitili.wss.certificate.password}"/>
+    </bean>
+    <util:map id="securityParams" key-type="java.lang.String" value-type="java.lang.String">
+        <entry key="authMode" value="${auth.mode}"/>
+    </util:map>
+    <http:conduit id="asiointitiliViranomaispalvelutConduit" name="*.http-conduit">
+        <http:tlsClientParameters>
+            <sec:keyManagers keyPassword="${viestintapalvelu.asiointitili.wss.keystore.password}">
+                <sec:keyStore file="${viestintapalvelu.asiointitili.wss.keystore.file}"
+                              type="jks" password="${viestintapalvelu.asiointitili.wss.keystore.password}" />
+            </sec:keyManagers>
+            <sec:certAlias>${viestintapalvelu.asiointitili.wss.keystore.alias}</sec:certAlias>
+        </http:tlsClientParameters>
+    </http:conduit>
 
     <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 

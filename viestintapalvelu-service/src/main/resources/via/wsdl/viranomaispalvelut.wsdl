@@ -1,0 +1,348 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<WL5G3N1:definitions name="Viranomaispalvelut" targetNamespace="http://www.suomi.fi/asiointitili"
+                     xmlns:WL5G3N0="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd"
+                     xmlns:WL5G3N1="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N2="http://www.suomi.fi/asiointitili"
+                     xmlns:WL5G3N3="http://www.w3.org/2006/05/addressing/wsdl"
+                     xmlns:WL5G3N4="http://schemas.xmlsoap.org/wsdl/soap/"
+                     xmlns:wsp="http://schemas.xmlsoap.org/ws/2004/09/policy">
+    <wsp:UsingPolicy WL5G3N1:Required="true"/>
+    <wsp:Policy WL5G3N0:Id="wspAsiointitiliSignature">
+        <wssp:Integrity SignToken="false" xmlns:wls="http://www.bea.com/wls90/security/policy/wsee#part"
+                        xmlns:wssp="http://www.bea.com/wls90/security/policy">
+            <wssp:SignatureAlgorithm URI="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+            <wssp:CanonicalizationAlgorithm URI="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+            <wssp:Target>
+                <wssp:DigestAlgorithm URI="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <wssp:MessageParts Dialect="http://www.bea.com/wls90/security/policy/wsee#part">
+                    wls:SystemHeaders()
+                </wssp:MessageParts>
+            </wssp:Target>
+            <wssp:Target>
+                <wssp:DigestAlgorithm URI="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <wssp:MessageParts Dialect="http://www.bea.com/wls90/security/policy/wsee#part">
+                    wls:SecurityHeader(wsu:Timestamp)
+                </wssp:MessageParts>
+            </wssp:Target>
+            <wssp:Target>
+                <wssp:DigestAlgorithm URI="http://www.w3.org/2000/09/xmldsig#sha1"/>
+                <wssp:MessageParts Dialect="http://schemas.xmlsoap.org/2002/12/wsse#part">
+                    wsp:Body()
+                </wssp:MessageParts>
+            </wssp:Target>
+            <wssp:SupportedTokens>
+                <wssp:SecurityToken IncludeInMessage="true"
+                        TokenType="http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-x509-token-profile-1.0#X509v3">
+                    <wssp:TokenIssuer>CN=CACERT,OU=FOR TESTING ONLY,O=MyOrganization,L=MyTown,ST=MyState,C=US,1.2.840.113549.1.9.1=#160f737570706f7274406265612e636f6d,CN=Demo Certificate Authority Constraints,OU=Security,O=BEA WebLogic,L=San Francisco,ST=California,C=US,1.2.840.113549.1.9.1=#16107365637572697479406265612e636f6d,CN=Demo Certificate Authority Constraints,OU=Security,O=BEA WebLogic,L=San Francisco,ST=California,C=US,CN=CertGenCAB,OU=FOR TESTING ONLY,O=MyOrganization,L=MyTown,ST=MyState,C=US,CN=Deutsche Telekom Root CA 2,OU=T-TeleSec Trust Center,O=Deutsche Telekom AG,C=DE,CN=America Online Root Certification Authority 2,O=America Online Inc.,C=US,OU=Security Communication RootCA1,O=SECOM Trust.net,C=JP,CN=America Online Root Certification Authority 1,O=America Online Inc.,C=US,CN=Entrust.net Client Certification Authority,OU=(c) 1999 Entrust.net Limited,OU=www.entrust.net/Client_CA_Info/CPS incorp. by ref. limits liab.,O=Entrust.net,C=US,OU=VeriSign Trust Network,OU=(c) 1998 VeriSign\, Inc. - For authorized use only,OU=Class 3 Public Primary Certification Authority - G2,O=VeriSign\, Inc.,C=US,1.2.840.113549.1.9.1=#1619706572736f6e616c2d6261736963407468617774652e636f6d,CN=Thawte Personal Basic CA,OU=Certification Services Division,O=Thawte Consulting,L=Cape Town,ST=Western Cape,C=ZA,CN=GlobalSign Root CA,OU=Root CA,O=GlobalSign nv-sa,C=BE,1.2.840.113549.1.9.1=#1611696e666f4076616c69636572742e636f6d,CN=http://www.valicert.com/,OU=ValiCert Class 1 Policy Validation Authority,O=ValiCert\, Inc.,L=ValiCert Validation Network,CN=Global Chambersign Root - 2008,O=AC Camerfirma S.A.,2.5.4.5=#1309413832373433323837,L=Madrid (see current address at www.camerfirma.com/address),C=EU,CN=DigiCert Assured ID Root CA,OU=www.digicert.com,O=DigiCert Inc,C=US,CN=AddTrust Class 1 CA Root,OU=AddTrust TTP Network,O=AddTrust AB,C=SE,CN=VeriSign Class 2 Public Primary Certification Authority - G3,OU=(c) 1999 VeriSign\, Inc. - For authorized use only,OU=VeriSign Trust Network,O=VeriSign\, Inc.,C=US,1.2.840.113549.1.9.1=#161b706572736f6e616c2d7072656d69756d407468617774652e636f6d,CN=Thawte Personal Premium CA,OU=Certification Services Division,O=Thawte Consulting,L=Cape Town,ST=Western Cape,C=ZA,CN=AddTrust External CA Root,OU=AddTrust External TTP Network,O=AddTrust AB,C=SE,CN=DigiCert Global Root CA,OU=www.digicert.com,O=DigiCert Inc,C=US,CN=TC TrustCenter Class 2 CA II,OU=TC TrustCenter Class 2 CA,O=TC TrustCenter GmbH,C=DE,CN=TC TrustCenter Universal CA I,OU=TC TrustCenter Universal CA,O=TC TrustCenter GmbH,C=DE,1.2.840.113549.1.9.1=#1611696e666f4076616c69636572742e636f6d,CN=http://www.valicert.com/,OU=ValiCert Class 2 Policy Validation Authority,O=ValiCert\, Inc.,L=ValiCert Validation Network,CN=Entrust.net Secure Server Certification Authority,OU=(c) 1999 Entrust.net Limited,OU=www.entrust.net/CPS incorp. by ref. (limits liab.),O=Entrust.net,C=US,OU=Equifax Secure eBusiness CA-2,O=Equifax Secure,C=US,CN=Equifax Secure eBusiness CA-1,O=Equifax Secure Inc.,C=US,1.2.840.113549.1.9.1=#16197072656d69756d2d736572766572407468617774652e636f6d,CN=Thawte Premium Server CA,OU=Certification Services Division,O=Thawte Consulting cc,L=Cape Town,ST=Western Cape,C=ZA,OU=VeriSign Trust Network,OU=(c) 1998 VeriSign\, Inc. - For authorized use only,OU=Class 2 Public Primary Certification Authority - G2,O=VeriSign\, Inc.,C=US,CN=AddTrust Qualified CA Root,OU=AddTrust TTP Network,O=AddTrust AB,C=SE,CN=Entrust.net Client Certification Authority,OU=(c) 2000 Entrust.net Limited,OU=www.entrust.net/GCCA_CPS incorp. by ref. (limits liab.),O=Entrust.net,CN=UTN-USERFirst-Hardware,OU=http://www.usertrust.com,O=The USERTRUST Network,L=Salt Lake City,ST=UT,C=US,CN=DigiCert High Assurance EV Root CA,OU=www.digicert.com,O=DigiCert Inc,C=US,OU=Starfield Class 2 Certification Authority,O=Starfield Technologies\, Inc.,C=US,CN=VeriSign Class 1 Public Primary Certification Authority - G3,OU=(c) 1999 VeriSign\, Inc. - For authorized use only,OU=VeriSign Trust Network,O=VeriSign\, Inc.,C=US,CN=SwissSign Silver CA - G2,O=SwissSign AG,C=CH,OU=Security Communication EV RootCA1,O=SECOM Trust Systems CO.\,LTD.,C=JP,1.2.840.113549.1.9.1=#16177365727665722d6365727473407468617774652e636f6d,CN=Thawte Server CA,OU=Certification Services Division,O=Thawte Consulting cc,L=Cape Town,ST=Western Cape,C=ZA,OU=Class 3 Public Primary Certification Authority,O=VeriSign\, Inc.,C=US,CN=Entrust.net Secure Server Certification Authority,OU=(c) 2000 Entrust.net Limited,OU=www.entrust.net/SSL_CPS incorp. by ref. (limits liab.),O=Entrust.net,CN=GlobalSign,O=GlobalSign,OU=GlobalSign Root CA - R2,CN=GeoTrust Global CA,O=GeoTrust Inc.,C=US,OU=VeriSign Trust Network,OU=(c) 1998 VeriSign\, Inc. - For authorized use only,OU=Class 1 Public Primary Certification Authority - G2,O=VeriSign\, Inc.,C=US,CN=Chambers of Commerce Root - 2008,O=AC Camerfirma S.A.,2.5.4.5=#1309413832373433323837,L=Madrid (see current address at www.camerfirma.com/address),C=EU,CN=UTN-USERFirst-Client Authentication and Email,OU=http://www.usertrust.com,O=The USERTRUST Network,L=Salt Lake City,ST=UT,C=US,CN=AAA Certificate Services,O=Comodo CA Limited,L=Salford,ST=Greater Manchester,C=GB,CN=SwissSign Gold CA - G2,O=SwissSign AG,C=CH,CN=Baltimore CyberTrust Root,OU=CyberTrust,O=Baltimore,C=IE,OU=Equifax Secure Certificate Authority,O=Equifax,C=US,CN=Chambers of Commerce Root,OU=http://www.chambersign.org,O=AC Camerfirma SA CIF A82743287,C=EU,OU=Class 2 Public Primary Certification Authority,O=VeriSign\, Inc.,C=US,CN=Entrust.net Certification Authority (2048),OU=(c) 1999 Entrust.net Limited,OU=www.entrust.net/CPS_2048 incorp. by ref. (limits liab.),O=Entrust.net,OU=Secure Server Certification Authority,O=RSA Data Security\, Inc.,C=US,CN=UTN - DATACorp SGC,OU=http://www.usertrust.com,O=The USERTRUST Network,L=Salt Lake City,ST=UT,C=US,CN=TC TrustCenter Class 4 CA II,OU=TC TrustCenter Class 4 CA,O=TC TrustCenter GmbH,C=DE,CN=Sonera Class2 CA,O=Sonera,C=FI,CN=UTN-USERFirst-Object,OU=http://www.usertrust.com,O=The USERTRUST Network,L=Salt Lake City,ST=UT,C=US,OU=Class 1 Public Primary Certification Authority,O=VeriSign\, Inc.,C=US,CN=GTE CyberTrust Global Root,OU=GTE CyberTrust Solutions\, Inc.,O=GTE Corporation,C=US,CN=Thawte Timestamping CA,OU=Thawte Certification,O=Thawte,L=Durbanville,ST=Western Cape,C=ZA,CN=Baltimore CyberTrust Code Signing Root,OU=CyberTrust,O=Baltimore,C=IE,CN=Sonera Class1 CA,O=Sonera,C=FI,1.2.840.113549.1.9.1=#161c706572736f6e616c2d667265656d61696c407468617774652e636f6d,CN=Thawte Personal Freemail CA,OU=Certification Services Division,O=Thawte Consulting,L=Cape Town,ST=Western Cape,C=ZA,CN=SwissSign Platinum CA - G2,O=SwissSign AG,C=CH,CN=GTE CyberTrust Root 5,OU=GTE CyberTrust Solutions\, Inc.,O=GTE Corporation,C=US,CN=VeriSign Class 3 Public Primary Certification Authority - G3,OU=(c) 1999 VeriSign\, Inc. - For authorized use only,OU=VeriSign Trust Network,O=VeriSign\, Inc.,C=US,OU=Go Daddy Class 2 Certification Authority,O=The Go Daddy Group\, Inc.,C=US,CN=Equifax Secure Global eBusiness CA-1,O=Equifax Secure Inc.,C=US,</wssp:TokenIssuer>
+                </wssp:SecurityToken>
+            </wssp:SupportedTokens>
+        </wssp:Integrity>
+        <wssp:MessageAge Age="60" xmlns:wssp="http://www.bea.com/wls90/security/policy"/>
+    </wsp:Policy>
+    <WL5G3N1:types>
+        <xsd:schema elementFormDefault="qualified" targetNamespace="http://www.suomi.fi/asiointitili"
+                    xmlns:WL5G3N0="http://schemas.xmlsoap.org/wsdl/" xmlns:WL5G3N1="http://www.suomi.fi/asiointitili"
+                    xmlns:WL5G3N2="http://www.w3.org/2006/05/addressing/wsdl"
+                    xmlns:WL5G3N3="http://schemas.xmlsoap.org/wsdl/soap/"
+                    xmlns:tns="http://www.suomi.fi/asiointitili" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+            <xsd:element name="HaeAsiakkaita">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Viranomainen" type="tns:Viranomainen"/>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Kysely" type="tns:Kysely_WS1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Viranomainen">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="ViranomaisTunnus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="PalveluTunnus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="KayttajaTunnus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="SanomaTunniste" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="SanomaVersio" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="SanomaVarmenneNimi" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Kysely_WS1">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="KyselyLaji" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="KyselyAlku" nillable="true" type="xsd:dateTime"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="KyselyLoppu" nillable="true" type="xsd:dateTime"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Asiakkaat" type="tns:ArrayOfAsiakas"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfAsiakas">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Asiakas" nillable="true" type="tns:Asiakas"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Asiakas">
+                <xsd:attribute name="AsiakasTunnus" type="xsd:string"/>
+                <xsd:attribute name="TunnusTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:element name="HaeAsiakkaitaResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="HaeAsiakkaitaResult" type="tns:Vastaus_WS1"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Vastaus_WS1">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TilaKoodi" type="tns:TilaKoodi_WS"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Asiakkaat" type="tns:ArrayOfAsiakasJaTila_WS1"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="TilaKoodi_WS">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="TilaKoodi" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TilaKoodiKuvaus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="SanomaTunniste" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfAsiakasJaTila_WS1">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Asiakas" nillable="true" type="tns:AsiakasJaTila_WS1"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="AsiakasJaTila_WS1">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="Tila" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="TilaPvm" type="xsd:dateTime"/>
+                </xsd:sequence>
+                <xsd:attribute name="AsiakasTunnus" type="xsd:string"/>
+                <xsd:attribute name="TunnusTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:element name="LisaaKohteita">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Viranomainen" type="tns:Viranomainen"/>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Kysely" type="tns:Kysely_WS2"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Kysely_WS2">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="KohdeMaara" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Kohteet" type="tns:ArrayOfKohde_WS2"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfKohde_WS2">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Kohde" nillable="true" type="tns:Kohde_WS2"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Kohde_WS2">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Asiakas" type="tns:Asiakas"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="ViranomaisTunniste" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Viittaus" type="tns:Viittaus_WS"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="VahvistusVaatimus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="AsiaNumero" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Nimeke" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="LahetysPvm" type="xsd:dateTime"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="LahettajaNimi" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="KuvausTeksti" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Maksullisuus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="MaksamisKuvausTeksti" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Tila" type="tns:Tila_WS2"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Tiedostot" type="tns:ArrayOfTiedosto"/>
+                    <xsd:element minOccurs="0" name="ViranomaisenEmail">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="400"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element minOccurs="0" name="VaadiLukukuittaus">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="400"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="SmsLisatieto">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="1000"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="EmailLisatietoOtsikko">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="EmailLisatietoSisalto" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TavoitettavuusTietoSMS">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TavoitettavuusTietoEmail">
+                        <xsd:simpleType>
+                            <xsd:restriction base="xsd:string">
+                                <xsd:maxLength value="200"/>
+                            </xsd:restriction>
+                        </xsd:simpleType>
+                    </xsd:element>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Viittaus_WS">
+                <xsd:attribute name="ViittausTunniste" type="xsd:string"/>
+                <xsd:attribute name="ViittausTunnisteTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:complexType name="Tila_WS2">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TilaKoodi" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Tila" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TilaKuvaus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="TilaPvm" nillable="true" type="xsd:dateTime"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfTiedosto">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Tiedosto" nillable="true" type="tns:Tiedosto"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="Tiedosto">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TiedostonKuvaus" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TiedostoURL" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TiedostoSisalto" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TiedostoKoko" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TiedostoMuoto" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TiedostoNimi" type="xsd:string"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:element name="LisaaKohteitaResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="LisaaKohteitaResult" type="tns:Vastaus_WS2"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Vastaus_WS2">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TilaKoodi" type="tns:TilaKoodi_WS"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="KohdeMaara" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="Kohteet" type="tns:ArrayOfKohdeJaAsiakasTila_WS2_V"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="ArrayOfKohdeJaAsiakasTila_WS2_V">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Kohde" nillable="true" type="tns:KohdeJaAsiakasTila_WS2_V"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="KohdeJaAsiakasTila_WS2_V">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="ViranomaisTunniste" type="xsd:string"/>
+                    <xsd:element maxOccurs="unbounded" minOccurs="0" name="Asiakas" type="tns:AsiakasJaKohteenTila"/>
+                </xsd:sequence>
+            </xsd:complexType>
+            <xsd:complexType name="AsiakasJaKohteenTila">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="AsiointitiliTunniste" type="xsd:string"/>
+                    <xsd:element maxOccurs="1" minOccurs="1" name="KohteenTila" type="xsd:int"/>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="KohteenTilaKuvaus" type="xsd:string"/>
+                </xsd:sequence>
+                <xsd:attribute name="AsiakasTunnus" type="xsd:string"/>
+                <xsd:attribute name="TunnusTyyppi" type="xsd:string"/>
+            </xsd:complexType>
+            <xsd:element name="HaeTilaTieto">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Viranomainen" type="tns:Viranomainen"/>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="Kysely" type="tns:Kysely_WS10"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Kysely_WS10"/>
+            <xsd:element name="HaeTilaTietoResponse">
+                <xsd:complexType>
+                    <xsd:sequence>
+                        <xsd:element maxOccurs="1" minOccurs="0" name="HaeTilaTietoResult" type="tns:Vastaus_WS10"/>
+                    </xsd:sequence>
+                </xsd:complexType>
+            </xsd:element>
+            <xsd:complexType name="Vastaus_WS10">
+                <xsd:sequence>
+                    <xsd:element maxOccurs="1" minOccurs="0" name="TilaKoodi" type="tns:TilaKoodi_WS"/>
+                </xsd:sequence>
+            </xsd:complexType>
+        </xsd:schema>
+    </WL5G3N1:types>
+    <WL5G3N1:message name="Viranomaispalvelut_HaeAsiakkaita_InputMessage">
+        <WL5G3N1:part element="WL5G3N2:HaeAsiakkaita" name="parameters"/>
+    </WL5G3N1:message>
+    <WL5G3N1:message name="Viranomaispalvelut_HaeAsiakkaita_OutputMessage">
+        <WL5G3N1:part element="WL5G3N2:HaeAsiakkaitaResponse" name="parameters"/>
+    </WL5G3N1:message>
+    <WL5G3N1:message name="Viranomaispalvelut_LisaaKohteita_InputMessage">
+        <WL5G3N1:part element="WL5G3N2:LisaaKohteita" name="parameters"/>
+    </WL5G3N1:message>
+    <WL5G3N1:message name="Viranomaispalvelut_LisaaKohteita_OutputMessage">
+        <WL5G3N1:part element="WL5G3N2:LisaaKohteitaResponse" name="parameters"/>
+    </WL5G3N1:message>
+    <WL5G3N1:message name="Viranomaispalvelut_HaeTilaTieto_InputMessage">
+        <WL5G3N1:part element="WL5G3N2:HaeTilaTieto" name="parameters"/>
+    </WL5G3N1:message>
+    <WL5G3N1:message name="Viranomaispalvelut_HaeTilaTieto_OutputMessage">
+        <WL5G3N1:part element="WL5G3N2:HaeTilaTietoResponse" name="parameters"/>
+    </WL5G3N1:message>
+    <WL5G3N1:portType name="Viranomaispalvelut">
+        <WL5G3N1:operation name="HaeAsiakkaita">
+            <WL5G3N1:input WL5G3N3:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeAsiakkaita" message="WL5G3N2:Viranomaispalvelut_HaeAsiakkaita_InputMessage"/>
+            <WL5G3N1:output WL5G3N3:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeAsiakkaitaResponse" message="WL5G3N2:Viranomaispalvelut_HaeAsiakkaita_OutputMessage"/>
+        </WL5G3N1:operation>
+        <WL5G3N1:operation name="LisaaKohteita">
+            <WL5G3N1:input WL5G3N3:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/LisaaKohteita" message="WL5G3N2:Viranomaispalvelut_LisaaKohteita_InputMessage"/>
+            <WL5G3N1:output WL5G3N3:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/LisaaKohteitaResponse" message="WL5G3N2:Viranomaispalvelut_LisaaKohteita_OutputMessage"/>
+        </WL5G3N1:operation>
+        <WL5G3N1:operation name="HaeTilaTieto">
+            <WL5G3N1:input WL5G3N3:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeTilaTieto" message="WL5G3N2:Viranomaispalvelut_HaeTilaTieto_InputMessage"/>
+            <WL5G3N1:output WL5G3N3:Action="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeTilaTietoResponse" message="WL5G3N2:Viranomaispalvelut_HaeTilaTieto_OutputMessage"/>
+        </WL5G3N1:operation>
+    </WL5G3N1:portType>
+    <WL5G3N1:binding name="ViranomaispalvelutSoap" type="WL5G3N2:Viranomaispalvelut">
+        <wsp:Policy>
+            <wsp:PolicyReference URI="#wspAsiointitiliSignature"/>
+        </wsp:Policy>
+        <WL5G3N4:binding style="document" transport="http://schemas.xmlsoap.org/soap/http"/>
+        <WL5G3N1:operation name="HaeAsiakkaita">
+            <WL5G3N4:operation soapAction="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeAsiakkaita" style="document"/>
+            <WL5G3N1:input>
+                <WL5G3N4:body use="literal"/>
+            </WL5G3N1:input>
+            <WL5G3N1:output>
+                <WL5G3N4:body use="literal"/>
+            </WL5G3N1:output>
+        </WL5G3N1:operation>
+        <WL5G3N1:operation name="LisaaKohteita">
+            <WL5G3N4:operation soapAction="http://www.suomi.fi/asiointitili/Viranomaispalvelut/LisaaKohteita" style="document"/>
+            <WL5G3N1:input>
+                <WL5G3N4:body use="literal"/>
+            </WL5G3N1:input>
+            <WL5G3N1:output>
+                <WL5G3N4:body use="literal"/>
+            </WL5G3N1:output>
+        </WL5G3N1:operation>
+        <WL5G3N1:operation name="HaeTilaTieto">
+            <WL5G3N4:operation soapAction="http://www.suomi.fi/asiointitili/Viranomaispalvelut/HaeTilaTieto" style="document"/>
+            <WL5G3N1:input>
+                <WL5G3N4:body use="literal"/>
+            </WL5G3N1:input>
+            <WL5G3N1:output>
+                <WL5G3N4:body use="literal"/>
+            </WL5G3N1:output>
+        </WL5G3N1:operation>
+    </WL5G3N1:binding>
+    <WL5G3N1:service name="Viranomaispalvelut">
+        <WL5G3N1:port binding="WL5G3N2:ViranomaispalvelutSoap" name="ViranomaispalvelutSoap">
+            <WL5G3N4:address location="http://integraatiopalvelu.fi:80/Asiointitili/ViranomaispalvelutWSInterface"/>
+        </WL5G3N1:port>
+    </WL5G3N1:service>
+</WL5G3N1:definitions>
