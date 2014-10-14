@@ -13,44 +13,20 @@ import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource;
 
-/**
- * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service-context.xml}
- * 
- * @author vehei1
- *
- */
 @Component
-public class CurrentUserComponent {
-    private static final Logger logger = LoggerFactory.getLogger(CurrentUserComponent.class);
+public interface CurrentUserComponent {
 
-    @Resource
-    private OmattiedotResource omattiedotResourceClient;
-    
     /**
      * Hakee kirjaantuneen käyttäjän tiedot
      * 
      * @return Henkilon tiedot
      */
-    public Henkilo getCurrentUser() {
-        try {
-            return omattiedotResourceClient.currentHenkiloTiedot();
-        } catch (Exception e) {
-            logger.error("Error getting current user: " + e.getMessage(), e);
-            throw new ExternalInterfaceException("error.msg.gettingCurrentUserFailed", e);
-        }
-    }
+    public Henkilo getCurrentUser();
 
     /**
      * Hakee kirjaantuneen käyttäjän organisaattioiden tiedot
      * 
      * @return Lista henkilön organisaattiotietoja
      */
-    public List<OrganisaatioHenkilo> getCurrentUserOrganizations() {
-        try {
-            return omattiedotResourceClient.currentHenkiloOrganisaatioHenkiloTiedot();
-        } catch (Exception e) {
-            logger.error("Error getting current user's organizations: " + e.getMessage(), e);
-            throw new ExternalInterfaceException(e);
-        }
-    }
+    public List<OrganisaatioHenkilo> getCurrentUserOrganizations();
 }

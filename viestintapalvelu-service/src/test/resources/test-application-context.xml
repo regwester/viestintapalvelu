@@ -63,6 +63,8 @@
         <property name="password" value=""/>
     </bean>
     
+    <bean id="currentUserComponent" class="fi.vm.sade.viestintapalvelu.externalinterface.component.DummyCurrentUserComponent"/>
+    
     <!-- EntityManagerFactory (required by JTA) support -->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="dataSourceInitializer">
         <property name="loadTimeWeaver">

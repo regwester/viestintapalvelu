@@ -49,6 +49,7 @@ import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponentImpl;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.letter.impl.DokumenttiIdProviderImpl;
@@ -93,7 +94,7 @@ public class LetterResourceAsyncPerformanceIT {
     @Before
     public void before() throws Exception {
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
-        CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
+        CurrentUserComponent currentUserComponent = new CurrentUserComponentImpl() {
             @Override
             public Henkilo getCurrentUser() {
                 return testHenkilo;

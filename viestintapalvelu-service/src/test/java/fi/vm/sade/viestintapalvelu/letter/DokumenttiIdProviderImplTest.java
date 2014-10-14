@@ -26,9 +26,9 @@ import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponentImpl;
 import fi.vm.sade.viestintapalvelu.letter.impl.DokumenttiIdProviderImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static org.junit.Assert.assertEquals;
 
 /**
@@ -44,7 +44,7 @@ public class DokumenttiIdProviderImplTest {
 
     @Before
     public void before() {
-        dokumenttiIdProvider.setCurrentUserComponent(new CurrentUserComponent() {
+        dokumenttiIdProvider.setCurrentUserComponent(new CurrentUserComponentImpl() {
             public Henkilo getCurrentUser() {
                 return henkilo;
             }
