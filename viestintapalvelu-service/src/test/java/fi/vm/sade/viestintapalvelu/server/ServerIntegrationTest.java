@@ -27,8 +27,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterResource;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Extend this class for embedded server support to your test class
@@ -40,6 +40,9 @@ public class ServerIntegrationTest {
     private Tomcat tomcat;
     private final static String WORKING_DIRECTORY = System.getProperty("java.io.tmpdir");
     private final static String SERVICE_NAME = "viestintapalvelu-service"; 
+    private final static String HOST_NAME = "localhost";
+    private final static Integer PORT = 9096;
+    private final static String HOST_WITH_PORT = "http://" + HOST_NAME + ":" + PORT;
     
     @Before
     public void startServer() throws Exception {
@@ -47,9 +50,9 @@ public class ServerIntegrationTest {
         String contextPath = "/" + SERVICE_NAME;
         tomcat = new Tomcat();
         tomcat.addWebapp(tomcat.getHost(), contextPath, WORKING_DIRECTORY + "/" + SERVICE_NAME);   
-        tomcat.setPort(9096);
+        tomcat.setPort(PORT);
         tomcat.setBaseDir(WORKING_DIRECTORY);
-        tomcat.setHostname("localhost");
+        tomcat.setHostname(HOST_NAME);
         tomcat.getHost().setAppBase(WORKING_DIRECTORY);
         tomcat.getHost().setAutoDeploy(true);
         tomcat.getHost().setDeployOnStartup(true);
@@ -57,23 +60,22 @@ public class ServerIntegrationTest {
         tomcat.start();
         Thread.sleep(500);
     }
-
     
     @Test
     public void quickTest() {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:9096").path("/" + SERVICE_NAME + "/api/v1/letter/async/letter/status/1");
+        WebTarget target = client.target(HOST_WITH_PORT).path("/" + SERVICE_NAME + "/api/v1/letter/async/letter/status/1");
         Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).get();
         assertNotNull(resp);
     }
     
     @Test
     public void anotherTest() throws Exception {
-        WebTarget target = ClientBuilder.newClient().target("http://localhost:9096").path("/" + SERVICE_NAME + "/api/v1/letter/async/letter");
+        WebTarget target = ClientBuilder.newClient().target(HOST_WITH_PORT).path("/" + SERVICE_NAME + "/api/v1/template/store");
         ObjectMapper mapper = new ObjectMapper();
-        String s = mapper.writeValueAsString(DocumentProviderTestData.getAsyncLetterBatch());
+        String s = mapper.writeValueAsString(DocumentProviderTestData.getTemplate());
         Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(s));
-        assertTrue(resp.getEntity() instanceof String);
+        assertEquals(200, resp.getStatus());
     }
     
     @After
