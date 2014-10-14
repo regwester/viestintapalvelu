@@ -19,6 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <authentication-domain.version>1.0-SNAPSHOT</authentication-domain.version>
         <dokumenttipalvelu.version>1.0-SNAPSHOT</dokumenttipalvelu.version>
+        <dtoconverter.version>2.0.2-RELEASE</dtoconverter.version>
     </properties>
 
     <dependencies>
@@ -497,6 +498,17 @@
             <artifactId>flyway-core</artifactId>
         </dependency>
 
+        <dependency>
+            <groupId>fi.ratamaa</groupId>
+            <artifactId>dtoconverter</artifactId>
+            <version>${dtoconverter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.ratamaa</groupId>
+            <artifactId>dtoconverter-hibernate</artifactId>
+            <version>${dtoconverter.version}</version>
+        </dependency>
+
         <!-- Apache PDFBox API library for PDF document handling -->
         <dependency>
             <groupId>org.apache.pdfbox</groupId>
@@ -623,6 +635,7 @@
                 <version>2.3</version>
                 <executions>
                     <execution>
+                        <phase>generate-sources</phase>
                         <goals>
                             <goal>wsimport</goal>
                         </goals>
@@ -632,6 +645,23 @@
                                 <wsdlFile>${basedir}/src/main/resources/via/wsdl/viranomaispaluukanava.wsdl</wsdlFile>
                                 <wsdlFile>${basedir}/src/main/resources/via/wsdl/viranomaispalvelut.wsdl</wsdlFile>
                             </wsdlFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>add-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${project.build.directory}/generated-sources/wsimport</source>
+                            </sources>
                         </configuration>
                     </execution>
                 </executions>

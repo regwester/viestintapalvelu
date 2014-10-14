@@ -16,8 +16,7 @@
 
 package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili;
 
-import fi.suomi.asiointitili.VastausWS2;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.KyselyWS2Dto;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 
 /**
  * User: ratamaa
@@ -26,6 +25,39 @@ import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.KyselyWS2D
  */
 public interface AsiointitiliService {
 
-    VastausWS2 kyselyWS2(KyselyWS2Dto kyselyWS2);
+    /**
+     * Omien asiointitiliasiakkaiden tarkistus
+     *
+     * Tämän kyselyn avulla viranomaisjärjestelmä voi tarkistaa mitkä sen asiakkaista ovat asiointitilipalvelun
+     * käyttäjiä ja voivat siis vastaanottaa asiointiasioita asiointitilille. Kyselyn avulla voi hakea kaikki omat
+     * asiakkaat tai tarkistaa annetun tai annettujen hetujen osalta, ovatko he ottaneet asiointitilin käyttöön.
+     *
+     * Vastauksessa saadaan tieto, onko  asiakas asiointitilin käyttäjä.
+     *
+     * @param kyselyDto tarkistuskysely
+     * @return vastaus
+     */
+    AsiakasTilaKyselyVastausDto tarkistaAsiointitilinTila(AsiakasTilaTarkastusKyselyDto kyselyDto);
+
+    /**
+     * Omien asiointitiliasiakkaiden tarkistus
+     *
+     * Kyselyä rajataan ajan suhteen siten, että haetaan vain tietyllä aikavälillä
+     * asiointitilin käyttäjäksi liittyneet.
+     *
+     * Vastauksessa saadaan tieto, onko  asiakas asiointitilin käyttäjä.
+     *
+     * @param kyselyDto kysely
+     * @return vastaus
+     */
+    AsiakasTilaKyselyVastausDto haeAsiakasTiloja(HaeAsiakasTilojaKyselyDto kyselyDto);
+
+    /**
+     * Asiointiasian lähettäminen / viranomaisen tiedoksianto
+     *
+     * @param kyselyWS2 tiedoksianto
+     * @return vastaus
+     */
+    KohdeLisaysVastausDto lisaaKohteitaAsiointitilille(KohdeLisaysDto kyselyWS2);
 
 }

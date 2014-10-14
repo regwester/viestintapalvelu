@@ -14,32 +14,25 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws;
+package fi.vm.sade.viestintapalvelu.util;
 
-import javax.xml.datatype.DatatypeConfigurationException;
-import javax.xml.datatype.DatatypeFactory;
-import javax.xml.datatype.XMLGregorianCalendar;
+import javax.validation.ConstraintValidator;
+import javax.validation.ConstraintValidatorContext;
 
-import org.joda.time.DateTime;
+import fi.vm.sade.generic.common.HetuUtils;
 
 /**
  * User: ratamaa
- * Date: 13.10.2014
- * Time: 12:40
+ * Date: 14.10.2014
+ * Time: 15:42
  */
-public class XMLTypeHelper {
-    private XMLTypeHelper() {
+public class HetuValidator implements ConstraintValidator<ValidHetu,String> {
+    @Override
+    public void initialize(ValidHetu constraintAnnotation) {
     }
 
-    public static XMLGregorianCalendar dateTime(DateTime dt) {
-        if (dt == null) {
-            return null;
-        }
-        try {
-            return DatatypeFactory.newInstance().newXMLGregorianCalendar(dt.toGregorianCalendar());
-        } catch (DatatypeConfigurationException e) {
-            throw new IllegalStateException(e);
-        }
+    @Override
+    public boolean isValid(String value, ConstraintValidatorContext context) {
+        return HetuUtils.isHetuValid(value);
     }
-
 }

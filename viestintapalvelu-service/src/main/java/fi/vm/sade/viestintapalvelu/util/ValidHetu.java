@@ -14,31 +14,26 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto;
+package fi.vm.sade.viestintapalvelu.util;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.lang.annotation.*;
 
-import com.wordnik.swagger.annotations.ApiModel;
-import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import fi.suomi.asiointitili.KohdeWS2;
+import javax.validation.Constraint;
+import javax.validation.Payload;
 
 /**
  * User: ratamaa
- * Date: 13.10.2014
- * Time: 17:48
+ * Date: 14.10.2014
+ * Time: 15:40
  */
-@ApiModel("KyselyWS2")
-public class KyselyWS2Dto {
-    @ApiModelProperty("Kyselyn kohteet")
-    private List<KohdeWS2> kohteet = new ArrayList<KohdeWS2>();
+@Retention(RetentionPolicy.RUNTIME)
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.ANNOTATION_TYPE})
+@Constraint(validatedBy = HetuValidator.class)
+@Documented
+public @interface ValidHetu {
+    String message() default "{fi.vm.sade.viestintapalvelu.util.ValidHetu}";
 
-    public List<KohdeWS2> getKohteet() {
-        return kohteet;
-    }
+    Class<?>[] groups() default {};
 
-    public void setKohteet(List<KohdeWS2> kohteet) {
-        this.kohteet = kohteet;
-    }
+    Class<? extends Payload>[] payload() default {};
 }

@@ -20,16 +20,15 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.suomi.asiointitili.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliService;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.KyselyWS2Dto;
-
-import static fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws.XMLTypeHelper.dateTime;
-import static org.joda.time.DateTime.now;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.converter.AsiointitiliDtoConverter;
 
 /**
  * User: ratamaa
@@ -39,6 +38,9 @@ import static org.joda.time.DateTime.now;
 @Service
 public class AsiointitiliServiceImpl implements AsiointitiliService {
     public static final String SANOMA_VERSIO = "1.0";
+    public static final String KYSELYLAJI_ASIAKKAAT = "Asiakkaat";
+    public static final String KYSELYLAJI_KAIKKI_ASIAKKAAT = "Kaikki";
+
     @Value("${viestintapalvelu.asiointitili.viranomainen.viranomaistunnus}")
     private String viranomainenTunnus;
     @Value("${viestintapalvelu.asiointitili.viranomainen.kayttajatunnus}")
@@ -50,6 +52,9 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
 
     @Resource
     private Viranomaispalvelut asiointitiliViranomaispalvelutClient;
+
+    @Autowired
+    private AsiointitiliDtoConverter asiointitiliDtoConverter;
 
     protected Viranomainen createViranomainen() {
         Viranomainen virnaomainen = new Viranomainen();
@@ -64,18 +69,37 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
 
     @Override
     @Transactional
-    public VastausWS2 kyselyWS2(KyselyWS2Dto dto) {
-        // TODO: Use DTOs in service interface
-        // TODO: Validate
-        // TODO: Save to database
-        KyselyWS2 kysely = new KyselyWS2();
-        kysely.setKohteet(new ArrayOfKohdeWS2());
-        kysely.getKohteet().getKohde().addAll(dto.getKohteet());
-        for (KohdeWS2 kohde : kysely.getKohteet().getKohde()) {
-            kohde.setLahetysPvm(dateTime(now()));
-        }
-        kysely.setKohdeMaara(kysely.getKohteet().getKohde().size());
-        return asiointitiliViranomaispalvelutClient.lisaaKohteita(createViranomainen(), kysely);
+    public KohdeLisaysVastausDto lisaaKohteitaAsiointitilille(KohdeLisaysDto kyselyDto) {
+        KyselyWS2 kysely = asiointitiliDtoConverter.convert(kyselyDto, new KyselyWS2());
+        Viranomainen viranomainen = createViranomainen();
+        // TODO: Save to database (including viranomainen.sanomaTunniste)?
+        VastausWS2 vastaus = asiointitiliViranomaispalvelutClient.lisaaKohteita(viranomainen, kysely);
+        // TODO: Save vastaus to database?
+        return asiointitiliDtoConverter.convert(vastaus, new KohdeLisaysVastausDto());
+    }
+
+    @Override
+    @Transactional
+    public AsiakasTilaKyselyVastausDto tarkistaAsiointitilinTila(AsiakasTilaTarkastusKyselyDto kyselyDto) {
+        KyselyWS1 kysely = asiointitiliDtoConverter.convert(kyselyDto, new KyselyWS1());
+        kysely.setKyselyLaji(KYSELYLAJI_ASIAKKAAT);
+        Viranomainen viranomainen = createViranomainen();
+        // TODO: Save to database (including viranomainen.sanomaTunniste)?
+        VastausWS1 vastaus = asiointitiliViranomaispalvelutClient.haeAsiakkaita(viranomainen, kysely);
+        // TODO: Save vastaus to database?
+        return asiointitiliDtoConverter.convert(vastaus, new AsiakasTilaKyselyVastausDto());
+    }
+
+    @Override
+    @Transactional
+    public AsiakasTilaKyselyVastausDto haeAsiakasTiloja(HaeAsiakasTilojaKyselyDto kyselyDto) {
+        KyselyWS1 kysely = asiointitiliDtoConverter.convert(kyselyDto, new KyselyWS1());
+        kysely.setKyselyLaji(KYSELYLAJI_KAIKKI_ASIAKKAAT);
+        Viranomainen viranomainen = createViranomainen();
+        // TODO: Save to database (including viranomainen.sanomaTunniste)?
+        VastausWS1 vastaus = asiointitiliViranomaispalvelutClient.haeAsiakkaita(viranomainen, kysely);
+        // TODO: Save vastaus to database?
+        return asiointitiliDtoConverter.convert(vastaus, new AsiakasTilaKyselyVastausDto());
     }
 
 }
