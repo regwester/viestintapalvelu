@@ -102,4 +102,23 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
         return asiointitiliDtoConverter.convert(vastaus, new AsiakasTilaKyselyVastausDto());
     }
 
+    public void setAsiointitiliDtoConverter(AsiointitiliDtoConverter asiointitiliDtoConverter) {
+        this.asiointitiliDtoConverter = asiointitiliDtoConverter;
+    }
+
+    public void setViranomainenTunnus(String viranomainenTunnus) {
+        this.viranomainenTunnus = viranomainenTunnus;
+    }
+
+    public void setViranomainenKayttajatunnus(String viranomainenKayttajatunnus) {
+        this.viranomainenKayttajatunnus = viranomainenKayttajatunnus;
+    }
+
+    public void setVirnaomainenPalvelutunnus(String virnaomainenPalvelutunnus) {
+        this.virnaomainenPalvelutunnus = virnaomainenPalvelutunnus;
+    }
+
+    public void setVirnaomainenSanomaVarmenne(String virnaomainenSanomaVarmenne) {
+        this.virnaomainenSanomaVarmenne = virnaomainenSanomaVarmenne;
+    }
 }

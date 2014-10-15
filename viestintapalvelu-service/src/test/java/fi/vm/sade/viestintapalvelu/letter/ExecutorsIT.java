@@ -70,7 +70,6 @@ public class ExecutorsIT {
 
     @Test
     public void testExecutorServiceIsAnAdapterToExecutor() throws Exception {
-        batchJobExecutorService.shutdown();
         assertTrue(letterReceiverExecutorService instanceof ExecutorServiceAdapter);
         assertEquals(this.<Object>readProperty(letterReceiverExecutorService, "taskExecutor"), receiverExecutor);
 

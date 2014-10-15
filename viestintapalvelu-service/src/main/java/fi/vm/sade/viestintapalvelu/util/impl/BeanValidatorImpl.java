@@ -46,7 +46,8 @@ import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 public class BeanValidatorImpl implements BeanValidator {
     private ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 
-    private static final Function<ConstraintViolation, String> TRANSLATOR = new Function<ConstraintViolation, String>() {
+    private static final Function<ConstraintViolation, String> VIOLATION_TRANSLATOR =
+            new Function<ConstraintViolation, String>() {
         @Nullable
         @Override
         public String apply(@Nullable ConstraintViolation input) {
@@ -72,7 +73,7 @@ public class BeanValidatorImpl implements BeanValidator {
         if (!violations.isEmpty()) {
             Map<String,Object> result = new HashMap<String, Object>();
             result.put("tilaKoodi", 400);
-            Collection<String> errors = Collections2.transform(violations, TRANSLATOR);
+            Collection<String> errors = Collections2.transform(violations, VIOLATION_TRANSLATOR);
             result.put("kuvaus", StringHelper.join(", ", errors.iterator()));
             result.put("virheet", errors);
             Response response = Response.status(Response.Status.BAD_REQUEST).entity(result).build();

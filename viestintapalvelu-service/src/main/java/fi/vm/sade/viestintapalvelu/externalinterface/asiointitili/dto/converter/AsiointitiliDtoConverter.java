@@ -47,28 +47,29 @@ public class AsiointitiliDtoConverter extends AbstractDtoConverter {
     }
 
     public ArrayOfKohdeWS2 convert(ArrayList<KohdeDto> from, ArrayOfKohdeWS2 to) {
+        to.getKohde().clear();
         to.getKohde().addAll(convertCollection(from, new ArrayList<KohdeWS2>(), KohdeWS2.class));
         return to;
     }
 
     public ArrayOfTiedosto convert(ArrayList<TiedostoDto> from, ArrayOfTiedosto to) {
+        to.getTiedosto().clear();
         to.getTiedosto().addAll(convertCollection(from, new ArrayList<Tiedosto>(), Tiedosto.class));
         return to;
     }
 
     public ArrayOfAsiakas convert(ArrayList<AsiakasDto> from, ArrayOfAsiakas to) {
+        to.getAsiakas().clear();
         to.getAsiakas().addAll(convertCollection(from, new ArrayList<Asiakas>(), Asiakas.class));
         return to;
     }
 
     public ArrayList<KohdeJaAsiakasTilaDto> convert(ArrayOfKohdeJaAsiakasTilaWS2V from, ArrayList<KohdeJaAsiakasTilaDto> to) {
-        convertCollection(from.getKohde(), to, KohdeJaAsiakasTilaDto.class);
-        return to;
+        return convertCollection(from.getKohde(), to, KohdeJaAsiakasTilaDto.class);
     }
 
     public ArrayList<AsiakasTilaDto> convert(ArrayOfAsiakasJaTilaWS1 from, ArrayList<AsiakasTilaDto> to) {
-        convertCollection(from.getAsiakas(), to, AsiakasTilaDto.class);
-        return to;
+        return convertCollection(from.getAsiakas(), to, AsiakasTilaDto.class);
     }
 
     public KyselyWS2 convert(KohdeLisaysDto from, KyselyWS2 to) {

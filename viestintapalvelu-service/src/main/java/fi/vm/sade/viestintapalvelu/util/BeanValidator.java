@@ -24,5 +24,15 @@ import javax.ws.rs.BadRequestException;
  * Time: 8:01
  */
 public interface BeanValidator {
+
+    /**
+     * @param bean to validate with javax.bean.validator
+     * @param <T> type of the bean
+     * @throws BadRequestException with 400 status Response having Map entity {
+     *     "tilaKoodi": 400,
+     *     "kuvaus": concatenated constraint violations,
+     *     "virheet": constraint violations
+     * } if given bean contains any constraint violations
+     */
     <T> void validate(T bean) throws BadRequestException;
 }

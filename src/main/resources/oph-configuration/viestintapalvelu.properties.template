@@ -134,3 +134,5 @@ viestintapalvelu.asiointitili.viranomainen.viranomaistunnus = {{viestintapalvelu
 viestintapalvelu.asiointitili.viranomainen.kayttajatunnus = {{viestintapalvelu_asiointitili_viranomainen_kayttajatunnus}}
 viestintapalvelu.asiointitili.viranomainen.palvelutunnus = {{viestintapalvelu_asiointitili_viranomainen_palvelutunnus}}
 viestintapalvelu.asiointitili.viranomainen.sanoma.varmenne = {{viestintapalvelu_asiointitili_viranomainen_sanoma_varmenne}}
+viestintapalvelu.asiointitili.ws.log.requests = true
+viestintapalvelu.asiointitili.ws.log.responses = true

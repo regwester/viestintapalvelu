@@ -120,8 +120,9 @@
             address="${viestintapalvelu.asiointitili.service.location}">
         <jaxws:inInterceptors>
             <bean id="asiointitiliViranomaispalvelutLoggingInInterceptor"
-                        class="org.apache.cxf.interceptor.LoggingInInterceptor" >
+                        class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingInInterceptor" >
                 <property name="prettyLogging" value="true" />
+                <property name="enabled" value="${viestintapalvelu.asiointitili.ws.log.responses}"/>
             </bean>
         </jaxws:inInterceptors>
         <jaxws:outInterceptors>
@@ -138,8 +139,9 @@
                 </constructor-arg>
             </bean>
             <bean id="asiointitiliViranomaispalvelutLoggingOutInterceptor"
-                  class="org.apache.cxf.interceptor.LoggingOutInterceptor" >
+                  class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingOutInterceptor" >
                 <property name="prettyLogging" value="true" />
+                <property name="enabled" value="${viestintapalvelu.asiointitili.ws.log.requests}"/>
             </bean>
         </jaxws:outInterceptors>
     </jaxws:client>
@@ -150,7 +152,7 @@
         <prop key="org.apache.ws.security.crypto.merlin.keystore.password">${viestintapalvelu.asiointitili.wss.keystore.password}</prop>
         <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${viestintapalvelu.asiointitili.wss.keystore.alias}</prop>
     </util:properties>
-    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.ws.PrivateKeyPasswordCallbackHandler">
+    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.util.ws.PrivateKeyPasswordCallbackHandler">
         <property name="privateKeyPassword" value="${viestintapalvelu.asiointitili.wss.certificate.password}"/>
     </bean>
     <util:map id="securityParams" key-type="java.lang.String" value-type="java.lang.String">
