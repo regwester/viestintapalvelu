@@ -25,7 +25,6 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.ratamaa.dtoconverter.annotation.DtoValidate;
 import fi.vm.sade.viestintapalvelu.util.ValidHetu;
 
 /**
@@ -33,7 +32,6 @@ import fi.vm.sade.viestintapalvelu.util.ValidHetu;
  * Date: 14.10.2014
  * Time: 9:50
  */
-@DtoValidate
 @JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel("Asiaan liittyvän asiakkaan tiedot.")
 public class AsiakasDto implements Serializable {

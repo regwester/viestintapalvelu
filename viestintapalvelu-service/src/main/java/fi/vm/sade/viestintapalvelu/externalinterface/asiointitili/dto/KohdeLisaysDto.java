@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -36,6 +39,7 @@ import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 public class KohdeLisaysDto implements Serializable {
     private static final long serialVersionUID = 1301104464235527503L;
 
+    @Size(min=1) @Valid
     @ApiModelProperty("Kyselyn kohteet")
     @DtoConversion
     private List<KohdeDto> kohteet = new ArrayList<KohdeDto>();

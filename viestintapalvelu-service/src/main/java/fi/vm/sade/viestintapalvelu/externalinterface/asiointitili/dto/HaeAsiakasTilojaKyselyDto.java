@@ -25,14 +25,12 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fi.ratamaa.dtoconverter.annotation.DtoConverted;
-import fi.ratamaa.dtoconverter.annotation.DtoValidate;
 
 /**
  * User: ratamaa
  * Date: 14.10.2014
  * Time: 13:06
  */
-@DtoValidate
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HaeAsiakasTilojaKyselyDto implements Serializable {
     private static final long serialVersionUID = 7965935645471426330L;

@@ -20,6 +20,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -32,20 +33,18 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoConverted;
 import fi.ratamaa.dtoconverter.annotation.DtoNotExported;
-import fi.ratamaa.dtoconverter.annotation.DtoValidate;
 
 /**
  * User: ratamaa
  * Date: 14.10.2014
  * Time: 9:42
  */
-@DtoValidate
 @ApiModel("Yhden asian tiedot kokoava elementti")
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class KohdeDto implements Serializable {
     private static final long serialVersionUID = -6161720816265352792L;
 
-    @Size(min=1)
+    @Size(min=1) @Valid
     @DtoConversion(path="asiakas")
     @ApiModelProperty("Asiaan liittyvän asiakkaan tiedot. Asia liitetään kyseisen asiakkaan asiointitiliin.\n" +
        "Mahdollistetaan saman asian lähettäminen useille asiakkaille, jolloin näitä elementtejä voi olla useita.")
@@ -53,6 +52,7 @@ public class KohdeDto implements Serializable {
     @NotNull
     @Size(max = 100)
     private String viranomaisTunniste;
+    @Valid
     @DtoConversion @ApiModelProperty("Käytetään, jos halutaan liittää viesti aiemmin lähetettyyn viestiin" +
             "asiointitilillä, jolloin viesti näkyy samassa viestiketjussa.")
     private ViittausDto viittaus;
@@ -95,6 +95,7 @@ public class KohdeDto implements Serializable {
     @ApiModelProperty("ASIAKAS. Maksun vapaamuotoinen kuvaustieto. Esim. hinta ja maksuohjeet.\n" +
             "HUOM! Asiointitilipalvelu ei tarjoa verkkomaksutoiminnallisuuksia.")
     private String maksamisKuvausTeksti;
+    @Valid
     @DtoConversion
     @ApiModelProperty("Asiaan liittyvät asiakirjat.")
     private List<TiedostoDto> tiedostot = new ArrayList<TiedostoDto>();

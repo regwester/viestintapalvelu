@@ -28,7 +28,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.ratamaa.dtoconverter.annotation.DtoConverted;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
-import fi.ratamaa.dtoconverter.annotation.DtoValidate;
 
 /**
  * User: ratamaa
@@ -39,7 +38,6 @@ import fi.ratamaa.dtoconverter.annotation.DtoValidate;
         description="Asiaan liittyvä asiakirja voi tulla asian liitteenä TiedostoSisalto-kentässä" +
         "tai URL-osoitteena viranomaisen omaan asiakirjavarastoon TiedostoURL-kentässä." +
         "Vain URLia käytetään 1. vaiheessa, mutta jatkossa mahdolista välittää muotoinen PDF päätös")
-@DtoValidate
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class TiedostoDto implements Serializable {
     private static final long serialVersionUID = -8346140031056859027L;

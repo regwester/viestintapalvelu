@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.Size;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
@@ -34,6 +37,7 @@ public class AsiakasTilaTarkastusKyselyDto implements Serializable {
     private static final long serialVersionUID = 590486540331626563L;
 
     @DtoConversion
+    @Size(min=1) @Valid
     private List<AsiakasDto> asiakkaat = new ArrayList<AsiakasDto>();
 
     public List<AsiakasDto> getAsiakkaat() {
