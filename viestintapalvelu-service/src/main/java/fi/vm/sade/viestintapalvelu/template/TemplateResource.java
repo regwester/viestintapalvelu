@@ -1,8 +1,27 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
+
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
@@ -12,22 +31,6 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -426,22 +429,23 @@ public class TemplateResource extends AsynchronousResource {
         // "YES".equalsIgnoreCase(content));
         boolean getContent = false;
 
+        // Drafts replacements
+        String applicationPeriod = request.getParameter("applicationPeriod"); // = Haku
+
         // OPH default template
-        Template template = templateService.getTemplateByName(templateName, languageCode, getContent);
+        Template template = templateService.getTemplateByName(
+                new TemplateCriteriaImpl().withName(templateName)
+                        .withLanguage(languageCode)
+                        .withApplicationPeriod(applicationPeriod), getContent);
 
         Map<String, Object> templateRepl = new HashMap<String, Object>();
         templateRepl.put("name", "default");
         templateRepl.put("templateReplacements", template.getReplacements());
         history.add(templateRepl);
 
-        // Drafts replacements
-        String applicationPeriod = request.getParameter("applicationPeriod"); // = Haku
 
         if ((oid != null) && !("".equals(oid))) {
-            // TODO: kummin tämä halutaan?
-            Optional<String> applicationPeriodForTagAndNonTagSeach = Optional.absent(); // käytännössä ollut näin
-            // Piitäisikö olla? Vai halutaanko ehkä tähän mäppiin omana kohtanaan?
-            // Optional.fromNullable(applicationPeriod);
+            Optional<String> applicationPeriodForTagAndNonTagSeach = Optional.absent();
 
             List<Replacement> templateReplacements = letterService.findReplacementByNameOrgTag(templateName,
                 languageCode, oid, Optional.<String>absent(), applicationPeriodForTagAndNonTagSeach);
