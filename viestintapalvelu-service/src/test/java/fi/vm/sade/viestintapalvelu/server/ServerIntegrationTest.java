@@ -22,6 +22,7 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -66,7 +67,6 @@ public class ServerIntegrationTest {
         tomcat.getHost().setAppBase(WORKING_DIRECTORY);
         tomcat.getHost().setAutoDeploy(true);
         tomcat.getHost().setDeployOnStartup(true);
-        tomcat.init();
         tomcat.start();
         Thread.sleep(500);
     }
