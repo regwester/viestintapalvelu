@@ -1,5 +1,5 @@
-angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout', 'Options',
-  function ($scope, Generator, Printer, Template, $timeout, Options) {
+angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout', 'Options', '_',
+  function ($scope, Generator, Printer, Template, $timeout, Options, _) {
     $scope.letters = [];
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
@@ -12,7 +12,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.oid = "1.2.246.562.10.00000000001";
     $scope.applicationPeriod = "K2014";
     $scope.generalEmail = null;
-    $scope.haut = [{nimi: {kieli_fi: "Listaa hauista ladatan..."}, oid:null}];
+    $scope.haut = [{nimi: {kieli_fi: "Listaa hauista ladataan..."}, oid:null}];
 
     Options.hakus(function(haut) {
         $scope.haut = haut;
@@ -46,7 +46,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.tinymceModel = '';
     function generateLetters(count) {
       $scope.letters = $scope.letters.concat(Generator.generateObjects(count, function (data) {
-        var tulokset = generateTulokset(data.any('hakutoive-lukumaara'));
+        var tulokset = generateTulokset(data.any('hakutoiveLukumaara'));
         var postoffice = data.any('postoffice');
         var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'));
 
@@ -74,6 +74,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
 
     function generateTulokset(count) {
       return Generator.generateObjects(count, function (data) {
+        var selectionCriteria = data.randomItems('selectionCriteria', 3);
         return {
           "organisaationNimi": data.any('organisaationNimi'),
           "oppilaitoksenNimi": data.any('oppilaitoksenNimi'),
@@ -85,8 +86,13 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           "paasyJaSoveltuvuuskoe": data.any('koe'), // Ei nivelkirjeessä
           "valinnanTulos": data.any('valinnanTulos'),
           "varasija": data.any('varasija'),
-          "hylkaysperuste": data.any('valinnanTulos') // Ei nivelkirjeessä
-
+          "hylkaysperuste": data.any('valinnanTulos'), // Ei nivelkirjeessä
+          "sijoitukset": _.map(selectionCriteria, function(item) { //kk_haussa katsotaan monia erilaisia pisteitä (koe, valinta, jne..)
+              return {'nimi': item, 'oma': data.any('pisteetvajaa'), 'alin': data.any('alinHyvaksyttyPistemaara')};
+          }),
+          "pisteet": _.map(selectionCriteria, function(item) { //kk_haussa katsotaan monia erilaisia pisteitä (koe, valinta, jne..)
+              return {'nimi': item, 'oma': data.any('pisteetvajaa'), 'alin': data.any('alinHyvaksyttyPistemaara')};
+          })
         };
       });
     }

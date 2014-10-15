@@ -131,10 +131,6 @@
                             <th>Hylkaysperuste <a href="#" ng-click="toggleColumn($index, 'hylkaysperuste')"><i
                                     ng:class="{ 'icon-minus': ! isRemoved($index, 'hylkaysperuste'), 'icon-plus': isRemoved($index, 'hylkaysperuste') }"></i></a>
                             </th>
-
-                            <!--                         <th>Selite <a href="#" ng-click="toggleColumn($index, 'selite')"><i
-                                                            ng:class="{ 'icon-minus': ! isRemoved($index, 'selite'), 'icon-plus': isRemoved($index, 'selite') }"></i></a>
-                                                    </th> -->
                             <th></th>
                         </tr>
                         <tr ng-repeat="haku in letter.templateReplacements.tulokset">
@@ -153,14 +149,26 @@
                                        placeholder="Hakeneet">
                             </td>
                             <td>
-                                <input class="input-small input-pile" type="text" ng-model="haku.omatPisteet"
-                                       placeholder="Pisteesi">
-                                <input class="input-small" type="text" ng-model="haku.alinHyvaksyttyPistemaara"
-                                       placeholder="Raja">
+                                <ul>
+                                    <li ng-repeat="pisteet in haku.pisteet">
+                                        <input class="input-xlarge input-pile" type="text" ng-model="pisteet.nimi" placeholder="Nimi">
+                                        <input class="input-small input-pile" type="text" ng-model="pisteet.oma"
+                                               placeholder="Pisteesi">
+                                        <input class="input-small" type="text" ng-model="pisteet.alin"
+                                               placeholder="Raja">
+                                    </li>
+                                </ul>
                             </td>
-                            <td><input ng-disabled="isRemoved($parent.$index, 'paasyJaSoveltuvuuskoe')"
-                                       class="input-small"
-                                       type="text" ng-model="haku.paasyJaSoveltuvuuskoe" placeholder="Koe pisteesi">
+                            <td>
+                                <ul>
+                                    <li ng-repeat="sijoitukset in haku.sijoitukset">
+                                        <input class="input-xlarge input-pile" type="text" ng-model="sijoitukset.nimi" placeholder="Nimi">
+                                        <input class="input-small input-pile" type="text" ng-model="sijoitukset.oma"
+                                               placeholder="Pisteesi">
+                                        <input class="input-small" type="text" ng-model="sijoitukset.alin"
+                                               placeholder="Raja">
+                                    </li>
+                                </ul>
                             </td>
                             <td><input ng-disabled="isRemoved($parent.$index, 'valinnanTulos')" class="input-small"
                                        type="text" ng-model="haku.valinnanTulos" placeholder="Tulos"></td>
@@ -170,9 +178,6 @@
                             <td><input ng-disabled="isRemoved($parent.$index, 'hylkaysperuste')" class="input-small"
                                        type="text"
                                        ng-model="haku.hylkaysperuste" placeholder="Hylkaysperuste"></td>
-
-                            <!--                    <td><input ng-disabled="isRemoved($parent.$index, 'selite')" class="input-small" type="text"
-                                                               ng-model="haku.selite" placeholder="Selite"></td> -->
 
                             <td><a href="#" ng-click="removeHakukohde($parent.$index, $index)"><i
                                     class="icon-trash"></i></a></td>

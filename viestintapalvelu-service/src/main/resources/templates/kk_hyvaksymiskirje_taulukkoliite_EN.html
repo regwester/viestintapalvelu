@@ -28,7 +28,7 @@
         #foreach( $tulos in $tulokset )
         <tr>
             <td class="hakutoive">$foreach.count. $tulos.organisaationNimi, $tulos.oppilaitoksenNimi<br/>$tulos.hakukohteenNimi</td>
-            <td>$tulos.hyvaksytyt / $tulos.hakeneet</td>
+            <td>$tulos.hyvaksytyt / $tulos.kaikkiHakeneet</td>
             <td>$tulos.valinnanTulos</td>
             <td>$tulos.hylkaysperuste</td>
             <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.kaikki</p>#end</td>
