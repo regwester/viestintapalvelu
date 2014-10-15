@@ -105,7 +105,6 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public void storeTemplate(Template template) {
         Henkilo henkilo = currentUserComponent.getCurrentUser();
-        template.setVersionro("1");
         template.setStoringOid(henkilo.getOidHenkilo());
         templateDAO.insert(template);
         ensureNoOtherDefaults(template);
