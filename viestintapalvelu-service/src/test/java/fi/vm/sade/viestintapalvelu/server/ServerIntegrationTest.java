@@ -3,7 +3,6 @@ package fi.vm.sade.viestintapalvelu.server;
 import java.io.File;
 import java.io.IOException;
 
-import javax.annotation.Resource;
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
 import javax.ws.rs.client.Entity;
@@ -22,19 +21,13 @@ import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import static org.mockito.Mockito.when;
-
-import fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource;
 import fi.vm.sade.viestintapalvelu.letter.LetterResource;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertEquals;
@@ -45,8 +38,6 @@ import static org.junit.Assert.assertNotNull;
  * @author Risto Salama
  *
  */
-@RunWith(MockitoJUnitRunner.class)
-@Component
 public class ServerIntegrationTest {
 
     private Tomcat tomcat;
