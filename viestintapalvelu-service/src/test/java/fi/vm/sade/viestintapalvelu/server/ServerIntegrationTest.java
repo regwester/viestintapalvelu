@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
  * @author Risto Salama
  *
  */
-public class ServerIntegrationTest {
+public abstract class ServerIntegrationTest {
 
     private Tomcat tomcat;
     private final static String WORKING_DIRECTORY = System.getProperty("java.io.tmpdir");
@@ -51,6 +51,7 @@ public class ServerIntegrationTest {
     public void startServer() throws Exception {
         createWar();
         tomcat = new Tomcat();
+        tomcat.setBaseDir(WORKING_DIRECTORY);
         tomcat.addWebapp(tomcat.getHost(), "/" + SERVICE_NAME, WORKING_DIRECTORY + "/" + SERVICE_NAME);   
         tomcat.setPort(PORT);
         tomcat.setBaseDir(WORKING_DIRECTORY);
@@ -58,25 +59,11 @@ public class ServerIntegrationTest {
         tomcat.getHost().setAppBase(WORKING_DIRECTORY);
         tomcat.getHost().setAutoDeploy(true);
         tomcat.getHost().setDeployOnStartup(true);
+        tomcat.init();
         tomcat.start();
-        Thread.sleep(500);
-    }
-    
-    @Test
-    public void quickTest() {
-        Client client = ClientBuilder.newClient();
-        WebTarget target = client.target(HOST_WITH_PORT).path("/" + SERVICE_NAME + "/api/v1/letter/async/letter/status/1");
-        Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).get();
-        assertNotNull(resp);
-    }
-    
-    @Test
-    public void anotherTest() throws Exception {
-        WebTarget target = ClientBuilder.newClient().target(HOST_WITH_PORT).path("/" + SERVICE_NAME + "/api/v1/template/store");
-        ObjectMapper mapper = new ObjectMapper();
-        String s = mapper.writeValueAsString(DocumentProviderTestData.getTemplate());
-        Response resp = target.request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(s));
-        assertEquals(200, resp.getStatus());
+        while(!tomcat.getServer().getState().equals(LifecycleState.STARTED)) {
+            Thread.sleep(500);
+        }
     }
     
     @After
@@ -87,6 +74,9 @@ public class ServerIntegrationTest {
                 tomcat.stop();
             }
             tomcat.destroy();
+            while(!tomcat.getServer().getState().equals(LifecycleState.DESTROYED)) {
+                Thread.sleep(500);
+            }
         }
     }
     
@@ -111,6 +101,10 @@ public class ServerIntegrationTest {
     protected void restart() throws Exception {
         stop();
         start();
+    }
+    
+    protected WebTarget createWebTarget(String rest) {
+        return ClientBuilder.newClient().target(HOST_WITH_PORT).path("/" + SERVICE_NAME + rest);
     }
     
     private void createWar() throws ClassNotFoundException, IOException {
