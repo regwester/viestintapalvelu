@@ -15,8 +15,7 @@ public class TemplateServerIntegrationTest extends ServerIntegrationTest {
     
     @Test
     public void createsTemplate() throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        String s = mapper.writeValueAsString(DocumentProviderTestData.getTemplate());
+        String s = new ObjectMapper().writeValueAsString(DocumentProviderTestData.getTemplate());
         Response resp = createWebTarget("/api/v1/template/store").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(s));
         assertEquals(200, resp.getStatus());
     }
