@@ -131,7 +131,7 @@ public class LetterServiceTest {
         
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getTemplateId() == 1);
-        assertTrue(foundLetterBatch.getTemplateName().equals("test-templateName"));
+        assertTrue(foundLetterBatch.getTemplateName().equals(DocumentProviderTestData.TEMPLATE_NAME));
         assertTrue(foundLetterBatch.getLetters() == null);
         assertNotNull(foundLetterBatch.getTemplateReplacements());
         assertTrue(foundLetterBatch.getTemplateReplacements().size() > 0);

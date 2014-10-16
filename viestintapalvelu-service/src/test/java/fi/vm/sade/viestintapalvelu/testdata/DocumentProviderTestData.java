@@ -15,6 +15,8 @@ import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
 
 public class DocumentProviderTestData {
+    public static final String TEMPLATE_NAME = "test_template";
+
     public static AddressLabel getAddressLabel() {
         AddressLabel addressLabel = new AddressLabel("Etunimi", "Sukunimi", "Testiosoite 1", "Testiosoite 2", 
             "Testiosoite 3", "00100", "Helsinki", "", "Suomi", "FI");
@@ -68,7 +70,7 @@ public class DocumentProviderTestData {
         letterBatch.setStoringOid("1.2.246.562.24.00000000001");
         letterBatch.setTag("test-tag");
         letterBatch.setTemplateId(new Long(1));
-        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTemplateName(TEMPLATE_NAME);
         letterBatch.setTemplate(getTemplate());
         letterBatch.setTemplateReplacements(getTemplateReplacements());
         letterBatch.setLetters(getLetters());
@@ -85,7 +87,7 @@ public class DocumentProviderTestData {
         letterBatch.setStoringOid("1.2.246.562.24.00000000001");
         letterBatch.setTag("test-tag");
         letterBatch.setTemplateId(new Long(1));
-        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTemplateName(TEMPLATE_NAME);
         letterBatch.setTemplate(getTemplate());
         letterBatch.setTemplateReplacements(getTemplateReplacements());
         letterBatch.setLetters(getAsyncLetterBatchLetters());
@@ -108,7 +110,7 @@ public class DocumentProviderTestData {
         letterBatch.setStoringOid("1.2.246.562.24.00000000001");
         letterBatch.setTag("test-tag");
         letterBatch.setTemplateId(new Long(1));
-        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTemplateName(TEMPLATE_NAME);
         letterBatch.setTimestamp(new Date());
         letterBatch.setVersion(new Long(0));
         letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
@@ -133,7 +135,7 @@ public class DocumentProviderTestData {
         letterBatch.setStoringOid("1.2.246.562.24.00000000001");
         letterBatch.setTag("test-tag");
         letterBatch.setTemplateId(new Long(1));
-        letterBatch.setTemplateName("test-templateName");
+        letterBatch.setTemplateName(TEMPLATE_NAME);
         letterBatch.setTimestamp(new Date());
         letterBatch.setVersion(new Long(0));
         
@@ -377,7 +379,7 @@ public class DocumentProviderTestData {
         fi.vm.sade.viestintapalvelu.template.Template template = new fi.vm.sade.viestintapalvelu.template.Template();
         
         template.setLanguage("FI");
-        template.setName("test_template");
+        template.setName(TEMPLATE_NAME);
         template.setOrganizationOid("1.2.246.562.10.00000000001");
         template.setStoringOid("1.2.246.562.24.00000000001");
         template.setStyles("test-styles");
@@ -397,7 +399,7 @@ public class DocumentProviderTestData {
         }
         
         template.setLanguage("FI");
-        template.setName("test_template");
+        template.setName(TEMPLATE_NAME);
         template.setOrganizationOid("1.2.246.562.10.00000000001");
         template.setStoringOid("1.2.246.562.24.00000000001");
         template.setStyles("test-styles");
@@ -430,7 +432,7 @@ public class DocumentProviderTestData {
             templateContent.setId(id);
         }
         
-        templateContent.setContent("test_content");
+        templateContent.setContent(getHtmlContent());
         templateContent.setContentType("pdf");
         templateContent.setName("test_template_content");
         templateContent.setOrder(1);
@@ -446,7 +448,7 @@ public class DocumentProviderTestData {
         
         fi.vm.sade.viestintapalvelu.template.TemplateContent templateContent = 
             new fi.vm.sade.viestintapalvelu.template.TemplateContent();
-        templateContent.setContent("test_content");
+        templateContent.setContent(getHtmlContent());
         templateContent.setName("test_template_content");
         templateContent.setOrder(1);
         templateContent.setTimestamp(new Date());
@@ -454,6 +456,13 @@ public class DocumentProviderTestData {
         templateContents.add(templateContent);
         
         return templateContents;
+    }
+
+    private static String getHtmlContent() {
+        return "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD " +
+                "XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\">" +
+                "<html xmlns=\"http://www.w3.org/1999/xhtml\"><head><title>Testi</title></head>" +
+                "<body>Testi</body></html>";
     }
 
     public static Map<String, Object> getTemplateReplacements() {

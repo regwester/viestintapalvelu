@@ -49,7 +49,7 @@ public class LetterBatchDAOTest {
         letterBatchDAO.insert(letterBatch);
         
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
-            "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
+                DocumentProviderTestData.TEMPLATE_NAME, "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
                 Optional.<String>absent());
         
         assertNotNull(foundLetterBatch);
@@ -114,7 +114,7 @@ public class LetterBatchDAOTest {
         letterBatchDAO.insert(letterBatch);
 
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
-                "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
+                DocumentProviderTestData.TEMPLATE_NAME, "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
                 Optional.of("period"));
 
         assertNotNull(foundLetterBatch);
@@ -146,7 +146,7 @@ public class LetterBatchDAOTest {
         letterBatchDAO.insert(letterBatch);
 
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
-                "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.<String>absent(),
+                DocumentProviderTestData.TEMPLATE_NAME, "FI", "1.2.246.562.10.00000000001", Optional.<String>absent(),
                 Optional.of("period"));
 
         assertNotNull(foundLetterBatch);
@@ -176,7 +176,7 @@ public class LetterBatchDAOTest {
         letterBatchDAO.insert(letterBatch);
         
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrg(
-            "test-templateName", "FI", "1.2.246.562.10.00000000001");
+            DocumentProviderTestData.TEMPLATE_NAME, "FI", "1.2.246.562.10.00000000001");
         
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getId() > 0);
