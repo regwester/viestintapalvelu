@@ -434,8 +434,7 @@ public class TemplateResource extends AsynchronousResource {
 
         // OPH default template
         Template template = templateService.getTemplateByName(
-                new TemplateCriteriaImpl().withName(templateName)
-                        .withLanguage(languageCode)
+                new TemplateCriteriaImpl(templateName, languageCode)
                         .withApplicationPeriod(applicationPeriod), getContent);
 
         Map<String, Object> templateRepl = new HashMap<String, Object>();

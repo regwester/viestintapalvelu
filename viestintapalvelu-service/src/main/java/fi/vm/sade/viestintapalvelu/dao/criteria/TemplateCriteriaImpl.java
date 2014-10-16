@@ -54,10 +54,16 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         return this.defaultRequirement;
     }
 
+    public TemplateCriteriaImpl() {
+    }
+
+    public TemplateCriteriaImpl(String name, String language) {
+        this.name = name;
+        this.language = language;
+    }
+
     protected TemplateCriteriaImpl copy() {
-        TemplateCriteriaImpl copy = new TemplateCriteriaImpl();
-        copy.name = this.name;
-        copy.language = this.language;
+        TemplateCriteriaImpl copy = new TemplateCriteriaImpl(this.name, this.language);
         copy.type = this.type;
         copy.applicationPeriod = this.applicationPeriod;
         copy.defaultRequirement = this.defaultRequirement;

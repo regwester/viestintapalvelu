@@ -163,7 +163,7 @@ public class LetterBuilder {
             if (languageIsDifferent(baseTemplate, letter)) {
                 // Get the template in user specific language
                 Template template = templateService.getTemplateByName(
-                        new TemplateCriteriaImpl().withName(letterTemplate.getName()).withLanguage(letter.getLanguageCode())
+                        new TemplateCriteriaImpl(letterTemplate.getName(), letter.getLanguageCode())
                                 .withApplicationPeriod(batch.getApplicationPeriod()), true);
                 if (template != null) {
                     letterTemplate = template;
@@ -240,7 +240,8 @@ public class LetterBuilder {
 
         // Search template by name
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(new TemplateCriteriaImpl().withName(batch.getTemplateName()).withLanguage(batch.getLanguageCode())
+            template = templateService.getTemplateByName(new TemplateCriteriaImpl(batch.getTemplateName(),
+                            batch.getLanguageCode())
                     .withApplicationPeriod(batch.getApplicationPeriod()), true);
             batch.setTemplateId(template.getId()); // update template Id
         }
