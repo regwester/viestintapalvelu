@@ -16,5 +16,5 @@ public interface SecurityConstants {
     // Järjestelmäkäyttäjälle takaisinkutsurajapintaan ryhmäsähköpostista viestintäpalveluun liitteiden lataamiseksi:
     public static final String SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_SYSTEM_ATTACHMENT_DOWNLOAD')";
 
-    public static final String ASIOINTITILI = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_ASIOINTITILI_CRUD')";
+    public static final String ASIOINTITILI = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_ASIOINTITILICRUD')";
 }
