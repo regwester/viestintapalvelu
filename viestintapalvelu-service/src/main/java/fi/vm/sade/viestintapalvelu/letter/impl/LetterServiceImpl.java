@@ -420,6 +420,8 @@ public class LetterServiceImpl implements LetterService {
             LetterReceiverLetter lrl = new LetterReceiverLetter();
             lrl.setTimestamp(new Date());
             lrl.setLetterReceivers(rec);
+            lrl.setContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
+            lrl.setOriginalContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             rec.setLetterReceiverLetter(lrl);
 
             receivers.add(rec);
