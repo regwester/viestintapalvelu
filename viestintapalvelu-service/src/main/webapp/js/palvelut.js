@@ -64,8 +64,8 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
     var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
     // TODO: get this URL from properties:
-    /*var _dokumenttiServiceLocation = getCurrentHost()+"/dokumenttipalvelu-service/resources/dokumentit"; */
-    var _dokumenttiServiceLocation = 'https://itest-virkailija.oph.ware.fi/dokumenttipalvelu-service/resources/dokumentit';
+    var _dokumenttiServiceLocation = getCurrentHost()+"/dokumenttipalvelu-service/resources/dokumentit";
+    //var _dokumenttiServiceLocation = 'https://itest-virkailija.oph.ware.fi/dokumenttipalvelu-service/resources/dokumentit';
 
     return function () {
         function osoitetarratPDF(labels) {
