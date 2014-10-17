@@ -21,9 +21,10 @@ public class LetterRecoveryServerIntegrationTest extends ServerIntegrationTest {
     public void recoversAndFinishesInterruptedLetterBatchProcess() throws Exception {
         String s = new ObjectMapper().writeValueAsString(DocumentProviderTestData.getTemplate());
         createWebTarget("/api/v1/template/store").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(s));
-        String json = new ObjectMapper().writeValueAsString(givenLetterBatchWith100Letters());
+        String json = new ObjectMapper().writeValueAsString(givenLetterBatchWithXLetters(500));
         Response response = createWebTarget("/api/v1/letter/async/letter/").request(MediaType.APPLICATION_JSON_TYPE).post(Entity.json(json));
         String id = response.readEntity(String.class);
+        restart();
         while (!statusIsReady(id)) {
             Thread.sleep(500);
         }
@@ -31,13 +32,14 @@ public class LetterRecoveryServerIntegrationTest extends ServerIntegrationTest {
 
     private boolean statusIsReady(String id) {
         Response statusResponse = createWebTarget("/api/v1/letter/async/letter/status/" + id).request(MediaType.APPLICATION_JSON_TYPE).get();
+        System.out.println(statusResponse.readEntity(String.class));
         return statusResponse.readEntity(String.class).contains("ready");
     }
     
-    private LetterBatchDetails givenLetterBatchWith100Letters() {
+    private LetterBatchDetails givenLetterBatchWithXLetters(int amount) {
         AsyncLetterBatchDto batch = DocumentProviderTestData.getAsyncLetterBatch();
         List<AsyncLetterBatchLetterDto> letters = batch.getLetters();
-        for (int i = 0; i < 100; i++) {
+        for (int i = 0; i < amount; i++) {
             letters.addAll(DocumentProviderTestData.getAsyncLetterBatchLetters());
         }
         return batch;

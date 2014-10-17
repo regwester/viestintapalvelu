@@ -47,10 +47,7 @@ public abstract class ServerIntegrationTest {
         tomcat.getHost().setAutoDeploy(true);
         tomcat.getHost().setDeployOnStartup(true);
         tomcat.init();
-        tomcat.start();
-        while(!tomcat.getServer().getState().equals(LifecycleState.STARTED)) {
-            Thread.sleep(500);
-        }
+        start();
     }
     
     @After
@@ -77,15 +74,21 @@ public abstract class ServerIntegrationTest {
         deleteDeployedWebApp();
     }
     
-    protected void start() throws Exception {
+    protected final void start() throws Exception {
         tomcat.start();
+        while (!tomcat.getServer().getState().equals(LifecycleState.STARTED)) {
+            Thread.sleep(500);
+        }
     }
     
-    protected void stop() throws Exception {
+    protected final void stop() throws Exception {
         tomcat.stop();
+        while (!tomcat.getServer().getState().equals(LifecycleState.STOPPED)) {
+            Thread.sleep(500);
+        }
     }
     
-    protected void restart() throws Exception {
+    protected final void restart() throws Exception {
         stop();
         start();
     }
@@ -112,5 +115,6 @@ public abstract class ServerIntegrationTest {
             new File(WORKING_DIRECTORY, SERVICE_NAME + ".war").delete();
         } catch (Exception e) {}
     }
+    
 }
 
