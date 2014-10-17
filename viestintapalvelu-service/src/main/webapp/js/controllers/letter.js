@@ -66,7 +66,9 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           "templateReplacements": {"tulokset": tulokset,
             "koulu": tulokset[0]['organisaationNimi'],
             "koulutus": tulokset[0]['hakukohteenNimi'],
-            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"]
+            "henkilotunnus": "101085-9879",
+            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
+            "hakijapalveluidenOsoite" : data.any('street') + ' ' + data.any('housenumber')
           }
         };
       }));
@@ -74,7 +76,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
 
     function generateTulokset(count) {
       return Generator.generateObjects(count, function (data) {
-        var selectionCriteria = data.randomItems('selectionCriteria', 3);
+        var selectionCriteria = data.randomItems('selectionCriteria', _.range(0,5));
         return {
           "organisaationNimi": data.any('organisaationNimi'),
           "oppilaitoksenNimi": data.any('oppilaitoksenNimi'),
@@ -88,10 +90,10 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           "varasija": data.any('varasija'),
           "hylkaysperuste": data.any('valinnanTulos'), // Ei nivelkirjeessä
           "sijoitukset": _.map(selectionCriteria, function(item) { //kk_haussa katsotaan monia erilaisia pisteitä (koe, valinta, jne..)
-              return {'nimi': item, 'oma': data.any('pisteetvajaa'), 'alin': data.any('alinHyvaksyttyPistemaara')};
+              return {'nimi': item, 'oma': data.any('hyvaksytyt'), 'hyvaksytyt': data.any('kaikkiHakeneet')};
           }),
           "pisteet": _.map(selectionCriteria, function(item) { //kk_haussa katsotaan monia erilaisia pisteitä (koe, valinta, jne..)
-              return {'nimi': item, 'oma': data.any('pisteetvajaa'), 'alin': data.any('alinHyvaksyttyPistemaara')};
+              return {'nimi': item, 'oma': data.any('pisteetvajaa'), 'minimi': data.any('alinHyvaksyttyPistemaara')};
           })
         };
       });
@@ -134,7 +136,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
                     });
                 }
                 $scope.monitorStatus = status;
-                if (status.status == "ready") {
+                if (status.status === "ready") {
                     $scope.downloadAllowedForId = id;
                     if (status.emailReviewable) {
                         $scope.emailPossibleForId = id;
@@ -143,6 +145,8 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
                     if (whenDone) {
                         whenDone();
                     }
+                } else if(status.status === "error"){
+                    alert("Async process failed: " + status.errors[0].errorCause);
                 } else {
                     if (status.emailReviewable) {
                         $scope.emailPreviewPossibleForId = id;
@@ -158,7 +162,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
        if ($scope.emailPossibleForId) {
            Printer.sendEmail($scope.emailPossibleForId).success(function() {
                $scope.emailPossibleForId = null;
-               alert("Viesti lähti ryhmäsähköpostipalvelulle.")
+               alert("Viesti lähti ryhmäsähköpostipalvelulle.");
            });
        }
     };
