@@ -10,8 +10,10 @@
 <body>
 <div class="liiteSisalto">
     <p><b>$addressLabel.firstName $addressLabel.lastName</b></p>
+    <br/>
 
     <p><b>TILANTEESI SYKSYN 2014 KORKEAKOULUJEN YHTEISHAUSSA</b></p>
+    <br/>
 
     <table>
         <thead>
@@ -31,7 +33,7 @@
             <td>$tulos.hyvaksytyt / $tulos.kaikkiHakeneet</td>
             <td>$tulos.valinnanTulos</td>
             <td>$tulos.hylkaysperuste</td>
-            <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.kaikki</p>#end</td>
+            <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.hyvaksytyt</p>#end</td>
             <td>#foreach($pisteet in $tulos.pisteet)<p>$pisteet.nimi $pisteet.oma / $pisteet.minimi</p>#end</td>
         </tr>
         #end
