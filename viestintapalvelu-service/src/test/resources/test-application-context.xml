@@ -40,10 +40,12 @@
     -->
 
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+    <bean id="mockitoConfiguration" class="fi.vm.sade.viestintapalvelu.server.CachelessMockitoConfiguration" />
+    <bean id="currentUserComponent" class="fi.vm.sade.viestintapalvelu.externalinterface.component.DummyCurrentUserComponent"/>
     
     <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
     </util:map>
-
+    
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />
     <mockito:mock id="henkiloResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" />
     <mockito:mock id="omattiedotResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource"/>
@@ -62,8 +64,6 @@
         <property name="username" value="sa"/>    
         <property name="password" value=""/>
     </bean>
-    
-    <bean id="currentUserComponent" class="fi.vm.sade.viestintapalvelu.externalinterface.component.DummyCurrentUserComponent"/>
     
     <!-- EntityManagerFactory (required by JTA) support -->
     <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="dataSourceInitializer">
