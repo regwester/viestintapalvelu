@@ -29,7 +29,7 @@ import java.util.List;
  * Date: 29.9.2014
  * Time: 19:15
  */
-public class JacksonReplacementValueDeserializaer extends JsonDeserializer<Object> {
+public class JacksonReplacementValueDeserializer extends JsonDeserializer<Object> {
 
     @Override
     public Object deserialize(JsonParser jp, DeserializationContext ctxt)
