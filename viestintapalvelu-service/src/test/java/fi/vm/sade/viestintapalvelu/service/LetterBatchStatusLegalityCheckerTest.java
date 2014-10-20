@@ -17,10 +17,13 @@
 package fi.vm.sade.viestintapalvelu.service;
 
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.JUnit4;
 
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
 
+@RunWith(JUnit4.class)
 public class LetterBatchStatusLegalityCheckerTest {
     private LetterBatchStatusLegalityChecker checker = new LetterBatchStatusLegalityChecker();
 

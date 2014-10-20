@@ -18,11 +18,14 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import javax.ws.rs.NotFoundException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.encoding.ShaPasswordEncoder;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
 /**
  * User: ratamaa
@@ -33,6 +36,8 @@ import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
     // SHA-1, internally calls MessageDigest.getInstance(algorithm) for each encodePassword call (thus thread-safe):
     private ShaPasswordEncoder encoder = new ShaPasswordEncoder();
+    @Autowired
+    private LetterBatchDAO letterBatchDAO;
 
     @Value("${viestintapalvelu.dokumentti.id.salt}")
     private String dokumenttiIdSalt;
@@ -63,9 +68,17 @@ public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
     }
 
     private String generateHash(String prefix, long id) {
-        return encoder.encodePassword(dokumenttiIdSalt + prefix + id, null);
+        LetterBatch batch = letterBatchDAO.read(id);
+        if (batch == null) {
+            throw new NotFoundException();
+        }
+        return encoder.encodePassword(dokumenttiIdSalt + prefix + id + "-" + batch.getTimestamp().getTime(), null);
     }
 
+    public void setLetterBatchDAO(LetterBatchDAO letterBatchDAO) {
+        this.letterBatchDAO = letterBatchDAO;
+    }
+    
     public void setEncoder(ShaPasswordEncoder encoder) {
         this.encoder = encoder;
     }

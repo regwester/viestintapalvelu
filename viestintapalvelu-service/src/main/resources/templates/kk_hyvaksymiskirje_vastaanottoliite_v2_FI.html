@@ -8,23 +8,15 @@
     <title>Opiskelupaikan vastaanottaminen</title>
 </head>
 <body>
-<div class='header'>
-    <div class="organisaatio"></div>
-    <div class='osoitetarra'>
-        <div>$osoite</div>
-    </div>
+<div class="liiteSisalto">
     <p>$addressLabel.firstName $addressLabel.lastName</p>
     <p>$koulu</p>
     <p>$koulutus</p>
-</div>
+    <br/>
 
-<div class="asiakirjanTyyppi">
-    $letterDate
-</div>
+    <p>OPISKELUPAIKAN VASTAANOTTAMINEN SYKSYN 2014 KORKEAKOULUJEN YHTEISHAUSSA</p>
+    <br/>
 
-<div class="asiaotsikko">OPISKELUPAIKAN VASTAANOTTAMINEN SYKSYN 2014 KORKEAKOULUJEN YHTEISHAUSSA<br/><br/></div>
-
-<div class="sisalto">
     <p>
         Olet tullut hyväksytyksi korkeakoulujen yhteishaussa syksyllä 2014. Vahvistaaksesi opiskelupaikkasi, sinun tulee
         vielä ilmoittaa sen vastaanottamisesta. Jollet ilmoita vastaanottamisesta tässä kirjeessä annettuun määräaikaan
@@ -52,14 +44,15 @@
     <p><b>OPISKELUPAIKAN VASTAANOTTAMISILMOITUS KEVÄTLUKUKAUDELLE 2015</b></p>
 
     <p>$addressLabel.firstName $addressLabel.lastName</p>
-    [Hakijan hetu tai hetuttomalla syntymäaika]
+    <p>$henkilotunnus</p>
     <p>$koulu</p>
     <p>$koulutus</p>
+    <br/>
 
     <p><b>Ilmoitan sitovasti seuraavaa (X):</b></p>
 
     <p>
-        <b>_</b> Otan vastaan yllä mainitun opiskelupaikan sitovasti. En ole aiemmin vastaanottanut
+        <b>_</b>&amp;Otan vastaan yllä mainitun opiskelupaikan sitovasti. En ole aiemmin vastaanottanut
         korkeakoulututkintoon johtavaa opiskelupaikkaa syksyn 2014 korkeakoulujen yhteishaussa. Tämän ilmoituksen
         tehtyäni en voi tulla valituksi toiseen korkeakoulututkintoon johtavaan opiskelupaikkaan syksyn 2014
         korkeakoulujen yhteishaussa. Mikäli minulla on ylempiä hakutoiveita, joissa olen hyväksyttynä tai varasijalla,
@@ -67,16 +60,18 @@
     </p>
 
     <p>
-        <b>_</b> Otan vastaan yllä mainitun opiskelupaikan ehdollisesti. Mikäli tulen hyväksytyksi ylemmälle
+        <b>_</b>&amp;Otan vastaan yllä mainitun opiskelupaikan ehdollisesti. Mikäli tulen hyväksytyksi ylemmälle
         hakutoiveelleni, peruuntuu yllä mainittu opiskelupaikkani automaattisesti. Mikäli en tule hyväksytyksi ylemmälle
         hakutoiveelleni, muuttuu tämä vastaanottamisilmoitukseni sitovaksi.
     </p>
 
-    <p><b>_</b> En ota vastaan yllä mainittua opiskelupaikkaa.</p>
+    <p><b>_</b>&amp;En ota vastaan yllä mainittua opiskelupaikkaa.</p>
+    <br/>
 
     <p>Allekirjoitus ja päiväys:</p>
+    <br/>
 
-    <p><b><i>Palauta ilmoitus osoitteeseen XXX, XXXXXX viimeistään 9.12.2014</i></b></p>
+    <p><b><i>Palauta ilmoitus osoitteeseen $hakijapalveluidenOsoite viimeistään 9.12.2014</i></b></p>
 </div>
 
 </body>

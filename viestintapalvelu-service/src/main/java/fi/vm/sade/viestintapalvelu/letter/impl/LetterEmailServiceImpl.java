@@ -114,10 +114,9 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         }
         // Ensure template exists for each language:
         for (String language : new HashSet<String>(options)) {
-            if (templateService.getTemplateByName( new TemplateCriteriaImpl()
-                        .withName(template.getName())
-                        .withLanguage(language.toUpperCase())
-                        .withApplicationPeriod(letterBatch.getApplicationPeriod()), false) == null) {
+            if (templateService.getTemplateByName(
+                        new TemplateCriteriaImpl(template.getName(), language.toUpperCase())
+                            .withApplicationPeriod(letterBatch.getApplicationPeriod()), false) == null) {
                 options.remove(language);
             }
         }
@@ -216,10 +215,9 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
             if (!languageCode.equals(templateLanguage)) {
                 // Get the template in user specific language
-                Template languageTemplate = templateService.getTemplateByName( new TemplateCriteriaImpl()
-                        .withName(template.getName())
-                        .withLanguage(languageCode)
-                        .withApplicationPeriod(letterBatch.getApplicationPeriod()), true);
+                Template languageTemplate = templateService.getTemplateByName(
+                        new TemplateCriteriaImpl(template.getName(), languageCode)
+                            .withApplicationPeriod(letterBatch.getApplicationPeriod()), true);
                 if (languageTemplate != null) {
                     template = languageTemplate;
                 } else {

@@ -1,15 +1,20 @@
 package fi.vm.sade.viestintapalvelu;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-// TODO isipila 23.5.2013: where should we have static utils?
 public final class Utils {
-
+    private static Logger log = LoggerFactory.getLogger(Utils.class);
     private static final FastDateFormat THREAD_SAFE_DATE_FORMATTER = FastDateFormat
             .getInstance("dd.MM.yyyy_HH.mm");
 
@@ -58,6 +63,16 @@ public final class Utils {
                 .append(".")
                 .append(THREAD_SAFE_DATE_FORMATTER.format(new Date()))
                 .append(".").append(filename).toString();
+    }
+
+    public static String getResource(String resource) {
+        try {
+            InputStream fs = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
+            return IOUtils.toString(fs, "UTF-8");
+        } catch(IOException e) {
+            log.error("Failed to read the resource file: {}.\n{}", resource, e.toString());
+        }
+        return "";
     }
 
     private static String getAuthenticatedUserName() {

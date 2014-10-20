@@ -3,7 +3,9 @@
     <table class="table">
         <tr>
             <th>Valitse esimerkki pohjista:</th>
+            <th>Anna pohjalle nimi</th>
             <th>Tai luo tiedostonimien pohjalta: <i>(esim: tiedosto1,tiedosto2 jne.)</i></th>
+            <th>Korvauskenttätiedosto</th>
             <th>Tyylit tiedostonimi</th>
             <th>Kieli <i>(oletus: FI)</i></th>
             <th></th>
@@ -13,7 +15,13 @@
             	<select ng-model="template" ng-options="c.name for c in templates" ng-change="templateChanged()"></select>
             </td>
             <td>
+                <input class="input-medium" type="text" ng-model="templateName" placeholder="Pohjan nimi">
+            </td>
+            <td>
                 <input class="input-xlarge" type="text" ng-model="files" placeholder="Mallit tiedostonimi">
+            </td>
+            <td>
+                <input class="input-large" type="text" ng-model="replacementFile" placeholder="Korvauskenttätiedosto">
             </td>
             <td>
                 <input class="input-medium" type="text" ng-model="styleFile" placeholder="Tyylit tiedostonimi">

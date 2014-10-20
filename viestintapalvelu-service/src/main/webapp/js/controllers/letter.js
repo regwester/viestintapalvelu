@@ -1,5 +1,5 @@
-angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout', 'Options',
-  function ($scope, Generator, Printer, Template, $timeout, Options) {
+angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Printer', 'Template', '$timeout', 'Options', '_',
+  function ($scope, Generator, Printer, Template, $timeout, Options, _) {
     $scope.letters = [];
     $scope.count = 0;
     $scope.select_min = 0; // Min count of letters selectable from UI drop-down list
@@ -12,7 +12,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.oid = "1.2.246.562.10.00000000001";
     $scope.applicationPeriod = "K2014";
     $scope.generalEmail = null;
-    $scope.haut = [{nimi: {kieli_fi: "Listaa hauista ladatan..."}, oid:null}];
+    $scope.haut = [{nimi: {kieli_fi: "Listaa hauista ladataan..."}, oid:null}];
 
     Options.hakus(function(haut) {
         $scope.haut = haut;
@@ -46,7 +46,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     $scope.tinymceModel = '';
     function generateLetters(count) {
       $scope.letters = $scope.letters.concat(Generator.generateObjects(count, function (data) {
-        var tulokset = generateTulokset(data.any('hakutoive-lukumaara'));
+        var tulokset = generateTulokset(data.any('hakutoiveLukumaara'));
         var postoffice = data.any('postoffice');
         var country = data.prioritize(['FINLAND', 'FI'], 0.95).otherwise(data.any('country'));
 
@@ -66,7 +66,9 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           "templateReplacements": {"tulokset": tulokset,
             "koulu": tulokset[0]['organisaationNimi'],
             "koulutus": tulokset[0]['hakukohteenNimi'],
-            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"]
+            "henkilotunnus": "101085-9879",
+            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
+            "hakijapalveluidenOsoite" : data.any('street') + ' ' + data.any('housenumber')
           }
         };
       }));
@@ -74,6 +76,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
 
     function generateTulokset(count) {
       return Generator.generateObjects(count, function (data) {
+        var selectionCriteria = data.randomItems('selectionCriteria', _.range(0,5));
         return {
           "organisaationNimi": data.any('organisaationNimi'),
           "oppilaitoksenNimi": data.any('oppilaitoksenNimi'),
@@ -85,8 +88,13 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
           "paasyJaSoveltuvuuskoe": data.any('koe'), // Ei nivelkirjeessä
           "valinnanTulos": data.any('valinnanTulos'),
           "varasija": data.any('varasija'),
-          "hylkaysperuste": data.any('valinnanTulos') // Ei nivelkirjeessä
-
+          "hylkaysperuste": data.any('valinnanTulos'), // Ei nivelkirjeessä
+          "sijoitukset": _.map(selectionCriteria, function(item) { //kk_haussa katsotaan monia erilaisia pisteitä (koe, valinta, jne..)
+              return {'nimi': item, 'oma': data.any('hyvaksytyt'), 'hyvaksytyt': data.any('kaikkiHakeneet')};
+          }),
+          "pisteet": _.map(selectionCriteria, function(item) { //kk_haussa katsotaan monia erilaisia pisteitä (koe, valinta, jne..)
+              return {'nimi': item, 'oma': data.any('pisteetvajaa'), 'minimi': data.any('alinHyvaksyttyPistemaara')};
+          })
         };
       });
     }
@@ -128,7 +136,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
                     });
                 }
                 $scope.monitorStatus = status;
-                if (status.status == "ready") {
+                if (status.status === "ready") {
                     $scope.downloadAllowedForId = id;
                     if (status.emailReviewable) {
                         $scope.emailPossibleForId = id;
@@ -137,6 +145,8 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
                     if (whenDone) {
                         whenDone();
                     }
+                } else if(status.status === "error"){
+                    alert("Async process failed: " + status.errors[0].errorCause);
                 } else {
                     if (status.emailReviewable) {
                         $scope.emailPreviewPossibleForId = id;
@@ -152,7 +162,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
        if ($scope.emailPossibleForId) {
            Printer.sendEmail($scope.emailPossibleForId).success(function() {
                $scope.emailPossibleForId = null;
-               alert("Viesti lähti ryhmäsähköpostipalvelulle.")
+               alert("Viesti lähti ryhmäsähköpostipalvelulle.");
            });
        }
     };

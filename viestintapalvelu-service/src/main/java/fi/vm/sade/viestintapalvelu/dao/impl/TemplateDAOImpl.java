@@ -112,14 +112,14 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
      * Find template by name
      */
     public Template findTemplateByName(String name, String language) {
-        return findTemplate(new TemplateCriteriaImpl().withName(name).withLanguage(language));
+        return findTemplate(new TemplateCriteriaImpl(name, language));
     }
 
     /**
      * Find template by name
      */
     public Template findTemplateByName(String name, String language, String type) {
-        return findTemplate(new TemplateCriteriaImpl().withName(name).withLanguage(language).withType(type));
+        return findTemplate(new TemplateCriteriaImpl(name, language).withType(type));
     }
 
     public List<String> getAvailableTemplates() {
