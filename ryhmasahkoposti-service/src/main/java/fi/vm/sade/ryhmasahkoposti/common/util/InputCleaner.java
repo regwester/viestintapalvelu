@@ -8,11 +8,21 @@ import org.jsoup.safety.Whitelist;
 
 public class InputCleaner {
 
+    public static String cleanHtmlFragment(String html) {
+        Document doc = cleanHtml(html);
+        return doc.body().html().toString().replaceAll("\\r\\n|\\n|\\r", "");
+    }
+
+    public static String cleanHtmlDocument(String html) {
+        Document doc = cleanHtml(html);
+        return doc.toString().replaceAll("\\r\\n|\\n|\\r", "");
+    }
+
     /* Removes dangerous elements and all attributes except style */
-    public static String cleanHtml(String html) {
+    public static Document cleanHtml(String html) {
 
         Cleaner cleaner = new Cleaner(getWhitelist());
-        Document dirtyDoc = Jsoup.parse(html);
+        Document dirtyDoc = Jsoup.parseBodyFragment(html);
         Document almostCleanDoc = cleaner.clean(dirtyDoc);
 
         // check that style attributes don't include any url() or expression()
@@ -24,7 +34,7 @@ public class InputCleaner {
             }
         }
 
-        return almostCleanDoc.toString();
+        return almostCleanDoc;
     }
 
     /*

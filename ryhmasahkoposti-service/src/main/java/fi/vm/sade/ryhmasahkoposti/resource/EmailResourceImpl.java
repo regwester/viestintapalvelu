@@ -152,7 +152,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     private void sanitizeInput(EmailData emailData) {
         log.debug("Sanitizing email body");
-        emailData.getEmail().setBody(InputCleaner.cleanHtml(emailData.getEmail().getBody()));
+        emailData.getEmail().setBody(InputCleaner.cleanHtmlDocument(emailData.getEmail().getBody()));
     }
     
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {
