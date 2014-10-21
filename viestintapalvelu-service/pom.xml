@@ -23,6 +23,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Henkilöpalvelu -->
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>
@@ -94,9 +100,9 @@
             </exclusions>
         </dependency>
         <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-            </dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -536,10 +542,10 @@
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>asm-all-repackaged</artifactId>
-            		<groupId>org.glassfish.hk2.external</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>asm-all-repackaged</artifactId>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 

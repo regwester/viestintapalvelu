@@ -18,10 +18,12 @@
     <name>Viestintapalvelu</name>
 
     <modules>
+        <module>common</module>
         <module>viestintapalvelu-service</module>
         <module>viestintapalvelu-ui</module>
         <module>ryhmasahkoposti-api</module>
         <module>ryhmasahkoposti-service</module>
+        <module>ajastus-service</module>
     </modules>
 
     <properties>

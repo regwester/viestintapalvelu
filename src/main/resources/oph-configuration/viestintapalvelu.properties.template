@@ -54,6 +54,7 @@ activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
 cas.callback.ryhmasahkoposti=http://${server.name}:8309/ryhmasahkoposti-service
 cas.callback.viestintapalvelu=http://${server.name}:8309/viestintapalvelu
+cas.callback.ajastuspalvelu=http://${server.name}:8309/ajastuspalvelu
 cas.group-role-attribute=cn
 cas.group-search-base=ou\=groups
 cas.group-search-filter=(uniqueMember\={0})
@@ -62,6 +63,7 @@ cas.user-search-base=ou\=people
 cas.user-search-filter=(|(mail\={0})(uid\={0}))
 cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti-service
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
+cas.service.ajastuspalvelu=https\://${host.virkailija}/ajastuspalvelu
 customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
 dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
 flyway.initOnMigrate=true

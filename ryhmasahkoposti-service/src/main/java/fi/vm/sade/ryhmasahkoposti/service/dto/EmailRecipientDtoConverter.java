@@ -65,7 +65,7 @@ public class EmailRecipientDtoConverter {
         to.setHtml(original.isHtml());
         to.setInfected(false);
         to.setLanguageCode(original.getLanguageCode());
-        to.setOrganizationOid(original.getOrganizationOid());
+            to.setOrganizationOid(original.getOrganizationOid());
         to.setReplyTo(original.getReplyTo());
         to.setSender(original.getSender());
         to.setSenderOid(original.getSenderOid());

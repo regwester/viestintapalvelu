@@ -41,10 +41,10 @@
     <!-- Authentication and authorization support -->
 
     <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
     </bean>
-    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean>

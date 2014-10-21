@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:http="http://cxf.apache.org/transports/http/configuration"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
+
+    <context:component-scan base-package="fi.vm.sade.ajastuspalvelu"/>
+
+    <context:property-placeholder
+            location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+            ignore-resource-not-found="true" properties-ref="defaultProps"/>
+
+    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <util:properties local-override="true">
+                <prop key="cas_mode">front</prop>
+                <prop key="cas_key">ajastuspalvelu</prop>
+                <prop key="cas_service">${cas.service.ajastuspalvelu}</prop>
+                <prop key="cas_callback_url">${cas.callback.ajastuspalvelu}</prop>
+                <prop key="spring_security_default_access">isAuthenticated()</prop>
+            </util:properties>
+        </property>
+    </bean>
+
+    <bean id="dbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+        <property name="driverClassName" value="org.postgresql.Driver" />
+        <property name="url" value="jdbc:postgresql://localhost:5432/quartz_test" />
+        <property name="username" value="quartz_test" />
+        <property name="password" value="quartz_test" />
+    </bean>
+    <bean id="flyway" class="org.flywaydb.core.Flyway" init-method="migrate">
+        <property name="initOnMigrate" value="true"/>
+        <property name="dataSource" ref="dbDataSource" />
+    </bean>
+
+    <bean id="schedulerJDBC" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"  depends-on="flyway">
+        <property name="dataSource" ref="dbDataSource" />
+        <property name="jobFactory" ref="autowiringBeanJobFactory"/>
+        <property name="overwriteExistingJobs" value="true" />
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.jobStore.isClustered">false</prop>
+                <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</prop>
+                <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+                <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+            </props>
+        </property>
+    </bean>
+</beans>
