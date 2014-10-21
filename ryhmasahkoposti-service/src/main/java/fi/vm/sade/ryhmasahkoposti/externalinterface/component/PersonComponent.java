@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource;
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**
  * Komponenttiluokka henkilon tietojen hakemiseksi CXF:n avulla {@link service-context.xml}

@@ -42,14 +42,14 @@ import org.springframework.transaction.annotation.Transactional;
 import com.sun.org.apache.xerces.internal.jaxp.datatype.XMLGregorianCalendarImpl;
 
 import fi.suomi.asiointitili.*;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
+import fi.vm.sade.viestintapalvelu.common.util.ValidHetu;
+import fi.vm.sade.viestintapalvelu.common.util.XMLTypeHelper;
+import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.converter.AsiointitiliDtoConverter;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.impl.AsiointitiliServiceImpl;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
-import fi.vm.sade.viestintapalvelu.util.ValidHetu;
-import fi.vm.sade.viestintapalvelu.util.XMLTypeHelper;
-import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
 
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
 import static fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers.catchAllParameters;

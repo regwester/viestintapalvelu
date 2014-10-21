@@ -26,6 +26,7 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
+import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import fi.vm.sade.viestintapalvelu.dao.*;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
@@ -40,7 +41,6 @@ import fi.vm.sade.viestintapalvelu.letter.dto.*;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
-import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
 
 import static org.joda.time.DateTime.now;
 

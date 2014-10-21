@@ -7,8 +7,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
-import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**
  * Template component

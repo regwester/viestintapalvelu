@@ -23,7 +23,7 @@ import org.joda.time.DateTime;
 import fi.ratamaa.dtoconverter.typeconverter.TypeConversionContainer;
 import fi.ratamaa.dtoconverter.typeconverter.TypeConversionSuite;
 import fi.ratamaa.dtoconverter.typeconverter.TypeConverterAdapter;
-import fi.vm.sade.viestintapalvelu.util.XMLTypeHelper;
+import fi.vm.sade.viestintapalvelu.common.util.XMLTypeHelper;
 
 /**
  * User: ratamaa

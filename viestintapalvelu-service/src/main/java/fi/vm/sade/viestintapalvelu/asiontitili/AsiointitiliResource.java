@@ -35,9 +35,9 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliService;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 
 /**
  * User: ratamaa
