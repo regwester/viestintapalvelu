@@ -49,6 +49,10 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+        </dependency>
 
         <!-- JPA and QSDL -->
         <dependency>
@@ -67,8 +71,8 @@
             <artifactId>generic-common</artifactId>
             <exclusions>
                 <exclusion>
-                    <artifactId>validation-api</artifactId>
                     <groupId>javax.validation</groupId>
+                    <artifactId>validation-api</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -127,6 +131,16 @@
         <dependency>
             <groupId>org.glassfish.jersey.containers</groupId>
             <artifactId>jersey-container-servlet</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.core</groupId>
+            <artifactId>jersey-client</artifactId>
+        </dependency>
+
+        <!-- Jersey Spring 3 DI support -->
+        <dependency>
+            <groupId>org.glassfish.jersey.ext</groupId>
+            <artifactId>jersey-spring3</artifactId>
         </dependency>
 
         <!-- Postgresql-->

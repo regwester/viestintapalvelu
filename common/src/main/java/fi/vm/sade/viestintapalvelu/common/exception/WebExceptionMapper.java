@@ -38,7 +38,7 @@ public class WebExceptionMapper implements ExtendedExceptionMapper<Throwable> {
 
     private static final Logger logger = LoggerFactory.getLogger(WebExceptionMapper.class);
 
-    private static final ResourceBundle resource = ResourceBundle.getBundle("properties.messages");
+    private static final ResourceBundle resource = ResourceBundle.getBundle("properties.ErrorMessages");
 
     @Override
     public boolean isMappable(Throwable throwable) {

@@ -14,24 +14,15 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu;
+package fi.vm.sade.ajastuspalvelu.service.test;
 
 import java.util.Date;
-
-import org.springframework.stereotype.Service;
 
 /**
  * User: ratamaa
  * Date: 21.10.2014
  * Time: 13:16
  */
-@Service
-public class OtherServiceImpl implements OtherService {
-    @Override
-    public void doSomething(Date previousFireTime, Date nextFireTime, String name) {
-        System.out.println("------------------------------------------------");
-        System.out.println("Job named: " + name + " was called at " + new Date());
-        System.out.println("It was last run at " + previousFireTime + " and next time at: " + nextFireTime);
-        System.out.println();
-    }
+public interface OtherService {
+    void doSomething(Date previousFireTime, Date nextFireTime, String name);
 }

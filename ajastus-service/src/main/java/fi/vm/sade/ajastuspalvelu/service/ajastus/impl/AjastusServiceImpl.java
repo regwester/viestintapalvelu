@@ -13,13 +13,16 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.ajastuspalvelu;
+package fi.vm.sade.ajastuspalvelu.service.ajastus.impl;
 
 import javax.annotation.PostConstruct;
 
 import org.quartz.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import fi.vm.sade.ajastuspalvelu.service.ajastus.AjastusService;
+import fi.vm.sade.ajastuspalvelu.service.test.OtherService;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
@@ -31,7 +34,7 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Time: 17:10
  */
 @Service
-public class QuartzTestServiceImpl implements Job {
+public class AjastusServiceImpl implements Job, AjastusService {
 
     @Autowired
     private Scheduler scheduler;
@@ -48,11 +51,12 @@ public class QuartzTestServiceImpl implements Job {
         scheduler.start();
     }
 
+    @Override
     public void cronJob(Long id, String cron) throws SchedulerException {
         JobKey key = new JobKey(""+id, "group");
         JobDetail job = scheduler.getJobDetail(key);
         if (job == null) {
-            job = newJob(QuartzTestServiceImpl.class)
+            job = newJob(AjastusServiceImpl.class)
                     .withIdentity(key)
                     .requestRecovery().storeDurably()
                     .build();

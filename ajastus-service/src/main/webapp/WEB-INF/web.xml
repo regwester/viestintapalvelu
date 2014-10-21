@@ -16,6 +16,7 @@
 <web-app version="3.0" xmlns="http://java.sun.com/xml/ns/javaee"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd">
+    <display-name>AjastusService</display-name>
 
     <context-param>
         <param-name>contextConfigLocation</param-name>
@@ -83,9 +84,11 @@
     </servlet-mapping>
 
     <resource-ref>
-        <description>PostgreSQL Viestinnan Datasource </description>
-        <res-ref-name>jdbc/viestinta</res-ref-name>
+        <description>PostgreSQL Ajastuksen Datasource </description>
+        <res-ref-name>jdbc/ajastus</res-ref-name>
         <res-type>javax.sql.DataSource</res-type>
         <res-auth>Container</res-auth>
     </resource-ref>
+
+    <distributable />
 </web-app>

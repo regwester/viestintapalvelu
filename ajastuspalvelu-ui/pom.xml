@@ -29,6 +29,7 @@
     <packaging>war</packaging>
 
     <artifactId>ajastuspalvelu-ui</artifactId>
+    <name>Ajastuspalvelu :: UI</name>
 
     <build>
         <plugins>
