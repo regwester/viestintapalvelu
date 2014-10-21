@@ -10,7 +10,7 @@
     </parent>
 
     <artifactId>ryhmasahkoposti-service</artifactId>
-    <name>Ryhmsahkoposti :: Service</name>
+    <name>Ryhmasahkoposti :: Service</name>
     <packaging>war</packaging>
 
     <properties>
