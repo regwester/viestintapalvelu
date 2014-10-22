@@ -24,3 +24,4 @@ target
 **/rebel.xml
 
 velocity.log
+phantomjsdriver.log
