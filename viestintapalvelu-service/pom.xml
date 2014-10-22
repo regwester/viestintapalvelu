@@ -19,6 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <authentication-domain.version>1.0-SNAPSHOT</authentication-domain.version>
         <dokumenttipalvelu.version>1.0-SNAPSHOT</dokumenttipalvelu.version>
+        <dtoconverter.version>2.0.2-RELEASE</dtoconverter.version>
     </properties>
 
     <dependencies>
@@ -412,6 +413,10 @@
             <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-bindings-soap</artifactId>
         </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-ws-security</artifactId>
+        </dependency>
 
         <dependency>
             <groupId>org.jsoup</groupId>
@@ -491,6 +496,17 @@
         <dependency>
             <groupId>com.googlecode.flyway</groupId>
             <artifactId>flyway-core</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.ratamaa</groupId>
+            <artifactId>dtoconverter</artifactId>
+            <version>${dtoconverter.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.ratamaa</groupId>
+            <artifactId>dtoconverter-hibernate</artifactId>
+            <version>${dtoconverter.version}</version>
         </dependency>
 
         <!-- Apache PDFBox API library for PDF document handling -->
@@ -596,10 +612,6 @@
                 <artifactId>tomcat7-maven-plugin</artifactId>
             </plugin>
             <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
                 <groupId>com.googlecode.flyway</groupId>
                 <artifactId>flyway-maven-plugin</artifactId>
                 <configuration>
@@ -613,6 +625,30 @@
                 <artifactId>hibernate4-maven-plugin</artifactId>
             </plugin>
 
+            <plugin>
+                <groupId>org.jvnet.jax-ws-commons</groupId>
+                <artifactId>jaxws-maven-plugin</artifactId>
+                <version>2.3</version>
+                <executions>
+                    <execution>
+                        <phase>generate-sources</phase>
+                        <goals>
+                            <goal>wsimport</goal>
+                        </goals>
+                        <configuration>
+                            <packageName>fi.suomi.asiointitili</packageName>
+                            <wsdlFiles>
+                                <wsdlFile>${basedir}/src/main/resources/via/wsdl/viranomaispaluukanava.wsdl</wsdlFile>
+                                <wsdlFile>${basedir}/src/main/resources/via/wsdl/viranomaispalvelut.wsdl</wsdlFile>
+                            </wsdlFiles>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
+            </plugin>
         </plugins>
         <pluginManagement>
             <plugins>
@@ -649,5 +685,66 @@
             </plugins>
         </pluginManagement>
     </build>
+
+    <profiles>
+        <profile>
+            <id>jdk6</id>
+            <activation>
+                <!-- needed only on JDK 6-->
+                <jdk>1.6</jdk>
+            </activation>
+            <properties>
+                <endorsed.dir>${project.build.directory}/endorsed</endorsed.dir>
+            </properties>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-dependency-plugin</artifactId>
+                        <executions>
+                            <execution>
+                                <phase>validate</phase>
+                                <goals>
+                                    <goal>copy</goal>
+                                </goals>
+                                <configuration>
+                                    <outputDirectory>${endorsed.dir}</outputDirectory>
+                                    <silent>true</silent>
+                                    <!-- need JAXB API and JAX-WS API in an endorsed dir-->
+                                    <artifactItems>
+                                        <artifactItem>
+                                            <groupId>javax.xml.bind</groupId>
+                                            <artifactId>jaxb-api</artifactId>
+                                            <version>2.2.7</version>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                        <artifactItem>
+                                            <groupId>javax.xml.ws</groupId>
+                                            <artifactId>jaxws-api</artifactId>
+                                            <version>2.2.9</version>
+                                            <type>jar</type>
+                                        </artifactItem>
+                                    </artifactItems>
+                                </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-compiler-plugin</artifactId>
+                        <version>2.3.2</version>
+                        <configuration>
+                            <source>1.6</source>
+                            <target>1.6</target>
+                            <compilerArguments>
+                                <!-- tell compiler to use endorsed dir -->
+                                <endorseddirs>${endorsed.dir}</endorseddirs>
+                            </compilerArguments>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
 

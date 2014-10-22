@@ -10,8 +10,10 @@
 <body>
 <div class="liiteSisalto">
     <p><b>$addressLabel.firstName $addressLabel.lastName</b></p>
+    <br/>
 
     <p><b>YOUR SITUATION IN JOINT APPLICATION IN AUTUMN 2014</b></p>
+    <br/>
 
     <table>
         <thead>
@@ -28,10 +30,10 @@
         #foreach( $tulos in $tulokset )
         <tr>
             <td class="hakutoive">$foreach.count. $tulos.organisaationNimi, $tulos.oppilaitoksenNimi<br/>$tulos.hakukohteenNimi</td>
-            <td>$tulos.hyvaksytyt / $tulos.hakeneet</td>
+            <td>$tulos.hyvaksytyt / $tulos.kaikkiHakeneet</td>
             <td>$tulos.valinnanTulos</td>
             <td>$tulos.hylkaysperuste</td>
-            <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.kaikki</p>#end</td>
+            <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.hyvaksytyt</p>#end</td>
             <td>#foreach($pisteet in $tulos.pisteet)<p>$pisteet.nimi $pisteet.oma / $pisteet.minimi</p>#end</td>
         </tr>
         #end
@@ -60,7 +62,7 @@
 
     <p>
         <b>Basis for rejection:</b> If your selection status is failed, you cannot be accepted to the study programme.
-        In this column you can see the basis ofyour rejection. You can get more information about the basis of rejection
+        In this column you can see the basis of your rejection. You can get more information about the basis of rejection
         in the university or polytechnic / UAS in question.
     </p>
 
@@ -83,8 +85,7 @@
         amount is not the only thing that has influence on the result of the student selection. For example a failed
         language test or some part of the entrance examination is failed can prevent the selection even though the total
         point amount would be enough to get accepted. You can see the point amount only if it is possible to count the
-        points for you with this selection way. Mikäli valintatavassa ei lasketa pisteitä tai sinulle ei voida niitä
-        laskea, on sarake tyhjä. Unless there are no point counting on this selection way or it is not possible to count
+        points for you with this selection way. Unless there are no point counting on this selection way or it is not possible to count
         the points for you, the column is empty.
     </p>
 

@@ -1,19 +1,30 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.NoSuchAlgorithmException;
-import java.util.*;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.Map;
+import java.util.HashMap;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.GET;
+import javax.ws.rs.PUT;
+import javax.ws.rs.POST;
+import javax.ws.rs.Produces;
+import javax.ws.rs.Consumes;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -85,11 +96,17 @@ public class TemplateResource extends AsynchronousResource {
     public Template template(@Context HttpServletRequest request) throws IOException, DocumentException {
 
         Template result = new Template();
-        String[] fileNames = request.getParameter("templateFile").split(",");
+
         String language = request.getParameter("lang");
+        result.setLanguage(language);
+
+        String resultName = request.getParameter("templateName");
+        result.setName(resultName);
+
         String styleFile = request.getParameter("styleFile");
         if (styleFile != null) {
-            result.setStyles(getStyle(styleFile));
+            String styleURL = "/template_styles/" + styleFile + ".css";
+            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\" \"", ""));
         }
 
         // Read type if provided
@@ -100,34 +117,29 @@ public class TemplateResource extends AsynchronousResource {
             type = type.toLowerCase();
         }
 
+        String[] fileNames = request.getParameter("templateFile").split(",");
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         int order = 1;
         for (String file : fileNames) {
-            String templateName = Utils.resolveTemplateName("/templates/" + file + "_{LANG}{TYPE}.html", language, type);
-            BufferedReader buff = new BufferedReader(
-                new InputStreamReader(getClass().getResourceAsStream(templateName)));
-            StringBuilder sb = new StringBuilder();
-
-            String line = buff.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = buff.readLine();
-            }
+            String templateURL = Utils.resolveTemplateName("/templates/" + file + "_{LANG}{TYPE}.html", language, type);
             TemplateContent content = new TemplateContent();
-            content.setName(templateName);
-            content.setContent(sb.toString());
+            content.setName(templateURL);
+            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\" \"", ""));
             content.setOrder(order);
             contents.add(content);
             order++;
         }
         result.setContents(contents);
+
+        String replacementFile = request.getParameter("replacementFile");
+        String replacementURL = Utils.resolveTemplateName("/replacements/" + replacementFile + "_{LANG}{TYPE}.html", language, type);
         Replacement replacement = new Replacement();
-        replacement.setName("$sisalto");
+        replacement.setName("sisalto");
+        replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\" \"", ""));
         ArrayList<Replacement> rList = new ArrayList<Replacement>();
         rList.add(replacement);
         result.setReplacements(rList);
 
-        //return new Template();
         return result;
     }
 
@@ -141,7 +153,6 @@ public class TemplateResource extends AsynchronousResource {
     public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
         String templateId = request.getParameter("templateId");
         Long id = Long.parseLong(templateId);
-
         return templateService.findById(id);
     }
 
@@ -157,28 +168,14 @@ public class TemplateResource extends AsynchronousResource {
         DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
 
-        String[] templates = {
-                "/test_data/hyvaksymiskirje_FI.json", "/test_data/hyvaksymiskirje_SV.json",
-                "/test_data/jalkiohjauskirje_FI.json", "/test_data/jalkiohjauskirje_SV.json",
-                "/test_data/hyvaksymiskirje_nivel_FI.json", "/test_data/hyvaksymiskirje_nivel_SV.json",
-                "/test_data/jalkiohjauskirje_nivel_FI.json", "/test_data/jalkiohjauskirje_nivel_SV.json",
-                "/test_data/koekutsukirje_EN.json","/test_data/koekutsukirje_SV.json", "/test_data/koekutsukirje_FI.json",
-                "/test_data/osoitepalvelu_email_EN.json","/test_data/osoitepalvelu_email_SV.json", 
-                "/test_data/osoitepalvelu_email_FI.json"
-                };
+        ClassLoader cl = getClass().getClassLoader();
+        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
+        Resource[] templates = resolver.getResources("classpath*:/test_data/*.json");
 
-        for (String template : templates) {
+        for (Resource template : templates) {
             Map<String, String> current = new HashMap<String, String>();
-            BufferedReader buff = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(template)));
-            StringBuilder sb = new StringBuilder();
-
-            String line = buff.readLine();
-            while (line != null) {
-                sb.append(line);
-                line = buff.readLine();
-            }
-            current.put("name", template);
-            current.put("content", sb.toString());
+            current.put("name", template.getFilename());
+            current.put("content", Utils.getResource(template.getURL().toString()).replaceAll("\\r|\\n|\" \"", ""));
             res.add(current);
         }
 
@@ -434,8 +431,7 @@ public class TemplateResource extends AsynchronousResource {
 
         // OPH default template
         Template template = templateService.getTemplateByName(
-                new TemplateCriteriaImpl().withName(templateName)
-                        .withLanguage(languageCode)
+                new TemplateCriteriaImpl(templateName, languageCode)
                         .withApplicationPeriod(applicationPeriod), getContent);
 
         Map<String, Object> templateRepl = new HashMap<String, Object>();
@@ -483,18 +479,6 @@ public class TemplateResource extends AsynchronousResource {
         }
 
         return Response.ok(history).build();
-    }
-
-    private String getStyle(String styleFile) throws IOException {
-        BufferedReader buf = new BufferedReader(new InputStreamReader(getClass().getResourceAsStream(
-            "/template_styles/" + styleFile + ".css")));
-        StringBuilder sb = new StringBuilder();
-        String line = buf.readLine();
-        while (line != null) {
-            sb.append(line);
-            line = buf.readLine();
-        }
-        return sb.toString();
     }
 
     @GET

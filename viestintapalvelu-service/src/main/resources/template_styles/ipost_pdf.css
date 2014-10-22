@@ -2,11 +2,11 @@
     size: 210mm 297mm;
     margin: 16mm 10mm 30mm 12mm;
 
-@bottom-center {
-		vertical-align: top;
-		content: element(footer);
-	}
+    @bottom-center {
+        vertical-align: top;
+        content: element(footer);
     }
+}
 
 @font-face {
     font-family: Calibri;
@@ -31,7 +31,7 @@ body {
 .koekutsuheader {
     font-size: 14px;
     font-family: Calibri;
-	margin: 4mm 0 0 11mm;
+    margin: 4mm 0 0 11mm;
     height: 50mm;
     width: 100mm;
     float: left;
@@ -61,7 +61,7 @@ body {
 .koekutsuosoitetarra {
     font-size: 14px;
     font-family: Calibri;
-	width: 70mm;
+    width: 70mm;
     height: 37mm;
     margin: 0;
     padding: 0;
@@ -79,9 +79,9 @@ body {
 }
 
 .koekutsukirjeenpaivays {
-	font-size: 14px;
+    font-size: 14px;
     font-family: Calibri;
-	margin-top: 50px;
+    margin-top: 50px;
     margin-left: 500px;
 }
 
@@ -95,9 +95,9 @@ p {
 }
 
 .koekutsuasiaotsikko {
-	font-size: 14px;
+    font-size: 14px;
     font-family: Calibri;
-	margin:  15mm 0 0 11mm;
+    margin: 15mm 0 0 11mm;
     clear: both;
     font-weight: bold;
 }
@@ -112,13 +112,12 @@ p {
 }
 
 .koekutsusisalto {
-	font-size: 14px;
+    font-size: 14px;
     font-family: Calibri;
-	margin:  15mm 0 0 11mm;
-	clear: both;
+    margin: 15mm 0 0 11mm;
+    clear: both;
     line-height: 140%;
 }
-
 
 .liiteSisalto {
     font-size: 11px;
@@ -143,7 +142,7 @@ td {
 }
 
 .koekutsuhakukohde {
-	font-size: 14px;
+    font-size: 14px;
     font-family: Calibri;
     margin: 5mm 0 0 11mm;
     text-align: left;

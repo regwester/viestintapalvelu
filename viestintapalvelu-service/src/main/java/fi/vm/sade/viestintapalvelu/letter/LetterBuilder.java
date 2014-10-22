@@ -163,7 +163,7 @@ public class LetterBuilder {
             if (languageIsDifferent(baseTemplate, letter)) {
                 // Get the template in user specific language
                 Template template = templateService.getTemplateByName(
-                        new TemplateCriteriaImpl().withName(letterTemplate.getName()).withLanguage(letter.getLanguageCode())
+                        new TemplateCriteriaImpl(letterTemplate.getName(), letter.getLanguageCode())
                                 .withApplicationPeriod(batch.getApplicationPeriod()), true);
                 if (template != null) {
                     letterTemplate = template;
@@ -240,7 +240,8 @@ public class LetterBuilder {
 
         // Search template by name
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(new TemplateCriteriaImpl().withName(batch.getTemplateName()).withLanguage(batch.getLanguageCode())
+            template = templateService.getTemplateByName(new TemplateCriteriaImpl(batch.getTemplateName(),
+                            batch.getLanguageCode())
                     .withApplicationPeriod(batch.getApplicationPeriod()), true);
             batch.setTemplateId(template.getId()); // update template Id
         }
@@ -366,7 +367,7 @@ public class LetterBuilder {
 
         // liite specific handling
         if (data.containsKey("tulokset")) {
-            List<Map<String, String>> tulokset = (List<Map<String, String>>) data.get("tulokset");
+            List<Map<String, Object>> tulokset = (List<Map<String, Object>>) data.get("tulokset");
             Map<String, Boolean> columns = distinctColumns(tulokset);
             data.put("tulokset", normalizeColumns(columns, tulokset));
             data.put("columns", columns);
@@ -410,27 +411,40 @@ public class LetterBuilder {
         return data;
     }
 
-    private List<Map<String, String>> normalizeColumns(Map<String, Boolean> columns, List<Map<String, String>> tulokset) {
+    private List<Map<String, Object>> normalizeColumns(Map<String, Boolean> columns, List<Map<String, Object>> tulokset) {
         if (tulokset == null) {
             return null;
         }
-        for (Map<String, String> row : tulokset) {
+        for (Map<String, Object> row : tulokset) {
             for (String column : columns.keySet()) {
                 if (!row.containsKey(column) || row.get(column) == null) {
                     row.put(column, "");
                 }
-                row.put(column, cleanHtmlFromApi(row.get(column)));
+                Object obj = row.get(column);
+                if(obj instanceof String) {
+                    row.put(column, cleanHtmlFromApi((String)obj));
+                } else if(obj instanceof ArrayList<?> && (((ArrayList<?>)obj).get(0) instanceof Map<?, ?>)) {
+                    for (Map<String, String> map: (ArrayList<Map<String, String>>) obj) {
+                        for(Map.Entry<String, String> entry: map.entrySet()) {
+                            entry.setValue(cleanHtmlFromApi(entry.getValue()));
+                        }
+                    }
+                    row.put(column, obj);
+                } else {
+                    row.put(column, "");
+                }
+
             }
         }
         return tulokset;
     }
 
-    private Map<String, Boolean> distinctColumns(List<Map<String, String>> tulokset) {
+    private Map<String, Boolean> distinctColumns(List<Map<String, Object>> tulokset) {
         Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
         if (tulokset == null) {
             return printedColumns;
         }
-        for (Map<String, String> haku : tulokset) {
+        for (Map<String, Object> haku : tulokset) {
             if (haku == null) {
                 continue;
             }
