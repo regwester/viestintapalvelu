@@ -14,21 +14,29 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu.api.dto;
+package fi.vm.sade.ajastuspalvelu.api.databind;
 
-import java.io.Serializable;
-import java.util.Map;
+import java.io.IOException;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+
+import fi.vm.sade.ajastuspalvelu.api.dto.Item;
+import fi.vm.sade.ajastuspalvelu.api.dto.ReceiverItem;
 
 /**
  * User: ratamaa
  * Date: 22.10.2014
- * Time: 13:25
+ * Time: 13:53
  */
-@JsonIgnoreProperties(ignoreUnknown = true)
-public interface Item extends Serializable {
-
-    Map<String,Object> getContext();
-
+public class ItemDeserializer extends JsonDeserializer<Item> {
+    @Override
+    public Item deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
+        try {
+            return ctxt.readValue(jp, ReceiverItem.class);
+        } catch(Exception e) {
+        }
+        return null;
+    }
 }

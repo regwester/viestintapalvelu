@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+
+import fi.vm.sade.ajastuspalvelu.api.databind.ItemDeserializer;
 
 /**
  * User: ratamaa
@@ -32,6 +35,7 @@ public class SchedulerResponse implements Serializable {
     private static final long serialVersionUID = -818989152242206206L;
 
     private Map<String,Object> commonContent = new HashMap<String, Object>();
+    @JsonDeserialize(contentUsing = ItemDeserializer.class)
     private List<? extends Item> items = new ArrayList<Item>();
 
     public Map<String, Object> getCommonContent() {

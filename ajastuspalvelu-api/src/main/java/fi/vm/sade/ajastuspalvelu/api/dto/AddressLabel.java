@@ -22,9 +22,11 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Kirjeen vastaanottajan osoitetiedot")
 public class AddressLabel implements Serializable {
     private static final long serialVersionUID = 8596158946243672828L;

@@ -19,6 +19,7 @@ package fi.vm.sade.ajastuspalvelu.api.dto;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 /**
@@ -26,6 +27,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  * Date: 22.10.2014
  * Time: 13:27
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ReceiverItem implements Item {
     private static final long serialVersionUID = -7769952777161931528L;
 
