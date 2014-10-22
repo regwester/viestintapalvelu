@@ -26,7 +26,7 @@
         </property>
     </bean>
 
-    <bean id="flyway" class="com.googlecode.core.Flyway" init-method="migrate">
+    <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
         <property name="initOnMigrate" value="true"/>
         <property name="dataSource" ref="dbDataSource" />
     </bean>
