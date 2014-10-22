@@ -30,7 +30,12 @@
 
     <artifactId>ajastuspalvelu-ui</artifactId>
     <name>Ajastuspalvelu :: UI</name>
-
+    
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <webapp.dir>${project.basedir}/src/main/webapp</webapp.dir>
+    </properties>
+    
     <build>
         <plugins>
             <plugin>
@@ -41,7 +46,57 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-resources-plugin</artifactId>
             </plugin>
+            
+             <plugin>
+                <groupId>com.github.klieber</groupId>
+                <artifactId>phantomjs-maven-plugin</artifactId>
+                <version>${phantomjs-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <version>${phantomjs.version}</version>
+                </configuration>
+            </plugin>
+            
+            <plugin>
+                <groupId>com.github.searls</groupId>
+                <artifactId>jasmine-maven-plugin</artifactId>
+                <version>${jasmine-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
+                    <webDriverCapabilities>
+                          <phantomjs.binary.path>${phantomjs.binary}</phantomjs.binary.path>
+                    </webDriverCapabilities>
+                    <preloadSources>
+                        <source>${webapp.dir}/assets/lib/jquery/jquery-2.1.1.min.js</source>
+                        <source>${webapp.dir}/assets/lib/angular/angular.js</source>
+                        <source>${webapp.dir}/assets/lib/angular/angular-mocks.js</source>
+                        <source>${webapp.dir}/assets/lib/angular/angular-resource.js</source>
+                        <source>${webapp.dir}/assets/lib/angular/angular-route.js</source>
+                        <source>${webapp.dir}/assets/lib/angular/angular-animate.js</source>
+                        <source>${webapp.dir}/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.2.min.js</source>
+                    </preloadSources>
+                    <jsSrcDir>${webapp.dir}</jsSrcDir>
+                    <sourceExcludes>
+                        <exclude>assets/**/*.js</exclude>
+                    </sourceExcludes>
+                    <jsTestSrcDir>${project.basedir}/src/test/spec</jsTestSrcDir>
+                </configuration>
+            </plugin>
         </plugins>
+
     </build>
 
 </project>

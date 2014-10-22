@@ -2,7 +2,7 @@
 
 var app = angular.module('ajastuspalvelu', [ 'ngResource', 'ngRoute', 'ngAnimate', 'ui.bootstrap']);
 
-app.config([ '$routeProvider', '$httpProvider', function($routeProvider, $httpProvider) {
+app.config([ '$routeProvider', function($routeProvider) {
     $routeProvider
     .when('/etusivu', {
         controller : 'TaskListController',
