@@ -43,6 +43,16 @@
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.containers</groupId>
+            <artifactId>jersey-container-servlet-core</artifactId>
+            <version>${jersey.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>javax.annotation</groupId>
+            <artifactId>javax.annotation-api</artifactId>
+            <version>1.2</version>
+        </dependency>
 
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
@@ -347,6 +357,10 @@
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>de.smartics.maven.plugin</groupId>
+                <artifactId>hibernate4-maven-plugin</artifactId>
             </plugin>
             <plugin>
                 <groupId>com.googlecode.flyway</groupId>
