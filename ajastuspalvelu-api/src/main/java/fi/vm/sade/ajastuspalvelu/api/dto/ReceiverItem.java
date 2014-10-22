@@ -16,6 +16,7 @@
 
 package fi.vm.sade.ajastuspalvelu.api.dto;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -28,7 +29,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  * Time: 13:27
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ReceiverItem implements Item {
+public class ReceiverItem implements Serializable {
     private static final long serialVersionUID = -7769952777161931528L;
 
     @ApiModelProperty(value = "OID-tyyppi: (henkilo)", required = false)
@@ -74,7 +75,6 @@ public class ReceiverItem implements Item {
         this.addressLabel = addressLabel;
     }
 
-    @Override
     public Map<String, Object> getContext() {
         return context;
     }

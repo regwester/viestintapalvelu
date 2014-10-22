@@ -1,3 +1,4 @@
+package fi.vm.sade.ajastuspalvelu.api.dto;
 /*
  * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
  *
