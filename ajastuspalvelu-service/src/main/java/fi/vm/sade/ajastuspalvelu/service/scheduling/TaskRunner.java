@@ -20,6 +20,8 @@ import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ErrorDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDetailsDto;
 
 /**
+ * Determines a business process
+ *
  * User: ratamaa
  * Date: 23.10.2014
  * Time: 13:55

@@ -29,7 +29,6 @@ import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.Schedule;
 import fi.vm.sade.ajastuspalvelu.util.DateHelper;
 
-import static fi.vm.sade.ajastuspalvelu.service.scheduling.impl.CronSchedule.cron;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -43,20 +42,21 @@ import static org.quartz.TriggerBuilder.newTrigger;
 public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
     private static final Logger logger = LoggerFactory.getLogger(QuartzSchedulingServiceImpl.class);
 
+    public static final String QVARTZ_GROUP_NAME = "ScheduledTask";
+
     @Autowired
     private Scheduler scheduler;
 
     @PostConstruct
-    public void test() throws SchedulerException, ParseException {
-//        cronJob(123456l, cron("0 * * * * ?"));
-
+    public void startup() throws SchedulerException, ParseException {
+//        scheduleJob(123456l, cron("0 * * * * ?"));
         scheduler.start();
         logger.info("SchedulingServiceImpl Quartz scheduler.start()");
     }
 
     @Override
-    public void cronJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException {
-        JobKey key = new JobKey(""+ scheduledTaskId, "group");
+    public void scheduleJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException {
+        JobKey key = createKey(scheduledTaskId);
         JobDetail job = scheduler.getJobDetail(key);
         if (job == null) {
             job = newJob(QuartzTriggeredJobDelegator.class)
@@ -74,7 +74,7 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
         }
         // And schedule with a new trigger:
         Trigger trigger = newTrigger()
-                .withIdentity("trigger." + key.getName(), "group")
+                .withIdentity("trigger." + key.getName(), QVARTZ_GROUP_NAME)
                 .forJob(key)
                 .startAt(schedule.getActiveBegin().transform(DateHelper.TO_DATE).orNull())
                 .endAt(schedule.getActiveEnd().transform(DateHelper.TO_DATE).orNull())
@@ -82,6 +82,25 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
                 .build();
         scheduler.scheduleJob(trigger);
         logger.info("Added trigger {} for scheduledTaskId={}", trigger, scheduledTaskId);
+    }
+
+    private JobKey createKey(Long scheduledTaskId) {
+        return new JobKey(""+ scheduledTaskId, QVARTZ_GROUP_NAME);
+    }
+
+    @Override
+    public void unscheduleJob(Long scheduledTaskId) throws SchedulerException {
+        JobKey key = createKey(scheduledTaskId);
+        JobDetail job = scheduler.getJobDetail(key);
+        if (job != null) {
+            // Remove all triggers from given job:
+            for (Trigger trigger : scheduler.getTriggersOfJob(key)) {
+                scheduler.unscheduleJob(trigger.getKey());
+                logger.info("Removed trigger {}", trigger);
+            }
+            scheduler.deleteJob(key);
+            logger.info("Removed job {}", job);
+        }
     }
 
 }

@@ -25,6 +25,8 @@ import org.quartz.SchedulerException;
  */
 public interface QuartzSchedulingService {
 
-    void cronJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException;
+    void scheduleJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException;
+
+    void unscheduleJob(Long scheduledTaskId) throws SchedulerException;
 
 }
