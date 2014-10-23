@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,6 +48,9 @@ public class LetterReportServiceImpl implements LetterReportService {
     private CurrentUserComponent currentUserComponent;
     private OrganizationComponent organizationComponent;
     private HenkiloComponent henkiloComponent;
+
+    @Value("${viestintapalvelu.rekisterinpitajaOID}")
+    private String rekisterinpitajaOID;
     
     @Autowired
     public LetterReportServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiversDAO letterReceiversDAO, 
@@ -101,11 +105,19 @@ public class LetterReportServiceImpl implements LetterReportService {
 
     @Override
     public LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting) {
-        List<LetterBatch> letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(organizationOID, 
-            pagingAndSorting);
-        
+
+        final List<LetterBatch> letterBatches;
+        final long numberOfLetterBatches;
+        if(organizationOID != null && organizationOID.equals(rekisterinpitajaOID)) {
+            letterBatches = letterBatchDAO.findAll(pagingAndSorting);
+            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches();
+        } else {
+            letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(organizationOID, pagingAndSorting);
+            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(organizationOID);
+        }
+
         LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
-        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatches(organizationOID));
+        letterBatchesReport.setNumberOfLetterBatches(numberOfLetterBatches);
         return letterBatchesReport;
     }
     

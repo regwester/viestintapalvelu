@@ -181,7 +181,8 @@ public class IPostiResource {
         if(iposti.getSentDate() == null || (force != null && true == force)) {
             ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
             iposti.setSentDate(new Date());
-            iPostiService.update(iposti);
+            iPostiService.markAsSent(iposti);
+            //iPostiService.update(iposti);
         }
     }
 

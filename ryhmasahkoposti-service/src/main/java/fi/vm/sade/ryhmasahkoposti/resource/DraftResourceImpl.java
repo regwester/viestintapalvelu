@@ -74,7 +74,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
         //Set the user oid (again, overwriting things might not be the most elegant solution)
         draft.setUserOid(getCurrentUserOid());
         //clean the html
-        draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
+        draft.setBody(InputCleaner.cleanHtmlDocument(draft.getBody()));
 
         logger.debug("Draft: {}", draft.toString());
         return draftService.saveDraft(draft);
@@ -88,7 +88,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
 
         String oid = getCurrentUserOid();
         //clean the html
-        draft.setBody(InputCleaner.cleanHtml(draft.getBody()));
+        draft.setBody(InputCleaner.cleanHtmlDocument(draft.getBody()));
         draftService.updateDraft(id, oid, draft);
         return "{\"status\": \"success\"}";
     }

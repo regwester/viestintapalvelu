@@ -4,11 +4,10 @@ import java.io.*;
 import java.text.SimpleDateFormat;
 import java.util.*;
 
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.dom4j.DocumentException;
-import org.jsoup.Jsoup;
-import org.jsoup.safety.Whitelist;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -145,7 +144,7 @@ public class TemplateBuilder {
             dataContext.put(VARIABLE_NAME_LETTER_DATE, new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
             // Replace sisalto parameter with Email's body if there is one:
             if (message.getBody() != null) {
-                dataContext.put(ReplacementDTO.NAME_EMAIL_BODY, cleanHtmlFromApi(message.getBody()));
+                dataContext.put(ReplacementDTO.NAME_EMAIL_BODY, InputCleaner.cleanHtmlFragment(message.getBody()));
             }
             // Replace Email's subject with otsikko parameter if there is one (always replaced)
             if (dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT) != null) {
@@ -265,7 +264,7 @@ public class TemplateBuilder {
 
             for (String key : replacements.keySet()) {
                 if (replacements.get(key) instanceof String) {
-                    data.put(key, cleanHtmlFromApi((String) replacements.get(key)));
+                    data.put(key, InputCleaner.cleanHtmlFragment((String) replacements.get(key)));
                 } else {
                     data.put(key, replacements.get(key));
                 }
@@ -275,11 +274,6 @@ public class TemplateBuilder {
         data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         return data;
     }
-
-    private String cleanHtmlFromApi(String string) {
-        return Jsoup.clean(string, Whitelist.relaxed());
-    }
-
     
     /**
      * Create page
@@ -303,7 +297,7 @@ public class TemplateBuilder {
         dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
 
         if (emailData.getEmail().getBody() != null) {
-            dataContext.put("sisalto", cleanHtmlFromApi((String) emailData.getEmail().getBody()));
+            dataContext.put("sisalto", InputCleaner.cleanHtmlDocument(emailData.getEmail().getBody()));
         }
 
         if (emailData.getEmail().getSourceRegister() != null) {
