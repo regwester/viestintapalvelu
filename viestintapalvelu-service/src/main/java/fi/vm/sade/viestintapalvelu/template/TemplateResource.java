@@ -168,14 +168,10 @@ public class TemplateResource extends AsynchronousResource {
         DocumentException {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
 
-        ClassLoader cl = getClass().getClassLoader();
-        ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
-        Resource[] templates = resolver.getResources("classpath*:/test_data/*.json");
-
-        for (Resource template : templates) {
+        for (Resource template : Utils.getResourceList("classpath*:/test_data/*.json")) {
             Map<String, String> current = new HashMap<String, String>();
             current.put("name", template.getFilename());
-            current.put("content", Utils.getResource(template.getURL().toString()).replaceAll("\\r|\\n|\" \"", ""));
+            current.put("content", Utils.getResource(template.getInputStream()).replaceAll("\\r|\\n|\" \"", ""));
             res.add(current);
         }
 

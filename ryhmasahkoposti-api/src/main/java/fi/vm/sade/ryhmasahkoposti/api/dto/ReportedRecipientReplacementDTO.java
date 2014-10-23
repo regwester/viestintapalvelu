@@ -18,7 +18,7 @@ public class ReportedRecipientReplacementDTO {
     /**
      * Value of the replacement
      */
-//    @JsonDeserialize(using = JacksonReplacementValueDeserializaer.class)
+//    @JsonDeserialize(using = JacksonReplacementValueDeserializer.class)
     private Object value;
     /**
      * Default value
