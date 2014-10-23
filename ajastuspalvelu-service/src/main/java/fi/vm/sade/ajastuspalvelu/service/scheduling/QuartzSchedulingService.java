@@ -25,8 +25,23 @@ import org.quartz.SchedulerException;
  */
 public interface QuartzSchedulingService {
 
+    /**
+     * Schedule a ScheduledTask or change it's schedule.
+     *
+     * @see fi.vm.sade.ajastuspalvelu.service.scheduling.impl.SingleScheduledTaskTaskSchedule
+     *
+     * @param scheduledTaskId id of a ScheduledTask
+     * @param schedule the (new) schedule to use
+     * @throws SchedulerException on Quartz scheduler error
+     */
     void scheduleJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException;
 
+    /**
+     * Call when scheduled task is removed / disabled.
+     *
+     * @param scheduledTaskId id of a ScheduledTask the unschedule
+     * @throws SchedulerException on Quartz scheduler error
+     */
     void unscheduleJob(Long scheduledTaskId) throws SchedulerException;
 
 }

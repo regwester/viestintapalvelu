@@ -48,8 +48,7 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
     private Scheduler scheduler;
 
     @PostConstruct
-    public void startup() throws SchedulerException, ParseException {
-//        scheduleJob(123456l, cron("0 * * * * ?"));
+    public void startup() throws SchedulerException {
         scheduler.start();
         logger.info("SchedulingServiceImpl Quartz scheduler.start()");
     }
