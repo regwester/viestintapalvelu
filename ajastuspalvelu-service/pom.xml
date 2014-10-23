@@ -315,7 +315,21 @@
                 </exclusion>
             </exclusions>
         </dependency>
-
+      
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.spi</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+        
+        
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.jodatime</artifactId>
+            <version>2.0.1</version>
+        </dependency>
+      
+      
     </dependencies>
 
     <build>
