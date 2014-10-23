@@ -38,6 +38,14 @@ public class OptionalHelper {
         };
     }
 
+    public static<T> Supplier<T> illegalState(final String message) throws NotFoundException {
+        return new Supplier<T>() {
+            public T get() {
+                throw new IllegalStateException(message);
+            }
+        };
+    }
+
     public static<T, E extends RuntimeException> Supplier<T> doThrow(final E e) throws E {
         return new Supplier<T>() {
             @Override

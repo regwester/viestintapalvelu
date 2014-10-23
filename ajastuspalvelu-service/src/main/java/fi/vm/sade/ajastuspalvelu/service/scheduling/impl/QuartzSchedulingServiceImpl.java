@@ -13,17 +13,23 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.ajastuspalvelu.service.ajastus.impl;
+package fi.vm.sade.ajastuspalvelu.service.scheduling.impl;
+
+import java.text.ParseException;
 
 import javax.annotation.PostConstruct;
 
 import org.quartz.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.ajastuspalvelu.service.ajastus.AjastusService;
-import fi.vm.sade.ajastuspalvelu.service.test.OtherService;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.Schedule;
+import fi.vm.sade.ajastuspalvelu.util.DateHelper;
 
+import static fi.vm.sade.ajastuspalvelu.service.scheduling.impl.CronSchedule.cron;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.JobBuilder.newJob;
 import static org.quartz.TriggerBuilder.newTrigger;
@@ -34,56 +40,48 @@ import static org.quartz.TriggerBuilder.newTrigger;
  * Time: 17:10
  */
 @Service
-public class AjastusServiceImpl implements Job, AjastusService {
+public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
+    private static final Logger logger = LoggerFactory.getLogger(QuartzSchedulingServiceImpl.class);
 
     @Autowired
     private Scheduler scheduler;
 
-    @Autowired
-    private OtherService otherService;
-
     @PostConstruct
-    public void test() throws SchedulerException {
-        System.out.println("INIT");
-
-        cronJob(123456l, "0 * * * * ?");
+    public void test() throws SchedulerException, ParseException {
+//        cronJob(123456l, cron("0 * * * * ?"));
 
         scheduler.start();
+        logger.info("SchedulingServiceImpl Quartz scheduler.start()");
     }
 
     @Override
-    public void cronJob(Long id, String cron) throws SchedulerException {
-        JobKey key = new JobKey(""+id, "group");
+    public void cronJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException {
+        JobKey key = new JobKey(""+ scheduledTaskId, "group");
         JobDetail job = scheduler.getJobDetail(key);
         if (job == null) {
-            job = newJob(AjastusServiceImpl.class)
+            job = newJob(QuartzTriggeredJobDelegator.class)
                     .withIdentity(key)
                     .requestRecovery().storeDurably()
                     .build();
             scheduler.addJob(job, false);
+            logger.info("Added job {}", job);
         } else {
             // Remove all triggers from given job:
             for (Trigger trigger : scheduler.getTriggersOfJob(key)) {
-                System.out.println("Removed trigger: " + trigger.getKey());
                 scheduler.unscheduleJob(trigger.getKey());
+                logger.info("Removed trigger {}", trigger);
             }
         }
         // And schedule with a new trigger:
         Trigger trigger = newTrigger()
-                .withIdentity("trigger."+key.getName(), "group")
+                .withIdentity("trigger." + key.getName(), "group")
                 .forJob(key)
-                // .startAt() // the start moment
-                // .endAt() // the end moment
-                .withSchedule(cronSchedule(cron))
+                .startAt(schedule.getActiveBegin().transform(DateHelper.TO_DATE).orNull())
+                .endAt(schedule.getActiveEnd().transform(DateHelper.TO_DATE).orNull())
+                .withSchedule(cronSchedule(schedule.getCron()))
                 .build();
         scheduler.scheduleJob(trigger);
-        System.out.println("Scheduled " + trigger);
+        logger.info("Added trigger {} for scheduledTaskId={}", trigger, scheduledTaskId);
     }
 
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        otherService.doSomething(jobExecutionContext.getPreviousFireTime(),
-                                jobExecutionContext.getNextFireTime(),
-                                jobExecutionContext.getJobDetail().getKey().getName());
-    }
 }

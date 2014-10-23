@@ -1,26 +1,17 @@
 package fi.vm.sade.ajastuspalvelu.service.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import java.io.Serializable;
 
-import org.hibernate.annotations.Parameter;
+import javax.persistence.*;
+
 import org.hibernate.annotations.Type;
-import org.hibernate.annotations.TypeDef;
 import org.joda.time.DateTime;
 
-@TypeDef(name = "dateTime", typeClass = org.jadira.usertype.dateandtime.joda.PersistentDateTime.class, parameters = {@Parameter(name = "databaseZone", value = "jvm")})
 @Table(name = "ajastettu_ajo")
 @Entity(name = "ScheduledRun")
-public class ScheduledRun {
-    
+public class ScheduledRun implements Serializable {
+    private static final long serialVersionUID = -7836109411827939921L;
+
     public enum State {
         STARTED, FINISHED, ERROR;
     }

@@ -1,15 +1,10 @@
 package fi.vm.sade.ajastuspalvelu.service.model;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
-import javax.persistence.SequenceGenerator;
-import javax.persistence.Table;
-import javax.persistence.Version;
+import java.io.Serializable;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
 
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
@@ -19,14 +14,15 @@ import org.joda.time.DateTime;
 @TypeDef(name = "dateTime", typeClass = org.jadira.usertype.dateandtime.joda.PersistentDateTime.class, parameters = {@Parameter(name = "databaseZone", value = "jvm")})
 @Table(name = "ajastettu_tehtava")
 @Entity(name = "ScheduledTask")
-public class ScheduledTask {
-    
+public class ScheduledTask implements Serializable {
+    private static final long serialVersionUID = -896169749313021674L;
+
     @Id
     @Column(name = "id", nullable = false, unique = true)
     @SequenceGenerator(name = "ajastettu_tehtava_id_seq", sequenceName = "ajastettu_tehtava_id_seq")
     @GeneratedValue(generator = "ajastettu_tehtava_id_seq")
     private Long id;
-    
+
     @Version
     @Column(name = "versio", nullable = false)
     private Long versio;
@@ -59,6 +55,10 @@ public class ScheduledTask {
     @Type(type = "dateTime")
     @Column(name = "yksittaisen_ajohetki")
     private DateTime runtimeForSingle;
+
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "scheduledTask",
+        cascade = CascadeType.PERSIST)
+    private Set<ScheduledRun> runs = new HashSet<ScheduledRun>(0);
 
     public Long getId() {
         return id;
@@ -139,5 +139,12 @@ public class ScheduledTask {
     public void setRuntimeForSingle(DateTime runtimeForSingle) {
         this.runtimeForSingle = runtimeForSingle;
     }
-    
+
+    public Set<ScheduledRun> getRuns() {
+        return runs;
+    }
+
+    protected void setRuns(Set<ScheduledRun> runs) {
+        this.runs = runs;
+    }
 }

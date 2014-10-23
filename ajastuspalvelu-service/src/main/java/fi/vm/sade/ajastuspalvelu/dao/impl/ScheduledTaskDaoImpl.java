@@ -14,26 +14,21 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu.service.test.impl;
+package fi.vm.sade.ajastuspalvelu.dao.impl;
 
-import java.util.Date;
+import org.springframework.stereotype.Repository;
 
-import org.springframework.stereotype.Service;
-
-import fi.vm.sade.ajastuspalvelu.service.test.OtherService;
+import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
+import fi.vm.sade.ajastuspalvelu.service.model.ScheduledTask;
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 
 /**
  * User: ratamaa
- * Date: 21.10.2014
- * Time: 13:16
+ * Date: 23.10.2014
+ * Time: 13:38
  */
-@Service
-public class OtherServiceImpl implements OtherService {
-    @Override
-    public void doSomething(Date previousFireTime, Date nextFireTime, String name) {
-        System.out.println("------------------------------------------------");
-        System.out.println("Job named: " + name + " was called at " + new Date());
-        System.out.println("It was last run at " + previousFireTime + " and next time at: " + nextFireTime);
-        System.out.println();
-    }
+@Repository
+public class ScheduledTaskDaoImpl extends AbstractJpaDAOImpl<ScheduledTask, Long>
+        implements ScheduledTaskDao {
+
 }

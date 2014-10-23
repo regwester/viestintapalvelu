@@ -14,15 +14,23 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu.service.ajastus;
+package fi.vm.sade.ajastuspalvelu.service.scheduling;
 
-import org.quartz.SchedulerException;
+import org.quartz.JobExecutionContext;
+
+import fi.vm.sade.ajastuspalvelu.service.scheduling.exception.RetryException;
 
 /**
  * User: ratamaa
- * Date: 21.10.2014
- * Time: 16:50
+ * Date: 23.10.2014
+ * Time: 13:29
  */
-public interface AjastusService {
-    void cronJob(Long id, String cron) throws SchedulerException;
+public interface ScheduledTaskExecutorService {
+
+    /**
+     * @param scheduledTaskId
+     * @param context
+     */
+    void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context)
+            throws RetryException, Exception;
 }

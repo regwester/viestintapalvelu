@@ -14,15 +14,15 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu.service.test;
+package fi.vm.sade.ajastuspalvelu.dao;
 
-import java.util.Date;
+import fi.vm.sade.ajastuspalvelu.service.model.ScheduledTask;
+import fi.vm.sade.generic.dao.JpaDAO;
 
 /**
  * User: ratamaa
- * Date: 21.10.2014
- * Time: 13:16
+ * Date: 23.10.2014
+ * Time: 13:37
  */
-public interface OtherService {
-    void doSomething(Date previousFireTime, Date nextFireTime, String name);
+public interface ScheduledTaskDao extends JpaDAO<ScheduledTask, Long> {
 }
