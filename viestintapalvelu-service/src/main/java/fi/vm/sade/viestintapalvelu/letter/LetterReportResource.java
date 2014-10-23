@@ -68,7 +68,8 @@ public class LetterReportResource extends AsynchronousResource {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiOperation(value = "Hakee käyttäjän organisaation kirjelähetysten tiedot", notes = "Hakee halutun määrän käyttäjän "
         + "ja hänen organisaantionsa kirjelähetyksiä. Haku voidaan aloittaa tietystä kohtaa ja ne voidaan hakea lajiteltuna "
-        + "nousevasti tai laskevasti tietyn sarakkeen mukaan. Palauttaa tietojen mukana käyttäjän kaikki organisaatiot", 
+        + "nousevasti tai laskevasti tietyn sarakkeen mukaan. Palauttaa tietojen mukana käyttäjän kaikki organisaatiot. "
+        + "Jos käyttäjä on rekisterinylläpitäjä, haetaan kaikkien kirjelähetysten tiedot organisaatiosta riippumatta.",
         response = LetterBatchesReportDTO.class, responseContainer = "List")
     public Response getLetterBatchReports(@ApiParam(value="Organisaation oid-tunnus", required=false) 
         @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, 
@@ -87,8 +88,7 @@ public class LetterReportResource extends AsynchronousResource {
         }
         
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        LetterBatchesReportDTO letterBatchesReport = 
-            letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
+        LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
         
         letterBatchesReport.setOrganizations(organizations);
         for (int i = 0; i < organizations.size(); i++) {
