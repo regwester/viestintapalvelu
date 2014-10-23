@@ -35,7 +35,7 @@ public class ScheduledRun {
     @Column(name = "versio", nullable = false)
     private Long versio;
     
-    @JoinColumn(name = "ajastettu_tehtava", nullable = false)
+    @JoinColumn(name = "ajastettu_tehtava_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private ScheduledTask scheduledTask;
     
