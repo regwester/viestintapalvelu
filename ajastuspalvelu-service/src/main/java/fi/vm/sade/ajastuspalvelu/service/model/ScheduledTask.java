@@ -3,19 +3,33 @@ package fi.vm.sade.ajastuspalvelu.service.model;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
+import javax.persistence.Version;
 
-import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
+import org.hibernate.annotations.Parameter;
 import org.joda.time.DateTime;
 
 @TypeDef(name = "dateTime", typeClass = org.jadira.usertype.dateandtime.joda.PersistentDateTime.class, parameters = {@Parameter(name = "databaseZone", value = "jvm")})
 @Table(name = "ajastettu_tehtava")
 @Entity(name = "ScheduledTask")
-public class ScheduledTask extends ScheduleBaseEntity {
+public class ScheduledTask {
+    
+    @Id
+    @Column(name = "id", nullable = false, unique = true)
+    @SequenceGenerator(name = "ajastettu_tehtava_id_seq", sequenceName = "ajastettu_tehtava_id_seq")
+    @GeneratedValue(generator = "ajastettu_tehtava_id_seq")
+    private Long id;
+    
+    @Version
+    @Column(name = "versio", nullable = false)
+    private Long versio;
     
     @JoinColumn(name = "tehtava_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
@@ -45,6 +59,22 @@ public class ScheduledTask extends ScheduleBaseEntity {
     @Type(type = "dateTime")
     @Column(name = "yksittaisen_ajohetki")
     private DateTime runtimeForSingle;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getVersio() {
+        return versio;
+    }
+
+    public void setVersio(Long versio) {
+        this.versio = versio;
+    }
 
     public Task getTask() {
         return task;
