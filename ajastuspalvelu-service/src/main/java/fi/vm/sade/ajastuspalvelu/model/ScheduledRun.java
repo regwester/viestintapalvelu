@@ -29,11 +29,11 @@ public class ScheduledRun implements Serializable {
     @JoinColumn(name = "ajastettu_tehtava_id", nullable = false)
     @ManyToOne(fetch = FetchType.LAZY)
     private ScheduledTask scheduledTask;
-    
+
     @Type(type = "dateTime")
     @Column(name = "ajo_aloitettu", nullable = false)
     private DateTime started = new DateTime();
-    
+
     @Type(type = "dateTime")
     @Column(name = "ajo_paattynyt")
     private DateTime finished;

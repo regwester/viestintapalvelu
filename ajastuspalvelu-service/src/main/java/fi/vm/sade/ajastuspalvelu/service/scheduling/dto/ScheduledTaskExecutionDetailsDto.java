@@ -27,6 +27,7 @@ public class ScheduledTaskExecutionDetailsDto {
     private Long taskId;
     private Long scheduledTaskId;
     private String templateName;
+    private String hakuOid;
     private JobExecutionContext context;
 
     // ... plus other possible scheduled task related parameters
@@ -61,5 +62,13 @@ public class ScheduledTaskExecutionDetailsDto {
 
     public void setContext(JobExecutionContext context) {
         this.context = context;
+    }
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
     }
 }

@@ -32,12 +32,23 @@
     <properties>
         <quartz-jobs.version>2.2.1</quartz-jobs.version>
         <jetty-maven-plugin.version>9.2.0.M0</jetty-maven-plugin.version>
+        <usertype.version>3.0.0.GA</usertype.version>
     </properties>
 
     <dependencies>
         <dependency>
             <groupId>fi.vm.sade.viestintapalvelu</groupId>
             <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>ajastuspalvelu-api</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>ryhmasahkoposti-api</artifactId>
             <version>${project.version}</version>
         </dependency>
 
@@ -315,21 +326,17 @@
                 </exclusion>
             </exclusions>
         </dependency>
-      
+
+        <dependency>
+            <groupId>org.jadira.usertype</groupId>
+            <artifactId>usertype.core</artifactId>
+            <version>${usertype.version}</version>
+        </dependency>
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.spi</artifactId>
-            <version>2.0.1</version>
+            <version>${usertype.version}</version>
         </dependency>
-        
-        
-        <dependency>
-            <groupId>org.jadira.usertype</groupId>
-            <artifactId>usertype.jodatime</artifactId>
-            <version>2.0.1</version>
-        </dependency>
-      
-      
     </dependencies>
 
     <build>

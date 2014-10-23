@@ -6,12 +6,17 @@ import java.util.Set;
 
 import javax.persistence.*;
 
+import org.hibernate.annotations.Parameter;
 import org.hibernate.annotations.Type;
 import org.hibernate.annotations.TypeDef;
-import org.hibernate.annotations.Parameter;
+import org.hibernate.annotations.TypeDefs;
 import org.joda.time.DateTime;
 
-@TypeDef(name = "dateTime", typeClass = org.jadira.usertype.dateandtime.joda.PersistentDateTime.class, parameters = {@Parameter(name = "databaseZone", value = "jvm")})
+@TypeDefs({
+    @TypeDef(name = "dateTime", typeClass = org.jadira.usertype.dateandtime.joda.PersistentDateTime.class,
+            parameters = {@Parameter(name = "databaseZone", value = "jvm")},
+            defaultForType = DateTime.class)
+})
 @Table(name = "ajastettu_tehtava")
 @Entity(name = "ScheduledTask")
 public class ScheduledTask implements Serializable {
@@ -37,11 +42,9 @@ public class ScheduledTask implements Serializable {
     @Column(name = "luoja_organisaatio_oid")
     private String creatorOrganizationOid;
     
-    @Type(type = "dateTime")
     @Column(name = "luontiaika", nullable = false)
     private DateTime created = new DateTime();
-    
-    @Type(type = "dateTime")
+
     @Column(name = "muokkausaika")
     private DateTime modified;
     

@@ -36,6 +36,7 @@ public class ScheduledTaskDtoConverter {
         to.setTaskId(from.getTask().getId());
         to.setTemplateName(from.getTask().getTemplateName());
         to.setContext(context);
+        to.setHakuOid(from.getHakuOid());
         return to;
     }
 }
