@@ -59,5 +59,85 @@ public class ScheduledTask {
     @Type(type = "dateTime")
     @Column(name = "yksittaisen_ajohetki")
     private DateTime runtimeForSingle;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Long getVersio() {
+        return versio;
+    }
+
+    public void setVersio(Long versio) {
+        this.versio = versio;
+    }
+
+    public Task getTask() {
+        return task;
+    }
+
+    public void setTask(Task task) {
+        this.task = task;
+    }
+
+    public String getCreatorOid() {
+        return creatorOid;
+    }
+
+    public void setCreatorOid(String creatorOid) {
+        this.creatorOid = creatorOid;
+    }
+
+    public String getCreatorOrganizationOid() {
+        return creatorOrganizationOid;
+    }
+
+    public void setCreatorOrganizationOid(String creatorOrganizationOid) {
+        this.creatorOrganizationOid = creatorOrganizationOid;
+    }
+
+    public DateTime getCreated() {
+        return created;
+    }
+
+    public void setCreated(DateTime created) {
+        this.created = created;
+    }
+
+    public DateTime getModified() {
+        return modified;
+    }
+
+    public void setModified(DateTime modified) {
+        this.modified = modified;
+    }
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public void setHakuOid(String hakuOid) {
+        this.hakuOid = hakuOid;
+    }
+
+    public DateTime getRemoved() {
+        return removed;
+    }
+
+    public void setRemoved(DateTime removed) {
+        this.removed = removed;
+    }
+
+    public DateTime getRuntimeForSingle() {
+        return runtimeForSingle;
+    }
+
+    public void setRuntimeForSingle(DateTime runtimeForSingle) {
+        this.runtimeForSingle = runtimeForSingle;
+    }
     
 }
