@@ -1,4 +1,4 @@
-package fi.vm.sade.ajastuspalvelu.service.resource;
+package fi.vm.sade.ajastuspalvelu.resource;
 
 import javax.ws.rs.DELETE;
 import javax.ws.rs.GET;
@@ -8,7 +8,7 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.security.access.prepost.PreAuthorize;
 
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
+import fi.vm.sade.ajastuspalvelu.resource.dto.ScheduledTaskDto;
 
 @PreAuthorize("isAuthenticated()")
 @Path("sheduledtask")

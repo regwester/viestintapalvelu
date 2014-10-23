@@ -14,7 +14,7 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu.service.test;
+package fi.vm.sade.ajastuspalvelu.service.runner;
 
 import java.util.Date;
 

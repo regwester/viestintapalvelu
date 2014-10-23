@@ -30,9 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.google.common.base.Optional;
 
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
-import fi.vm.sade.ajastuspalvelu.service.model.ScheduledRun;
-import fi.vm.sade.ajastuspalvelu.service.model.ScheduledTask;
-import fi.vm.sade.ajastuspalvelu.service.model.Task;
+import fi.vm.sade.ajastuspalvelu.model.ScheduledRun;
+import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
+import fi.vm.sade.ajastuspalvelu.model.Task;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.ScheduledTaskExecutorService;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.TaskRunner;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ErrorDto;

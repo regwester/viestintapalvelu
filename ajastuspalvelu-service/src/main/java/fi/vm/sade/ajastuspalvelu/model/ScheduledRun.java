@@ -1,4 +1,4 @@
-package fi.vm.sade.ajastuspalvelu.service.model;
+package fi.vm.sade.ajastuspalvelu.model;
 
 import java.io.Serializable;
 

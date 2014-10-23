@@ -16,13 +16,13 @@
 
 package fi.vm.sade.ajastuspalvelu.dao;
 
-import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
+import fi.vm.sade.ajastuspalvelu.model.Task;
 import fi.vm.sade.generic.dao.JpaDAO;
 
 /**
  * User: ratamaa
  * Date: 23.10.2014
- * Time: 13:37
+ * Time: 14:30
  */
-public interface ScheduledTaskDao extends JpaDAO<ScheduledTask, Long> {
+public interface TaskDao extends JpaDAO<Task, Long> {
 }

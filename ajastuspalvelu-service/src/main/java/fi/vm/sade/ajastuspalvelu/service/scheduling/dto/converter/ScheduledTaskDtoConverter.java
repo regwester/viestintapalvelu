@@ -19,7 +19,7 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling.dto.converter;
 import org.quartz.JobExecutionContext;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ajastuspalvelu.service.model.ScheduledTask;
+import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDetailsDto;
 
 /**

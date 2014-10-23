@@ -19,9 +19,11 @@
     <persistence-unit name="viestinta" transaction-type="RESOURCE_LOCAL">
         <provider>org.hibernate.ejb.HibernatePersistence</provider>
         <non-jta-data-source>java:comp/env/jdbc/ajastus</non-jta-data-source>
-        
-		<class>fi.vm.sade.generic.model.BaseEntity</class>
-        
+
+        <class>fi.vm.sade.ajastuspalvelu.model.Task</class>
+        <class>fi.vm.sade.ajastuspalvelu.model.ScheduledTask</class>
+        <class>fi.vm.sade.ajastuspalvelu.model.ScheduledRun</class>
+
         <properties>
             <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQL82Dialect"/>
             <property name="hibernate.jdbc.batch_size" value="20" />
