@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.dao.impl;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
@@ -29,5 +30,13 @@ public class IPostiDAOImpl extends AbstractJpaDAOImpl<IPosti, Long> implements I
         query.setParameter("value", id);
         return query.getResultList();
     }
-
+    
+    public int markAsSent(IPosti iPosti) {
+        EntityManager em = getEntityManager();
+        Query query = em.createNativeQuery("UPDATE kirjeet.iposti set lahetetty = :lahetetty where id =:id and version = :version");
+        query.setParameter("lahetetty", iPosti.getSentDate());
+        query.setParameter("id", iPosti.getId());
+        query.setParameter("version", iPosti.getVersion());
+        return query.executeUpdate();
+    }
 }

@@ -135,3 +135,6 @@ viestintapalvelu.asiointitili.viranomainen.palvelutunnus = {{viestintapalvelu_as
 viestintapalvelu.asiointitili.viranomainen.sanoma.varmenne = {{viestintapalvelu_asiointitili_viranomainen_sanoma_varmenne}}
 viestintapalvelu.asiointitili.ws.log.requests = true
 viestintapalvelu.asiointitili.ws.log.responses = true
+
+viestintapalvelu.rekisterinpitajaOID=1.2.246.562.10.00000000001
+

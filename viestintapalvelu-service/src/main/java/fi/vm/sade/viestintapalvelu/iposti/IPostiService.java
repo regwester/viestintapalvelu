@@ -13,5 +13,7 @@ public interface IPostiService {
     public List<IPosti> findMailById(Long mailId);
 
     void update(IPosti iposti);
+    
+    boolean markAsSent(IPosti iposti);
 
 }
