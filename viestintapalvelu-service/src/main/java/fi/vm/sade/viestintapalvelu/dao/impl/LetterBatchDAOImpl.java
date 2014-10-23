@@ -94,6 +94,20 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
+    public List<LetterBatch> findAll(PagingAndSortingDTO pagingAndSorting) {
+        QLetterBatch letterBatch = QLetterBatch.letterBatch;
+
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        JPAQuery findLetterBatches = from(letterBatch).orderBy(orderBy);
+
+        if (pagingAndSorting.getNumberOfRows() != 0) {
+            findLetterBatches.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
+        }
+
+        return findLetterBatches.list(letterBatch);
+    }
+
+    @Override
     public List<LetterBatch> findLetterBatchesByOrganizationOid(String organizationOID, 
         PagingAndSortingDTO pagingAndSorting) {
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
@@ -125,6 +139,16 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
         
         return findBySearchCriteria.list(letterBatch);
+    }
+
+    @Override
+    public Long findNumberOfLetterBatches() {
+        EntityManager em = getEntityManager();
+
+        String findNumberOfLetterBatches =
+                "SELECT COUNT(*) FROM LetterBatch";
+        TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
+        return query.getSingleResult();
     }
 
     @Override
@@ -193,6 +217,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'"
                 + " ORDER BY lb.timestamp ASC", Long.class).getResultList();
     }
+
+
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
