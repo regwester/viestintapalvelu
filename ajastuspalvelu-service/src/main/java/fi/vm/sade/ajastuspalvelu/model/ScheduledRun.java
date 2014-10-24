@@ -38,6 +38,7 @@ public class ScheduledRun implements Serializable {
     @Column(name = "ajo_paattynyt")
     private DateTime finished;
     
+    @Enumerated(EnumType.STRING)
     @Column(name = "tila")
     private State state = State.STARTED;
     
