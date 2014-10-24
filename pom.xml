@@ -1811,17 +1811,5 @@
             </build>
         </profile>
     </profiles>
-    <dependencies>
-      <dependency>
-        <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
-        <artifactId>dokumenttipalvelu-api</artifactId>
-        <version>${dokumenttipalvelu.version}</version>
-        <exclusions>
-          <exclusion>
-            <artifactId>cas-client-core</artifactId>
-            <groupId>org.jasig.cas.client</groupId>
-          </exclusion>
-        </exclusions>
-      </dependency>
-    </dependencies>
+
 </project>
