@@ -47,7 +47,8 @@
     <!-- general -->
 
     <!-- email service: -->
-    <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
+    <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource"
+                         address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRestInternal"/>
         </jaxrs-client:outInterceptors>

@@ -32,7 +32,7 @@
     <properties>
         <quartz-jobs.version>2.2.1</quartz-jobs.version>
         <jetty-maven-plugin.version>9.2.0.M0</jetty-maven-plugin.version>
-        <usertype.version>3.0.0.GA</usertype.version>
+        <usertype.version>3.2.0.GA</usertype.version>
     </properties>
 
     <dependencies>
@@ -330,11 +330,6 @@
         <dependency>
             <groupId>org.jadira.usertype</groupId>
             <artifactId>usertype.core</artifactId>
-            <version>${usertype.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.jadira.usertype</groupId>
-            <artifactId>usertype.spi</artifactId>
             <version>${usertype.version}</version>
         </dependency>
     </dependencies>
