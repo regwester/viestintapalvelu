@@ -9,13 +9,9 @@ import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
 
 @Component("scheduledTaskConverter")
 public class ScheduledTaskConverter implements Converter<ScheduledTask, ScheduledTaskDto> {
-
-    private final ScheduledTaskDao dao;
     
     @Autowired
-    public ScheduledTaskConverter(ScheduledTaskDao dao) {
-        this.dao = dao;
-    }
+    private ScheduledTaskDao dao;
     
     @Override
     public ScheduledTask convertToModel(ScheduledTaskDto dto) {

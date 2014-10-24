@@ -3,6 +3,7 @@ package fi.vm.sade.ajastuspalvelu.service.impl;
 import java.util.List;
 
 import org.joda.time.DateTime;
+import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,6 +16,7 @@ import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.ScheduledTaskService;
 import fi.vm.sade.ajastuspalvelu.service.converter.ScheduledTaskConverter;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
 
 @Service
 public class ScheduledTaskServiceImpl implements ScheduledTaskService {
@@ -24,6 +26,9 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     
     @Autowired
     private ScheduledTaskConverter scheduledTaskConverter;
+    
+    @Autowired
+    private QuartzSchedulingService schedulingService;
     
     @Transactional
     @Override
@@ -40,10 +45,11 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     
     @Transactional
     @Override
-    public void remove(long id) {
+    public void remove(long id) throws SchedulerException {
       ScheduledTask task = dao.read(id);
       task.setRemoved(new DateTime());
       dao.update(task);
+      schedulingService.unscheduleJob(id);
     }
     
     @Transactional(readOnly = true)
