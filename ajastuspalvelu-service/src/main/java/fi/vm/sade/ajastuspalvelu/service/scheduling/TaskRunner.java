@@ -29,6 +29,8 @@ import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDe
 public interface TaskRunner {
 
     /**
+     * Run this processes by given scheduledTask
+     *
      * @param scheduledTask the task
      * @throws Exception
      */
@@ -36,9 +38,10 @@ public interface TaskRunner {
 
     /**
      * Called if the run method trow an exception to handle and translate the exception
+     * with proper cause and message
      *
      * @param scheduledTask the the task with when
-     * @param error the caus of the error
+     * @param error the cause of the error
      * @return the translated cause of the error with possible message or the original error
      */
     ErrorDto handleError(ScheduledTaskExecutionDetailsDto scheduledTask, ErrorDto error);

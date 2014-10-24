@@ -29,10 +29,19 @@ import com.google.common.base.Optional;
  */
 public interface Schedule extends Serializable {
 
+    /**
+     * @return a valid cron expression
+     */
     String getCron();
 
+    /**
+     * @return active period begin
+     */
     Optional<DateTime> getActiveBegin();
 
+    /**
+     * @return active period end
+     */
     Optional<DateTime> getActiveEnd();
 
 }

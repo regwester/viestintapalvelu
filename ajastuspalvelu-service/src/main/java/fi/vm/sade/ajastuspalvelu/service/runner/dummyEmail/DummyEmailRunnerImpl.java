@@ -41,8 +41,8 @@ import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDe
 public class DummyEmailRunnerImpl implements TaskRunner {
     private static final Logger logger = LoggerFactory.getLogger(DummyEmailRunnerImpl.class);
 
-    @Resource(name="dummyEmailResourceClient")
-    private SchedulerResource source;
+    @Resource
+    private SchedulerResource dummyEmailResourceClient;
 
     @Autowired
     private EmailService emailService;
@@ -52,7 +52,7 @@ public class DummyEmailRunnerImpl implements TaskRunner {
 
     @Override
     public void run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
-        SchedulerResponse response = source.get();
+        SchedulerResponse response = dummyEmailResourceClient.get();
         // Expect all receivers to contain email:
         EmailDetailsDto emailDetailsDto = emailDetailsDtoConverter.convert(scheduledTask, response,
                 new EmailDetailsDto());
@@ -62,6 +62,6 @@ public class DummyEmailRunnerImpl implements TaskRunner {
     @Override
     public ErrorDto handleError(ScheduledTaskExecutionDetailsDto scheduledTask, ErrorDto error) {
         logger.error("Dummy email exception handling: " + error.getMessage());
-        return error.retry();
+        return error.withRetry();
     }
 }

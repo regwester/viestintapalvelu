@@ -36,8 +36,18 @@ public class ErrorDto implements Serializable {
         this.cause = cause;
     }
 
-    public ErrorDto retry() {
+    public ErrorDto withRetry() {
         this.retry = true;
+        return this;
+    }
+
+    public ErrorDto withCaused(Exception e) {
+        this.cause = e;
+        return this;
+    }
+
+    public ErrorDto withMessage(String message) {
+        this.message = message;
         return this;
     }
 
