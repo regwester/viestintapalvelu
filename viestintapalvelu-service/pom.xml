@@ -67,11 +67,6 @@
         </dependency>
 
         <!-- Dokumenttipalvelu -->
-        <dependency>
-            <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
-            <artifactId>dokumenttipalvelu-api</artifactId>
-            <version>${dokumenttipalvelu.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -165,6 +160,10 @@
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                  <artifactId>cas-client-core</artifactId>
+                  <groupId>org.jasig.cas.client</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -591,6 +590,12 @@
             <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
             <artifactId>dokumenttipalvelu-api</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+              <exclusion>
+                <artifactId>cas-client-core</artifactId>
+                <groupId>org.jasig.cas.client</groupId>
+              </exclusion>
+            </exclusions>
         </dependency>
     </dependencies>
 
