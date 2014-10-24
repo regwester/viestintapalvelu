@@ -1,5 +1,8 @@
 package fi.vm.sade.ajastuspalvelu.service.impl;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.joda.time.DateTime;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -13,7 +16,8 @@ import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.converter.ScheduledTaskConverter;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 
 import static org.mockito.Mockito.verify;
@@ -61,7 +65,14 @@ public class ScheduledTaskServiceImplTest {
         verify(dao).update(task);
         verify(schedulingService).unscheduleJob(id);
         assertNotNull(task.getRemoved());
-        
+    }
+    
+    @Test
+    public void returnsListOfScheduledTasks() {
+        when(dao.findAll()).thenReturn(Arrays.asList(givenScheduledTask(1l), givenScheduledTask(2l), givenScheduledTask(3l)));
+        when(converter.convertToDto(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(1l));
+        List<ScheduledTaskDto> tasks = service.list();
+        assertEquals(3, tasks.size());
     }
     
     private ScheduledTask givenScheduledTask(long id) {
