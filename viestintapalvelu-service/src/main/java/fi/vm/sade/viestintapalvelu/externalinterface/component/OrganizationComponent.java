@@ -49,8 +49,7 @@ public class OrganizationComponent {
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
         String[] language = {"fi", "sv", "en"};
-        
-        if (organisaatio.getNimi() == null) {
+        if (organisaatio == null || organisaatio.getNimi() == null) {
             return "";
         }
         
