@@ -19,7 +19,7 @@ import fi.vm.sade.ajastuspalvelu.service.ScheduledTaskService;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
 
 @PreAuthorize("isAuthenticated()")
-@Path("sheduledtask")
+@Path("scheduledtask")
 public class ScheduledTaskResource {
     
     private final static Logger LOGGER = LoggerFactory.getLogger(ScheduledTaskResource.class); 
