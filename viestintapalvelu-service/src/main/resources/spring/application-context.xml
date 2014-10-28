@@ -117,7 +117,8 @@
     </jaxrs-client:client>
 
     <jaxws:client id="asiointitiliViranomaispalvelutClient" serviceClass="fi.suomi.asiointitili.Viranomaispalvelut"
-            address="${viestintapalvelu.asiointitili.service.location}">
+            address="${viestintapalvelu.asiointitili.service.location}"
+            wsdlLocation="/via/wsdl/viranomaispalvelut.wsdl">
         <jaxws:inInterceptors>
             <bean id="asiointitiliViranomaispalvelutLoggingInInterceptor"
                         class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingInInterceptor" >
@@ -132,9 +133,11 @@
                         <entry key="action" value="Timestamp Signature"/>
                         <entry key="signaturePropRefId" value="xmlSignatureProperties"/>
                         <entry key="user" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
+                        <entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
                         <entry key="signatureUser" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
                         <entry key="xmlSignatureProperties" value-ref="asiointitiliViranomaispalvelutCrytoProperties"/>
                         <entry key="passwordCallbackRef" value-ref="privateKeyPasswordHandler"/>
+                        <entry key="signatureKeyIdentifier" value="DirectReference"/>
                     </map>
                 </constructor-arg>
             </bean>
