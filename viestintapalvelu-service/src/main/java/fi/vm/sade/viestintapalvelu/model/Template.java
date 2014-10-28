@@ -66,7 +66,7 @@ public class Template extends BaseEntity {
     private String styles;
 
     @ApiModelProperty(value = "Pohja tyyppi, default = 'DOC'")
-    @Column(name = "tyyppi", nullable = true)
+    @Column(name = "tyyppi", nullable = true, length = 16)
     private String type;
 
     @ApiModelProperty(value = "Pohjan versiokohtainen kuvaus")
