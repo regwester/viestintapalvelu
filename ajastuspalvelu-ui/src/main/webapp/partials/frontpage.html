@@ -1,8 +1,25 @@
-<div>
-	<h1>Ajastuspalvelu</h1>
-	<button ng-click="create()" class="btn btn-lg btn-primary">Create New</button>
-	<ul ng-repeat="task in tasks">
-		<li>{{task.id}}</li>
-	</ul>
-	<button ng-click="edit('sataa')" class="btn btn-lg btn-primary">Temp</button>
+<div class="panel panel-primary">
+	<div class="panel-heading">
+		<h1>Ajastuspalvelu</h1>
+		<button ng-click="create()" class="btn btn-lg btn-primary">Luo uusi</button>
+	</div>
+	<div class="panel-body">
+		<table class="table table-striped">
+			<thead>
+				<tr>
+					<td>Haku</td>
+					<td>Tehtävä</td>
+					<td colspan="2">Ajastettu</td>
+				</tr>
+			</thead>
+			<tbody>
+				<tr ng-repeat="task in tasks">
+					<td>{{task.taskName}}</td>
+					<td>{{task.hakuOid}}</td>
+					<td>{{task.runtimeForSingle}}</td>
+					<td><button ng-click="edit(task.id)" class="btn btn-sm btn-primary">Muokkaa</button></td>
+				</tr>
+			</tbody>
+		</table>
+	</div>
 </div>
