@@ -7,8 +7,12 @@ app.factory('ScheduledTasks', function($resource) {
     });
 });
 
-app.controller('TaskListController', ['$scope', 'ScheduledTasks', function($scope, ScheduledTasks) {
+app.controller('TaskListController', ['$scope', '$location', 'ScheduledTasks', function($scope, $location, ScheduledTasks) {
     ScheduledTasks.get({}, function(result) {
 	$scope.tasks = result
     });
+    
+    $scope.create = function() {
+	$location.path("/create");
+    }
 }]);

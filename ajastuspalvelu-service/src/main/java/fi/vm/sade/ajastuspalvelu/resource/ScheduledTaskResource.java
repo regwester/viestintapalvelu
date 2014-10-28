@@ -3,6 +3,7 @@ package fi.vm.sade.ajastuspalvelu.resource;
 import java.util.List;
 
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -32,6 +33,12 @@ public class ScheduledTaskResource {
     public Response getScheduledTasks() {
         List<ScheduledTaskDto> dto = service.list();
         return Response.status(Status.OK).entity(dto).build();
+    }
+    
+    @POST
+    public Response insertScheduledTask(ScheduledTaskDto dto) {
+        service.insert(dto);
+        return Response.status(Status.OK).build();
     }
     
     @PUT

@@ -10,6 +10,10 @@ app.config([ '$routeProvider', function($routeProvider) {
         controller : 'TaskListController',
         templateUrl : 'partials/frontpage.html'
     })
+    .when('/create', {
+	controller : 'CreateTaskController',
+	templateUrl : 'partials/createtask.html'
+    })
     .otherwise({
         redirectTo : '/etusivu'
     });
