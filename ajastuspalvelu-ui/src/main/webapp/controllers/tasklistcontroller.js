@@ -13,6 +13,10 @@ app.controller('TaskListController', ['$scope', '$location', 'ScheduledTasks', f
     });
     
     $scope.create = function() {
-	$location.path("/create");
+	$location.path("/create")
+    }
+    
+    $scope.edit = function(task) {
+	$location.path("/edit/" + task)
     }
 }]);

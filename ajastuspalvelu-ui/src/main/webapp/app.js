@@ -14,6 +14,10 @@ app.config([ '$routeProvider', function($routeProvider) {
 	controller : 'CreateTaskController',
 	templateUrl : 'partials/createtask.html'
     })
+    .when('/edit/:task', {
+	controller : 'EditTaskController',
+	templateUrl : 'partials/edittask.html'
+    })
     .otherwise({
         redirectTo : '/etusivu'
     });

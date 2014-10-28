@@ -18,7 +18,5 @@ app.controller('CreateTaskController', ['$scope', '$location', 'CreateScheduledT
 	            $location.path("/etusivu/");
 	});
     }
-    ScheduledTasks.get({}, function(result) {
-	$scope.tasks = result
-    });
+    
 }]);
