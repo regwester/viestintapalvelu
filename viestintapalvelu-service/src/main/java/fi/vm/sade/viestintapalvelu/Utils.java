@@ -10,6 +10,9 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
@@ -65,14 +68,32 @@ public final class Utils {
                 .append(".").append(filename).toString();
     }
 
-    public static String getResource(String resource) {
+    public static String getResource(String relativePath) {
+        InputStream fs = Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath);
+        return getResource(fs);
+    }
+
+    public static String getResource(InputStream fs) {
         try {
-            InputStream fs = Thread.currentThread().getContextClassLoader().getResourceAsStream(resource);
             return IOUtils.toString(fs, "UTF-8");
         } catch(IOException e) {
-            log.error("Failed to read the resource file: {}.\n{}", resource, e.toString());
+            log.error("Failed to read the resource file: {}.\n{}", fs.toString(), e.toString());
+        } catch(NullPointerException e) {
+            log.error("Resource not found: {}.\n{}", e.toString());
         }
         return "";
+    }
+
+    public static Resource[] getResourceList(String pattern) {
+        Resource[] resources = new Resource[0];
+        try {
+            ClassLoader cl =  Thread.currentThread().getContextClassLoader();
+            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
+            resources = resolver.getResources(pattern);
+        } catch(IOException e) {
+            log.error("Failed to read the resources with pattern: {}.\n{}", pattern, e.toString());
+        }
+        return resources;
     }
 
     private static String getAuthenticatedUserName() {
