@@ -2,7 +2,7 @@
 
 var SERVICE_REST_PATH = "../ajastuspalvelu-service/"
 
-var app = angular.module('ajastuspalvelu', [ 'ngResource', 'ngRoute', 'ngAnimate', 'ui.bootstrap']);
+var app = angular.module('ajastuspalvelu', [ 'ngResource', 'ngRoute', 'ngAnimate', 'ui.bootstrap', 'localization']);
 
 app.config([ '$routeProvider', function($routeProvider) {
     $routeProvider
