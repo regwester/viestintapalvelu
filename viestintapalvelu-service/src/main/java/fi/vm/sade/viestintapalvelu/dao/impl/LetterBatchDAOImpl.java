@@ -1,13 +1,13 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.internal.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -166,14 +166,21 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public Long findNumberOfLetterBatches(String organizationOid) {
+    public Long findNumberOfLetterBatches(List<String> oids) {
+        if (oids.isEmpty()) {
+            return 0l;
+        }
     	EntityManager em = getEntityManager();
-    	
+
+        Map<String,Object> params = new HashMap<String, Object>();
     	String findNumberOfLetterBatches = 
-    		"SELECT COUNT(*) FROM LetterBatch a WHERE a.organizationOid = :organizationOid";
+    		"SELECT COUNT(*) FROM LetterBatch a WHERE "
+            + letterBatchOrganisaatioOidInExpressions(oids, "a.organizationOid", params, "_oids");
     	TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
-    	query.setParameter("organizationOid", organizationOid);
-    
+    	for (Map.Entry<String,Object> kv : params.entrySet()) {
+            query.setParameter(kv.getKey(), kv.getValue());
+        }
+
     	return query.getSingleResult();
     }
 
@@ -294,5 +301,22 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 });
         return inExcepssionsCollection.toArray(new BooleanExpression[
                 inExcepssionsCollection.size()]);
+    }
+
+    private String letterBatchOrganisaatioOidInExpressions(List<String> oids, final String hqlColumn,
+                                                           final Map<String,Object> params,
+                                                           final String valPrefix) {
+        final List<List<String>> oidChunks = CollectionHelper.split(oids, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+        final AtomicInteger n = new AtomicInteger(0);
+        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks,
+                new Function<List<String>, String>() {
+                    public String apply(@Nullable List<String> oidsChunk) {
+                        int pNum = n.incrementAndGet();
+                        String paramName = valPrefix+"_"+pNum;
+                        params.put(paramName, oidsChunk);
+                        return hqlColumn+" in (:"+paramName+")";
+                    }
+                });
+        return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
 }
