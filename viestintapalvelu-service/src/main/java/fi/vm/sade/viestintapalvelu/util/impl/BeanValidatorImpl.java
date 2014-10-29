@@ -72,10 +72,10 @@ public class BeanValidatorImpl implements BeanValidator {
         Set<ConstraintViolation<T>> violations = validatorFactory.getValidator().validate(bean);
         if (!violations.isEmpty()) {
             Map<String,Object> result = new HashMap<String, Object>();
-            result.put("tilaKoodi", 400);
+            result.put("status", 400);
             Collection<String> errors = Collections2.transform(violations, VIOLATION_TRANSLATOR);
-            result.put("kuvaus", StringHelper.join(", ", errors.iterator()));
-            result.put("virheet", errors);
+            result.put("description", StringHelper.join(", ", errors.iterator()));
+            result.put("errors", errors);
             Response response = Response.status(Response.Status.BAD_REQUEST).entity(result).build();
             throw new BadRequestException(response);
         }

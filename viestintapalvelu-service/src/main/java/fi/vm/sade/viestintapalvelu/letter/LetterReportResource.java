@@ -13,9 +13,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import com.sun.istack.Nullable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -32,6 +34,7 @@ import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 
 /**
  * Kirjelähetysten raportoinnin REST-toteutus
@@ -52,7 +55,12 @@ public class LetterReportResource extends AsynchronousResource {
     private PagingAndSortingDTOConverter pagingAndSortingDTOConverter;
     @Autowired
     private DownloadCache downloadCache;
-    
+    @Autowired
+    private OrganisaatioService organisaatioService;
+
+    @Value("${viestintapalvelu.rekisterinpitajaOID}")
+    private String rekisterinpitajaOID;
+
     /**
      * Hakee käyttäjän organisaation kirjelähetysten tiedot
      * 
@@ -82,11 +90,8 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
         List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
-        
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
-        
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
         
@@ -214,13 +219,14 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
         List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
-        
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
         
         LetterReportQueryDTO query = new LetterReportQueryDTO();
-        query.setOrganizationOid(organizationOid);
+        if(organizationOid.equals(rekisterinpitajaOID)) {
+            query.setOrganizationOids(null);
+        } else {
+            query.setOrganizationOids(organisaatioService.findHierarchyOids(organizationOid));
+        }
         query.setSearchArgument(searchArgument);
         
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
@@ -237,5 +243,17 @@ public class LetterReportResource extends AsynchronousResource {
         }
 
         return Response.ok(letterBatchesReport).build();
+    }
+
+    protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,
+                                                   List<OrganizationDTO> allowedOrganizations) {
+        if (organizationOid != null && !organizationOid.isEmpty()) {
+            for (OrganizationDTO organization : allowedOrganizations) {
+                if (organizationOid.equals(organization.getOid())) {
+                    return organizationOid;
+                }
+            }
+        }
+        return allowedOrganizations.get(0).getOid();
     }
 }

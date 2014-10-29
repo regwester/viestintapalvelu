@@ -22,3 +22,5 @@ target
 **/Scrapbook.jpage
 **/.tern-project
 **/rebel.xml
+
+phantomjsdriver.log

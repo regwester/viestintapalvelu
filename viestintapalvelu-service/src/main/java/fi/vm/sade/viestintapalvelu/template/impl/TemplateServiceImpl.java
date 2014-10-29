@@ -21,6 +21,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
+import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
@@ -493,12 +494,12 @@ public class TemplateServiceImpl implements TemplateService {
             if (StringUtils.equalsIgnoreCase(criteria.getType(), Template.TYPE_EMAIL)) {
                 // If type is email -> read only email content and subject from template
                 // all other contents are ignored
-                if (!StringUtils.equalsIgnoreCase(co.getName(), TemplateContent.CONTENT_NAME_EMAIL_BODY)) {
+                if (!StringUtils.equalsIgnoreCase(co.getName(), Contents.EMAIL_BODY)) {
                     continue;
                 }
             } else {
                 // If type is doc -> read all template contents by ignore email subject or email content
-                if (StringUtils.equalsIgnoreCase(co.getName(), TemplateContent.CONTENT_NAME_EMAIL_BODY)) {
+                if (StringUtils.equalsIgnoreCase(co.getName(), Contents.EMAIL_BODY)) {
                     continue;
                 }
             }

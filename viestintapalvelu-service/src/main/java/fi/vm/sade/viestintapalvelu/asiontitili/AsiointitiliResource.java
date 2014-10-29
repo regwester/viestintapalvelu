@@ -35,7 +35,9 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliService;
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliCommunicationService;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 
@@ -45,13 +47,98 @@ import fi.vm.sade.viestintapalvelu.util.BeanValidator;
  * Time: 16:15
  */
 @Component
-@Api(value=Urls.ASIOINTITILI, description = "Kansalaisen asiointitilin tominnot")
 @Path(Urls.ASIOINTITILI)
+@Api(value= Urls.ASIOINTITILI, description = "Kansalaisen asiointitilin tominnot")
 @PreAuthorize("isAuthenticated()")
 public class AsiointitiliResource {
     private static final Logger logger = LoggerFactory.getLogger(AsiointitiliResource.class);
 
-    private static final String HAE_ASIAKAS_TILOJA_NOTES = "Omien asiointitiliasiakkaiden tarkistus" +
+//    @Autowired
+//    private AsiointitiliCommunicationService asiointitiliCommunicationService;
+
+    @Autowired
+    private AsiointitiliService asiointitiliService;
+
+    @Autowired
+    private BeanValidator beanValidator;
+
+    @POST
+    @PreAuthorize(SecurityConstants.ASIOINTITILI)
+    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
+    @Path("/send")
+    @ApiOperation(value="Viestin lähetys asiointitilipalveluun",
+            notes= AsiointitiliResource.SEND_NOTES, response = AsiointitiliAsyncResponseDto.class)
+    public Response send(@ApiParam("Viestien lähetyspyyntö") AsiointitiliSendBatchDto sendBatch) {
+        beanValidator.validate(sendBatch);
+        AsiointitiliAsyncResponseDto response = asiointitiliService.send(sendBatch);
+        return Response.status(statusCode(response.getStatusCode())).entity(response).build();
+    }
+
+//    @POST
+//    @Deprecated
+//    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
+//    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
+//    @Path("/haeAsiakasTiloja")
+//    @ApiOperation(value="EI KÄYTÖSSÄ. Asiointitlin kysely WS1 / HaeAsiakasTiloja Kaikki-kyselylaji",
+//            notes= AsiointitiliResource.HAE_ASIAKAS_TILOJA_NOTES, response = AsiakasTilaKyselyVastausDto.class)
+//    @PreAuthorize(SecurityConstants.ASIOINTITILI)
+//    public Response haeAsiakasTiloja(@ApiParam("Kysely") HaeAsiakasTilojaKyselyDto kyselyWS1) {
+//        beanValidator.validate(kyselyWS1);
+//        AsiakasTilaKyselyVastausDto vastaus = asiointitiliCommunicationService.haeAsiakasTiloja(kyselyWS1);
+//        return Response.status(statusCode(vastaus.getTilaKoodi())).entity(vastaus).build();
+//    }
+//
+//    @POST
+//    @Deprecated
+//    @PreAuthorize(SecurityConstants.ASIOINTITILI)
+//    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
+//    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
+//    @Path("/tarkistaAsiointitilinTila")
+//    @ApiOperation(value="EI KÄYTÖSSÄ. Asiointitlin kysely WS1 / HaeAsiakasTiloja Asiakkaat-kyselylaji",
+//            notes= AsiointitiliResource.TARKISTA_ASIAKASTILIN_TILA_NOTES, response = AsiakasTilaKyselyVastausDto.class)
+//    public Response tarkistaAsiointitilinTila(@ApiParam("Kysely") AsiakasTilaTarkastusKyselyDto kyselyWS1) {
+//        beanValidator.validate(kyselyWS1);
+//        AsiakasTilaKyselyVastausDto vastaus = asiointitiliCommunicationService.tarkistaAsiointitilinTila(kyselyWS1);
+//        return Response.status(statusCode(vastaus.getTilaKoodi())).entity(vastaus).build();
+//    }
+//
+//    @POST
+//    @Deprecated
+//    @PreAuthorize(SecurityConstants.ASIOINTITILI)
+//    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
+//    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
+//    @Path("/lisaaKohteitaAsiointitilille")
+//    @ApiOperation(value="EI KÄYTÖSSÄ. Asiointitlin kysely WS2 / LisaaKohteita",
+//            notes= AsiointitiliResource.KOHDE_LISAYS_NOTES, response = KohdeLisaysVastausDto.class)
+//    public Response lisaaKohteitaAsiointitilille(@ApiParam("Kysely") KohdeLisaysDto kyselyWS2) {
+//        beanValidator.validate(kyselyWS2);
+//        KohdeLisaysVastausDto vastaus = asiointitiliCommunicationService.lisaaKohteitaAsiointitilille(kyselyWS2);
+//        return Response.status(statusCode(vastaus.getTilaKoodi())).entity(vastaus).build();
+//    }
+
+    private int statusCode(int tilaKoodi) {
+        if (Response.Status.fromStatusCode(tilaKoodi) == null) {
+            if (tilaKoodi >= 500) {
+                return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
+            }
+            if (tilaKoodi >= 400) {
+                return Response.Status.BAD_REQUEST.getStatusCode();
+            }
+            if (tilaKoodi >= 300) {
+                return Response.Status.UNAUTHORIZED.getStatusCode();
+            }
+            return Response.Status.OK.getStatusCode();
+        }
+        return tilaKoodi;
+    }
+
+    public static final String SEND_NOTES = "Lähettää viestin asiointitilipalveluun niille vastaanottajille, joilla " +
+            "asiointitili on olemassa.";
+
+    public static final String HAE_ASIAKAS_TILOJA_NOTES = "HUOM: Suora pyyntö asiointitilipalveluun. EI KÄYTÖSSÄ." +
+            "" +
+            "Omien asiointitiliasiakkaiden tarkistus" +
             "" +
             "Tämän kyselyn avulla viranomaisjärjestelmä voi tarkistaa mitkä sen asiakkaista ovat asiointitilipalvelun" +
             "käyttäjiä ja voivat siis vastaanottaa asiointiasioita asiointitilille. \n" +
@@ -59,13 +146,17 @@ public class AsiointitiliResource {
             "ovatko he ottaneet asiointitilin käyttöön.\n" +
             "\n" +
             "Vastauksessa saadaan tieto, onko  asiakas asiointitilin käyttäjä.";
-    private static final String TARKISTA_ASIAKASTILIN_TILA_NOTES = "Omien asiointitiliasiakkaiden tarkistus" +
+    public static final String TARKISTA_ASIAKASTILIN_TILA_NOTES = "HUOM: Suora pyyntö asiointitilipalveluun. EI KÄYTÖSSÄ." +
+            "" +
+            "Omien asiointitiliasiakkaiden tarkistus" +
             "" +
             "Vastauksessa saadaan tieto, onko  asiakas asiointitilin käyttäjä.\n" +
             "\n" +
             "Kyselyä rajataan ajan suhteen siten, että haetaan vain tietyllä aikavälillä" +
             "asiointitilin käyttäjäksi liittyneet.";
-    public static final String KOHDE_LISAYS_NOTES = "Asiointiasian lähettäminen / viranomaisen tiedoksianto" +
+    public static final String KOHDE_LISAYS_NOTES = "HUOM: Suora pyyntö asiointitilipalveluun. EI KÄYTÖSSÄ." +
+            "" +
+            "Asiointiasian lähettäminen / viranomaisen tiedoksianto" +
             "" +
             "Tämän rajapinnan avulla viranomaisjärjestelmä voi lähettää asiointitilipalveluun asiointiasioita," +
             "tiedoksiantoja ja vastauksia kyselyihin. Lähetetyt asiat voivat sisältää linkkejä viranomaisen" +
@@ -84,65 +175,4 @@ public class AsiointitiliResource {
             "Kutsun vastauksena voidaan toimittaa lähetettyjen asioiden tallennustiedot asiakohtaisesti" +
             "(synkroninen) tai pelkkä kuittaus asioiden vastaanottamisesta (asynkroninen). Viestintätyyppi" +
             "on valittavissa liittymisen yhteydessä viranomaiskohtaisesti";
-
-    @Autowired
-    private AsiointitiliService asiointitiliService;
-
-    @Autowired
-    private BeanValidator beanValidator;
-
-    @POST
-    @PreAuthorize(SecurityConstants.ASIOINTITILI)
-    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
-    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
-    @Path("/haeAsiakasTiloja")
-    @ApiOperation(value="Asiointitlin kysely WS1 / HaeAsiakasTiloja Kaikki-kyselylaji",
-            notes= HAE_ASIAKAS_TILOJA_NOTES, response = AsiakasTilaKyselyVastausDto.class)
-    public Response haeAsiakasTiloja(@ApiParam("Kysely") HaeAsiakasTilojaKyselyDto kyselyWS1) {
-        beanValidator.validate(kyselyWS1);
-        AsiakasTilaKyselyVastausDto vastaus = asiointitiliService.haeAsiakasTiloja(kyselyWS1);
-        return Response.status(statusCode(vastaus.getTilaKoodi())).entity(vastaus).build();
-    }
-
-    @POST
-    @PreAuthorize(SecurityConstants.ASIOINTITILI)
-    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
-    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
-    @Path("/tarkistaAsiointitilinTila")
-    @ApiOperation(value="Asiointitlin kysely WS1 / HaeAsiakasTiloja Asiakkaat-kyselylaji",
-            notes= TARKISTA_ASIAKASTILIN_TILA_NOTES, response = AsiakasTilaKyselyVastausDto.class)
-    public Response tarkistaAsiointitilinTila(@ApiParam("Kysely") AsiakasTilaTarkastusKyselyDto kyselyWS1) {
-        beanValidator.validate(kyselyWS1);
-        AsiakasTilaKyselyVastausDto vastaus = asiointitiliService.tarkistaAsiointitilinTila(kyselyWS1);
-        return Response.status(statusCode(vastaus.getTilaKoodi())).entity(vastaus).build();
-    }
-
-    @POST
-    @PreAuthorize(SecurityConstants.ASIOINTITILI)
-    @Consumes(MediaType.APPLICATION_JSON+";charset=utf-8")
-    @Produces(MediaType.APPLICATION_JSON+";charset=utf-8")
-    @Path("/lisaaKohteitaAsiointitilille")
-    @ApiOperation(value="Asiointitlin kysely WS2 / LisaaKohteita",
-            notes= KOHDE_LISAYS_NOTES, response = KohdeLisaysVastausDto.class)
-    public Response lisaaKohteitaAsiointitilille(@ApiParam("Kysely") KohdeLisaysDto kyselyWS2) {
-        beanValidator.validate(kyselyWS2);
-        KohdeLisaysVastausDto vastaus = asiointitiliService.lisaaKohteitaAsiointitilille(kyselyWS2);
-        return Response.status(statusCode(vastaus.getTilaKoodi())).entity(vastaus).build();
-    }
-
-    private int statusCode(int tilaKoodi) {
-        if (Response.Status.fromStatusCode(tilaKoodi) == null) {
-            if (tilaKoodi >= 500) {
-                return Response.Status.INTERNAL_SERVER_ERROR.getStatusCode();
-            }
-            if (tilaKoodi >= 400) {
-                return Response.Status.BAD_REQUEST.getStatusCode();
-            }
-            if (tilaKoodi >= 300) {
-                return Response.Status.UNAUTHORIZED.getStatusCode();
-            }
-            return Response.Status.OK.getStatusCode();
-        }
-        return tilaKoodi;
-    }
 }

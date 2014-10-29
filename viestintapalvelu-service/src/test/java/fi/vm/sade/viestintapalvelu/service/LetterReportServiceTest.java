@@ -1,14 +1,8 @@
 package fi.vm.sade.viestintapalvelu.service;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-
-import static org.mockito.Mockito.when;
-
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.zip.DataFormatException;
@@ -39,6 +33,7 @@ import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.letter.LetterReportService;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterReportServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
@@ -47,6 +42,11 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
+import static org.junit.Assert.*;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-application-context.xml")
@@ -70,13 +70,16 @@ public class LetterReportServiceTest {
     private OrganizationComponent mockedOrganizationComponent;
     @Mock
     private HenkiloComponent mockedHenkiloComponent;
+    @Mock
+    private OrganisaatioService organisaatioService;
+
     private LetterReportService letterReportService;
     
     @Before
     public void setup() {
         this.letterReportService = new LetterReportServiceImpl(mockedLetterBatchDAO, mockedLetterReceiversDAO, 
             mockedLetterReceiverLetterDAO, mockedIPostiDAO, mockedTemplateService, mockedCurrentUserComponent, 
-            mockedOrganizationComponent, mockedHenkiloComponent);
+            mockedOrganizationComponent, mockedHenkiloComponent, organisaatioService);
     }
     
     @Test
@@ -123,7 +126,7 @@ public class LetterReportServiceTest {
         when(mockedOrganizationComponent.getNameOfOrganisation(any(OrganisaatioRDTO.class))).thenReturn("oppilaitos");
 
         LetterReportQueryDTO query = new LetterReportQueryDTO();
-        query.setOrganizationOid("1.2.246.562.10.00000000001");
+        query.setOrganizationOids(Arrays.asList("1.2.246.562.10.00000000001"));
         query.setSearchArgument("hakutekija");
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
      
@@ -139,13 +142,17 @@ public class LetterReportServiceTest {
 
     @Test
     public void testGetLetterBatchesReportByOrganizationOID() {
-        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         List<LetterBatch> mockedLetterBatches = new ArrayList<LetterBatch>();
         mockedLetterBatches.add(letterBatch);
+        //noinspection unchecked
         when(mockedLetterBatchDAO.findLetterBatchesByOrganizationOid(
-            any(String.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterBatches);
+            any(List.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterBatches);
 
-        when(mockedLetterBatchDAO.findNumberOfLetterBatches(any(String.class))).thenReturn(new Long(1));
+        when(organisaatioService.findHierarchyOids(eq("1.2.246.562.10.00000000001")))
+                .thenReturn(Arrays.asList("1.2.246.562.10.00000000001"));
+
+        when(mockedLetterBatchDAO.findNumberOfLetterBatches(any(String.class))).thenReturn(1l);
 
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
