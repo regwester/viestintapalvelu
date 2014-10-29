@@ -335,5 +335,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
         return attachments;
     }
 
-
+    public void setBeanValidator(BeanValidator beanValidator) {
+        this.beanValidator = beanValidator;
+    }
 }

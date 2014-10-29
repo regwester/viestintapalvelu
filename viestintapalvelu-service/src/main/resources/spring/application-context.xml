@@ -78,6 +78,14 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
+    <jaxrs-client:client id="organisaatioResourceWithoutAuthenticationClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication"
+                         address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
+
     <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
