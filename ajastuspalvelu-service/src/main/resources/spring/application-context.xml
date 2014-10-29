@@ -9,6 +9,7 @@
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd">
 
     <context:component-scan base-package="fi.vm.sade.ajastuspalvelu"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
 
     <context:property-placeholder
             location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
