@@ -27,4 +27,6 @@ public interface IPostiDAO extends JpaDAO<IPosti, Long>{
      */
     public List<IPosti> findMailById(Long id);
 
+    
+    public int markAsSent(IPosti iposti);
 }

@@ -30,12 +30,26 @@ ryhmasahkoposti.antivirus.port={{ryhmasahkoposti_antivirus_port}}
 ryhmasahkoposti.antivirus.timeout={{ryhmasahkoposti_antivirus_timeout}}
 ryhmasahkoposti.require.virus.check={{ryhmasahkoposti_require_virus_check}}
 
+viestintapalvelu.dokumentti.id.salt = {{viestintapalvelu_dokumentti_id_salt}}
+
 server.name={{ansible_hostname}}
 viestintapalvelu.iposti.host={{viestintapalvelu_iposti_host}}
 viestintapalvelu.iposti.port={{viestintapalvelu_iposti_port}}
 viestintapalvelu.iposti.password={{viestintapalvelu_iposti_password}}
 viestintapalvelu.iposti.username={{viestintapalvelu_iposti_username}}
 viestintapalvelu.iposti.directory={{viestintapalvelu_iposti_directory}}
+
+viestintapalvelu.asiointitili.service.location= {{viestintapalvelu_asiointitili_service_location}}
+viestintapalvelu.asiointitili.wss.keystore.file= {{viestintapalvelu_asiointitili_wss_keystore_file}}
+viestintapalvelu.asiointitili.wss.keystore.password= {{viestintapalvelu_asiointitili_wss_keystore_password}}
+viestintapalvelu.asiointitili.wss.certificate.password= {{viestintapalvelu_asiointitili_wss_certificate_password}}
+viestintapalvelu.asiointitili.wss.keystore.alias= {{viestintapalvelu_asiointitili_wss_keystore_alias}}
+viestintapalvelu.asiointitili.viranomainen.viranomaistunnus = {{viestintapalvelu_asiointitili_viranomainen_viranomaistunnus}}
+viestintapalvelu.asiointitili.viranomainen.kayttajatunnus = {{viestintapalvelu_asiointitili_viranomainen_kayttajatunnus}}
+viestintapalvelu.asiointitili.viranomainen.palvelutunnus = {{viestintapalvelu_asiointitili_viranomainen_palvelutunnus}}
+viestintapalvelu.asiointitili.viranomainen.sanoma.varmenne = {{viestintapalvelu_asiointitili_viranomainen_sanoma_varmenne}}
+
+
 
 # Oletusarvoja
 accessRight.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/accessRightService
@@ -117,8 +131,13 @@ viestintapalvelu.recovery.handler.jobs.pool.size=1
 viestintapalvelu.recovery.fixed.rate=3600000
 # kuinka kauan palvelun käynnistämisestä toipumisajo ekan kerran ajetaan
 viestintapalvelu.recovery.initial.delay=5000
-viestintapalvelu.dokumentti.id.salt = {{viestintapalvelu_dokumentti_id_salt}}
 
 web.url.cas=https\://${host.cas}/cas
 viestintapalvelu.use.dev.basic.authentication=false
 viestintapalvelu.swagger.base.bath=/viestintapalvelu
+
+viestintapalvelu.asiointitili.wss.keystore.instance = JKS
+viestintapalvelu.asiointitili.ws.log.requests = true
+viestintapalvelu.asiointitili.ws.log.responses = true
+
+viestintapalvelu.rekisterinpitajaOID=1.2.246.562.10.00000000001

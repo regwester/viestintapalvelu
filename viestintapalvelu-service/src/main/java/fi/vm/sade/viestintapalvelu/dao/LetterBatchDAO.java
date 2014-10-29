@@ -8,7 +8,9 @@ import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+
+;
 
 /**
  * Rajapinta kirjelähetysten tietokantakäsittelyä varten
@@ -44,11 +46,11 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 	/**
 	 * Hakee listan kirjelähetysten tietoja sivutettuna ja lajiteltuna
 	 * 
-	 * @param organizationOID Käyttäjän organisaatiotieto
+	 * @param organizationOIDs organisaatio OIDs
 	 * @param pagingAndSorting Sivutus- ja lajittelutiedot
 	 * @return Lista kirjelähetysten tietoja
 	 */
-    List<LetterBatch> findLetterBatchesByOrganizationOid(String organizationOID, PagingAndSortingDTO pagingAndSorting);
+    List<LetterBatch> findLetterBatchesByOrganizationOid(List<String> organizationOIDs, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee listan kirjelähetyksiä annetujen hakuparametrien mukaisesti
@@ -58,14 +60,21 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      * @return Lista kirjelähetysten tietoja
      */
     List<LetterBatch> findLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery, PagingAndSortingDTO pagingAndSorting);
-    
+
+    /**
+     * Hakee kirjelähetysten lukumäärän
+     *
+     * @return Kirjelähetysten lukumäärä
+     */
+    Long findNumberOfLetterBatches();
+
     /**
 	 * Hakee kirjelähetysten lukumäärän
 	 * 
-	 * @param  organizationOid Organisaation oid-tunnus
+	 * @param  organizationOids Organisaatioiden oid-tunnukset
 	 * @return Kirjelähetysten lukumäärä
 	 */
-	Long findNumberOfLetterBatches(String organizationOid);
+	Long findNumberOfLetterBatches(List<String> organizationOids);
 	
 	/**
 	 * Hakee kirjelähetysten lukumäärän annettujen hakuparametrien mukaisesti
@@ -101,4 +110,12 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      * @return list of id's of unfinished LetterBatches 
      */
     List<Long> findUnfinishedLetterBatches();
+
+    /**
+     * Hakee listan kirjelähetysten tietoja sivutettuna ja lajiteltuna
+     *
+     * @param pagingAndSorting Sivutus- ja lajittelutiedot
+     * @return Lista kirjelähetysten tietoja
+     */
+    List<LetterBatch> findAll(PagingAndSortingDTO pagingAndSorting);
 }

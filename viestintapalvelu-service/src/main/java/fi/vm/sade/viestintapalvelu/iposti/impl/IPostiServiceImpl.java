@@ -44,4 +44,10 @@ public class IPostiServiceImpl implements IPostiService {
     public List<IPosti> findMailById(Long mailId) {
         return iPostiDAO.findMailById(mailId);
     }
+    
+    @Override
+    public boolean markAsSent(IPosti iposti) {
+        int result = iPostiDAO.markAsSent(iposti);
+        return (result == 1);
+    }
 }

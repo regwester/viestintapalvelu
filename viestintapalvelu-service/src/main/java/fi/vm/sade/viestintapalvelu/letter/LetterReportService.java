@@ -25,16 +25,17 @@ public interface LetterReportService {
      * @param pagingAndSorting Sivutus- ja lajittelutiedot
      * @return Kirjelähetyksen tiedot
      */
-    public LetterBatchReportDTO getLetterBatchReport(Long id, PagingAndSortingDTO pagingAndSorting);
+    LetterBatchReportDTO getLetterBatchReport(Long id, PagingAndSortingDTO pagingAndSorting);
     
     /**
-     * Hakee käyttäjän organisaation raportoitavat kirjelähetykset lajiteltuna ja sivutettuna
+     * Hakee käyttäjän organisaation raportoitavat kirjelähetykset lajiteltuna ja sivutettuna. Jos organizationOID on yhtä
+     * kuin rekisterinpitäjän OID, haetaan kaikki kirjelähetykset organisaatiosta riippumatta.
      *  
      * @param organizationOID Organisaation OID
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Näytettävät kirjelähetyksen raporttitiedot
      */
-    public LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting);
+    LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting);
     
     /**
      * Hakee hakuparametrien mukaiset raportoitavat kirjelähetykset lajiteltuna ja sivutettuna
@@ -43,7 +44,7 @@ public interface LetterReportService {
      * @param pagingAndSorting Sivutus ja lajittelutiedot
      * @return Näytettävät kirjelähetyksen raporttitiedot
      */
-    public LetterBatchesReportDTO getLetterBatchesReport(LetterReportQueryDTO query, PagingAndSortingDTO pagingAndSorting);
+    LetterBatchesReportDTO getLetterBatchesReport(LetterReportQueryDTO query, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee vastaanottajan kirjeen sisällön 
@@ -53,7 +54,7 @@ public interface LetterReportService {
      * @throws DataFormatException 
      * @throws IOException 
      */
-    public LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
+    LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 
     /**
      * Hakee käyttäjän organisaatiotiedot

@@ -97,9 +97,6 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource"
                          address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}"
                          inheritHeaders="true">
-        <!--<jaxrs-client:outInterceptors>-->
-        <!--<ref bean="ticketInterceptorRest"/>-->
-        <!--</jaxrs-client:outInterceptors>-->
         <jaxrs-client:outInterceptors>
             <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
                 <property name="webCasUrl" value="${web.url.cas}" />

@@ -1,15 +1,23 @@
 package fi.vm.sade.viestintapalvelu;
 
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
+import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.time.FastDateFormat;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-// TODO isipila 23.5.2013: where should we have static utils?
 public final class Utils {
-
+    private static Logger log = LoggerFactory.getLogger(Utils.class);
     private static final FastDateFormat THREAD_SAFE_DATE_FORMATTER = FastDateFormat
             .getInstance("dd.MM.yyyy_HH.mm");
 
@@ -58,6 +66,34 @@ public final class Utils {
                 .append(".")
                 .append(THREAD_SAFE_DATE_FORMATTER.format(new Date()))
                 .append(".").append(filename).toString();
+    }
+
+    public static String getResource(String relativePath) {
+        InputStream fs = Thread.currentThread().getContextClassLoader().getResourceAsStream(relativePath);
+        return getResource(fs);
+    }
+
+    public static String getResource(InputStream fs) {
+        try {
+            return IOUtils.toString(fs, "UTF-8");
+        } catch(IOException e) {
+            log.error("Failed to read the resource file: {}.\n{}", fs.toString(), e.toString());
+        } catch(NullPointerException e) {
+            log.error("Resource not found: {}.\n{}", e.toString());
+        }
+        return "";
+    }
+
+    public static Resource[] getResourceList(String pattern) {
+        Resource[] resources = new Resource[0];
+        try {
+            ClassLoader cl =  Thread.currentThread().getContextClassLoader();
+            ResourcePatternResolver resolver = new PathMatchingResourcePatternResolver(cl);
+            resources = resolver.getResources(pattern);
+        } catch(IOException e) {
+            log.error("Failed to read the resources with pattern: {}.\n{}", pattern, e.toString());
+        }
+        return resources;
     }
 
     private static String getAuthenticatedUserName() {

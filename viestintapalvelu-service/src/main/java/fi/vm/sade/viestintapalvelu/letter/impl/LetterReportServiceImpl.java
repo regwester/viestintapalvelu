@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.zip.DataFormatException;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -28,6 +29,7 @@ import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.letter.LetterReportService;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -47,11 +49,16 @@ public class LetterReportServiceImpl implements LetterReportService {
     private CurrentUserComponent currentUserComponent;
     private OrganizationComponent organizationComponent;
     private HenkiloComponent henkiloComponent;
-    
+    private OrganisaatioService organisaatioService;
+
+    @Value("${viestintapalvelu.rekisterinpitajaOID}")
+    private String rekisterinpitajaOID;
+
     @Autowired
     public LetterReportServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiversDAO letterReceiversDAO, 
-        LetterReceiverLetterDAO letterReceiverLetterDAO, IPostiDAO iPostiDAO, TemplateService templateService, 
-        CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent, HenkiloComponent henkiloComponent) {
+            LetterReceiverLetterDAO letterReceiverLetterDAO, IPostiDAO iPostiDAO, TemplateService templateService,
+            CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent, HenkiloComponent henkiloComponent,
+            OrganisaatioService organisaatioService) {
         this.letterBatchDAO = letterBatchDAO;
         this.letterReceiversDAO = letterReceiversDAO;
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
@@ -60,6 +67,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         this.currentUserComponent = currentUserComponent;
         this.organizationComponent = organizationComponent;
         this.henkiloComponent = henkiloComponent;
+        this.organisaatioService = organisaatioService;
     }
     
     @Override
@@ -101,11 +109,20 @@ public class LetterReportServiceImpl implements LetterReportService {
 
     @Override
     public LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting) {
-        List<LetterBatch> letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(organizationOID, 
-            pagingAndSorting);
-        
+
+        final List<LetterBatch> letterBatches;
+        final long numberOfLetterBatches;
+        if(organizationOID != null && organizationOID.equals(rekisterinpitajaOID)) {
+            letterBatches = letterBatchDAO.findAll(pagingAndSorting);
+            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches();
+        } else {
+            List<String> oids = organisaatioService.findHierarchyOids(organizationOID);
+            letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(oids, pagingAndSorting);
+            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(oids);
+        }
+
         LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
-        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatches(organizationOID));
+        letterBatchesReport.setNumberOfLetterBatches(numberOfLetterBatches);
         return letterBatchesReport;
     }
     

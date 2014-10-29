@@ -1,18 +1,20 @@
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
 
 /**
  * Komponenttiluokka organisaation tietojen hakemiseksi käyttäen CXF:ää
@@ -25,7 +27,12 @@ public class OrganizationComponent {
     private static Logger LOGGER = LoggerFactory.getLogger(OrganizationComponent.class);
     @Resource
     private OrganisaatioResource organisaatioResourceClient;
- 
+    @Resource
+    private OrganisaatioResourceWithoutAuthentication organisaatioResourceWithoutAuthenticationClient;
+
+    @Value("${viestintapalvelu.rekisterinpitajaOID}")
+    private String rootOrganizationOID;
+
     /**
      * Hae organisaation tiedot
      * 
@@ -49,8 +56,7 @@ public class OrganizationComponent {
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
         String[] language = {"fi", "sv", "en"};
-        
-        if (organisaatio.getNimi() == null) {
+        if (organisaatio == null || organisaatio.getNimi() == null) {
             return "";
         }
         
@@ -79,7 +85,29 @@ public class OrganizationComponent {
             throw new ExternalInterfaceException("error.msg.gettingOrganizationDataFailed", e);
         }
     }
-    
+
+    /**
+     * @return organisaatiohierarkian
+     */
+    public OrganisaatioHierarchyDto getOrganizationHierarchy() {
+        try {
+            OrganisaatioHierarchyResultsDto rootResults = organisaatioResourceWithoutAuthenticationClient.hierarchy(true);
+            /// XXX: doesn't include the root:
+            OrganisaatioHierarchyDto root = new OrganisaatioHierarchyDto();
+            root.setChildren(rootResults.getOrganisaatiot());
+            root.setOid(rootOrganizationOID);
+            Map<String,String> nimi = new HashMap<String, String>();
+            nimi.put("fi", "Opetushallitus");
+            nimi.put("sv", "Utbildningsstyrelsen");
+            nimi.put("en", "The Finnish National Board of Education");
+            root.setNimi(nimi);
+            return root;
+        } catch (Exception e) {
+            LOGGER.error(e.getMessage());
+            throw new ExternalInterfaceException("error.msg.getOrganizationHierarchyFailed", e);
+        }
+    }
+
     /**
      * Palauttaa listan organisaation isärakenteesta
      * 

@@ -1,6 +1,17 @@
 package fi.vm.sade.viestintapalvelu.template.impl;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.*;
+
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
@@ -10,16 +21,8 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
+import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
-import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.util.*;
 
 @Service
 @Transactional
@@ -146,8 +149,7 @@ public class TemplateServiceImpl implements TemplateService {
         if (model.isUsedAsDefault()) {
             // Can not have multiple defaults for the templates with the same name, language and type:
             List<Template> templates = templateDAO.findTemplates(
-                    new TemplateCriteriaImpl().withName(model.getName())
-                            .withLanguage(model.getLanguage())
+                    new TemplateCriteriaImpl(model.getName(), model.getLanguage())
                             .withType(model.getType()));
             for (Template otherTemplate : templates) {
                 if (!otherTemplate.getId().equals(model.getId())
@@ -371,7 +373,7 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content, String type) {
-        return getTemplateByName(new TemplateCriteriaImpl().withName(name).withLanguage(language).withType(type), content);
+        return getTemplateByName(new TemplateCriteriaImpl(name, language).withType(type), content);
     }
 
     @Override
@@ -402,15 +404,17 @@ public class TemplateServiceImpl implements TemplateService {
             return null;
         }
 
-        Template template = templateDAO.findTemplate(criteria);
-        if (template == null && criteria.getApplicationPeriod() != null) {
-            criteria = criteria.withApplicationPeriod(null).withDefaultRequired();
+        Template template;
+        if (criteria.getApplicationPeriod() != null) {
+            // First look-up with specified criteria with application period
             template = templateDAO.findTemplate(criteria);
             if (template == null) {
-                // Last, if no default specified, try without applicationPeriod and without default requirement
-                // (will match the last one(;
-                template = templateDAO.findTemplate(criteria.withoutDefaultRequired());
+                // If not found, try the default-flagged without application period
+                template = resolveTemplatePreferringDefault(criteria
+                        .withApplicationPeriod(null));
             }
+        } else {
+            template = resolveTemplatePreferringDefault(criteria);
         }
         if (template == null) {
             return null;
@@ -422,6 +426,16 @@ public class TemplateServiceImpl implements TemplateService {
             convertContent(template, searchTempl, criteria);
         }
         return searchTempl;
+    }
+
+    private Template resolveTemplatePreferringDefault(TemplateCriteria criteria) {
+        // First look-up for flagged default:
+        Template template = templateDAO.findTemplate(criteria.withDefaultRequired());
+        if (template == null) {
+            // and fall back to last:
+            template = templateDAO.findTemplate(criteria.withoutDefaultRequired());
+        }
+        return template;
     }
 
     // TODO: move to separate DTO converter:
@@ -480,12 +494,12 @@ public class TemplateServiceImpl implements TemplateService {
             if (StringUtils.equalsIgnoreCase(criteria.getType(), Template.TYPE_EMAIL)) {
                 // If type is email -> read only email content and subject from template
                 // all other contents are ignored
-                if (!StringUtils.equalsIgnoreCase(co.getName(), TemplateContent.CONTENT_NAME_EMAIL_BODY)) {
+                if (!StringUtils.equalsIgnoreCase(co.getName(), Contents.EMAIL_BODY)) {
                     continue;
                 }
             } else {
                 // If type is doc -> read all template contents by ignore email subject or email content
-                if (StringUtils.equalsIgnoreCase(co.getName(), TemplateContent.CONTENT_NAME_EMAIL_BODY)) {
+                if (StringUtils.equalsIgnoreCase(co.getName(), Contents.EMAIL_BODY)) {
                     continue;
                 }
             }
