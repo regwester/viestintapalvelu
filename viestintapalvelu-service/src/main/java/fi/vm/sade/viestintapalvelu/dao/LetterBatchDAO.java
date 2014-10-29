@@ -71,10 +71,10 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
     /**
 	 * Hakee kirjelähetysten lukumäärän
 	 * 
-	 * @param  organizationOid Organisaation oid-tunnus
+	 * @param  organizationOids Organisaatioiden oid-tunnukset
 	 * @return Kirjelähetysten lukumäärä
 	 */
-	Long findNumberOfLetterBatches(String organizationOid);
+	Long findNumberOfLetterBatches(List<String> organizationOids);
 	
 	/**
 	 * Hakee kirjelähetysten lukumäärän annettujen hakuparametrien mukaisesti

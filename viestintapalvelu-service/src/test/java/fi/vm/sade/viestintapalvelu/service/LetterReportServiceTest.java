@@ -152,7 +152,7 @@ public class LetterReportServiceTest {
         when(organisaatioService.findHierarchyOids(eq("1.2.246.562.10.00000000001")))
                 .thenReturn(Arrays.asList("1.2.246.562.10.00000000001"));
 
-        when(mockedLetterBatchDAO.findNumberOfLetterBatches(any(String.class))).thenReturn(1l);
+        when(mockedLetterBatchDAO.findNumberOfLetterBatches(any(List.class))).thenReturn(1l);
 
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
