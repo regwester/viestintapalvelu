@@ -416,9 +416,11 @@ public class LetterBuilder {
                 if(obj instanceof String) {
                     row.put(column, cleaner.clean((String) obj));
                 } else if(obj instanceof ArrayList<?> && (((ArrayList<?>)obj).size() > 0 && ((ArrayList<?>)obj).get(0) instanceof Map<?, ?>)) {
-                    for (Map<String, String> map: (ArrayList<Map<String, String>>) obj) {
-                        for(Map.Entry<String, String> entry: map.entrySet()) {
-                            entry.setValue(cleaner.clean(entry.getValue()));
+                    for (Map<String, Object> map: (ArrayList<Map<String, Object>>) obj) {
+                        for(Map.Entry<String, Object> entry: map.entrySet()) {
+                            if (entry.getValue() != null) {
+                                entry.setValue(cleaner.clean(entry.getValue().toString()));
+                            }
                         }
                     }
                     row.put(column, obj);
