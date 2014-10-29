@@ -66,4 +66,9 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
         });
     }
 
+    @Override
+    public ScheduledTaskDto findById(long id) {
+        return scheduledTaskConverter.convertToDto(dao.read(id));
+    }
+
 }

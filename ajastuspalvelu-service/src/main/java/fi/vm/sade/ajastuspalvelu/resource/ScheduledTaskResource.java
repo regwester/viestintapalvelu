@@ -29,6 +29,13 @@ public class ScheduledTaskResource {
     private ScheduledTaskService service;
     
     @GET
+    @Path("/{scheduledtaskid}")
+    public Response getScheduledTask(@PathParam("scheduledtaskid") Long scheduledTaskId) {
+        ScheduledTaskDto dto = service.findById(scheduledTaskId);
+        return Response.status(Status.OK).entity(dto).build();
+    }
+    
+    @GET
     @Path("/list")
     public Response getScheduledTasks() {
         List<ScheduledTaskDto> dto = service.list();

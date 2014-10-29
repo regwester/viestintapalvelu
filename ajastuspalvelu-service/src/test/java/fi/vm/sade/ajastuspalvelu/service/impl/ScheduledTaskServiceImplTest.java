@@ -75,6 +75,15 @@ public class ScheduledTaskServiceImplTest {
         assertEquals(3, tasks.size());
     }
     
+    @Test
+    public void returnsScheduledTask() {
+        Long id = 7l;
+        when(dao.read(id)).thenReturn(givenScheduledTask(id));
+        when(converter.convertToDto(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(id));
+        ScheduledTaskDto task = service.findById(id);
+        assertEquals(id, task.id);
+    }
+    
     private ScheduledTask givenScheduledTask(long id) {
         ScheduledTask task = new ScheduledTask();
         task.setId(id);

@@ -15,4 +15,6 @@ public interface ScheduledTaskService {
     public void remove(long id) throws SchedulerException;
     
     public List<ScheduledTaskDto> list();
+    
+    public ScheduledTaskDto findById(long id);
 }
