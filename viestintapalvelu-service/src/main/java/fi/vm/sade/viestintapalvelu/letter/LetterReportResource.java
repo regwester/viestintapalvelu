@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import com.sun.istack.Nullable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -82,11 +83,8 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
         List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
-        
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
-        
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
         
@@ -214,10 +212,7 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
         List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
-        
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
         
         LetterReportQueryDTO query = new LetterReportQueryDTO();
         query.setOrganizationOid(organizationOid);
@@ -237,5 +232,17 @@ public class LetterReportResource extends AsynchronousResource {
         }
 
         return Response.ok(letterBatchesReport).build();
+    }
+
+    protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,
+                                                   List<OrganizationDTO> allowedOrganizations) {
+        if (organizationOid != null && !organizationOid.isEmpty()) {
+            for (OrganizationDTO organization : allowedOrganizations) {
+                if (organizationOid.equals(organization.getOid())) {
+                    return organizationOid;
+                }
+            }
+        }
+        return allowedOrganizations.get(0).getOid();
     }
 }

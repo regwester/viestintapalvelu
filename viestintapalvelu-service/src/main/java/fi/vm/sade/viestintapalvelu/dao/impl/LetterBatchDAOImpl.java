@@ -132,7 +132,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         
         BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, letterBatch, letterReceiverAddress);        
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-    
+
         JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
             letterBatch.letterReceivers, letterReceivers).leftJoin(
             letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression).orderBy(orderBy).limit(
@@ -247,18 +247,20 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         
         if (query.getOrganizationOid() != null) {
-            booleanBuilder.and(letterBatch.organizationOid.in(query.getOrganizationOid()));
+            booleanBuilder.and(letterBatch.organizationOid.eq(query.getOrganizationOid()));
         }
         
         if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
-            booleanBuilder.and(letterBatch.templateName.containsIgnoreCase(query.getSearchArgument()));
-            booleanBuilder.or(letterBatch.fetchTarget.containsIgnoreCase(query.getSearchArgument()));
-            booleanBuilder.or(letterBatch.applicationPeriod.contains(query.getSearchArgument()));
-            booleanBuilder.or(letterReceiverAddress.lastName.concat(" ").concat(
-                letterReceiverAddress.firstName).containsIgnoreCase(query.getSearchArgument()));
-            booleanBuilder.or(letterReceiverAddress.postalCode.contains(query.getSearchArgument()));
+            booleanBuilder.andAnyOf(
+                    letterBatch.templateName.containsIgnoreCase(query.getSearchArgument()),
+                    letterBatch.fetchTarget.containsIgnoreCase(query.getSearchArgument()),
+                    letterBatch.applicationPeriod.contains(query.getSearchArgument()),
+                    letterReceiverAddress.lastName.concat(" ").concat(
+                            letterReceiverAddress.firstName).containsIgnoreCase(query.getSearchArgument()),
+                    letterReceiverAddress.postalCode.contains(query.getSearchArgument())
+            );
         }
-                
+
         return booleanBuilder;
     }
 }
