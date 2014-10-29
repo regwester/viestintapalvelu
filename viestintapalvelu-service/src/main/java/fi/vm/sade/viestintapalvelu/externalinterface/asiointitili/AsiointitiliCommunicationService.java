@@ -16,6 +16,10 @@
 
 package fi.vm.sade.viestintapalvelu.externalinterface.asiointitili;
 
+import javax.ws.rs.NotFoundException;
+
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 
 /**
@@ -23,9 +27,11 @@ import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
  * Date: 10.10.2014
  * Time: 15:45
  */
-public interface AsiointitiliService {
+public interface AsiointitiliCommunicationService {
 
     /**
+     * Direct call to the Asiointitili-service.
+     *
      * Omien asiointitiliasiakkaiden tarkistus
      *
      * Tämän kyselyn avulla viranomaisjärjestelmä voi tarkistaa mitkä sen asiakkaista ovat asiointitilipalvelun
@@ -40,6 +46,8 @@ public interface AsiointitiliService {
     AsiakasTilaKyselyVastausDto tarkistaAsiointitilinTila(AsiakasTilaTarkastusKyselyDto kyselyDto);
 
     /**
+     * Direct call to the Asiointitili-service.
+     *
      * Omien asiointitiliasiakkaiden tarkistus
      *
      * Kyselyä rajataan ajan suhteen siten, että haetaan vain tietyllä aikavälillä
@@ -53,11 +61,12 @@ public interface AsiointitiliService {
     AsiakasTilaKyselyVastausDto haeAsiakasTiloja(HaeAsiakasTilojaKyselyDto kyselyDto);
 
     /**
+     * Direct call to the Asiointitili-service.
+     *
      * Asiointiasian lähettäminen / viranomaisen tiedoksianto
      *
      * @param kyselyWS2 tiedoksianto
      * @return vastaus
      */
     KohdeLisaysVastausDto lisaaKohteitaAsiointitilille(KohdeLisaysDto kyselyWS2);
-
 }
