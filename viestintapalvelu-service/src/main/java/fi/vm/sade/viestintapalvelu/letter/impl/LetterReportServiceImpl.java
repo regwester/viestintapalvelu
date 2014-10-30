@@ -206,14 +206,17 @@ public class LetterReportServiceImpl implements LetterReportService {
         
         letterBatchReport.setApplicationPeriod(letterBatch.getApplicationPeriod());
         letterBatchReport.setDeliveryTypeIPosti(isLetterBatchSentByIPosti(letterBatch));
-        letterBatchReport.setFetchTargetName(getFetchTargetName(letterBatch));
+        letterBatchReport.setFetchTarget(letterBatch.getFetchTarget());
         letterBatchReport.setLetterBatchID(letterBatch.getId());
         letterBatchReport.setTag(letterBatch.getTag());
         letterBatchReport.setTimestamp(letterBatch.getTimestamp());
-        
+        letterBatchReport.setOrganisaatioOid(letterBatch.getOrganizationOid());
+
         Template template = templateService.findById(letterBatch.getTemplateId());
         letterBatchReport.setTemplate(template);
-        
+        if (letterBatch.getBatchStatus() != null) {
+            letterBatchReport.setStatus(letterBatch.getBatchStatus().name());
+        }
         return letterBatchReport;
     }
     
@@ -240,15 +243,6 @@ public class LetterReportServiceImpl implements LetterReportService {
         }
         
         return letterReceiverDTOs;
-    }
-
-    private String getFetchTargetName(LetterBatch letterBatch) {
-        if (letterBatch.getFetchTarget() == null) {
-            return "";
-        }
-        
-        OrganisaatioRDTO organization = organizationComponent.getOrganization(letterBatch.getFetchTarget());
-        return organizationComponent.getNameOfOrganisation(organization);
     }
     
     private boolean isLetterBatchSentByIPosti(LetterBatch letterBatch) {
