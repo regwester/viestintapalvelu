@@ -20,22 +20,22 @@
     <div class="span6">{{ reportedLetterDTO.template.language }}</div>
   </div>
 
-  <div class="row-fluid">
+  <div class="row-fluid" ng-if="reportedLetterDTO.applicationPeriod">
     <div class="span2">{{ 'reportedletterview.label.haku' | i18n }}</div>
     <div class="span6">{{ reportedLetterDTO.applicationPeriod }}</div>
   </div>
 
   <div class="row-fluid">
     <div class="span2">{{ 'reportedletterview.label.oppilaitos_tai_organisaatio' | i18n }}</div>
-    <div class="span6"></div>
+    <div class="span6">{{ reportedLetterDTO.organisaatioOid }}</div>
   </div>
 
-  <div class="row-fluid">
+  <div class="row-fluid" ng-if="reportedLetterDTO.fetchTarget">
     <div class="span2">{{ 'reportedletterview.label.hakukohde' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.fetchTargetName }}</div>
+    <div class="span6">{{ reportedLetterDTO.fetchTarget }}</div>
   </div>
 
-  <div class="row-fluid">
+  <div class="row-fluid" ng-if="reportedLetterDTO.tag">
     <div class="span2">{{ 'reportedletterview.label.haun_tunniste' | i18n }}</div>
     <div class="span6">{{ reportedLetterDTO.tag }}</div>
   </div>
