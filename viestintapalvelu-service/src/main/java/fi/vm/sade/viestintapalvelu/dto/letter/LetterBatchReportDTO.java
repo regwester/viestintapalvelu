@@ -20,6 +20,7 @@ public class LetterBatchReportDTO implements Serializable {
     private List<LetterReceiverDTO> letterReceivers;
     private Long numberOfReceivers; 
     private List<IPostiDTO> iPostis;
+    private String status;
     
     public Long getLetterBatchID() {
         return letterBatchID;
@@ -107,5 +108,13 @@ public class LetterBatchReportDTO implements Serializable {
 
     public void setiPostis(List<IPostiDTO> iPostis) {
         this.iPostis = iPostis;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

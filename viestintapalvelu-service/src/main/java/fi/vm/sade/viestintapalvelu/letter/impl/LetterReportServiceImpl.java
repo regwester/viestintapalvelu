@@ -213,7 +213,9 @@ public class LetterReportServiceImpl implements LetterReportService {
         
         Template template = templateService.findById(letterBatch.getTemplateId());
         letterBatchReport.setTemplate(template);
-        
+        if (letterBatch.getBatchStatus() != null) {
+            letterBatchReport.setStatus(letterBatch.getBatchStatus().name());
+        }
         return letterBatchReport;
     }
     
