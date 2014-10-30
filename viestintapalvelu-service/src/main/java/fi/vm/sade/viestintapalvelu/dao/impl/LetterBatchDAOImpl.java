@@ -1,13 +1,13 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
+import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.hibernate.internal.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -19,6 +19,7 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.PathBuilder;
+import com.mysema.query.types.path.StringPath;
 import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -127,7 +128,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-        BooleanExpression whereExpression = anyOf(letterBatchOrganisaatioOidInExpressions(organizationOIDs, letterBatch));
+        BooleanExpression whereExpression = anyOf(splittedInExpression(organizationOIDs,
+                letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
         
         if (pagingAndSorting.getNumberOfRows() != 0) {
@@ -166,14 +168,21 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public Long findNumberOfLetterBatches(String organizationOid) {
+    public Long findNumberOfLetterBatches(List<String> oids) {
+        if (oids.isEmpty()) {
+            return 0l;
+        }
     	EntityManager em = getEntityManager();
-    	
+
+        Map<String,Object> params = new HashMap<String, Object>();
     	String findNumberOfLetterBatches = 
-    		"SELECT COUNT(*) FROM LetterBatch a WHERE a.organizationOid = :organizationOid";
+    		"SELECT COUNT(*) FROM LetterBatch a WHERE "
+            + splittedInExpression(oids, "a.organizationOid", params, "_oids");
     	TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
-    	query.setParameter("organizationOid", organizationOid);
-    
+    	for (Map.Entry<String,Object> kv : params.entrySet()) {
+            query.setParameter(kv.getKey(), kv.getValue());
+        }
+
     	return query.getSingleResult();
     }
 
@@ -266,7 +275,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 // no organisaatios should yield no results, thus:
                 booleanBuilder.and(BooleanTemplate.TRUE.eq(BooleanTemplate.FALSE));
             } else {
-                booleanBuilder.andAnyOf(letterBatchOrganisaatioOidInExpressions(query.getOrganizationOids(), letterBatch));
+                booleanBuilder.andAnyOf(splittedInExpression(query.getOrganizationOids(),
+                        letterBatch.organizationOid));
             }
         }
         
@@ -284,15 +294,32 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return booleanBuilder;
     }
 
-    private BooleanExpression[] letterBatchOrganisaatioOidInExpressions(List<String> oids, final QLetterBatch letterBatch) {
-        List<List<String>> oidChunks = CollectionHelper.split(oids, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+    private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
+        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
         Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks,
                 new Function<List<String>, BooleanExpression>() {
                     public BooleanExpression apply(@Nullable List<String> oidsChunk) {
-                        return letterBatch.organizationOid.in(oidsChunk);
+                        return column.in(oidsChunk);
                     }
                 });
         return inExcepssionsCollection.toArray(new BooleanExpression[
                 inExcepssionsCollection.size()]);
+    }
+
+    private String splittedInExpression(List<String> values, final String hqlColumn,
+                                        final Map<String, Object> params,
+                                        final String valPrefix) {
+        final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+        final AtomicInteger n = new AtomicInteger(0);
+        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks,
+                new Function<List<String>, String>() {
+                    public String apply(@Nullable List<String> oidsChunk) {
+                        int pNum = n.incrementAndGet();
+                        String paramName = valPrefix+"_"+pNum;
+                        params.put(paramName, oidsChunk);
+                        return hqlColumn+" in (:"+paramName+")";
+                    }
+                });
+        return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
 }

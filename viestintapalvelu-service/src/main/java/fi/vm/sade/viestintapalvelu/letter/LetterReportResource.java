@@ -150,16 +150,31 @@ public class LetterReportResource extends AsynchronousResource {
     @ApiOperation(value = "Hakee vastaanottajan kirjeen ja palauttaa linkin ko. kirjeeseen", notes = "Hakee "
         + "vastaanottajan kirjeen. Kirjeelle tehdään unzipo ja sisältö laitetaan talteen cacheen. Palautetaan linkin"
         + " ko. kirjeeseen", response=String.class)
-    public Response getReceiversLetter(@ApiParam(value="Vastaanottajan kirjeen avain") 
-        @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request) {
+    public Response getReceiversLetter(@ApiParam(value="Vastaanottajan kirjeen avain")
+                                       @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request) {
         try {
-           LetterReceiverLetterDTO letterReceiverLetter = letterReportService.getLetterReceiverLetter(id);
-           String documentId = downloadCache.addDocument(new Download(
-               letterReceiverLetter.getContentType(), letterReceiverLetter.getTemplateName(), letterReceiverLetter.getLetter()));       
-           return createResponse(request, documentId);
+            LetterReceiverLetterDTO letterReceiverLetter = letterReportService.getLetterReceiverLetter(id);
+            String documentId = downloadCache.addDocument(new Download(
+                    letterReceiverLetter.getContentType(),
+                    letterReceiverLetter.getTemplateName() + determineExtension(letterReceiverLetter.getContentType()),
+                    letterReceiverLetter.getLetter()));
+            return createResponse(request, documentId);
         } catch (Exception e) {
-           return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build(); 
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
+    }
+
+    private String determineExtension(String contentType) {
+        if (contentType == null) {
+            return "";
+        }
+        if (contentType.endsWith("/zip")) {
+            return ".zip";
+        }
+        if (contentType.endsWith("/pdf")) {
+            return ".pdf";
+        }
+        return "";
     }
 
     /**
@@ -175,15 +190,15 @@ public class LetterReportResource extends AsynchronousResource {
     @ApiOperation(value = "Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä", notes = "Hakee kirjelähetyksen"
         + "vastaanottajien kirjeet. Kirjeille tehdään unzip ja ne yhdistetään yhdeksi PDF:ksi. "
         + "Sisältö laitetaan talteen cacheen. Palautetaan linkin ko. PDF-dokumenteihin", response=String.class)
-    public Response getLetterContents(@ApiParam(value="Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id, 
-        @Context HttpServletRequest request) {
+    public Response getLetterContents(@ApiParam(value="Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id,
+                                      @Context HttpServletRequest request) {
         try {
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
             String documentId = downloadCache.addDocument(new Download(
-               "application/pdf", "letterContents" + id, letterContents));       
+                    "application/pdf", "letterContents" + id + ".pdf", letterContents));
             return createResponse(request, documentId);
         } catch (Exception e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build(); 
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
     }
 

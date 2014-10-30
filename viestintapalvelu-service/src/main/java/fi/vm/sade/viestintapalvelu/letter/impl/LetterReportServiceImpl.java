@@ -118,7 +118,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         } else {
             List<String> oids = organisaatioService.findHierarchyOids(organizationOID);
             letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(oids, pagingAndSorting);
-            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(organizationOID);
+            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(oids);
         }
 
         LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
