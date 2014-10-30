@@ -19,6 +19,7 @@ import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.PathBuilder;
+import com.mysema.query.types.path.StringPath;
 import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -127,7 +128,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-        BooleanExpression whereExpression = anyOf(letterBatchOrganisaatioOidInExpressions(organizationOIDs, letterBatch));
+        BooleanExpression whereExpression = anyOf(splittedInExpression(organizationOIDs,
+                letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
         
         if (pagingAndSorting.getNumberOfRows() != 0) {
@@ -175,7 +177,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         Map<String,Object> params = new HashMap<String, Object>();
     	String findNumberOfLetterBatches = 
     		"SELECT COUNT(*) FROM LetterBatch a WHERE "
-            + letterBatchOrganisaatioOidInExpressions(oids, "a.organizationOid", params, "_oids");
+            + splittedInExpression(oids, "a.organizationOid", params, "_oids");
     	TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
     	for (Map.Entry<String,Object> kv : params.entrySet()) {
             query.setParameter(kv.getKey(), kv.getValue());
@@ -273,7 +275,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 // no organisaatios should yield no results, thus:
                 booleanBuilder.and(BooleanTemplate.TRUE.eq(BooleanTemplate.FALSE));
             } else {
-                booleanBuilder.andAnyOf(letterBatchOrganisaatioOidInExpressions(query.getOrganizationOids(), letterBatch));
+                booleanBuilder.andAnyOf(splittedInExpression(query.getOrganizationOids(),
+                        letterBatch.organizationOid));
             }
         }
         
@@ -291,22 +294,22 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return booleanBuilder;
     }
 
-    private BooleanExpression[] letterBatchOrganisaatioOidInExpressions(List<String> oids, final QLetterBatch letterBatch) {
-        List<List<String>> oidChunks = CollectionHelper.split(oids, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+    private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
+        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
         Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks,
                 new Function<List<String>, BooleanExpression>() {
                     public BooleanExpression apply(@Nullable List<String> oidsChunk) {
-                        return letterBatch.organizationOid.in(oidsChunk);
+                        return column.in(oidsChunk);
                     }
                 });
         return inExcepssionsCollection.toArray(new BooleanExpression[
                 inExcepssionsCollection.size()]);
     }
 
-    private String letterBatchOrganisaatioOidInExpressions(List<String> oids, final String hqlColumn,
-                                                           final Map<String,Object> params,
-                                                           final String valPrefix) {
-        final List<List<String>> oidChunks = CollectionHelper.split(oids, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+    private String splittedInExpression(List<String> values, final String hqlColumn,
+                                        final Map<String, Object> params,
+                                        final String valPrefix) {
+        final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
         final AtomicInteger n = new AtomicInteger(0);
         Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks,
                 new Function<List<String>, String>() {

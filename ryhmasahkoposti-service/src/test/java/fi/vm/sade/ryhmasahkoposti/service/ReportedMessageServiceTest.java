@@ -33,6 +33,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.impl.ReportedMessageServiceImpl;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
@@ -48,11 +49,12 @@ public class ReportedMessageServiceTest {
     @Mock
     ReportedMessageDAO mockedReportedMessageDAO;
 
-    private ReportedMessageService reportedMessageService;
+    private ReportedMessageServiceImpl reportedMessageService;
 
     @Before
     public void setup() {
         reportedMessageService = new ReportedMessageServiceImpl(mockedReportedMessageDAO);
+        reportedMessageService.setRootOrganizationOID("1.2.246.562.10.00000000001");
     }
 
     @Test
@@ -75,7 +77,7 @@ public class ReportedMessageServiceTest {
         List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
         reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 
-        when(mockedReportedMessageDAO.findByOrganizationOid(any(String.class),
+        when(mockedReportedMessageDAO.findByOrganizationOids(any(List.class),
                 any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
