@@ -9,6 +9,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.sun.istack.Nullable;
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
@@ -40,10 +42,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy,
                                         String order) throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
-
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(
@@ -66,10 +65,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows,
                                         Integer page, String sortedBy, String order) throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
-
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
         ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(organizationOid, searchArgument);
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
@@ -126,5 +122,17 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
         ReportedAttachment reportedAttachment = groupEmailReportingService.getAttachment(attachmentID);
         byte[] binary = reportedAttachment.getAttachment();
         return Response.ok(binary).header("Content-Disposition", "attachment; filename=\"" + reportedAttachment.getAttachmentName() + "\"").build();
+    }
+
+    protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,
+                                                   List<OrganizationDTO> allowedOrganizations) {
+        if (organizationOid != null && !organizationOid.isEmpty()) {
+            for (OrganizationDTO organization : allowedOrganizations) {
+                if (organizationOid.equals(organization.getOid())) {
+                    return organizationOid;
+                }
+            }
+        }
+        return allowedOrganizations.get(0).getOid();
     }
 }

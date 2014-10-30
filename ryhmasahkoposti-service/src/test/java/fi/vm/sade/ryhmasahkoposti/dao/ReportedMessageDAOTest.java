@@ -6,10 +6,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import org.junit.Rule;
 import org.junit.Test;
@@ -290,7 +287,7 @@ public class ReportedMessageDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         reportedMessageDAO.insert(reportedMessage);
 
-        Long lkm = reportedMessageDAO.findNumberOfReportedMessages("1.2.246.562.10.00000000001");
+        Long lkm = reportedMessageDAO.findNumberOfReportedMessages(Arrays.asList("1.2.246.562.10.00000000001"));
 
         assertNotNull(lkm);
         assertNotEquals(new Long(0), lkm);

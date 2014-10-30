@@ -12,7 +12,7 @@ public class LetterBatchReportDTO implements Serializable {
     private Long letterBatchID;
     private Template template;
     private String applicationPeriod;
-    private String fetchTargetName;
+    private String fetchTarget;
     private String creatorName;
     private String tag;    
     private boolean deliveryTypeIPosti;
@@ -20,6 +20,8 @@ public class LetterBatchReportDTO implements Serializable {
     private List<LetterReceiverDTO> letterReceivers;
     private Long numberOfReceivers; 
     private List<IPostiDTO> iPostis;
+    private String organisaatioOid;
+    private String status;
     
     public Long getLetterBatchID() {
         return letterBatchID;
@@ -45,12 +47,12 @@ public class LetterBatchReportDTO implements Serializable {
         this.applicationPeriod = applicationPeriod;
     }
     
-    public String getFetchTargetName() {
-        return fetchTargetName;
+    public String getFetchTarget() {
+        return fetchTarget;
     }
     
-    public void setFetchTargetName(String fetchTargetName) {
-        this.fetchTargetName = fetchTargetName;
+    public void setFetchTarget(String fetchTarget) {
+        this.fetchTarget = fetchTarget;
     }
     
     public String getCreatorName() {
@@ -107,5 +109,21 @@ public class LetterBatchReportDTO implements Serializable {
 
     public void setiPostis(List<IPostiDTO> iPostis) {
         this.iPostis = iPostis;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
+    public void setOrganisaatioOid(String organisaatioOid) {
+        this.organisaatioOid = organisaatioOid;
+    }
+
+    public String getOrganisaatioOid() {
+        return organisaatioOid;
     }
 }

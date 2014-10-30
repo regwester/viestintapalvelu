@@ -104,7 +104,7 @@ public class LetterReportServiceTest {
         
         assertNotNull(letterBatchReport);
         assertEquals(letterBatchReport.getApplicationPeriod(), letterBatch.getApplicationPeriod());
-        assertEquals(letterBatchReport.getFetchTargetName(), "oppilaitos");
+        assertEquals(letterBatchReport.getFetchTarget(), "fetchTarget");
         assertTrue(letterBatchReport.getLetterBatchID().equals(new Long(1)));
         assertTrue(letterBatchReport.getLetterReceivers().size() == 1);
         assertTrue(letterBatchReport.getiPostis().size() > 0);
@@ -137,7 +137,7 @@ public class LetterReportServiceTest {
         assertTrue(letterBatchesReport.getLetterBatchReports().size() > 0);
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
         assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
-        assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTargetName().equalsIgnoreCase("oppilaitos"));        
+        assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTarget().equalsIgnoreCase("fetchTarget"));
     }
 
     @Test
@@ -168,7 +168,7 @@ public class LetterReportServiceTest {
         assertTrue(letterBatchesReport.getLetterBatchReports().size() > 0);
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
         assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
-        assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTargetName().equalsIgnoreCase("oppilaitos"));        
+        assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTarget().equalsIgnoreCase("fetchTarget"));
     }
 
     @Test

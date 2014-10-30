@@ -38,6 +38,8 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.*;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
+import fi.vm.sade.ryhmasahkoposti.service.DailyTaskRunner;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import mockit.Mock;
 import mockit.MockClass;
@@ -68,6 +70,16 @@ public class IntegrationTestConfig {
     }
 
     private static MailerStatus mailerStatus = new MailerStatus();
+
+    @Bean
+    DailyTaskRunner systemStartupTasksService() {
+        return new DailyTaskRunner() {
+            @Override
+            public void runDailyTasks() {
+
+            }
+        };
+    }
 
     @Bean
     MailerStatus mailerStatus() {
@@ -112,6 +124,11 @@ public class IntegrationTestConfig {
         return new OrganisaatioResource() {
             @Override
             public OrganisaatioRDTO getOrganisaatioByOID(String oid) {
+                throw new IllegalStateException("Please mock me when needed!");
+            }
+
+            @Override
+            public OrganisaatioHierarchyResultsDto hierarchy(boolean vainAktiiviset) throws Exception {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };
