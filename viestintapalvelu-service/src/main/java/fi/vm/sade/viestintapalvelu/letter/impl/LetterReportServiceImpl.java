@@ -29,6 +29,7 @@ import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.letter.LetterReportService;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -48,14 +49,16 @@ public class LetterReportServiceImpl implements LetterReportService {
     private CurrentUserComponent currentUserComponent;
     private OrganizationComponent organizationComponent;
     private HenkiloComponent henkiloComponent;
+    private OrganisaatioService organisaatioService;
 
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
-    
+
     @Autowired
     public LetterReportServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiversDAO letterReceiversDAO, 
-        LetterReceiverLetterDAO letterReceiverLetterDAO, IPostiDAO iPostiDAO, TemplateService templateService, 
-        CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent, HenkiloComponent henkiloComponent) {
+            LetterReceiverLetterDAO letterReceiverLetterDAO, IPostiDAO iPostiDAO, TemplateService templateService,
+            CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent, HenkiloComponent henkiloComponent,
+            OrganisaatioService organisaatioService) {
         this.letterBatchDAO = letterBatchDAO;
         this.letterReceiversDAO = letterReceiversDAO;
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
@@ -64,6 +67,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         this.currentUserComponent = currentUserComponent;
         this.organizationComponent = organizationComponent;
         this.henkiloComponent = henkiloComponent;
+        this.organisaatioService = organisaatioService;
     }
     
     @Override
@@ -112,8 +116,9 @@ public class LetterReportServiceImpl implements LetterReportService {
             letterBatches = letterBatchDAO.findAll(pagingAndSorting);
             numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches();
         } else {
-            letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(organizationOID, pagingAndSorting);
-            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(organizationOID);
+            List<String> oids = organisaatioService.findHierarchyOids(organizationOID);
+            letterBatches = letterBatchDAO.findLetterBatchesByOrganizationOid(oids, pagingAndSorting);
+            numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(oids);
         }
 
         LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
@@ -201,14 +206,17 @@ public class LetterReportServiceImpl implements LetterReportService {
         
         letterBatchReport.setApplicationPeriod(letterBatch.getApplicationPeriod());
         letterBatchReport.setDeliveryTypeIPosti(isLetterBatchSentByIPosti(letterBatch));
-        letterBatchReport.setFetchTargetName(getFetchTargetName(letterBatch));
+        letterBatchReport.setFetchTarget(letterBatch.getFetchTarget());
         letterBatchReport.setLetterBatchID(letterBatch.getId());
         letterBatchReport.setTag(letterBatch.getTag());
         letterBatchReport.setTimestamp(letterBatch.getTimestamp());
-        
+        letterBatchReport.setOrganisaatioOid(letterBatch.getOrganizationOid());
+
         Template template = templateService.findById(letterBatch.getTemplateId());
         letterBatchReport.setTemplate(template);
-        
+        if (letterBatch.getBatchStatus() != null) {
+            letterBatchReport.setStatus(letterBatch.getBatchStatus().name());
+        }
         return letterBatchReport;
     }
     
@@ -235,15 +243,6 @@ public class LetterReportServiceImpl implements LetterReportService {
         }
         
         return letterReceiverDTOs;
-    }
-
-    private String getFetchTargetName(LetterBatch letterBatch) {
-        if (letterBatch.getFetchTarget() == null) {
-            return "";
-        }
-        
-        OrganisaatioRDTO organization = organizationComponent.getOrganization(letterBatch.getFetchTarget());
-        return organizationComponent.getNameOfOrganisation(organization);
     }
     
     private boolean isLetterBatchSentByIPosti(LetterBatch letterBatch) {

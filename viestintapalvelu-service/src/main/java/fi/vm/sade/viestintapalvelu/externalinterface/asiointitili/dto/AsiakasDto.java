@@ -37,7 +37,7 @@ import fi.vm.sade.viestintapalvelu.common.util.ValidHetu;
 public class AsiakasDto implements Serializable {
     private static final long serialVersionUID = 533428770069677860L;
 
-    @NotNull @ValidHetu // TODO: validate HETU?
+    @NotNull @ValidHetu
     @Size(max = 20)
     @ApiModelProperty(value="Asiakkaan tunniste. Aina hetu. Rajapinnassa varauduttu muihin tunnustyyppeihin," +
             "mutta HETU on ainoa tuettu.", notes = "väli A ja hetun tarkastusmerkki isoilla kirjaimilla.",
@@ -45,7 +45,7 @@ public class AsiakasDto implements Serializable {
     private String asiakasTunnus;
     @NotNull
     @Size(max = 10)
-    @ApiModelProperty(value="Asiakkaan tunnisteen tyyppi", required = true)
+    @ApiModelProperty(value="Asiakkaan tunnisteen tyyppi, Tuettu arvo: SSN", required = true)
     private String tunnusTyyppi;
 
     public String getAsiakasTunnus() {

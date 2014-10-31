@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.iposti;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
@@ -93,11 +94,13 @@ public class IPostiResource {
     @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
-    public Response getBatchById(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id, @Context HttpServletRequest request) throws Exception {
+    public Response getBatchById(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id,
+                                 @Context HttpServletRequest request,
+                                 @Context HttpServletResponse response) throws Exception {
         try {
             IPosti iposti = iPostiService.findBatchById(id);
             byte[] zip = iposti.getContent();
-            return Response.ok(zip).build();
+            return downloadZipResponse(id, response, zip);
         } catch(Exception e) {
             return Response.status(400).build();
         }
@@ -110,7 +113,9 @@ public class IPostiResource {
     @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
-    public Response getIPostiById(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request) throws Exception {
+    public Response getIPostiById(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id,
+                                  @Context HttpServletRequest request,
+                                  @Context HttpServletResponse response) throws Exception {
         try {
             Map<String, byte[]> batches = new LinkedHashMap<String, byte[]>();
             List<IPosti> iposts = iPostiService.findMailById(id);
@@ -118,12 +123,20 @@ public class IPostiResource {
                 batches.put(iposti.getContentName(), iposti.getContent());
             }
             byte[] zip = documentBuilder.zip(batches);
-            return Response.ok(zip).build();
+            return downloadZipResponse(id, response, zip);
         } catch(Exception e) {
             return Response.status(400).build();
         }
     }
-    
+
+    private Response downloadZipResponse(Long id, HttpServletResponse response, byte[] zip) {
+        response.setHeader("Content-Type", "application/zip");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + id + ".zip\"");
+        response.setHeader("Content-Length", String.valueOf(zip.length));
+        response.setHeader("Cache-Control", "private");
+        return Response.ok(zip).type("application/zip").build();
+    }
+
     /**
      * Sends single iposti item
      * @param id

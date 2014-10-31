@@ -64,6 +64,7 @@ public class DownloadResource {
         response.setHeader("Content-Type", download.getContentType());
         response.setHeader("Content-Disposition", "attachment; filename=\"" + download.getFilename() + "\"");
         response.setHeader("Content-Length", String.valueOf(download.toByteArray().length));
+        response.setHeader("Cache-Control", "private");
         return Response.ok(download.toByteArray()).type(download.getContentType()).build();
     }
 }
