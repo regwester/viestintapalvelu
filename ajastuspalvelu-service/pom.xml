@@ -339,7 +339,7 @@
     </dependencies>
 
     <build>
-        <finalName>ajastuspalvelu</finalName>
+        <finalName>ajastuspalvelu-service</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
