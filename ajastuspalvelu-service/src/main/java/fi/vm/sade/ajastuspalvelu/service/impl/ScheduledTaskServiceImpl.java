@@ -1,6 +1,9 @@
 package fi.vm.sade.ajastuspalvelu.service.impl;
 
+import java.util.ArrayList;
 import java.util.List;
+
+import jersey.repackaged.com.google.common.collect.ImmutableList;
 
 import org.joda.time.DateTime;
 import org.quartz.SchedulerException;
@@ -56,14 +59,11 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     @Override
     public List<ScheduledTaskDto> list() {
         List<ScheduledTask> tasks = dao.findAll();
-        return Lists.transform(tasks, new Function<ScheduledTask, ScheduledTaskDto>() {
-
-            @Override
-            public ScheduledTaskDto apply(ScheduledTask input) {
-                return scheduledTaskConverter.convertToDto(input);
-            }
-            
-        });
+        List<ScheduledTaskDto> dtos = new ArrayList<ScheduledTaskDto>();
+        for (ScheduledTask scheduledTask : tasks) {
+            dtos.add(scheduledTaskConverter.convertToDto(scheduledTask));
+        }
+        return dtos;
     }
 
     @Override
