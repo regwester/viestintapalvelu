@@ -33,6 +33,7 @@ import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.asiontitili.AsiointitiliService;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.*;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -45,7 +46,6 @@ import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 
 import static com.google.common.base.Optional.fromNullable;
 import static fi.vm.sade.viestintapalvelu.util.HetuPrinterUtil.clearHetu;

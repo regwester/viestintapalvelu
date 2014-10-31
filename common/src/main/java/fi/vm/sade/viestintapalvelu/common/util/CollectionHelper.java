@@ -57,29 +57,6 @@ public class CollectionHelper {
         return ready;
     }
 
-    /**
-     * @param c collection to split
-     * @param chunkSize the maximum number of elements in each chunk
-     * @param <T> contained in the collection
-     * @param <C> the collection type
-     * @return a list of chunks
-     */
-    public static<T,C extends Collection<? extends T>> List<List<T>> split(C c, int chunkSize) {
-        List<List<T>> ready = new ArrayList<List<T>>();
-        List<T> current = new ArrayList<T>();
-        if (c != null) {
-            for (T e : c) {
-                if (current.size() >= chunkSize) {
-                    ready.add(current);
-                    current = new ArrayList<T>();
-                }
-                current.add(e);
-            }
-        }
-        ready.add(current);
-        return ready;
-    }
-
     public static final Function<BaseEntity, Long> ENTITY_ID = new Function<BaseEntity, Long>() {
         @Nullable
         @Override

@@ -23,6 +23,7 @@ import com.mysema.query.types.path.StringPath;
 import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
@@ -31,7 +32,6 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterBatch;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
-import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
 
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
@@ -228,9 +228,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public List<Long> findAllLetterReceiverIdsByBatch(long batchId) {
         return getEntityManager().createQuery(
-                    "select lr.id from LetterReceivers lr"
-                    + " inner join lr.letterBatch batch with batch.id = :batchId"
-                    + " order by lr.id", Long.class)
+                "select lr.id from LetterReceivers lr"
+                        + " inner join lr.letterBatch batch with batch.id = :batchId"
+                        + " order by lr.id", Long.class)
             .setParameter("batchId", batchId).getResultList();
     }
     

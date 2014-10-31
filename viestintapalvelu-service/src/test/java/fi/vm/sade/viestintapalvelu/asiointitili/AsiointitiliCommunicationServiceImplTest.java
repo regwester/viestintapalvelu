@@ -48,7 +48,6 @@ import fi.vm.sade.viestintapalvelu.common.util.XMLTypeHelper;
 import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.converter.AsiointitiliDtoConverter;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.impl.AsiointitiliServiceImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.impl.AsiointitiliCommunicationServiceImpl;
 import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
 
