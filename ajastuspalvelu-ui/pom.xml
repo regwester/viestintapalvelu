@@ -37,6 +37,7 @@
     </properties>
     
     <build>
+        <finalName>ajastuspalvelu-ui</finalName>
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>

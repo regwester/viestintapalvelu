@@ -48,7 +48,7 @@ import fi.vm.sade.viestintapalvelu.common.util.XMLTypeHelper;
 import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.converter.AsiointitiliDtoConverter;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.impl.AsiointitiliServiceImpl;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.impl.AsiointitiliCommunicationServiceImpl;
 import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
 
 import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstReturn;
@@ -64,11 +64,11 @@ import static org.mockito.Mockito.when;
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
-public class AsiointitiliServiceImplTest {
+public class AsiointitiliCommunicationServiceImplTest {
     @Mock
     private Viranomaispalvelut asiointitiliViranomaispalvelutClient;
     @InjectMocks
-    private AsiointitiliServiceImpl asiointitiliService;
+    private AsiointitiliCommunicationServiceImpl asiointitiliService;
     private AsiointitiliDtoConverter asiointitiliDtoConverter = new AsiointitiliDtoConverter();
     private BeanValidator validator = new BeanValidatorImpl();
 

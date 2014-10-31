@@ -23,6 +23,8 @@ import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.message.Message;
 
+import fi.vm.sade.viestintapalvelu.util.HetuPrinterUtil;
+
 /**
  * User: ratamaa
  * Date: 15.10.2014
@@ -53,5 +55,9 @@ public class CustomLoggingOutInterceptor extends LoggingOutInterceptor {
     @Override
     protected Logger getLogger() {
         return LOG;
+    }
+
+    protected String transform(String originalLogString) {
+        return HetuPrinterUtil.clearHetu(originalLogString);
     }
 }

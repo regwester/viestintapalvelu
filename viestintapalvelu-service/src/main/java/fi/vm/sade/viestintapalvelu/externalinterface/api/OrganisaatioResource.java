@@ -6,8 +6,10 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import org.springframework.stereotype.Component;
+
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
 
 @Component
 @Path("/organisaatio")

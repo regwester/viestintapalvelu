@@ -49,6 +49,7 @@
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean>
 
+
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
                          accessDecisionManager="accessDecisionManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
@@ -164,11 +165,13 @@
     <task:annotation-driven/>
 
     <!-- Sending emails -->
+    <bean id="dailyTaskRunner" class="fi.vm.sade.ryhmasahkoposti.service.DailyTaskRunnerImpl"/>
     <bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"></bean>
     <task:executor id="emailExecutor" rejection-policy="ABORT" pool-size="10"/>
     <task:scheduler id="emailScheduler" pool-size="10"/>
     <task:scheduled-tasks scheduler="emailScheduler">
         <task:scheduled ref="emailServiceImpl" method="checkEmailQueues" cron="${ryhmasahkoposti.sender.cron}"/>
+        <task:scheduled ref="dailyTaskRunner" method="runDailyTasks" fixed-delay="86400000" initial-delay="5000"/>
     </task:scheduled-tasks>
 
     <!-- Swagger configuration -->

@@ -86,7 +86,7 @@ public class KohdeDto implements Serializable {
             "niiden mukaan keneltä asia on tullut. \n" +
             "Tämän kentän avulla voi antaa tarkemman lähettäjätiedon.")
     private String lahettajaNimi;
-    @NotNull
+    @NotNull @Size(min=1)
     private String kuvausTeksti;
     @DtoConverted
     @ApiModelProperty("ASIAKAS. Tieto maksullisuudesta.")

@@ -13,9 +13,11 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import com.sun.istack.Nullable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
@@ -32,6 +34,7 @@ import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 
 /**
  * Kirjelähetysten raportoinnin REST-toteutus
@@ -52,7 +55,12 @@ public class LetterReportResource extends AsynchronousResource {
     private PagingAndSortingDTOConverter pagingAndSortingDTOConverter;
     @Autowired
     private DownloadCache downloadCache;
-    
+    @Autowired
+    private OrganisaatioService organisaatioService;
+
+    @Value("${viestintapalvelu.rekisterinpitajaOID}")
+    private String rekisterinpitajaOID;
+
     /**
      * Hakee käyttäjän organisaation kirjelähetysten tiedot
      * 
@@ -82,11 +90,8 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
         List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
-        
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
-        
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
         
@@ -145,16 +150,31 @@ public class LetterReportResource extends AsynchronousResource {
     @ApiOperation(value = "Hakee vastaanottajan kirjeen ja palauttaa linkin ko. kirjeeseen", notes = "Hakee "
         + "vastaanottajan kirjeen. Kirjeelle tehdään unzipo ja sisältö laitetaan talteen cacheen. Palautetaan linkin"
         + " ko. kirjeeseen", response=String.class)
-    public Response getReceiversLetter(@ApiParam(value="Vastaanottajan kirjeen avain") 
-        @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request) {
+    public Response getReceiversLetter(@ApiParam(value="Vastaanottajan kirjeen avain")
+                                       @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request) {
         try {
-           LetterReceiverLetterDTO letterReceiverLetter = letterReportService.getLetterReceiverLetter(id);
-           String documentId = downloadCache.addDocument(new Download(
-               letterReceiverLetter.getContentType(), letterReceiverLetter.getTemplateName(), letterReceiverLetter.getLetter()));       
-           return createResponse(request, documentId);
+            LetterReceiverLetterDTO letterReceiverLetter = letterReportService.getLetterReceiverLetter(id);
+            String documentId = downloadCache.addDocument(new Download(
+                    letterReceiverLetter.getContentType(),
+                    letterReceiverLetter.getTemplateName() + determineExtension(letterReceiverLetter.getContentType()),
+                    letterReceiverLetter.getLetter()));
+            return createResponse(request, documentId);
         } catch (Exception e) {
-           return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build(); 
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
+    }
+
+    private String determineExtension(String contentType) {
+        if (contentType == null) {
+            return "";
+        }
+        if (contentType.endsWith("/zip")) {
+            return ".zip";
+        }
+        if (contentType.endsWith("/pdf")) {
+            return ".pdf";
+        }
+        return "";
     }
 
     /**
@@ -170,15 +190,15 @@ public class LetterReportResource extends AsynchronousResource {
     @ApiOperation(value = "Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä", notes = "Hakee kirjelähetyksen"
         + "vastaanottajien kirjeet. Kirjeille tehdään unzip ja ne yhdistetään yhdeksi PDF:ksi. "
         + "Sisältö laitetaan talteen cacheen. Palautetaan linkin ko. PDF-dokumenteihin", response=String.class)
-    public Response getLetterContents(@ApiParam(value="Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id, 
-        @Context HttpServletRequest request) {
+    public Response getLetterContents(@ApiParam(value="Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id,
+                                      @Context HttpServletRequest request) {
         try {
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
             String documentId = downloadCache.addDocument(new Download(
-               "application/pdf", "letterContents" + id, letterContents));       
+                    "application/pdf", "letterContents" + id + ".pdf", letterContents));
             return createResponse(request, documentId);
         } catch (Exception e) {
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build(); 
+            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
     }
 
@@ -214,13 +234,14 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
         List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
-        
-        if (organizationOid == null || organizationOid.isEmpty()) {
-            organizationOid = organizations.get(0).getOid();
-        }
+        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
         
         LetterReportQueryDTO query = new LetterReportQueryDTO();
-        query.setOrganizationOid(organizationOid);
+        if(organizationOid.equals(rekisterinpitajaOID)) {
+            query.setOrganizationOids(null);
+        } else {
+            query.setOrganizationOids(organisaatioService.findHierarchyOids(organizationOid));
+        }
         query.setSearchArgument(searchArgument);
         
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
@@ -237,5 +258,17 @@ public class LetterReportResource extends AsynchronousResource {
         }
 
         return Response.ok(letterBatchesReport).build();
+    }
+
+    protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,
+                                                   List<OrganizationDTO> allowedOrganizations) {
+        if (organizationOid != null && !organizationOid.isEmpty()) {
+            for (OrganizationDTO organization : allowedOrganizations) {
+                if (organizationOid.equals(organization.getOid())) {
+                    return organizationOid;
+                }
+            }
+        }
+        return allowedOrganizations.get(0).getOid();
     }
 }

@@ -20,13 +20,15 @@ import java.util.UUID;
 
 import javax.annotation.Resource;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.suomi.asiointitili.*;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliService;
+import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliCommunicationService;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.converter.AsiointitiliDtoConverter;
 
@@ -36,7 +38,9 @@ import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.converter.
  * Time: 15:46
  */
 @Service
-public class AsiointitiliServiceImpl implements AsiointitiliService {
+public class AsiointitiliCommunicationServiceImpl implements AsiointitiliCommunicationService {
+    private static final Logger logger = LoggerFactory.getLogger(AsiointitiliCommunicationServiceImpl.class);
+
     public static final String SANOMA_VERSIO = "1.0";
     public static final String KYSELYLAJI_ASIAKKAAT = "Asiakkaat";
     public static final String KYSELYLAJI_KAIKKI_ASIAKKAAT = "Kaikki";
@@ -81,13 +85,21 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     @Override
     @Transactional
     public AsiakasTilaKyselyVastausDto tarkistaAsiointitilinTila(AsiakasTilaTarkastusKyselyDto kyselyDto) {
+
         KyselyWS1 kysely = asiointitiliDtoConverter.convert(kyselyDto, new KyselyWS1());
         kysely.setKyselyLaji(KYSELYLAJI_ASIAKKAAT);
         Viranomainen viranomainen = createViranomainen();
+        logger.info("Requesting tarkistaAsiointitilinTila query (message id: {}) for {} customers",
+                viranomainen.getSanomaTunniste(),
+                kyselyDto.getAsiakkaat().size());
         // TODO: Save to database (including viranomainen.sanomaTunniste)?
         VastausWS1 vastaus = asiointitiliViranomaispalvelutClient.haeAsiakkaita(viranomainen, kysely);
         // TODO: Save vastaus to database?
-        return asiointitiliDtoConverter.convert(vastaus, new AsiakasTilaKyselyVastausDto());
+        AsiakasTilaKyselyVastausDto vastausDto = asiointitiliDtoConverter.convert(vastaus, new AsiakasTilaKyselyVastausDto());
+        logger.info("Received tarkistaAsiointitilinTila response (message id: {}) with status: {} ({})",
+                vastausDto.getSanomaTunniste(), vastausDto.getTilaKoodi(),
+                vastausDto.getKuvaus());
+        return vastausDto;
     }
 
     @Override

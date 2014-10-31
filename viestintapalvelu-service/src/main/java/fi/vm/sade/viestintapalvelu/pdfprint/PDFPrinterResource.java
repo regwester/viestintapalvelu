@@ -1,9 +1,5 @@
 package fi.vm.sade.viestintapalvelu.pdfprint;
 
-import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
-import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
-import static org.joda.time.DateTime.now;
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -12,11 +8,7 @@ import java.util.List;
 import java.util.concurrent.ExecutorService;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -45,6 +37,10 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.letter.LetterResource;
+
+import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
+import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
+import static org.joda.time.DateTime.now;
 
 @Path(Urls.PRINTER_PATH)
 @PreAuthorize("isAuthenticated()")
@@ -170,13 +166,12 @@ public class PDFPrinterResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] pdf = buildDocument(input);
-                    String documentName = input.getDocumentName();
-                    documentName = input.getDocumentName() == null ? "document.pdf"
+                    String documentName = input.getDocumentName() == null ? "document.pdf"
                             : input.getDocumentName() + ".pdf";
                     dokumenttiResource
                             .tallenna(
                                     null,
-                                    filenamePrefixWithUsernameAndTimestamp("documentName"),
+                                    filenamePrefixWithUsernameAndTimestamp(documentName),
                                     now().plusDays(1).toDate().getTime(),
                                     Arrays.asList("viestintapalvelu",
                                             documentName, "pdf"),

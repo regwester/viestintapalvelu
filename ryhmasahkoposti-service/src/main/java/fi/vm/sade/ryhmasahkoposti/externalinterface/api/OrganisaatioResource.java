@@ -7,6 +7,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
+
 import org.springframework.stereotype.Component;
 
 @Component
@@ -16,4 +18,9 @@ public interface OrganisaatioResource {
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     public OrganisaatioRDTO getOrganisaatioByOID(@PathParam("oid") String oid);
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
+    @Path("/hae")
+    OrganisaatioHierarchyResultsDto hierarchy(@PathParam("vainAktiiviset") boolean vainAktiiviset) throws Exception;
 }
