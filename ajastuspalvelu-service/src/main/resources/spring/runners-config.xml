@@ -22,28 +22,6 @@
            http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
            http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd">
 
-    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target" ref="ticketInterceptorTarget"/>
-    </bean>
-    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target" ref="ticketInterceptorTarget"/>
-        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
-    </bean>
-    <bean id="ticketInterceptorInternalServiceUser" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target">
-            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                <property name="webCasUrl" value="${web.url.cas}" />
-                <property name="targetService" value="${cas.service.viestintapalvelu}" />
-                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-            </bean>
-        </property>
-        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
-        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-    </bean>
-
     <!-- general -->
 
     <!-- email service: -->

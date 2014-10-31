@@ -118,6 +118,7 @@ viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkai
 viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
 viestintapalvelu.tarjontapalvelu.rest.url = https://${host.virkailija}/tarjonta-service/rest
+viestintapalvelu.rest.api.url = https://${host.virkailija}/viestintapalvelu/api/v1
 viestintapalvelu.options.cache.valid.millis=3600000
 # kuinka monta LetterBatch-käsittelyä sallitaan rinnakkain:
 viestintapalvelu.letter.batch.jobs.pool.size=3

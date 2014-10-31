@@ -39,7 +39,7 @@ public class AppResourceConfig extends ResourceConfig {
     public AppResourceConfig() {
 
         // Register resources using package scan
-        packages("fi.vm.sade.ajastuspalvelu");
+        packages("fi.vm.sade.ajastuspalvelu.resource");
         packages("fi.vm.sade.generic");
 
         // Register custom filters, providers and features
