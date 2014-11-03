@@ -28,18 +28,21 @@ app.factory('FetchScheduledTask', ['$resource', function($resource) {
     });
 }]);
 
-app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$filter', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 
-                                      function($scope, $location, $routeParams, $filter, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus) {
-    
+app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$filter', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 'Tasks', 
+                                      function($scope, $location, $routeParams, $filter, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus, Tasks) {
     
     FetchScheduledTask.get( {scheduledtaskid : $routeParams.task} , {}, function(result) {
 	$scope.task = result
-    });
-    
-    Hakus.get({}, function(result) {
-	$scope.hakus = result
-	$scope.selectedHaku = $filter('filter')(result, function (haku) {return haku.hakuOid == $scope.task.hakuOid})[0]
-	console.log($scope.selectedHaku)
+	
+	Hakus.get({}, function(result) {
+		$scope.hakus = result
+		$scope.selectedHaku = $filter('filter') (result, function (haku) {return haku.hakuOid === $scope.task.hakuOid})[0]
+	});
+	
+	Tasks.get({}, function(result) {
+	    $scope.tasks = result
+	    $scope.selectedTask = $filter('filter') (result, function (task) {return task.name === $scope.task.taskName})[0]
+	});
     });
     
     $scope.hakuByName = function(haku) {
@@ -49,7 +52,10 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
     }
     
     $scope.save = function() {
-	EditScheduledTask.put({}, $scope.task, function(result) {
+	var taskToSave = $scope.task
+	taskToSave.taskId = $scope.selectedTask.id
+	taskToSave.hakuOid = $scope.selectedHaku.hakuOid
+	EditScheduledTask.put({}, taskToSave, function(result) {
 	    $location.path("/etusivu/");
 	});
     }
