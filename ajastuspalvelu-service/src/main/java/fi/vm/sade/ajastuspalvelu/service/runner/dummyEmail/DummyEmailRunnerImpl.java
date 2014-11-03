@@ -56,6 +56,7 @@ public class DummyEmailRunnerImpl implements TaskRunner {
         // Expect all receivers to contain email:
         EmailDetailsDto emailDetailsDto = emailDetailsDtoConverter.convert(scheduledTask, response,
                 new EmailDetailsDto());
+        emailDetailsDto.getReplacements().put("subject", "Testiviesti");
         emailService.sendEmail(emailDetailsDto);
     }
 

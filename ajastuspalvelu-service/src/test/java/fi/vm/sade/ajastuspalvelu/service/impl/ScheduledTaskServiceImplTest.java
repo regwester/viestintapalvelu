@@ -11,9 +11,11 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.quartz.SchedulerException;
 
+import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskCriteria;
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.converter.ScheduledTaskConverter;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskCriteriaDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
@@ -73,9 +75,9 @@ public class ScheduledTaskServiceImplTest {
     
     @Test
     public void returnsListOfScheduledTasks() {
-        when(dao.findAll()).thenReturn(Arrays.asList(givenScheduledTask(1l), givenScheduledTask(2l), givenScheduledTask(3l)));
+        when(dao.find(any(ScheduledTaskCriteria.class))).thenReturn(Arrays.asList(givenScheduledTask(1l), givenScheduledTask(2l), givenScheduledTask(3l)));
         when(converter.convert(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(1l));
-        List<ScheduledTaskListDto> tasks = service.list();
+        List<ScheduledTaskListDto> tasks = service.list(new ScheduledTaskCriteriaDto());
         assertEquals(3, tasks.size());
     }
     

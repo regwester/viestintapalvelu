@@ -19,6 +19,8 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling.impl;
 import java.text.ParseException;
 
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.LocalDateTime;
 import org.quartz.CronExpression;
 
 import com.google.common.base.Optional;
@@ -42,13 +44,14 @@ public class SingleScheduledTaskTaskSchedule implements Schedule {
     }
 
     private String toCron(DateTime dt) {
+        LocalDateTime ldt = dt.toLocalDateTime();
         try {
-            return new CronExpression(dt.getSecondOfMinute() + " "
-                    + dt.getMinuteOfHour() + " "
-                    + dt.getHourOfDay() + " "
-                    + dt.getDayOfMonth() + " "
-                    + dt.getMonthOfYear() + " ? " // <- any day of week
-                    + dt.getYear()).getCronExpression();
+            return new CronExpression(ldt.getSecondOfMinute() + " "
+                    + ldt.getMinuteOfHour() + " "
+                    + ldt.getHourOfDay() + " "
+                    + ldt.getDayOfMonth() + " "
+                    + ldt.getMonthOfYear() + " ? " // <- any day of week
+                    + ldt.getYear()).getCronExpression();
         } catch (ParseException e) {
             throw new IllegalStateException(e);
         }

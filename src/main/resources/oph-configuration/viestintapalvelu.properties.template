@@ -152,3 +152,4 @@ viestintapalvelu.rekisterinpitajaOID=1.2.246.562.10.00000000001
 #
 ##############################################################################
 ajastuspalvelu.task.dummyEmail.endpoint = https\://${host.virkailija}/ajastuspalvelu-service/testdata/response.json
+ajastuspalvelu.ryhmasahkoposti.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/

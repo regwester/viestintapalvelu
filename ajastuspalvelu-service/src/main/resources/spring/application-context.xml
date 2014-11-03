@@ -65,6 +65,7 @@
         <property name="dataSource" ref="dbDataSource" />
         <property name="jobFactory" ref="autowiringBeanJobFactory"/>
         <property name="overwriteExistingJobs" value="true" />
+        <property name="startupDelay" value="60"/>
         <property name="quartzProperties">
             <props>
                 <prop key="org.quartz.jobStore.isClustered">false</prop>

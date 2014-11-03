@@ -26,9 +26,19 @@
 
     <!-- email service: -->
     <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource"
-                         address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
+                         address="${ajastuspalvelu.ryhmasahkoposti.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRestInternal"/>
+            <ref bean="ticketInterceptorInternalServiceUser"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+    <jaxrs-client:client id="templateResourceClient"
+                         serviceClass="fi.vm.sade.ajastuspalvelu.service.external.api.TemplateResource"
+                         address="${viestintapalvelu.rest.api.url}">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ticketInterceptorInternalServiceUser"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
@@ -44,10 +54,8 @@
             <ref bean="ticketInterceptorInternalServiceUser"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider"/>
+            <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
-
 
 </beans>

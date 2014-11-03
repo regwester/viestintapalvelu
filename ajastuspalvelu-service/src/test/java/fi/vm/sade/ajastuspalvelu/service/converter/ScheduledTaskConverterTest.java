@@ -30,18 +30,12 @@ public class ScheduledTaskConverterTest {
     
     @InjectMocks
     private ScheduledTaskConverter converter;
-    
-    @Test
-    public void convertsDtoToModel() {
-        when(dao.read(TASK_ID)).thenReturn(null);
-        assertModel(converter.convert(new ScheduledTaskModifyDto(null, TASK_ID, HAKU_OID, RUNTIME), new ScheduledTask()), null);
-    }
 
     @Test
     public void convertsDtoToModelUsingExistingModel() {
         long id = 5l;
         ScheduledTask task = givenScheduledTask(id);
-        when(dao.read(TASK_ID)).thenReturn(null);
+        when(dao.read(TASK_ID)).thenReturn(new Task());
         assertModel(converter.convert(new ScheduledTaskModifyDto(id, TASK_ID, HAKU_OID, RUNTIME), task), id);
     }
 

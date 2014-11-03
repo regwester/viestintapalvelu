@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.ajastuspalvelu.service.scheduling.impl;
 
-import javax.annotation.PostConstruct;
-
 import org.quartz.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -44,12 +42,6 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
 
     @Autowired
     private Scheduler scheduler;
-
-    @PostConstruct
-    public void startup() throws SchedulerException {
-        scheduler.start();
-        logger.info("SchedulingServiceImpl Quartz scheduler.start()");
-    }
 
     @Override
     public void scheduleJob(Long scheduledTaskId, Schedule schedule) throws SchedulerException {

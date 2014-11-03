@@ -33,6 +33,7 @@ public class JacksonFeature implements Feature {
         registerModule(new JodaModule());
         disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
         disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
+        disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
     }};
 
     private static final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider(){{

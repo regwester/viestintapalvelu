@@ -20,15 +20,22 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 /**
  * User: ratamaa
  * Date: 3.11.2014
  * Time: 9:44
  */
+@ApiModel("Ajastetun tehtävän lisäyksen tiedot")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledTaskModifyDto extends ScheduledTaskSaveDto {
     private static final long serialVersionUID = 8940004793789228189L;
 
     @NotNull
+    @ApiModelProperty(value = "Muokattavan ajastetun tehtävän ID", required = true)
     private Long id;
 
     public ScheduledTaskModifyDto() {
