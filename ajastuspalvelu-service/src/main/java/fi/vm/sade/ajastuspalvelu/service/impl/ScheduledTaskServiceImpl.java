@@ -3,16 +3,11 @@ package fi.vm.sade.ajastuspalvelu.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import jersey.repackaged.com.google.common.collect.ImmutableList;
-
 import org.joda.time.DateTime;
 import org.quartz.SchedulerException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.google.common.base.Function;
-import com.google.common.collect.Lists;
 
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
@@ -65,7 +60,8 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
         }
         return dtos;
     }
-
+    
+    @Transactional(readOnly = true)
     @Override
     public ScheduledTaskDto findById(long id) {
         return scheduledTaskConverter.convertToDto(dao.read(id));

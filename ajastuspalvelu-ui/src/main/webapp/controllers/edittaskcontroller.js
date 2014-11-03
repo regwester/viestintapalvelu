@@ -32,7 +32,7 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', 'Ed
                                       function($scope, $location, $routeParams, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask) {
     
     
-    FetchScheduledTask.get( scheduledtaskid : $routeParams.task ), {}, function(result) {
+    FetchScheduledTask.get( {scheduledtaskid : $routeParams.task} , {}, function(result) {
 	$scope.task = result;
     });
     
