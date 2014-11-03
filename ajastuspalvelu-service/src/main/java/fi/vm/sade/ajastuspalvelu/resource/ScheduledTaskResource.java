@@ -54,18 +54,17 @@ public class ScheduledTaskResource {
     }
     
     @POST
-    @Consumes(MediaType.APPLICATION_JSON_VALUE)
-    @Produces(MediaType.TEXT_PLAIN_VALUE)
-    @ApiOperation("Tallentaa ajastetun tehtävän")
+    @Consumes(MediaType.APPLICATION_JSON_VALUE+"; charset=UTF-8")
+    @Produces(MediaType.APPLICATION_JSON_VALUE)
+    @ApiOperation(value = "Tallentaa ajastetun tehtävän", response = ScheduledTaskListDto.class)
     public Response insertScheduledTask(ScheduledTaskSaveDto dto) throws SchedulerException {
         beanValidator.validate(dto);
-        service.insert(dto);
-        return Response.status(Status.OK).build();
+        ScheduledTaskListDto inserted = service.insert(dto);
+        return Response.ok(inserted).build();
     }
 
     @PUT
-    @Consumes(MediaType.APPLICATION_JSON_VALUE)
-    @Produces(MediaType.TEXT_PLAIN_VALUE)
+    @Consumes(MediaType.APPLICATION_JSON_VALUE+"; charset=UTF-8")
     @ApiOperation("Päivittää ajastetun tehtävän tiedot")
     public Response update(ScheduledTaskModifyDto dto) throws SchedulerException {
         beanValidator.validate(dto);
@@ -75,7 +74,6 @@ public class ScheduledTaskResource {
     
     @PUT
     @Path("/close/{scheduledtaskid}")
-    @Produces(MediaType.TEXT_PLAIN_VALUE)
     @ApiOperation("Poistaa ajastetun tehtävän (ajastuksen päättäminen)")
     public Response close(@PathParam("scheduledtaskid") Long id) {
         try {
