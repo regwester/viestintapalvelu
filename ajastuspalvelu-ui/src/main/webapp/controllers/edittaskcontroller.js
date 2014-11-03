@@ -28,12 +28,16 @@ app.factory('FetchScheduledTask', ['$resource', function($resource) {
     });
 }]);
 
-app.controller('EditTaskController', ['$scope', '$location', '$routeParams', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 
-                                      function($scope, $location, $routeParams, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask) {
+app.controller('EditTaskController', ['$scope', '$location', '$routeParams', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 
+                                      function($scope, $location, $routeParams, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus) {
     
     
     FetchScheduledTask.get( {scheduledtaskid : $routeParams.task} , {}, function(result) {
-	$scope.task = result;
+	$scope.task = result
+    });
+    
+    Hakus.get({}, function(result) {
+	$scope.hakus = result
     });
     
     
