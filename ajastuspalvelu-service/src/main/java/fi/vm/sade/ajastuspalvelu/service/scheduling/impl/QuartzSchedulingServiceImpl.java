@@ -15,8 +15,6 @@
  */
 package fi.vm.sade.ajastuspalvelu.service.scheduling.impl;
 
-import java.text.ParseException;
-
 import javax.annotation.PostConstruct;
 
 import org.quartz.*;
@@ -71,16 +69,24 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
                 logger.info("Removed trigger {}", trigger);
             }
         }
-        // And schedule with a new trigger:
-        Trigger trigger = newTrigger()
-                .withIdentity("trigger." + key.getName(), QVARTZ_GROUP_NAME)
-                .forJob(key)
-                .startAt(schedule.getActiveBegin().transform(DateHelper.TO_DATE).orNull())
-                .endAt(schedule.getActiveEnd().transform(DateHelper.TO_DATE).orNull())
-                .withSchedule(cronSchedule(schedule.getCron()))
-                .build();
-        scheduler.scheduleJob(trigger);
-        logger.info("Added trigger {} for scheduledTaskId={}", trigger, scheduledTaskId);
+        if (schedule.isValid()) {
+            // And schedule with a new trigger:
+            TriggerBuilder<? extends Trigger> builder = newTrigger()
+                    .withIdentity("trigger." + key.getName(), QVARTZ_GROUP_NAME)
+                    .forJob(key)
+                    .withSchedule(cronSchedule(schedule.getCron()));
+            if (schedule.getActiveBegin().isPresent()) {
+                builder = builder.startAt(schedule.getActiveBegin().transform(DateHelper.TO_DATE).get());
+            }
+            if (schedule.getActiveEnd().isPresent()) {
+                builder = builder.endAt(schedule.getActiveEnd().transform(DateHelper.TO_DATE).get());
+            }
+            Trigger trigger = builder.build();
+            scheduler.scheduleJob(trigger);
+            logger.info("Added trigger {} for scheduledTaskId={}", trigger, scheduledTaskId);
+        } else {
+            logger.info("Schedule {} invalid (in past). Ignoring trigger.", schedule);
+        }
     }
 
     private JobKey createKey(Long scheduledTaskId) {

@@ -30,6 +30,11 @@ import com.google.common.base.Optional;
 public interface Schedule extends Serializable {
 
     /**
+     * @return true if this schedule is valid to be run at some point in the future (if false, may be ignored)
+     */
+    boolean isValid();
+
+    /**
      * @return a valid cron expression
      */
     String getCron();

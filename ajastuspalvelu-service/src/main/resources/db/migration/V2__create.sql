@@ -23,7 +23,7 @@ create table ajastettu_tehtava (
 create table ajastettu_ajo(
   id serial8 primary key,
   versio int8 not null default 0,
-  ajastettu_tehtava_id int8 references ajastettu_ajo(id) not null,
+  ajastettu_tehtava_id int8 references ajastettu_tehtava(id) not null,
   ajo_aloitettu timestamp not null,
   ajo_paattynyt timestamp,
   tila varchar(64) not null,

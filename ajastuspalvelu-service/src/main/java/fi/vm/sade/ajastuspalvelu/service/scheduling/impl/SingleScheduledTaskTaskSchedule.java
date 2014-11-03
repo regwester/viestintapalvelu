@@ -25,6 +25,8 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.ajastuspalvelu.service.scheduling.Schedule;
 
+import static org.joda.time.DateTime.now;
+
 /**
  * User: ratamaa
  * Date: 23.10.2014
@@ -52,6 +54,11 @@ public class SingleScheduledTaskTaskSchedule implements Schedule {
         }
     }
 
+    @Override
+    public boolean isValid() {
+        return runtimeForSingle.isAfter(now());
+    }
+
     public DateTime getRuntimeForSingle() {
         return runtimeForSingle;
     }
@@ -69,5 +76,10 @@ public class SingleScheduledTaskTaskSchedule implements Schedule {
     @Override
     public Optional<DateTime> getActiveEnd() {
         return Optional.absent();
+    }
+
+    @Override
+    public String toString() {
+        return "SingleScheduledTaskTaskSchedule("+this.runtimeForSingle+", cron="+this.cron+")";
     }
 }

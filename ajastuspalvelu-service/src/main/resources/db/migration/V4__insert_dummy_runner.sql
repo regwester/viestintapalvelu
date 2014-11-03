@@ -1,2 +1,2 @@
 
-insert into tehtava(bean_nimi, nimi) values ('dummyRunner', 'Testiajo');
+insert into tehtava(bean_nimi, nimi) values ('dummyEmail', 'Testiajo');

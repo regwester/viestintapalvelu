@@ -47,6 +47,11 @@ public class CronSchedule implements Schedule {
     }
 
     @Override
+    public boolean isValid() {
+        return true;
+    }
+
+    @Override
     public String getCron() {
         return this.cron;
     }
@@ -59,5 +64,10 @@ public class CronSchedule implements Schedule {
     @Override
     public Optional<DateTime> getActiveEnd() {
         return Optional.absent();
+    }
+
+    @Override
+    public String toString() {
+        return "CronSchedule("+this.cron+")";
     }
 }
