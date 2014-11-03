@@ -45,7 +45,7 @@ public class SingleScheduledTaskTaskSchedule implements Schedule {
                     + dt.getMinuteOfHour() + " "
                     + dt.getHourOfDay() + " "
                     + dt.getDayOfMonth() + " "
-                    + dt.getMonthOfYear() + " "
+                    + dt.getMonthOfYear() + " ? " // <- any day of week
                     + dt.getYear()).getCronExpression();
         } catch (ParseException e) {
             throw new IllegalStateException(e);

@@ -7,18 +7,18 @@ import org.joda.time.DateTime;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ScheduledTaskDto implements Serializable {
+public class ScheduledTaskListDto implements Serializable {
     private static final long serialVersionUID = -5059282779150572999L;
 
-    public final Long id;
+    private final Long id;
 
-    public final String taskName;
+    private final String taskName;
 
-    public final String hakuOid;
+    private final String hakuOid;
 
-    public final DateTime runtimeForSingle;
+    private final DateTime runtimeForSingle;
 
-    public ScheduledTaskDto(Long id, String taskName, String hakuOid, DateTime runtimeForSingle) {
+    public ScheduledTaskListDto(Long id, String taskName, String hakuOid, DateTime runtimeForSingle) {
         this.id = id;
         this.taskName = taskName;
         this.hakuOid = hakuOid;
@@ -36,6 +36,22 @@ public class ScheduledTaskDto implements Serializable {
         return result;
     }
 
+    public Long getId() {
+        return id;
+    }
+
+    public String getTaskName() {
+        return taskName;
+    }
+
+    public String getHakuOid() {
+        return hakuOid;
+    }
+
+    public DateTime getRuntimeForSingle() {
+        return runtimeForSingle;
+    }
+
     @Override
     public boolean equals(Object obj) {
         if (this == obj)
@@ -44,7 +60,7 @@ public class ScheduledTaskDto implements Serializable {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        ScheduledTaskDto other = (ScheduledTaskDto) obj;
+        ScheduledTaskListDto other = (ScheduledTaskListDto) obj;
         if (hakuOid == null) {
             if (other.hakuOid != null)
                 return false;

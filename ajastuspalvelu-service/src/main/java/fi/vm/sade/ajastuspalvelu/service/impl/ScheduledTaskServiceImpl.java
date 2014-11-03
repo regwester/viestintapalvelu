@@ -13,8 +13,11 @@ import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.ScheduledTaskService;
 import fi.vm.sade.ajastuspalvelu.service.converter.ScheduledTaskConverter;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.impl.SingleScheduledTaskTaskSchedule;
 
 @Service
 public class ScheduledTaskServiceImpl implements ScheduledTaskService {
@@ -30,17 +33,24 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     
     @Transactional
     @Override
-    public ScheduledTaskDto insert(ScheduledTaskDto dto) {
-        ScheduledTask task = dao.insert(scheduledTaskConverter.convertToModel(dto));
-        return scheduledTaskConverter.convertToDto(task);
+    public ScheduledTaskListDto insert(ScheduledTaskSaveDto dto) throws SchedulerException {
+        ScheduledTask task = dao.insert(scheduledTaskConverter.convert(dto, new ScheduledTask()));
+        updateScheduling(task);
+        return scheduledTaskConverter.convert(task);
     }
     
     @Transactional
     @Override
-    public void update(ScheduledTaskDto dto) {
-        dao.update(scheduledTaskConverter.convertToModel(dto));
+    public void update(ScheduledTaskModifyDto dto) throws SchedulerException {
+        ScheduledTask task = dao.read(dto.getId());
+        dao.update(scheduledTaskConverter.convert(dto, task));
+        updateScheduling(task);
     }
-    
+
+    private void updateScheduling(ScheduledTask task) throws SchedulerException {
+        schedulingService.scheduleJob(task.getId(), new SingleScheduledTaskTaskSchedule(task.getRuntimeForSingle()));
+    }
+
     @Transactional
     @Override
     public void remove(long id) throws SchedulerException {
@@ -52,19 +62,19 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     
     @Transactional(readOnly = true)
     @Override
-    public List<ScheduledTaskDto> list() {
+    public List<ScheduledTaskListDto> list() {
         List<ScheduledTask> tasks = dao.findAll();
-        List<ScheduledTaskDto> dtos = new ArrayList<ScheduledTaskDto>();
+        List<ScheduledTaskListDto> dtos = new ArrayList<ScheduledTaskListDto>();
         for (ScheduledTask scheduledTask : tasks) {
-            dtos.add(scheduledTaskConverter.convertToDto(scheduledTask));
+            dtos.add(scheduledTaskConverter.convert(scheduledTask));
         }
         return dtos;
     }
     
     @Transactional(readOnly = true)
     @Override
-    public ScheduledTaskDto findById(long id) {
-        return scheduledTaskConverter.convertToDto(dao.read(id));
+    public ScheduledTaskModifyDto findById(long id) {
+        return scheduledTaskConverter.convert(dao.read(id), new ScheduledTaskModifyDto());
     }
 
 }

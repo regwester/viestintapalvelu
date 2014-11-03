@@ -3,34 +3,35 @@ package fi.vm.sade.ajastuspalvelu.service.converter;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
+import fi.vm.sade.ajastuspalvelu.dao.TaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
 
 @Component("scheduledTaskConverter")
-public class ScheduledTaskConverter implements Converter<ScheduledTask, ScheduledTaskDto> {
-    
+public class ScheduledTaskConverter {
+
     @Autowired
-    private ScheduledTaskDao dao;
-    
-    @Override
-    public ScheduledTask convertToModel(ScheduledTaskDto dto) {
-        ScheduledTask task = getScheduledTask(dto);
-        //TODO task.setTask(task);
-        task.setHakuOid(dto.hakuOid);
-        task.setRuntimeForSingle(dto.runtimeForSingle);
-        return task;
+    private TaskDao taskDao;
+
+    public ScheduledTaskListDto convert(ScheduledTask model) {
+        return new ScheduledTaskListDto(model.getId(), model.getTask().getName(),
+                model.getHakuOid(), model.getRuntimeForSingle());
     }
 
-    @Override
-    public ScheduledTaskDto convertToDto(ScheduledTask model) {
-        return new ScheduledTaskDto(model.getId(), model.getTask().getName(), model.getHakuOid(), model.getRuntimeForSingle());
+    public ScheduledTask convert(ScheduledTaskSaveDto from, ScheduledTask to) {
+        to.setTask(taskDao.read(from.getTaskId()));
+        to.setHakuOid(from.getHakuOid());
+        to.setRuntimeForSingle(from.getRuntimeForSingle());
+        return to;
     }
 
-    private ScheduledTask getScheduledTask(ScheduledTaskDto dto) {
-        if (dto.id != null) {
-            return dao.read(dto.id);
-        }
-        return new ScheduledTask();
+    public ScheduledTaskModifyDto convert(ScheduledTask from, ScheduledTaskModifyDto to) {
+        to.setId(from.getId());
+        to.setTaskId(from.getTask() != null ? from.getTask().getId() : null);
+        to.setHakuOid(from.getHakuOid());
+        to.setRuntimeForSingle(from.getRuntimeForSingle());
+        return to;
     }
 }

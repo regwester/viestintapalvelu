@@ -7,13 +7,14 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import static org.mockito.Mockito.when;
-
-import static org.junit.Assert.assertEquals;
-import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
+import fi.vm.sade.ajastuspalvelu.dao.TaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.model.Task;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
+
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ScheduledTaskConverterTest {
@@ -22,33 +23,33 @@ public class ScheduledTaskConverterTest {
 
     private static final String HAKU_OID = "1.9.2.3", HAKU_OID_TASK = "1.2.3.4";
 
-    private static final String TASK_NAME = "taskName";
+    private static final Long TASK_ID = 123l;
 
     @Mock
-    private ScheduledTaskDao dao;
+    private TaskDao dao;
     
     @InjectMocks
     private ScheduledTaskConverter converter;
     
     @Test
     public void convertsDtoToModel() {
-        assertModel(converter.convertToModel(new ScheduledTaskDto(null, TASK_NAME, HAKU_OID, RUNTIME)), null);
+        when(dao.read(TASK_ID)).thenReturn(null);
+        assertModel(converter.convert(new ScheduledTaskModifyDto(null, TASK_ID, HAKU_OID, RUNTIME), new ScheduledTask()), null);
     }
 
     @Test
     public void convertsDtoToModelUsingExistingModel() {
         long id = 5l;
         ScheduledTask task = givenScheduledTask(id);
-        when(dao.read(id)).thenReturn(task);
-        assertModel(converter.convertToModel(new ScheduledTaskDto(id, TASK_NAME, HAKU_OID, RUNTIME)), id);
+        when(dao.read(TASK_ID)).thenReturn(null);
+        assertModel(converter.convert(new ScheduledTaskModifyDto(id, TASK_ID, HAKU_OID, RUNTIME), task), id);
     }
 
-    
     @Test
     public void convertsModelToDto() {
         long id = 3l;
-        ScheduledTaskDto dto = converter.convertToDto(givenScheduledTask(id));
-        assertEquals(new ScheduledTaskDto(id, null, HAKU_OID_TASK, RUNTIME_TASK), dto);
+        ScheduledTaskListDto dto = converter.convert(givenScheduledTask(id));
+        assertEquals(new ScheduledTaskListDto(id, null, HAKU_OID_TASK, RUNTIME_TASK), dto);
     }
 
     private void assertModel(ScheduledTask task, Long expectedId) {

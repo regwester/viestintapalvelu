@@ -14,12 +14,15 @@ import org.quartz.SchedulerException;
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.converter.ScheduledTaskConverter;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
-
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -37,22 +40,23 @@ public class ScheduledTaskServiceImplTest {
     
     @InjectMocks
     private ScheduledTaskServiceImpl service;
-    
+
     @Test
-    public void insertsScheduledTask() {
+    public void insertsScheduledTask() throws SchedulerException {
         long id = 1l;
         ScheduledTask task = givenScheduledTask(id);
-        when(converter.convertToModel(any(ScheduledTaskDto.class))).thenReturn(task);
+        when(converter.convert(any(ScheduledTaskSaveDto.class), any(ScheduledTask.class))).thenReturn(task);
         when(dao.insert(any(ScheduledTask.class))).thenReturn(task);
-        when(converter.convertToDto(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(id));
-        assertEquals(task.getId(), service.insert(givenScheduledTaskDto(null)).id);
+        when(converter.convert(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(id));
+        assertEquals(task.getId(), service.insert(random(new ScheduledTaskSaveDto())).getId());
     }
     
     @Test
-    public void updatesScheduledTask() {
+    public void updatesScheduledTask() throws SchedulerException {
         ScheduledTask task = givenScheduledTask(4l);
-        when(converter.convertToModel(any(ScheduledTaskDto.class))).thenReturn(task);
-        service.update(givenScheduledTaskDto(4l));
+        when(dao.read(eq(4l))).thenReturn(task);
+        when(converter.convert(any(ScheduledTaskSaveDto.class), any(ScheduledTask.class))).thenReturn(task);
+        service.update(randomModifyDto(4l));
         verify(dao).update(task);
     }
     
@@ -70,8 +74,8 @@ public class ScheduledTaskServiceImplTest {
     @Test
     public void returnsListOfScheduledTasks() {
         when(dao.findAll()).thenReturn(Arrays.asList(givenScheduledTask(1l), givenScheduledTask(2l), givenScheduledTask(3l)));
-        when(converter.convertToDto(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(1l));
-        List<ScheduledTaskDto> tasks = service.list();
+        when(converter.convert(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(1l));
+        List<ScheduledTaskListDto> tasks = service.list();
         assertEquals(3, tasks.size());
     }
     
@@ -79,18 +83,33 @@ public class ScheduledTaskServiceImplTest {
     public void returnsScheduledTask() {
         Long id = 7l;
         when(dao.read(id)).thenReturn(givenScheduledTask(id));
-        when(converter.convertToDto(any(ScheduledTask.class))).thenReturn(givenScheduledTaskDto(id));
-        ScheduledTaskDto task = service.findById(id);
-        assertEquals(id, task.id);
+        when(converter.convert(any(ScheduledTask.class), any(ScheduledTaskModifyDto.class))).thenReturn(randomModifyDto(id));
+        ScheduledTaskModifyDto task = service.findById(id);
+        assertEquals(id, task.getId());
     }
     
     private ScheduledTask givenScheduledTask(long id) {
         ScheduledTask task = new ScheduledTask();
+        task.setRuntimeForSingle(new DateTime());
         task.setId(id);
         return task;
     }
-    
-    private ScheduledTaskDto givenScheduledTaskDto(Long id) {
-        return new ScheduledTaskDto(id, "test_task", "1.9.2.3.4", new DateTime());
+
+    private ScheduledTaskModifyDto randomModifyDto(Long id) {
+        ScheduledTaskModifyDto dto = new ScheduledTaskModifyDto();
+        dto.setId(id);
+        random(dto);
+        return dto;
+    }
+
+    private ScheduledTaskSaveDto random(ScheduledTaskSaveDto dto) {
+        dto.setTaskId(123l);
+        dto.setRuntimeForSingle(new DateTime());
+        dto.setHakuOid("1.9.2.3.4");
+        return dto;
+    }
+
+    private ScheduledTaskListDto givenScheduledTaskDto(Long id) {
+        return new ScheduledTaskListDto(id, "test_task", "1.9.2.3.4", new DateTime());
     }
 }

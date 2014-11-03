@@ -13,7 +13,7 @@ import fi.vm.sade.ajastuspalvelu.dao.TaskDao;
 import fi.vm.sade.ajastuspalvelu.model.Task;
 import fi.vm.sade.ajastuspalvelu.service.TaskService;
 import fi.vm.sade.ajastuspalvelu.service.converter.TaskConverter;
-import fi.vm.sade.ajastuspalvelu.service.dto.TaskDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.TaskListDto;
 
 @Service
 public class TaskServiceImpl implements TaskService {
@@ -26,13 +26,13 @@ public class TaskServiceImpl implements TaskService {
     
     @Transactional
     @Override
-    public List<TaskDto> list() {
+    public List<TaskListDto> list() {
         List<Task> tasks = dao.findAll();
-        return Lists.transform(tasks, new Function<Task, TaskDto>() {
+        return Lists.transform(tasks, new Function<Task, TaskListDto>() {
 
             @Override
-            public TaskDto apply(Task input) {
-                return converter.convertToDto(input);
+            public TaskListDto apply(Task input) {
+                return converter.convert(input);
             }
         });
     }
