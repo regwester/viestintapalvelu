@@ -50,6 +50,17 @@
             <groupId>fi.vm.sade.viestintapalvelu</groupId>
             <artifactId>ryhmasahkoposti-api</artifactId>
             <version>${project.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.media</groupId>
+                    <artifactId>jersey-media-multipart</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.glassfish.jersey.media</groupId>
+            <artifactId>jersey-media-multipart</artifactId>
+            <version>${jersey.version}</version>
         </dependency>
 
         <dependency>
@@ -277,12 +288,6 @@
         <dependency>
             <groupId>org.jgroups</groupId>
             <artifactId>jgroups</artifactId>
-        </dependency>
-
-        <!-- Swagger -->
-        <dependency>
-            <groupId>com.wordnik</groupId>
-            <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
         </dependency>
 
         <!-- Test: -->

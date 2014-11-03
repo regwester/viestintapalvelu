@@ -94,6 +94,14 @@
                     <artifactId>javassist</artifactId>
                     <groupId>javassist</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.media</groupId>
+                    <artifactId>jersey-media-multipart</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.containers</groupId>
+                    <artifactId>jersey-container-servlet-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
