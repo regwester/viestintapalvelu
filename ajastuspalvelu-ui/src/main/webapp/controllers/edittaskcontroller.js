@@ -28,8 +28,8 @@ app.factory('FetchScheduledTask', ['$resource', function($resource) {
     });
 }]);
 
-app.controller('EditTaskController', ['$scope', '$location', '$routeParams', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 
-                                      function($scope, $location, $routeParams, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus) {
+app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$filter', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 
+                                      function($scope, $location, $routeParams, $filter, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus) {
     
     
     FetchScheduledTask.get( {scheduledtaskid : $routeParams.task} , {}, function(result) {
@@ -38,11 +38,14 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', 'Ed
     
     Hakus.get({}, function(result) {
 	$scope.hakus = result
-	$scope.selectedHaku = $scope.task.hakuOid
+	$scope.selectedHaku = $filter('filter')(result, function (haku) {return haku.hakuOid == $scope.task.hakuOid})[0]
+	console.log($scope.selectedHaku)
     });
     
     $scope.hakuByName = function(haku) {
-	return haku.nimi['kieli_fi']
+	var name = haku.nimi['kieli_fi']
+	if (!name || name == '') name = haku.nimi['kieli_en']
+	return name
     }
     
     $scope.save = function() {
