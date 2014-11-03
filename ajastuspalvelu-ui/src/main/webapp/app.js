@@ -1,6 +1,6 @@
 "use strict";
 
-var SERVICE_REST_PATH = "../ajastuspalvelu-service/"
+var SERVICE_REST_PATH = "../ajastuspalvelu-service/api/v1/"
 
 var app = angular.module('ajastuspalvelu', [ 'ngResource', 'ngRoute', 'ngAnimate', 'ui.bootstrap', 'localization']);
 

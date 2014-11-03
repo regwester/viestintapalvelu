@@ -1,5 +1,8 @@
 <div>
 	<p>{{task}}</p>
+	<select ng-model="selectedHaku" ng-options="hakuByName(haku) for haku in hakus" required="required">
+		<option value=""></option>
+	</select>
 	<button ng-click="save()" class="btn btn-lg btn-primary">{{'common.save' | i18n}}</button>
 	<button ng-click="remove()" class="btn btn-lg btn-danger">{{'common.delete' | i18n}}</button>
 </div>
