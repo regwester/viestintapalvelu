@@ -16,18 +16,30 @@
 
 package fi.vm.sade.ajastuspalvelu.dao;
 
-import java.util.List;
-
-import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
-import fi.vm.sade.generic.dao.JpaDAO;
-
 /**
  * User: ratamaa
- * Date: 23.10.2014
- * Time: 13:37
+ * Date: 3.11.2014
+ * Time: 16:46
  */
-public interface ScheduledTaskDao extends JpaDAO<ScheduledTask, Long> {
+public interface ScheduledTaskCriteria {
 
-    List<ScheduledTask> find(ScheduledTaskCriteria criteria);
+    public enum OrderBy {
+        CREATED_AT,
+        TASK_NAME,
+        APPLICATION_PERIOD,
+        SINGLE_RUNTIME
+    }
+    public enum OrderDirection {
+        ASC,
+        DESC
+    };
+
+    OrderBy getOrderBy();
+
+    OrderDirection getOrderDirection();
+
+    ScheduledTaskCriteria withOrderBy(OrderBy orderBy);
+
+    ScheduledTaskCriteria withOrderDirection(OrderDirection order);
 
 }

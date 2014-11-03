@@ -83,5 +83,5 @@ public class ScheduledTaskListDto implements Serializable {
             return false;
         return true;
     }
-    
+
 }

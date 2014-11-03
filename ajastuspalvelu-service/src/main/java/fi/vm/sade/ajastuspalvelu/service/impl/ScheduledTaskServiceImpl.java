@@ -13,6 +13,7 @@ import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.service.ScheduledTaskService;
 import fi.vm.sade.ajastuspalvelu.service.converter.ScheduledTaskConverter;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskCriteriaDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
@@ -33,17 +34,17 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     
     @Autowired
     private QuartzSchedulingService schedulingService;
-    
-    @Transactional
+
     @Override
+    @Transactional
     public ScheduledTaskListDto insert(ScheduledTaskSaveDto dto) throws SchedulerException {
         ScheduledTask task = dao.insert(scheduledTaskConverter.convert(dto, new ScheduledTask()));
         updateScheduling(task);
         return scheduledTaskConverter.convert(task);
     }
-    
-    @Transactional
+
     @Override
+    @Transactional
     public void update(ScheduledTaskModifyDto dto) throws SchedulerException {
         ScheduledTask task = fromNullable(dao.read(dto.getId()))
             .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + dto.getId()));
@@ -55,8 +56,8 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
         schedulingService.scheduleJob(task.getId(), new SingleScheduledTaskTaskSchedule(task.getRuntimeForSingle()));
     }
 
-    @Transactional
     @Override
+    @Transactional
     public void remove(long id) throws SchedulerException {
       ScheduledTask task = fromNullable(dao.read(id))
               .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + id));
@@ -64,20 +65,20 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
       dao.update(task);
       schedulingService.unscheduleJob(id);
     }
-    
-    @Transactional(readOnly = true)
+
     @Override
-    public List<ScheduledTaskListDto> list() {
-        List<ScheduledTask> tasks = dao.findAll();
+    @Transactional(readOnly = true)
+    public List<ScheduledTaskListDto> list(ScheduledTaskCriteriaDto criteriaDto) {
+        List<ScheduledTask> tasks = dao.find(criteriaDto);
         List<ScheduledTaskListDto> dtos = new ArrayList<ScheduledTaskListDto>();
         for (ScheduledTask scheduledTask : tasks) {
             dtos.add(scheduledTaskConverter.convert(scheduledTask));
         }
         return dtos;
     }
-    
-    @Transactional(readOnly = true)
+
     @Override
+    @Transactional(readOnly = true)
     public ScheduledTaskModifyDto findById(long id) {
         return scheduledTaskConverter.convert(fromNullable(dao.read(id))
                 .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + id)),

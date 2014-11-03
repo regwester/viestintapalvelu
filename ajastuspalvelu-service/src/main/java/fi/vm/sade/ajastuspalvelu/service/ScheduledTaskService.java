@@ -4,19 +4,20 @@ import java.util.List;
 
 import org.quartz.SchedulerException;
 
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskCriteriaDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
 
 public interface ScheduledTaskService {
     
-    public ScheduledTaskListDto insert(ScheduledTaskSaveDto dto) throws SchedulerException;
+    ScheduledTaskListDto insert(ScheduledTaskSaveDto dto) throws SchedulerException;
     
-    public void update(ScheduledTaskModifyDto dto) throws SchedulerException;
+    void update(ScheduledTaskModifyDto dto) throws SchedulerException;
     
-    public void remove(long id) throws SchedulerException;
+    void remove(long id) throws SchedulerException;
     
-    public List<ScheduledTaskListDto> list();
+    List<ScheduledTaskListDto> list(ScheduledTaskCriteriaDto criteria);
     
-    public ScheduledTaskModifyDto findById(long id);
+    ScheduledTaskModifyDto findById(long id);
 }

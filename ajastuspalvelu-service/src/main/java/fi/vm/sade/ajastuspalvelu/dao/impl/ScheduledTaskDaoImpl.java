@@ -16,8 +16,11 @@
 
 package fi.vm.sade.ajastuspalvelu.dao.impl;
 
+import java.util.List;
+
 import org.springframework.stereotype.Repository;
 
+import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskCriteria;
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -31,4 +34,27 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 public class ScheduledTaskDaoImpl extends AbstractJpaDAOImpl<ScheduledTask, Long>
         implements ScheduledTaskDao {
 
+    @Override
+    public List<ScheduledTask> find(ScheduledTaskCriteria criteria) {
+        return getEntityManager().createQuery("select st from ScheduledTask st order by "
+            + buildOrderBy("st", criteria), ScheduledTask.class).getResultList();
+    }
+
+    private String buildOrderBy(String alias, ScheduledTaskCriteria criteria) {
+        return buildColumn(alias, criteria.getOrderBy()) + " " + criteria.getOrderDirection().name();
+    }
+
+    private String buildColumn(String alias, ScheduledTaskCriteria.OrderBy orderBy) {
+        switch (orderBy) {
+            case CREATED_AT:
+                return alias+".created";
+            case SINGLE_RUNTIME:
+                return alias+".runtimeForSingle";
+            case TASK_NAME:
+                return alias+".task.name";
+            case APPLICATION_PERIOD:
+                return alias+".hakuOid";
+            default: throw new IllegalStateException("Unsupported OrderBy: " + orderBy);
+        }
+    }
 }
