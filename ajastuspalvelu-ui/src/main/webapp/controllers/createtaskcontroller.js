@@ -6,8 +6,8 @@ app.factory('CreateScheduledTask', function($resource) {
     });
 });
 
-app.controller('CreateTaskController', ['$scope', '$location', 'CreateScheduledTask', 'Hakus', 'Tasks', 
-                                        function($scope, $location, CreateScheduledTask, Hakus, Tasks) {
+app.controller('CreateTaskController', ['$scope', '$location', '$filter', 'CreateScheduledTask', 'Hakus', 'Tasks', 
+                                        function($scope, $location, $filter, CreateScheduledTask, Hakus, Tasks) {
     
     Hakus.get({}, function(result) {
 	$scope.hakus = result
@@ -19,13 +19,12 @@ app.controller('CreateTaskController', ['$scope', '$location', 'CreateScheduledT
 	$scope.selectedTask = result[0]
     });
     
-    $scope.selectedDate = new Date();
+    $scope.selectedDate = $filter('date')(new Date(), 'dd-MM-yyyy');
     $scope.selectedTime = new Date();
     
     $scope.create = function() {
-	var dateSelected = $scope.selectedDate
-	dateSelected.setHours($scope.selectedTime.getHours)
-	dateSelected.setMinutes($scope.selectedTime.getMinutes)
+	var dateSelected = $filter('date')($scope.selectedDate, 'yyyy-dd-MM')
+	dateSelected += "T" + $filter('date')($scope.selectedTime, 'hh:mm:ss.sss')
 	var task = {
 		taskId: $scope.selectedTask.id,
 		hakuOid: $scope.selectedHaku.oid,
