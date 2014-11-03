@@ -18,8 +18,6 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling.impl;
 
 import org.joda.time.DateTime;
 import org.quartz.JobExecutionContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.NoSuchBeanDefinitionException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,8 +46,6 @@ import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
  */
 @Service
 public class ScheduledTaskExecutorServiceImpl implements ScheduledTaskExecutorService {
-    private static final Logger logger = LoggerFactory.getLogger(ScheduledTaskExecutorServiceImpl.class);
-
     @Autowired
     private ScheduledTaskDao scheduledTaskDao;
 
