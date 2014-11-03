@@ -36,7 +36,7 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
 	
 	Hakus.get({}, function(result) {
 		$scope.hakus = result
-		$scope.selectedHaku = $filter('filter') (result, function (haku) {return haku.hakuOid === $scope.task.hakuOid})[0]
+		$scope.selectedHaku = $filter('filter') (result, function (haku) {return haku.oid === $scope.task.hakuOid})[0]
 	});
 	
 	Tasks.get({}, function(result) {
