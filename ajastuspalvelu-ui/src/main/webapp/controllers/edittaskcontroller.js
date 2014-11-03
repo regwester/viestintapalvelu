@@ -38,8 +38,12 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', 'Ed
     
     Hakus.get({}, function(result) {
 	$scope.hakus = result
+	$scope.selectedHaku = $scope.task.hakuOid
     });
     
+    $scope.hakuByName = function(haku) {
+	return haku.nimi['kieli_fi']
+    }
     
     $scope.save = function() {
 	EditScheduledTask.put({}, $scope.task, function(result) {
