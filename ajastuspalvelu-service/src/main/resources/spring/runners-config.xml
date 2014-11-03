@@ -34,6 +34,16 @@
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
+    <jaxrs-client:client id="templateResourceClient"
+                         serviceClass="fi.vm.sade.ajastuspalvelu.service.external.api.TemplateResource"
+                         address="${viestintapalvelu.rest.api.url}">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ticketInterceptorInternalServiceUser"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
 
     <!-- dummyEmail -->
@@ -47,6 +57,5 @@
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
-
 
 </beans>

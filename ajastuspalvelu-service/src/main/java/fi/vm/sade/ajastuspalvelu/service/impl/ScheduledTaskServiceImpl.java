@@ -18,6 +18,9 @@ import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
 import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.QuartzSchedulingService;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.impl.SingleScheduledTaskTaskSchedule;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
+
+import static com.google.common.base.Optional.fromNullable;
 
 @Service
 public class ScheduledTaskServiceImpl implements ScheduledTaskService {
@@ -42,7 +45,8 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     @Transactional
     @Override
     public void update(ScheduledTaskModifyDto dto) throws SchedulerException {
-        ScheduledTask task = dao.read(dto.getId());
+        ScheduledTask task = fromNullable(dao.read(dto.getId()))
+            .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + dto.getId()));
         dao.update(scheduledTaskConverter.convert(dto, task));
         updateScheduling(task);
     }
@@ -54,7 +58,8 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     @Transactional
     @Override
     public void remove(long id) throws SchedulerException {
-      ScheduledTask task = dao.read(id);
+      ScheduledTask task = fromNullable(dao.read(id))
+              .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + id));
       task.setRemoved(new DateTime());
       dao.update(task);
       schedulingService.unscheduleJob(id);
@@ -74,7 +79,9 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     @Transactional(readOnly = true)
     @Override
     public ScheduledTaskModifyDto findById(long id) {
-        return scheduledTaskConverter.convert(dao.read(id), new ScheduledTaskModifyDto());
+        return scheduledTaskConverter.convert(fromNullable(dao.read(id))
+                .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + id)),
+                new ScheduledTaskModifyDto());
     }
 
 }

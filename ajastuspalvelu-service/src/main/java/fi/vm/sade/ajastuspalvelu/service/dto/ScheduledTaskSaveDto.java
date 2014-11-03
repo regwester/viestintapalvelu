@@ -23,17 +23,26 @@ import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 /**
  * User: ratamaa
  * Date: 3.11.2014
  * Time: 9:48
  */
+@ApiModel("Ajastetun tehtävän lisäyksen tiedot")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ScheduledTaskSaveDto implements Serializable {
     private static final long serialVersionUID = -6956375461878229360L;
 
     @NotNull
+    @ApiModelProperty(value = "Tehtävän ID", required = true)
     private Long taskId;
+    @ApiModelProperty(value ="Haun OID", required = false)
     private String hakuOid;
+    @ApiModelProperty(value ="Tehtävän suoritusaika. Oletava tulevaisuudessa.", required = true)
     @NotNull @Future
     private DateTime runtimeForSingle;
 
