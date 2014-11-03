@@ -18,6 +18,7 @@ package fi.vm.sade.ajastuspalvelu.service.dto;
 
 import java.io.Serializable;
 
+import javax.validation.constraints.Future;
 import javax.validation.constraints.NotNull;
 
 import org.joda.time.DateTime;
@@ -33,7 +34,7 @@ public class ScheduledTaskSaveDto implements Serializable {
     @NotNull
     private Long taskId;
     private String hakuOid;
-    @NotNull
+    @NotNull @Future
     private DateTime runtimeForSingle;
 
     public ScheduledTaskSaveDto() {
