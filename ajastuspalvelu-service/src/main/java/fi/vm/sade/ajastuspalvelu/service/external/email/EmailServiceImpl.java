@@ -39,7 +39,10 @@ import fi.vm.sade.ajastuspalvelu.service.external.email.dto.EmailReceiver;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+
+import static com.google.common.base.Optional.fromNullable;
 
 /**
  * User: ratamaa
@@ -63,6 +66,12 @@ public class EmailServiceImpl implements EmailService {
     @Override
     public EmailSendId sendEmail(EmailDetailsDto details) throws Exception {
         EmailData emailData = new EmailData();
+        for (Map.Entry<String,Object> kv : details.getReplacements().entrySet()) {
+            ReplacementDTO replacement = new ReplacementDTO();
+            replacement.setName(kv.getKey());
+            replacement.setDefaultValue(kv.getValue() == null ? null : kv.getValue().toString());
+            emailData.getReplacements().add(replacement);
+        }
         emailData.getEmail().setCharset("UTF-8");
         emailData.getEmail().setHtml(true);
         emailData.getEmail().setTemplateName(details.getTemplateName());
@@ -71,7 +80,18 @@ public class EmailServiceImpl implements EmailService {
         emailData.getEmail().setCallingProcess(AJASTUSPROSESSI);
         emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));
         TemplateDTO templateDTO = getTemplate(emailData);
-        emailData.getEmail().setBody(resolveBody(templateDTO).or(""));
+        String body = toString(details.getReplacements().get("email_body")),
+                subject = toString(details.getReplacements().get("subject"));
+        emailData.getEmail().setBody(fromNullable(body).or(content("email_body", templateDTO)).orNull());
+        if (emailData.getEmail().getBody() == null) {
+            emailData.getEmail().setBody(content(templateDTO.getName(), templateDTO).or(
+                    OptionalHelper.<String>notFound("Template email content not found for template " + templateDTO.getName())));
+        }
+        emailData.getEmail().setSubject(fromNullable(subject).or(replacement("subject", templateDTO)).orNull());
+        if (emailData.getEmail().getSubject() == null) {
+            emailData.getEmail().setBody(replacement("otsikko", templateDTO).or(
+                    OptionalHelper.<String>notFound("Template email subject not found for template " + templateDTO.getName())));
+        }
 
         for (EmailReceiver receiver : details.getReceivers()) {
             if (receiver.getEmail() == null) {
@@ -79,7 +99,7 @@ public class EmailServiceImpl implements EmailService {
             }
 
             EmailRecipient recipient = new EmailRecipient();
-            recipient.setEmail("varsinainen_vastaanottaja@example.com");
+            recipient.setEmail(receiver.getEmail());
             recipient.setLanguageCode("FI");
             recipient.setOid(receiver.getOid());
             recipient.setOidType(receiver.getOidType());
@@ -94,6 +114,7 @@ public class EmailServiceImpl implements EmailService {
             }
             emailData.getRecipient().add(recipient);
         }
+
         Response response = emailResourceClient.sendEmail(emailData);
         if (response.getStatus() == HttpStatus.OK.value()) {
             EmailSendId id = objectMapperProvider.getContext(EmailServiceImpl.class).reader(EmailSendId.class)
@@ -103,10 +124,23 @@ public class EmailServiceImpl implements EmailService {
         throw new ExternalInterfaceException("Ryhhmasahkoposti-service sendMail returned code " + response.getStatus());
     }
 
-    private Optional<String> resolveBody(TemplateDTO templateDTO) {
+    private String toString(Object replacement) {
+        return replacement == null ? null : replacement.toString();
+    }
+
+    private Optional<String> replacement(String name, TemplateDTO templateDTO) {
+        for (ReplacementDTO replacementDTO : templateDTO.getReplacements()) {
+            if (name.equals(replacementDTO.getName())) {
+                return fromNullable(replacementDTO.getDefaultValue());
+            }
+        }
+        return Optional.absent();
+    }
+
+    private Optional<String> content(String part, TemplateDTO templateDTO) {
         for (TemplateContentDTO templateContentDTO : templateDTO.getContents()) {
-            if ("email_body".equals(templateContentDTO)) {
-                return Optional.of(templateContentDTO.getContent());
+            if (part.equals(templateContentDTO.getName())) {
+                return fromNullable(templateContentDTO.getContent());
             }
         }
         return Optional.absent();
