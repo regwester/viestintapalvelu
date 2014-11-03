@@ -39,7 +39,7 @@ public class EmailDetailsDtoConverter {
     public EmailDetailsDto convert(ScheduledTaskExecutionDetailsDto from, SchedulerResponse response,
                                    EmailDetailsDto to) {
         to.setHakuOid(from.getHakuOid());
-        to.setTemplateNamke(from.getTemplateName());
+        to.setTemplateName(from.getTemplateName());
         if (response.getCommonContext() != null) {
             to.setReplacements(response.getCommonContext());
         } else {

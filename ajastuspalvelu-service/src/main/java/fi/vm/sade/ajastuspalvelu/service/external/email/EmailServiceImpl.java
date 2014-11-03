@@ -49,7 +49,7 @@ public class EmailServiceImpl implements EmailService {
         EmailData emailData = new EmailData();
         emailData.getEmail().setCharset("UTF-8");
         emailData.getEmail().setHtml(true);
-        emailData.getEmail().setTemplateName(details.getTemplateNamke());
+        emailData.getEmail().setTemplateName(details.getTemplateName());
         emailData.getEmail().setLanguageCode("FI");
         emailData.getEmail().setCallingProcess(AJASTUSPROSESSI);
         emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));

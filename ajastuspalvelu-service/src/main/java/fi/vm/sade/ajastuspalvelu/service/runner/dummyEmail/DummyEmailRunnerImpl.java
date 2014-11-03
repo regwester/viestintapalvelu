@@ -62,6 +62,6 @@ public class DummyEmailRunnerImpl implements TaskRunner {
     @Override
     public ErrorDto handleError(ScheduledTaskExecutionDetailsDto scheduledTask, ErrorDto error) {
         logger.error("Dummy email exception handling: " + error.getMessage());
-        return error.withRetry();
+        return error;
     }
 }

@@ -27,17 +27,17 @@ import java.util.Map;
  * Time: 15:34
  */
 public class EmailDetailsDto {
-    private String templateNamke;
+    private String templateName;
     private String hakuOid;
     private Map<String,Object> replacements = new HashMap<String, Object>();
     private List<EmailReceiver> receivers = new ArrayList<EmailReceiver>();
 
-    public String getTemplateNamke() {
-        return templateNamke;
+    public String getTemplateName() {
+        return templateName;
     }
 
-    public void setTemplateNamke(String templateNamke) {
-        this.templateNamke = templateNamke;
+    public void setTemplateName(String templateNamke) {
+        this.templateName = templateNamke;
     }
 
     public String getHakuOid() {
