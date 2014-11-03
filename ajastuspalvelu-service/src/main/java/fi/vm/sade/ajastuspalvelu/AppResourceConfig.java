@@ -50,8 +50,8 @@ public class AppResourceConfig extends ResourceConfig {
         //register(exceptionMapper);
         register(WebExceptionMapper.class);
         // Register swagger resources
-//        register(ApiListingResourceJSON.class);
-//        register(JerseyApiDeclarationProvider.class);
-//        register(JerseyResourceListingProvider.class);
+        register(ApiListingResourceJSON.class);
+        register(JerseyApiDeclarationProvider.class);
+        register(JerseyResourceListingProvider.class);
     }
 }

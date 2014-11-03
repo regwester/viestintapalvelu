@@ -27,6 +27,7 @@ import javax.ws.rs.core.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
+import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.ajastuspalvelu.service.external.api.ViestintapalveluOptionsResource;
@@ -39,6 +40,7 @@ import fi.vm.sade.ajastuspalvelu.service.external.api.dto.HakuDetailsDto;
  */
 @Component
 @Path("options")
+@Api(value = "options", description = "Käyttöliittymässä näytettävät valinnat")
 @PreAuthorize("isAuthenticated()")
 public class OptionsResource {
 
@@ -52,6 +54,5 @@ public class OptionsResource {
     public List<HakuDetailsDto> listHakus() {
         return viestintapalveluOptionsClient.listHakus(false);
     }
-
 
 }
