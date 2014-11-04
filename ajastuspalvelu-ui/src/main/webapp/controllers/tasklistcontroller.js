@@ -7,8 +7,8 @@ app.factory('ScheduledTasks', function($resource) {
     });
 });
 
-app.controller('TaskListController', ['$scope', '$location', '$filter', 'ScheduledTasks', 'Hakus', 
-                                      function($scope, $location, $filter, ScheduledTasks, Hakus) {
+app.controller('TaskListController', ['$scope', '$location', '$filter', 'ScheduledTasks', 'Hakus', 'HakuNameByLocale', 
+                                      function($scope, $location, $filter, ScheduledTasks, Hakus, HakuNameByLocale) {
     Hakus.get({}, function(result) {
 	$scope.hakus = result
 	
@@ -27,8 +27,6 @@ app.controller('TaskListController', ['$scope', '$location', '$filter', 'Schedul
     
     $scope.hakuByName = function(hakuOid) {
 	var haku = $filter('filter') ($scope.hakus, function (haku) {return haku.oid === hakuOid})[0]
-	var name = haku.nimi['kieli_fi']
-	if (!name || name == '') name = haku.nimi['kieli_en']
-	return name
+	return HakuNameByLocale(haku)
     }
 }]);
