@@ -31,6 +31,8 @@ app.factory('FetchScheduledTask', ['$resource', function($resource) {
 app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$filter', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 'Tasks', 'HakuNameByLocale', 
                                       function($scope, $location, $routeParams, $filter, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus, Tasks, HakuNameByLocale) {
     
+    $scope.minDate = new Date()
+    
     FetchScheduledTask.get( {scheduledtaskid : $routeParams.task} , {}, function(result) {
 	$scope.task = result
 	$scope.selectedDate = $scope.task.runtimeForSingle
@@ -53,6 +55,7 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
 	taskToSave.hakuOid = $scope.selectedHaku.oid
 	var dateSelected = $filter('date')($scope.selectedDate, 'yyyy-MM-dd')
 	dateSelected += "T" + $filter('date')($scope.selectedTime, 'HH:mm:ss.sss')
+	taskToSave.runtimeForSingle = dateSelected
 	EditScheduledTask.put({}, taskToSave, function(result) {
 	    $location.path("/etusivu/");
 	});
