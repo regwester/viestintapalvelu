@@ -27,9 +27,10 @@ import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
 import org.joda.time.DateTime;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
@@ -37,10 +38,11 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
-import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
+import fi.vm.sade.viestintapalvelu.recovery.Recoverer;
+import fi.vm.sade.viestintapalvelu.recovery.RecovererPriority;
 
 import static org.joda.time.DateTime.now;
 
@@ -50,10 +52,12 @@ import static org.joda.time.DateTime.now;
  * Time: 14:25
  */
 @Component
-@PreAuthorize("isAuthenticated()")
 @Path(Urls.OPTIONS_PATH)
 @Api(value=Urls.OPTIONS_PATH, description = "Käyttöliittymässä käytettävät valinnat")
-public class OptionsResource {
+@RecovererPriority(10)
+public class OptionsResource implements Recoverer {
+    private static final Logger logger = LoggerFactory.getLogger(OptionsResource.class);
+
     protected enum CacheType {
         hakus
     }
@@ -61,13 +65,22 @@ public class OptionsResource {
     @Autowired
     private TarjontaComponent tarjontaComponent;
 
-    @Value("#{optionsCacheConfig['timeoutMillis'] != null ? optionsCacheConfig['timeoutMillis'] : 3600000}")
-    private long optionsCacheValidMillis = 3600*1000l;
+    @Value("#{optionsCacheConfig['timeoutMillis'] != null ? optionsCacheConfig['timeoutMillis'] : 86400000}")
+    private long optionsCacheValidMillis = 24*3600*1000l;
+
+    @Override
+    public Runnable getTask() {
+        return new Runnable() {
+            @Override
+            public void run() {
+                listHakus(false);
+            }
+        };
+    }
 
     protected Map<CacheType, CacheEntry<?>> cache = new HashMap<CacheType, CacheEntry<?>>();
 
     @GET
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/hakus")
     @ApiOperation(value="Palauttaa julkaistut haut",
@@ -88,8 +101,10 @@ public class OptionsResource {
                 && !forceRefresh) {
             return entry.getData();
         } else {
+            logger.info("Refreshing OptionsCache={}", type);
             entry = new CacheEntry<T>(resolver.resolve());
             cache.put(type,entry);
+            logger.info("Refreshed OptionsCache={}", type);
             return entry.getData();
         }
     }

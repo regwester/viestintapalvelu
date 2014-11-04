@@ -18,6 +18,7 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling;
 
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ErrorDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDetailsDto;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.TaskResultDto;
 
 /**
  * Determines a business process
@@ -34,7 +35,7 @@ public interface TaskRunner {
      * @param scheduledTask the task
      * @throws Exception
      */
-    void run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception;
+    TaskResultDto run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception;
 
     /**
      * Called if the run method trow an exception to handle and translate the exception

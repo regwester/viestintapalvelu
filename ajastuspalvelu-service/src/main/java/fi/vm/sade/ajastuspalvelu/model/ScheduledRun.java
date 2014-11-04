@@ -44,6 +44,9 @@ public class ScheduledRun implements Serializable {
     
     @Column(name = "virheviesti")
     private String errorMessage;
+
+    @Column(name = "ulkoinen_tunniste")
+    private String externalId;
     
     public Long getId() {
         return id;
@@ -100,5 +103,12 @@ public class ScheduledRun implements Serializable {
     public void setErrorMessage(String errorMessage) {
         this.errorMessage = errorMessage;
     }
-    
+
+    public String getExternalId() {
+        return externalId;
+    }
+
+    public void setExternalId(String externalId) {
+        this.externalId = externalId;
+    }
 }

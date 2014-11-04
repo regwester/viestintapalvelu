@@ -29,12 +29,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Collections2;
-
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.recovery.Recoverer;
+import fi.vm.sade.viestintapalvelu.recovery.RecovererPriority;
 
 import static org.joda.time.DateTime.now;
 
@@ -45,6 +44,7 @@ import static org.joda.time.DateTime.now;
  */
 @Service
 @Singleton
+@RecovererPriority(100)
 public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
     private static final Logger logger = LoggerFactory.getLogger(OrganisaatioServiceImpl.class);
 
