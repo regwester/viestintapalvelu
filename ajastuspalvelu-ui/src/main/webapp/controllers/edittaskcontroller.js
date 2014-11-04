@@ -28,8 +28,8 @@ app.factory('FetchScheduledTask', ['$resource', function($resource) {
     });
 }]);
 
-app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$filter', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 'Tasks', 
-                                      function($scope, $location, $routeParams, $filter, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus, Tasks) {
+app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$filter', 'EditScheduledTask', 'RemoveScheduledTask', 'FetchScheduledTask', 'Hakus', 'Tasks', 'HakuNameByLocale', 
+                                      function($scope, $location, $routeParams, $filter, EditScheduledTask, RemoveScheduledTask, FetchScheduledTask, Hakus, Tasks, HakuNameByLocale) {
     
     FetchScheduledTask.get( {scheduledtaskid : $routeParams.task} , {}, function(result) {
 	$scope.task = result
@@ -41,15 +41,9 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
 	
 	Tasks.get({}, function(result) {
 	    $scope.tasks = result
-	    $scope.selectedTask = $filter('filter') (result, function (task) {return task.name === $scope.task.taskName})[0]
+	    $scope.selectedTask = $filter('filter') (result, function (task) {return task.id === $scope.task.taskId})[0]
 	});
     });
-    
-    $scope.hakuByName = function(haku) {
-	var name = haku.nimi['kieli_fi']
-	if (!name || name == '') name = haku.nimi['kieli_en']
-	return name
-    }
     
     $scope.save = function() {
 	var taskToSave = $scope.task
@@ -64,5 +58,9 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
 	RemoveScheduledTask.remove({ scheduledtaskid : $scope.task.id },{}, function(result) {
 	    $location.path("/etusivu/");
 	});
+    }
+    
+    $scope.hakuByName = function(haku) {
+	return HakuNameByLocale(haku)
     }
 }]);
