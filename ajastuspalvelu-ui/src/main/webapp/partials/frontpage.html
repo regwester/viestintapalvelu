@@ -14,8 +14,8 @@
 			</thead>
 			<tbody>
 				<tr ng-repeat="task in tasks">
-					<td>{{task.taskName}}</td>
 					<td>{{hakuByName(task.hakuOid)}}</td>
+					<td>{{task.taskName}}</td>
 					<td>{{task.runtimeForSingle | date:'dd.MM.yyyy hh:mm'}}</td>
 					<td>
 						<button ng-click="edit(task.id)" class="btn btn-sm btn-primary">{{'common.edit' | i18n}}</button>
