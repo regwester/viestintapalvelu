@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Resource;
@@ -39,7 +40,6 @@ import fi.vm.sade.ajastuspalvelu.service.external.email.dto.EmailReceiver;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 
 import static com.google.common.base.Optional.fromNullable;
@@ -53,6 +53,7 @@ import static com.google.common.base.Optional.fromNullable;
 public class EmailServiceImpl implements EmailService {
     public static final String AJASTUSPROSESSI = "ajastusprosessi";
     public static final String GET_CONTENT_TRUE_VALUE = "YES";
+    public static final String EMAIL_TEMPLATE_TYPE = "email";
 
     @Resource
     private EmailResource emailResourceClient;
@@ -78,20 +79,42 @@ public class EmailServiceImpl implements EmailService {
         emailData.getEmail().setLanguageCode("FI");
         emailData.getEmail().setHakuOid(details.getHakuOid());
         emailData.getEmail().setCallingProcess(AJASTUSPROSESSI);
-        emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));
+        emailData.getEmail().setSender(toString(details.getReplacements().get("sender")));
+        emailData.getEmail().setSenderOid(toString(details.getReplacements().get("senderOid")));
+        emailData.getEmail().setOrganizationOid(toString(details.getReplacements().get("organizationOid")));
+        List<SourceRegister> registers = new ArrayList<SourceRegister>();
+        if (details.getReplacements().get("sourceRegister") != null
+                 && details.getReplacements().get("sourceRegister") instanceof List) {
+            for (Object val : (List) details.getReplacements().get("sourceRegister")) {
+                if (val instanceof String) {
+                    registers.add(new SourceRegister(val.toString()));
+                } else if (val instanceof Map) {
+                    String name = toString(((Map) val).get("name"));
+                    if (name != null) {
+                        registers.add(new SourceRegister(name));
+                    }
+                }
+            }
+        }
+        if (!registers.isEmpty()) {
+            emailData.getEmail().setSourceRegister(registers);
+        } else {
+            emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));
+        }
         TemplateDTO templateDTO = getTemplate(emailData);
-        String body = toString(details.getReplacements().get("email_body")),
-                subject = toString(details.getReplacements().get("subject"));
-        emailData.getEmail().setBody(fromNullable(body).or(content("email_body", templateDTO)).orNull());
-        if (emailData.getEmail().getBody() == null) {
-            emailData.getEmail().setBody(content(templateDTO.getName(), templateDTO).or(
-                    OptionalHelper.<String>notFound("Template email content not found for template " + templateDTO.getName())));
+
+        /**
+         * Viestintäpalvelusta tulevissa myös email-tyyppisissä kirjeissä on määritelty otsikko muttei välttämättä
+         * subject-replacementtia. Yleisistä replacement-kentistä ryhmäsähköposti kuitenkin jättää pois sellaiset
+         */
+        Optional<String> subjectReplacement = replacement("subject", templateDTO),
+                otsikkoReplacement = replacement("otsikko", templateDTO);
+        if (details.getReplacements().get("subject") != null) {
+            emailData.getEmail().setSubject(toString(details.getReplacements().get("subject")));
+        } else if (!subjectReplacement.isPresent() && otsikkoReplacement.isPresent()) {
+            emailData.getEmail().setSubject(otsikkoReplacement.get());
         }
-        emailData.getEmail().setSubject(fromNullable(subject).or(replacement("subject", templateDTO)).orNull());
-        if (emailData.getEmail().getSubject() == null) {
-            emailData.getEmail().setBody(replacement("otsikko", templateDTO).or(
-                    OptionalHelper.<String>notFound("Template email subject not found for template " + templateDTO.getName())));
-        }
+        emailData.getEmail().setTemplateId(""+templateDTO.getId());
 
         for (EmailReceiver receiver : details.getReceivers()) {
             if (receiver.getEmail() == null) {
@@ -130,17 +153,8 @@ public class EmailServiceImpl implements EmailService {
 
     private Optional<String> replacement(String name, TemplateDTO templateDTO) {
         for (ReplacementDTO replacementDTO : templateDTO.getReplacements()) {
-            if (name.equals(replacementDTO.getName())) {
+            if (name.equalsIgnoreCase(replacementDTO.getName())) {
                 return fromNullable(replacementDTO.getDefaultValue());
-            }
-        }
-        return Optional.absent();
-    }
-
-    private Optional<String> content(String part, TemplateDTO templateDTO) {
-        for (TemplateContentDTO templateContentDTO : templateDTO.getContents()) {
-            if (part.equals(templateContentDTO.getName())) {
-                return fromNullable(templateContentDTO.getContent());
             }
         }
         return Optional.absent();
@@ -148,7 +162,8 @@ public class EmailServiceImpl implements EmailService {
 
     private TemplateDTO getTemplate(EmailData emailData) throws IOException, DocumentException {
         TemplateDTO templateDTO = templateResourceClient.getTemplate(emailData.getEmail().getTemplateName(),
-                emailData.getEmail().getLanguageCode(), null, emailData.getEmail().getHakuOid(), GET_CONTENT_TRUE_VALUE);
+                emailData.getEmail().getLanguageCode(), EMAIL_TEMPLATE_TYPE,
+                emailData.getEmail().getHakuOid(), GET_CONTENT_TRUE_VALUE);
         if (templateDTO == null) {
             throw new NotFoundException("Template "+emailData.getEmail().getTemplateName() + " not found.");
         }

@@ -31,6 +31,8 @@ import fi.vm.sade.ajastuspalvelu.service.runner.dto.converter.EmailDetailsDtoCon
 import fi.vm.sade.ajastuspalvelu.service.scheduling.TaskRunner;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ErrorDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDetailsDto;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.TaskResultDto;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 
 /**
  * User: ratamaa
@@ -51,18 +53,18 @@ public class DummyEmailRunnerImpl implements TaskRunner {
     private EmailDetailsDtoConverter emailDetailsDtoConverter;
 
     @Override
-    public void run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
+    public TaskResultDto run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
         SchedulerResponse response = dummyEmailResourceClient.get();
         // Expect all receivers to contain email:
         EmailDetailsDto emailDetailsDto = emailDetailsDtoConverter.convert(scheduledTask, response,
                 new EmailDetailsDto());
-        emailDetailsDto.getReplacements().put("subject", "Testiviesti");
-        emailService.sendEmail(emailDetailsDto);
+        EmailSendId emailSendId = emailService.sendEmail(emailDetailsDto);
+        return new TaskResultDto(emailSendId.getId());
     }
 
     @Override
     public ErrorDto handleError(ScheduledTaskExecutionDetailsDto scheduledTask, ErrorDto error) {
-        logger.error("Dummy email exception handling: " + error.getMessage());
+        logger.error("Dummy email special exception handling: " + error.getMessage(), error.getCause());
         return error;
     }
 }

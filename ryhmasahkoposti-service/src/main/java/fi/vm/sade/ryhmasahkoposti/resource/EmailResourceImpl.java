@@ -1,11 +1,17 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.*;
-import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
-import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
-import fi.vm.sade.ryhmasahkoposti.service.EmailService;
-import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
-import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.util.Iterator;
+import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.Response;
+
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -18,15 +24,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import javax.servlet.ServletException;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
-import java.net.URISyntaxException;
-import java.util.Iterator;
-import java.util.List;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
+import fi.vm.sade.ryhmasahkoposti.service.EmailService;
+import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
+import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 
 
 @Component
@@ -151,8 +154,13 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     private void sanitizeInput(EmailData emailData) {
-        log.debug("Sanitizing email body");
-        emailData.getEmail().setBody(InputCleaner.cleanHtmlDocument(emailData.getEmail().getBody()));
+        if (emailData.getEmail().getBody() != null) {
+            log.debug("Sanitizing email body");
+            emailData.getEmail().setBody(InputCleaner.cleanHtmlDocument(emailData.getEmail().getBody()));
+        } else if (emailData.getEmail().getTemplateId() == null
+                        && emailData.getEmail().getTemplateName() == null) {
+            throw new BadRequestException("Email without a body or template.");
+        }
     }
     
     private AttachmentResponse storeAttachment(FileItem item) throws Exception {

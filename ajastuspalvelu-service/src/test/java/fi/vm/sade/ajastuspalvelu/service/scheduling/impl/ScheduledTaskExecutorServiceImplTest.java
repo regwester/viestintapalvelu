@@ -26,15 +26,17 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.context.ApplicationContext;
 
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
+import fi.vm.sade.ajastuspalvelu.model.ScheduledRun;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
 import fi.vm.sade.ajastuspalvelu.model.Task;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.TaskRunner;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ErrorDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDetailsDto;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.TaskResultDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.converter.ScheduledTaskDtoConverter;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.exception.RetryException;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.when;
 
@@ -60,28 +62,32 @@ public class ScheduledTaskExecutorServiceImplTest {
 
     @Test
     public void testSuccessRun() throws Exception {
-        final AtomicBoolean b = new AtomicBoolean(false);
-        setup(1l, new TaskRunner() {
+        ScheduledTask task = setup(1l, new TaskRunner() {
             @Override
-            public void run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
-                b.set(true);
+            public TaskResultDto run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
+                return new TaskResultDto("abc");
             }
 
             @Override
             public ErrorDto handleError(ScheduledTaskExecutionDetailsDto scheduledTask, ErrorDto error) {
+                fail("Not here");
                 return error;
             }
         });
         executor.executeScheduledTask(1l, QuartzTriggeredJobDelegatorTest.context(1l));
-        assertTrue(b.get());
+        assertEquals(1, task.getRuns().size());
+        ScheduledRun run = task.getRuns().iterator().next();
+        assertEquals(ScheduledRun.State.FINISHED, run.getState());
+        assertEquals("abc", run.getExternalId());
+        assertNotNull(run.getFinished());
     }
 
-    @Test(expected = Exception.class)
+    @Test
     public void testFailureRun() throws Exception {
-        setup(1l, new TaskRunner() {
+        ScheduledTask task = setup(1l, new TaskRunner() {
             @Override
-            public void run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
-                throw new Exception();
+            public TaskResultDto run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
+                throw new Exception("MSG");
             }
 
             @Override
@@ -89,23 +95,43 @@ public class ScheduledTaskExecutorServiceImplTest {
                 return error;
             }
         });
-        executor.executeScheduledTask(1l, QuartzTriggeredJobDelegatorTest.context(1l));
+        try {
+            executor.executeScheduledTask(1l, QuartzTriggeredJobDelegatorTest.context(1l));
+            fail("Should have thrown");
+        } catch (Exception e) {
+            assertEquals(1, task.getRuns().size());
+            ScheduledRun run = task.getRuns().iterator().next();
+            assertEquals(ScheduledRun.State.ERROR, run.getState());
+            assertEquals("MSG", run.getErrorMessage());
+            assertEquals("MSG", e.getMessage());
+            assertNull(run.getFinished());
+        }
     }
 
-    @Test(expected = RetryException.class)
+    @Test
     public void testRetryFailureRun() throws Exception {
-        setup(1l, new TaskRunner() {
+        ScheduledTask task = setup(1l, new TaskRunner() {
             @Override
-            public void run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
-                throw new Exception();
+            public TaskResultDto run(ScheduledTaskExecutionDetailsDto scheduledTask) throws Exception {
+                throw new Exception("msg");
             }
 
             @Override
             public ErrorDto handleError(ScheduledTaskExecutionDetailsDto scheduledTask, ErrorDto error) {
-                return error.withRetry();
+                return error.withRetry().withMessage("Cleaned msg");
             }
         });
-        executor.executeScheduledTask(1l, QuartzTriggeredJobDelegatorTest.context(1l));
+        try {
+            executor.executeScheduledTask(1l, QuartzTriggeredJobDelegatorTest.context(1l));
+            fail("Should have thrown");
+        } catch(RetryException e) {
+            assertEquals(1, task.getRuns().size());
+            ScheduledRun run = task.getRuns().iterator().next();
+            assertEquals(ScheduledRun.State.ERROR, run.getState());
+            assertEquals("Cleaned msg", run.getErrorMessage());
+            assertEquals("java.lang.Exception: msg", e.getMessage());
+            assertNull(run.getFinished());
+        }
     }
 
     private ScheduledTask setup(long id, TaskRunner runner) {

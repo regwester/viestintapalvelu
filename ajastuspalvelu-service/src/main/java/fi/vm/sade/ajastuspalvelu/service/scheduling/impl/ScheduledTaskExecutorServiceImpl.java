@@ -35,6 +35,7 @@ import fi.vm.sade.ajastuspalvelu.service.scheduling.ScheduledTaskExecutorService
 import fi.vm.sade.ajastuspalvelu.service.scheduling.TaskRunner;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ErrorDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.ScheduledTaskExecutionDetailsDto;
+import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.TaskResultDto;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.dto.converter.ScheduledTaskDtoConverter;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.exception.RetryException;
 import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
@@ -71,13 +72,16 @@ public class ScheduledTaskExecutorServiceImpl implements ScheduledTaskExecutorSe
                 = scheduledTaskDtoConverter.convert(scheduledTask, new ScheduledTaskExecutionDetailsDto(),context);
 
         try {
-            runner.run(executionDetails);
+            TaskResultDto result = runner.run(executionDetails);
+            if (result != null) {
+                run.setExternalId(result.getExternalId());
+            }
         } catch(Exception e) {
             run.setState(ScheduledRun.State.ERROR);
+            String originalErrorMsg = e.getMessage() != null ? e.getMessage() : "Unknown error: " + e.getClass().getCanonicalName();
             ErrorDto error = runner.handleError(executionDetails, new ErrorDto(e.getMessage(), e));
             if (error != null) {
-                run.setErrorMessage(Optional.fromNullable(error.getMessage()).or(
-                        e.getMessage() != null ? e.getMessage() : "Unknown error: " + e.getClass().getCanonicalName()));
+                run.setErrorMessage(Optional.fromNullable(error.getMessage()).or(originalErrorMsg));
                 if (error.getCause() != null) {
                     if (error.getMessage() == null && error.getCause().getMessage() != null) {
                         run.setErrorMessage(error.getCause().getMessage());
@@ -90,6 +94,8 @@ public class ScheduledTaskExecutorServiceImpl implements ScheduledTaskExecutorSe
                 if (error.isRetry()) {
                     throw new RetryException(e);
                 }
+            } else {
+                run.setErrorMessage(originalErrorMsg);
             }
             throw e;
         }

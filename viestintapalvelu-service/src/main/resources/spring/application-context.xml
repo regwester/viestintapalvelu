@@ -116,9 +116,6 @@
     <jaxrs-client:client id="tarjontaHakuResourceClient"
                     serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
                     address="${viestintapalvelu.tarjontapalvelu.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>

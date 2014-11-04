@@ -5,7 +5,8 @@
             "oid": "1.2.246.562.24.98887406606",
             "email": "tommi.ratamaa@dicode.fi",
             "context": {
-                "etunimi": "Tommi"
+                "hakukohde": "Testihakukohde",
+                "muut_hakukohteet": ["Muu hakukohde"]
             }
         },
         {
@@ -13,8 +14,21 @@
             "oid": "1.2.246.562.24.22279080046",
             "email": "juha.korkalainen@cybercom.com",
             "context": {
-                "etunimi": "Juha"
+                "subject": "Tarkempi otsikko",
+                "hakukohde": "Testihakukohde2",
+                "muut_hakukohteet": ["Testi", "Testi2"],
+                "sisalto": "<p>Hyvä hakija,</p><p>Tämä on erikoisempi viestin sisältö.</p>"
             }
         }
-    ]
+    ],
+    "commonContext" : {
+        "subject" : "Ylikirjoitettu otsikko",
+        "sender": "Lähettäjä",
+        "senderOid": "1.2.246.562.24.72453542949",
+        "organizationOid": "1.2.246.562.10.00000000001",
+        "sourceRegister": [
+            {"name": "opintopolku"},
+            {"name": "aitu"}
+        ]
+    }
 }
