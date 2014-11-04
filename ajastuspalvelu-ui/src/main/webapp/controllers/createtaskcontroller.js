@@ -19,6 +19,7 @@ app.controller('CreateTaskController', ['$scope', '$location', '$filter', 'Creat
 	$scope.selectedTask = result[0]
     });
     
+    $scope.minDate = new Date()
     $scope.selectedDate = $filter('date')(new Date(), 'dd-MM-yyyy');
     $scope.selectedTime = new Date();
     
