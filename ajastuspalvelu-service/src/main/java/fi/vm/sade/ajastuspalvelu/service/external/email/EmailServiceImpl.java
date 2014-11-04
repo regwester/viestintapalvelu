@@ -103,9 +103,13 @@ public class EmailServiceImpl implements EmailService {
         }
         TemplateDTO templateDTO = getTemplate(emailData);
 
+        /// TODO: XXX
         /**
          * Viestintäpalvelusta tulevissa myös email-tyyppisissä kirjeissä on määritelty otsikko muttei välttämättä
-         * subject-replacementtia. Yleisistä replacement-kentistä ryhmäsähköposti kuitenkin jättää pois sellaiset
+         * subject-replacementtia. Yleisistä replacement-kentistä ryhmäsähköposti kuitenkin jättää pois sellaiset, joita
+         * ei ole pohjassa määritelty (yleiseltä tasolta, ei vastaanottajakohtaisista). Näin ollen kierrätetään tämä
+         * yleinen replacement subject-kentän kautta ja käytetään otsikko-kenttää jos muita ei ole määritelty.
+         * Niin nyt näin toistaiseksi...
          */
         Optional<String> subjectReplacement = replacement("subject", templateDTO),
                 otsikkoReplacement = replacement("otsikko", templateDTO);
@@ -114,6 +118,7 @@ public class EmailServiceImpl implements EmailService {
         } else if (!subjectReplacement.isPresent() && otsikkoReplacement.isPresent()) {
             emailData.getEmail().setSubject(otsikkoReplacement.get());
         }
+
         emailData.getEmail().setTemplateId(""+templateDTO.getId());
 
         for (EmailReceiver receiver : details.getReceivers()) {
