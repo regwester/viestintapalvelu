@@ -41,7 +41,7 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
 	
 	Tasks.get({}, function(result) {
 	    $scope.tasks = result
-	    $scope.selectedTask = $filter('filter') (result, function (task) {return task.name === $scope.task.taskName})[0]
+	    $scope.selectedTask = $filter('filter') (result, function (task) {return task.id === $scope.task.taskId})[0]
 	});
     });
     
