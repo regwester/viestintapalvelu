@@ -23,8 +23,8 @@ app.controller('CreateTaskController', ['$scope', '$location', '$filter', 'Creat
     $scope.selectedTime = new Date();
     
     $scope.create = function() {
-	var dateSelected = $filter('date')($scope.selectedDate, 'yyyy-dd-MM')
-	dateSelected += "T" + $filter('date')($scope.selectedTime, 'hh:mm:ss.sss')
+	var dateSelected = $filter('date')($scope.selectedDate, 'yyyy-MM-dd')
+	dateSelected += "T" + $filter('date')($scope.selectedTime, 'HH:mm:ss.sss')
 	var task = {
 		taskId: $scope.selectedTask.id,
 		hakuOid: $scope.selectedHaku.oid,
