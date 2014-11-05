@@ -32,7 +32,7 @@ app.controller('CreateTaskController', ['$scope', '$location', '$filter', 'Creat
 		runtimeForSingle: dateSelected
 	}
 	CreateScheduledTask.post({}, task, function(result) {
-	            $location.path("/etusivu/");
+	    $scope.back()
 	});
     }
     
@@ -44,6 +44,10 @@ app.controller('CreateTaskController', ['$scope', '$location', '$filter', 'Creat
     
     $scope.hakuByName = function(haku) {
 	return HakuNameByLocale(haku)
+    }
+    
+    $scope.back = function() {
+	$location.path("/etusivu/");
     }
     
 }]);

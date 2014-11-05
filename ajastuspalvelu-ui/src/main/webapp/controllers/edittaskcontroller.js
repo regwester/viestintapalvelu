@@ -63,7 +63,7 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
     
     $scope.remove = function() {
 	RemoveScheduledTask.remove({ scheduledtaskid : $scope.task.id },{}, function(result) {
-	    $location.path("/etusivu/");
+	    $scope.back()
 	});
     }
     
@@ -76,4 +76,8 @@ app.controller('EditTaskController', ['$scope', '$location', '$routeParams', '$f
 	$event.stopPropagation();
 	$scope.opened = true;
     };
+    
+    $scope.back = function() {
+	$location.path("/etusivu/");
+    }
 }]);
