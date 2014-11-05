@@ -41,7 +41,6 @@ import fi.vm.sade.ajastuspalvelu.service.external.api.dto.HakuDetailsDto;
 @Component
 @Path("options")
 @Api(value = "options", description = "Käyttöliittymässä näytettävät valinnat")
-@PreAuthorize("isAuthenticated()")
 public class OptionsResource {
 
     @Resource
