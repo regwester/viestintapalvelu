@@ -79,7 +79,7 @@ public final class Utils {
         } catch(IOException e) {
             log.error("Failed to read the resource file: {}.\n{}", fs.toString(), e.toString());
         } catch(NullPointerException e) {
-            log.error("Resource not found: {}.\n{}", e.toString());
+            log.error("Resource not found.\n{}", e.toString());
         }
         return "";
     }

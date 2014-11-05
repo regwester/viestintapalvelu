@@ -41,10 +41,10 @@
       "mandatory" : false
     },
     {
-    	"id":1,
-    	"name": "subject",
-    	"defaultValue": "Hyväksymiskirje",
-    	"mandatory": false
+        "id":1,
+        "name": "subject",
+        "defaultValue": "Hyväksymiskirje",
+        "mandatory": false
     }
   ],
   "applicationPeriods" : null,
