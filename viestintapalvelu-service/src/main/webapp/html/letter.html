@@ -27,12 +27,7 @@
         </table>
         <br/>
         <textarea ui-tinymce ng-model="tinymceModel"></textarea>
-        <div ng-show="template">
-			<p>Lähetä osoitetiedot lähetyskorvauskenttinä: 
-				<input type="checkbox" ng-model="sendAddressLetterReplacements"  />
-			</p>
-        </div>
-		
+
         <input class="generate" type="number" ng-model="count" ng-change="updateGenerated()" placeholder="Generoi"
                ng-show="template" min="{{select_min}}" max="{{select_max}}">
 

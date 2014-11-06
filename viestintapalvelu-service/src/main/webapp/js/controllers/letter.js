@@ -100,21 +100,14 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     }
 
    function replacements() {
-       var repls =  {"sisalto": $scope.tinymceModel,
+       return  {"sisalto": $scope.tinymceModel,
            "hakukohde": "Tässä lukee hakukohde",
            "tarjoaja": "Tässä tarjoajan nimi",
            "koeaika": "12.12.2014 klo 12.12",
            "koepaikka": "TTY sali TB2012",
            "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
            "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
-       }
-       if ($scope.sendAddressLetterReplacements) {
-	   repls.addressline = "Pekaritarinkatu 9D 24"
-	   repls.postalCode = "00420"
-	   repls.city = "Helsinki"
-	   repls.country = "Suomi"
-       }
-       return repls
+       };
    }
 
     $scope.generatePDF = function () {
