@@ -105,7 +105,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
 		   "addressline": "Pekaritarinkatu 9D 24",
 		   "postalCode": "00420",
 		   "city": "Helsinki",
-		   "country": "Suomi"
+		   "country": "FINLAND"
 	   }
        }
        return  {"sisalto": $scope.tinymceModel,
