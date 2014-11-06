@@ -401,6 +401,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
         for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+            if (organisaatioHenkilo.isPassivoitu()) {
+                continue;
+            }
             OrganizationDTO organization = new OrganizationDTO();
 
             OrganisaatioRDTO organisaatioRDTO = organizationComponent.getOrganization(organisaatioHenkilo

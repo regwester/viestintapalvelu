@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.io.IOException;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -10,8 +11,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import fi.vm.sade.generic.model.BaseEntity;
 import fi.vm.sade.viestintapalvelu.template.ReadableReplacement;
 
@@ -55,7 +59,10 @@ public class LetterReplacement extends BaseEntity implements ReadableReplacement
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-        
+    
+    @Column(name = "json_arvo")
+    private String jsonValue = null;
+
     
     public LetterBatch getLetterBatch() {
 		return letterBatch;
@@ -101,11 +108,25 @@ public class LetterReplacement extends BaseEntity implements ReadableReplacement
         this.timestamp = timestamp;
     }
 
+    public String getJsonValue() {
+        return jsonValue;
+    }
+
+    public void setJsonValue(String jsonValue) {
+        this.jsonValue = jsonValue;
+    }
+
 	@Override
 	public String toString() {
 		return "LetterReplacement [name="+ name + ", defaultValue=" + defaultValue + ", mandatory="
 				+ mandatory + ", timestamp=" + timestamp + "]";
 	}
 
-
+    @Transient
+    public Object getEffectiveValue(ObjectMapper mapper) throws IOException {
+        if (this.jsonValue != null) {
+            return mapper.readValue(this.jsonValue, Object.class);
+        }
+        return this.defaultValue;
+    }
 }

@@ -67,8 +67,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
             "koulu": tulokset[0]['organisaationNimi'],
             "koulutus": tulokset[0]['hakukohteenNimi'],
             "henkilotunnus": "101085-9879",
-            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
-            "hakijapalveluidenOsoite" : data.any('street') + ' ' + data.any('housenumber')
+            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"]
           }
         };
       }));
@@ -100,14 +99,23 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     }
 
    function replacements() {
+       var fetchServiceAddress = null
+       if ($scope.sendAddressLetterReplacements) {
+	   fetchServiceAddress = {
+		   "addressline": "Pekaritarinkatu 9D 24",
+		   "postalCode": "00420",
+		   "city": "Helsinki",
+		   "country": "FINLAND"
+	   }
+       }
        return  {"sisalto": $scope.tinymceModel,
            "hakukohde": "Tässä lukee hakukohde",
            "tarjoaja": "Tässä tarjoajan nimi",
            "koeaika": "12.12.2014 klo 12.12",
            "koepaikka": "TTY sali TB2012",
            "koepaikanosoite": "Korkeakoulunkatu 10,\n33720 Tampere",
-           "hakijapalveluidenYhteystiedot": "Hakijapalvelut, PL 123, 10100 HELSINKI"
-       };
+           "hakijapalveluidenOsoite": fetchServiceAddress
+       }
    }
 
     $scope.generatePDF = function () {

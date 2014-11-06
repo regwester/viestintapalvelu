@@ -23,8 +23,6 @@ import javax.ws.rs.core.Response;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,7 +37,6 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
@@ -58,9 +55,6 @@ public class TemplateResource extends AsynchronousResource {
     @Autowired
     private UserRightsValidator userRightsValidator;
 
-    @Autowired
-    private LetterBuilder letterBuilder;
-
     private final static String GetHistory = "Palauttaa kirjepohjan historian";
     private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
         + "Kukin sisältää MAPin nimen (name) ja listan korvauskenttiä (templateReplacements) <br>"
@@ -77,6 +71,8 @@ public class TemplateResource extends AsynchronousResource {
     private final static String ApitemplateVersionsByName = "Palauttaa kirjepohjan kaikki versiot nimen perusteella.";
     private final static String TemplateByID = "Palauttaa kirjepohjan Id:n perusteella.";
     private final static String TemplateExamples = "Palauttaa saatavilla olevien kirjepohjien nimet ja sisällöt.";
+    private final static String TemplatePartials = "Palauttaa saatavilla olevien kirjepohjien html-sisällön";
+    private final static String TemplateReplacements = "Palauttaa saatavilla olevien kirjepohjien oletuskorvaussisällön";
     private final static String Store = "Rajapinnalla voi tallentaa kantaa kirjepohjan.";
     private final static String StoreDraft = "Rajapinnalla voi tallentaa kantaa kirjepohjaluonnoksen.";
     private final static String AttachApplicationPeriod = "Rajapinnalla voi liittää haut kirjepohjaan.";
@@ -105,26 +101,30 @@ public class TemplateResource extends AsynchronousResource {
 
         String styleFile = request.getParameter("styleFile");
         if (styleFile != null) {
-            String styleURL = "/template_styles/" + styleFile + ".css";
-            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\" \"", ""));
+            String styleURL = "/template_styles/" + styleFile;
+            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
         }
 
-        // Read type if provided
+        // Commented out because I don't understand the purpose of this code
+        /*
         String type = request.getParameter("type");
         if (type != null) {
-            if (StringUtils.equalsIgnoreCase(type, "email"))
+            if (type.equalsIgnoreCase("email")){
                 type = "doc";
+            }
             type = type.toLowerCase();
+            //result.setType(type);
         }
+        */
 
-        String[] fileNames = request.getParameter("templateFile").split(",");
+        String[] fileNames = request.getParameter("templateFiles").split(",");
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         int order = 1;
         for (String file : fileNames) {
-            String templateURL = Utils.resolveTemplateName("/templates/" + file + "_{LANG}{TYPE}.html", language, type);
+            String templateURL = "/templates/" + file;
             TemplateContent content = new TemplateContent();
-            content.setName(templateURL);
-            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\" \"", ""));
+            content.setName(file);
+            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
             content.setOrder(order);
             contents.add(content);
             order++;
@@ -132,12 +132,14 @@ public class TemplateResource extends AsynchronousResource {
         result.setContents(contents);
 
         String replacementFile = request.getParameter("replacementFile");
-        String replacementURL = Utils.resolveTemplateName("/replacements/" + replacementFile + "_{LANG}{TYPE}.html", language, type);
-        Replacement replacement = new Replacement();
-        replacement.setName("sisalto");
-        replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\" \"", ""));
         ArrayList<Replacement> rList = new ArrayList<Replacement>();
-        rList.add(replacement);
+        if(replacementFile != null) {
+            String replacementURL = "/replacements/" + replacementFile;
+            Replacement replacement = new Replacement();
+            replacement.setName("sisalto");
+            replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
+            rList.add(replacement);
+        }
         result.setReplacements(rList);
 
         return result;
@@ -156,26 +158,59 @@ public class TemplateResource extends AsynchronousResource {
         return templateService.findById(id);
     }
 
-
-    
     @GET
-    @Path("/getAvailableExamples")
+    @Path("/exampleFiles")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Produces("application/json")
-    @Transactional
     @ApiOperation(value = TemplateExamples, notes = TemplateExamples)
-    public List<Map<String, String>> templateExamples(@Context HttpServletRequest request) throws IOException,
-        DocumentException {
-        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+    public List<String> getTemplateExamples() throws IOException {
+        return getResourceList("classpath*:/test_data/*.json");
+    }
 
-        for (Resource template : Utils.getResourceList("classpath*:/test_data/*.json")) {
-            Map<String, String> current = new HashMap<String, String>();
-            current.put("name", template.getFilename());
-            current.put("content", Utils.getResource(template.getInputStream()).replaceAll("\\r|\\n|\" \"", ""));
-            res.add(current);
+    @GET
+    @Path("/exampleFiles/{name}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    public String getTemplateExample(@PathParam("name") String name) throws IOException {
+        return getResource("/test_data/" + name);
+    }
+
+    @GET
+    @Path("/partialFiles")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    @ApiOperation(value = TemplatePartials, notes = TemplatePartials)
+    public List<String> getTemplatePartials() throws IOException {
+        return getResourceList("classpath*:/templates/*.html");
+    }
+
+    @GET
+    @Path("/styleFiles")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    public List<String> getStyleFiles() throws IOException {
+        return getResourceList("classpath*:/template_styles/*.css");
+    }
+
+    @GET
+    @Path("/replacementFiles")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    @ApiOperation(value = TemplateReplacements, notes = TemplateReplacements)
+    public List<String> getTemplateReplacements() throws IOException {
+        return getResourceList("classpath*:/replacements/*.html");
+    }
+
+    private List<String> getResourceList(String pattern) throws IOException {
+        List<String> resources = new ArrayList<String>();
+        for (Resource template : Utils.getResourceList(pattern)) {
+            resources.add(template.getFilename());
         }
+        return resources;
+    }
 
-        return res;
+    private String getResource(String file) throws IOException {
+        return Utils.getResource(file).replaceAll("\\r|\\n|\" \"", "");
     }
 
     @GET

@@ -1,141 +1,161 @@
 <div class="container">
-  <div class="row-fluid">
-    <div class="span2">
-      <button type="button" ng-click="back()" class="btn">
-           <i class="icon-arrow-left" style="padding-right: 0.2em;"></i>{{'reportedletterview.button.viestien_raportteihin' | i18n}}</span>
-      </button>
+    <div class="row-fluid">
+        <div class="span2">
+            <button type="button" ng-click="back()" class="btn">
+                <i class="icon-arrow-left" style="padding-right: 0.2em;"></i>{{'reportedletterview.button.viestien_raportteihin'
+                | i18n}}</span>
+            </button>
+        </div>
+        <div class="span10">
+            <h1>{{'reportedletterview.otsikko.lahetysraportti' | i18n}}</h1>
+        </div>
     </div>
-    <div class="span10">
-        <h1>{{'reportedletterview.otsikko.lahetysraportti' | i18n}}</h1>
-      </div>
-  </div>
 
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.kirjepohja' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.template.name }}</div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.oletuskieli' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.template.language }}</div>
-  </div>
-
-  <div class="row-fluid" ng-if="reportedLetterDTO.applicationPeriod">
-    <div class="span2">{{ 'reportedletterview.label.haku' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.applicationPeriod }}</div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.oppilaitos_tai_organisaatio' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.organisaatioOid }}</div>
-  </div>
-
-  <div class="row-fluid" ng-if="reportedLetterDTO.fetchTarget">
-    <div class="span2">{{ 'reportedletterview.label.hakukohde' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.fetchTarget }}</div>
-  </div>
-
-  <div class="row-fluid" ng-if="reportedLetterDTO.tag">
-    <div class="span2">{{ 'reportedletterview.label.haun_tunniste' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.tag }}</div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.sisalto' | i18n }}</div>
-    <div class="span6" ng-if="reportedLetterDTO.template">
-      <limited-paragraph 
-                content="getLetterContent()"
-                show-button-text="{{ 'reportedmessageview.text.nayta_kaikki' | i18n }}"
-                hide-button-text="{{ 'reportedmessageview.text.piilota' | i18n }}"
-                limit="350" />
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.kirjepohja' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.template.name }}</div>
     </div>
-  </div>
 
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.tekija' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.creatorName }}</div>
-  </div>
-
-  <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
-    <div class="span2">{{ 'reportedletterview.label.tila' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.sentDate }}</div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.lahetystapa' | i18n }}</div>
-    <div class="span6" ng-if="reportedLetterDTO">
-     {{ reportedLetterDTO.deliveryTypeIPosti ? 'reportedletterview.text.iposti' : 'reportedletterview.text.muu' | i18n }}
-     </div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.lahetysajankohta' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.timestamp | date : 'd.M.yyyy H.mm' }}</div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.kirjelahetyksen_tunniste' | i18n }}</div>
-    <div class="span6">{{ reportedLetterDTO.letterBatchID }}</div>
-  </div>
-
-  <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
-    <div class="span2">{{ 'reportedletterview.label.lahetyksen_kooste' | i18n }}</div>
-    <div class="span6"><a ng-href="/viestintapalvelu/api/v1/iposti/getIPostiById/{{ reportedLetterDTO.letterBatchID }}">{{ reportedLetterDTO.template.name }}.zip</a></div>
-  </div>
-
-  <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
-    <div class="span2">{{ 'reportedletterview.label.lahetyserat' | i18n }}</div>
-    <div class="span10">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>{{ 'reportedletterview.otsikko.numero' | i18n | uppercase }}</th>
-            <th>{{ 'reportedletterview.otsikko.lahetys' | i18n | uppercase }}</th>
-            <th>{{ 'reportedletterview.otsikko.tila' | i18n | uppercase }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="iPosti in reportedLetterDTO.iPostis">
-            <td>{{ $index }}</td>
-            <td><a ng-href="/viestintapalvelu/api/v1/iposti/getBatchById/{{ iPosti.id }}">{{ iPosti.contentName }}</a></td>
-            <td>{{ iPosti.sentDate === null ? 'reportedletterview.text.ei_lahetetty' : 'reportedletterview.text.toimitettu_lahetettavaksi' | i18n }}</td>
-          </tr>
-        </tbody>
-      </table>
-      <button class="btn" ng-click="sendIPosti(reportedLetterDTO.letterBatchID)">{{ 'reportedletterview.button.iposti_lahetys' | i18n }}</button>
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.oletuskieli' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.template.language }}</div>
     </div>
-  </div>
 
-  <div class="row-fluid">
-  	<img ng-show="reportedLetterDTO.status == 'error'" style="margin-right:10px;" src="./assets/img/error-icon28x29.png">
-    <div ng-show="reportedLetterDTO.status != 'error'" class="span2">{{'reportedletterview.label.kooste_kirjeista' | i18n}}</div>
-    <div ng-show="reportedLetterDTO.status != 'error'" class="span6"><a ng-click="downloadContents(reportedLetterDTO.letterBatchID)">{{'reportedLetterview.text.naytakooste' | i18n}}</a></div>
-  </div>
-
-  <div class="row-fluid">
-    <div class="span2">{{ 'reportedletterview.label.vastaanottajat' | i18n }}</div>
-    <div class="span10">
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>{{ 'reportedletterview.otsikko.nimi' | i18n | uppercase }}</th>
-            <th>{{ 'reportedletterview.otsikko.osoite' | i18n | uppercase }}</th>
-            <th>{{ 'reportedletterview.otsikko.kirje' | i18n | uppercase }}</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr ng-repeat="recipient in reportedLetterDTO.letterReceivers">
-            <td>{{ recipient.name }}</td>
-            <td>{{ recipient.address1 }}, {{ recipient.postalCode }} {{ recipient.city | uppercase }}</td>
-            <td><a ng-show="reportedLetterDTO.status != 'error'" ng-click="downloadLetter(recipient)">{{recipient.templateName}}.pdf</a></td>
-          </tr>
-        </tbody>
-      </table>
+    <div class="row-fluid" ng-if="reportedLetterDTO.applicationPeriod">
+        <div class="span2">{{ 'reportedletterview.label.haku' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.applicationPeriod }}</div>
     </div>
-  </div>
-  
-  <div class="pagination pagination-centered row-fluid" ng-if="reportedLetterDTO.numberOfReceivers > pagination.pageSize">
-    <pagination ng-model="pagination.page" total-items="reportedLetterDTO.numberOfReceivers" items-per-page="{{pagination.pageSize}}" ng-change="fetch()" previous-text="{{'pagination.button.edellinen' | i18n}}" next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
-  </div>
-  
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.oppilaitos_tai_organisaatio' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.organisaatioOid }}</div>
+    </div>
+
+    <div class="row-fluid" ng-if="reportedLetterDTO.fetchTarget">
+        <div class="span2">{{ 'reportedletterview.label.hakukohde' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.fetchTarget }}</div>
+    </div>
+
+    <div class="row-fluid" ng-if="reportedLetterDTO.tag">
+        <div class="span2">{{ 'reportedletterview.label.haun_tunniste' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.tag }}</div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.sisalto' | i18n }}</div>
+        <div class="span6" ng-if="reportedLetterDTO.template">
+            <limited-paragraph
+                    content="getLetterContent()"
+                    show-button-text="{{ 'reportedmessageview.text.nayta_kaikki' | i18n }}"
+                    hide-button-text="{{ 'reportedmessageview.text.piilota' | i18n }}"
+                    limit="350"/>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.tekija' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.creatorName }}</div>
+    </div>
+
+    <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
+        <div class="span2">{{ 'reportedletterview.label.tila' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.sentDate }}</div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.lahetystapa' | i18n }}</div>
+        <div class="span6" ng-if="reportedLetterDTO">
+            {{ reportedLetterDTO.deliveryTypeIPosti ? 'reportedletterview.text.iposti' : 'reportedletterview.text.muu' |
+            i18n }}
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.lahetysajankohta' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.timestamp | date : 'd.M.yyyy H.mm' }}</div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.kirjelahetyksen_tunniste' | i18n }}</div>
+        <div class="span6">{{ reportedLetterDTO.letterBatchID }}</div>
+    </div>
+
+    <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
+        <div class="span2">{{ 'reportedletterview.label.lahetyksen_kooste' | i18n }}</div>
+        <div class="span6"><a
+                ng-href="/viestintapalvelu/api/v1/iposti/getIPostiById/{{ reportedLetterDTO.letterBatchID }}">{{
+            reportedLetterDTO.template.name }}.zip</a></div>
+    </div>
+
+    <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
+        <div class="span2">{{ 'reportedletterview.label.lahetyserat' | i18n }}</div>
+        <div class="span10">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{{ 'reportedletterview.otsikko.numero' | i18n | uppercase }}</th>
+                    <th>{{ 'reportedletterview.otsikko.lahetys' | i18n | uppercase }}</th>
+                    <th>{{ 'reportedletterview.otsikko.tila' | i18n | uppercase }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="iPosti in reportedLetterDTO.iPostis">
+                    <td>{{ $index }}</td>
+                    <td><a ng-href="/viestintapalvelu/api/v1/iposti/getBatchById/{{ iPosti.id }}">{{ iPosti.contentName
+                        }}</a></td>
+                    <td>{{ iPosti.sentDate === null ? 'reportedletterview.text.ei_lahetetty' :
+                        'reportedletterview.text.toimitettu_lahetettavaksi' | i18n }}
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+            <button class="btn" ng-click="sendIPosti(reportedLetterDTO.letterBatchID)">{{
+                'reportedletterview.button.iposti_lahetys' | i18n }}
+            </button>
+        </div>
+    </div>
+
+    <div class="row-fluid">
+        <img ng-show="reportedLetterDTO.status == 'error'" style="margin-right:10px;"
+             src="./assets/img/error-icon28x29.png">
+
+        <div ng-show="reportedLetterDTO.status != 'error'" class="span2">{{'reportedletterview.label.kooste_kirjeista' |
+            i18n}}
+        </div>
+        <div ng-show="reportedLetterDTO.status != 'error'" class="span6"><a
+                ng-click="downloadContents(reportedLetterDTO.letterBatchID)">{{'reportedLetterview.text.naytakooste' |
+            i18n}}</a></div>
+    </div>
+
+    <div class="row-fluid">
+        <div class="span2">{{ 'reportedletterview.label.vastaanottajat' | i18n }}</div>
+        <div class="span10">
+            <table class="table table-striped">
+                <thead>
+                <tr>
+                    <th>{{ 'reportedletterview.otsikko.nimi' | i18n | uppercase }}</th>
+                    <th>{{ 'reportedletterview.otsikko.osoite' | i18n | uppercase }}</th>
+                    <th>{{ 'reportedletterview.otsikko.kirje' | i18n | uppercase }}</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr ng-repeat="recipient in reportedLetterDTO.letterReceivers">
+                    <td>{{ recipient.name }}</td>
+                    <td>{{ recipient.address1 }}, {{ recipient.postalCode }} {{ recipient.city | uppercase }}</td>
+                    <td><a ng-show="reportedLetterDTO.status != 'error'" ng-click="downloadLetter(recipient)">{{recipient.templateName}}.pdf</a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="pagination pagination-centered row-fluid"
+         ng-if="reportedLetterDTO.numberOfReceivers > pagination.pageSize">
+        <pagination ng-model="pagination.page" total-items="reportedLetterDTO.numberOfReceivers"
+                    items-per-page="{{pagination.pageSize}}" ng-change="fetch()"
+                    previous-text="{{'pagination.button.edellinen' | i18n}}"
+                    next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+    </div>
+
 </div>
