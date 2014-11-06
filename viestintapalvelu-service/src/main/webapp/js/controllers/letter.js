@@ -67,7 +67,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
             "koulu": tulokset[0]['organisaationNimi'],
             "koulutus": tulokset[0]['hakukohteenNimi'],
             "henkilotunnus": "101085-9879",
-            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"],
+            "muut_hakukohteet" : ["Muu hakukohde 1", "Muu hakukohde 2"]
           }
         };
       }));
