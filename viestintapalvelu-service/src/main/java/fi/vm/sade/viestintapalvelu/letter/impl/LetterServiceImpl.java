@@ -105,14 +105,20 @@ public class LetterServiceImpl implements LetterService {
     @Transactional
     public LetterBatch createLetter(AsyncLetterBatchDto letterBatch) {
         // kirjeet.kirjelahetys
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         LetterBatch model = new LetterBatch();
-        letterBatchDtoConverter.convert(letterBatch, model);
+        try {
+            
+            letterBatchDtoConverter.convert(letterBatch, model,mapper);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
+        }
+        
         model.setTimestamp(new Date());
         model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
         model.setBatchStatus(LetterBatch.Status.created);
 
         // kirjeet.vastaanottaja
-        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         try {
             model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
         } catch (JsonProcessingException e) {
@@ -131,14 +137,19 @@ public class LetterServiceImpl implements LetterService {
     @Transactional
     public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
         // kirjeet.kirjelahetys
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
+        
         LetterBatch model = new LetterBatch();
-        letterBatchDtoConverter.convert(letterBatch, model);
+        try {
+            letterBatchDtoConverter.convert(letterBatch, model, mapper);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
+        }
         model.setTimestamp(new Date());
         model.setBatchStatus(LetterBatch.Status.created);
         model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
 
         // kirjeet.vastaanottaja
-        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         try {
             model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
         } catch (JsonProcessingException e) {
@@ -570,7 +581,7 @@ public class LetterServiceImpl implements LetterService {
         LetterReceivers receiver = letterReceiversDAO.read(receiverId);
         LetterBatch batch = receiver.getLetterBatch();
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
-        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(batch),
+        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(batch, mapper),
                 formReplacementMap(receiver, mapper));
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
@@ -596,10 +607,10 @@ public class LetterServiceImpl implements LetterService {
         }
     }
 
-    private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+    private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch, ObjectMapper mapper) throws IOException {
         Map<String, Object> replacements = new HashMap<String, Object>();
         for (LetterReplacement repl : batch.getLetterReplacements()) {
-            replacements.put(repl.getName(), repl.getDefaultValue());
+            replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
         return replacements;
     }
