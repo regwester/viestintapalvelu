@@ -23,14 +23,12 @@ import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
-import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
@@ -175,7 +173,6 @@ public class LetterBuilder {
                     letter.getTemplateReplacements()); // Letter recipient level replacements
 
             if (letterTemplate != null) {
-                AttachmentUri attachmentUri = null;
                 List<TemplateContent> contents = letterTemplate.getContents();
                 PdfDocument currentDocument = new PdfDocument(letter.getAddressLabel());
                 Collections.sort(contents);
@@ -462,16 +459,6 @@ public class LetterBuilder {
         data.put("metadataList", metadataList);
         data.put("ipostTest", Constants.IPOST_TEST);
         return data;
-    }
-
-    private boolean shouldReceiveEmail(Letter letter) {
-        return (letter.getEmailAddress() != null && !letter.getEmailAddress().isEmpty());
-    }
-
-    private void sendEmail(EmailSourceData source) throws IOException {
-        if (source != null) {
-            emailComponent.sendEmail(source);
-        }
     }
 
     public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
