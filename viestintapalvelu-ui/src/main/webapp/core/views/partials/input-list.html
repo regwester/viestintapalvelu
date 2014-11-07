@@ -1,0 +1,6 @@
+<div class="input-list">
+    <p class="bold" ng-if="label">{{label}}</p>
+    <div ng-repeat="item in items">
+        <input class="margin-right-half" type="{{input}}" ng-model="$parent.model" value="{{item.value}}"> {{item.text}}
+    </div>
+</div>

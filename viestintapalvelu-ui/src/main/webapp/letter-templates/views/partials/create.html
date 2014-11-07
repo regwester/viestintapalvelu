@@ -1,0 +1,23 @@
+<div class="modal info-dialog">
+    <div class="modal-header dialog-header-info">
+        <h3>Luo uusi kirjepohja</h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            <p class="bold">Luo kirjepohja haulle:</p>
+            <select></select>
+        </div>
+        <div>
+            <p class="bold">Käytä pohjana hakua:</p>
+            <select></select>
+        </div>
+        <p>Valitse uuden kirjepohjan lähtökohdaksi jokin haku, oletuskirjepohja tai tyhjä dokumentti.</p>
+        <input-list label="Luotava kirjepohjatyyppi:" items="applicationTypes" input="radio"/>
+        <input-list label="Luotavat kieliversiot:" items="languages" input="checkbox"/>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn" ng-click="cancel()">Peruuta</button>
+        <button type="button" class="btn btn-primary" ng-click="confirm()">Luo</button>
+    </div>
+</div>

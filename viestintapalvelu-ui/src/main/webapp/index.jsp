@@ -50,7 +50,7 @@
     <!-- HTML5 Blob polyfill -->
     <script type="text/javascript" src="assets/lib/file/Blob.js"></script>
 
-    <!--Virkailija layout script -->
+    <!-- Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
 
     <script type="text/javascript" src="assets/lib/tinymce/tinymce.min.js"></script>
@@ -75,7 +75,7 @@
     <!-- Initialize modules -->
     <script type="text/javascript" src="email/init.js"></script>
     <script type="text/javascript" src="report/init.js"></script>
-    <script type="text/javascript" src="template/init.js"></script>
+    <script type="text/javascript" src="letter-templates/init.js"></script>
     <script type="text/javascript" src="core/init.js"></script>
     <script type="text/javascript" src="init.js"></script>
 
@@ -97,7 +97,7 @@
     <script type="text/javascript" src="report/services/reportedMessage.js"></script>
     <script type="text/javascript" src="report/services/sharedVariables.js"></script>
     <script type="text/javascript" src="core/services/global.js"></script>
-    <script type="text/javascript" src="template/services/template.js"></script>
+    <script type="text/javascript" src="letter-templates/services/template.js"></script>
 
     <!-- Directives -->
     <script type="text/javascript" src="email/directives/upload.js"></script>
@@ -105,6 +105,7 @@
     <script type="text/javascript" src="email/directives/recipientList.js"></script>
     <script type="text/javascript" src="report/directives/reportedMessageStatus.js"></script>
     <script type="text/javascript" src="report/directives/limitedParagraph.js"></script>
+    <script type="text/javascript" src="core/directives/input-list.js"></script>
 
     <!-- Controllers -->
     <script type="text/javascript" src="email/controllers/tab.js"></script>
@@ -119,7 +120,8 @@
     <script type="text/javascript" src="report/controllers/errorDialog.js"></script>
     <script type="text/javascript" src="report/controllers/reportedLetterList.js"></script>
     <script type="text/javascript" src="report/controllers/reportedLetterView.js"></script>
-    <script type="text/javascript" src="template/controllers/templateTree.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/templateTree.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/letterTemplateList.js"></script>
 
     <!-- Routes -->
     <script type="text/javascript" src="core/routes.js"></script>

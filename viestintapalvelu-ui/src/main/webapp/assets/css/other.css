@@ -413,6 +413,23 @@ ul.attachments-list {
     margin-right: 5px;
 }
 
+.margin-right-half {
+    margin-right: 0.5em;
+}
+
+.margin-bottom-half {
+    margin-bottom: 0.5em;
+}
+.margin-bottom-one {
+    margin-bottom: 1em;
+}
+
+.input-list input {
+    top: 0px;
+    margin-top: 0px;
+    margin-right: 5px;
+}
+
 .modal-dialog .modal-body img {
     margin-right: 10px;
 }
