@@ -2,11 +2,7 @@ package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Path;
@@ -20,7 +16,6 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -541,6 +536,7 @@ public class TemplateResource extends AsynchronousResource {
         return templateService.getTemplateByName(templateName, languageCode, true, type);
     }
 
+
     @GET
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/{applicationPeriod}/getTemplateContent")
@@ -566,4 +562,15 @@ public class TemplateResource extends AsynchronousResource {
                         .withType(type)
                         .withApplicationPeriod(applicationPeriod), true);
     }
+
+    @GET
+    @Produces("application/json")
+    @Path("/listByApplicationPeriod/{applicationPeriod}")
+    public Collection<Template> getTemplatesByApplicationPeriod(
+            @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
+            @PathParam("applicationPeriod") String applicationPeriod) {
+        List<Template> byApplicationPeriod = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
+        return byApplicationPeriod;
+    }
+
 }
