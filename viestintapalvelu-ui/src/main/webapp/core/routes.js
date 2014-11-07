@@ -8,8 +8,13 @@ angular.module('core')
     
     var emailUrl = '/viestintapalvelu-ui/email/views/';
     var reportUrl = '/viestintapalvelu-ui/report/views/';
-    
+    var templUrl = '/viestintapalvelu-ui/template/views/';
     $stateProvider
+    .state('test', {
+      url: "/test",
+      templateUrl: templUrl+"test.html",
+      controller: "TemplateController"
+    })
     .state('email', {
       url: '/email',
       templateUrl: emailUrl + 'email.html',
