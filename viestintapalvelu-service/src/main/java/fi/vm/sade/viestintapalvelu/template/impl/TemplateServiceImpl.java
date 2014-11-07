@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import fi.vm.sade.viestintapalvelu.model.Draft;
+import fi.vm.sade.viestintapalvelu.model.Replacement;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
+import fi.vm.sade.viestintapalvelu.template.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,9 +25,6 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.*;
-import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
-import fi.vm.sade.viestintapalvelu.template.Contents;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
 @Transactional
@@ -398,6 +400,15 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
+    public List<fi.vm.sade.viestintapalvelu.template.Template> getByApplicationPeriod(TemplateCriteria criteria) {
+        List<Template> templates = templateDAO.findTemplates(criteria);
+        List<fi.vm.sade.viestintapalvelu.template.Template> convertedTemplates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>(templates.size());
+        for (Template template : templates) {
+            convertedTemplates.add(getConvertedTemplate(template));
+        }
+        return convertedTemplates;
+    }
+
     public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(TemplateCriteria criteria, boolean content) {
         fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
         if (criteria.getName() == null) {
@@ -439,6 +450,12 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     // TODO: move to separate DTO converter:
+    private fi.vm.sade.viestintapalvelu.template.Template getConvertedTemplate(Template from) {
+        return convertBasicData(from, new fi.vm.sade.viestintapalvelu.template.Template());
+    }
+
+
+        // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template convertBasicData(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
         to.setId(from.getId());
         to.setName(from.getName());
