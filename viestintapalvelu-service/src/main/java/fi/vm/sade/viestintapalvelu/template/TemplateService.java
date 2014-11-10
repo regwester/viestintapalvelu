@@ -1,8 +1,10 @@
 package fi.vm.sade.viestintapalvelu.template;
 
 import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 
 import java.io.IOException;
 import java.util.List;
@@ -14,6 +16,8 @@ public interface TemplateService {
     Template getTemplateFromFiles(String languageCode, String type, String... names) throws IOException;
 
     List<String> getTemplateNamesList();
+    
+    List<String> getTemplateNamesListByState(State state);
 
     void storeTemplate(Template template);
 

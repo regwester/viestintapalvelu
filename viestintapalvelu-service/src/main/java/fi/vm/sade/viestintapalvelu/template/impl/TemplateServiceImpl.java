@@ -8,8 +8,10 @@ import java.util.*;
 import fi.vm.sade.viestintapalvelu.model.Draft;
 import fi.vm.sade.viestintapalvelu.model.Replacement;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.*;
+
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -101,7 +103,15 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public List<String> getTemplateNamesList() {
-        return templateDAO.getAvailableTemplates();
+        return getTemplateNamesListByState(State.PUBLISHED);
+    }
+    
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateNamesListByState(fi.vm.sade.viestintapalvelu.model.Template.State)
+     */
+    @Override
+    public List<String> getTemplateNamesListByState(State state) {
+        return templateDAO.getAvailableTemplatesByType(state);
     }
 
     /* (non-Javadoc)

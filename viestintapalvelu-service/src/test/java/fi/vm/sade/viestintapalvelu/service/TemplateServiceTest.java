@@ -6,9 +6,11 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -30,6 +32,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -255,8 +258,24 @@ public class TemplateServiceTest {
         assertTrue(templateFindByName.getType() != null);
         assertTrue(templateFindByName.getType().equals("doc"));
     }
-
-
+    
+    @Test
+    public void fetchesOnlyPublishedTemplatesByDefault() {
+        templateService.getTemplateNamesList();
+        verify(mockedTemplateDAO.getAvailableTemplatesByType(State.PUBLISHED));
+    }
+    
+    @Test
+    public void fetchesOnlyClosedTemplates() {
+        templateService.getTemplateNamesListByState(State.CLOSED);
+        verify(mockedTemplateDAO.getAvailableTemplatesByType(State.CLOSED));
+    }
+    
+    @Test
+    public void fetchesOnlyDrafts() {
+        templateService.getTemplateNamesListByState(State.PUBLISHED);
+        verify(mockedTemplateDAO.getAvailableTemplatesByType(State.PUBLISHED));
+    }
 
 
 }
