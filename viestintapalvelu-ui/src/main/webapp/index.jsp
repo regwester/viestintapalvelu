@@ -122,6 +122,7 @@
     <script type="text/javascript" src="report/controllers/reportedLetterView.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/templateTree.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/letterTemplateList.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/templateDialog.js"></script>
 
     <!-- Routes -->
     <script type="text/javascript" src="core/routes.js"></script>
