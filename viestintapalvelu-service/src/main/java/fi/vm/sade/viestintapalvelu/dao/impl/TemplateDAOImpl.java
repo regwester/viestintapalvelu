@@ -155,10 +155,22 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
 
     public List<String> getAvailableTemplates() {
         EntityManager em = getEntityManager();
-        Query q = em
-                .createQuery("SELECT DISTINCT name, language from Template");
+        Query q = em.createQuery("SELECT DISTINCT name, language from Template");
         @SuppressWarnings("unchecked")
-        List<Object[]> qResult = (List<Object[]>) q.getResultList();
+        List<String> result = resultsToNameLanguage((List<Object[]>) q.getResultList());
+        return result;
+    }
+
+    public List<String> getAvailableTemplatesByType(Template.State state) {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery("SELECT DISTINCT name, language from Template WHERE state = :state");
+        query.setParameter("state", state);
+        @SuppressWarnings("unchecked")
+        List<String> result = resultsToNameLanguage((List<Object[]>) query.getResultList());
+        return result;
+    }
+    
+    private List<String> resultsToNameLanguage(List<Object[]> qResult) {
         List<String> result = new ArrayList<String>();
         for (Object[] o : qResult) {
             StringBuilder current = new StringBuilder();
@@ -175,4 +187,5 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         }
         return result;
     }
+    
 }

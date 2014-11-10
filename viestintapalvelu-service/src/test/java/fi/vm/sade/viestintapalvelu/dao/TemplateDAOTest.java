@@ -15,8 +15,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -168,6 +168,19 @@ public class TemplateDAOTest {
         assertNotNull(availableTemplates);
         assertTrue(availableTemplates.size() == 1);
         assertTrue(availableTemplates.get(0).indexOf("::") != -1);
+    }
+    
+    @Test
+    public void returnsTemplatesUsingType() {
+        String templateNamePrefix = "suljettu";
+        Template closedTemplate = DocumentProviderTestData.getTemplateWithGivenNamePrefix(null, templateNamePrefix);
+        closedTemplate.setState(State.CLOSED);
+        templateDAO.insert(closedTemplate);
+        templateDAO.insert(DocumentProviderTestData.getTemplate(null));
+        List<String> availableTemplates = templateDAO.getAvailableTemplatesByType(State.CLOSED);
+        assertEquals(1, availableTemplates.size());
+        assertTrue(availableTemplates.get(0).contains(templateNamePrefix));
+        assertTrue(availableTemplates.get(0).contains(closedTemplate.getLanguage()));
     }
 
 }
