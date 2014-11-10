@@ -394,6 +394,7 @@ public class DocumentProviderTestData {
         Structure structure = new Structure();
         structure.setName(prefix + "_structure");
         structure.setLanguage("FI");
+        structure.setDescription("Structure description");
         // TODO: create structure elements?
         template.setStructure(structure);
         

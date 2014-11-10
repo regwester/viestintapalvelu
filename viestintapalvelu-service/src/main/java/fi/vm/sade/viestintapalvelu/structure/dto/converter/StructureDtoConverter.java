@@ -14,24 +14,17 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.dao;
+package fi.vm.sade.viestintapalvelu.structure.dto.converter;
 
-import java.sql.Struct;
-import java.util.List;
+import org.springframework.stereotype.Component;
 
-import com.google.common.base.Optional;
-
-import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
-import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.util.dtoconverter.AbstractDtoConverter;
 
 /**
  * User: ratamaa
  * Date: 10.11.2014
- * Time: 13:18
+ * Time: 14:28
  */
-public interface StructureDAO extends JpaDAO<Structure, Long> {
-    List<StructureListDto> findLatestStructuresVersionsForList();
-
-    Optional<Structure> findLatestStructrueByNameAndLanguage(String name, String language);
+@Component
+public class StructureDtoConverter extends AbstractDtoConverter {
 }

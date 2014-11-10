@@ -14,6 +14,7 @@ public class Urls {
     public static final String LETTER_PATH = "letter";
     public static final String PRINTER_PATH = "printer";
     public static final String TEMPLATE_RESOURCE_PATH = "template";
+    public static final String STRUCTURE_RESOURCE_PATH = "structure";
     public static final String IPOSTI_RESOURCE_PATH = "iposti";
     public static final String REPORTING_PATH = "reporting";
     public static final String REPORTING_LIST_PATH = "list";
