@@ -1,0 +1,37 @@
+
+
+<div>
+    <div class="span8">
+        <div class="navbar">
+            <ol class="breadcrumb">
+                <li><a href="">crumb 1</a></li>
+                <li><a href="">crumb 2</a></li>
+                <li><a href="">crumb 3</a></li>
+            </ol>
+        </div>
+        <h2>Foobar</h2>
+        <div>awesome list div
+            <ol collapse="isCollapsed">
+                <li ng-repeat="person in foo">
+                    {{person.id}} - {{person.name}}
+                </li>
+            </ol>
+        </div>
+
+
+        <div>
+            {{testData}}
+        </div>
+        <div>
+            <tree-grid
+                    tree-data="test_tree_data"
+                    tree-control="my_tree"
+                    col-defs="col_defs"
+                    on-select="my_tree_handler(branch)"
+                    expand-level="2"
+                    >
+            </tree-grid>
+        </div>
+        <button class="btn" type="button" ng-click="updateTestData()">Randomize above number</button>
+    </div>
+</div>
