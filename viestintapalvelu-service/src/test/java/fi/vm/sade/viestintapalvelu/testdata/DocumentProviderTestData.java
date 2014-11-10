@@ -378,6 +378,8 @@ public class DocumentProviderTestData {
         
         template.setLanguage("FI");
         template.setName("test_template");
+        template.setStructureName("test_structure");
+        template.setStructureId(1l);
         template.setOrganizationOid("1.2.246.562.10.00000000001");
         template.setStoringOid("1.2.246.562.24.00000000001");
         template.setStyles("test-styles");

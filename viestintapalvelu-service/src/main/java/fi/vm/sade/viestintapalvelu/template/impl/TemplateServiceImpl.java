@@ -5,13 +5,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-import fi.vm.sade.viestintapalvelu.model.Draft;
-import fi.vm.sade.viestintapalvelu.model.Replacement;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.Template.State;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
-import fi.vm.sade.viestintapalvelu.template.*;
-
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -22,11 +15,16 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
+import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
+import fi.vm.sade.viestintapalvelu.template.Contents;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
 @Transactional
@@ -34,12 +32,15 @@ public class TemplateServiceImpl implements TemplateService {
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
     private DraftDAO draftDAO;
+    private StructureDAO structureDAO;
 
     @Autowired
-    public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO) {
+    public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO,
+                               StructureDAO structureDAO) {
         this.templateDAO = templateDAO;
         this.currentUserComponent = currentUserComponent;
         this.draftDAO = draftDAO;
+        this.structureDAO = structureDAO;
     }
 
     /* (non-Javadoc)
@@ -142,6 +143,13 @@ public class TemplateServiceImpl implements TemplateService {
         model.setContents(parseContentModels(template.getContents(), model));
         model.setReplacements(parseReplacementModels(template.getReplacements(), model));
         model.setType(template.getType());
+        if (template.getStructureId() != null) {
+            model.setStructure(structureDAO.read(template.getStructureId()));
+        } else if (template.getStructureName() != null
+                && template.getLanguage() != null) {
+            model.setStructure(structureDAO.findLatestStructrueByNameAndLanguage(template.getStructureName(),
+                    template.getLanguage()).orNull());
+        }
         updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         storeTemplate(model);
     }
@@ -244,6 +252,8 @@ public class TemplateServiceImpl implements TemplateService {
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
+        result.setStructureId(searchResult.getStructure().getId());
+        result.setStructureName(searchResult.getStructure().getName());
         result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
         result.setStyles(searchResult.getStyles());
@@ -469,6 +479,8 @@ public class TemplateServiceImpl implements TemplateService {
     private fi.vm.sade.viestintapalvelu.template.Template convertBasicData(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
         to.setId(from.getId());
         to.setName(from.getName());
+        to.setStructureId(from.getStructure().getId());
+        to.setStructureName(from.getStructure().getName());
         to.setUsedAsDefault(from.isUsedAsDefault());
         //searchTempl.setStyles(template.getStyles());
         to.setLanguage(from.getLanguage());

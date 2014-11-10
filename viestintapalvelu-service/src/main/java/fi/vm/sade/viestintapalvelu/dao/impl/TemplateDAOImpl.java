@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
@@ -58,7 +59,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         Template templ = new Template();
         try {
             templ = query.getSingleResult();
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             templ = null;
         }
         return templ;

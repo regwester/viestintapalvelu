@@ -37,8 +37,12 @@ public class Template{
     private boolean usedAsDefault;
     
     private String type;
-    
-	public List<TemplateContent> getContents() {
+
+    private Long structureId;
+
+    private String structureName;
+
+    public List<TemplateContent> getContents() {
         return contents;
     }    
 
@@ -156,6 +160,22 @@ public class Template{
 
     public void setUsedAsDefault(boolean usedAsDefault) {
         this.usedAsDefault = usedAsDefault;
+    }
+
+    public Long getStructureId() {
+        return structureId;
+    }
+
+    public void setStructureId(Long structureId) {
+        this.structureId = structureId;
+    }
+
+    public String getStructureName() {
+        return structureName;
+    }
+
+    public void setStructureName(String structureName) {
+        this.structureName = structureName;
     }
 
     @Override

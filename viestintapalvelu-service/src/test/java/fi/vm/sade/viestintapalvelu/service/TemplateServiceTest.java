@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.service;
 
 import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
+import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
@@ -50,11 +51,14 @@ public class TemplateServiceTest {
     private CurrentUserComponent mockedCurrentUserComponent;
     @Mock
     private DraftDAO mockedDraftDAO;
+    @Mock
+    private StructureDAO structureDAO;
     private TemplateService templateService;
 
     @Before
     public void setup() {
-        this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent, mockedDraftDAO);
+        this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent, mockedDraftDAO,
+                structureDAO);
     }
     
     @Test
