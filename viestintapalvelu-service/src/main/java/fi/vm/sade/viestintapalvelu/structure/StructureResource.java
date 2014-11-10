@@ -54,7 +54,8 @@ public class StructureResource {
     @GET
     @Path("/")
     @Produces("application/json;charset=utf-8")
-    @ApiOperation("Listaa uusimma rakenneversiot")
+    @ApiOperation(value = "Listaa uusimma rakenneversiot", response = StructureListDto.class,
+            responseContainer = "List")
     public List<StructureListDto> listLatestVersions() throws IOException {
         return structureService.findLatestStructuresVersionsForList();
     }
@@ -62,7 +63,7 @@ public class StructureResource {
     @GET
     @Path("/{id}")
     @Produces("application/json;charset=utf-8")
-    @ApiOperation("Hakee rakenteen tiedot id:llä")
+    @ApiOperation(value = "Hakee rakenteen tiedot id:llä", response = StructureViewDto.class)
     public StructureViewDto getStructureById(@ApiParam(value = "id", name = "Rakenteen id") @PathParam("id") long id) {
         return structureService.getStructure(id);
     }
@@ -70,7 +71,8 @@ public class StructureResource {
     @GET
     @Path("/{name}/{language}")
     @Produces("application/json;charset=utf-8")
-    @ApiOperation("Hakee viimeisimmän rakenteen tiedot nimellä ja kielellä")
+    @ApiOperation(value = "Hakee viimeisimmän rakenteen tiedot nimellä ja kielellä",
+            response = StructureViewDto.class)
     public StructureViewDto getStructureByNameAndLanguage(
             @ApiParam(value = "name", name = "Rakenteen nimi") @PathParam("name") String name,
             @ApiParam(value = "language", name = "Rakenteen kieli") @PathParam("language") String language) {
