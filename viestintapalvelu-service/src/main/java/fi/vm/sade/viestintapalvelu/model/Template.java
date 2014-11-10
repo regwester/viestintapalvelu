@@ -31,7 +31,7 @@ public class Template extends BaseEntity {
 
     private static final long serialVersionUID = 4178735997933155683L;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name="rakenne", nullable = false) // -- , updatable = false
     private Structure structure;
 

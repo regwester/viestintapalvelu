@@ -391,6 +391,11 @@ public class DocumentProviderTestData {
 
     public static Template getTemplate(Long id) {
         Template template = new Template();
+        Structure structure = new Structure();
+        structure.setName("test_structure");
+        structure.setLanguage("FI");
+        // TODO: create structure elements?
+        template.setStructure(structure);
         
         if (id != null) {
             template.setId(id);

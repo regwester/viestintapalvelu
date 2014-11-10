@@ -28,14 +28,14 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
  * Time: 10:26
  */
 @Entity
-@Table(name = "sisalto", schema = "kirjeet")
+@Table(name = "rakenne_sisalto", schema = "kirjeet")
 public class Content implements Serializable {
     private static final long serialVersionUID = 8808015115199460274L;
 
     @Id
     @Column(name = "id", nullable = false, updatable = false, unique = true)
-    @GeneratedValue(generator = "sisalto_id_seq")
-    @SequenceGenerator(name = "sisalto_id_seq", sequenceName = "sisalto_id_seq")
+    @GeneratedValue(generator = "rakenne_sisalto_id_seq")
+    @SequenceGenerator(name = "rakenne_sisalto_id_seq", sequenceName = "rakenne_sisalto_id_seq")
     private Long id;
 
     @Column(name="nimi", nullable = false, updatable = false, length = 255)

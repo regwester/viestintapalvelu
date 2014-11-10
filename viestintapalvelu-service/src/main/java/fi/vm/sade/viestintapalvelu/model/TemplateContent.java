@@ -22,7 +22,7 @@ import fi.vm.sade.generic.model.BaseEntity;
  */
 @Deprecated
 @Entity
-@Table(name = "vanha_sisalto", schema= "kirjeet")
+@Table(name = "sisalto", schema= "kirjeet")
 public class TemplateContent extends BaseEntity implements
         Comparable<TemplateContent> {
 

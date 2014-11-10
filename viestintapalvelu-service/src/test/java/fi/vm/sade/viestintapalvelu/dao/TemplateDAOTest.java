@@ -1,8 +1,7 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import java.util.List;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -14,7 +13,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
 
@@ -26,7 +27,7 @@ import static org.junit.Assert.*;
 public class TemplateDAOTest {
     @Autowired
     private TemplateDAO templateDAO;
-    
+
     @Test
     public void testFindTemplateByNameFound() {
         Template storedTemplate = DocumentProviderTestData.getTemplate(null);

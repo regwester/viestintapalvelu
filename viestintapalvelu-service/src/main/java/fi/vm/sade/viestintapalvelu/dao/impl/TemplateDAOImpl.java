@@ -23,17 +23,22 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
 
     @Override
     public Template insert(Template entity) {
-        // TODO: a temporal solution:
+        // TODO: a temporal solution: REMOVE ME (the whole method) after Structure building implemented in the app
         boolean oldStyle = false;
         if (entity.getStructure() == null) {
             oldStyle = true;
             // select a random template for the null constraint:
-            entity.setStructure(getEntityManager().createQuery("select s from Structure s order by s.id", Structure.class)
-                .setMaxResults(1).getResultList().get(0));
+            List<Structure> structures = getEntityManager().createQuery("select s from Structure s order by s.id", Structure.class)
+                    .setMaxResults(1).getResultList();
+            if (structures.isEmpty()) {
+                throw new IllegalStateException("No structure specified (and no existing structures in the system " +
+                        "allowing to perform an old style migration)");
+            }
+            entity.setStructure(structures.get(0));
         }
         super.insert(entity);
         if (oldStyle) {
-            // create the new template structure by old one:
+            // create the new template structure based on the old one:
             getEntityManager().createNativeQuery(
                 "update kirjeet.kirjepohja set rakenne = kirjeet.luoRakenneVanhastaPohjasta(id) where " +
                         " id = ?;").setParameter(1, entity.getId()).executeUpdate();
