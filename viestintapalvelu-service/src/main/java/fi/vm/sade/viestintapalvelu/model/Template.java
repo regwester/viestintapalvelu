@@ -31,6 +31,10 @@ public class Template extends BaseEntity {
 
     private static final long serialVersionUID = 4178735997933155683L;
 
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name="rakenne", nullable = false, updatable = false)
+    private Structure structure;
+
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
@@ -193,5 +197,13 @@ public class Template extends BaseEntity {
 
     protected void setApplicationPeriods(Set<TemplateApplicationPeriod> hakus) {
         this.applicationPeriods = hakus;
+    }
+
+    public Structure getStructure() {
+        return structure;
+    }
+
+    public void setStructure(Structure structure) {
+        this.structure = structure;
     }
 }

@@ -19,6 +19,12 @@
         <class>fi.vm.sade.viestintapalvelu.model.UsedTemplate</class>
         <class>fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod</class>
         <class>fi.vm.sade.viestintapalvelu.model.LetterReceiverLetterAttachment</class>
+        <class>fi.vm.sade.viestintapalvelu.model.Style</class>
+        <class>fi.vm.sade.viestintapalvelu.model.Structure</class>
+        <class>fi.vm.sade.viestintapalvelu.model.ContentStructure</class>
+        <class>fi.vm.sade.viestintapalvelu.model.ContentStructureContent</class>
+        <class>fi.vm.sade.viestintapalvelu.model.Content</class>
+        <class>fi.vm.sade.viestintapalvelu.model.ContentReplacement</class>
         
         <properties>
             <property name="hibernate.hbm2ddl.auto" value="create-drop"/>

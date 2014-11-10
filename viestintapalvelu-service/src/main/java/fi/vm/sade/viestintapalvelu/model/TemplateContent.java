@@ -20,9 +20,9 @@ import fi.vm.sade.generic.model.BaseEntity;
  ON UPDATE NO ACTION ON DELETE NO ACTION
  )
  */
-
-@Table(name = "sisalto", schema= "kirjeet")
-@Entity()
+@Deprecated
+@Entity
+@Table(name = "vanha_sisalto", schema= "kirjeet")
 public class TemplateContent extends BaseEntity implements
         Comparable<TemplateContent> {
 

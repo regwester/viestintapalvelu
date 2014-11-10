@@ -3,28 +3,28 @@
 alter table kirjeet.kaytetytpohjat alter column aikaleima type timestamp using date(now()) + aikaleima;
 
 -- Style
-create table kirjeet.tyyli(
-  nimi varchar(127) primary key, -- String name;
-  tyyli text not null, -- String cssContent;
-  aikaleima timestamp without time zone not null default now() -- Date timestamp = new Date()
+create table kirjeet.tyyli (
+  id serial8 primary key,
+  nimi varchar(127) not null,
+  tyyli text not null,
+  aikaleima timestamp without time zone not null default now()
 );
 
 -- Structure:
 create table kirjeet.rakenne (
   id serial8 primary key,
-  nimi varchar(511) not null, -- String name;
-  kielikoodi varchar(7) not null, -- String language;
-  aikaleima timestamp without time zone not null default now(), -- Date timestamp = new Date()
-  unique (nimi, kielikoodi)
+  nimi varchar(511) not null,
+  kielikoodi varchar(7) not null,
+  aikaleima timestamp without time zone not null default now()
 );
 
 -- ContentStructure
-create table kirjeet.sisalto_rakenne(
+create table kirjeet.sisalto_rakenne (
   id serial8 primary key,
-  rakenne int8 references kirjeet.rakenne(id) not null, -- Structure structure
-  tyyppi varchar(127) not null, -- ContentStructureType type : enum ContentStructureType { email, letter, asiointitili };
-  tyyli varchar(127) not null references kirjeet.tyyli(nimi), -- Style style
-  aikaleima timestamp without time zone not null default now(), -- Date timestamp = new Date()
+  rakenne int8 references kirjeet.rakenne(id) not null,
+  tyyppi varchar(127) not null,
+  tyyli int8 references kirjeet.tyyli(id),
+  aikaleima timestamp without time zone not null default now(),
   unique (rakenne, tyyppi)
 );
 alter table kirjeet.sisalto_rakenne add constraint sisalto_rakenne_tyyppi check(
@@ -34,21 +34,21 @@ alter table kirjeet.sisalto_rakenne add constraint sisalto_rakenne_tyyppi check(
 -- Content:
 create table kirjeet.sisalto_uusi (
   id serial8 primary key,
-  nimi character varying(255), -- String name;
-  aikaleima timestamp without time zone not null default now(), -- Date timestamp = new Date()
-  sisalto text, -- String content;
-  tyyppi character varying(63) -- ContentType contentType
+  nimi character varying(255),
+  sisalto text not null,
+  tyyppi character varying(63)
 );
 alter table kirjeet.sisalto_uusi add constraint sisalto_tyyppi check(
   tyyppi in ('plain', 'html')
 );
+alter sequence kirjeet.sisalto_uusi_id_seq rename to sisalto_id_seq;
 
 -- Liitostaulu: ContentStructureContent: ContentStructure - Content:
-create table kirjeet.sisalto_rakenne_sisalto(
+create table kirjeet.sisalto_rakenne_sisalto (
   sisalto_rakenne int8 references kirjeet.sisalto_rakenne(id) not null,
   sisalto int8 references  kirjeet.sisalto_uusi(id) not null,
   rooli varchar(64) not null,
-  jarjestys int not null, -- Integer orderNumber
+  jarjestys int not null,
   primary key (sisalto_rakenne, sisalto),
   unique (sisalto_rakenne, jarjestys)
 );
@@ -58,15 +58,18 @@ alter table kirjeet.sisalto_rakenne_sisalto add constraint sisalto_rakenne_sisal
 
 
 -- ContentReplacement:
-create table kirjeet.sisalto_korvauskentta(
+create table kirjeet.sisalto_korvauskentta (
   id serial8 primary key,
-  rakenne int8 references kirjeet.rakenne(id) not null, -- Structure structure;
-  avain varchar(127) not null,  -- String key;
-  nimi varchar(255) not null,   -- String name;
-  kuvaus text,                  -- String description;
-  jarjestys integer,            -- Integer orderNumber;
-  tyyppi varchar(63) not null,  -- ContentType contentType;
-  riveja integer not null default 1 -- int numberOfRows;
+  rakenne int8 references kirjeet.rakenne(id) not null,
+  avain varchar(127) not null,
+  nimi varchar(255) not null,
+  kuvaus text,
+  jarjestys integer not null,
+  tyyppi varchar(63) not null,
+  riveja integer not null default 1,
+  unique(rakenne, avain),
+  unique(rakenne, nimi),
+  unique(rakenne, jarjestys)
 );
 alter table kirjeet.sisalto_korvauskentta add constraint sisalto_korvauskentta_tyyppi check(
   tyyppi in ('plain', 'html')
@@ -74,11 +77,6 @@ alter table kirjeet.sisalto_korvauskentta add constraint sisalto_korvauskentta_t
 
 -- Template:
 alter table kirjeet.kirjepohja add column rakenne int8 references kirjeet.rakenne(id);
-alter table kirjeet.kirjepohja add column tila varchar(63); -- TemplateState state; enum TemplateStte { draft, published, closed };
-alter table kirjeet.kirjepohja add constraint kirjepohja_tila check(
-  tila in ('draft', 'published', 'closed')
-);
-
 
 -- BEGIN MIGRATE:
 create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns int8 as $$
@@ -90,11 +88,12 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
     LIITE_SISALTO_TYYPPI text := 'liite';
     rakenneId int8;
     tyyliNimi text;
+    tyyliId int8;
     sisaltoRakenneId int8;
     sisalto kirjeet.sisalto%rowtype;
     korvaukentta kirjeet.korvauskentat%rowtype;
     sisaltoJarjestysNro int := 0;
-    korvauskenttaJarjestys int := 11;
+    korvauskenttaJarjestys int := 100;
     kirjeTyyppinen bool;
     emailTyyppinen bool;
     sisaltoId int8;
@@ -103,7 +102,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
     select into vanhaPohja kp.* from kirjeet.kirjepohja kp where kp.id = _id;
     raise info 'Migratoidaan vanha pohja %', vanhaPohja.id;
     PAA_SISALTO_TYYPPI := vanhaPohja.nimi;
-    
+
     -- Luodaan rakenne:
     rakenneNimi := vanhaPohja.nimi || '_' || vanhaPohja.id; -- rakenteenkin osalta voisi olla muuttunut pohjien välillä (contentit erityisesti)
     insert into kirjeet.rakenne(nimi, kielikoodi, aikaleima) values (rakenneNimi, vanhaPohja.kielikoodi, vanhaPohja.aikaleima);
@@ -111,21 +110,21 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
     raise info ' > Rakenne=%', rakenneId;
 
     -- Luodaan vanhasta templatesta uusi Style-sisältö (yksilöinti vanhan kirjepohjan id:llä):
-    tyyliNimi := ('vanha_' || vanhaPohja.nimi || '_' || vanhaPohja.id);
-
+    tyyliNimi := ('vanha_' || vanhaPohja.nimi);
     insert into kirjeet.tyyli (nimi, tyyli) values (tyyliNimi, vanhaPohja.tyylit);
-    raise info ' > Tyyli %', tyyliNimi;
-    
+    tyyliId := (select max(id) from kirjeet.tyyli);
+    raise info ' > Tyyli % (%)', tyyliNimi, tyyliId;
+
     -- Tuodaan kaikki vanhat korvauskentät sellaisenaan:
     for korvaukentta in select kk.* from kirjeet.korvauskentat kk where kk.kirjepohja_id = _id order by kk.id loop
       raise info ' > Korvauskenttä % (%)', korvaukentta.nimi, korvaukentta.id;
       if korvaukentta.nimi = 'sisalto' then
         insert into kirjeet.sisalto_korvauskentta(rakenne, avain, nimi, kuvaus, jarjestys, tyyppi, riveja)
-          values (rakenneId, 'sisalto', 'Sisältö', 'Kirjeen ja sähköpostin pääsisältö', 10, 'html', 20);
+          values (rakenneId, 'sisalto', 'Sisältö', 'Kirjeen ja sähköpostin pääsisältö', 50, 'html', 20);
         raise info ' > Tulkittu sisällöksi';
       elseif korvaukentta.nimi = 'otsikko' then
         insert into kirjeet.sisalto_korvauskentta(rakenne, avain, nimi, kuvaus, jarjestys, tyyppi, riveja)
-          values (rakenneId, 'otsikko', 'Otsikko', 'Kirjeen ylätunnisteessa näkyvä otsikko', 1, 'plain', 1);
+          values (rakenneId, 'otsikko', 'Otsikko', 'Kirjeen ylätunnisteessa näkyvä otsikko', 10, 'plain', 1);
         raise info ' > Tulkittu otsikoksi';
       elseif korvaukentta.nimi = 'asiakirjatyyppi' then
         insert into kirjeet.sisalto_korvauskentta(rakenne, avain, nimi, kuvaus, jarjestys, tyyppi, riveja)
@@ -134,7 +133,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
         raise info ' > Tulkittu asiakirjatyypiksi';
       elseif korvaukentta.nimi = 'subject' then
         insert into kirjeet.sisalto_korvauskentta(rakenne, avain, nimi, kuvaus, jarjestys, tyyppi, riveja)
-          values (rakenneId, 'subject', 'Sähköpostin otsikko', 'Sähköpostiviestin otsikko', 3, 'plain', 1);
+          values (rakenneId, 'subject', 'Sähköpostin otsikko', 'Sähköpostiviestin otsikko', 30, 'plain', 1);
         raise info ' > Tulkittu sähköpostin otsikoksi';
       else
         raise info ' > Tulkittu muuksi korvaukentäksi, järjestysnumero: %', korvauskenttaJarjestys;
@@ -160,7 +159,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
         -- Joko kirje ei ole email-tyyyppinen tai kirjeestä löytyy kirjepohjan niminen sisältöosio ja se on email-tyyppinen,
         -- joten oletetaan, että tästä on tarkoitus luoda myös kirjeitä:
         insert into kirjeet.sisalto_rakenne(rakenne, tyyppi, tyyli)
-        values (rakenneId, 'letter', tyyliNimi);
+        values (rakenneId, 'letter', tyyliId);
         select into sisaltoRakenneId max(id) from kirjeet.sisalto_rakenne;
         raise info ' > Luotiin letter-sisältörakenne %', sisaltoRakenneId;
     
@@ -169,8 +168,8 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
                         order by s.jarjestys, s.id loop
           sisaltoJarjestysNro := sisaltoJarjestysNro+1;
           
-          insert into kirjeet.sisalto_uusi(nimi, aikaleima, sisalto, tyyppi)
-            values (sisalto.nimi, sisalto.aikaleima, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+          insert into kirjeet.sisalto_uusi(nimi, sisalto, tyyppi)
+            values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
           sisaltoJarjestysNro := case when sisalto.jarjestys is not null then greatest(sisalto.jarjestys, sisaltoJarjestysNro)
                                  else sisaltoJarjestysNro end;
           insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
@@ -182,14 +181,14 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
       if emailTyyppinen then 
         -- Kirjeestä löytyy email_body, eli tehdään siitä (myös) email-tyyppinen sisalto_rakenne:
         insert into kirjeet.sisalto_rakenne(rakenne, tyyppi, tyyli)
-            values (rakenneId, 'email', tyyliNimi);
+            values (rakenneId, 'email', tyyliId);
         select into sisaltoRakenneId max(id) from kirjeet.sisalto_rakenne;
         raise info ' > Luotiin email-sisältörakenne %', sisaltoRakenneId;
         
         -- Luodaan email_body sisältö ja linkitetään se:
         select into sisalto s.* from kirjeet.sisalto s where s.kirjepohja_id = _id and s.nimi = EMAI_POHJA_SISALTO_TYYPPI;
-        insert into kirjeet.sisalto_uusi(nimi, aikaleima, sisalto, tyyppi)
-            values (EMAI_POHJA_SISALTO_TYYPPI, sisalto.aikaleima, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+        insert into kirjeet.sisalto_uusi(nimi, sisalto, tyyppi)
+            values (EMAI_POHJA_SISALTO_TYYPPI, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
         sisaltoJarjestysNro := case when sisalto.jarjestys is not null then greatest(sisalto.jarjestys, sisaltoJarjestysNro+1)
                                else sisaltoJarjestysNro end;
         insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
@@ -211,8 +210,8 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
                     inner join kirjeet.rakenne r on r.id = _id and sr.rakenne = r.id
                     where s.nimi = sisalto.nimi;
             if sisaltoId is null then
-              insert into kirjeet.sisalto_uusi(nimi, aikaleima, sisalto, tyyppi)
-                values (sisalto.nimi, sisalto.aikaleima, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+              insert into kirjeet.sisalto_uusi(nimi, sisalto, tyyppi)
+                values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
               select into sisaltoId max(id) from kirjeet.sisalto_uusi;
               raise info ' > Luotiin uusi sisältö';
             else
@@ -241,8 +240,8 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
                   inner join kirjeet.rakenne r on r.id = _id and sr.rakenne = r.id
                 where s.nimi = sisalto.nimi;
               if sisaltoId is null then
-                insert into kirjeet.sisalto_uusi(nimi, aikaleima, sisalto, tyyppi)
-                  values (sisalto.nimi, sisalto.aikaleima, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+                insert into kirjeet.sisalto_uusi(nimi, sisalto, tyyppi)
+                  values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
                 select into sisaltoId max(id) from kirjeet.sisalto_uusi;
                 raise info ' > Luotiin uusi sisältö';
               else
@@ -268,9 +267,5 @@ update kirjeet.kirjepohja set rakenne = kirjeet.luoRakenneVanhastaPohjasta(id);
 alter table kirjeet.kirjepohja alter column rakenne set not null;
 alter table kirjeet.sisalto rename to vanha_sisalto;
 alter table kirjeet.sisalto_uusi rename to sisalto;
-
--- Oletetaan, että kaikki nykyiset olemassa olevat kirjepohjat ovat julkaistuja ja niitä ei voi siis enää muokata:
-update kirjeet.kirjepohja set tila = 'published';
-alter table kirjeet.kirjepohja alter column tila set not null;
 -- END MIGRATE
 
