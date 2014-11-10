@@ -388,11 +388,11 @@ public class DocumentProviderTestData {
         
         return template;
     }
-
-    public static Template getTemplate(Long id) {
+    
+    public static Template getTemplateWithGivenNamePrefix(Long id, String prefix) {
         Template template = new Template();
         Structure structure = new Structure();
-        structure.setName("test_structure");
+        structure.setName(prefix + "_structure");
         structure.setLanguage("FI");
         structure.setDescription("Structure description");
         // TODO: create structure elements?
@@ -403,7 +403,7 @@ public class DocumentProviderTestData {
         }
         
         template.setLanguage("FI");
-        template.setName("test_template");
+        template.setName(prefix + "_template");
         template.setOrganizationOid("1.2.246.562.10.00000000001");
         template.setStoringOid("1.2.246.562.24.00000000001");
         template.setStyles("test-styles");
@@ -421,6 +421,10 @@ public class DocumentProviderTestData {
         template.setReplacements(replacements);
         
         return template;
+    }
+
+    public static Template getTemplate(Long id) {
+        return getTemplateWithGivenNamePrefix(id, "test");
     }
 
     public static TemplateApplicationPeriod getTemplateHaku(Template template, String hakuOid) {
