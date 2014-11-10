@@ -5,26 +5,26 @@ alter table kirjeet.kaytetytpohjat alter column aikaleima type timestamp using d
 -- Style
 create table kirjeet.tyyli (
   id serial8 primary key,
-  nimi varchar(127) not null, -- String name;
-  tyyli text not null, -- String cssContent;
+  nimi varchar(127) not null,
+  tyyli text not null,
   aikaleima timestamp without time zone not null default now() -- Date timestamp = new Date()
 );
 
 -- Structure:
 create table kirjeet.rakenne (
   id serial8 primary key,
-  nimi varchar(511) not null, -- String name;
-  kielikoodi varchar(7) not null, -- String language;
+  nimi varchar(511) not null,
+  kielikoodi varchar(7) not null,
   aikaleima timestamp without time zone not null default now() -- Date timestamp = new Date()
 );
 
 -- ContentStructure
 create table kirjeet.sisalto_rakenne (
   id serial8 primary key,
-  rakenne int8 references kirjeet.rakenne(id) not null, -- Structure structure
-  tyyppi varchar(127) not null, -- ContentStructureType type : enum ContentStructureType { email, letter, asiointitili };
-  tyyli int8 references kirjeet.tyyli(id), -- Style style
-  aikaleima timestamp without time zone not null default now(), -- Date timestamp = new Date()
+  rakenne int8 references kirjeet.rakenne(id) not null,
+  tyyppi varchar(127) not null,
+  tyyli int8 references kirjeet.tyyli(id),
+  aikaleima timestamp without time zone not null default now(),
   unique (rakenne, tyyppi)
 );
 alter table kirjeet.sisalto_rakenne add constraint sisalto_rakenne_tyyppi check(
@@ -34,9 +34,9 @@ alter table kirjeet.sisalto_rakenne add constraint sisalto_rakenne_tyyppi check(
 -- Content:
 create table kirjeet.rakenne_sisalto (
   id serial8 primary key,
-  nimi character varying(255), -- String name;
-  sisalto text not null, -- String content;
-  tyyppi character varying(63) -- ContentType contentType
+  nimi character varying(255),
+  sisalto text not null,
+  tyyppi character varying(63)
 );
 alter table kirjeet.rakenne_sisalto add constraint sisalto_tyyppi check(
   tyyppi in ('plain', 'html')
@@ -47,7 +47,7 @@ create table kirjeet.sisalto_rakenne_sisalto (
   sisalto_rakenne int8 references kirjeet.sisalto_rakenne(id) not null,
   sisalto int8 references  kirjeet.rakenne_sisalto(id) not null,
   rooli varchar(64) not null,
-  jarjestys int not null, -- Integer orderNumber
+  jarjestys int not null,
   primary key (sisalto_rakenne, sisalto),
   unique (sisalto_rakenne, jarjestys)
 );
@@ -59,13 +59,13 @@ alter table kirjeet.sisalto_rakenne_sisalto add constraint sisalto_rakenne_sisal
 -- ContentReplacement:
 create table kirjeet.sisalto_korvauskentta (
   id serial8 primary key,
-  rakenne int8 references kirjeet.rakenne(id) not null, -- Structure structure;
-  avain varchar(127) not null,  -- String key;
-  nimi varchar(255) not null,   -- String name;
-  kuvaus text,                  -- String description;
-  jarjestys integer not null,            -- Integer orderNumber;
-  tyyppi varchar(63) not null,  -- ContentType contentType;
-  riveja integer not null default 1, -- int numberOfRows;
+  rakenne int8 references kirjeet.rakenne(id) not null,
+  avain varchar(127) not null,
+  nimi varchar(255) not null,
+  kuvaus text,
+  jarjestys integer not null,
+  tyyppi varchar(63) not null,
+  riveja integer not null default 1,
   unique(rakenne, avain),
   unique(rakenne, nimi),
   unique(rakenne, jarjestys)
@@ -206,19 +206,11 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
             sisaltoJarjestysNro := sisaltoJarjestysNro+1;
             raise info ' > Liiteen % sisältöosio', sisalto.nimi;
 
-            select into sisaltoId s.id from kirjeet.rakenne_sisalto s
-                    inner join kirjeet.sisalto_rakenne_sisalto srs on srs.sisalto = s.id
-                    inner join kirjeet.sisalto_rakenne sr on sr.id = srs.sisalto_rakenne
-                    inner join kirjeet.rakenne r on r.id = _id and sr.rakenne = r.id
-                    where s.nimi = sisalto.nimi;
-            if sisaltoId is null then
-              insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-                values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
-              select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
-              raise info ' > Luotiin uusi sisältö';
-            else
-              raise info ' > Sisältö-osio % löytyi jo tästä rakenteesta id:llä %', sisalto.nimi, sisaltoId;
-            end if;
+            insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
+              values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+            select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
+            raise info ' > Luotiin uusi sisältö %', sisaltoId;
+
             sisaltoJarjestysNro := case when sisalto.jarjestys is not null
                 then greatest(sisalto.jarjestys, sisaltoJarjestysNro) else sisaltoJarjestysNro end;
             insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
@@ -236,19 +228,11 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
               sisaltoJarjestysNro := sisaltoJarjestysNro+1;
               raise info ' > Liiteen % sisältöosio', sisalto.nimi;
 
-              select into sisaltoId min(s.id) from kirjeet.rakenne_sisalto s
-                  inner join kirjeet.sisalto_rakenne_sisalto srs on srs.sisalto = s.id
-                  inner join kirjeet.sisalto_rakenne sr on sr.id = srs.sisalto_rakenne
-                  inner join kirjeet.rakenne r on r.id = _id and sr.rakenne = r.id
-                where s.nimi = sisalto.nimi;
-              if sisaltoId is null then
-                insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-                  values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
-                select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
-                raise info ' > Luotiin uusi sisältö';
-              else
-                raise info ' > Sisältö-osio % löytyi jo tästä rakenteesta id:llä %', sisalto.nimi, sisaltoId;
-              end if;
+              insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
+                values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+              select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
+              raise info ' > Luotiin uusi sisältö %', sisaltoId;
+
               sisaltoJarjestysNro := case when sisalto.jarjestys is not null
                   then greatest(sisalto.jarjestys, sisaltoJarjestysNro) else sisaltoJarjestysNro end;
               insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)

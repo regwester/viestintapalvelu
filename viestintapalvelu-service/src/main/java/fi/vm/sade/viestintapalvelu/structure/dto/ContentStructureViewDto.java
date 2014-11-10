@@ -20,6 +20,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
 import fi.vm.sade.viestintapalvelu.model.ContentStructureContent;
@@ -29,11 +32,13 @@ import fi.vm.sade.viestintapalvelu.model.ContentStructureContent;
  * Date: 10.11.2014
  * Time: 14:24
  */
+@ApiModel("Rakennetyypin (esim. letter|email|asiointitili) sisältö")
 public class ContentStructureViewDto implements Serializable {
     private static final long serialVersionUID = 4909549781715757219L;
 
     private Long id;
     @DtoConversion
+    @ApiModelProperty("Rakenteen tyyppi: email|letter|asiointtili")
     private String type;
     private Long styleId;
     private String styleName;

@@ -22,6 +22,8 @@ import java.util.List;
 
 import org.joda.time.DateTime;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 
 /**
@@ -29,6 +31,7 @@ import fi.ratamaa.dtoconverter.annotation.DtoConversion;
  * Date: 10.11.2014
  * Time: 14:23
  */
+@ApiModel("Rakenne")
 public class StructureViewDto implements Serializable {
     private static final long serialVersionUID = -4413108416336072603L;
 
