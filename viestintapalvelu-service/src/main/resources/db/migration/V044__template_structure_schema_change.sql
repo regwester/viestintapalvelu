@@ -172,7 +172,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
           sisaltoJarjestysNro := sisaltoJarjestysNro+1;
 
           insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-            values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+            values (sisalto.nimi, sisalto.sisalto, 'html');
           sisaltoJarjestysNro := case when sisalto.jarjestys is not null then greatest(sisalto.jarjestys, sisaltoJarjestysNro)
                                  else sisaltoJarjestysNro end;
           insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
@@ -192,7 +192,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
         -- Luodaan email_body sisältö ja linkitetään se:
         select into sisalto s.* from kirjeet.sisalto s where s.kirjepohja_id = _id and s.nimi = EMAI_POHJA_SISALTO_TYYPPI;
         insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-            values (EMAI_POHJA_SISALTO_TYYPPI, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+            values (EMAI_POHJA_SISALTO_TYYPPI, sisalto.sisalto, 'html');
         sisaltoJarjestysNro := case when sisalto.jarjestys is not null then greatest(sisalto.jarjestys, sisaltoJarjestysNro+1)
                                else sisaltoJarjestysNro end;
         insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
@@ -209,7 +209,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
             raise info ' > Liiteen % sisältöosio', sisalto.nimi;
 
             insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-              values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+              values (sisalto.nimi, sisalto.sisalto, 'html');
             select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
             raise info ' > Luotiin uusi sisältö %', sisaltoId;
 
@@ -231,7 +231,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
               raise info ' > Liiteen % sisältöosio', sisalto.nimi;
 
               insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-                values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+                values (sisalto.nimi, sisalto.sisalto, 'html');
               select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
               raise info ' > Luotiin uusi sisältö %', sisaltoId;
 
