@@ -34,18 +34,7 @@ public class Template extends BaseEntity {
     private static final long serialVersionUID = 4178735997933155683L;
     
     public enum State {
-        DRAFT("luonnos"), CLOSED("suljettu"), PUBLISHED("julkaistu");
-        
-        private final String value;
-        
-        private State(String v) {
-            this.value = v;
-        }
-        
-        @Override
-        public String toString() {
-            return value;
-        }
+        luonnos, suljettu, julkaistu;
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -83,7 +72,7 @@ public class Template extends BaseEntity {
 
     @Enumerated(EnumType.STRING)
     @Column(name = "tila", nullable = false)
-    private State state = State.DRAFT;
+    private State state = State.luonnos;
     /**
      * Type email
      */

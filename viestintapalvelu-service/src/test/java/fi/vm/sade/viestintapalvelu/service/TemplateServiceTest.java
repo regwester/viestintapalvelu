@@ -262,19 +262,19 @@ public class TemplateServiceTest {
     @Test
     public void fetchesOnlyPublishedTemplatesByDefault() {
         templateService.getTemplateNamesList();
-        verify(mockedTemplateDAO).getAvailableTemplatesByType(State.PUBLISHED);
+        verify(mockedTemplateDAO).getAvailableTemplatesByType(State.julkaistu);
     }
     
     @Test
     public void fetchesOnlyClosedTemplates() {
-        templateService.getTemplateNamesListByState(State.CLOSED);
-        verify(mockedTemplateDAO).getAvailableTemplatesByType(State.CLOSED);
+        templateService.getTemplateNamesListByState(State.suljettu);
+        verify(mockedTemplateDAO).getAvailableTemplatesByType(State.suljettu);
     }
     
     @Test
     public void fetchesOnlyDrafts() {
-        templateService.getTemplateNamesListByState(State.PUBLISHED);
-        verify(mockedTemplateDAO).getAvailableTemplatesByType(State.PUBLISHED);
+        templateService.getTemplateNamesListByState(State.julkaistu);
+        verify(mockedTemplateDAO).getAvailableTemplatesByType(State.julkaistu);
     }
 
 

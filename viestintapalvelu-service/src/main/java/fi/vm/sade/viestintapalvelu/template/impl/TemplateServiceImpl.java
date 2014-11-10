@@ -103,7 +103,7 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public List<String> getTemplateNamesList() {
-        return getTemplateNamesListByState(State.PUBLISHED);
+        return getTemplateNamesListByState(State.julkaistu);
     }
     
     /* (non-Javadoc)
