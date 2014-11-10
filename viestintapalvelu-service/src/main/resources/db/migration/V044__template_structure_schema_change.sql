@@ -88,7 +88,7 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
     LIITE_SISALTO_TYYPPI text := 'liite';
     rakenneId int8;
     tyyliNimi text;
-    tyyliId int8;
+    tyyliId int8 := null;
     sisaltoRakenneId int8;
     sisalto kirjeet.sisalto%rowtype;
     korvaukentta kirjeet.korvauskentat%rowtype;
@@ -111,10 +111,12 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
     raise info ' > Rakenne=%', rakenneId;
 
     -- Luodaan vanhasta templatesta uusi Style-sisältö (yksilöinti vanhan kirjepohjan id:llä):
-    tyyliNimi := ('vanha_' || vanhaPohja.nimi);
-    insert into kirjeet.tyyli (nimi, tyyli) values (tyyliNimi, vanhaPohja.tyylit);
-    tyyliId := (select max(id) from kirjeet.tyyli);
-    raise info ' > Tyyli % (%)', tyyliNimi, tyyliId;
+    if vanhaPohja.tyylit is not null then
+      tyyliNimi := ('vanha_' || vanhaPohja.nimi);
+      insert into kirjeet.tyyli (nimi, tyyli) values (tyyliNimi, vanhaPohja.tyylit);
+      tyyliId := (select max(id) from kirjeet.tyyli);
+      raise info ' > Tyyli % (%)', tyyliNimi, tyyliId;
+    end if;
 
     -- Tuodaan kaikki vanhat korvauskentät sellaisenaan:
     for korvaukentta in select kk.* from kirjeet.korvauskentat kk where kk.kirjepohja_id = _id order by kk.id loop
