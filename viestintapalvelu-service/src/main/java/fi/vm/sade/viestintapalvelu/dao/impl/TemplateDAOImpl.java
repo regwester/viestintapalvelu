@@ -1,22 +1,48 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
-import org.springframework.stereotype.Repository;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
-import java.util.ArrayList;
-import java.util.List;
+
+import org.springframework.stereotype.Repository;
+
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 
 @Repository
 public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         implements TemplateDAO {
+
+    @Override
+    public Template insert(Template entity) {
+        // TODO: a temporal solution:
+        boolean oldStyle = false;
+        if (entity.getStructure() == null) {
+            oldStyle = true;
+            // select a random template for the null constraint:
+            entity.setStructure(getEntityManager().createQuery("select s from Structure s order by s.id", Structure.class)
+                .setMaxResults(1).getResultList().get(0));
+        }
+        super.insert(entity);
+        if (oldStyle) {
+            // create the new template structure by old one:
+            getEntityManager().createNativeQuery(
+                "update kirjeet.kirjepohja set rakenne = kirjeet.luoRakenneVanhastaPohjasta(id) where " +
+                        " id = ?;").setParameter(1, entity.getId()).executeUpdate();
+            entity.setStructure(getEntityManager()
+                    .createQuery("select t.structure from Template t where t.id=:id", Structure.class)
+                    .setParameter("id", entity.getId()).getResultList().get(0));
+        }
+        return entity;
+    }
 
     @Override
     public Template findTemplate(TemplateCriteria criteria) {

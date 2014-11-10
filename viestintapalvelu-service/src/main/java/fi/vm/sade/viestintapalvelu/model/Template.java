@@ -32,7 +32,7 @@ public class Template extends BaseEntity {
     private static final long serialVersionUID = 4178735997933155683L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name="rakenne", nullable = false, updatable = false)
+    @JoinColumn(name="rakenne", nullable = false) // -- , updatable = false
     private Structure structure;
 
     @Column(name = "aikaleima", nullable = false)
