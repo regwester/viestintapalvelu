@@ -62,9 +62,9 @@ angular.module('core')
                     templateUrl: templateUrl + 'overview.html',
                     controller: 'LetterTemplateListCtrl'
                 })
-                .state('test', { // TODO: rename
-                    url: "/test",
-                    templateUrl: templateUrl+"test.html",
+                .state('templateTreeList', {
+                    url: "/templateTreeList",
+                    templateUrl: templateUrl+"templateTreeList.html",
                     controller: "TemplateController"
                 })
                 .state('letter_reports', {
