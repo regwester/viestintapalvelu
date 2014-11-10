@@ -174,10 +174,10 @@ public class TemplateDAOTest {
     public void returnsTemplatesUsingType() {
         String templateNamePrefix = "suljettu";
         Template closedTemplate = DocumentProviderTestData.getTemplateWithGivenNamePrefix(null, templateNamePrefix);
-        closedTemplate.setState(State.CLOSED);
+        closedTemplate.setState(State.suljettu);
         templateDAO.insert(closedTemplate);
         templateDAO.insert(DocumentProviderTestData.getTemplate(null));
-        List<String> availableTemplates = templateDAO.getAvailableTemplatesByType(State.CLOSED);
+        List<String> availableTemplates = templateDAO.getAvailableTemplatesByType(State.suljettu);
         assertEquals(1, availableTemplates.size());
         assertTrue(availableTemplates.get(0).contains(templateNamePrefix));
         assertTrue(availableTemplates.get(0).contains(closedTemplate.getLanguage()));
