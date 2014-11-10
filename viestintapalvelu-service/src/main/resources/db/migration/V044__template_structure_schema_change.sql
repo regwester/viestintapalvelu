@@ -206,19 +206,11 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
             sisaltoJarjestysNro := sisaltoJarjestysNro+1;
             raise info ' > Liiteen % sisältöosio', sisalto.nimi;
 
-            select into sisaltoId s.id from kirjeet.rakenne_sisalto s
-                    inner join kirjeet.sisalto_rakenne_sisalto srs on srs.sisalto = s.id
-                    inner join kirjeet.sisalto_rakenne sr on sr.id = srs.sisalto_rakenne
-                    inner join kirjeet.rakenne r on r.id = _id and sr.rakenne = r.id
-                    where s.nimi = sisalto.nimi;
-            if sisaltoId is null then
-              insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-                values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
-              select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
-              raise info ' > Luotiin uusi sisältö';
-            else
-              raise info ' > Sisältö-osio % löytyi jo tästä rakenteesta id:llä %', sisalto.nimi, sisaltoId;
-            end if;
+            insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
+              values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+            select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
+            raise info ' > Luotiin uusi sisältö %', sisaltoId;
+
             sisaltoJarjestysNro := case when sisalto.jarjestys is not null
                 then greatest(sisalto.jarjestys, sisaltoJarjestysNro) else sisaltoJarjestysNro end;
             insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
@@ -236,19 +228,11 @@ create or replace function kirjeet.luoRakenneVanhastaPohjasta (_id int8) returns
               sisaltoJarjestysNro := sisaltoJarjestysNro+1;
               raise info ' > Liiteen % sisältöosio', sisalto.nimi;
 
-              select into sisaltoId min(s.id) from kirjeet.rakenne_sisalto s
-                  inner join kirjeet.sisalto_rakenne_sisalto srs on srs.sisalto = s.id
-                  inner join kirjeet.sisalto_rakenne sr on sr.id = srs.sisalto_rakenne
-                  inner join kirjeet.rakenne r on r.id = _id and sr.rakenne = r.id
-                where s.nimi = sisalto.nimi;
-              if sisaltoId is null then
-                insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
-                  values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
-                select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
-                raise info ' > Luotiin uusi sisältö';
-              else
-                raise info ' > Sisältö-osio % löytyi jo tästä rakenteesta id:llä %', sisalto.nimi, sisaltoId;
-              end if;
+              insert into kirjeet.rakenne_sisalto(nimi, sisalto, tyyppi)
+                values (sisalto.nimi, sisalto.sisalto, coalesce(sisalto.tyyppi, 'html'));
+              select into sisaltoId max(id) from kirjeet.rakenne_sisalto;
+              raise info ' > Luotiin uusi sisältö %', sisaltoId;
+
               sisaltoJarjestysNro := case when sisalto.jarjestys is not null
                   then greatest(sisalto.jarjestys, sisaltoJarjestysNro) else sisaltoJarjestysNro end;
               insert into kirjeet.sisalto_rakenne_sisalto(sisalto_rakenne, rooli, sisalto, jarjestys)
