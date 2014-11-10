@@ -3,6 +3,8 @@
 angular.module('letter-templates')
     .controller('TemplateController', ['$scope', '$state', 'templateService', function($scope, $state, templateService) {
 
+        $scope.applicationPeriodList = [];
+        $scope.selectedApplicationPeriod = "Select one";
         $scope.col_defs = [
             { field: "lang", displayName: "Kieli"},
             { field: "status", displayName: "Tila"}
@@ -11,6 +13,14 @@ angular.module('letter-templates')
         $scope.placeholder_valitse_haku = "Valitse haku";
 
         $scope.my_tree_handler = function(branch){
+        }
+
+        $scope.updateTreeData = function(applicationPeriod) {
+            console.log(applicationPeriod);
+            templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
+                console.log("then success");
+                console.log(response);
+            });
         }
 
         $scope.test_tree_data = [
@@ -62,15 +72,9 @@ angular.module('letter-templates')
             ]}
         ];
 
-
-        $scope.init = function() {
-        };
-
-
-        $scope.updateTestData = function () {
-            //var oid = "1.2.246.562.24.72453542949";
-            //var templatesByOID = templateService.listByApplicationPeriod.get({applicationPeriod:oid});
-            //console.log(templatesByOID);
-            $scope.testData = Math.random();
-        }
+        templateService.getHakus().success(function(data) {
+            console.log(data);
+            $scope.applicationPeriodList = data;
+            console.log($scope.applicationPeriodList);
+        });
 }]);
