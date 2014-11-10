@@ -44,6 +44,10 @@ public class Structure implements Serializable {
     @Column(name="nimi", nullable = false, updatable = false, length = 511)
     private String name;
 
+    // The description text for UI, only the structures with description are to be selectable in he UI
+    @Column(name="kuvaus", updatable = false, length = 511)
+    private String description;
+
     @Column(name="kielikoodi", nullable = false, updatable = false, length = 7)
     private String language;
 
@@ -81,6 +85,14 @@ public class Structure implements Serializable {
 
     public void setLanguage(String language) {
         this.language = language;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public Date getTimestamp() {

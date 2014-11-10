@@ -14,24 +14,25 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.dao;
+package fi.vm.sade.viestintapalvelu.structure;
 
-import java.sql.Struct;
 import java.util.List;
 
-import com.google.common.base.Optional;
+import javax.ws.rs.NotFoundException;
 
-import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
-import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
 
 /**
  * User: ratamaa
  * Date: 10.11.2014
- * Time: 13:18
+ * Time: 14:18
  */
-public interface StructureDAO extends JpaDAO<Structure, Long> {
+public interface StructureService {
+
     List<StructureListDto> findLatestStructuresVersionsForList();
 
-    Optional<Structure> findLatestStructrueByNameAndLanguage(String name, String language);
+    StructureViewDto getStructure(long id) throws NotFoundException;
+
+    StructureViewDto getLatestStructureByNameAndLanguage(String name, String language) throws NotFoundException;
 }
