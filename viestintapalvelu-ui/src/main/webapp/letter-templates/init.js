@@ -1,3 +1,5 @@
 'use strict';
 
-angular.module('letter-templates', []);
+var modules = ['treeGrid'];
+
+angular.module('letter-templates', modules);
