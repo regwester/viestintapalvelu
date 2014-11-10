@@ -388,7 +388,7 @@ public class TemplateServiceImpl implements TemplateService {
             fi.vm.sade.viestintapalvelu.template.Template dto = convertBasicData(template,
                     new fi.vm.sade.viestintapalvelu.template.Template());
             if (periods) {
-                covnertApplicationPeriods(template, dto);
+                convertApplicationPeriods(template, dto);
             }
             if (content) {
                 convertReplacements(template, dto);
@@ -472,7 +472,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     // TODO: move to separate DTO converter:
-    private fi.vm.sade.viestintapalvelu.template.Template covnertApplicationPeriods(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
+    private fi.vm.sade.viestintapalvelu.template.Template convertApplicationPeriods(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
         List<String> periods = new ArrayList<String>();
         for (TemplateApplicationPeriod applicationPeriod : from.getApplicationPeriods()) {
             periods.add(applicationPeriod.getId().getApplicationPeriod());
