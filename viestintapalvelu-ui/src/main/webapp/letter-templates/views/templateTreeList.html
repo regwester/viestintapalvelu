@@ -22,11 +22,7 @@
 <div class="container-fluid">
     <h1>Kirjepohjat ja -luonnokset</h1>
     <div class="control-group">
-        <select class="selectpicker span6 placeholder">
-            <option selected disabled>{{placeholder_valitse_haku}}</option>
-            <option>Mustard</option>
-            <option>Ketchup Ketchup Ketchup Ketchup Ketchup Ketchup Ketchup Ketchup </option>
-            <option>Relish Relish Relish Relish Relish </option>
+        <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.nimi.kieli_fi for Object in applicationPeriodList" class="selectpicker span6 placeholder">
         </select>
     </div>
     <tabset>

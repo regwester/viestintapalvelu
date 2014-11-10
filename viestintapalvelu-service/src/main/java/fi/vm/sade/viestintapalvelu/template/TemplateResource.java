@@ -16,6 +16,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,6 +48,9 @@ public class TemplateResource extends AsynchronousResource {
 
     @Autowired
     private LetterService letterService;
+
+    @Autowired
+    TarjontaComponent tarjontaComponent;
 
     @Autowired
     private UserRightsValidator userRightsValidator;
@@ -565,12 +570,23 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Produces("application/json")
+    @Path("/haku")
+    public List<HakuDetailsDto> getHakus() {
+        List<HakuDetailsDto> hakus = tarjontaComponent.findPublisehedHakus(100);
+        return hakus;
+    }
+
+    @GET
+    @Produces("application/json")
     @Path("/listByApplicationPeriod/{applicationPeriod}")
-    public Collection<Template> getTemplatesByApplicationPeriod(
+    public List<Template> getTemplatesByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
-        List<Template> byApplicationPeriod = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
-        return byApplicationPeriod;
+
+        List<Template> templates = new ArrayList<Template>();
+
+
+        return templates;
     }
 
 }

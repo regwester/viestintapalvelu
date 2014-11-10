@@ -1,15 +1,18 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('templateService', ['$resource', '$http', function($resource, $http) {
+    .factory('templateService', ['$resource', '$http', function ($resource, $http) {
 
-    var baseUrl = '/viestintapalvelu-service/api/v1/template/';
+        var baseUrl = '/viestintapalvelu-service/api/v1/template/';
 
+        return {
 
-    return {
-        listByApplicationPeriod: $resource(baseUrl+"listByApplicationPeriod/:applicationPeriod",
-            {applicationPeriod: '@applicationPeriod'}),
+            getHakus: function() {
+                return $http.get(baseUrl + 'haku');
+            },
 
-        status: $resource(baseUrl + 'status')
-    };
-}]);
+            getByApplicationPeriod: function (applicationPeriod) {
+                return $http.get(baseUrl + 'listByApplicationPeriod/' + applicationPeriod);
+            }
+        };
+    }]);
