@@ -19,18 +19,27 @@ package fi.vm.sade.viestintapalvelu.dao.dto;
 import java.io.Serializable;
 import java.util.Date;
 
+import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
 /**
  * User: ratamaa
  * Date: 10.11.2014
  * Time: 14:12
  */
+@ApiModel("Rakenteen tiedot")
 public class StructureListDto implements Serializable {
     private static final long serialVersionUID = 4439159936778931284L;
 
+    @ApiModelProperty("ID")
     private Long id;
+    @ApiModelProperty("Kuvaus (käyttöliittymässä näytettävä)")
     private String description;
+    @ApiModelProperty("Nimi, yksilöivä")
     private String name;
+    @ApiModelProperty("Kielikoodi")
     private String language;
+    @ApiModelProperty("Luontiaika")
     private Date timestamp;
 
     public StructureListDto() {
