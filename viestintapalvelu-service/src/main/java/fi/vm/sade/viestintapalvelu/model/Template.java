@@ -3,9 +3,11 @@ package fi.vm.sade.viestintapalvelu.model;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
 import fi.vm.sade.generic.model.BaseEntity;
 
 import javax.persistence.*;
+
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -30,7 +32,22 @@ import java.util.Set;
 public class Template extends BaseEntity {
 
     private static final long serialVersionUID = 4178735997933155683L;
-
+    
+    public enum State {
+        DRAFT("luonnos"), CLOSED("suljettu"), PUBLISHED("julkaistu");
+        
+        private final String value;
+        
+        private State(String v) {
+            this.value = v;
+        }
+        
+        @Override
+        public String toString() {
+            return value;
+        }
+    }
+    
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
@@ -59,7 +76,9 @@ public class Template extends BaseEntity {
 
     @Column(name = "oletuspohja", nullable = false)
     private boolean usedAsDefault = false;
-
+    
+    @Column(name = "tila", nullable = false)
+    private State state = State.DRAFT;
     /**
      * Type email
      */
@@ -193,5 +212,13 @@ public class Template extends BaseEntity {
 
     protected void setApplicationPeriods(Set<TemplateApplicationPeriod> hakus) {
         this.applicationPeriods = hakus;
+    }
+    
+    public State getState() {
+        return state;
+    }
+    
+    public void setState(State state) {
+        this.state = state;
     }
 }
