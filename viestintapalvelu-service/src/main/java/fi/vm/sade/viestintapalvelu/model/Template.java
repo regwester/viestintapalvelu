@@ -80,7 +80,8 @@ public class Template extends BaseEntity {
 
     @Column(name = "oletuspohja", nullable = false)
     private boolean usedAsDefault = false;
-    
+
+    @Enumerated(EnumType.STRING)
     @Column(name = "tila", nullable = false)
     private State state = State.DRAFT;
     /**
