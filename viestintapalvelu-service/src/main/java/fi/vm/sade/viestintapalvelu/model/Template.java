@@ -29,22 +29,6 @@ import java.util.Set;
 @Entity(name = "Template")
 public class Template extends BaseEntity {
 
-    public Set<TemplateContent> getContents() {
-        return contents;
-    }
-
-    public void setContents(Set<TemplateContent> contents) {
-        this.contents = contents;
-    }
-
-    public Set<Replacement> getReplacements() {
-        return replacements;
-    }
-
-    public void setReplacements(Set<Replacement> replacements) {
-        this.replacements = replacements;
-    }
-
     private static final long serialVersionUID = 4178735997933155683L;
 
     @Column(name = "aikaleima", nullable = false)
@@ -86,15 +70,6 @@ public class Template extends BaseEntity {
      */
     public static final String TYPE_DOC = "doc";
 
-    
-    public String getStyles() {
-        return styles;
-    }
-
-    public void setStyles(String styles) {
-        this.styles = styles;
-    }
-
     @Column(name = "oid_tallentaja", nullable = true)
     private String storingOid;
 
@@ -118,6 +93,14 @@ public class Template extends BaseEntity {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
+    }
+    
+    public String getStyles() {
+        return styles;
+    }
+    
+    public void setStyles(String styles) {
+        this.styles = styles;
     }
 
     public String getName() {
@@ -190,6 +173,22 @@ public class Template extends BaseEntity {
 
     public void setUsedAsDefault(boolean defaultTemplate) {
         this.usedAsDefault = defaultTemplate;
+    }
+    
+    public Set<TemplateContent> getContents() {
+        return contents;
+    }
+    
+    public void setContents(Set<TemplateContent> contents) {
+        this.contents = contents;
+    }
+    
+    public Set<Replacement> getReplacements() {
+        return replacements;
+    }
+    
+    public void setReplacements(Set<Replacement> replacements) {
+        this.replacements = replacements;
     }
 
     protected void setApplicationPeriods(Set<TemplateApplicationPeriod> hakus) {
