@@ -1,11 +1,19 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('LetterTemplateListCtrl', ['$scope',
-        function($scope) {
+    .controller('LetterTemplateListCtrl', ['$scope', '$modal',
+        function($scope, $modal) {
 
             $scope.radioSelection;
             $scope.applicationTarget;
+
+            $scope.openCreateDialog = function(){
+                $modal.open({
+                    size: 'lg',
+                    templateUrl: 'letter-templates/views/partials/create.html',
+                    controller: 'TemplateDialogCtrl'
+                });
+            };
 
             $scope.letterTypes = [
                 {
