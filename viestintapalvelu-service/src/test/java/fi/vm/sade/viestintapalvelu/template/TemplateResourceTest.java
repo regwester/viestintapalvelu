@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.template;
 import java.lang.reflect.Field;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.BadRequestException;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -21,8 +22,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import static org.mockito.Mockito.when;
-
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -36,9 +35,9 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
+import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TemplateResourceTest.Config.class)
@@ -108,6 +107,15 @@ public class TemplateResourceTest {
 
         resource.store(template);
         assertEquals(0, resource.templateNames().size());
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void strucureShouldBeValidated() throws Exception {
+        Template template = DocumentProviderTestData.getTemplate();
+        template.setStructureId(null);
+        template.setStructureName(null);
+        template.setStructure(new StructureSaveDto());
+        resource.store(template);
     }
 
     @Test
