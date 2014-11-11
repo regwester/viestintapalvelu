@@ -30,12 +30,14 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.structure.dto.constraint.ValidContentStructure;
 
 /**
  * User: ratamaa
  * Date: 11.11.2014
  * Time: 10:02
  */
+@ValidContentStructure
 @ApiModel("Kuvaa rakenteen kirjettä, sähköpostia tai asiointitiliä varten.")
 public class ContentStructureSaveDto implements Serializable {
     private static final long serialVersionUID = 4210603060735538525L;

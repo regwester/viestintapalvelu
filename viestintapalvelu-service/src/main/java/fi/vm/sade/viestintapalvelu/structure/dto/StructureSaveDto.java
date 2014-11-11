@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -46,10 +47,12 @@ public class StructureSaveDto implements Serializable {
     @ApiModelProperty("Rakenteen kuvaus, joka näytetään käyttöliittymässä rakenteen valinnassa")
     private String description;
     @ApiModelProperty("Sisältörakenteet eri esitystavoille")
-    @DtoConversion @Valid
+    @Valid @NotNull @Size(min=1)
+    @DtoConversion
     private List<ContentStructureSaveDto> contentStructures = new ArrayList<ContentStructureSaveDto>();
     @ApiModelProperty("Rakenteessa käytettävät korvaukentät niiden esitysjärjestyksessä")
-    @DtoConversion(exported = false) @Valid
+    @Valid @NotNull
+    @DtoConversion(exported = false)
     private List<ContentReplacementSaveDto> replacements = new ArrayList<ContentReplacementSaveDto>();
 
     public String getName() {

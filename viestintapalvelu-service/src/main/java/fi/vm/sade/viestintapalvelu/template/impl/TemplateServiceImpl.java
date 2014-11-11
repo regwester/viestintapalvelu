@@ -22,9 +22,11 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
 import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
 
 @Service
 @Transactional
@@ -33,14 +35,16 @@ public class TemplateServiceImpl implements TemplateService {
     private TemplateDAO templateDAO;
     private DraftDAO draftDAO;
     private StructureDAO structureDAO;
+    private StructureService structureService;
 
     @Autowired
     public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO,
-                               StructureDAO structureDAO) {
+                               StructureDAO structureDAO, StructureService structureService) {
         this.templateDAO = templateDAO;
         this.currentUserComponent = currentUserComponent;
         this.draftDAO = draftDAO;
         this.structureDAO = structureDAO;
+        this.structureService = structureService;
     }
 
     /* (non-Javadoc)
@@ -148,9 +152,42 @@ public class TemplateServiceImpl implements TemplateService {
                 && template.getLanguage() != null) {
             model.setStructure(structureDAO.findLatestStructrueByNameAndLanguage(template.getStructureName(),
                     template.getLanguage()).orNull());
+        } else if (template.getStructure() != null) {
+            // new structure:
+            long structureId = structureService.storeStructure(template.getStructure());
+            template.setStructureId(structureId);
+            model.setStructure(structureDAO.read(structureId));
+        }
+        // TODO: remove the if and throw an exception if not (current template JSONs do not contain structures)
+        if (model.getStructure() != null) {
+            validateTemplateAgainstStructure(template, model.getStructure());
         }
         updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         storeTemplate(model);
+    }
+
+    private void validateTemplateAgainstStructure(fi.vm.sade.viestintapalvelu.template.Template template, Structure structure) {
+        if (!structure.getLanguage().equalsIgnoreCase(template.getLanguage())) {
+            throw BeanValidatorImpl.badRequest("Template language "+template.getLanguage() + " differs from "
+                + " structure (id="+structure.getId()+") language " + structure.getLanguage());
+        }
+        for (ContentReplacement contentReplacement : structure.getReplacements()) {
+            fi.vm.sade.viestintapalvelu.template.Replacement replacement
+                    = getReplacement(contentReplacement.getKey(), template.getReplacements());
+            if (replacement == null) {
+                throw BeanValidatorImpl.badRequest("Template does not contain replacement "+contentReplacement.getKey());
+            }
+            // Content validated against content type?
+        }
+    }
+
+    private fi.vm.sade.viestintapalvelu.template.Replacement getReplacement(String key, List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements) {
+        for (fi.vm.sade.viestintapalvelu.template.Replacement replacement : replacements) {
+            if (key.equals(replacement.getName())) {
+                return replacement;
+            }
+        }
+        return null;
     }
 
     @Override

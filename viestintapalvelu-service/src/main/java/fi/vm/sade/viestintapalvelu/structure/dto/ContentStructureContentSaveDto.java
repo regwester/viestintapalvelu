@@ -54,6 +54,16 @@ public class ContentStructureContentSaveDto implements Serializable {
     @DtoPath("content.content")
     private String content;
 
+    public ContentStructureContentSaveDto() {
+    }
+
+    public ContentStructureContentSaveDto(ContentRole role, String name, ContentType contentType, String content) {
+        this.role = role;
+        this.name = name;
+        this.contentType = contentType;
+        this.content = content;
+    }
+
     public ContentRole getRole() {
         return role;
     }
@@ -84,5 +94,15 @@ public class ContentStructureContentSaveDto implements Serializable {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    @Override
+    public String toString() {
+        return "ContentStructureContentSaveDto{" +
+                "role=" + role +
+                ", name='" + name + '\'' +
+                ", contentType=" + contentType +
+                ", content='" + content + '\'' +
+                '}';
     }
 }
