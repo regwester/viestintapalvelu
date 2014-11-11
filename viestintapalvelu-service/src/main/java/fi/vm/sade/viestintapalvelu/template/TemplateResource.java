@@ -288,6 +288,25 @@ public class TemplateResource extends AsynchronousResource {
                 parseBoolean(request, "content"),
                 parseBoolean(request, "periods"));
     }
+    
+    @GET
+    @Path("/listVersionsByName/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = ApitemplateVersionsByName, notes = ApitemplateVersionsByName, response = Template.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "periods", value = "YES, jos halutaan, että palautetaan myös viestiin liittyvät haut (OID:t).", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "Kirjepohja tyyppi (doc, email)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query")})
+    public List<Template> listVersionsByNameUsingState(@Context HttpServletRequest request, @ApiParam(name = "state", value = "kirjepohjan tila, millä haetaan") @PathParam("state") State state) throws IOException, DocumentException {
+        return templateService.listTemplateVersionsByName(templateCriteriaParams(request).withState(state),
+                parseBoolean(request, "content"),
+                parseBoolean(request, "periods"));
+    }
 
     @POST
     @Path("/store")

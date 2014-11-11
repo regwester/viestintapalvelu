@@ -2,10 +2,13 @@ package fi.vm.sade.viestintapalvelu.template;
 
 import java.lang.reflect.Field;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvnet.hk2.annotations.Service;
+import org.mockito.Mockito;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +20,8 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.mockito.Mockito.when;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
@@ -33,6 +38,7 @@ import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TemplateResourceTest.Config.class)
@@ -48,8 +54,6 @@ public class TemplateResourceTest {
     
     @Autowired
     private TransactionalActions actions;
-    
-    private Structure structure;
     
     @Before
     public void before() throws Exception {
@@ -67,20 +71,18 @@ public class TemplateResourceTest {
     
     @Test
     public void insertsTemplate() throws Exception {
-        structure = actions.createStructure();
         assertNotNull(resource.store(givenTemplateWithStructure()));
     }
     
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
-        structure = actions.createStructure();
         resource.store(givenTemplateWithStructure());
         assertEquals(0, resource.templateNames().size());
     }
 
     @Test
     public void storesStructureRelationByName() throws Exception {
-        structure = actions.createStructure();
+        Structure structure = actions.createStructure();
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(structure.getName());
@@ -110,12 +112,34 @@ public class TemplateResourceTest {
 
     @Test
     public void returnsTemplateNamesThatAreInDraftState() throws Exception {
-        structure = actions.createStructure();
         resource.store(givenTemplateWithStructure());
         assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
     
+    @Test
+    public void doesNotReturnTemplatesThatAreNotPublished() throws Exception {
+        Template template = givenTemplateWithStructure();
+        resource.store(template);
+        assertTrue(resource.listVersionsByName(constructRequest(template)).isEmpty());
+    }
+    
+    @Test
+    public void returnsTemplatesThatAreInDraftState() throws Exception {
+        Template template = givenTemplateWithStructure();
+        resource.store(template);
+        assertEquals(1, resource.listVersionsByNameUsingState(constructRequest(template), State.luonnos).size());
+    }
+    
+    private HttpServletRequest constructRequest(Template template) {
+        HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
+        when(req.getParameter("templateName")).thenReturn(template.getName());
+        when(req.getParameter("languageCode")).thenReturn(template.getLanguage());
+        when(req.getParameter("type")).thenReturn(template.getType());
+        return req;
+    }
+    
     private Template givenTemplateWithStructure() {
+        Structure structure = actions.createStructure();
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(structure.getId());
         template.setStructureName(null);
