@@ -55,8 +55,6 @@ public class TemplateResourceTest {
     @Autowired
     private TransactionalActions actions;
     
-    private Structure structure;
-    
     @Before
     public void before() throws Exception {
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
@@ -73,24 +71,22 @@ public class TemplateResourceTest {
     
     @Test
     public void insertsTemplate() throws Exception {
-        structure = actions.createStructure();
         assertNotNull(resource.store(givenTemplateWithStructure()));
     }
     
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
-        structure = actions.createStructure();
         resource.store(givenTemplateWithStructure());
         assertEquals(0, resource.templateNames().size());
     }
 
     @Test
     public void storesStructureRelationByName() throws Exception {
-        structure = actions.createStructure();
+        Structure structure = actions.createStructure();
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(structure.getName());
-        resource.store(givenTemplateWithStructure());
+        resource.store(template);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -116,7 +112,6 @@ public class TemplateResourceTest {
 
     @Test
     public void returnsTemplateNamesThatAreInDraftState() throws Exception {
-        structure = actions.createStructure();
         resource.store(givenTemplateWithStructure());
         assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
@@ -144,6 +139,7 @@ public class TemplateResourceTest {
     }
     
     private Template givenTemplateWithStructure() {
+        Structure structure = actions.createStructure();
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(structure.getId());
         template.setStructureName(null);
