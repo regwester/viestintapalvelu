@@ -58,7 +58,7 @@ public class ContentStructure implements Serializable {
     @Column(name="tyyppi", nullable = false, updatable = false)
     private ContentStructureType type;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "content", cascade = CascadeType.PERSIST)
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentStructure", cascade = CascadeType.PERSIST)
     private Set<ContentStructureContent> contents = new HashSet<ContentStructureContent>();
 
     public Long getId() {

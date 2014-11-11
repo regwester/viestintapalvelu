@@ -47,4 +47,33 @@ public class ContentStructureContentId implements Serializable {
     public void setContentId(Long contentId) {
         this.contentId = contentId;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof ContentStructureContentId)) return false;
+
+        ContentStructureContentId that = (ContentStructureContentId) o;
+
+        if (contentId != null ? !contentId.equals(that.contentId) : that.contentId != null) return false;
+        if (contentStructureId != null ? !contentStructureId.equals(that.contentStructureId) : that.contentStructureId != null)
+            return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = contentStructureId != null ? contentStructureId.hashCode() : 0;
+        result = 31 * result + (contentId != null ? contentId.hashCode() : 0);
+        return result;
+    }
+
+    @Override
+    public String toString() {
+        return "ContentStructureContentId{" +
+                "contentStructureId=" + contentStructureId +
+                ", contentId=" + contentId +
+                '}';
+    }
 }
