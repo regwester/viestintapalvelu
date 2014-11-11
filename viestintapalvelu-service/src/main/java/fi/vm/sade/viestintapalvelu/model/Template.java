@@ -52,7 +52,7 @@ public class Template extends BaseEntity {
     @Column(name = "kielikoodi", nullable = false)
     private String language;
 
-	@Column(name="versionro", nullable=false)
+	@Column(name="versionro", nullable=true)
 	private String versionro;	
 	    
     @ApiModelProperty(value = "CSS styles")

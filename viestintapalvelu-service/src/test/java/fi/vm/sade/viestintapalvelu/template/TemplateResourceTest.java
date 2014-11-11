@@ -59,7 +59,6 @@ public class TemplateResourceTest {
         currentUserComponentField.set(((Advised)service).getTargetSource().getTarget(), currentUserComponent);
     }
     
-    @Ignore
     @Test
     public void insertsTemplate() throws Exception {
         assertNotNull(resource.store(givenTemplateWithStructure()));
