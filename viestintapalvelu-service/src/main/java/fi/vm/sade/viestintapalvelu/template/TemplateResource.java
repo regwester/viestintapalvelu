@@ -18,6 +18,7 @@ import javax.ws.rs.core.Response;
 
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -35,6 +36,7 @@ import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
@@ -221,19 +223,20 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = TemplateNames, notes = TemplateNames2)
     public List<Map<String, String>> templateNames(@Context HttpServletRequest request) throws IOException,
         DocumentException {
-        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
         List<String> serviceResult = templateService.getTemplateNamesList();
-        for (String s : serviceResult) {
-            if (s != null && s.trim().length() > 0) {
-                if (s.indexOf("::") > 0) {
-                    Map<String, String> m = new HashMap<String, String>();
-                    String[] sa = s.split("::");
-                    m.put("name", sa[0]);
-                    m.put("lang", sa[1]);
-                    res.add(m);
-                }
-            }
-        }
+        List<Map<String, String>> res = formTemplateNameLanguageMap(serviceResult);
+        return res;
+    }
+    
+    @GET
+    @Path("/getNames/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = TemplateNames, notes = TemplateNames2)
+    public List<Map<String, String>> templateNamesByState(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
+        List<String> serviceResult = templateService.getTemplateNamesListByState(state);
+        List<Map<String, String>> res = formTemplateNameLanguageMap(serviceResult);
         return res;
     }
 
@@ -587,6 +590,22 @@ public class TemplateResource extends AsynchronousResource {
 
 
         return templates;
+    }
+    
+    private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
+        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+        for (String s : serviceResult) {
+            if (s != null && s.trim().length() > 0) {
+                if (s.indexOf("::") > 0) {
+                    Map<String, String> m = new HashMap<String, String>();
+                    String[] sa = s.split("::");
+                    m.put("name", sa[0]);
+                    m.put("lang", sa[1]);
+                    res.add(m);
+                }
+            }
+        }
+        return res;
     }
 
 }

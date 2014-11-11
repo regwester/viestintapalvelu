@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.junit.Before;
@@ -19,12 +20,16 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -65,13 +70,15 @@ public class TemplateResourceTest {
     }
     
     @Test
-    public void doesNotReturnTemplateNamesThatAreNotPublished() {
-        
+    public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
+        resource.store(givenTemplateWithStructure());
+        assertEquals(0, resource.templateNames(null).size());
     }
     
     @Test
-    public void returnsTemplateNamesThatAreInDraftState() {
-        
+    public void returnsTemplateNamesThatAreInDraftState() throws Exception {
+        resource.store(givenTemplateWithStructure());
+        assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
     
     private Template givenTemplateWithStructure() {
