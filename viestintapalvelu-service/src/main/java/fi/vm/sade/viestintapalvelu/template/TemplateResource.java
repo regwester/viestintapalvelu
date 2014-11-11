@@ -63,7 +63,7 @@ public class TemplateResource extends AsynchronousResource {
         + " - organizationLatestByTag: edelliseen tarkennettuna tunnisteeella ";
     private final static String GetHistory200 = "Hakijalla ei ole valtuuksia hakea kirjepohjia.";
 
-    private final static String TemplateNames = "Palauttaa valittavissaolevien kirjepohjien nimet.";
+    private final static String TemplateNames = "Palauttaa valittavissaolesvien kirjepohjien nimet.";
     private final static String TemplateNames2 = "Palauttaa listan MAPeja. Esim: <br>" + "{ <br>"
         + "'name': 'jalkiohjauskirje', <br>" + "'lang': 'FI' <br>" + "}";
 

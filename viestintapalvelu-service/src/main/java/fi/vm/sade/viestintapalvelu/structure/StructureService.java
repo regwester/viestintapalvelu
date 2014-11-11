@@ -21,6 +21,7 @@ import java.util.List;
 import javax.ws.rs.NotFoundException;
 
 import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
 
 /**
@@ -30,9 +31,31 @@ import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
  */
 public interface StructureService {
 
+    /**
+     * @return all structures in the system that have a description with id of their latest
+     * version for the particular name and language ordered by description in ascending order
+     * (and finally creation time descending)
+     */
     List<StructureListDto> findLatestStructuresVersionsForList();
 
+    /**
+     * @param id of the structure
+     * @return the details for the structure
+     * @throws NotFoundException if not found by id
+     */
     StructureViewDto getStructure(long id) throws NotFoundException;
 
+    /**
+     * @param name of the structure
+     * @param language code
+     * @return the latest structure for given name and language
+     * @throws NotFoundException if not found
+     */
     StructureViewDto getLatestStructureByNameAndLanguage(String name, String language) throws NotFoundException;
+
+    /**
+     * @param structure to be saved (assumed to be validated)
+     * @return the id of the saved structure
+     */
+    long storeStructure(StructureSaveDto structure);
 }

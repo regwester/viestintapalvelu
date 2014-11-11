@@ -1,9 +1,9 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-import com.wordnik.swagger.annotations.ApiModel;
-
 import java.util.Date;
 import java.util.List;
+
+import com.wordnik.swagger.annotations.ApiModel;
 
 @ApiModel(value = "Kirjetemplate")
 public class Template{

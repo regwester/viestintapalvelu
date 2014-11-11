@@ -16,9 +16,21 @@
 
 package fi.vm.sade.viestintapalvelu.structure.dto.converter;
 
+import java.util.HashSet;
+import java.util.Set;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import fi.vm.sade.viestintapalvelu.dao.StyleDAO;
+import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentReplacementSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureContentSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
+import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
 import fi.vm.sade.viestintapalvelu.util.dtoconverter.AbstractDtoConverter;
+import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
 
 /**
  * User: ratamaa
@@ -27,4 +39,46 @@ import fi.vm.sade.viestintapalvelu.util.dtoconverter.AbstractDtoConverter;
  */
 @Component
 public class StructureDtoConverter extends AbstractDtoConverter {
+
+    @Autowired
+    private StyleDAO styleDAO;
+
+    public Structure convert(StructureSaveDto from, Structure to) {
+        convertValue(from, to);
+        for (ContentStructure cs : to.getContentStructures()) {
+            cs.setStructure(to);
+        }
+
+        int orderNumber = 1;
+        Set<String> usedKeys = new HashSet<String>();
+        for (ContentReplacementSaveDto dto : from.getReplacements()) {
+            if (!usedKeys.add(dto.getKey())) {
+                throw BeanValidatorImpl.badRequest("Replacements contained key: " + dto.getKey() + " twice.");
+            }
+            ContentReplacement replacement = convert(dto, new ContentReplacement());
+            replacement.setOrderNumber(orderNumber++);
+            replacement.setStructure(to);
+            to.getReplacements().add(replacement);
+        }
+        return to;
+    }
+
+    public ContentStructure convert(ContentStructureSaveDto from, ContentStructure to) {
+        convertValue(from, to);
+
+        if (from.getStyleName() != null && from.getStyle() == null) {
+            to.setStyle(styleDAO.findLatestByName(from.getStyleName())
+                    .or(OptionalHelpper.<Style>notFound("Style not found by name="+from.getStyleName())));
+        } else if (to.getStyle() != null && to.getStyle().getId() == null) {
+            styleDAO.insert(to.getStyle());
+        }
+        int orderNumber = 1;
+        for (ContentStructureContentSaveDto contentDto : from.getContents()) {
+            ContentStructureContent csc = convert(contentDto, new ContentStructureContent());
+            csc.setContentStructure(to);
+            csc.setOrderNumber(orderNumber++);
+            to.getContents().add(csc);
+        }
+        return to;
+    }
 }

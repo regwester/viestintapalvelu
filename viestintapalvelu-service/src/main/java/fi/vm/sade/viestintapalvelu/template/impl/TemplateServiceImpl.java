@@ -132,10 +132,9 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
-        //model.setId(template.getId());
         model.setName(template.getName());
         model.setDescription(template.getDescription());
-        model.setTimestamp(new Date()); //template.getTimestamp());
+        model.setTimestamp(new Date());
         model.setStyles(template.getStyles());
         model.setUsedAsDefault(template.isUsedAsDefault());
         model.setLanguage(template.getLanguage());

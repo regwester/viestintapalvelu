@@ -40,7 +40,7 @@ public class ContentStructureContent implements Serializable {
         @AttributeOverride(name="contentId",
                 column = @Column(name="sisalto", nullable = false, updatable = false)),
     })
-    private ContentStructureContentId id;
+    private ContentStructureContentId id = new ContentStructureContentId();
 
     @Enumerated(EnumType.STRING)
     @Column(name="rooli", nullable = false, updatable = false)

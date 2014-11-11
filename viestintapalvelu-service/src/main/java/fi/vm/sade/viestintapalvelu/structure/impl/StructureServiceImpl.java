@@ -26,6 +26,7 @@ import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
 import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.converter.StructureDtoConverter;
 import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
@@ -65,5 +66,13 @@ public class StructureServiceImpl implements StructureService {
         Structure structure = structureDAO.findLatestStructrueByNameAndLanguage(name, language).or(
                 OptionalHelpper.<Structure>notFound("Structure not found by name="+name + ", language="+language));
         return dtoConverter.convert(structure, new StructureViewDto());
+    }
+
+    @Override
+    @Transactional
+    public long storeStructure(StructureSaveDto dto) {
+        Structure structure = dtoConverter.convert(dto, new Structure());
+        structureDAO.insert(structure);
+        return structure.getId();
     }
 }
