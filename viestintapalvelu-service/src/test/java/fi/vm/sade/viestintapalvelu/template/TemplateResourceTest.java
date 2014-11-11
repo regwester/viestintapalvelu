@@ -84,7 +84,7 @@ public class TemplateResourceTest {
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(structure.getName());
-        resource.store(givenTemplateWithStructure());
+        resource.store(template);
         assertEquals(0, resource.templateNames().size());
     }
 

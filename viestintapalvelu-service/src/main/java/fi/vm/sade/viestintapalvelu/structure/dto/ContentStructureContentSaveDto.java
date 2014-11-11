@@ -95,4 +95,14 @@ public class ContentStructureContentSaveDto implements Serializable {
     public void setContent(String content) {
         this.content = content;
     }
+
+    @Override
+    public String toString() {
+        return "ContentStructureContentSaveDto{" +
+                "role=" + role +
+                ", name='" + name + '\'' +
+                ", contentType=" + contentType +
+                ", content='" + content + '\'' +
+                '}';
+    }
 }
