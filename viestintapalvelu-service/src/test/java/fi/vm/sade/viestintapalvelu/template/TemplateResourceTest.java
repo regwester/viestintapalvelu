@@ -68,7 +68,7 @@ public class TemplateResourceTest {
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
         resource.store(givenTemplateWithStructure());
-        assertEquals(0, resource.templateNames(null).size());
+        assertEquals(0, resource.templateNames().size());
     }
     
     @Test
