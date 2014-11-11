@@ -25,7 +25,6 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
-import fi.vm.sade.viestintapalvelu.model.ContentStructureContent;
 
 /**
  * User: ratamaa

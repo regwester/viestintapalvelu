@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -35,6 +36,7 @@ import fi.ratamaa.dtoconverter.annotation.DtoConversion;
  * Time: 10:01
  */
 @ApiModel("Tallennettava rakenne")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class StructureSaveDto implements Serializable {
     private static final long serialVersionUID = -2377272637158787917L;
 

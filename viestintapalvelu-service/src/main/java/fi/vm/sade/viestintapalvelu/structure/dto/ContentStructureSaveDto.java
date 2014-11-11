@@ -24,6 +24,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -39,6 +40,7 @@ import fi.vm.sade.viestintapalvelu.structure.dto.constraint.ValidContentStructur
  */
 @ValidContentStructure
 @ApiModel("Kuvaa rakenteen kirjettä, sähköpostia tai asiointitiliä varten.")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContentStructureSaveDto implements Serializable {
     private static final long serialVersionUID = 4210603060735538525L;
 

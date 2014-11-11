@@ -75,4 +75,8 @@ public class StructureServiceImpl implements StructureService {
         structureDAO.insert(structure);
         return structure.getId();
     }
+
+    public void setDtoConverter(StructureDtoConverter dtoConverter) {
+        this.dtoConverter = dtoConverter;
+    }
 }

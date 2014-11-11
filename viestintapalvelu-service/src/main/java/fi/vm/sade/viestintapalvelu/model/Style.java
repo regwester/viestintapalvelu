@@ -47,6 +47,14 @@ public class Style implements Serializable {
     @Column(name="aikaleima", nullable = false, updatable = false)
     private Date timestamp = new Date();
 
+    public Style() {
+    }
+
+    public Style(String name, String style) {
+        this.name = name;
+        this.style = style;
+    }
+
     public Long getId() {
         return id;
     }
