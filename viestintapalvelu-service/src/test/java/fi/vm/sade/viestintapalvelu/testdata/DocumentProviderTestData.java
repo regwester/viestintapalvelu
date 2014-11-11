@@ -393,10 +393,7 @@ public class DocumentProviderTestData {
     
     public static Template getTemplateWithGivenNamePrefix(Long id, String prefix) {
         Template template = new Template();
-        Structure structure = new Structure();
-        structure.setName(prefix + "_structure");
-        structure.setLanguage("FI");
-        structure.setDescription("Structure description");
+        Structure structure = getStructureWithGivenPrefixForName(prefix);
         // TODO: create structure elements?
         template.setStructure(structure);
         
@@ -423,6 +420,14 @@ public class DocumentProviderTestData {
         template.setReplacements(replacements);
         
         return template;
+    }
+
+    public static Structure getStructureWithGivenPrefixForName(String prefix) {
+        Structure structure = new Structure();
+        structure.setName(prefix + "_structure");
+        structure.setLanguage("FI");
+        structure.setDescription("Structure description");
+        return structure;
     }
 
     public static Template getTemplate(Long id) {
