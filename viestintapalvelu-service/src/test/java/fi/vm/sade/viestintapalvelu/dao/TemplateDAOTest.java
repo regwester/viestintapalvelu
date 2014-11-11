@@ -30,7 +30,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         templateDAO.insert(storedTemplate);
         
         Template template = templateDAO.findTemplateByName("test_template", "FI");
@@ -45,7 +45,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndTypeFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         templateDAO.insert(storedTemplate);
         
         Template template = templateDAO.findTemplateByName("test_template", "FI", "doc");
@@ -60,7 +60,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         String testHakuOid = "1234.56789.154875";
         DocumentProviderTestData.getTemplateHaku(storedTemplate, "1234.56789.012345");
         DocumentProviderTestData.getTemplateHaku(storedTemplate, testHakuOid);
@@ -81,7 +81,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuNotFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         String testHakuOid = "1234.56789.154875";
         templateDAO.insert(storedTemplate);
 
@@ -95,7 +95,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndDefaultFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         storedTemplate.setUsedAsDefault(true);
         templateDAO.insert(storedTemplate);
 
@@ -109,7 +109,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndDefaultNotFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         templateDAO.insert(storedTemplate);
 
         Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
@@ -121,7 +121,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndWithoutDefaultFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         templateDAO.insert(storedTemplate);
 
         Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
@@ -135,7 +135,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuNotFound2() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         String testHakuOid = "1234.56789.154875";
         DocumentProviderTestData.getTemplateHaku(storedTemplate, "1234.56789.012345");
         templateDAO.insert(storedTemplate);
@@ -147,10 +147,37 @@ public class TemplateDAOTest {
                 .withApplicationPeriod(testHakuOid));
         assertNull(template);
     }
+    
+    @Test
+    public void findsTemplateByNameAndState() {
+        Template storedTemplate = givenPublishedTemplate();
+        storedTemplate.setState(State.julkaistu);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                .withState(State.julkaistu));
+        assertNotNull(template);
+        assertEquals(template.getId(), storedTemplate.getId());
+    }
+    
+    @Test
+    public void doesNotFindTemplateByNameAndState() {
+        Template storedTemplate = givenPublishedTemplate();
+        storedTemplate.setState(State.suljettu);
+        templateDAO.insert(storedTemplate);
+
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
+                .withName("test_template")
+                .withLanguage("FI")
+                .withState(State.julkaistu));
+        assertNull(template);
+    }
 
     @Test
     public void testFindTemplateByNameNotFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         templateDAO.insert(storedTemplate);
         
         Template template = templateDAO.findTemplateByName("test_template_not_found", "FI");
@@ -160,7 +187,7 @@ public class TemplateDAOTest {
     
     @Test
     public void testGetAvailableTemplatesFound() {
-        Template storedTemplate = DocumentProviderTestData.getTemplate(null);
+        Template storedTemplate = givenPublishedTemplate();
         templateDAO.insert(storedTemplate);
 
         List<String> availableTemplates = templateDAO.getAvailableTemplates();
@@ -171,16 +198,21 @@ public class TemplateDAOTest {
     }
     
     @Test
-    public void returnsTemplatesUsingType() {
+    public void returnsTemplatesUsingState() {
         String templateNamePrefix = "suljettu";
         Template closedTemplate = DocumentProviderTestData.getTemplateWithGivenNamePrefix(null, templateNamePrefix);
         closedTemplate.setState(State.suljettu);
         templateDAO.insert(closedTemplate);
-        templateDAO.insert(DocumentProviderTestData.getTemplate(null));
+        templateDAO.insert(givenPublishedTemplate());
         List<String> availableTemplates = templateDAO.getAvailableTemplatesByType(State.suljettu);
         assertEquals(1, availableTemplates.size());
         assertTrue(availableTemplates.get(0).contains(templateNamePrefix));
         assertTrue(availableTemplates.get(0).contains(closedTemplate.getLanguage()));
     }
 
+    private Template givenPublishedTemplate() {
+        Template template = DocumentProviderTestData.getTemplate(null);
+        template.setState(State.julkaistu);
+        return template;
+    }
 }

@@ -16,6 +16,8 @@
 
 package fi.vm.sade.viestintapalvelu.dao.criteria;
 
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+
 /**
  * User: ratamaa
  * Date: 9.9.2014
@@ -28,6 +30,7 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     private String type;
     private String applicationPeriod;
     private boolean defaultRequirement;
+    private State state = State.julkaistu;
 
     @Override
     public String getName() {
@@ -67,6 +70,7 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         copy.type = this.type;
         copy.applicationPeriod = this.applicationPeriod;
         copy.defaultRequirement = this.defaultRequirement;
+        copy.state = this.state;
         return copy;
     }
 
@@ -160,5 +164,23 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         result = HASH_FACTOR * result + (applicationPeriod != null ? applicationPeriod.hashCode() : 0);
         result = HASH_FACTOR * result + (defaultRequirement ? 1 : 0);
         return result;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria#getState()
+     */
+    @Override
+    public State getState() {
+        return state;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria#withGivenState(fi.vm.sade.viestintapalvelu.model.Template.State)
+     */
+    @Override
+    public TemplateCriteria withState(State state) {
+        TemplateCriteriaImpl copy = copy();
+        copy.state = state;
+        return copy;
     }
 }
