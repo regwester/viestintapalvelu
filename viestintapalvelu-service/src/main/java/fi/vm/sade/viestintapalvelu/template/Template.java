@@ -3,10 +3,17 @@ package fi.vm.sade.viestintapalvelu.template;
 import java.util.Date;
 import java.util.List;
 
+import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Size;
+
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 
 @ApiModel(value = "Kirjetemplate")
-public class Template{
+public class Template {
 
     private static final long serialVersionUID = 4178735997933155683L;
 
@@ -14,34 +21,50 @@ public class Template{
 
     private Date timestamp;
 
+    @NotNull
+    @ApiModelProperty("Kirjepohjan tekninen nimi")
     private String name;
-
+    @NotNull @Size(min=2,max=3)
+    @ApiModelProperty("Kirjepohjan kielikoodi")
     private String language;
 
+    @ApiModelProperty("Kirjepohjan uvaus")
     private String description;
 
+    @Deprecated // Määritetään rakenteessa
     private String styles;
 
     private String storingOid;
 
     private String organizationOid;
 
+    @Deprecated // Nämä tulevat rakenteen mukaan
     private List<TemplateContent> contents;
 
+    @NotNull @Size(min=1)
     private List<Replacement> replacements;
 
+    @ApiModelProperty("Haku OID:t, joihin tämä kirjepohja linkittyy")
     private List<String> applicationPeriods;
 
+    @Deprecated // Tätä ei käytetä mihinkään
     private String templateVersio;
 
+    @ApiModelProperty("Jos true, tätä kirjepohjaa käytetään oletuksena suhteessa muihin samalla tavalla rajattuihin kirjepohjiin")
     private boolean usedAsDefault;
-    
+
+    @Deprecated
     private String type;
 
+    @ApiModelProperty("Rakenteen id. Jos syötetty valitaan rakenne tämän mukaan. Oltava saman kielinen kuin kirjepohja.")
     private Long structureId;
-
+    @ApiModelProperty("Rakenteen nimi. Jos syötetty ja structureId ei ole syötetty haetaan uusin rakenne tällä nimellä ja kielellä.")
     private String structureName;
+    @Valid
+    @ApiModelProperty("Käytetään luomaan uusi rakene jos sekä structureId että structureName ovat null")
+    private StructureSaveDto structure;
 
+    @Deprecated
     public List<TemplateContent> getContents() {
         return contents;
     }    
@@ -74,6 +97,7 @@ public class Template{
         return storingOid;
     }
 
+    @Deprecated
     public String getStyles() {
         return styles;
     }
@@ -91,6 +115,7 @@ public class Template{
         return timestamp;
     }
 
+    @Deprecated
     public void setContents(List<TemplateContent> contents) {
         this.contents = contents;
     }
@@ -119,6 +144,7 @@ public class Template{
         this.storingOid = storingOid;
     }
 
+    @Deprecated
     public void setStyles(String styles) {
         this.styles = styles;
     }
@@ -130,10 +156,12 @@ public class Template{
         this.timestamp = timestamp;
     }
 
+    @Deprecated
 	public String getType() {
 		return type;
 	}
 
+    @Deprecated
 	public void setType(String type) {
 		this.type = type;
 	}
@@ -176,6 +204,14 @@ public class Template{
 
     public void setStructureName(String structureName) {
         this.structureName = structureName;
+    }
+
+    public StructureSaveDto getStructure() {
+        return structure;
+    }
+
+    public void setStructure(StructureSaveDto structure) {
+        this.structure = structure;
     }
 
     @Override

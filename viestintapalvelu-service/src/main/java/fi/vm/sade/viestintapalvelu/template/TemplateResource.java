@@ -37,6 +37,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
@@ -56,6 +57,9 @@ public class TemplateResource extends AsynchronousResource {
 
     @Autowired
     private UserRightsValidator userRightsValidator;
+
+    @Autowired
+    private BeanValidator beanValidator;
 
     private final static String GetHistory = "Palauttaa kirjepohjan historian";
     private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
@@ -292,6 +296,7 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
     public Template store(Template template) throws IOException, DocumentException {
+        beanValidator.validate(template);
         templateService.storeTemplateDTO(template);
         return new Template(); //TODO: return something more meaningful
     }
