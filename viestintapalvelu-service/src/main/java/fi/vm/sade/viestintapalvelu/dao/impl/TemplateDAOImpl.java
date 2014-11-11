@@ -86,6 +86,11 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         if (criteria.getType() != null) {
             and(where).append("a.type = :type");
         }
+        
+        if (criteria.getState() != null) {
+            and(where).append("a.state = :state");
+        }
+        
         if (criteria.getApplicationPeriod() != null) {
             queryStr.append(" INNER JOIN a.applicationPeriods templateApplicationPeriod ");
             and(where).append("templateApplicationPeriod.id.applicationPeriod = :applicationPeriodOid");
@@ -112,6 +117,10 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         }
         if (criteria.getApplicationPeriod() != null) {
             query.setParameter("applicationPeriodOid", criteria.getApplicationPeriod());
+        }
+        
+        if (criteria.getState() != null) {
+            query.setParameter("state", criteria.getState());
         }
         return query;
     }
