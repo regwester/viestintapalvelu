@@ -8,6 +8,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
@@ -53,29 +54,31 @@ public class TemplateServiceTest {
     private DraftDAO mockedDraftDAO;
     @Mock
     private StructureDAO structureDAO;
+    @Mock
+    private StructureService structureService;
     private TemplateService templateService;
 
     @Before
     public void setup() {
         this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent, mockedDraftDAO,
-                structureDAO);
+                structureDAO, structureService);
     }
-    
+
     @Test
     public void testStoreTemplateDTO() {
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
-        mockedTemplateDAO.insert(DocumentProviderTestData.getTemplate(new Long(1)));
+        mockedTemplateDAO.insert(DocumentProviderTestData.getTemplate(1l));
         
         fi.vm.sade.viestintapalvelu.template.Template template = DocumentProviderTestData.getTemplate();
         templateService.storeTemplateDTO(template);
         
-        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(new Long(1)));
+        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(1l));
     }
 
     @Test
     public void testFindById() {
         List<Template> mockedTemplates = new ArrayList<Template>();
-        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(1l);
         mockedTemplates.add(mockedTemplate);
         
         when(mockedTemplateDAO.findBy(eq("id"), any(Long.class))).thenReturn(mockedTemplates);
@@ -90,7 +93,7 @@ public class TemplateServiceTest {
 
     @Test
     public void testGetTemplateByName() {
-        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(1l);
         when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);
 
         fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
@@ -104,7 +107,7 @@ public class TemplateServiceTest {
 
     @Test
     public void testGetTemplateByNameAndType() {
-        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(1l);
         when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);
 
         fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
@@ -120,7 +123,7 @@ public class TemplateServiceTest {
 
     @Test
     public void testGetTemplateByCriteriaWithApplicationPeriod() {
-        Template mockedTemplate = DocumentProviderTestData.getTemplate(new Long(1));
+        Template mockedTemplate = DocumentProviderTestData.getTemplate(1l);
         String applicationPeriodOid = "1234.5678910.12345";
         DocumentProviderTestData.getTemplateHaku(mockedTemplate, applicationPeriodOid);
         when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);

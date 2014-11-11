@@ -28,6 +28,12 @@ import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureContentSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertEquals;
@@ -53,7 +59,6 @@ public class TemplateResourceTest {
     
     @Before
     public void before() throws Exception {
-        structure = actions.createStructure();
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
         CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
             @Override
@@ -68,17 +73,50 @@ public class TemplateResourceTest {
     
     @Test
     public void insertsTemplate() throws Exception {
+        structure = actions.createStructure();
         assertNotNull(resource.store(givenTemplateWithStructure()));
     }
     
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
+        structure = actions.createStructure();
         resource.store(givenTemplateWithStructure());
         assertEquals(0, resource.templateNames().size());
     }
-    
+
+    @Test
+    public void storesStructureRelationByName() throws Exception {
+        structure = actions.createStructure();
+        Template template = DocumentProviderTestData.getTemplate();
+        template.setStructureId(null);
+        template.setStructureName(structure.getName());
+        resource.store(givenTemplateWithStructure());
+        assertEquals(0, resource.templateNames().size());
+    }
+
+    @Test
+    public void storesNewStructure() throws Exception {
+        Template template = DocumentProviderTestData.getTemplate();
+        template.setStructureId(null);
+        template.setStructureName(null);
+        StructureSaveDto structureDto = new StructureSaveDto();
+        structureDto.setName("rakenne");
+        structureDto.setLanguage("FI");
+        ContentStructureSaveDto contentStructure = new ContentStructureSaveDto();
+        contentStructure.setType(ContentStructureType.letter);
+        contentStructure.getContents().add(new ContentStructureContentSaveDto(
+                ContentRole.body, "email_sisalto", ContentType.html,
+                "<html><head><title>T</title></head><body>B</body></html>"));
+        structureDto.getContentStructures().add(contentStructure);
+        template.setStructure(structureDto);
+
+        resource.store(template);
+        assertEquals(0, resource.templateNames().size());
+    }
+
     @Test
     public void returnsTemplateNamesThatAreInDraftState() throws Exception {
+        structure = actions.createStructure();
         resource.store(givenTemplateWithStructure());
         assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
@@ -108,7 +146,7 @@ public class TemplateResourceTest {
     private Template givenTemplateWithStructure() {
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(structure.getId());
-        template.setStructureName(structure.getName());
+        template.setStructureName(null);
         return template;
     }
     
