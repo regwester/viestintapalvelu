@@ -1,10 +1,8 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-import java.io.IOException;
 import java.lang.reflect.Field;
 
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvnet.hk2.annotations.Service;
@@ -19,8 +17,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
-
-import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
