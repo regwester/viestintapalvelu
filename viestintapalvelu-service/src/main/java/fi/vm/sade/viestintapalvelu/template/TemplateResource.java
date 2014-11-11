@@ -221,11 +221,9 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateNames, notes = TemplateNames2)
-    public List<Map<String, String>> templateNames(@Context HttpServletRequest request) throws IOException,
-        DocumentException {
+    public List<Map<String, String>> templateNames() throws IOException, DocumentException {
         List<String> serviceResult = templateService.getTemplateNamesList();
-        List<Map<String, String>> res = formTemplateNameLanguageMap(serviceResult);
-        return res;
+        return formTemplateNameLanguageMap(serviceResult);
     }
     
     @GET
@@ -236,8 +234,7 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = TemplateNames, notes = TemplateNames2)
     public List<Map<String, String>> templateNamesByState(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
         List<String> serviceResult = templateService.getTemplateNamesListByState(state);
-        List<Map<String, String>> res = formTemplateNameLanguageMap(serviceResult);
-        return res;
+        return formTemplateNameLanguageMap(serviceResult);
     }
 
     @GET
