@@ -91,9 +91,12 @@ public class LetterReportServiceImpl implements LetterReportService {
         List<IPostiDTO> iPostiDTOs = getListOfIPostiDTO(iPostis);
         letterBatchReport.setiPostis(iPostiDTOs);
         
-        Henkilo henkilo = henkiloComponent.getHenkilo(letterBatch.getStoringOid());
-        letterBatchReport.setCreatorName(henkilo.getSukunimi() + ", " + henkilo.getEtunimet());
-        
+        if (letterBatch.getStoringOid() != null) {
+            Henkilo henkilo = henkiloComponent.getHenkilo(letterBatch.getStoringOid());
+            letterBatchReport.setCreatorName(henkilo.getSukunimi() + ", " + henkilo.getEtunimet());
+        } else {
+            letterBatchReport.setCreatorName("" + ", " + "");
+        }
         return letterBatchReport;
     }
 

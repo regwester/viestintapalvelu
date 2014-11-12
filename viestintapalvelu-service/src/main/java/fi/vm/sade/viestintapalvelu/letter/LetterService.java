@@ -34,7 +34,7 @@ public interface LetterService {
      *            Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
-    LetterBatch createLetter(AsyncLetterBatchDto letterBatch);
+    LetterBatch createLetter(AsyncLetterBatchDto letterBatch, boolean anonymous);
 
     /**
      * Luo kirjelähetyksen
@@ -43,7 +43,7 @@ public interface LetterService {
      *            Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
-    LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch);
+    LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous);
 
     /**
      * Hakee kirjelähetyksen tiedot annetun avaimen perusteella

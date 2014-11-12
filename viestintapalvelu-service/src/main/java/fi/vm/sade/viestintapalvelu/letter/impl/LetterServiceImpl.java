@@ -103,7 +103,7 @@ public class LetterServiceImpl implements LetterService {
     /* ---------------------- */
     @Override
     @Transactional
-    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch) {
+    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch, boolean anonymous) {
         // kirjeet.kirjelahetys
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         LetterBatch model = new LetterBatch();
@@ -115,7 +115,9 @@ public class LetterServiceImpl implements LetterService {
         }
         
         model.setTimestamp(new Date());
-        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        if (!anonymous) {
+            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        }
         model.setBatchStatus(LetterBatch.Status.created);
 
         // kirjeet.vastaanottaja
@@ -135,7 +137,7 @@ public class LetterServiceImpl implements LetterService {
     /* ---------------------- */
     @Override
     @Transactional
-    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous) {
         // kirjeet.kirjelahetys
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         
@@ -147,8 +149,9 @@ public class LetterServiceImpl implements LetterService {
         }
         model.setTimestamp(new Date());
         model.setBatchStatus(LetterBatch.Status.created);
-        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
-
+        if (!anonymous) {
+            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        }
         // kirjeet.vastaanottaja
         try {
             model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
