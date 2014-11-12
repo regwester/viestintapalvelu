@@ -22,6 +22,8 @@ public interface TemplateService {
     void storeTemplate(Template template);
 
     void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template);
+    
+    void updateTemplate(fi.vm.sade.viestintapalvelu.template.Template template);
 
     fi.vm.sade.viestintapalvelu.template.Template saveAttachedApplicationPeriods(ApplicationPeriodsAttachDto dto);
 

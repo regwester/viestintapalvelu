@@ -136,16 +136,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
-        model.setName(template.getName());
-        model.setDescription(template.getDescription());
-        model.setTimestamp(new Date());
-        model.setStyles(template.getStyles());
-        model.setUsedAsDefault(template.isUsedAsDefault());
-        model.setLanguage(template.getLanguage());
-        model.setOrganizationOid(template.getOrganizationOid());
-        model.setContents(parseContentModels(template.getContents(), model));
-        model.setReplacements(parseReplacementModels(template.getReplacements(), model));
-        model.setType(template.getType());
+        convertTemplate(template, model);
         if (template.getStructureId() != null) {
             model.setStructure(structureDAO.read(template.getStructureId()));
         } else if (template.getStructureName() != null
@@ -164,6 +155,19 @@ public class TemplateServiceImpl implements TemplateService {
         }
         updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         storeTemplate(model);
+    }
+
+    private void convertTemplate(fi.vm.sade.viestintapalvelu.template.Template from, Template to) {
+        to.setName(from.getName());
+        to.setDescription(from.getDescription());
+        to.setTimestamp(new Date());
+        to.setStyles(from.getStyles());
+        to.setUsedAsDefault(from.isUsedAsDefault());
+        to.setLanguage(from.getLanguage());
+        to.setOrganizationOid(from.getOrganizationOid());
+        to.setContents(parseContentModels(from.getContents(), to));
+        to.setReplacements(parseReplacementModels(from.getReplacements(), to));
+        to.setType(from.getType());
     }
 
     private void validateTemplateAgainstStructure(fi.vm.sade.viestintapalvelu.template.Template template, Structure structure) {
@@ -667,6 +671,31 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         return replacements;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#updateTemplate(fi.vm.sade.viestintapalvelu.template.Template)
+     */
+    @Override
+    public void updateTemplate(fi.vm.sade.viestintapalvelu.template.Template template) {
+        Template model = templateDAO.read(template.getId());
+        final State newState = template.getState();
+        final State oldState = model.getState();
+        verifyState(oldState, newState);
+        if (newState != State.suljettu && oldState == State.luonnos) {
+            convertTemplate(template, model);
+        }
+        model.setState(newState);
+        templateDAO.update(model);
+    }
+
+    private void verifyState(State oldState, State newState) {
+        if (oldState == State.suljettu && newState != State.julkaistu) {
+            throw new IllegalArgumentException("Updating closed template to anything other than published is not supported");
+        }
+        if (oldState == State.julkaistu && newState != State.suljettu) {
+            throw new IllegalArgumentException("Published template can only be closed via update");
+        }
     }
 
 

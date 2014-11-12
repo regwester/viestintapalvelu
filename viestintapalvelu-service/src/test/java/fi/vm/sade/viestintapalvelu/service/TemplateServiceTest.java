@@ -18,6 +18,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.test.context.ContextConfiguration;
@@ -30,6 +31,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -283,6 +285,67 @@ public class TemplateServiceTest {
         templateService.getTemplateNamesListByState(State.julkaistu);
         verify(mockedTemplateDAO).getAvailableTemplatesByType(State.julkaistu);
     }
+    
+    @Test
+    public void closesPublishedTemplate() {
+        verifyTemplateStateChange(State.julkaistu, State.suljettu);
+    }
+    
+    @Test
+    public void closesTemplateThatIsInDraftState() {
+        verifyTemplateStateChange(State.luonnos, State.suljettu);
+    }
+    
+    @Test
+    public void publishesClosedTemplate() {
+        verifyTemplateStateChange(State.suljettu, State.julkaistu);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void closedTemplateCannotBeUpdatedToAnythingBesidesPublished() {
+        verifyTemplateStateChange(State.suljettu, State.luonnos);
+    }
+    
+    @Test (expected = IllegalArgumentException.class)
+    public void cannotUpdatePublishedTemplateToAnythingBesidesClosed() {
+        verifyTemplateStateChange(State.julkaistu, State.luonnos);
+    }
+    
+    @Test
+    public void publishesTemplateThatIsInDraftState() {
+        verifyTemplateStateChange(State.luonnos, State.julkaistu);
+    }
+    
 
+    @Test
+    public void updatesTemplateThatIsInDraftState() {
+        ArgumentCaptor<Template> captor = ArgumentCaptor.forClass(Template.class);
+        fi.vm.sade.viestintapalvelu.template.Template template = DocumentProviderTestData.getTemplate();
+        template.setId(5l);
+        template.setUsedAsDefault(true);
+        verifyTemplateStateChange(State.luonnos, State.luonnos, captor, template);
+        assertTrue(captor.getValue().isUsedAsDefault());
+    }
+    
+    private void verifyTemplateStateChange(State oldState, State newState) {
+        ArgumentCaptor<Template> captor = ArgumentCaptor.forClass(Template.class);
+        fi.vm.sade.viestintapalvelu.template.Template template = DocumentProviderTestData.getTemplate();
+        template.setId(7l);
+        verifyTemplateStateChange(oldState, newState, captor, template);
+    }
+
+    private void verifyTemplateStateChange(State oldState, State newState, ArgumentCaptor<Template> captor, fi.vm.sade.viestintapalvelu.template.Template template) {
+        template.setState(newState);
+        when(mockedTemplateDAO.read(template.getId())).thenReturn(givenTemplateWithStateAndId(template.getId(), oldState));
+        templateService.updateTemplate(template);
+        verify(mockedTemplateDAO).update(captor.capture());
+        assertEquals(newState, captor.getValue().getState());
+    }
+    
+    private Template givenTemplateWithStateAndId(Long id, State state) {
+        Template template = DocumentProviderTestData.getTemplate(id);
+        template.setState(state);
+        return template;
+    }
 
 }
