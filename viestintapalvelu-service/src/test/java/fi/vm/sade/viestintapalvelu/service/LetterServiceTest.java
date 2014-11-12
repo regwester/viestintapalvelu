@@ -95,7 +95,7 @@ public class LetterServiceTest {
         });
         when(templateDAO.findTemplateByName(any(String.class), any(String.class)))
             .thenReturn(DocumentProviderTestData.getTemplate(1l));
-        LetterBatch createdLetterBatch = letterService.createLetter(letterBatch);
+        LetterBatch createdLetterBatch = letterService.createLetter(letterBatch, false);
         
         assertNotNull(createdLetterBatch);
         assertNotNull(createdLetterBatch.getLetterReceivers());

@@ -78,7 +78,9 @@ public class LetterBuilder {
 
         return null;
     }
-    
+
+    /**
+
     public byte[] printZIP(LetterBatch batch) throws IOException, DocumentException, Exception {
         boolean valid = LetterBatchValidator.isValid(batch);
         LOG.debug("Validated batch result: " + valid);
@@ -100,7 +102,7 @@ public class LetterBuilder {
         letterService.createLetter(batch);
         return resultZip;
     }
-
+*/
     private byte[] getIpostiZip(MergedPdfDocument pdf, String templateName, String zipName) throws IOException {
         Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
         context.put("filename", templateName + ".pdf");
@@ -113,7 +115,8 @@ public class LetterBuilder {
         return zip;
     }
     
-    public byte[] printPDF(LetterBatch batch) throws IOException, DocumentException, Exception {
+/**
+      public byte[] printPDF(LetterBatch batch) throws IOException, DocumentException, Exception {
         boolean valid = LetterBatchValidator.isValid(batch);
         LOG.debug("Validated batch result: " + valid);
 
@@ -122,7 +125,7 @@ public class LetterBuilder {
         letterService.createLetter(batch);
         return resultPDF.toByteArray();
     }
-
+*/
     private MergedPdfDocument getMergedPDFDocument(List<LetterReceiverLetter> receivers) {
         MergedPdfDocument result = null;
         try {

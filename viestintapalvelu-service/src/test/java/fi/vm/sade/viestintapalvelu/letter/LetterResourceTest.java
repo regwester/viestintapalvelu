@@ -43,14 +43,14 @@ public class LetterResourceTest {
         injectObject("letterService", service);
         injectObject("letterBuilder", builder);
         injectObject("letterPDFProcessor", processor);
-        when(service.createLetter(any(AsyncLetterBatchDto.class)))
+        when(service.createLetter(any(AsyncLetterBatchDto.class), false))
                 .thenReturn(DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID));
     }
     
     @Test
     public void usesLetterService() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
-        verify(service, times(1)).createLetter(any(AsyncLetterBatchDto.class));
+        verify(service, times(1)).createLetter(any(AsyncLetterBatchDto.class), false);
     }
     
     @Test
@@ -72,7 +72,7 @@ public class LetterResourceTest {
     
     @Test
     public void returnsServerErrorWhenExceptionIsThrownDuringAsyncLetter() {
-        when(service.createLetter(any(AsyncLetterBatchDto.class))).thenThrow(new NullPointerException());
+        when(service.createLetter(any(AsyncLetterBatchDto.class), false)).thenThrow(new NullPointerException());
         assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getStatus());
     }
 
