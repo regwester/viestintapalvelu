@@ -300,6 +300,7 @@ public class TemplateServiceImpl implements TemplateService {
         result.setContents(parseContentDTOs(searchResult.getContents()));
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setType(searchResult.getType());
+        result.setState(searchResult.getState());
         return result;
     }
 
@@ -496,6 +497,7 @@ public class TemplateServiceImpl implements TemplateService {
         if (content) {
             convertContent(template, searchTempl, criteria);
         }
+        searchTempl.setState(template.getState());
         return searchTempl;
     }
 
