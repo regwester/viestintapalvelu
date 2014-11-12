@@ -63,6 +63,15 @@ public class Structure implements Serializable {
             cascade = CascadeType.PERSIST)
     private Set<ContentReplacement> replacements = new HashSet<ContentReplacement>();
 
+    public Structure() {
+    }
+
+    public Structure(String name, String description, String language) {
+        this.name = name;
+        this.description = description;
+        this.language = language;
+    }
+
     public Long getId() {
         return id;
     }

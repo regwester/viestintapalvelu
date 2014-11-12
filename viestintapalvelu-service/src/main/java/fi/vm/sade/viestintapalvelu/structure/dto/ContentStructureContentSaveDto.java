@@ -20,6 +20,7 @@ import java.io.Serializable;
 
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -35,6 +36,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 @ApiModel(value = "Rakenteen sisältöosa",
         description = "Kuvaa kirjeen/sähköpostin/asiointitiliviestin sisällön, yksittäisen sähköpostin tai asiointitlilin liitteen " +
                 " tai asiointitilin tekstiviestin")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContentStructureContentSaveDto implements Serializable {
     private static final long serialVersionUID = 8957552890776904394L;
 

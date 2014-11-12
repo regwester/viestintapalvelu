@@ -21,6 +21,7 @@ import java.io.Serializable;
 import javax.validation.constraints.Min;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -32,6 +33,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
  * Time: 10:02
  */
 @ApiModel("Rakenteeseen liittyvä korvauskenttä")
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ContentReplacementSaveDto implements Serializable {
     private static final long serialVersionUID = -4428639427097651014L;
 

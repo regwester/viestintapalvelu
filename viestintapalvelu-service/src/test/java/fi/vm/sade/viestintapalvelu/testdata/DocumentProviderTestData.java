@@ -13,6 +13,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterContent;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 
 public class DocumentProviderTestData {
     public static AddressLabel getAddressLabel() {
@@ -387,6 +388,7 @@ public class DocumentProviderTestData {
         template.setContents(getTemplateContents());
         template.setReplacements(getReplacements());
         template.setType("doc");
+        template.setState(State.luonnos);
         
         return template;
     }

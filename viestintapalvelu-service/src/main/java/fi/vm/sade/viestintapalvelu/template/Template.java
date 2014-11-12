@@ -10,6 +10,7 @@ import javax.validation.constraints.Size;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 
 @ApiModel(value = "Kirjetemplate")
@@ -63,7 +64,10 @@ public class Template {
     @Valid
     @ApiModelProperty("Käytetään luomaan uusi rakene jos sekä structureId että structureName ovat null")
     private StructureSaveDto structure;
-
+    
+    @ApiModelProperty("Kirjepohjan tila")
+    private State state;
+    
     @Deprecated
     public List<TemplateContent> getContents() {
         return contents;
@@ -213,6 +217,14 @@ public class Template {
     public void setStructure(StructureSaveDto structure) {
         this.structure = structure;
     }
+    
+    public State getState() {
+        return state;
+    }
+    
+    public void setState(State state) {
+        this.state = state;
+    }
 
     @Override
 	public String toString() {
@@ -225,6 +237,7 @@ public class Template {
 				+ templateVersio + ", type=" + type
                 + ", applicationPeriods=" + applicationPeriods
                 + ", usedAsDefault=" + usedAsDefault
+                + ", state=" + state
                 + "]";
 	}
 }
