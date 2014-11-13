@@ -21,6 +21,8 @@ import java.io.Serializable;
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoOrderBy;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
+import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 
 /**
  * User: ratamaa
@@ -30,8 +32,7 @@ import fi.ratamaa.dtoconverter.annotation.DtoPath;
 public class ContentStructureContentViewDto implements Serializable {
     private static final long serialVersionUID = -3017641890329988134L;
 
-    @DtoConversion
-    private String role;
+    private ContentRole role;
     @DtoOrderBy
     private int orderNumber;
     @DtoPath("content.id")
@@ -39,15 +40,15 @@ public class ContentStructureContentViewDto implements Serializable {
     @DtoPath("content.name")
     private String name;
     @DtoPath("content.contentType")
-    private String contentType;
+    private ContentType contentType;
     @DtoPath("content.content")
     private String content;
 
-    public String getRole() {
+    public ContentRole getRole() {
         return role;
     }
 
-    public void setRole(String role) {
+    public void setRole(ContentRole role) {
         this.role = role;
     }
 
@@ -75,11 +76,11 @@ public class ContentStructureContentViewDto implements Serializable {
         this.name = name;
     }
 
-    public String getContentType() {
+    public ContentType getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
+    public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 

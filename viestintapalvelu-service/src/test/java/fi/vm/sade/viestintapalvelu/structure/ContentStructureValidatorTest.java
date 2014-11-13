@@ -67,45 +67,71 @@ public class ContentStructureValidatorTest {
     @Test
     public void testEmailStructureValidation() {
         assertFalse(isValid(structure(ContentStructureType.email)));
+        assertFalse(isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain))));
+        assertFalse(isValid(structure(ContentStructureType.email,
+                content(ContentRole.body, ContentType.html))));
+        assertFalse( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.html),
+                content(ContentRole.body, ContentType.html)
+        )));
+        assertFalse( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
+                content(ContentRole.header, ContentType.plain),
+                content(ContentRole.body, ContentType.html)
+        )));
         assertTrue( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html)
         )));
         assertFalse(isValid(structure(ContentStructureType.email,
                 content(ContentRole.body, ContentType.plain)
         )));
+        assertFalse(isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
+                content(ContentRole.body, ContentType.plain)
+        )));
         assertTrue(isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.body, ContentType.plain)
         )));
         assertFalse(isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.body, ContentType.plain)
         )));
         assertFalse(isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.body, ContentType.plain)
         )));
         assertTrue( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.attachment, ContentType.html)
         )));
         assertFalse( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.attachment, ContentType.plain)
         )));
         assertTrue( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.attachment, ContentType.html),
                 content(ContentRole.attachment, ContentType.html)
         )));
         assertFalse(isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html),
                 content(ContentRole.sms, ContentType.plain)
         )));
         assertFalse( isValid(structure(ContentStructureType.email,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.attachment, ContentType.html)
         )));
     }
@@ -113,33 +139,54 @@ public class ContentStructureValidatorTest {
     @Test
     public void testAsiointitiliStructureValidation() {
         assertFalse(isValid(structure(ContentStructureType.asiointitili)));
+        assertFalse(isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain))));
+        assertFalse(isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.body, ContentType.plain))));
         assertTrue( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
+                content(ContentRole.body, ContentType.plain)
+        )));
+        assertFalse( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
+                content(ContentRole.header, ContentType.plain),
+                content(ContentRole.body, ContentType.plain)
+        )));
+        assertFalse( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.html),
                 content(ContentRole.body, ContentType.plain)
         )));
         assertFalse(isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.html)
         )));
         assertFalse(isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.sms, ContentType.plain)
         )));
         assertTrue( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.attachment, ContentType.html)
         )));
         assertTrue( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.sms, ContentType.plain)
         )));
         assertFalse(isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.sms, ContentType.html)
         )));
         assertTrue( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.attachment, ContentType.html),
                 content(ContentRole.attachment, ContentType.html)
         )));
         assertTrue( isValid(structure(ContentStructureType.asiointitili,
+                content(ContentRole.header, ContentType.plain),
                 content(ContentRole.body, ContentType.plain),
                 content(ContentRole.attachment, ContentType.html),
                 content(ContentRole.attachment, ContentType.html),

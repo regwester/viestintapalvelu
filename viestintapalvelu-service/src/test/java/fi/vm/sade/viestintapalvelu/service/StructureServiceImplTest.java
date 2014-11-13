@@ -42,6 +42,7 @@ import fi.vm.sade.viestintapalvelu.dao.StyleDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
 import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Style;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureViewDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
@@ -124,7 +125,9 @@ public class StructureServiceImplTest {
         assertEquals(dto.getReplacements().size(), viewDto.getReplacements().size());
         assertEquals(dto.getContentStructures().size(), viewDto.getContentStructures().size());
         for (ContentStructureViewDto csDto : viewDto.getContentStructures()) {
-            assertNotNull(csDto.getStyle());
+            if ((csDto.getType() != ContentStructureType.asiointitili)) {
+                assertNotNull(csDto.getStyle());
+            }
         }
     }
 

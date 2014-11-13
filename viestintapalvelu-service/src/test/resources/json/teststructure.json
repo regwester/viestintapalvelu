@@ -27,10 +27,45 @@
             "styleName": "perustyyli",
             "contents": [
                 {
+                    "role": "header",
+                    "name": "sahkopostin_otsikko",
+                    "contentType": "plain",
+                    "content": "$subject"
+                },
+                {
                     "role": "body",
                     "name": "sahkopostin_paasialato",
                     "contentType": "html",
                     "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/>    <link rel=\"stylesheet\" type=\"text/css\" href=\"classpath:/ipost_pdf.css\"/>    <title>Jälkiohjauskirje</title></head><body><div class='header'>    <div class=\"organisaatio\"></div> </div><div class=\"asiaotsikko\">$asiakirjatyyppi</div><br/><div class=\"asiaotsikko\">$otsikko</div><div class=\"sisalto\">$sisalto</div></body></html>"
+                },
+                {
+                    "role": "attachment",
+                    "name": "toinen_sisalto",
+                    "contentType": "html",
+                    "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/>    <link rel=\"stylesheet\" type=\"text/css\" href=\"classpath:/ipost_pdf.css\"/>    <title>Jälkiohjauskirje</title></head><body><div class='header'>    <div class=\"organisaatio\"></div>    <div class='osoitetarra'>        <div>$osoite</div>    </div></div><div class=\"asiakirjanTyyppi\">$letterDate</div><p>Tässä lisää sisältöä.</p></div></body></html>"
+                }
+            ]
+        },
+        {
+            "type": "asiointitili",
+            "contents": [
+                {
+                    "role": "header",
+                    "name": "sahkopostin_otsikko",
+                    "contentType": "plain",
+                    "content": "$subject"
+                },
+                {
+                    "role": "body",
+                    "name": "paasisalto",
+                    "contentType": "plain",
+                    "content": "$asiointitilisisalto"
+                },
+                {
+                    "role": "sms",
+                    "name": "tekstiviesti",
+                    "contentType": "plain",
+                    "content": "$tekstiviesti"
                 },
                 {
                     "role": "attachment",
@@ -45,7 +80,14 @@
         {
             "key": "asiakirjatyyppi",
             "name": "Asiakirjatyyppi",
-            "description": "Asiakirjan tyyppi (alussa näkyvä otsikko)",
+            "description": "Asiakirjan tyyppi (kirjeen sisällön alussa näkyvä otsikko)",
+            "contentType": "plain",
+            "numberOfRows": 1
+        },
+        {
+            "key": "subject",
+            "name": "Otsikko",
+            "description": "Sähköpostin ja asiointitilin otsikko",
             "contentType": "plain",
             "numberOfRows": 1
         },
@@ -55,6 +97,20 @@
             "description": "Kirjeen ja sähköpostin pääsisältö",
             "contentType": "html",
             "numberOfRows": 20
+        },
+        {
+            "key": "asiointitilisisalto",
+            "name": "Asiointitiliviestin sisältö",
+            "description": "Asiointitilin ilmoituksen pääsisältö",
+            "contentType": "plain",
+            "numberOfRows": 20
+        },
+        {
+            "key": "tekstiviesti",
+            "name": "Asiointitilin tekstiviesti",
+            "description": "Asiointitilin tekstiviestisisältö",
+            "contentType": "plain",
+            "numberOfRows": 5
         }
     ]
 }

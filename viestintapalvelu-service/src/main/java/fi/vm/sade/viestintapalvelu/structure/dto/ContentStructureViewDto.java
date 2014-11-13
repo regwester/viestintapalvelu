@@ -25,6 +25,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 
 /**
  * User: ratamaa
@@ -36,9 +37,8 @@ public class ContentStructureViewDto implements Serializable {
     private static final long serialVersionUID = 4909549781715757219L;
 
     private Long id;
-    @DtoConversion
     @ApiModelProperty("Rakenteen tyyppi: email|letter|asiointtili")
-    private String type;
+    private ContentStructureType type;
     private Long styleId;
     private String styleName;
     @DtoPath("style.style")
@@ -54,11 +54,11 @@ public class ContentStructureViewDto implements Serializable {
         this.id = id;
     }
 
-    public String getType() {
+    public ContentStructureType getType() {
         return type;
     }
 
-    public void setType(String type) {
+    public void setType(ContentStructureType type) {
         this.type = type;
     }
 
