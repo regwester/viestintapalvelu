@@ -106,6 +106,7 @@
     <script type="text/javascript" src="report/directives/reportedMessageStatus.js"></script>
     <script type="text/javascript" src="report/directives/limitedParagraph.js"></script>
     <script type="text/javascript" src="core/directives/input-list.js"></script>
+    <script type="text/javascript" src="core/directives/form-item.js"></script>
 
     <!-- Controllers -->
     <script type="text/javascript" src="email/controllers/tab.js"></script>
@@ -122,6 +123,7 @@
     <script type="text/javascript" src="report/controllers/reportedLetterView.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/templateTree.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/letterTemplateList.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/letterTemplateCreate.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/templateDialog.js"></script>
 
     <!-- Routes -->

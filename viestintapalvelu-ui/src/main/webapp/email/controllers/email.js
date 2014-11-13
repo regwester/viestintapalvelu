@@ -4,20 +4,7 @@ angular.module('email')
 .controller('EmailCtrl', ['$scope', '$rootScope', 'EmailService', 'DraftService', 'uploadManager', '$state', 'DialogService', 'Global',
   function($scope, $rootScope, EmailService, DraftService, uploadManager, $state, DialogService, Global) {
 
-    $scope.tinymceOptions = {
-      height: 400,
-      width: 650,
-      menubar: false,
-      language: Global.getUserLanguage(),
-      //paste plugin to avoid ms word tags and similar content
-      plugins: "paste textcolor",
-      toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor",
-      paste_auto_cleanup_on_paste : true,
-      paste_remove_styles: true,
-      paste_remove_styles_if_webkit: true,
-      paste_strip_class_attributes: true
-    };
-
+    $scope.editorOptions = Global.getEditorOptions();
     $scope.email = window.emailData.email;
     $scope.recipients = window.emailData.recipient;
     $scope.email.attachInfo = [];
