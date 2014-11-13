@@ -29,6 +29,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import static org.junit.Assert.assertEquals;
@@ -79,16 +80,11 @@ public class TemplateServiceTest {
 
     @Test
     public void testFindById() {
-        List<Template> mockedTemplates = new ArrayList<Template>();
-        Template mockedTemplate = DocumentProviderTestData.getTemplate(1l);
-        mockedTemplates.add(mockedTemplate);
-        
-        when(mockedTemplateDAO.findBy(eq("id"), any(Long.class))).thenReturn(mockedTemplates);
-        
+        Template template = DocumentProviderTestData.getTemplate(1l);
+        when(mockedTemplateDAO.findByIdAndState(template.getId(), State.julkaistu)).thenReturn(template);
         fi.vm.sade.viestintapalvelu.template.Template templateFindByID = templateService.findById(1);
-        
         assertNotNull(templateFindByID);
-        assertTrue(templateFindByID.getId() == 1);
+        assertEquals(template.getId().longValue(), templateFindByID.getId());
         assertNotNull(templateFindByID.getContents().size() == 1);
         assertNotNull(templateFindByID.getReplacements().size() == 1);
     }
