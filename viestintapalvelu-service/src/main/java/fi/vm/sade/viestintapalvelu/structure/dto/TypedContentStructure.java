@@ -14,18 +14,19 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.model;
+package fi.vm.sade.viestintapalvelu.structure.dto;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
+import java.util.Collection;
+
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 
 /**
  * User: ratamaa
- * Date: 6.10.2014
- * Time: 17:19
+ * Date: 13.11.2014
+ * Time: 14:19
  */
-@Entity
-@DiscriminatorValue("GENERAL")
-public class LetterBatchGeneralProcessingError extends LetterBatchProcessingError {
-    private static final long serialVersionUID = -1816998415185592381L;
+public interface TypedContentStructure {
+    ContentStructureType getType();
+
+    Collection<? extends TypedContentStructureContent> getContents();
 }

@@ -43,6 +43,9 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
+import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -201,7 +204,10 @@ public class TemplateResourceTest {
         private StructureDAO dao;
 
         public Structure createStructure() {
-            return dao.insert(DocumentProviderTestData.getStructureWithGivenPrefixForName("somesuch"));
+            return dao.insert(DocumentProviderTestData.getStructureWithGivenPrefixForName("somesuch",
+                    contentStructure(ContentStructureType.letter,
+                            content(ContentRole.body, ContentType.html))
+            ));
         }
     }
 }

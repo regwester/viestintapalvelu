@@ -14,6 +14,12 @@ import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureContentSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
+import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 
 public class DocumentProviderTestData {
     public static AddressLabel getAddressLabel() {
@@ -379,8 +385,15 @@ public class DocumentProviderTestData {
         
         template.setLanguage("FI");
         template.setName("test_template");
-        template.setStructureName("test_structure");
-        template.setStructureId(1l);
+        template.setStructure(structureSaveDto(
+                contentStructureSaveDto(ContentStructureType.letter,
+                        contentSaveDto(ContentRole.body, ContentType.html)
+                ),
+                contentStructureSaveDto(ContentStructureType.email,
+                        contentSaveDto(ContentRole.header, ContentType.plain),
+                        contentSaveDto(ContentRole.body, ContentType.html)
+                )
+        ));
         template.setOrganizationOid("1.2.246.562.10.00000000001");
         template.setStoringOid("1.2.246.562.24.00000000001");
         template.setStyles("test-styles");
@@ -389,15 +402,14 @@ public class DocumentProviderTestData {
         template.setReplacements(getReplacements());
         template.setType("letter");
         template.setState(State.luonnos);
-        
+
         return template;
     }
     
     public static Template getTemplateWithGivenNamePrefix(Long id, String prefix) {
         Template template = new Template();
-        Structure structure = getStructureWithGivenPrefixForName(prefix);
-        // TODO: create structure elements?
-        template.setStructure(structure);
+        template.setStructure(getStructureWithGivenPrefixForName(prefix,
+                contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))));
         
         if (id != null) {
             template.setId(id);
@@ -407,25 +419,18 @@ public class DocumentProviderTestData {
         template.setName(prefix + "_template");
         template.setOrganizationOid("1.2.246.562.10.00000000001");
         template.setStoringOid("1.2.246.562.24.00000000001");
-        template.setStyles("test-styles");
         template.setTimestamp(new Date());
         template.setVersionro("1.0");
-        template.setType("letter");
         
         Set<Replacement> replacements = new HashSet<Replacement>();
         replacements.add(getReplacement(id, template));
-        
-        Set<TemplateContent> templateContents = new HashSet<TemplateContent>();
-        templateContents.add(getTemplateContent(id, template));
-        
-        template.setContents(templateContents);
         template.setReplacements(replacements);
         
         return template;
     }
 
-    public static Structure getStructureWithGivenPrefixForName(String prefix) {
-        Structure structure = new Structure();
+    public static Structure getStructureWithGivenPrefixForName(String prefix, ContentStructure ... contentStructures) {
+        Structure structure = structure(contentStructures);
         structure.setName(prefix + "_structure");
         structure.setLanguage("FI");
         structure.setDescription("Structure description");
@@ -440,23 +445,6 @@ public class DocumentProviderTestData {
         TemplateApplicationPeriod templateApplicationPeriod = new TemplateApplicationPeriod(template, hakuOid);
         template.getApplicationPeriods().add(templateApplicationPeriod);
         return templateApplicationPeriod;
-    }
-
-    public static TemplateContent getTemplateContent(Long id, Template template) {
-        TemplateContent templateContent = new TemplateContent();
-        
-        if (id != null) {
-            templateContent.setId(id);
-        }
-        
-        templateContent.setContent("test_content");
-        templateContent.setContentType("pdf");
-        templateContent.setName("test_template_content");
-        templateContent.setOrder(1);
-        templateContent.setTemplate(template);
-        templateContent.setTimestamp(new Date());
-        
-        return templateContent;
     }
 
     public static List<fi.vm.sade.viestintapalvelu.template.TemplateContent> getTemplateContents() {
@@ -477,8 +465,8 @@ public class DocumentProviderTestData {
 
     public static Map<String, Object> getTemplateReplacements() {
         Map<String, Object> templateReplacements = new HashMap<String, Object>();
-        templateReplacements.put("key-1", new String("templatereplacemet-1"));
-        templateReplacements.put("key-2", new String("templatereplacemet-2"));
+        templateReplacements.put("key-1", "templatereplacemet-1");
+        templateReplacements.put("key-2", "templatereplacemet-2");
         
         return templateReplacements;
     }
@@ -491,5 +479,66 @@ public class DocumentProviderTestData {
         attachment.setContents("Test data".getBytes());
         attachment.setVersion(1l);
         return attachment;
+    }
+
+    public static Structure structure(ContentStructure ...contentStructures) {
+        Structure structure = new Structure();
+        structure.setName("test_structure");
+        structure.setLanguage("FI");
+        for (ContentStructure contentStructure : contentStructures) {
+            contentStructure.setStructure(structure);
+            structure.getContentStructures().add(contentStructure);
+        }
+        return structure;
+    }
+
+    public static ContentStructure contentStructure(ContentStructureType type, ContentStructureContent... contents) {
+        ContentStructure contentStructure = new ContentStructure();
+        contentStructure.setType(type);
+        int orderNumber = 0;
+        for (ContentStructureContent content : contents) {
+            content.setOrderNumber(++orderNumber);
+            content.setContentStructure(contentStructure);
+            contentStructure.getContents().add(content);
+        }
+        return contentStructure;
+    }
+
+    public static ContentStructureContent content(ContentRole role, ContentType type) {
+        ContentStructureContent csc = new ContentStructureContent();
+        csc.setRole(role);
+        Content content = new Content();
+        content.setContent(type == ContentType.html ? "<html><head><title>T</title></head><body>B</body></html>"
+                : "content");
+        content.setName("name");
+        content.setContentType(type);
+        csc.setContent(content);
+        return csc;
+    }
+
+    public static StructureSaveDto structureSaveDto(ContentStructureSaveDto... contentStructures) {
+        StructureSaveDto saveDto = new StructureSaveDto();
+        saveDto.setName("test_structure");
+        saveDto.setLanguage("FI");
+        saveDto.setDescription("Testirakenne");
+        for (ContentStructureSaveDto contentStructure : contentStructures) {
+            saveDto.getContentStructures().add(contentStructure);
+        }
+        return saveDto;
+    }
+
+    public static ContentStructureSaveDto contentStructureSaveDto(ContentStructureType type, ContentStructureContentSaveDto... contents) {
+        ContentStructureSaveDto structure = new ContentStructureSaveDto();
+        structure.setType(type);
+        for (ContentStructureContentSaveDto content : contents) {
+            structure.getContents().add(content);
+        }
+        return structure;
+    }
+
+    public static ContentStructureContentSaveDto contentSaveDto(ContentRole role, ContentType type) {
+        return new ContentStructureContentSaveDto(role, "name", type,
+                type == ContentType.html ? "<html><head><title>T</title></head><body>B</body></html>"
+                        : "content");
     }
 }

@@ -1,61 +1,44 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-import com.lowagie.text.DocumentException;
-
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.Template.State;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-
 import java.io.IOException;
 import java.util.List;
 
+import com.lowagie.text.DocumentException;
+
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+
 public interface TemplateService {
-
-    Template getTemplateFromFiles(String languageCode, String... names) throws IOException;
-
-    Template getTemplateFromFiles(String languageCode, String type, String... names) throws IOException;
 
     List<String> getTemplateNamesList();
     
     List<String> getTemplateNamesListByState(State state);
 
-    Long storeTemplate(Template template);
-
-    Long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template);
+    long storeTemplateDTO(Template template);
     
-    void updateTemplate(fi.vm.sade.viestintapalvelu.template.Template template);
+    void updateTemplate(Template template);
 
-    fi.vm.sade.viestintapalvelu.template.Template saveAttachedApplicationPeriods(ApplicationPeriodsAttachDto dto);
+    Template saveAttachedApplicationPeriods(ApplicationPeriodsAttachDto dto);
 
-    void storeDraftDTO(fi.vm.sade.viestintapalvelu.template.Draft draft);
+    void storeDraftDTO(Draft draft);
 
 
-    fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName, String templateLanguage, String organizationOid,
+    Draft findDraftByNameOrgTag(String templateName, String templateLanguage, String organizationOid,
                                                                      String applicationPeriod, String fetchTarget, String tag);
 
     List<fi.vm.sade.viestintapalvelu.template.Replacement> findDraftReplacement(String templateName, String languageCode,
                                                                                 String oid, String applicationPeriod, String fetchTarget, String tag);
 
-    fi.vm.sade.viestintapalvelu.template.Template findById(long id, ContentStructureType structureType);
+    Template findById(long id, ContentStructureType structureType);
 
-    fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, ContentStructureType structureType, State state);
+    Template findByIdAndState(long id, ContentStructureType structureType, State state);
     
-    Template template(String name, String languageCode) throws IOException, DocumentException;
+    fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode) throws IOException, DocumentException;
 
-    Template template(String name, String languageCode, String type) throws IOException, DocumentException;
+    fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode, String type) throws IOException, DocumentException;
 
-    fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language);
+    Template getTemplateByName(TemplateCriteria criteria, boolean content);
 
-    fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, String type);
-
-    fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content);
-
-    fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content, String type);
-
-    fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(TemplateCriteria criteria, boolean content);
-
-    List<fi.vm.sade.viestintapalvelu.template.Template> listTemplateVersionsByName(TemplateCriteria templateCriteria, boolean content, boolean periods);
-
-    public List<fi.vm.sade.viestintapalvelu.template.Template> getByApplicationPeriod(TemplateCriteria criteria);
+    List<Template> listTemplateVersionsByName(TemplateCriteria templateCriteria, boolean content, boolean periods);
 }

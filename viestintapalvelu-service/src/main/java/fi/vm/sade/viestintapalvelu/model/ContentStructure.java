@@ -24,6 +24,7 @@ import java.util.Set;
 import javax.persistence.*;
 
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructure;
 
 /**
  * User: ratamaa
@@ -33,7 +34,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 @Entity
 @Table(name = "sisalto_rakenne", schema = "kirjeet",
         uniqueConstraints = @UniqueConstraint(columnNames = {"rakenne", "tyyppi"}))
-public class ContentStructure implements Serializable {
+public class ContentStructure implements Serializable, TypedContentStructure {
     private static final long serialVersionUID = -1419222938581144952L;
 
     @Id
@@ -101,6 +102,7 @@ public class ContentStructure implements Serializable {
         this.type = type;
     }
 
+    @Override
     public Set<ContentStructureContent> getContents() {
         return contents;
     }

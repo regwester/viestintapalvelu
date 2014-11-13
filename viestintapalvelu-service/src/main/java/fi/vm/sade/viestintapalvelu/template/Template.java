@@ -32,14 +32,12 @@ public class Template {
     @ApiModelProperty("Kirjepohjan uvaus")
     private String description;
 
-    @Deprecated // Määritetään rakenteessa
     private String styles;
 
     private String storingOid;
 
     private String organizationOid;
 
-    @Deprecated // Nämä tulevat rakenteen mukaan
     private List<TemplateContent> contents;
 
     @NotNull @Size(min=1)
@@ -54,7 +52,6 @@ public class Template {
     @ApiModelProperty("Jos true, tätä kirjepohjaa käytetään oletuksena suhteessa muihin samalla tavalla rajattuihin kirjepohjiin")
     private boolean usedAsDefault;
 
-    @Deprecated
     private String type;
 
     @ApiModelProperty("Rakenteen id. Jos syötetty valitaan rakenne tämän mukaan. Oltava saman kielinen kuin kirjepohja.")
@@ -67,8 +64,7 @@ public class Template {
     
     @ApiModelProperty("Kirjepohjan tila")
     private State state;
-    
-    @Deprecated
+
     public List<TemplateContent> getContents() {
         return contents;
     }    
@@ -119,7 +115,6 @@ public class Template {
         return timestamp;
     }
 
-    @Deprecated
     public void setContents(List<TemplateContent> contents) {
         this.contents = contents;
     }
@@ -148,7 +143,6 @@ public class Template {
         this.storingOid = storingOid;
     }
 
-    @Deprecated
     public void setStyles(String styles) {
         this.styles = styles;
     }
@@ -160,12 +154,10 @@ public class Template {
         this.timestamp = timestamp;
     }
 
-    @Deprecated
 	public String getType() {
 		return type;
 	}
 
-    @Deprecated
 	public void setType(String type) {
 		this.type = type;
 	}

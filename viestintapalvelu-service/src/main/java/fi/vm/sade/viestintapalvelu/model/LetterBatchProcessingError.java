@@ -8,13 +8,16 @@ import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
+import static javax.persistence.DiscriminatorType.STRING;
+
 /**
  * Created by jonimake on 22.9.2014.
  */
 @Table(name = "kirjelahetysvirhe", schema= "kirjeet")
 @Entity(name = "LetterBatchProcessingError")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "tyyppi")
+@DiscriminatorColumn(name = "tyyppi", discriminatorType = STRING,
+        columnDefinition = "VARCHAR(64)")
 public abstract class LetterBatchProcessingError extends BaseEntity {
     private static final long serialVersionUID = 1L;
 

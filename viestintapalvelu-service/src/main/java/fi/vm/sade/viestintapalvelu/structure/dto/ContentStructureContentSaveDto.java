@@ -37,7 +37,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
         description = "Kuvaa kirjeen/sähköpostin/asiointitiliviestin sisällön, yksittäisen sähköpostin tai asiointitlilin liitteen " +
                 " tai asiointitilin tekstiviestin")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ContentStructureContentSaveDto implements Serializable {
+public class ContentStructureContentSaveDto implements Serializable, TypedContentStructureContent {
     private static final long serialVersionUID = 8957552890776904394L;
 
     @NotNull
@@ -66,6 +66,7 @@ public class ContentStructureContentSaveDto implements Serializable {
         this.content = content;
     }
 
+    @Override
     public ContentRole getRole() {
         return role;
     }
@@ -82,6 +83,7 @@ public class ContentStructureContentSaveDto implements Serializable {
         this.name = name;
     }
 
+    @Override
     public ContentType getContentType() {
         return contentType;
     }

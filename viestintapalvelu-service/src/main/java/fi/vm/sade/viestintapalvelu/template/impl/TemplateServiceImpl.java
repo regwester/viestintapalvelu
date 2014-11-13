@@ -5,11 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -25,8 +25,9 @@ import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
-import fi.vm.sade.viestintapalvelu.template.Contents;
+import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
 import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
 
 @Service
@@ -37,71 +38,17 @@ public class TemplateServiceImpl implements TemplateService {
     private DraftDAO draftDAO;
     private StructureDAO structureDAO;
     private StructureService structureService;
+    private StructureConverter structureConverter;
 
     @Autowired
     public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO,
-                               StructureDAO structureDAO, StructureService structureService) {
+                               StructureDAO structureDAO, StructureService structureService, StructureConverter structureConverter) {
         this.templateDAO = templateDAO;
         this.currentUserComponent = currentUserComponent;
         this.draftDAO = draftDAO;
         this.structureDAO = structureDAO;
         this.structureService = structureService;
-    }
-
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateFromFiles(java.lang.String, java.lang.String)
-     */
-    @Override
-    public Template getTemplateFromFiles(String languageCode, String... names) throws IOException {
-        return getTemplateFromFiles(languageCode, null, names);
-    }
-
-    /* (non-Javadoc)
- * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateFromFiles(java.lang.String, java.lang.String, java.lang.String)
- */
-    @Override
-    public Template getTemplateFromFiles(String languageCode, String type, String... names) throws IOException {
-        Template result = new Template();
-        Set<TemplateContent> contents = new HashSet<TemplateContent>();
-        result.setLanguage(languageCode);
-        result.setName("template");
-        result.setUsedAsDefault(false);
-        result.setOrganizationOid("oid_org");
-        result.setStoringOid("storingOid");
-        result.setTimestamp(new Date());
-        result.setType(type);
-
-        int i = 1;
-        for (String name : names) {
-            String templateName = Utils.resolveTemplateName(name, languageCode, type);
-            if (templateName != null) {
-                BufferedReader buff = new BufferedReader(new InputStreamReader(
-                        getClass().getResourceAsStream(templateName)));
-                StringBuilder sb = new StringBuilder();
-
-                String line = buff.readLine();
-                while (line != null) {
-                    sb.append(line);
-                    line = buff.readLine();
-                }
-                TemplateContent content = new TemplateContent();
-                content.setName(name);
-                content.setContent(sb.toString());
-                content.setOrder(i++);
-                content.setTimestamp(new Date());
-                content.setTemplate(result);
-                contents.add(content);
-            }
-        }
-        result.setContents(contents);
-        Replacement replacement = new Replacement();
-        replacement.setName("$sisalto");
-        replacement.setDefaultValue("default value");
-        Set<Replacement> replacements = new HashSet<Replacement>();
-        replacement.setTemplate(result);
-        replacements.add(replacement);
-        result.setReplacements(replacements);
-        return result;
+        this.structureConverter = structureConverter;
     }
 
     /* (non-Javadoc)
@@ -120,14 +67,10 @@ public class TemplateServiceImpl implements TemplateService {
         return templateDAO.getAvailableTemplatesByType(state);
     }
 
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#storeTemplate(fi.vm.sade.viestintapalvelu.model.Template)
-     */
-    @Override
-    public Long storeTemplate(Template template) {
+    protected long storeTemplate(Template template) {
         Henkilo henkilo = currentUserComponent.getCurrentUser();
         template.setStoringOid(henkilo.getOidHenkilo());
-        Long templateId = templateDAO.insert(template).getId();
+        long templateId = templateDAO.insert(template).getId();
         ensureNoOtherDefaults(template);
         return templateId;
     }
@@ -136,7 +79,7 @@ public class TemplateServiceImpl implements TemplateService {
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template)
      */
     @Override
-    public Long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
+    public long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
         convertTemplate(template, model);
         if (template.getStructureId() != null) {
@@ -151,10 +94,10 @@ public class TemplateServiceImpl implements TemplateService {
             template.setStructureId(structureId);
             model.setStructure(structureDAO.read(structureId));
         }
-        // TODO: remove the if and throw an exception if not (current template JSONs do not contain structures)
-        if (model.getStructure() != null) {
-            validateTemplateAgainstStructure(template, model.getStructure());
+        if (model.getStructure() == null) {
+            throw BeanValidatorImpl.badRequest("Structure required. Please specify structureId / structureName or structure to create.");
         }
+        validateTemplateAgainstStructure(template, model.getStructure());
         updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         return storeTemplate(model);
     }
@@ -163,17 +106,12 @@ public class TemplateServiceImpl implements TemplateService {
         to.setName(from.getName());
         to.setDescription(from.getDescription());
         to.setTimestamp(new Date());
-        to.setStyles(from.getStyles());
         to.setUsedAsDefault(from.isUsedAsDefault());
         to.setLanguage(from.getLanguage());
         to.setOrganizationOid(from.getOrganizationOid());
-        if (from.getContents() != null) {
-            to.setContents(parseContentModels(from.getContents(), to));
-        }
         if (from.getReplacements() != null) {
             to.setReplacements(parseReplacementModels(from.getReplacements(), to));
         }
-        to.setType(from.getType());
     }
 
     private void validateTemplateAgainstStructure(fi.vm.sade.viestintapalvelu.template.Template template, Structure structure) {
@@ -213,10 +151,9 @@ public class TemplateServiceImpl implements TemplateService {
 
     protected void ensureNoOtherDefaults(Template model) {
         if (model.isUsedAsDefault()) {
-            // Can not have multiple defaults for the templates with the same name, language and type:
+            // Can not have multiple defaults for the templates with the same name and language:
             List<Template> templates = templateDAO.findTemplates(
-                    new TemplateCriteriaImpl(model.getName(), model.getLanguage())
-                            .withType(model.getType()));
+                    new TemplateCriteriaImpl(model.getName(), model.getLanguage()));
             for (Template otherTemplate : templates) {
                 if (!otherTemplate.getId().equals(model.getId())
                         && otherTemplate.isUsedAsDefault()) {
@@ -306,12 +243,9 @@ public class TemplateServiceImpl implements TemplateService {
         result.setStructureName(searchResult.getStructure().getName());
         result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
-        // TODO:
-        result.setStyles(searchResult.getStyles());
-        result.setContents(parseContentDTOs(searchResult.getContents()));
+        convertContent(searchResult, result, structureType);
 
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
-        result.setType(searchResult.getType());
         result.setState(searchResult.getState());
         return result;
     }
@@ -421,38 +355,6 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String)
-     */
-    @Override
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language) {
-        return getTemplateByName(name, language, true, null);
-    }
-
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String, java.lang.String)
-     */
-    @Override
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, String type) {
-        return getTemplateByName(name, language, true, type);
-    }
-
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String, boolean)
-     */
-    @Override
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content) {
-        return getTemplateByName(name, language, content, null);
-    }
-
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#getTemplateByName(java.lang.String, java.lang.String, boolean, java.lang.String)
-     */
-    @Override
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(String name, String language, boolean content, String type) {
-        return getTemplateByName(new TemplateCriteriaImpl(name, language).withType(type), content);
-    }
-
     @Override
     public List<fi.vm.sade.viestintapalvelu.template.Template> listTemplateVersionsByName(
             TemplateCriteria templateCriteria, boolean content, boolean periods) {
@@ -467,24 +369,15 @@ public class TemplateServiceImpl implements TemplateService {
             }
             if (content) {
                 convertReplacements(template, dto);
-                convertContent(template, dto, templateCriteria);
+                convertContent(template, dto, templateCriteria.getType());
             }
             dtos.add(dto);
         }
         return dtos;
     }
 
-    @Override
-    public List<fi.vm.sade.viestintapalvelu.template.Template> getByApplicationPeriod(TemplateCriteria criteria) {
-        List<Template> templates = templateDAO.findTemplates(criteria);
-        List<fi.vm.sade.viestintapalvelu.template.Template> convertedTemplates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>(templates.size());
-        for (Template template : templates) {
-            convertedTemplates.add(getConvertedTemplate(template));
-        }
-        return convertedTemplates;
-    }
-
-    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(TemplateCriteria criteria, boolean content) {
+    public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(
+            TemplateCriteria criteria, boolean content) {
         fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
         if (criteria.getName() == null) {
             return null;
@@ -509,7 +402,7 @@ public class TemplateServiceImpl implements TemplateService {
         convertBasicData(template, searchTempl);
         convertReplacements(template, searchTempl);
         if (content) {
-            convertContent(template, searchTempl, criteria);
+            convertContent(template, searchTempl, criteria.getType());
         }
         searchTempl.setState(template.getState());
         return searchTempl;
@@ -544,7 +437,6 @@ public class TemplateServiceImpl implements TemplateService {
         to.setStoringOid(from.getStoringOid());
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTemplateVersio(from.getVersionro());
-        to.setType(from.getType());
         to.setDescription(from.getDescription());
         return to;
     }
@@ -579,35 +471,25 @@ public class TemplateServiceImpl implements TemplateService {
         return to;
     }
 
-    // TODO: move to separate DTO converter:
-    private fi.vm.sade.viestintapalvelu.template.Template convertContent(Template from, fi.vm.sade.viestintapalvelu.template.Template to, TemplateCriteria criteria) {
-        // include style only with content
-        to.setStyles(from.getStyles());
-
-        List<fi.vm.sade.viestintapalvelu.template.TemplateContent> templateContent = new LinkedList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
-        for (TemplateContent co : from.getContents()) {
-            if (StringUtils.equalsIgnoreCase(criteria.getType(), Template.TYPE_EMAIL)) {
-                // If type is email -> read only email content and subject from template
-                // all other contents are ignored
-                if (!StringUtils.equalsIgnoreCase(co.getName(), Contents.EMAIL_BODY)) {
-                    continue;
-                }
-            } else {
-                // If type is doc -> read all template contents by ignore email subject or email content
-                if (StringUtils.equalsIgnoreCase(co.getName(), Contents.EMAIL_BODY)) {
-                    continue;
-                }
-            }
-            fi.vm.sade.viestintapalvelu.template.TemplateContent cont = new fi.vm.sade.viestintapalvelu.template.TemplateContent();
-            cont.setId(co.getId());
-            cont.setName(co.getName());
-            cont.setContent(co.getContent());
-            cont.setOrder(co.getOrder());
-            cont.setTimestamp(co.getTimestamp());
-            templateContent.add(cont);
-        }
-        to.setContents(templateContent);
+    private fi.vm.sade.viestintapalvelu.template.Template convertContent(Template from, fi.vm.sade.viestintapalvelu.template.Template to,
+                                                                         ContentStructureType structureType) {
+        Structure structure = from.getStructure();
+        ContentStructure contentStructure = contentStructure(structure, structureType)
+                .or(OptionalHelpper.<ContentStructure>notFound("Template id="
+                        +from.getId()+" does not have ContentStructure for type="+structureType));
+        to.setStyles(contentStructure.getStyle() != null ? contentStructure.getStyle().getStyle() : null);
+        to.setContents(structureConverter.toContents(contentStructure));
+        to.setType(contentStructure.getType().name());
         return to;
+    }
+
+    private Optional<ContentStructure> contentStructure(Structure structure, ContentStructureType structureType) {
+        for (ContentStructure contentStructure : structure.getContentStructures()) {
+            if (contentStructure.getType().equals(structureType)) {
+                return Optional.of(contentStructure);
+            }
+        }
+        return Optional.absent();
     }
 
     /* ------------------------- */

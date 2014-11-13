@@ -41,7 +41,7 @@ import fi.vm.sade.viestintapalvelu.structure.dto.constraint.ValidContentStructur
 @ValidContentStructure
 @ApiModel("Kuvaa rakenteen kirjettä, sähköpostia tai asiointitiliä varten.")
 @JsonIgnoreProperties(ignoreUnknown = true)
-public class ContentStructureSaveDto implements Serializable {
+public class ContentStructureSaveDto implements Serializable, TypedContentStructure {
     private static final long serialVersionUID = 4210603060735538525L;
 
     @NotNull
@@ -58,6 +58,7 @@ public class ContentStructureSaveDto implements Serializable {
     @DtoConversion(exported = false)
     private List<ContentStructureContentSaveDto> contents = new ArrayList<ContentStructureContentSaveDto>();
 
+    @Override
     public ContentStructureType getType() {
         return type;
     }
@@ -82,6 +83,7 @@ public class ContentStructureSaveDto implements Serializable {
         this.style = style;
     }
 
+    @Override
     public List<ContentStructureContentSaveDto> getContents() {
         return contents;
     }

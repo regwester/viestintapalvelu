@@ -24,10 +24,6 @@ public interface TemplateDAO extends JpaDAO<Template, Long> {
 
     void remove(TemplateApplicationPeriod templateApplicationPeriod);
 
-    Template findTemplateByName(String name, String language);
-
-	Template findTemplateByName(String name, String language, String type);
-	
 	List<String> getAvailableTemplates();
 	
 	List<String> getAvailableTemplatesByType(Template.State state);

@@ -13,6 +13,7 @@ import javax.ws.rs.core.Response.Status;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -40,6 +41,7 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {
+    public static final String DEFAULT_STRUCTURE_TYPE = ContentStructureType.letter.name();
 
     @Autowired
     private TemplateService templateService;
@@ -106,18 +108,6 @@ public class TemplateResource extends AsynchronousResource {
             result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
         }
 
-        // Commented out because I don't understand the purpose of this code
-        /*
-        String type = request.getParameter("type");
-        if (type != null) {
-            if (type.equalsIgnoreCase("email")){
-                type = "letter";
-            }
-            type = type.toLowerCase();
-            //result.setType(type);
-        }
-        */
-
         String[] fileNames = request.getParameter("templateFiles").split(",");
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         int order = 1;
@@ -154,11 +144,14 @@ public class TemplateResource extends AsynchronousResource {
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
-        String templateId = request.getParameter("templateId");
-        Long id = Long.parseLong(templateId);
-        ContentStructureType type = ContentStructureType.valueOf(Optional.fromNullable(request.getParameter("type")).or("letter"));
-        return templateService.findById(id,type);
+        return templateService.findById(Long.parseLong(request.getParameter("templateId")),
+                parseStructureType(request.getParameter("type")));
     }
+
+    private ContentStructureType parseStructureType(String type) {
+        return ContentStructureType.valueOf(Optional.fromNullable(type).or(DEFAULT_STRUCTURE_TYPE));
+    }
+
 
     @GET
     @Path("/exampleFiles")
@@ -257,7 +250,7 @@ public class TemplateResource extends AsynchronousResource {
         return new TemplateCriteriaImpl()
                     .withName(request.getParameter("templateName"))
                     .withLanguage(request.getParameter("languageCode"))
-                    .withType(request.getParameter("type"))
+                    .withType(parseStructureType(request.getParameter("type")))
                     .withApplicationPeriod(request.getParameter("applicationPeriod"));
     }
 
@@ -415,7 +408,7 @@ public class TemplateResource extends AsynchronousResource {
         Response response = userRightsValidator.checkUserRightsToOrganization(oid);
 
         // User isn't authorized to the organization
-        if (response.getStatus() != 200) {
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             return response;
         }
 
@@ -426,9 +419,11 @@ public class TemplateResource extends AsynchronousResource {
         String applicationPeriod = request.getParameter("applicationPeriod");
         String content = request.getParameter("content"); // If missing =>
                                                           // content excluded
+        ContentStructureType type = parseStructureType(request.getParameter("type"));
         boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
 
-        bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
+        bundle.setLatestTemplate(templateService.getTemplateByName(
+                new TemplateCriteriaImpl(templateName, languageCode, type), getContent));
 
         if ((oid != null) && !("".equals(oid))) {
             bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName,
@@ -466,7 +461,8 @@ public class TemplateResource extends AsynchronousResource {
         @ApiImplicitParam(name = "oid", value = "Organisaation Oid", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "tag", value = "Vapaa teksti tunniste", required = false, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "applicationPeriod", value = "Haku", required = true, dataType = "string", paramType = "query"),
-        @ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query")
+        @ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "type", value = "Rakennetyyppi", required = false, dataType = "string", paramType = "query")
     })
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to
@@ -475,7 +471,7 @@ public class TemplateResource extends AsynchronousResource {
         Response response = userRightsValidator.checkUserRightsToOrganization(oid);
 
         // User isn't authorized to the organization
-        if (response.getStatus() != 200) {
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             return response;
         }
 
@@ -483,19 +479,15 @@ public class TemplateResource extends AsynchronousResource {
 
         String templateName = request.getParameter("templateName");
         String languageCode = request.getParameter("languageCode");
-        // String content = request.getParameter("content"); // If missing =>
-        // content excluded
-        // boolean getContent = (content != null &&
-        // "YES".equalsIgnoreCase(content));
-        boolean getContent = false;
 
         // Drafts replacements
         String applicationPeriod = request.getParameter("applicationPeriod"); // = Haku
 
         // OPH default template
+        ContentStructureType type = parseStructureType(request.getParameter("type"));
         Template template = templateService.getTemplateByName(
-                new TemplateCriteriaImpl(templateName, languageCode)
-                        .withApplicationPeriod(applicationPeriod), getContent);
+                new TemplateCriteriaImpl(templateName, languageCode, type)
+                        .withApplicationPeriod(applicationPeriod), true);
 
         Map<String, Object> templateRepl = new HashMap<String, Object>();
         templateRepl.put("name", "default");
@@ -565,7 +557,7 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template getTemplateByID(@PathParam("templateId") String templateId, @Context HttpServletRequest request) {
         Long id = Long.parseLong(templateId);
-        ContentStructureType type = ContentStructureType.valueOf(Optional.fromNullable(request.getParameter("type")).or("letter"));
+        ContentStructureType type = parseStructureType(request.getParameter("type"));
         return templateService.findById(id, type);
     }
     
@@ -596,7 +588,8 @@ public class TemplateResource extends AsynchronousResource {
         DocumentException, NoSuchAlgorithmException {
 
         // Return template content
-        return templateService.getTemplateByName(templateName, languageCode, true, type);
+        ContentStructureType structureType = parseStructureType(type);
+        return templateService.getTemplateByName(new TemplateCriteriaImpl(templateName, languageCode, structureType), true);
     }
 
 
@@ -618,12 +611,11 @@ public class TemplateResource extends AsynchronousResource {
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod)
                 throws IOException, DocumentException, NoSuchAlgorithmException {
+        ContentStructureType structureType = parseStructureType(type);
+
         // Return template content
-        return templateService.getTemplateByName(new TemplateCriteriaImpl()
-                        .withName(templateName)
-                        .withLanguage(languageCode)
-                        .withType(type)
-                        .withApplicationPeriod(applicationPeriod), true);
+        return templateService.getTemplateByName(new TemplateCriteriaImpl(templateName, languageCode, structureType)
+                .withApplicationPeriod(applicationPeriod), true);
     }
 
     @GET

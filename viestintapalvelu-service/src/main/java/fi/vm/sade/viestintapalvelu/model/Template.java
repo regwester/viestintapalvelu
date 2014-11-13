@@ -1,16 +1,16 @@
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
+
+import javax.persistence.*;
+
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.generic.model.BaseEntity;
-
-import javax.persistence.*;
-
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
 
 /*
  * CREATE TABLE kirjeet.kirjepohja (
@@ -53,15 +53,7 @@ public class Template extends BaseEntity {
     private String language;
 
 	@Column(name="versionro", nullable=true)
-	private String versionro;	
-	    
-    @ApiModelProperty(value = "CSS styles")
-    @Column(name = "tyylit", nullable = false)
-    private String styles;
-
-    @ApiModelProperty(value = "Pohja tyyppi, default = 'DOC'")
-    @Column(name = "tyyppi", nullable = true, length = 16)
-    private String type;
+	private String versionro;
 
     @ApiModelProperty(value = "Pohjan versiokohtainen kuvaus")
     @Column(name = "kuvaus", nullable = true)
@@ -89,8 +81,9 @@ public class Template extends BaseEntity {
     @Column(name = "oid_organisaatio", nullable = true)
     private String organizationOid;
 
+    @Deprecated
     @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<TemplateContent> contents;
+    private Set<TemplateContent> contents = new HashSet<TemplateContent>();
 
     @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Replacement> replacements;
@@ -106,14 +99,6 @@ public class Template extends BaseEntity {
 
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
-    }
-    
-    public String getStyles() {
-        return styles;
-    }
-    
-    public void setStyles(String styles) {
-        this.styles = styles;
     }
 
     public String getName() {
@@ -160,14 +145,6 @@ public class Template extends BaseEntity {
         return serialVersionUID;
     }
 
-	public String getType() {
-		return type;
-	}
-
-	public void setType(String type) {
-		this.type = type;
-	}
-
     public String getDescription() {
         return description;
     }
@@ -187,11 +164,8 @@ public class Template extends BaseEntity {
     public void setUsedAsDefault(boolean defaultTemplate) {
         this.usedAsDefault = defaultTemplate;
     }
-    
-    public Set<TemplateContent> getContents() {
-        return contents;
-    }
-    
+
+    @Deprecated
     public void setContents(Set<TemplateContent> contents) {
         this.contents = contents;
     }

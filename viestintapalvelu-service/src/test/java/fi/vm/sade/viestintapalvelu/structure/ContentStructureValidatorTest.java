@@ -23,10 +23,11 @@ import org.junit.runners.JUnit4;
 import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.model.types.ContentType;
-import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureContentSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.constraint.ContentStructureValidator;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentSaveDto;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
@@ -41,156 +42,156 @@ public class ContentStructureValidatorTest {
 
     @Test
     public void testLetterStructureValidation() {
-        assertFalse(isValid(structure(ContentStructureType.letter)));
-        assertTrue( isValid(structure(ContentStructureType.letter,
-                content(ContentRole.body, ContentType.html)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter)));
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.body, ContentType.html)
         )));
-        assertFalse(isValid(structure(ContentStructureType.letter,
-                content(ContentRole.body, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse(isValid(structure(ContentStructureType.letter,
-                content(ContentRole.sms, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.sms, ContentType.plain)
         )));
-        assertFalse( isValid(structure(ContentStructureType.letter,
-                content(ContentRole.attachment, ContentType.html)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
-        assertFalse( isValid(structure(ContentStructureType.letter,
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.attachment, ContentType.html)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
-        assertTrue( isValid(structure(ContentStructureType.letter,
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.body, ContentType.html)
+        assertTrue(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.html)
         )));
     }
 
     @Test
     public void testEmailStructureValidation() {
-        assertFalse(isValid(structure(ContentStructureType.email)));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain))));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.body, ContentType.html))));
-        assertFalse( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.html),
-                content(ContentRole.body, ContentType.html)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email)));
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain))));
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.body, ContentType.html))));
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.html)
         )));
-        assertFalse( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html)
         )));
-        assertTrue( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html)
         )));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.body, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertTrue(isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.body, ContentType.plain)
+        assertTrue(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.body, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.body, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertTrue( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.attachment, ContentType.html)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
-        assertFalse( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.attachment, ContentType.plain)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.attachment, ContentType.plain)
         )));
-        assertTrue( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.attachment, ContentType.html),
-                content(ContentRole.attachment, ContentType.html)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.attachment, ContentType.html),
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
-        assertFalse(isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html),
-                content(ContentRole.sms, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html),
+                contentSaveDto(ContentRole.sms, ContentType.plain)
         )));
-        assertFalse( isValid(structure(ContentStructureType.email,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.attachment, ContentType.html)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.email,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
     }
 
     @Test
     public void testAsiointitiliStructureValidation() {
-        assertFalse(isValid(structure(ContentStructureType.asiointitili)));
-        assertFalse(isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain))));
-        assertFalse(isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.body, ContentType.plain))));
-        assertTrue( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili)));
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain))));
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.body, ContentType.plain))));
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.html),
-                content(ContentRole.body, ContentType.plain)
+        assertFalse( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.html),
+                contentSaveDto(ContentRole.body, ContentType.plain)
         )));
-        assertFalse(isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.html)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.html)
         )));
-        assertFalse(isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.sms, ContentType.plain)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.sms, ContentType.plain)
         )));
-        assertTrue( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.attachment, ContentType.html)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
-        assertTrue( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.sms, ContentType.plain)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.sms, ContentType.plain)
         )));
-        assertFalse(isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.sms, ContentType.html)
+        assertFalse(isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.sms, ContentType.html)
         )));
-        assertTrue( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.attachment, ContentType.html),
-                content(ContentRole.attachment, ContentType.html)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.attachment, ContentType.html),
+                contentSaveDto(ContentRole.attachment, ContentType.html)
         )));
-        assertTrue( isValid(structure(ContentStructureType.asiointitili,
-                content(ContentRole.header, ContentType.plain),
-                content(ContentRole.body, ContentType.plain),
-                content(ContentRole.attachment, ContentType.html),
-                content(ContentRole.attachment, ContentType.html),
-                content(ContentRole.sms, ContentType.plain)
+        assertTrue( isValid(DocumentProviderTestData.contentStructureSaveDto(ContentStructureType.asiointitili,
+                contentSaveDto(ContentRole.header, ContentType.plain),
+                contentSaveDto(ContentRole.body, ContentType.plain),
+                contentSaveDto(ContentRole.attachment, ContentType.html),
+                contentSaveDto(ContentRole.attachment, ContentType.html),
+                contentSaveDto(ContentRole.sms, ContentType.plain)
         )));
     }
 
@@ -198,18 +199,4 @@ public class ContentStructureValidatorTest {
         return validator.isValid(dto, null);
     }
 
-    private ContentStructureSaveDto structure(ContentStructureType type, ContentStructureContentSaveDto... contents) {
-        ContentStructureSaveDto structure = new ContentStructureSaveDto();
-        structure.setType(type);
-        for (ContentStructureContentSaveDto content : contents) {
-            structure.getContents().add(content);
-        }
-        return structure;
-    }
-
-    private ContentStructureContentSaveDto content(ContentRole role, ContentType type) {
-        return new ContentStructureContentSaveDto(role, "name", type,
-                type == ContentType.html ? "<html><head><title>T</title></head><body>B</body></html>"
-                : "content");
-    }
 }

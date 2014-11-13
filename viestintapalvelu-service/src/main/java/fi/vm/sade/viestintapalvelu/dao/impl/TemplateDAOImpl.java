@@ -13,43 +13,12 @@ import org.springframework.stereotype.Repository;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 
 @Repository
-public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
-        implements TemplateDAO {
-
-    @Override
-    public Template insert(Template entity) {
-        // TODO: a temporal solution: REMOVE ME (the whole method) after Structure building implemented in the app
-        boolean oldStyle = false;
-        if (entity.getStructure() == null) {
-            oldStyle = true;
-            // select a random template for the null constraint:
-            List<Structure> structures = getEntityManager().createQuery("select s from Structure s order by s.id", Structure.class)
-                    .setMaxResults(1).getResultList();
-            if (structures.isEmpty()) {
-                throw new IllegalStateException("No structure specified (and no existing structures in the system " +
-                        "allowing to perform an old style migration)");
-            }
-            entity.setStructure(structures.get(0));
-        }
-        super.insert(entity);
-        if (oldStyle) {
-            // create the new template structure based on the old one:
-            getEntityManager().createNativeQuery(
-                "update kirjeet.kirjepohja set rakenne = kirjeet.luoRakenneVanhastaPohjasta(id) where " +
-                        " id = ?;").setParameter(1, entity.getId()).executeUpdate();
-            entity.setStructure(getEntityManager()
-                    .createQuery("select t.structure from Template t where t.id=:id", Structure.class)
-                    .setParameter("id", entity.getId()).getResultList().get(0));
-        }
-        return entity;
-    }
+public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implements TemplateDAO {
 
     @Override
     public Template findTemplate(TemplateCriteria criteria) {
@@ -85,7 +54,8 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
             and(where).append("a.language = :language");
         }
         if (criteria.getType() != null) {
-            and(where).append("a.type = :type");
+            queryStr.append(" INNER JOIN a.structure s INNER JOIN s.contentStructures cs");
+            and(where).append("cs.type = :type");
         }
         
         if (criteria.getState() != null) {
@@ -148,20 +118,6 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
             b.append(" AND ");
         }
         return b;
-    }
-
-    /**
-     * Find template by name
-     */
-    public Template findTemplateByName(String name, String language) {
-        return findTemplate(new TemplateCriteriaImpl(name, language));
-    }
-
-    /**
-     * Find template by name
-     */
-    public Template findTemplateByName(String name, String language, String type) {
-        return findTemplate(new TemplateCriteriaImpl(name, language).withType(type));
     }
 
     public List<String> getAvailableTemplates() {

@@ -128,7 +128,7 @@ public class LetterBatch extends BaseEntity {
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<LetterBatchProcessingError> processingErrors = new ArrayList<LetterBatchProcessingError>();
+    private Set<LetterBatchProcessingError> processingErrors = new HashSet<LetterBatchProcessingError>();
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -296,11 +296,11 @@ public class LetterBatch extends BaseEntity {
         this.batchStatus = batchStatus;
     }
 
-    public List<LetterBatchProcessingError> getProcessingErrors() {
+    public Set<LetterBatchProcessingError> getProcessingErrors() {
         return processingErrors;
     }
 
-    public void setProcessingErrors(List<LetterBatchProcessingError> processingErrors) {
+    protected void setProcessingErrors(Set<LetterBatchProcessingError> processingErrors) {
         this.processingErrors = processingErrors;
     }
     

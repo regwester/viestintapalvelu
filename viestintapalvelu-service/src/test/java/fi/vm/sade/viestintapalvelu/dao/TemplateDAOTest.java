@@ -16,9 +16,13 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.model.ContentStructure;
+import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -31,36 +35,6 @@ public class TemplateDAOTest {
     private TemplateDAO templateDAO;
 
     @Test
-    public void testFindTemplateByNameFound() {
-        Template storedTemplate = givenPublishedTemplate();
-        templateDAO.insert(storedTemplate);
-        
-        Template template = templateDAO.findTemplateByName("test_template", "FI");
-        
-        assertNotNull(template);
-        assertNotNull(template.getId());
-        assertEquals(storedTemplate.getName(), template.getName());
-        assertTrue(template.getContents().size() == 1);
-        assertTrue(template.getReplacements().size() == 1);
-        assertEquals(template.getType(), "letter");
-    }
-
-    @Test
-    public void testFindTemplateByNameAndTypeFound() {
-        Template storedTemplate = givenPublishedTemplate();
-        templateDAO.insert(storedTemplate);
-        
-        Template template = templateDAO.findTemplateByName("test_template", "FI", "letter");
-        
-        assertNotNull(template);
-        assertNotNull(template.getId());
-        assertEquals(storedTemplate.getName(), template.getName());
-        assertTrue(template.getContents().size() == 1);
-        assertTrue(template.getReplacements().size() == 1);
-        assertEquals(template.getType(), "letter");
-    }
-
-    @Test
     public void testFindTemplateByNameAndAndTypeAndHakuFound() {
         Template storedTemplate = givenPublishedTemplate();
         String testHakuOid = "1234.56789.154875";
@@ -68,17 +42,13 @@ public class TemplateDAOTest {
         DocumentProviderTestData.getTemplateHaku(storedTemplate, testHakuOid);
         templateDAO.persist(storedTemplate);
 
-        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
-                        .withName("test_template")
-                        .withLanguage("FI")
-                        .withType("letter")
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl("test_template", "FI",
+                                ContentStructureType.letter)
                         .withApplicationPeriod(testHakuOid));
         assertNotNull(template);
         assertNotNull(template.getId());
         assertEquals(storedTemplate.getName(), template.getName());
-        assertTrue(template.getContents().size() == 1);
         assertTrue(template.getReplacements().size() == 1);
-        assertEquals(template.getType(), "letter");
     }
 
     @Test
@@ -87,10 +57,8 @@ public class TemplateDAOTest {
         String testHakuOid = "1234.56789.154875";
         templateDAO.insert(storedTemplate);
 
-        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
-                .withName("test_template")
-                .withLanguage("FI")
-                .withType("letter")
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl("test_template", "FI",
+                        ContentStructureType.letter)
                 .withApplicationPeriod(testHakuOid));
         assertNull(template);
     }
@@ -142,10 +110,8 @@ public class TemplateDAOTest {
         DocumentProviderTestData.getTemplateHaku(storedTemplate, "1234.56789.012345");
         templateDAO.insert(storedTemplate);
 
-        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
-                .withName("test_template")
-                .withLanguage("FI")
-                .withType("letter")
+        Template template = templateDAO.findTemplate(new TemplateCriteriaImpl("test_template", "FI",
+                        ContentStructureType.letter)
                 .withApplicationPeriod(testHakuOid));
         assertNull(template);
     }
@@ -177,16 +143,6 @@ public class TemplateDAOTest {
         assertNull(template);
     }
 
-    @Test
-    public void testFindTemplateByNameNotFound() {
-        Template storedTemplate = givenPublishedTemplate();
-        templateDAO.insert(storedTemplate);
-        
-        Template template = templateDAO.findTemplateByName("test_template_not_found", "FI");
-        
-        assertNull(template);
-    } 
-    
     @Test
     public void testGetAvailableTemplatesFound() {
         Template storedTemplate = givenPublishedTemplate();
@@ -240,6 +196,14 @@ public class TemplateDAOTest {
     private Template givenPublishedTemplate() {
         Template template = DocumentProviderTestData.getTemplate(null);
         template.setState(State.julkaistu);
+        Structure structure = new Structure();
+        structure.setName("test_structure");
+        structure.setLanguage(template.getLanguage());
+        ContentStructure contentStructure = new ContentStructure();
+        contentStructure.setStructure(structure);
+        contentStructure.setType(ContentStructureType.letter);
+        structure.getContentStructures().add(contentStructure);
+        template.setStructure(structure);
         return template;
     }
 }

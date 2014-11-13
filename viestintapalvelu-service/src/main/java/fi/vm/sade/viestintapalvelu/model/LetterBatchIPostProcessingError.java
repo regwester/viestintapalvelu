@@ -30,7 +30,7 @@ import javax.persistence.Entity;
 public class LetterBatchIPostProcessingError extends LetterBatchProcessingError {
     private static final long serialVersionUID = -721331642198243867L;
 
-    @Column(name="iposti_order_number", nullable = false)
+    @Column(name="iposti_order_number")
     private int orderNumber;
 
     public int getOrderNumber() {

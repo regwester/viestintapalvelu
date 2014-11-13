@@ -27,6 +27,7 @@ import com.google.common.base.Optional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -40,6 +41,7 @@ import fi.vm.sade.viestintapalvelu.letter.dto.*;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
 
 import static org.joda.time.DateTime.now;
@@ -190,7 +192,9 @@ public class LetterServiceImpl implements LetterService {
         }
         languageCodes.add(letterBatch.getLanguageCode());
         for (String languageCode : languageCodes) {
-            fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(templateName, languageCode);
+            fi.vm.sade.viestintapalvelu.model.Template template
+                    = templateDAO.findTemplate(new TemplateCriteriaImpl(templateName, languageCode,
+                            ContentStructureType.letter));
             if (template != null) {
                 UsedTemplate usedTemplate = new UsedTemplate();
                 usedTemplate.setLetterBatch(letterB);
@@ -202,7 +206,9 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private String getTemplateNameFromBatch(LetterBatchDetails letterBatch) {
-        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(letterBatch.getTemplateName(), letterBatch.getLanguageCode());
+        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(
+                new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch.getLanguageCode(),
+                        ContentStructureType.letter));
         return template != null ? template.getName() : templateDAO.read(letterBatch.getTemplateId()).getName();
     }
 
@@ -567,15 +573,12 @@ public class LetterServiceImpl implements LetterService {
                 LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
-        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
         LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorTime(new Date());
         error.setLetterReceivers(receiver);
         error.setLetterBatch(batch);
         error.setErrorCause(Optional.fromNullable(message).or("Unknown (TODO)"));
-        errors.add(error);
-        batch.setProcessingErrors(errors);
-        letterBatchDAO.update(batch);
+        batch.addProcessingErrors(error);
     }
 
     @Override
@@ -812,7 +815,7 @@ public class LetterServiceImpl implements LetterService {
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
-        batch.getProcessingErrors().add(error);
+        batch.addProcessingErrors(error);
         letterBatchDAO.update(batch);
     }
 
@@ -830,7 +833,7 @@ public class LetterServiceImpl implements LetterService {
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
-        batch.getProcessingErrors().add(error);
+        batch.addProcessingErrors(error);
         letterBatchDAO.update(batch);
     }
 

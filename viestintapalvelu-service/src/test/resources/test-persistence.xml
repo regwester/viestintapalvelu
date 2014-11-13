@@ -6,6 +6,9 @@
         
         <class>fi.vm.sade.viestintapalvelu.model.LetterBatch</class>
         <class>fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError</class>
+        <class>fi.vm.sade.viestintapalvelu.model.LetterBatchGeneralProcessingError</class>
+        <class>fi.vm.sade.viestintapalvelu.model.LetterBatchIPostProcessingError</class>
+        <class>fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError</class>
         <class>fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress</class>
         <class>fi.vm.sade.viestintapalvelu.model.LetterReceiverEmail</class>
         <class>fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter</class>

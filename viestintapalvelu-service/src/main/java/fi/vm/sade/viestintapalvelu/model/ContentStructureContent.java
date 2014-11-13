@@ -21,6 +21,8 @@ import java.io.Serializable;
 import javax.persistence.*;
 
 import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
+import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructureContent;
 
 /**
  * User: ratamaa
@@ -30,7 +32,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
 @Entity
 @Table(name = "sisalto_rakenne_sisalto", schema = "kirjeet",
     uniqueConstraints = @UniqueConstraint(columnNames = {"sisalto_rakenne", "jarjestys"}))
-public class ContentStructureContent implements Serializable {
+public class ContentStructureContent implements Serializable, TypedContentStructureContent {
     private static final long serialVersionUID = 2783410302027964815L;
 
     @EmbeddedId
@@ -85,6 +87,12 @@ public class ContentStructureContent implements Serializable {
 
     public ContentRole getRole() {
         return role;
+    }
+
+    @Override
+    @Transient
+    public ContentType getContentType() {
+        return this.content == null ? null : this.content.getContentType();
     }
 
     public void setRole(ContentRole role) {
