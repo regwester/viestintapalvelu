@@ -35,8 +35,7 @@ public class ContentReplacementDto implements Serializable {
     private int orderNumber;
     private String name;
     private String description;
-    @DtoConversion
-    private String contentType;
+    private ContentType contentType;
     private int numberOfRows;
 
     public Long getId() {
@@ -79,11 +78,11 @@ public class ContentReplacementDto implements Serializable {
         this.description = description;
     }
 
-    public String getContentType() {
+    public ContentType getContentType() {
         return contentType;
     }
 
-    public void setContentType(String contentType) {
+    public void setContentType(ContentType contentType) {
         this.contentType = contentType;
     }
 

@@ -52,11 +52,13 @@ public class ContentStructureValidator implements ConstraintValidator<ValidConte
                     where(ContentRole.body).type(ContentType.html).min(1)
             );
             case email:         return allow(value.getType(), value.getContents(),
+                    where(ContentRole.header).type(ContentType.plain).min(1).max(1),
                     where(ContentRole.body).type(ContentType.html).min(1).max(1),
                     where(ContentRole.body).type(ContentType.plain).max(1),
                     where(ContentRole.attachment).type(ContentType.html)
             );
             case asiointitili:  return allow(value.getType(), value.getContents(),
+                    where(ContentRole.header).type(ContentType.plain).min(1).max(1),
                     where(ContentRole.body).type(ContentType.plain).min(1).max(1),
                     where(ContentRole.attachment).type(ContentType.html),
                     where(ContentRole.sms).type(ContentType.plain).max(1)

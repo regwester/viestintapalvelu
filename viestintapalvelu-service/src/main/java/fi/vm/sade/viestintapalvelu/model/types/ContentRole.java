@@ -22,6 +22,7 @@ package fi.vm.sade.viestintapalvelu.model.types;
  * Time: 10:31
  */
 public enum ContentRole {
+    header,
     body,
     sms,
     attachment;
