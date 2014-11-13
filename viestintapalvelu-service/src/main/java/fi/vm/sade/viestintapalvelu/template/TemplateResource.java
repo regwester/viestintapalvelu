@@ -577,7 +577,7 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template getTemplateByIDAndState(@PathParam("templateId") long templateId, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state,
             @QueryParam("structureType") ContentStructureType type) {
-        type = Optional.fromNullable(type).or(type.letter);
+        type = Optional.fromNullable(type).or(ContentStructureType.letter);
         return templateService.findByIdAndState(templateId, type, state);
     }
     
