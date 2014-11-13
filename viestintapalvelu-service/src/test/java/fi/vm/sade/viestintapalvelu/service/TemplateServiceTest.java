@@ -42,10 +42,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
-@ContextConfiguration("/test-application-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
-    DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
-@Transactional(readOnly=true)
 public class TemplateServiceTest {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
