@@ -160,7 +160,7 @@ public class TemplateResourceTest {
     
     private Template givenSavedTemplateInDraftStatus() throws Exception{
         Long id = (Long) resource.store(givenTemplateWithStructure()).getEntity();
-        return resource.getTemplateByIDAndState(id, State.luonnos);
+        return resource.getTemplateByIDAndState(id, State.luonnos, null);
     }
     
     private HttpServletRequest constructRequest(Template template) {

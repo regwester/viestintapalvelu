@@ -575,8 +575,10 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
-    public Template getTemplateByIDAndState(@PathParam("templateId") long templateId, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state) {
-        return templateService.findByIdAndState(templateId, state);
+    public Template getTemplateByIDAndState(@PathParam("templateId") long templateId, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state,
+            @QueryParam("structureType") ContentStructureType type) {
+        type = Optional.fromNullable(type).or(type.letter);
+        return templateService.findByIdAndState(templateId, type, state);
     }
     
     @GET
