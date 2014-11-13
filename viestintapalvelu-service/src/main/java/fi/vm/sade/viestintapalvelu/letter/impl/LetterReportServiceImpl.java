@@ -35,6 +35,7 @@ import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
@@ -218,7 +219,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         letterBatchReport.setTimestamp(letterBatch.getTimestamp());
         letterBatchReport.setOrganisaatioOid(letterBatch.getOrganizationOid());
 
-        Template template = templateService.findById(letterBatch.getTemplateId());
+        Template template = templateService.findById(letterBatch.getTemplateId(), ContentStructureType.letter);
         letterBatchReport.setTemplate(template);
         if (letterBatch.getBatchStatus() != null) {
             letterBatchReport.setStatus(letterBatch.getBatchStatus().name());

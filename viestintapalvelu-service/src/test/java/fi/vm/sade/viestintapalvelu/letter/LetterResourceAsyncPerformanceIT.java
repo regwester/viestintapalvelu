@@ -296,6 +296,7 @@ public class LetterResourceAsyncPerformanceIT {
 
         public long createTemplate() {
             Template template = DocumentProviderTestData.getTemplate(null);
+            template.setState(Template.State.julkaistu);
             for (TemplateContent content : template.getContents()) {
                 content.setContent(testHtmlContent());
             }

@@ -5,19 +5,10 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
@@ -35,8 +26,11 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
@@ -116,7 +110,7 @@ public class TemplateResource extends AsynchronousResource {
         String type = request.getParameter("type");
         if (type != null) {
             if (type.equalsIgnoreCase("email")){
-                type = "doc";
+                type = "letter";
             }
             type = type.toLowerCase();
             //result.setType(type);
@@ -161,7 +155,8 @@ public class TemplateResource extends AsynchronousResource {
     public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
         String templateId = request.getParameter("templateId");
         Long id = Long.parseLong(templateId);
-        return templateService.findById(id);
+        ContentStructureType type = ContentStructureType.valueOf(Optional.fromNullable(request.getParameter("type")).or("letter"));
+        return templateService.findById(id,type);
     }
 
     @GET
@@ -537,14 +532,28 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
+    @Path("/{templateId}/{type}/getTemplateContent")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
+    public Template getTemplateByID(@PathParam("templateId") String templateId,
+                                       @PathParam("type") String type) {
+        Long id = Long.parseLong(templateId);
+        ContentStructureType typeEnumValue = ContentStructureType.valueOf(type);
+        return templateService.findById(id, typeEnumValue);
+    }
+
+    @GET
     @Path("/{templateId}/getTemplateContent")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
-    public Template getTemplateByID(@PathParam("templateId") String templateId) {
+    public Template getTemplateByID(@PathParam("templateId") String templateId, @Context HttpServletRequest request) {
         Long id = Long.parseLong(templateId);
-        return templateService.findById(id);
+        ContentStructureType type = ContentStructureType.valueOf(Optional.fromNullable(request.getParameter("type")).or("letter"));
+        return templateService.findById(id, type);
     }
     
     @GET
