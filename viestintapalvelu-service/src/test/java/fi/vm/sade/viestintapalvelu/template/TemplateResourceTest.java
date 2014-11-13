@@ -154,8 +154,13 @@ public class TemplateResourceTest {
         assertEquals(1, resource.templateNames().size());
     }
     
-    @After
-    public void cleanup() {
+    @Test
+    public void closesTemplate() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertTrue(resource.templateNamesByState(State.suljettu).isEmpty());
+        template.setState(State.suljettu);
+        assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
+        assertEquals(1, resource.templateNamesByState(State.suljettu).size());
     }
     
     private Template givenSavedTemplateInDraftStatus() throws Exception{
