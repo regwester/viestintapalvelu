@@ -4,7 +4,9 @@ import java.lang.reflect.Field;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response.Status;
 
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -15,6 +17,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -35,14 +39,17 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = TemplateResourceTest.Config.class)
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class})
+@DirtiesContext(classMode = ClassMode.AFTER_EACH_TEST_METHOD)
 public class TemplateResourceTest {
 
     @Autowired
@@ -110,7 +117,7 @@ public class TemplateResourceTest {
     }
 
     @Test(expected = BadRequestException.class)
-    public void strucureShouldBeValidated() throws Exception {
+    public void structureShouldBeValidated() throws Exception {
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(null);
@@ -138,11 +145,30 @@ public class TemplateResourceTest {
         assertEquals(1, resource.listVersionsByNameUsingState(constructRequest(template), State.luonnos).size());
     }
     
+    @Test
+    public void publishesTemplate() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertTrue(resource.templateNames().isEmpty());
+        template.setState(State.julkaistu);
+        assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
+        assertEquals(1, resource.templateNames().size());
+    }
+    
+    @After
+    public void cleanup() {
+    }
+    
+    private Template givenSavedTemplateInDraftStatus() throws Exception{
+        Long id = (Long) resource.store(givenTemplateWithStructure()).getEntity();
+        return resource.getTemplateByIDAndState(id, State.luonnos);
+    }
+    
     private HttpServletRequest constructRequest(Template template) {
         HttpServletRequest req = Mockito.mock(HttpServletRequest.class);
         when(req.getParameter("templateName")).thenReturn(template.getName());
         when(req.getParameter("languageCode")).thenReturn(template.getLanguage());
         when(req.getParameter("type")).thenReturn(template.getType());
+        when(req.getParameter("content")).thenReturn("true");
         return req;
     }
     
@@ -150,7 +176,7 @@ public class TemplateResourceTest {
         Structure structure = actions.createStructure();
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(structure.getId());
-        template.setStructureName(null);
+        template.setStructureName(structure.getName());
         return template;
     }
     

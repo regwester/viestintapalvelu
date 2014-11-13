@@ -19,9 +19,9 @@ public interface TemplateService {
     
     List<String> getTemplateNamesListByState(State state);
 
-    void storeTemplate(Template template);
+    Long storeTemplate(Template template);
 
-    void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template);
+    Long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template);
     
     void updateTemplate(fi.vm.sade.viestintapalvelu.template.Template template);
 

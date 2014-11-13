@@ -123,18 +123,19 @@ public class TemplateServiceImpl implements TemplateService {
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#storeTemplate(fi.vm.sade.viestintapalvelu.model.Template)
      */
     @Override
-    public void storeTemplate(Template template) {
+    public Long storeTemplate(Template template) {
         Henkilo henkilo = currentUserComponent.getCurrentUser();
         template.setStoringOid(henkilo.getOidHenkilo());
-        templateDAO.insert(template);
+        Long templateId = templateDAO.insert(template).getId();
         ensureNoOtherDefaults(template);
+        return templateId;
     }
 
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template)
      */
     @Override
-    public void storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
+    public Long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
         convertTemplate(template, model);
         if (template.getStructureId() != null) {
@@ -154,7 +155,7 @@ public class TemplateServiceImpl implements TemplateService {
             validateTemplateAgainstStructure(template, model.getStructure());
         }
         updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
-        storeTemplate(model);
+        return storeTemplate(model);
     }
 
     private void convertTemplate(fi.vm.sade.viestintapalvelu.template.Template from, Template to) {

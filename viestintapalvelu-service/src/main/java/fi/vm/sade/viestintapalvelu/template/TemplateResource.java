@@ -15,6 +15,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
@@ -314,10 +315,22 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
-    public Template store(Template template) throws IOException, DocumentException {
+    public Response store(Template template) throws IOException, DocumentException {
         beanValidator.validate(template);
-        templateService.storeTemplateDTO(template);
-        return new Template(); //TODO: return something more meaningful
+        Long templateId = templateService.storeTemplateDTO(template);
+        return Response.status(Status.OK).entity(templateId).build();
+    }
+    
+    @PUT
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+    @ApiOperation(value = "", notes = "")
+    public Response update(Template template) {
+        //beanValidator.validate(template);
+        templateService.updateTemplate(template);
+        return Response.status(Status.OK).build();
     }
 
     @PUT
@@ -545,6 +558,16 @@ public class TemplateResource extends AsynchronousResource {
     public Template getTemplateByID(@PathParam("templateId") String templateId) {
         Long id = Long.parseLong(templateId);
         return templateService.findById(id);
+    }
+    
+    @GET
+    @Path("/{templateId}/getTemplateContent/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
+    public Template getTemplateByIDAndState(@PathParam("templateId") long templateId, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state) {
+        return templateService.findByIdAndState(templateId, state);
     }
     
     @GET
