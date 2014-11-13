@@ -165,8 +165,12 @@ public class TemplateServiceImpl implements TemplateService {
         to.setUsedAsDefault(from.isUsedAsDefault());
         to.setLanguage(from.getLanguage());
         to.setOrganizationOid(from.getOrganizationOid());
-        to.setContents(parseContentModels(from.getContents(), to));
-        to.setReplacements(parseReplacementModels(from.getReplacements(), to));
+        if (from.getContents() != null) {
+            to.setContents(parseContentModels(from.getContents(), to));
+        }
+        if (from.getReplacements() != null) {
+            to.setReplacements(parseReplacementModels(from.getReplacements(), to));
+        }
         to.setType(from.getType());
     }
 
@@ -284,11 +288,7 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public fi.vm.sade.viestintapalvelu.template.Template findById(long id) {
-        Template searchResult = null;
-        List<Template> templates = templateDAO.findBy("id", id);
-        if (templates != null && !templates.isEmpty()) {
-            searchResult = templates.get(0);
-        }
+        Template searchResult = templateDAO.findByIdAndState(id, State.julkaistu);
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());

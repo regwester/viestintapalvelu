@@ -316,6 +316,14 @@ public class TemplateServiceTest {
         verifyTemplateStateChange(State.luonnos, State.julkaistu);
     }
     
+    @Test
+    public void findsOnlyPublishedTemplateByDefautl() {
+        Long id = 1l;
+        when(mockedTemplateDAO.findByIdAndState(id, State.julkaistu)).thenReturn(DocumentProviderTestData.getTemplate(id));
+        templateService.findById(id);
+        verify(mockedTemplateDAO).findByIdAndState(id, State.julkaistu);
+    }
+    
 
     @Test
     public void updatesTemplateThatIsInDraftState() {
