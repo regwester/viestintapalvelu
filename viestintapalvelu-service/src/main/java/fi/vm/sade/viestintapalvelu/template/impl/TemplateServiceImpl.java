@@ -22,6 +22,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
 import fi.vm.sade.viestintapalvelu.template.Contents;
@@ -288,16 +289,16 @@ public class TemplateServiceImpl implements TemplateService {
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
      */
     @Override
-    public fi.vm.sade.viestintapalvelu.template.Template findById(long id) {
-        return findByIdAndState(id, State.julkaistu);
+    public fi.vm.sade.viestintapalvelu.template.Template findById(long id, ContentStructureType structureType) {
+        return findByIdAndState(id, structureType, State.julkaistu);
     }
     
     /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findByIdAndState(long, fi.vm.sade.viestintapalvelu.model.Template.State)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
      */
     @Override
-    public fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, State state) {
-        Template searchResult = templateDAO.findByIdAndState(id, state);
+    public fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, ContentStructureType structureType, State state) {
+        Template searchResult = state == null ? templateDAO.read(id) : templateDAO.findByIdAndState(id, state);
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
@@ -305,14 +306,17 @@ public class TemplateServiceImpl implements TemplateService {
         result.setStructureName(searchResult.getStructure().getName());
         result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
+        // TODO:
         result.setStyles(searchResult.getStyles());
         result.setContents(parseContentDTOs(searchResult.getContents()));
+
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setType(searchResult.getType());
         result.setState(searchResult.getState());
         return result;
     }
 
+    @Deprecated
     private List<fi.vm.sade.viestintapalvelu.template.TemplateContent> parseContentDTOs(Set<TemplateContent> contents) {
         List<fi.vm.sade.viestintapalvelu.template.TemplateContent> result = new ArrayList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
 
@@ -344,6 +348,7 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
+    @Deprecated
     private Set<TemplateContent> parseContentModels(List<fi.vm.sade.viestintapalvelu.template.TemplateContent> contents, Template template) {
         Set<TemplateContent> result = new HashSet<TemplateContent>();
 

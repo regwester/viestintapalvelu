@@ -29,7 +29,8 @@ public interface TemplateResource {
             @PathParam("type") String type, @PathParam("applicationPeriod") String applicationPeriod) throws IOException, DocumentException;
 
     @GET
-    @Path("/{templateId}/getTemplateContent")
+    @Path("/{templateId}/{type}/getTemplateContent")
     @Produces("application/json")
-    public TemplateDTO getTemplateByID(@PathParam("templateId") String templateId);
+    public TemplateDTO getTemplateByID(@PathParam("templateId") String templateId,
+                                       @PathParam("type") String type);
 }

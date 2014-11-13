@@ -81,7 +81,7 @@ public class Template extends BaseEntity {
     /**
      * Type document
      */
-    public static final String TYPE_DOC = "doc";
+    public static final String TYPE_LETTER = "letter";
 
     @Column(name = "oid_tallentaja", nullable = true)
     private String storingOid;

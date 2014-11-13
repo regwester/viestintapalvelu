@@ -17,16 +17,15 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+
+import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -67,7 +66,7 @@ public class TemplateServiceTest {
     public void testFindById() {
         Template template = DocumentProviderTestData.getTemplate(1l);
         when(mockedTemplateDAO.findByIdAndState(template.getId(), State.julkaistu)).thenReturn(template);
-        fi.vm.sade.viestintapalvelu.template.Template templateFindByID = templateService.findById(1);
+        fi.vm.sade.viestintapalvelu.template.Template templateFindByID = templateService.findById(1, ContentStructureType.letter);
         assertNotNull(templateFindByID);
         assertEquals(template.getId().longValue(), templateFindByID.getId());
         assertNotNull(templateFindByID.getContents().size() == 1);
@@ -94,14 +93,14 @@ public class TemplateServiceTest {
         when(mockedTemplateDAO.findTemplate(any(TemplateCriteria.class))).thenReturn(mockedTemplate);
 
         fi.vm.sade.viestintapalvelu.template.Template templateFindByName = 
-            templateService.getTemplateByName("test_template", "FI", true, "doc");
+            templateService.getTemplateByName("test_template", "FI", true, "letter");
         
         assertNotNull(templateFindByName);
         assertTrue(templateFindByName.getId() == 1);
         assertNotNull(templateFindByName.getContents().size() == 1);
         assertNotNull(templateFindByName.getReplacements().size() == 1);
         assertTrue(templateFindByName.getType() != null);
-        assertTrue(templateFindByName.getType().equals("doc"));
+        assertTrue(templateFindByName.getType().equals("letter"));
     }
 
     @Test
@@ -115,7 +114,7 @@ public class TemplateServiceTest {
                 templateService.getTemplateByName(new TemplateCriteriaImpl()
                         .withName("test_template")
                         .withLanguage("FI")
-                        .withType("doc")
+                        .withType("letter")
                         .withApplicationPeriod(applicationPeriodOid), true);
 
         assertNotNull(templateFindByName);
@@ -123,7 +122,7 @@ public class TemplateServiceTest {
         assertNotNull(templateFindByName.getContents().size() == 1);
         assertNotNull(templateFindByName.getReplacements().size() == 1);
         assertTrue(templateFindByName.getType() != null);
-        assertTrue(templateFindByName.getType().equals("doc"));
+        assertTrue(templateFindByName.getType().equals("letter"));
     }
 
 
@@ -137,7 +136,7 @@ public class TemplateServiceTest {
         defaultTemplate.setUsedAsDefault(true);
         String name = "test_template",
                 lang = "FI",
-                type = "doc";
+                type = "letter";
 
         // The default should not be found:
         when(mockedTemplateDAO.findTemplate(eq(
@@ -178,7 +177,7 @@ public class TemplateServiceTest {
         assertNotNull(templateFindByName.getContents().size() == 1);
         assertNotNull(templateFindByName.getReplacements().size() == 1);
         assertTrue(templateFindByName.getType() != null);
-        assertTrue(templateFindByName.getType().equals("doc"));
+        assertTrue(templateFindByName.getType().equals("letter"));
     }
 
 
@@ -189,7 +188,7 @@ public class TemplateServiceTest {
         defaultTemplate.setUsedAsDefault(true);
         String name = "test_template",
                 lang = "FI",
-                type = "doc";
+                type = "letter";
 
         // The default should be found with default requirement:
         when(mockedTemplateDAO.findTemplate(eq(
@@ -214,7 +213,7 @@ public class TemplateServiceTest {
         assertNotNull(templateFindByName.getContents().size() == 1);
         assertNotNull(templateFindByName.getReplacements().size() == 1);
         assertTrue(templateFindByName.getType() != null);
-        assertTrue(templateFindByName.getType().equals("doc"));
+        assertTrue(templateFindByName.getType().equals("letter"));
     }
 
     @Test
@@ -222,7 +221,7 @@ public class TemplateServiceTest {
         Template lastTemplate = DocumentProviderTestData.getTemplate(3l);
         String name = "test_template",
                 lang = "FI",
-                type = "doc";
+                type = "letter";
 
         // The default should be found with default requirement:
         when(mockedTemplateDAO.findTemplate(eq(
@@ -246,7 +245,7 @@ public class TemplateServiceTest {
         assertNotNull(templateFindByName.getContents().size() == 1);
         assertNotNull(templateFindByName.getReplacements().size() == 1);
         assertTrue(templateFindByName.getType() != null);
-        assertTrue(templateFindByName.getType().equals("doc"));
+        assertTrue(templateFindByName.getType().equals("letter"));
     }
     
     @Test
@@ -301,21 +300,21 @@ public class TemplateServiceTest {
     public void findsOnlyPublishedTemplateByDefautl() {
         Long id = 1l;
         when(mockedTemplateDAO.findByIdAndState(id, State.julkaistu)).thenReturn(givenTemplateWithStateAndId(id, State.julkaistu));
-        assertEquals(State.julkaistu, templateService.findById(id).getState());
+        assertEquals(State.julkaistu, templateService.findById(id, ContentStructureType.letter).getState());
     }
     
     @Test
     public void findsOnlyClosedTemplate() {
         Long id = 3l;
         when(mockedTemplateDAO.findByIdAndState(id, State.suljettu)).thenReturn(givenTemplateWithStateAndId(id, State.suljettu));
-        assertEquals(State.suljettu, templateService.findByIdAndState(id, State.suljettu).getState());
+        assertEquals(State.suljettu, templateService.findByIdAndState(id, ContentStructureType.letter, State.suljettu).getState());
     }
     
     @Test
     public void findsOnlyDraftTemplate() {
         Long id = 5l;
         when(mockedTemplateDAO.findByIdAndState(id, State.luonnos)).thenReturn(givenTemplateWithStateAndId(id, State.luonnos));
-        assertEquals(State.luonnos, templateService.findByIdAndState(id, State.luonnos).getState());
+        assertEquals(State.luonnos, templateService.findByIdAndState(id, ContentStructureType.letter, State.luonnos).getState());
     }
     
     @Test

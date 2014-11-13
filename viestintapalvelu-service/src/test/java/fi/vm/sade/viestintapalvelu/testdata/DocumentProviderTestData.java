@@ -387,7 +387,7 @@ public class DocumentProviderTestData {
         template.setTimestamp(new Date());
         template.setContents(getTemplateContents());
         template.setReplacements(getReplacements());
-        template.setType("doc");
+        template.setType("letter");
         template.setState(State.luonnos);
         
         return template;
@@ -410,7 +410,7 @@ public class DocumentProviderTestData {
         template.setStyles("test-styles");
         template.setTimestamp(new Date());
         template.setVersionro("1.0");
-        template.setType("doc");
+        template.setType("letter");
         
         Set<Replacement> replacements = new HashSet<Replacement>();
         replacements.add(getReplacement(id, template));

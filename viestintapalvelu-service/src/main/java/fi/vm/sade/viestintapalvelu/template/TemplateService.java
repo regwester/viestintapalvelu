@@ -5,6 +5,7 @@ import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,10 +37,10 @@ public interface TemplateService {
     List<fi.vm.sade.viestintapalvelu.template.Replacement> findDraftReplacement(String templateName, String languageCode,
                                                                                 String oid, String applicationPeriod, String fetchTarget, String tag);
 
-    fi.vm.sade.viestintapalvelu.template.Template findById(long id);
-    
-    fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, State state);
+    fi.vm.sade.viestintapalvelu.template.Template findById(long id, ContentStructureType structureType);
 
+    fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, ContentStructureType structureType, State state);
+    
     Template template(String name, String languageCode) throws IOException, DocumentException;
 
     Template template(String name, String languageCode, String type) throws IOException, DocumentException;

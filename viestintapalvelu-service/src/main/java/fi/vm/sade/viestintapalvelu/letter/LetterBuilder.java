@@ -38,6 +38,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.*;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 
@@ -216,7 +217,7 @@ public class LetterBuilder {
         if (template == null && batch.getTemplateId() != null) { // If not found
                                                                  // by name
             long templateId = batch.getTemplateId();
-            template = templateService.findById(templateId);
+            template = templateService.findById(templateId, ContentStructureType.letter);
         }
         return template;
     }
@@ -239,7 +240,7 @@ public class LetterBuilder {
 
         // Search template by id
         if (template == null && batch.getTemplateId() != null) {
-            template = templateService.findById(batch.getTemplateId());
+            template = templateService.findById(batch.getTemplateId(), ContentStructureType.letter);
         }
 
         // Fail, if template is still not found
@@ -506,11 +507,11 @@ public class LetterBuilder {
         if (receiver.getWantedLanguage() != null) {
             for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
                 if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {
-                    return templateService.findById(usedTemplate.getTemplate().getId());
+                    return templateService.findById(usedTemplate.getTemplate().getId(), ContentStructureType.letter);
                 }
             }
         }
-        return templateService.findById(batch.getTemplateId());
+        return templateService.findById(batch.getTemplateId(), ContentStructureType.letter);
     }
 
     public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {

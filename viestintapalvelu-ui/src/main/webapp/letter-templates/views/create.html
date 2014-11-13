@@ -1,0 +1,94 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="span4">
+            <button ng-click="cancel()" class="inline-operation btn btn-small">
+                {{'email.button.peruuta' | i18n}}
+            </button>
+            <button ng-click="preview()" class="inline-operation btn-primary btn-small">
+                {{'email.button.preview' | i18n}}
+            </button>
+            <button ng-click="preview()" class="inline-operation btn-primary btn-small">
+                {{'email.button.preview' | i18n}}
+            </button>
+            <button ng-click="save()" class="inline-operation btn btn-small">
+                {{'email.button.tallenna' | i18n}}
+            </button>
+            <button ng-click="release()" class="inline-operation btn btn-small">
+                Julkaise
+            </button>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span4">
+            <h2>Muokkaa kirjepohjaa</h2>
+        </div>
+    </div>
+    <div class="row">
+        <form novalidate="novalidate" class="form-horizontal">
+            <form-item label="Haku:">
+                <p>Korkeakoulujen yhteishaku, syksy 2014</p>
+            </form-item>
+            <form-item label="Kirjeen tyyppi:">
+                <p>Hyväksymiskirje</p>
+            </form-item>
+            <form-item label="Kieli">
+                <p>suomi</p>
+            </form-item>
+            <form-item label="Tila:">
+                <p>Keskeneräinen</p>
+            </form-item>
+            <form-item label="Viesti, osa kaksi:">
+                <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
+            </form-item>
+            <form-item label="Otsikko:">
+                <input type="text" size="40" ng-model="letter.subject"/>
+            </form-item>
+            <form-item>
+                <p>Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen otsikko ja sähköpostiviestin otsikko</p>
+            </form-item>
+            <form-item label="Viesti, osa yksi:">
+                <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
+            </form-item>
+            <form-item>
+                <p>Oppilaitosvirkailijan muokattavissa oleva viestiosio</p>
+            </form-item>
+            <form-item label="Viesti, osa kaksi:">
+                <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
+            </form-item>
+            <form-item>
+                <p>Vain OPH:n virkailijan muokattavissa oleva viestiosio</p>
+            </form-item>
+            <form-item label="Liitteen otsikko:">
+                <input type="text" size="40" ng-model="letter.subject"/>
+            </form-item>
+            <form-item>
+                <p>Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen liitteen otsikko ja sähköpostin PDF-liitteen otsikko</p>
+            </form-item>
+            <form-item label="Liitteen tekstiosio:">
+                <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
+            </form-item>
+            <form-item>
+                <p>Vain OPH:n virkailijan muokattavissa oleva liitteen tekstiosio</p>
+            </form-item>
+        </form>
+    </div>
+    <div class="row">
+        <div class="span8">
+            <button ng-click="cancel()" class="inline-operation btn btn-small">
+                {{'email.button.peruuta' | i18n}}
+            </button>
+            <button ng-click="preview()" class="inline-operation btn btn-small">
+                {{'email.button.preview' | i18n}}
+            </button>
+            <button ng-click="preview()" class="inline-operation btn btn-small">
+                {{'email.button.preview' | i18n}}
+            </button>
+            <button ng-click="save()" class="inline-operation btn-primary btn-small">
+                {{'email.button.tallenna' | i18n}}
+            </button>
+            <button ng-click="release()" class="inline-operation btn btn-small">
+                Julkaise
+            </button>
+        </div>
+    </div>
+</div>
