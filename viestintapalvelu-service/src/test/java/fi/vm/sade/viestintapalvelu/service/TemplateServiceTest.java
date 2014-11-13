@@ -300,12 +300,24 @@ public class TemplateServiceTest {
     @Test
     public void findsOnlyPublishedTemplateByDefautl() {
         Long id = 1l;
-        when(mockedTemplateDAO.findByIdAndState(id, State.julkaistu)).thenReturn(DocumentProviderTestData.getTemplate(id));
-        templateService.findById(id);
-        verify(mockedTemplateDAO).findByIdAndState(id, State.julkaistu);
+        when(mockedTemplateDAO.findByIdAndState(id, State.julkaistu)).thenReturn(givenTemplateWithStateAndId(id, State.julkaistu));
+        assertEquals(State.julkaistu, templateService.findById(id).getState());
     }
     
-
+    @Test
+    public void findsOnlyClosedTemplate() {
+        Long id = 3l;
+        when(mockedTemplateDAO.findByIdAndState(id, State.suljettu)).thenReturn(givenTemplateWithStateAndId(id, State.suljettu));
+        assertEquals(State.suljettu, templateService.findByIdAndState(id, State.suljettu).getState());
+    }
+    
+    @Test
+    public void findsOnlyDraftTemplate() {
+        Long id = 5l;
+        when(mockedTemplateDAO.findByIdAndState(id, State.luonnos)).thenReturn(givenTemplateWithStateAndId(id, State.luonnos));
+        assertEquals(State.luonnos, templateService.findByIdAndState(id, State.luonnos).getState());
+    }
+    
     @Test
     public void updatesTemplateThatIsInDraftState() {
         ArgumentCaptor<Template> captor = ArgumentCaptor.forClass(Template.class);

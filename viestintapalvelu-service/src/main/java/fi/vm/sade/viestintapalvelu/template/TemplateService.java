@@ -37,6 +37,8 @@ public interface TemplateService {
                                                                                 String oid, String applicationPeriod, String fetchTarget, String tag);
 
     fi.vm.sade.viestintapalvelu.template.Template findById(long id);
+    
+    fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, State state);
 
     Template template(String name, String languageCode) throws IOException, DocumentException;
 

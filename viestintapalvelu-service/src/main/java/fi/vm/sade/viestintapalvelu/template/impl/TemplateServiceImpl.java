@@ -288,7 +288,15 @@ public class TemplateServiceImpl implements TemplateService {
      */
     @Override
     public fi.vm.sade.viestintapalvelu.template.Template findById(long id) {
-        Template searchResult = templateDAO.findByIdAndState(id, State.julkaistu);
+        return findByIdAndState(id, State.julkaistu);
+    }
+    
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findByIdAndState(long, fi.vm.sade.viestintapalvelu.model.Template.State)
+     */
+    @Override
+    public fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, State state) {
+        Template searchResult = templateDAO.findByIdAndState(id, state);
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
