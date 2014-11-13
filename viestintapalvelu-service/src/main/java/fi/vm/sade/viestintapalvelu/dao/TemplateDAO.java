@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.dao;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 
 import java.util.List;
@@ -30,4 +31,6 @@ public interface TemplateDAO extends JpaDAO<Template, Long> {
 	List<String> getAvailableTemplates();
 	
 	List<String> getAvailableTemplatesByType(Template.State state);
+	
+	Template findByIdAndState(Long id, State state);
 }

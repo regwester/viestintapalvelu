@@ -16,6 +16,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 
 @Repository
@@ -196,6 +197,18 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
 
         }
         return result;
+    }
+
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.dao.TemplateDAO#findByIdAndState(java.lang.Long, fi.vm.sade.viestintapalvelu.model.Template.State)
+     */
+    @Override
+    public Template findByIdAndState(Long id, State state) {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery("SELECT templ from Template templ WHERE id = :id AND state = :state");
+        query.setParameter("id", id);
+        query.setParameter("state", state);
+        return (Template) query.getSingleResult();
     }
     
 }

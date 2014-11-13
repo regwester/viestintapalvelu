@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.dao;
 
 import java.util.List;
 
+import javax.persistence.NoResultException;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -200,14 +202,39 @@ public class TemplateDAOTest {
     @Test
     public void returnsTemplatesUsingState() {
         String templateNamePrefix = "suljettu";
-        Template closedTemplate = DocumentProviderTestData.getTemplateWithGivenNamePrefix(null, templateNamePrefix);
-        closedTemplate.setState(State.suljettu);
-        templateDAO.insert(closedTemplate);
+        Template closedTemplate = givenTemplateWithNameAndState(templateNamePrefix, State.suljettu);
         templateDAO.insert(givenPublishedTemplate());
         List<String> availableTemplates = templateDAO.getAvailableTemplatesByType(State.suljettu);
         assertEquals(1, availableTemplates.size());
         assertTrue(availableTemplates.get(0).contains(templateNamePrefix));
         assertTrue(availableTemplates.get(0).contains(closedTemplate.getLanguage()));
+    }
+    
+    @Test (expected = NoResultException.class)
+    public void returnsClosedTemplateUsingState() {
+        Template template = givenTemplateWithNameAndState("suljettu", State.suljettu);
+        assertNotNull(templateDAO.findByIdAndState(template.getId(), State.suljettu));
+        templateDAO.findByIdAndState(template.getId(), State.julkaistu);
+    }
+    
+    @Test (expected = NoResultException.class)
+    public void returnsPublishedTemplateUsingState() {
+        Template template = givenTemplateWithNameAndState("julkaistu", State.julkaistu);
+        assertNotNull(templateDAO.findByIdAndState(template.getId(), State.julkaistu));
+        templateDAO.findByIdAndState(template.getId(), State.luonnos);
+    }
+    
+    @Test (expected = NoResultException.class)
+    public void returnsDraftTemplateUsingState() {
+        Template template = givenTemplateWithNameAndState("luonnos", State.luonnos);
+        assertNotNull(templateDAO.findByIdAndState(template.getId(), State.luonnos));
+        templateDAO.findByIdAndState(template.getId(), State.suljettu);
+    }
+
+    private Template givenTemplateWithNameAndState(String templateNamePrefix, State state) {
+        Template template = DocumentProviderTestData.getTemplateWithGivenNamePrefix(null, templateNamePrefix);
+        template.setState(state);
+        return templateDAO.insert(template);
     }
 
     private Template givenPublishedTemplate() {
