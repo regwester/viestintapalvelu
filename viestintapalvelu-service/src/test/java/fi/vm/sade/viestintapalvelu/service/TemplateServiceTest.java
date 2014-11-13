@@ -54,12 +54,10 @@ public class TemplateServiceTest {
     @Test
     public void testStoreTemplateDTO() {
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
-        mockedTemplateDAO.insert(DocumentProviderTestData.getTemplate(1l));
+        when(mockedTemplateDAO.insert(any(Template.class))).thenReturn(DocumentProviderTestData.getTemplate(1l));
         
         fi.vm.sade.viestintapalvelu.template.Template template = DocumentProviderTestData.getTemplate();
-        templateService.storeTemplateDTO(template);
-        
-        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(1l));
+        assertEquals(1l, templateService.storeTemplateDTO(template).longValue());
     }
 
     @Test
