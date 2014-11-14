@@ -255,7 +255,6 @@
                   tree_icon = attrs.iconExpand;
                 }
               }
-              console.log(tree_icon);
               branch.level = level;
               scope.tree_rows.push({
                 level: level,
