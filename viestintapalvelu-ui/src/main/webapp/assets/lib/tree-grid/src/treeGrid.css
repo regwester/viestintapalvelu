@@ -5,6 +5,21 @@
    for both Bootstrap 2 and Bootstrap 3
 
 */
+.icon-expand {
+    background-image: url("../../../img/itemtree-collapse-sprite.png");
+    background-position: -20px 0px;
+}
+
+.icon-expanded {
+    background-image: url("../../../img/itemtree-collapse-sprite.png");
+    background-position: 0px 0px;
+}
+
+.icon-actionmenu {
+    background-image: url("../../../img/actionmenu-icon-sprite.png");
+    background-size: 40px 20px;
+    background-position: 0px 0px;
+}
 
 .tree-grid-animate-enter,
 .tree-grid-row.ng-enter {
