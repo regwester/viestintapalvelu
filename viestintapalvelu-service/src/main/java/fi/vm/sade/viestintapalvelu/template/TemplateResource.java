@@ -76,7 +76,7 @@ public class TemplateResource extends AsynchronousResource {
     private final static String TemplateExamples = "Palauttaa saatavilla olevien kirjepohjien nimet ja sisällöt.";
     private final static String TemplatePartials = "Palauttaa saatavilla olevien kirjepohjien html-sisällön";
     private final static String TemplateReplacements = "Palauttaa saatavilla olevien kirjepohjien oletuskorvaussisällön";
-    private final static String Store = "Rajapinnalla voi tallentaa kantaa kirjepohjan.";
+    private final static String Store = "Rajapinnalla voi tallentaa kantaan uuden kirjepohjan.";
     private final static String StoreDraft = "Rajapinnalla voi tallentaa kantaa kirjepohjaluonnoksen.";
     private final static String AttachApplicationPeriod = "Rajapinnalla voi liittää haut kirjepohjaan.";
 
@@ -311,12 +311,12 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @POST
-    @Path("/store")
+    @Path("/insert")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
-    public Response store(Template template) throws IOException, DocumentException {
+    public Response insert(Template template) throws IOException, DocumentException {
         beanValidator.validate(template);
         Long templateId = templateService.storeTemplateDTO(template);
         return Response.status(Status.OK).entity(templateId).build();
