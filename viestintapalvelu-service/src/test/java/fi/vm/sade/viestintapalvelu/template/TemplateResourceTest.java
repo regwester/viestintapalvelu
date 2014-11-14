@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response.Status;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -164,6 +163,15 @@ public class TemplateResourceTest {
         template.setState(State.suljettu);
         assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
         assertEquals(1, resource.templateNamesByState(State.suljettu).size());
+    }
+    
+    @Test
+    public void fetchesOnlyPublishedTemplatesUsingNames() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertNull(resource.templateByName(constructRequest(template)));
+        template.setState(State.julkaistu);
+        resource.update(template);
+        assertNotNull(resource.templateByName(constructRequest(template)));
     }
     
     private Template givenSavedTemplateInDraftStatus() throws Exception{
