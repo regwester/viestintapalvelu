@@ -223,7 +223,6 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/getNames/{state}")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Transactional
     @ApiOperation(value = TemplateNames, notes = TemplateNames2)
     public List<Map<String, String>> templateNamesByState(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
         List<String> serviceResult = templateService.getTemplateNamesListByState(state);
@@ -282,7 +281,6 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/listVersionsByName/{state}")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Transactional
     @ApiOperation(value = ApitemplateVersionsByName, notes = ApitemplateVersionsByName, response = Template.class)
     @ApiImplicitParams({
             @ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)", required = true, dataType = "string", paramType = "query"),
@@ -565,7 +563,6 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/{templateId}/getTemplateContent/{state}")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template getTemplateByIDAndState(@PathParam("templateId") long templateId, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state,
             @QueryParam("structureType") ContentStructureType type) {
