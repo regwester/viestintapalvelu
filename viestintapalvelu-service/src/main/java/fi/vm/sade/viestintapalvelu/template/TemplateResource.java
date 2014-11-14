@@ -632,22 +632,11 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Produces("application/json")
-    @Path("/haku")
-    public List<HakuDetailsDto> getHakus() {
-        List<HakuDetailsDto> hakus = tarjontaComponent.findPublisehedHakus(100);
-        return hakus;
-    }
-
-    @GET
-    @Produces("application/json")
     @Path("/listByApplicationPeriod/{applicationPeriod}")
     public List<Template> getTemplatesByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
-
-        List<Template> templates = new ArrayList<Template>();
-
-
+        List<Template> templates = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
         return templates;
     }
     

@@ -28,19 +28,25 @@
     <tabset>
         <tab heading="Organisaation oletuskirjepohjat">
             <tree-grid
-                    tree-data="test_tree_data"
-                    col-defs="col_defs"
-                    on-select="my_tree_handler(branch)"
-                    expand-level="2"
+                    tree-data       = "test_tree_data"
+                    col-defs        = "col_defs"
+                    icon-leaf       = "icon-actionmenu"
+                    icon-expand     = "icon-expand"
+                    icon-collapse   = "icon-expanded"
+                    on-select       = "my_tree_handler(branch)"
+                    expand-level    = "2"
                     >
             </tree-grid>
         </tab>
         <tab heading="Hakukohteiden kirjeluonnokset">
             <tree-grid
-                    tree-data="test_tree_data2"
-                    col-defs="col_defs"
-                    on-select="my_tree_handler(branch)"
-                    expand-level="2"
+                    tree-data       = "test_tree_data2"
+                    col-defs        = "col_defs"
+                    icon-leaf       = "icon-actionmenu"
+                    icon-expand     = "icon-expand"
+                    icon-collapse   = "icon-expanded"
+                    on-select       = "my_tree_handler(branch)"
+                    expand-level    = "1"
                     >
             </tree-grid>
         </tab>

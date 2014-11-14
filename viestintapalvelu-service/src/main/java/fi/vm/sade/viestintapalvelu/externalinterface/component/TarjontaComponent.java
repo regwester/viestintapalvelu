@@ -51,7 +51,7 @@ public class TarjontaComponent {
     @Resource
     private TarjontaHakuResource tarjontaHakuResourceClient;
 
-    public List<HakuDetailsDto> findPublisehedHakus(Integer countLimit) {
+    public List<HakuDetailsDto> findPublished(Integer countLimit) {
         try {
             List<HakuListDto> hakus = tarjontaHakuResourceClient.hakus(Optional.fromNullable(countLimit).or(HUGE_COUNT));
             List<HakuDetailsDto> hakuDetails = new ArrayList<HakuDetailsDto>();
