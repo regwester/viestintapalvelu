@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateController', ['$scope', '$state', 'templateService', function($scope, $state, templateService) {
+    .controller('TemplateController', ['$scope', '$state', 'TemplateService', function($scope, $state, TemplateService) {
 
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = "Select one";
@@ -13,11 +13,11 @@ angular.module('letter-templates')
         $scope.placeholder_valitse_haku = "Valitse haku";
 
         $scope.my_tree_handler = function(branch){
-        }
+        };
 
         $scope.updateTreeData = function(applicationPeriod) {
             console.log(applicationPeriod);
-            templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
+            TemplateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
                 var newData = [];
                 var parseData = function(item) {
                     var firstColum18nStr = "Organisaatio ja kirjetyyppi";
@@ -31,9 +31,7 @@ angular.module('letter-templates')
                 response.data.forEach(parseData);
                 $scope.test_tree_data = newData;
             });
-        }
-
-
+        };
 
         $scope.test_tree_data = [
             {"Organisaatio ja kirjetyyppi":"Aalto-yliopisto", lang: "", status:"", children: [
@@ -84,7 +82,7 @@ angular.module('letter-templates')
             ]}
         ];
 
-        templateService.getHakus().success(function(data) {
+        TemplateService.getHakus().success(function(data) {
             $scope.applicationPeriodList = data;
         });
 }]);

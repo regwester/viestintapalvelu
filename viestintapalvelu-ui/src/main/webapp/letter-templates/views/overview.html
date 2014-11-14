@@ -16,7 +16,7 @@
     </div>
     <div class="row margin-bottom-one margin-right-four" ng-if="radioSelection == 'applicationTarget'">
         <div class="margin-right-four span4">
-            <select class="span4" ng-model="$parent.applicationTarget" ng-options="t as t for t in applicationTargets" ng-change="selectTarget()"></select>
+            <select class="span4" ng-model="$parent.applicationTarget" ng-options="t.oid as t.nimi.kieli_fi for t in applicationTargets | orderBy: 'nimi.kieli_fi'" ng-change="selectTarget()"></select>
         </div>
     </div>
     <div ng-if="applicationTarget" class="row">

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('templateService', ['$resource', '$http', function ($resource, $http) {
+    .factory('TemplateService', ['$resource', '$http', function ($resource, $http) {
 
         var serviceUrl = '/viestintapalvelu/api/v1/';
         var templateBaseUrl = serviceUrl + 'template/';
