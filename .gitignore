@@ -1,26 +1,30 @@
-#Eclipse#
+## Eclipse
 .settings
 .classpath
 .project
 
-*.class
-
-# Package Files #
-# gradle-wrapper.jar is required
-#*.jar 
-*.war
-*.ear
-
-target
-
-.DS_Store
-
-#idea
+## IntelliJ IDEA
 *.iml
 .idea/
 
+## Build
+*.class
+target
+webapp/
+
+## Package Files
+*.war
+*.ear
+
+## General
 **/Scrapbook.jpage
 **/.tern-project
 **/rebel.xml
+*.log
 
-phantomjsdriver.log
+## Macintosh
+.DS_Store
+
+## NodeJS & npm
+node_modules/
+node/

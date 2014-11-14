@@ -5,8 +5,12 @@ var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var del = require('del');
 
+/*
+   init.js files are included first, then other .js files.
+   lib folder in assets is excluded from being processed.
+*/
 var input = {
-    scripts: ['webapp/**/*.js', '!webapp/assets/lib/**/*'],
+    scripts: ['webapp/**/init.js', 'webapp/**/*.js', '!webapp/assets/lib/**/*'],
     styles: ['webapp/assets/css/**/*']
 };
 
@@ -28,9 +32,12 @@ gulp.task('scripts', ['clean'], function(){
         .pipe(gulp.dest(output.scripts));
 });
 
-gulp.task('sass', function() {
+gulp.task('styles', function() {
     return gulp.src(input.styles)
-        .pipe(sass())
+        .pipe(sourcemaps.init())
+            .pipe(sass())
+            .pipe(concat('all.css'))
+        .pipe(sourcemaps.write())
         .pipe(gulp.dest(output.styles));
 });
 
@@ -39,5 +46,4 @@ gulp.task('watch', function(){
     gulp.watch(input.styles, ['styles']);
 });
 
-gulp.task('default', ['watch', 'styles', 'scripts']);
-gulp.task('production', ['styles', 'scripts']);
+gulp.task('build', ['styles', 'scripts']);

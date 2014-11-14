@@ -64,7 +64,7 @@
                             <goal>gulp</goal>
                         </goals>
                         <configuration>
-                            <arguments>production</arguments>
+                            <arguments>build</arguments>
                         </configuration>
                     </execution>
                 </executions>
