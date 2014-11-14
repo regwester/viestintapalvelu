@@ -18,10 +18,22 @@ angular.module('letter-templates')
         $scope.updateTreeData = function(applicationPeriod) {
             console.log(applicationPeriod);
             templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
-                console.log("update tree data success, response:");
-                console.log(response);
+                var newData = [];
+                var parseData = function(item) {
+                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
+                    var newRow = {};
+                    newRow[firstColum18nStr] = item.name;
+                    newRow["lang"] = item.language;
+                    newRow["status"] = item.state;
+                    newData.push(newRow);
+                };
+
+                response.data.forEach(parseData);
+                $scope.test_tree_data = newData;
             });
         }
+
+
 
         $scope.test_tree_data = [
             {"Organisaatio ja kirjetyyppi":"Aalto-yliopisto", lang: "", status:"", children: [
