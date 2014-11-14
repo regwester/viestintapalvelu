@@ -433,7 +433,10 @@ public class TemplateServiceImpl implements TemplateService {
 
     // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template getConvertedTemplate(Template from) {
-        return convertBasicData(from, new fi.vm.sade.viestintapalvelu.template.Template());
+        fi.vm.sade.viestintapalvelu.template.Template template = convertBasicData(from, new fi.vm.sade.viestintapalvelu.template.Template());
+        template = convertApplicationPeriods(from, template);
+        template = convertReplacements(from, template);
+        return template;
     }
 
 
