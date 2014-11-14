@@ -244,6 +244,21 @@ public class TemplateResource extends AsynchronousResource {
     public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {
         return templateService.getTemplateByName(templateCriteriaParams(request), parseBoolean(request, "content"));
     }
+    
+    @GET
+    @Path("/getByName/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = ApitemplateByName, notes = ApitemplateByName, response = Template.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "type", value = "Kirjepohja tyyppi (doc, email)", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query")})
+    public Template templateByNameAndState(@Context HttpServletRequest request, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam ("state") State state) throws IOException, DocumentException {
+        return templateService.getTemplateByName(templateCriteriaParams(request).withState(state), parseBoolean(request, "content"));
+    }
 
     private TemplateCriteria templateCriteriaParams(HttpServletRequest request) {
         return new TemplateCriteriaImpl()
