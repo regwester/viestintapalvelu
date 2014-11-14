@@ -41,9 +41,9 @@ import fi.vm.sade.viestintapalvelu.letter.dto.*;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
-
 import static org.joda.time.DateTime.now;
 
 /**
@@ -209,7 +209,7 @@ public class LetterServiceImpl implements LetterService {
         fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(
                 new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch.getLanguageCode(),
                         ContentStructureType.letter));
-        return template != null ? template.getName() : templateDAO.read(letterBatch.getTemplateId()).getName();
+        return template != null ? template.getName() : templateDAO.findByIdAndState(letterBatch.getTemplateId(), State.julkaistu).getName();
     }
 
     /* ------------ */
