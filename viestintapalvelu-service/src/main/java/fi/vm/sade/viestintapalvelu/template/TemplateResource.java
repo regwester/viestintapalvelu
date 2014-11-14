@@ -624,9 +624,7 @@ public class TemplateResource extends AsynchronousResource {
     public List<Template> getTemplatesByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
-
         List<Template> templates = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
-
         return templates;
     }
     
