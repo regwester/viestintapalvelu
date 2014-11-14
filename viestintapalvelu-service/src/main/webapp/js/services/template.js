@@ -33,7 +33,7 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         }
 
         function saveTemplate(template) {
-            return $http.post(templateUrl + 'store', template);
+            return $http.post(templateUrl + 'insert', template);
         }
 
         function getByName(t) {
