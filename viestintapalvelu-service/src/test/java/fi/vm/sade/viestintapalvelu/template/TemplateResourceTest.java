@@ -174,6 +174,21 @@ public class TemplateResourceTest {
         assertNotNull(resource.templateByName(constructRequest(template)));
     }
     
+    @Test
+    public void fetchesClosedTemplatesUsingNamesAndState() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
+        template.setState(State.suljettu);
+        resource.update(template);
+        assertNotNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
+    }
+    
+    @Test
+    public void fetchesDraftTemplateUsingNameAndState() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertNotNull(resource.templateByNameAndState(constructRequest(template), State.luonnos));
+    }
+    
     private Template givenSavedTemplateInDraftStatus() throws Exception{
         Long id = (Long) resource.store(givenTemplateWithStructure()).getEntity();
         return resource.getTemplateByIDAndState(id, State.luonnos, null);
