@@ -18,7 +18,7 @@ angular.module('letter-templates')
         $scope.updateTreeData = function(applicationPeriod) {
             console.log(applicationPeriod);
             templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
-                console.log("then success");
+                console.log("update tree data success, response:");
                 console.log(response);
             });
         }
@@ -73,8 +73,6 @@ angular.module('letter-templates')
         ];
 
         templateService.getHakus().success(function(data) {
-            console.log(data);
             $scope.applicationPeriodList = data;
-            console.log($scope.applicationPeriodList);
         });
 }]);

@@ -7,17 +7,19 @@
 */
 .icon-expand {
     background-image: url("../../../img/itemtree-collapse-sprite.png");
-    background-position: -20px 0px;
+    background-position: -18px 0px;
+    background-size: 36px 18px;
 }
 
 .icon-expanded {
     background-image: url("../../../img/itemtree-collapse-sprite.png");
     background-position: 0px 0px;
+    background-size: 36px 18px;
 }
 
 .icon-actionmenu {
     background-image: url("../../../img/actionmenu-icon-sprite.png");
-    background-size: 40px 20px;
+    background-size: 36px 18px;
     background-position: 0px 0px;
 }
 
