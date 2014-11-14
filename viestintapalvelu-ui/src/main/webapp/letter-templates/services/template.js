@@ -3,7 +3,7 @@
 angular.module('letter-templates')
     .factory('templateService', ['$resource', '$http', function ($resource, $http) {
 
-        var serviceUrl = '/viestintapalvelu-service/api/v1/';
+        var serviceUrl = '/viestintapalvelu/api/v1/';
         var templateBaseUrl = serviceUrl + 'template/';
 
         return {
