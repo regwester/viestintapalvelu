@@ -1,49 +1,28 @@
 <div ng-controller='TemplateController'>
+    <div>
+        <h3>Valitse jokin esimerkkipohjista:</h3>
+        <select ng-model="exampleFile" ng-options="e as e for e in exampleFiles" ng-change="selectExample()"></select>
+    </div>
+    <div>
+        <h3>Tai luo uusi pohja valitsemalla resurssit:</h3>
+        <ul style="list-style: none">
+            <li>Valitse Pohjat: <select ng-model="selectedTemplate" ng-options="t as t for t in templateFiles" ng-change="selectTemplate()"></select>
+                <ul style="margin: 10px 4px"><li style="margin-right: 5px" class="btn btn-inverse" ng-repeat="template in selectedTemplates"ng-click="removeTemplate($index)" ng-bind="template"></li></ul>
+            </li>
+            <!--
+            <li>Valitse korvaussisältö: <select ng-model="selectedReplacement" ng-options="r as r for r in replacementFiles" ng-change="selectReplacement()"></select>
+                <ul style="margin: 10px 4px"><li style="margin-right: 5px" class="btn btn-inverse" ng-repeat="replacement in selectedReplacements" ng-click="removeReplacement($index)" ng-bind="replacement"></li></ul>
+            </li>
+            -->
+            <li>Valitse korvaussisältö: <select ng-model="replacementFile" ng-options="r as r for r in replacementFiles"></select></li>
 
-    <table class="table">
-        <tr>
-            <th>Valitse esimerkki pohjista:</th>
-            <th>Anna pohjalle nimi</th>
-            <th>Tai luo tiedostonimien pohjalta: <i>(esim: tiedosto1,tiedosto2 jne.)</i></th>
-            <th>Korvauskenttätiedosto</th>
-            <th>Tyylit tiedostonimi</th>
-            <th>Kieli <i>(oletus: FI)</i></th>
-            <th></th>
-        </tr>
-        <tr>
-            <td>
-            	<select ng-model="template" ng-options="c.name for c in templates" ng-change="templateChanged()"></select>
-            </td>
-            <td>
-                <input class="input-medium" type="text" ng-model="templateName" placeholder="Pohjan nimi">
-            </td>
-            <td>
-                <input class="input-xlarge" type="text" ng-model="files" placeholder="Mallit tiedostonimi">
-            </td>
-            <td>
-                <input class="input-large" type="text" ng-model="replacementFile" placeholder="Korvauskenttätiedosto">
-            </td>
-            <td>
-                <input class="input-medium" type="text" ng-model="styleFile" placeholder="Tyylit tiedostonimi">
-            </td>
-            <td>
-                <input class="input-medium" type="text" ng-model="language" placeholder="Kieli">
-            </td>
-            <td class="inline-operation">
-                <button class="btn btn-small" ng-click="import()">Load</button>
-            </td>
-        </tr>
-        <tr ng-show="showTemplateData">
-        	<th colspan="4">Muokkaa mallia JSON</th>
-        </tr>
-        <tr ng-show="showTemplateData">
-		    <td colspan="3">
-		    
-	         	<textarea class="span12" ng-model="templateData"  rows="10" style="height: 300px;"></textarea>
-         	</td>
-            <td class="inline-operation">
-                <button ng-click="store()" class="inline-operation btn btn-small">Save</button>
-            </td>
-        </tr>
-    </table>
+            <li>Valitse Tyylitiedosto: <select ng-model="styleFile" ng-options="s as s for s in styleFiles"></select></li>
+        </ul>
+        <button class="btn btn-small" ng-click="createTemplate()">Luo uusi kirjepohja</button>
+    </div>
+    <div ng-show="showTemplateData">
+        <h3>Lopullinen pohja:</h3>
+        <textarea class="span12" ng-model="template"  rows="10" style="height: 300px;"></textarea>
+        <button ng-click="saveTemplate()" class="inline-operation btn btn-small">Tallenna pohja</button>
+    </div>
 </div>

@@ -32,10 +32,10 @@ public class CatchSingleParameterAnswer<AnswerType,T> implements Answer<AnswerTy
     private List<AnswerType> returnValues = new ArrayList<AnswerType>();
     private Answer<AnswerType> target;
 
-    private CatchSingleParameterAnswer() {
+    CatchSingleParameterAnswer() {
     }
 
-    private CatchSingleParameterAnswer(Answer<AnswerType> target) {
+    CatchSingleParameterAnswer(Answer<AnswerType> target) {
         this.target = target;
     }
 
@@ -49,7 +49,9 @@ public class CatchSingleParameterAnswer<AnswerType,T> implements Answer<AnswerTy
 
     @Override
     public AnswerType answer(InvocationOnMock invocation) throws Throwable {
-        this.arguments.add((T) invocation.getArguments()[0]);
+        T argument = (T) invocation.getArguments()[0];
+        argument = handleArgument(argument);
+        this.arguments.add(argument);
         AnswerType value;
         if (this.target != null) {
             value = this.target.answer(invocation);
@@ -58,6 +60,10 @@ public class CatchSingleParameterAnswer<AnswerType,T> implements Answer<AnswerTy
         }
         this.returnValues.add(value);
         return value;
+    }
+
+    protected T handleArgument(T argument) {
+        return argument;
     }
 
     public int getInvocationCount() {

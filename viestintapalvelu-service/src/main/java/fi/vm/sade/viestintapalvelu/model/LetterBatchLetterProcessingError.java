@@ -31,7 +31,7 @@ public class LetterBatchLetterProcessingError extends LetterBatchProcessingError
     private static final long serialVersionUID = 1756908028928846781L;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "vastaanottaja_id", nullable = false)
+    @JoinColumn(name = "vastaanottaja_id")
     @JsonBackReference
     private LetterReceivers letterReceivers;
 

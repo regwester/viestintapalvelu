@@ -90,7 +90,7 @@ public class OptionsResource implements Recoverer {
             @QueryParam("forceRefresh") Boolean forceRefresh) {
         return cached(CacheType.hakus, new Cacheable<List<HakuDetailsDto>>() {
             public List<HakuDetailsDto> resolve() {
-                return tarjontaComponent.findPublisehedHakus(null);
+                return tarjontaComponent.findPublished(null);
             }
         }, Optional.fromNullable(forceRefresh).or(false));
     }

@@ -3,7 +3,16 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.zip.DataFormatException;
 import java.util.zip.Deflater;
 import java.util.zip.Inflater;
@@ -27,7 +36,12 @@ import com.google.common.base.Optional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
-import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -37,11 +51,26 @@ import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.letter.dto.*;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
-import fi.vm.sade.viestintapalvelu.model.*;
-
+import fi.vm.sade.viestintapalvelu.model.IPosti;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchGeneralProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchIPostProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import static org.joda.time.DateTime.now;
 
 /**
@@ -103,16 +132,24 @@ public class LetterServiceImpl implements LetterService {
     /* ---------------------- */
     @Override
     @Transactional
-    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch) {
+    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch, boolean anonymous) {
         // kirjeet.kirjelahetys
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         LetterBatch model = new LetterBatch();
-        letterBatchDtoConverter.convert(letterBatch, model);
+        try {
+            
+            letterBatchDtoConverter.convert(letterBatch, model,mapper);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
+        }
+        
         model.setTimestamp(new Date());
-        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        if (!anonymous) {
+            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        }
         model.setBatchStatus(LetterBatch.Status.created);
 
         // kirjeet.vastaanottaja
-        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         try {
             model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
         } catch (JsonProcessingException e) {
@@ -129,16 +166,22 @@ public class LetterServiceImpl implements LetterService {
     /* ---------------------- */
     @Override
     @Transactional
-    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous) {
         // kirjeet.kirjelahetys
+        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
+        
         LetterBatch model = new LetterBatch();
-        letterBatchDtoConverter.convert(letterBatch, model);
+        try {
+            letterBatchDtoConverter.convert(letterBatch, model, mapper);
+        } catch (JsonProcessingException e) {
+            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
+        }
         model.setTimestamp(new Date());
         model.setBatchStatus(LetterBatch.Status.created);
-        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
-
+        if (!anonymous) {
+            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        }
         // kirjeet.vastaanottaja
-        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         try {
             model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
         } catch (JsonProcessingException e) {
@@ -176,7 +219,9 @@ public class LetterServiceImpl implements LetterService {
         }
         languageCodes.add(letterBatch.getLanguageCode());
         for (String languageCode : languageCodes) {
-            fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(templateName, languageCode);
+            fi.vm.sade.viestintapalvelu.model.Template template
+                    = templateDAO.findTemplate(new TemplateCriteriaImpl(templateName, languageCode,
+                            ContentStructureType.letter));
             if (template != null) {
                 UsedTemplate usedTemplate = new UsedTemplate();
                 usedTemplate.setLetterBatch(letterB);
@@ -188,8 +233,10 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private String getTemplateNameFromBatch(LetterBatchDetails letterBatch) {
-        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(letterBatch.getTemplateName(), letterBatch.getLanguageCode());
-        return template != null ? template.getName() : templateDAO.read(letterBatch.getTemplateId()).getName();
+        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(
+                new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch.getLanguageCode(),
+                        ContentStructureType.letter));
+        return template != null ? template.getName() : templateDAO.findByIdAndState(letterBatch.getTemplateId(), State.julkaistu).getName();
     }
 
     /* ------------ */
@@ -553,15 +600,12 @@ public class LetterServiceImpl implements LetterService {
                 LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
-        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
         LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorTime(new Date());
         error.setLetterReceivers(receiver);
         error.setLetterBatch(batch);
         error.setErrorCause(Optional.fromNullable(message).or("Unknown (TODO)"));
-        errors.add(error);
-        batch.setProcessingErrors(errors);
-        letterBatchDAO.update(batch);
+        batch.addProcessingErrors(error);
     }
 
     @Override
@@ -570,7 +614,7 @@ public class LetterServiceImpl implements LetterService {
         LetterReceivers receiver = letterReceiversDAO.read(receiverId);
         LetterBatch batch = receiver.getLetterBatch();
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
-        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(batch),
+        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(batch, mapper),
                 formReplacementMap(receiver, mapper));
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
@@ -596,10 +640,10 @@ public class LetterServiceImpl implements LetterService {
         }
     }
 
-    private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+    private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch, ObjectMapper mapper) throws IOException {
         Map<String, Object> replacements = new HashMap<String, Object>();
         for (LetterReplacement repl : batch.getLetterReplacements()) {
-            replacements.put(repl.getName(), repl.getDefaultValue());
+            replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
         return replacements;
     }
@@ -798,7 +842,7 @@ public class LetterServiceImpl implements LetterService {
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
-        batch.getProcessingErrors().add(error);
+        batch.addProcessingErrors(error);
         letterBatchDAO.update(batch);
     }
 
@@ -816,7 +860,7 @@ public class LetterServiceImpl implements LetterService {
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
-        batch.getProcessingErrors().add(error);
+        batch.addProcessingErrors(error);
         letterBatchDAO.update(batch);
     }
 

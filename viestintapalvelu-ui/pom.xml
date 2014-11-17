@@ -5,7 +5,7 @@
     <parent>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
         <artifactId>viestintapalvelu</artifactId>
-        <version>10.3-SNAPSHOT</version>
+        <version>13.0-SNAPSHOT</version>
     </parent>
 
     <artifactId>viestintapalvelu-ui</artifactId>
@@ -59,6 +59,7 @@
                         <source>${webapp.dir}/email/init.js</source>
                         <source>${webapp.dir}/report/init.js</source>
                         <source>${webapp.dir}/core/init.js</source>
+                        <source>${webapp.dir}/letter-templates/init.js</source>
                         <source>${webapp.dir}/init.js</source>
                     </preloadSources>
                     <jsSrcDir>${webapp.dir}</jsSrcDir>

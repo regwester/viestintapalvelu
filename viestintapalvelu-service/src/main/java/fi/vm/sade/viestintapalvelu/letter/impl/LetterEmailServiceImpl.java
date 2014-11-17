@@ -43,6 +43,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.ReadableReplacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
@@ -191,7 +192,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         if (letterBatch.getTemplateId() == null) {
             throw new IllegalStateException("LetterBatch="+letterBatch.getTemplateId()+" does not have a templateId!");
         }
-        Template template = templateService.findById(letterBatch.getTemplateId());
+        Template template = templateService.findById(letterBatch.getTemplateId(), ContentStructureType.email);
         if (template == null) {
             throw new NotFoundException("Template not found by id="+letterBatch.getTemplateId());
         }

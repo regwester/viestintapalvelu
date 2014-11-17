@@ -43,7 +43,7 @@ public class TemplateComponent {
 
     public TemplateDTO getTemplateContent(String templateId) {
         try {
-            return templateResourceClient.getTemplateByID(templateId);
+            return templateResourceClient.getTemplateByID(templateId, "email");
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);

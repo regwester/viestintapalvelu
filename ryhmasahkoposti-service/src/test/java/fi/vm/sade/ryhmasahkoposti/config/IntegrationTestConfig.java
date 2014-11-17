@@ -168,7 +168,7 @@ public class IntegrationTestConfig {
             }
 
             @Override
-            public TemplateDTO getTemplateByID(String templateId) {
+            public TemplateDTO getTemplateByID(String templateId, String type) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };

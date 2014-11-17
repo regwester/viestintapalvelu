@@ -2,29 +2,18 @@ package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.Map;
-import java.util.HashMap;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.GET;
-import javax.ws.rs.PUT;
-import javax.ws.rs.POST;
-import javax.ws.rs.Produces;
-import javax.ws.rs.Consumes;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
-import org.springframework.core.io.support.ResourcePatternResolver;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,8 +28,12 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
@@ -48,6 +41,7 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {
+    public static final String DEFAULT_STRUCTURE_TYPE = ContentStructureType.letter.name();
 
     @Autowired
     private TemplateService templateService;
@@ -56,10 +50,13 @@ public class TemplateResource extends AsynchronousResource {
     private LetterService letterService;
 
     @Autowired
+    TarjontaComponent tarjontaComponent;
+
+    @Autowired
     private UserRightsValidator userRightsValidator;
 
     @Autowired
-    private LetterBuilder letterBuilder;
+    private BeanValidator beanValidator;
 
     private final static String GetHistory = "Palauttaa kirjepohjan historian";
     private final static String GetHistory2 = "Palauttaa listan MAPeja. Ainakin yksi, tällä hetkellä jopa kolme.<br>"
@@ -69,7 +66,7 @@ public class TemplateResource extends AsynchronousResource {
         + " - organizationLatestByTag: edelliseen tarkennettuna tunnisteeella ";
     private final static String GetHistory200 = "Hakijalla ei ole valtuuksia hakea kirjepohjia.";
 
-    private final static String TemplateNames = "Palauttaa valittavissaolevien kirjepohjien nimet.";
+    private final static String TemplateNames = "Palauttaa valittavissaolesvien kirjepohjien nimet.";
     private final static String TemplateNames2 = "Palauttaa listan MAPeja. Esim: <br>" + "{ <br>"
         + "'name': 'jalkiohjauskirje', <br>" + "'lang': 'FI' <br>" + "}";
 
@@ -77,7 +74,9 @@ public class TemplateResource extends AsynchronousResource {
     private final static String ApitemplateVersionsByName = "Palauttaa kirjepohjan kaikki versiot nimen perusteella.";
     private final static String TemplateByID = "Palauttaa kirjepohjan Id:n perusteella.";
     private final static String TemplateExamples = "Palauttaa saatavilla olevien kirjepohjien nimet ja sisällöt.";
-    private final static String Store = "Rajapinnalla voi tallentaa kantaa kirjepohjan.";
+    private final static String TemplatePartials = "Palauttaa saatavilla olevien kirjepohjien html-sisällön";
+    private final static String TemplateReplacements = "Palauttaa saatavilla olevien kirjepohjien oletuskorvaussisällön";
+    private final static String Store = "Rajapinnalla voi tallentaa kantaan uuden kirjepohjan.";
     private final static String StoreDraft = "Rajapinnalla voi tallentaa kantaa kirjepohjaluonnoksen.";
     private final static String AttachApplicationPeriod = "Rajapinnalla voi liittää haut kirjepohjaan.";
 
@@ -105,26 +104,18 @@ public class TemplateResource extends AsynchronousResource {
 
         String styleFile = request.getParameter("styleFile");
         if (styleFile != null) {
-            String styleURL = "/template_styles/" + styleFile + ".css";
-            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\" \"", ""));
+            String styleURL = "/template_styles/" + styleFile;
+            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
         }
 
-        // Read type if provided
-        String type = request.getParameter("type");
-        if (type != null) {
-            if (StringUtils.equalsIgnoreCase(type, "email"))
-                type = "doc";
-            type = type.toLowerCase();
-        }
-
-        String[] fileNames = request.getParameter("templateFile").split(",");
+        String[] fileNames = request.getParameter("templateFiles").split(",");
         List<TemplateContent> contents = new ArrayList<TemplateContent>();
         int order = 1;
         for (String file : fileNames) {
-            String templateURL = Utils.resolveTemplateName("/templates/" + file + "_{LANG}{TYPE}.html", language, type);
+            String templateURL = "/templates/" + file;
             TemplateContent content = new TemplateContent();
-            content.setName(templateURL);
-            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\" \"", ""));
+            content.setName(file);
+            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
             content.setOrder(order);
             contents.add(content);
             order++;
@@ -132,12 +123,14 @@ public class TemplateResource extends AsynchronousResource {
         result.setContents(contents);
 
         String replacementFile = request.getParameter("replacementFile");
-        String replacementURL = Utils.resolveTemplateName("/replacements/" + replacementFile + "_{LANG}{TYPE}.html", language, type);
-        Replacement replacement = new Replacement();
-        replacement.setName("sisalto");
-        replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\" \"", ""));
         ArrayList<Replacement> rList = new ArrayList<Replacement>();
-        rList.add(replacement);
+        if(replacementFile != null) {
+            String replacementURL = "/replacements/" + replacementFile;
+            Replacement replacement = new Replacement();
+            replacement.setName("sisalto");
+            replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
+            rList.add(replacement);
+        }
         result.setReplacements(rList);
 
         return result;
@@ -151,31 +144,68 @@ public class TemplateResource extends AsynchronousResource {
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template templateByID(@Context HttpServletRequest request) throws IOException, DocumentException {
-        String templateId = request.getParameter("templateId");
-        Long id = Long.parseLong(templateId);
-        return templateService.findById(id);
+        return templateService.findById(Long.parseLong(request.getParameter("templateId")),
+                parseStructureType(request.getParameter("type")));
+    }
+
+    private ContentStructureType parseStructureType(String type) {
+        return ContentStructureType.valueOf(Optional.fromNullable(type).or(DEFAULT_STRUCTURE_TYPE));
     }
 
 
-    
     @GET
-    @Path("/getAvailableExamples")
+    @Path("/exampleFiles")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Produces("application/json")
-    @Transactional
     @ApiOperation(value = TemplateExamples, notes = TemplateExamples)
-    public List<Map<String, String>> templateExamples(@Context HttpServletRequest request) throws IOException,
-        DocumentException {
-        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+    public List<String> getTemplateExamples() throws IOException {
+        return getResourceList("classpath*:/test_data/*.json");
+    }
 
-        for (Resource template : Utils.getResourceList("classpath*:/test_data/*.json")) {
-            Map<String, String> current = new HashMap<String, String>();
-            current.put("name", template.getFilename());
-            current.put("content", Utils.getResource(template.getInputStream()).replaceAll("\\r|\\n|\" \"", ""));
-            res.add(current);
+    @GET
+    @Path("/exampleFiles/{name}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    public String getTemplateExample(@PathParam("name") String name) throws IOException {
+        return getResource("/test_data/" + name);
+    }
+
+    @GET
+    @Path("/partialFiles")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    @ApiOperation(value = TemplatePartials, notes = TemplatePartials)
+    public List<String> getTemplatePartials() throws IOException {
+        return getResourceList("classpath*:/templates/*.html");
+    }
+
+    @GET
+    @Path("/styleFiles")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    public List<String> getStyleFiles() throws IOException {
+        return getResourceList("classpath*:/template_styles/*.css");
+    }
+
+    @GET
+    @Path("/replacementFiles")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    @ApiOperation(value = TemplateReplacements, notes = TemplateReplacements)
+    public List<String> getTemplateReplacements() throws IOException {
+        return getResourceList("classpath*:/replacements/*.html");
+    }
+
+    private List<String> getResourceList(String pattern) throws IOException {
+        List<String> resources = new ArrayList<String>();
+        for (Resource template : Utils.getResourceList(pattern)) {
+            resources.add(template.getFilename());
         }
+        return resources;
+    }
 
-        return res;
+    private String getResource(String file) throws IOException {
+        return Utils.getResource(file).replaceAll("\\r|\\n|\" \"", "");
     }
 
     @GET
@@ -184,22 +214,19 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateNames, notes = TemplateNames2)
-    public List<Map<String, String>> templateNames(@Context HttpServletRequest request) throws IOException,
-        DocumentException {
-        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+    public List<Map<String, String>> templateNames() throws IOException, DocumentException {
         List<String> serviceResult = templateService.getTemplateNamesList();
-        for (String s : serviceResult) {
-            if (s != null && s.trim().length() > 0) {
-                if (s.indexOf("::") > 0) {
-                    Map<String, String> m = new HashMap<String, String>();
-                    String[] sa = s.split("::");
-                    m.put("name", sa[0]);
-                    m.put("lang", sa[1]);
-                    res.add(m);
-                }
-            }
-        }
-        return res;
+        return formTemplateNameLanguageMap(serviceResult);
+    }
+    
+    @GET
+    @Path("/getNames/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = TemplateNames, notes = TemplateNames2)
+    public List<Map<String, String>> templateNamesByState(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
+        List<String> serviceResult = templateService.getTemplateNamesListByState(state);
+        return formTemplateNameLanguageMap(serviceResult);
     }
 
     @GET
@@ -217,12 +244,27 @@ public class TemplateResource extends AsynchronousResource {
     public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {
         return templateService.getTemplateByName(templateCriteriaParams(request), parseBoolean(request, "content"));
     }
+    
+    @GET
+    @Path("/getByName/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = ApitemplateByName, notes = ApitemplateByName, response = Template.class)
+    @ApiImplicitParams({
+        @ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "type", value = "Kirjepohja tyyppi (doc, email)", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query")})
+    public Template templateByNameAndState(@Context HttpServletRequest request, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam ("state") State state) throws IOException, DocumentException {
+        return templateService.getTemplateByName(templateCriteriaParams(request).withState(state), parseBoolean(request, "content"));
+    }
 
     private TemplateCriteria templateCriteriaParams(HttpServletRequest request) {
         return new TemplateCriteriaImpl()
                     .withName(request.getParameter("templateName"))
                     .withLanguage(request.getParameter("languageCode"))
-                    .withType(request.getParameter("type"))
+                    .withType(parseStructureType(request.getParameter("type")))
                     .withApplicationPeriod(request.getParameter("applicationPeriod"));
     }
 
@@ -249,16 +291,47 @@ public class TemplateResource extends AsynchronousResource {
                 parseBoolean(request, "content"),
                 parseBoolean(request, "periods"));
     }
+    
+    @GET
+    @Path("/listVersionsByName/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = ApitemplateVersionsByName, notes = ApitemplateVersionsByName, response = Template.class)
+    @ApiImplicitParams({
+            @ApiImplicitParam(name = "templateName", value = "kirjepohjan nimi (hyvaksymiskirje, jalkiohjauskirje,..)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "languageCode", value = "kielikoodi (FI, SV, ...)", required = true, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "content", value = "YES, jos halutaan, että palautetaan myös viestin sisältö.", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "periods", value = "YES, jos halutaan, että palautetaan myös viestiin liittyvät haut (OID:t).", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "type", value = "Kirjepohja tyyppi (doc, email)", required = false, dataType = "string", paramType = "query"),
+            @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query")})
+    public List<Template> listVersionsByNameUsingState(@Context HttpServletRequest request, @ApiParam(name = "state", value = "kirjepohjan tila, millä haetaan") @PathParam("state") State state) throws IOException, DocumentException {
+        return templateService.listTemplateVersionsByName(templateCriteriaParams(request).withState(state),
+                parseBoolean(request, "content"),
+                parseBoolean(request, "periods"));
+    }
 
     @POST
-    @Path("/store")
+    @Path("/insert")
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
-    public Template store(Template template) throws IOException, DocumentException {
-        templateService.storeTemplateDTO(template);
-        return new Template(); //TODO: return something more meaningful
+    public Response insert(Template template) throws IOException, DocumentException {
+        beanValidator.validate(template);
+        Long templateId = templateService.storeTemplateDTO(template);
+        return Response.status(Status.OK).entity(templateId).build();
+    }
+    
+    @PUT
+    @Path("/update")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+    @ApiOperation(value = "", notes = "")
+    public Response update(Template template) {
+        //beanValidator.validate(template);
+        templateService.updateTemplate(template);
+        return Response.status(Status.OK).build();
     }
 
     @PUT
@@ -348,7 +421,7 @@ public class TemplateResource extends AsynchronousResource {
         Response response = userRightsValidator.checkUserRightsToOrganization(oid);
 
         // User isn't authorized to the organization
-        if (response.getStatus() != 200) {
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             return response;
         }
 
@@ -359,9 +432,11 @@ public class TemplateResource extends AsynchronousResource {
         String applicationPeriod = request.getParameter("applicationPeriod");
         String content = request.getParameter("content"); // If missing =>
                                                           // content excluded
+        ContentStructureType type = parseStructureType(request.getParameter("type"));
         boolean getContent = (content != null && "YES".equalsIgnoreCase(content));
 
-        bundle.setLatestTemplate(templateService.getTemplateByName(templateName, languageCode, getContent));
+        bundle.setLatestTemplate(templateService.getTemplateByName(
+                new TemplateCriteriaImpl(templateName, languageCode, type), getContent));
 
         if ((oid != null) && !("".equals(oid))) {
             bundle.setLatestOrganisationReplacements(letterService.findReplacementByNameOrgTag(templateName,
@@ -399,7 +474,8 @@ public class TemplateResource extends AsynchronousResource {
         @ApiImplicitParam(name = "oid", value = "Organisaation Oid", required = true, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "tag", value = "Vapaa teksti tunniste", required = false, dataType = "string", paramType = "query"),
         @ApiImplicitParam(name = "applicationPeriod", value = "Haku", required = true, dataType = "string", paramType = "query"),
-        @ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query")
+        @ApiImplicitParam(name = "fetchTarget", value = "Hakukohde", required = false, dataType = "string", paramType = "query"),
+        @ApiImplicitParam(name = "type", value = "Rakennetyyppi", required = false, dataType = "string", paramType = "query")
     })
     public Response getHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
         // Pick up the organization oid from request and check urer's rights to
@@ -408,7 +484,7 @@ public class TemplateResource extends AsynchronousResource {
         Response response = userRightsValidator.checkUserRightsToOrganization(oid);
 
         // User isn't authorized to the organization
-        if (response.getStatus() != 200) {
+        if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             return response;
         }
 
@@ -416,19 +492,15 @@ public class TemplateResource extends AsynchronousResource {
 
         String templateName = request.getParameter("templateName");
         String languageCode = request.getParameter("languageCode");
-        // String content = request.getParameter("content"); // If missing =>
-        // content excluded
-        // boolean getContent = (content != null &&
-        // "YES".equalsIgnoreCase(content));
-        boolean getContent = false;
 
         // Drafts replacements
         String applicationPeriod = request.getParameter("applicationPeriod"); // = Haku
 
         // OPH default template
+        ContentStructureType type = parseStructureType(request.getParameter("type"));
         Template template = templateService.getTemplateByName(
-                new TemplateCriteriaImpl(templateName, languageCode)
-                        .withApplicationPeriod(applicationPeriod), getContent);
+                new TemplateCriteriaImpl(templateName, languageCode, type)
+                        .withApplicationPeriod(applicationPeriod), true);
 
         Map<String, Object> templateRepl = new HashMap<String, Object>();
         templateRepl.put("name", "default");
@@ -478,14 +550,39 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
+    @Path("/{templateId}/{type}/getTemplateContent")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
+    public Template getTemplateByID(@PathParam("templateId") String templateId,
+                                       @PathParam("type") String type) {
+        Long id = Long.parseLong(templateId);
+        ContentStructureType typeEnumValue = ContentStructureType.valueOf(type);
+        return templateService.findById(id, typeEnumValue);
+    }
+
+    @GET
     @Path("/{templateId}/getTemplateContent")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
-    public Template getTemplateByID(@PathParam("templateId") String templateId) {
+    public Template getTemplateByID(@PathParam("templateId") String templateId, @Context HttpServletRequest request) {
         Long id = Long.parseLong(templateId);
-        return templateService.findById(id);
+        ContentStructureType type = parseStructureType(request.getParameter("type"));
+        return templateService.findById(id, type);
+    }
+    
+    @GET
+    @Path("/{templateId}/getTemplateContent/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
+    public Template getTemplateByIDAndState(@PathParam("templateId") long templateId, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state,
+            @QueryParam("structureType") ContentStructureType type) {
+        type = Optional.fromNullable(type).or(ContentStructureType.letter);
+        return templateService.findByIdAndState(templateId, type, state);
     }
     
     @GET
@@ -503,8 +600,10 @@ public class TemplateResource extends AsynchronousResource {
         DocumentException, NoSuchAlgorithmException {
 
         // Return template content
-        return templateService.getTemplateByName(templateName, languageCode, true, type);
+        ContentStructureType structureType = parseStructureType(type);
+        return templateService.getTemplateByName(new TemplateCriteriaImpl(templateName, languageCode, structureType), true);
     }
+
 
     @GET
     @Produces("application/json")
@@ -524,11 +623,37 @@ public class TemplateResource extends AsynchronousResource {
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod)
                 throws IOException, DocumentException, NoSuchAlgorithmException {
+        ContentStructureType structureType = parseStructureType(type);
+
         // Return template content
-        return templateService.getTemplateByName(new TemplateCriteriaImpl()
-                        .withName(templateName)
-                        .withLanguage(languageCode)
-                        .withType(type)
-                        .withApplicationPeriod(applicationPeriod), true);
+        return templateService.getTemplateByName(new TemplateCriteriaImpl(templateName, languageCode, structureType)
+                .withApplicationPeriod(applicationPeriod), true);
     }
+
+    @GET
+    @Produces("application/json")
+    @Path("/listByApplicationPeriod/{applicationPeriod}")
+    public List<Template> getTemplatesByApplicationPeriod(
+            @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
+            @PathParam("applicationPeriod") String applicationPeriod) {
+        List<Template> templates = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
+        return templates;
+    }
+    
+    private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
+        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+        for (String s : serviceResult) {
+            if (s != null && s.trim().length() > 0) {
+                if (s.indexOf("::") > 0) {
+                    Map<String, String> m = new HashMap<String, String>();
+                    String[] sa = s.split("::");
+                    m.put("name", sa[0]);
+                    m.put("lang", sa[1]);
+                    res.add(m);
+                }
+            }
+        }
+        return res;
+    }
+
 }

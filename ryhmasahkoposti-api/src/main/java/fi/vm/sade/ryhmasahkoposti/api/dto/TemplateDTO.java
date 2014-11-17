@@ -66,9 +66,9 @@ public class TemplateDTO extends BaseDTO {
     public static final String TYPE_EMAIL = "email";
 
     /**
-     * Type document
+     * Type letter
      */
-    public static final String TYPE_DOC = "doc";
+    public static final String TYPE_LETTER = "letter";
 
     /**
      * Default template language code

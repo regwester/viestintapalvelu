@@ -16,7 +16,12 @@
 
 package fi.vm.sade.viestintapalvelu.common.util;
 
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Response;
 
 import com.google.common.base.Supplier;
 import com.google.common.base.Optional;
@@ -33,7 +38,13 @@ public class OptionalHelper {
     public static<T> Supplier<T> notFound(final String message) throws NotFoundException {
         return new Supplier<T>() {
             public T get() {
-                throw new NotFoundException(message);
+                Map<String,Object> result = new HashMap<String, Object>();
+                result.put("status", Response.Status.NOT_FOUND.getStatusCode());
+                result.put("description", message);
+                result.put("errors", Arrays.asList(message));
+                Response response = Response.status(Response.Status.NOT_FOUND)
+                        .entity(result).build();
+                throw new NotFoundException(message, response);
             }
         };
     }
