@@ -57,8 +57,7 @@ public class ScheduledTaskExecutorServiceImpl implements ScheduledTaskExecutorSe
     private ApplicationContext applicationContext;
 
     @Override
-    @Transactional(noRollbackFor = {RetryException.class, Exception.class,
-                    IllegalStateException.class})
+    @Transactional(noRollbackFor = {Exception.class})
     public void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context) throws RetryException, Exception {
         ScheduledTask scheduledTask = Optional.fromNullable(scheduledTaskDao.read(scheduledTaskId))
                 .or(OptionalHelper.<ScheduledTask>illegalState("ScheduledTask not found by id=" + scheduledTaskId));

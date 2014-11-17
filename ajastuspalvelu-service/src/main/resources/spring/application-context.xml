@@ -64,6 +64,7 @@
     <bean id="schedulerJDBC" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"  depends-on="flyway">
         <property name="dataSource" ref="dbDataSource" />
         <property name="jobFactory" ref="autowiringBeanJobFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
         <property name="overwriteExistingJobs" value="true" />
         <property name="startupDelay" value="60"/>
         <property name="quartzProperties">
