@@ -46,7 +46,7 @@
     <bean id="casTicketInterceptor" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
         <property name="useBasicAuthentication" value="${ryhmasahkoposti.dev.use-basic-authentication:false}"/>
         <property name="useSessionPerUser" value="${ryhmasahkoposti.use-session-per-user:true}"/>
-        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:false}"/>
+        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
         <property name="appClientUsername" value=""/>
         <property name="appClientPassword" value=""/>
     </bean>
@@ -55,7 +55,7 @@
     <bean id="casTicketInterceptorAAU" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
         <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
         <property name="useSessionPerUser" value="${ryhmasahkoposti.use-session-per-user:true}"/>
-        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:false}"/>
+        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
         <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
         <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
     </bean>
