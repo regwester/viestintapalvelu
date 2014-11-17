@@ -4,6 +4,7 @@ var uglify = require('gulp-uglify');
 var sass = require('gulp-sass');
 var sourcemaps = require('gulp-sourcemaps');
 var del = require('del');
+var bower = require('bower');
 
 /*
    init.js files are included first, then other .js files.
@@ -39,6 +40,14 @@ gulp.task('styles', function() {
             .pipe(concat('all.css'))
         .pipe(sourcemaps.write())
         .pipe(gulp.dest(output.styles));
+});
+
+
+gulp.task('bower', function(cb) {
+    bower.commands.install([], {save: true}, {})
+        .on('end', function(installed) {
+            cb();
+        })
 });
 
 gulp.task('watch', function(){
