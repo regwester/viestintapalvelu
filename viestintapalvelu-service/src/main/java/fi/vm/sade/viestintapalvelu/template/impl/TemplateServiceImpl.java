@@ -29,8 +29,8 @@ import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
-import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
-import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
+import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 
 @Service
 @Transactional
@@ -491,7 +491,7 @@ public class TemplateServiceImpl implements TemplateService {
                                                                          ContentStructureType structureType) {
         Structure structure = from.getStructure();
         ContentStructure contentStructure = contentStructure(structure, structureType)
-                .or(OptionalHelpper.<ContentStructure>notFound("Template id="
+                .or(OptionalHelper.<ContentStructure>notFound("Template id="
                         +from.getId()+" does not have ContentStructure for type="+structureType));
         to.setStyles(contentStructure.getStyle() != null ? contentStructure.getStyle().getStyle() : null);
         to.setContents(structureConverter.toContents(contentStructure));

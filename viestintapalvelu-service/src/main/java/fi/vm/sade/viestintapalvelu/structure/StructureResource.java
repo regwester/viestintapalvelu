@@ -34,7 +34,7 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 
 /**
  * User: ratamaa
