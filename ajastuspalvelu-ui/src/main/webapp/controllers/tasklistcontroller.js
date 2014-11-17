@@ -14,6 +14,9 @@ app.controller('TaskListController', ['$scope', '$location', '$filter', 'Schedul
 	
 	ScheduledTasks.get({}, function(result) {
 	    $scope.tasks = result
+	    angular.forEach($scope.tasks, function(task) {
+		task.hakuName = $scope.hakuByName(task.hakuOid)
+	    });
 	});
     });
     
