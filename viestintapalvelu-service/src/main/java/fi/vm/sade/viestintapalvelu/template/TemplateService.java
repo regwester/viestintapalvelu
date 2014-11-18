@@ -41,4 +41,6 @@ public interface TemplateService {
     Template getTemplateByName(TemplateCriteria criteria, boolean content);
 
     List<Template> listTemplateVersionsByName(TemplateCriteria templateCriteria, boolean content, boolean periods);
+
+    List<Template> getByApplicationPeriod(TemplateCriteria criteria);
 }

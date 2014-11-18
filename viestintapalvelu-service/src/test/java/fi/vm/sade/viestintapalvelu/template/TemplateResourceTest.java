@@ -6,7 +6,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response.Status;
 
-import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -80,12 +79,12 @@ public class TemplateResourceTest {
     
     @Test
     public void insertsTemplate() throws Exception {
-        assertNotNull(resource.store(givenTemplateWithStructure()));
+        assertNotNull(resource.insert(givenTemplateWithStructure()));
     }
     
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
-        resource.store(givenTemplateWithStructure());
+        resource.insert(givenTemplateWithStructure());
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -95,7 +94,7 @@ public class TemplateResourceTest {
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(structure.getName());
-        resource.store(template);
+        resource.insert(template);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -115,7 +114,7 @@ public class TemplateResourceTest {
         structureDto.getContentStructures().add(contentStructure);
         template.setStructure(structureDto);
 
-        resource.store(template);
+        resource.insert(template);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -125,26 +124,26 @@ public class TemplateResourceTest {
         template.setStructureId(null);
         template.setStructureName(null);
         template.setStructure(new StructureSaveDto());
-        resource.store(template);
+        resource.insert(template);
     }
 
     @Test
     public void returnsTemplateNamesThatAreInDraftState() throws Exception {
-        resource.store(givenTemplateWithStructure());
+        resource.insert(givenTemplateWithStructure());
         assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
     
     @Test
     public void doesNotReturnTemplatesThatAreNotPublished() throws Exception {
         Template template = givenTemplateWithStructure();
-        resource.store(template);
+        resource.insert(template);
         assertTrue(resource.listVersionsByName(constructRequest(template)).isEmpty());
     }
     
     @Test
     public void returnsTemplatesThatAreInDraftState() throws Exception {
         Template template = givenTemplateWithStructure();
-        resource.store(template);
+        resource.insert(template);
         assertEquals(1, resource.listVersionsByNameUsingState(constructRequest(template), State.luonnos).size());
     }
     
@@ -166,8 +165,32 @@ public class TemplateResourceTest {
         assertEquals(1, resource.templateNamesByState(State.suljettu).size());
     }
     
+    @Test
+    public void fetchesOnlyPublishedTemplatesUsingNames() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertNull(resource.templateByName(constructRequest(template)));
+        template.setState(State.julkaistu);
+        resource.update(template);
+        assertNotNull(resource.templateByName(constructRequest(template)));
+    }
+    
+    @Test
+    public void fetchesClosedTemplatesUsingNamesAndState() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
+        template.setState(State.suljettu);
+        resource.update(template);
+        assertNotNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
+    }
+    
+    @Test
+    public void fetchesDraftTemplateUsingNameAndState() throws Exception {
+        Template template = givenSavedTemplateInDraftStatus();
+        assertNotNull(resource.templateByNameAndState(constructRequest(template), State.luonnos));
+    }
+    
     private Template givenSavedTemplateInDraftStatus() throws Exception{
-        Long id = (Long) resource.store(givenTemplateWithStructure()).getEntity();
+        Long id = (Long) resource.insert(givenTemplateWithStructure()).getEntity();
         return resource.getTemplateByIDAndState(id, State.luonnos, null);
     }
     

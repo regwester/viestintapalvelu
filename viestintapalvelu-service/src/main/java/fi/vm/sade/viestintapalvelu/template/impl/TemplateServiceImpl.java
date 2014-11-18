@@ -5,6 +5,11 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.*;
 
+import fi.vm.sade.viestintapalvelu.model.Draft;
+import fi.vm.sade.viestintapalvelu.model.Replacement;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
+import fi.vm.sade.viestintapalvelu.template.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,9 +29,6 @@ import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
-import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
-import fi.vm.sade.viestintapalvelu.template.StructureConverter;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
 import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
 
@@ -376,6 +378,17 @@ public class TemplateServiceImpl implements TemplateService {
         return dtos;
     }
 
+    @Override
+    public List<fi.vm.sade.viestintapalvelu.template.Template> getByApplicationPeriod(TemplateCriteria criteria) {
+        List<fi.vm.sade.viestintapalvelu.template.Template> templates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
+        for (Template t : templateDAO.findTemplates(criteria)) {
+            fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(t);
+            templates.add(convertedTemplate);
+        }
+        return templates;
+    }
+
+
     public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(
             TemplateCriteria criteria, boolean content) {
         fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
@@ -420,7 +433,10 @@ public class TemplateServiceImpl implements TemplateService {
 
     // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template getConvertedTemplate(Template from) {
-        return convertBasicData(from, new fi.vm.sade.viestintapalvelu.template.Template());
+        fi.vm.sade.viestintapalvelu.template.Template template = convertBasicData(from, new fi.vm.sade.viestintapalvelu.template.Template());
+        template = convertApplicationPeriods(from, template);
+        template = convertReplacements(from, template);
+        return template;
     }
 
 

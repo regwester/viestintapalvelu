@@ -3,16 +3,17 @@
 angular.module('letter-templates')
     .factory('templateService', ['$resource', '$http', function ($resource, $http) {
 
-        var baseUrl = '/viestintapalvelu-service/api/v1/template/';
+        var serviceUrl = '/viestintapalvelu/api/v1/';
+        var templateBaseUrl = serviceUrl + 'template/';
 
         return {
 
             getHakus: function() {
-                return $http.get(baseUrl + 'haku');
+                return $http.get(serviceUrl + 'options/hakus');
             },
 
             getByApplicationPeriod: function (applicationPeriod) {
-                return $http.get(baseUrl + 'listByApplicationPeriod/' + applicationPeriod);
+                return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationPeriod);
             }
         };
     }]);
