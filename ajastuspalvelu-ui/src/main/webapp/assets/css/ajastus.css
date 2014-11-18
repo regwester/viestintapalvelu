@@ -1,0 +1,11 @@
+input.icon-actionmenu {
+    background-image: url("../img/icon-treetable-button.png");
+    background-color: Transparent;
+    background-repeat:no-repeat;
+    overflow: hidden;
+    outline:none;
+    cursor: pointer;
+    border: none;
+    width: 20px;
+    height: 18px;
+}

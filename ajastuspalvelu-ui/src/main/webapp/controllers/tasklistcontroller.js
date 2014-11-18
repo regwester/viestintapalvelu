@@ -32,4 +32,5 @@ app.controller('TaskListController', ['$scope', '$location', '$filter', 'Schedul
 	var haku = $filter('filter') ($scope.hakus, function (haku) {return haku.oid === hakuOid})[0]
 	return HakuNameByLocale(haku)
     }
+    
 }]);

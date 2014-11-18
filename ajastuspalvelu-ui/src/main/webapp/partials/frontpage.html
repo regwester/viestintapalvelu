@@ -7,19 +7,26 @@
 		<table class="table table-striped">
 			<thead>
 				<tr>
-					<td ng:click="sortBy='hakuName'; reverse = !reverse" class="sortable">{{'common.fetch' | i18n}} <i class="glyphicon glyphicon-sort"></i></td>
-					<td ng:click="sortBy='taskName'; reverse = !reverse" class="sortable">{{'common.task' | i18n}} <i class="glyphicon glyphicon-sort"></i></td>
-					<td ng:click="sortBy='runtimeForSingle'; reverse = !reverse" colspan="2" class="sortable">{{'front.scheduled.for' | i18n}} <i class="glyphicon glyphicon-sort"></i></td>
+					<th></th>
+					<th ng:click="sortBy='taskName'; reverse = !reverse" class="sortable">{{'front.task' | i18n}} <i class="glyphicon glyphicon-sort"></i></th>
+					<th ng:click="sortBy='hakuName'; reverse = !reverse" class="sortable">{{'common.fetch' | i18n}} <i class="glyphicon glyphicon-sort"></i></th>
+					<th ng:click="sortBy='runtimeForSingle'; reverse = !reverse" class="sortable">{{'front.scheduled.for' | i18n}} <i class="glyphicon glyphicon-sort"></i></th>
 				</tr>
 			</thead>
 			<tbody>
 				<tr ng-repeat="task in tasks | orderBy:sortBy:reverse">
-					<td>{{task.hakuName}}</td>
-					<td>{{task.taskName}}</td>
-					<td>{{task.runtimeForSingle | date:'dd.MM.yyyy HH:mm'}}</td>
 					<td>
-						<button ng-click="edit(task.id)" class="btn btn-sm btn-primary">{{'common.edit' | i18n}}</button>
+						<div class="btn-group dropdown">
+							<input type="button" class="icon-actionmenu dropdown-toggle"/>
+							<ul class="dropdown-menu" role="menu">
+								<li><a ng-click="edit(task.id)">{{'common.edit' | i18n}}</a></li>
+								<li><a href="#">{{'common.delete' | i18n}}</a></li>
+							</ul>
+						</div>
 					</td>
+					<td>{{task.taskName}}</td>
+					<td>{{task.hakuName}}</td>
+					<td>{{task.runtimeForSingle | date:'dd.MM.yyyy HH:mm'}}</td>
 				</tr>
 			</tbody>
 		</table>
