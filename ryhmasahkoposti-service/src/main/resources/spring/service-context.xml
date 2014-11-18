@@ -40,13 +40,24 @@
 
     <!-- Authentication and authorization support -->
 
-    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target" ref="ticketInterceptorTarget"/>
+	<bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache">
     </bean>
-    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target" ref="ticketInterceptorTarget"/>
-        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
+    
+    <bean id="casTicketInterceptor" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
+        <property name="useBasicAuthentication" value="${ryhmasahkoposti.dev.use-basic-authentication:false}"/>
+        <property name="useSessionPerUser" value="${ryhmasahkoposti.use-session-per-user:true}"/>
+        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
+        <property name="appClientUsername" value=""/>
+        <property name="appClientPassword" value=""/>
+    </bean>
+    
+    <!-- Application as a user -->
+    <bean id="casTicketInterceptorAAU" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
+        <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
+        <property name="useSessionPerUser" value="${ryhmasahkoposti.use-session-per-user:true}"/>
+        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
+        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
     </bean>
 
 
@@ -60,8 +71,11 @@
                          address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
+            <ref bean="casTicketInterceptor"/>
         </jaxrs-client:outInterceptors>
+        <jaxrs-client:inInterceptors>
+            <ref bean="casTicketInterceptor"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
@@ -73,20 +87,11 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource"
                          address="${ryhmasahkopostipalvelu.attachmentService.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <bean class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
-                <property name="target">
-                    <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                        <property name="webCasUrl" value="${web.url.cas}" />
-                        <property name="targetService" value="${cas.service.viestintapalvelu}" />
-                        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-                        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-                    </bean>
-                </property>
-                <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
-                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-            </bean>
+            <ref bean="casTicketInterceptorAAU"/>
         </jaxrs-client:outInterceptors>
+        <jaxrs-client:inInterceptors>
+            <ref bean="casTicketInterceptorAAU"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
@@ -99,13 +104,11 @@
                          address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                <property name="webCasUrl" value="${web.url.cas}" />
-                <property name="targetService" value="${ryhmasahkopostipalvelu.authenticationService.henkilo.cas.url}" />
-                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.henkilopalvelu}" />
-                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.henkilopalvelu}" />
-            </bean>
+            <ref bean="casTicketInterceptorAAU"/>
         </jaxrs-client:outInterceptors>
+        <jaxrs-client:inInterceptors>
+            <ref bean="casTicketInterceptorAAU"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
@@ -116,10 +119,7 @@
     <jaxrs-client:client id="organisaatioResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource"
                          address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <!-- Ei vaadi kirjautumista -->
-            <!--<ref bean="ticketInterceptorRest"/>-->
-        </jaxrs-client:outInterceptors>
+        <!-- Ei vaadi kirjautumista, eikä siksi interceptoria -->
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
@@ -131,20 +131,11 @@
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource"
                          address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <bean class="fi.vm.sade.ryhmasahkoposti.util.LocalDevModeSecurityTicketInterceptorAdapter">
-                <property name="target">
-                    <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
-                        <property name="webCasUrl" value="${web.url.cas}" />
-                        <property name="targetService" value="${cas.service.viestintapalvelu}" />
-                        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-                        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-                    </bean>
-                </property>
-                <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
-                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-            </bean>
+            <ref bean="casTicketInterceptorAAU"/>
         </jaxrs-client:outInterceptors>
+        <jaxrs-client:inInterceptors>
+            <ref bean="casTicketInterceptorAAU"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>

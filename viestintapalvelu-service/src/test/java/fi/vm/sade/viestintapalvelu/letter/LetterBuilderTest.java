@@ -15,6 +15,7 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertNotNull;
@@ -46,7 +47,8 @@ public class LetterBuilderTest {
     public void storesPDFAsBytesIntoLetterReceiverLetter() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
         LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
-        when(templateService.findById(any(Long.class))).thenReturn(DocumentProviderTestData.getTemplate());
+        when(templateService.findById(any(Long.class), any(ContentStructureType.class)))
+                .thenReturn(DocumentProviderTestData.getTemplate());
         when(docBuilder.merge(any(PdfDocument.class))).thenReturn(new MergedPdfDocument());
         builder.constructPDFForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertNotNull(receiver.getLetterReceiverLetter().getLetter());

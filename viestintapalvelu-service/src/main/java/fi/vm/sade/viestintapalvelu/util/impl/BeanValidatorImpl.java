@@ -71,14 +71,18 @@ public class BeanValidatorImpl implements BeanValidator {
     public<T> void validate(T bean) throws BadRequestException {
         Set<ConstraintViolation<T>> violations = validatorFactory.getValidator().validate(bean);
         if (!violations.isEmpty()) {
-            Map<String,Object> result = new HashMap<String, Object>();
-            result.put("status", 400);
             Collection<String> errors = Collections2.transform(violations, VIOLATION_TRANSLATOR);
-            result.put("description", StringHelper.join(", ", errors.iterator()));
-            result.put("errors", errors);
-            Response response = Response.status(Response.Status.BAD_REQUEST).entity(result).build();
-            throw new BadRequestException(response);
+            throw badRequest(errors.toArray(new String[errors.size()]));
         }
+    }
+
+    public static BadRequestException badRequest(String... errors) {
+        Map<String,Object> result = new HashMap<String, Object>();
+        result.put("status", 400);
+        result.put("description", StringHelper.join(", ", errors));
+        result.put("errors", errors);
+        Response response = Response.status(Response.Status.BAD_REQUEST).entity(result).build();
+        return new BadRequestException(response);
     }
 
 }

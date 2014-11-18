@@ -37,6 +37,8 @@ import java.io.Serializable;
 @Table(name = "kirjepohja_haku", schema= "kirjeet")
 @Entity(name = "TemplateApplicationPeriod")
 public class TemplateApplicationPeriod implements Serializable {
+    private static final long serialVersionUID = -1783173914653996853L;
+
     @EmbeddedId
     @AttributeOverrides({
         @AttributeOverride(name= "applicationPeriod", column = @Column(name="haku_oid", nullable = false, updatable = false)),

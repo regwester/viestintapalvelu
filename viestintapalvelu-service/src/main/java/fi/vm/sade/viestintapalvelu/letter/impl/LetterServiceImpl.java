@@ -27,6 +27,7 @@ import com.google.common.base.Optional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -40,8 +41,9 @@ import fi.vm.sade.viestintapalvelu.letter.dto.*;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
-
 import static org.joda.time.DateTime.now;
 
 /**
@@ -103,7 +105,7 @@ public class LetterServiceImpl implements LetterService {
     /* ---------------------- */
     @Override
     @Transactional
-    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch) {
+    public LetterBatch createLetter(AsyncLetterBatchDto letterBatch, boolean anonymous) {
         // kirjeet.kirjelahetys
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         LetterBatch model = new LetterBatch();
@@ -115,7 +117,9 @@ public class LetterServiceImpl implements LetterService {
         }
         
         model.setTimestamp(new Date());
-        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        if (!anonymous) {
+            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        }
         model.setBatchStatus(LetterBatch.Status.created);
 
         // kirjeet.vastaanottaja
@@ -135,7 +139,7 @@ public class LetterServiceImpl implements LetterService {
     /* ---------------------- */
     @Override
     @Transactional
-    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch) {
+    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous) {
         // kirjeet.kirjelahetys
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         
@@ -147,8 +151,9 @@ public class LetterServiceImpl implements LetterService {
         }
         model.setTimestamp(new Date());
         model.setBatchStatus(LetterBatch.Status.created);
-        model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
-
+        if (!anonymous) {
+            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+        }
         // kirjeet.vastaanottaja
         try {
             model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
@@ -187,7 +192,9 @@ public class LetterServiceImpl implements LetterService {
         }
         languageCodes.add(letterBatch.getLanguageCode());
         for (String languageCode : languageCodes) {
-            fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(templateName, languageCode);
+            fi.vm.sade.viestintapalvelu.model.Template template
+                    = templateDAO.findTemplate(new TemplateCriteriaImpl(templateName, languageCode,
+                            ContentStructureType.letter));
             if (template != null) {
                 UsedTemplate usedTemplate = new UsedTemplate();
                 usedTemplate.setLetterBatch(letterB);
@@ -199,8 +206,10 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private String getTemplateNameFromBatch(LetterBatchDetails letterBatch) {
-        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplateByName(letterBatch.getTemplateName(), letterBatch.getLanguageCode());
-        return template != null ? template.getName() : templateDAO.read(letterBatch.getTemplateId()).getName();
+        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(
+                new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch.getLanguageCode(),
+                        ContentStructureType.letter));
+        return template != null ? template.getName() : templateDAO.findByIdAndState(letterBatch.getTemplateId(), State.julkaistu).getName();
     }
 
     /* ------------ */
@@ -564,15 +573,12 @@ public class LetterServiceImpl implements LetterService {
                 LetterBatch.Status.error);
         batch.setBatchStatus(LetterBatch.Status.error);
 
-        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
         LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorTime(new Date());
         error.setLetterReceivers(receiver);
         error.setLetterBatch(batch);
         error.setErrorCause(Optional.fromNullable(message).or("Unknown (TODO)"));
-        errors.add(error);
-        batch.setProcessingErrors(errors);
-        letterBatchDAO.update(batch);
+        batch.addProcessingErrors(error);
     }
 
     @Override
@@ -809,7 +815,7 @@ public class LetterServiceImpl implements LetterService {
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
-        batch.getProcessingErrors().add(error);
+        batch.addProcessingErrors(error);
         letterBatchDAO.update(batch);
     }
 
@@ -827,7 +833,7 @@ public class LetterServiceImpl implements LetterService {
         error.setLetterBatch(batch);
         error.setErrorTime(new Date());
         error.setErrorCause(Optional.fromNullable(e.getMessage()).or("Unknown"));
-        batch.getProcessingErrors().add(error);
+        batch.addProcessingErrors(error);
         letterBatchDAO.update(batch);
     }
 

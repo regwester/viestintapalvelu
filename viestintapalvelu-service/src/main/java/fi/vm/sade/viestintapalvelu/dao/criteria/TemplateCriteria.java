@@ -16,6 +16,9 @@
 
 package fi.vm.sade.viestintapalvelu.dao.criteria;
 
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+
 /**
  * User: ratamaa
  * Date: 9.9.2014
@@ -36,12 +39,17 @@ public interface TemplateCriteria {
     /**
      * @return the document type used with this criteria to filter the result (null if not used)
      */
-    String getType();
+    ContentStructureType getType();
 
     /**
      * @return the OID of a Haku used with this criteria to filter the result (null if not used)
      */
     String getApplicationPeriod();
+    
+    /**
+     * @return the state used with this criteria to filter the result (defaults to {@link State#julkaistu}
+     */
+    State getState();
 
     /**
      * @return true if the matching template should be the default one (for given name and language)
@@ -64,7 +72,7 @@ public interface TemplateCriteria {
      * @param type to use (or not to use if null)
      * @return a criteria with type condition set to given value
      */
-    TemplateCriteria withType(String type);
+    TemplateCriteria withType(ContentStructureType type);
 
     /**
      * @param hakuOid to use (or not to use if null)
@@ -81,4 +89,10 @@ public interface TemplateCriteria {
      * @return a criteria without default requirement
      */
     TemplateCriteria withoutDefaultRequired();
+    
+    /**
+     * @param {@link State} to use (or not to use if null
+     * @return a criteria with state condition set to given value
+     */
+    TemplateCriteria withState(State state);
 }

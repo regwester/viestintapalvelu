@@ -24,6 +24,7 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.*;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -93,9 +94,9 @@ public class LetterServiceTest {
               return (LetterBatch) invocation.getArguments()[0];
             }
         });
-        when(templateDAO.findTemplateByName(any(String.class), any(String.class)))
+        when(templateDAO.findTemplate(any(TemplateCriteria.class)))
             .thenReturn(DocumentProviderTestData.getTemplate(1l));
-        LetterBatch createdLetterBatch = letterService.createLetter(letterBatch);
+        LetterBatch createdLetterBatch = letterService.createLetter(letterBatch, false);
         
         assertNotNull(createdLetterBatch);
         assertNotNull(createdLetterBatch.getLetterReceivers());
@@ -340,14 +341,12 @@ public class LetterServiceTest {
         assertNotNull(mockBatch.getLetterReceivers());
         LetterReceivers first = mockBatch.getLetterReceivers().iterator().next();
 
-        List<LetterBatchProcessingError> processingErrors = new ArrayList<LetterBatchProcessingError>();
         LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setLetterBatch(mockBatch);
         error.setErrorCause("Testing error");
         error.setErrorTime(failDate);
         error.setLetterReceivers(first);
-        processingErrors.add(error);
-        mockBatch.setProcessingErrors(processingErrors);
+        mockBatch.addProcessingErrors(error);
 
         LetterBatchStatusDto mockDto = new LetterBatchStatusDto(1235l, 235, 456, LetterBatch.Status.error, 235);
 

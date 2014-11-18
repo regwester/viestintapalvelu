@@ -27,4 +27,5 @@ import javax.persistence.Entity;
 @Entity
 @DiscriminatorValue("GENERAL")
 public class LetterBatchGeneralProcessingError extends LetterBatchProcessingError {
+    private static final long serialVersionUID = -1816998415185592381L;
 }

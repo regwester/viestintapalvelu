@@ -16,7 +16,10 @@
     <link rel="stylesheet" type="text/css" href="assets/css/virkailija.css"/>
     <link rel="stylesheet" type="text/css" href="assets/css/dialogs.css"/>
     <link rel="stylesheet" type="text/css" href="assets/css/other.css"/>
-
+    <link rel="stylesheet" type="text/css" href="assets/lib/tree-grid/src/treeGrid.css">
+    <!--
+    <link rel="stylesheet" type="text/css" href="assets/lib/treeview/css/angular.treeview.css">
+    -->
 </head>
 
 <body>
@@ -38,13 +41,16 @@
     <script type="text/javascript" src="assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js"></script>
     <script type="text/javascript" src="assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js"></script>
     <script type="text/javascript" src="assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js"></script>
-
+    <script type="text/javascript" src="assets/lib/tree-grid/src/tree-grid-directive.js"></script>
+    <!--
+    <script type="text/javascript" src="assets/lib/treeview/angular.treeview.js"></script>
+    -->
     <!-- HTML5 saveAs() polyfill, IE 10+, Firefox, Chrome, Opera, Safari supported -->
     <script type="text/javascript" src="assets/lib/file/FileSaver.js"></script>
     <!-- HTML5 Blob polyfill -->
     <script type="text/javascript" src="assets/lib/file/Blob.js"></script>
 
-    <!--Virkailija layout script -->
+    <!-- Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
 
     <script type="text/javascript" src="assets/lib/tinymce/tinymce.min.js"></script>
@@ -69,6 +75,7 @@
     <!-- Initialize modules -->
     <script type="text/javascript" src="email/init.js"></script>
     <script type="text/javascript" src="report/init.js"></script>
+    <script type="text/javascript" src="letter-templates/init.js"></script>
     <script type="text/javascript" src="core/init.js"></script>
     <script type="text/javascript" src="init.js"></script>
 
@@ -90,13 +97,16 @@
     <script type="text/javascript" src="report/services/reportedMessage.js"></script>
     <script type="text/javascript" src="report/services/sharedVariables.js"></script>
     <script type="text/javascript" src="core/services/global.js"></script>
-    
+    <script type="text/javascript" src="letter-templates/services/template.js"></script>
+
     <!-- Directives -->
     <script type="text/javascript" src="email/directives/upload.js"></script>
     <script type="text/javascript" src="email/directives/singleRowTable.js"></script>
     <script type="text/javascript" src="email/directives/recipientList.js"></script>
     <script type="text/javascript" src="report/directives/reportedMessageStatus.js"></script>
     <script type="text/javascript" src="report/directives/limitedParagraph.js"></script>
+    <script type="text/javascript" src="core/directives/input-list.js"></script>
+    <script type="text/javascript" src="core/directives/form-item.js"></script>
 
     <!-- Controllers -->
     <script type="text/javascript" src="email/controllers/tab.js"></script>
@@ -111,6 +121,10 @@
     <script type="text/javascript" src="report/controllers/errorDialog.js"></script>
     <script type="text/javascript" src="report/controllers/reportedLetterList.js"></script>
     <script type="text/javascript" src="report/controllers/reportedLetterView.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/templateTree.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/letterTemplateList.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/letterTemplateCreate.js"></script>
+    <script type="text/javascript" src="letter-templates/controllers/templateDialog.js"></script>
 
     <!-- Routes -->
     <script type="text/javascript" src="core/routes.js"></script>
