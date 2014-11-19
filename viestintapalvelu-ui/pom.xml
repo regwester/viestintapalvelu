@@ -96,6 +96,7 @@
                         <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js</source>
                         <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js</source>
                         <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js</source>
+                        <source>${webapp.dir}/assets/lib/tree-grid/src/tree-grid-directive.js</source>
                         <source>${webapp.dir}/email/init.js</source>
                         <source>${webapp.dir}/report/init.js</source>
                         <source>${webapp.dir}/core/init.js</source>
