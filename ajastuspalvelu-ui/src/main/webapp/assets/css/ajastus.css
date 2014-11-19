@@ -43,3 +43,11 @@ div.main-container {
 .clickable {
 	cursor: pointer !important;
 }
+
+.input-container {
+	width: 500px;
+}
+
+.datepick {
+	width: 140px;	
+}
