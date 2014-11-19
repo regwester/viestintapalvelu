@@ -7,8 +7,18 @@ app.factory('ScheduledTasks', function($resource) {
     });
 });
 
-app.controller('TaskListController', ['$scope', '$location', '$filter', 'ScheduledTasks', 'Hakus', 'HakuNameByLocale', 
-                                      function($scope, $location, $filter, ScheduledTasks, Hakus, HakuNameByLocale) {
+app.factory('RemoveScheduledTask', ['$resource', function($resource) {
+    return $resource(SERVICE_REST_PATH + "scheduledtask/close/:scheduledtaskid", {
+	scheduledtaskid : "@scheduledtaskid"
+    }, {
+        remove : {
+            method : "PUT"
+        }
+    });
+}]);
+
+app.controller('TaskListController', ['$scope', '$location', '$filter', '$modal', 'ScheduledTasks', 'Hakus', 'HakuNameByLocale', 
+                                      function($scope, $location, $filter, $modal, ScheduledTasks, Hakus, HakuNameByLocale) {
     Hakus.get({}, function(result) {
 	$scope.hakus = result
 	
@@ -33,4 +43,37 @@ app.controller('TaskListController', ['$scope', '$location', '$filter', 'Schedul
 	return HakuNameByLocale(haku)
     }
     
+    $scope.deleteTask = function(taskId) {
+
+	var modalInstance = $modal.open({
+	    templateUrl: 'deleteTaskModal.html',
+	    controller: 'DeleteTaskModal',
+	    size: 'sm',
+	    resolve: {
+		taskId: function() {
+		    return taskId
+		}
+	    }
+	});
+
+	modalInstance.result.then(function (taskId) {
+	    $scope.tasks = $filter('filter')($scope.tasks, function(task) { return task.taskId != taskId});
+	});
+    }
+    
+}]);
+
+app.controller('DeleteTaskModal', ['$scope', '$modalInstance', 'RemoveScheduledTask', 'taskId', function ($scope, $modalInstance, RemoveScheduledTask, taskId) {
+    
+    $scope.taskIdToDelete = taskId
+    
+    $scope.cancel = function () {
+      $modalInstance.dismiss('cancel')
+    };
+    
+    $scope.remove = function() {
+	RemoveScheduledTask.remove({ scheduledtaskid : $scope.taskIdToDelete },{}, function(result) {
+	    $modalInstance.close()
+	});
+    }
 }]);

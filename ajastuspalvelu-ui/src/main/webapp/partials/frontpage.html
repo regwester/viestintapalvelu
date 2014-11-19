@@ -1,4 +1,5 @@
 <div>
+	<div ng-include="'partials/delete.html'"/>
 	<div>
 		<h1 class>{{'common.scheduleservice.header' | i18n}}</h1>
 		<button ng-click="create()" class="btn btn-lg btn-primary"><i class="glyphicon glyphicon-plus-sign margin-right-half"></i> {{'front.create' | i18n}}</button>
@@ -20,7 +21,7 @@
 							<input type="button" class="icon-actionmenu dropdown-toggle"/>
 							<ul class="dropdown-menu" role="menu">
 								<li><a ng-click="edit(task.id)">{{'common.edit' | i18n}}</a></li>
-								<li><a href="#">{{'common.delete' | i18n}}</a></li>
+								<li><a ng-click="deleteTask(task.id)">{{'common.delete' | i18n}}</a></li>
 							</ul>
 						</div>
 					</td>
