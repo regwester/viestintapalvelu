@@ -57,7 +57,7 @@ app.controller('TaskListController', ['$scope', '$location', '$filter', '$modal'
 	});
 
 	modalInstance.result.then(function (taskId) {
-	    $scope.tasks = $filter('filter')($scope.tasks, function(task) { return task.taskId != taskId});
+	    $scope.tasks = $filter('filter')($scope.tasks, function(task) { return task.id != taskId});
 	});
     }
     
@@ -73,7 +73,7 @@ app.controller('DeleteTaskModal', ['$scope', '$modalInstance', 'RemoveScheduledT
     
     $scope.remove = function() {
 	RemoveScheduledTask.remove({ scheduledtaskid : $scope.taskIdToDelete },{}, function(result) {
-	    $modalInstance.close()
+	    $modalInstance.close($scope.taskIdToDelete)
 	});
     }
 }]);
