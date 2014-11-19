@@ -7,8 +7,13 @@ Viestintäpalvelun käyttöliittymä on tehty [AngularJS](https://angularjs.org/
 
 ```mvn clean install```
 
+Projektissa on käytössä maven lisäosa, joka lataa nodejs:n ja npm:n. Kun npm on ladattu voidaan sitä käyttää asentamaan gulp komennolla ```npm install -g gulp```.
+Tämän jälkeen gulpin tehtäviä voidaan ajaa suoraan komentoriviltä kirjoittamalla ```gulp [taskin nimi]```.
 
-Kehitystyössä kannattaa ajaa ```gulp watch```, niin gulp vahtii javascript ja sass tiedostoja ja kääntää ne automaattisesti.
+Kehitystyössä hyödyllinen komento on ```gulp watch```, jolloin gulp vahtii muutoksia kehityskansiossa oleviin javascript-, html- ja tyylitiedostoihin ja kääntää ne automaattisesti.
+Komennolla ```gulp clean``` voidaan poistaa aikaisemmin generoidut tuotantotiedostot. Komento ```gulp build``` tekee aluksi putsauksen ja sen jälkeen generoi uudet tuotantotiedostot.
+
+Maven ajaa komennon ```gulp build``` osana ```mvn clean install``` komentoa.
 
 ### Teknologiat
 
@@ -29,4 +34,5 @@ Kehitystyössä kannattaa ajaa ```gulp watch```, niin gulp vahtii javascript ja 
 
 ### Projektin rakenne
 
-Kehitystiedostot ovat suoraan src/main kansion alla. Julkisesti näkyvät tuotantotiedostot generoidaan webapps kansion alle.
+Kehitystiedostot ovat src/main/develop kansion alla. Julkisesti näkyvät tuotantotiedostot ovat webapps kansion alla.
+Osa tuotantotiedostoista generoidaan automaattisesti kehitysversioiden perusteella.
