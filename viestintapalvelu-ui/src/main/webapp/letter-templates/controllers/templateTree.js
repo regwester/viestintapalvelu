@@ -82,7 +82,7 @@ angular.module('letter-templates')
             ]}
         ];
 
-        TemplateService.getHakus().success(function(data) {
+        TemplateService.getApplicationTarget().then(function(data) {
             $scope.applicationPeriodList = data;
         });
 }]);
