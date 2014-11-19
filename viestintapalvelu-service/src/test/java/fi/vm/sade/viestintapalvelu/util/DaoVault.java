@@ -32,6 +32,7 @@ import com.google.common.base.Optional;
 import fi.ratamaa.dtoconverter.reflection.Property;
 import fi.vm.sade.generic.dao.JpaDAO;
 
+import static com.google.common.base.Optional.fromNullable;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
@@ -52,16 +53,8 @@ public class DaoVault<T> {
     }) {
         @Override
         protected T handleArgument(T argument) {
-            Property id = idProp(argument),
-                    version = versionProp(argument);
-            if (id != null) {
-                Long idValue = ++maxId;
-                id.set(argument, idValue);
-                store.put(idValue, argument);
-            }
-            if (version != null) {
-                version.set(argument, 0l);
-            }
+            insert(argument);
+            updateVersion(argument);
             return argument;
         }
     };
@@ -162,5 +155,34 @@ public class DaoVault<T> {
                 return values.get(0);
             }
         };
+    }
+
+    public DaoVault<T> insert(long id, T value) {
+        idProp(value).set(value, id);
+        maxId = Math.max(id, maxId);
+        store.put(id, value);
+        return this;
+    }
+
+    public DaoVault<T> insert(T model) {
+        Property id = idProp(model);
+        if (id != null) {
+            Long idValue = (Long) id.get(model);
+            if (idValue == null) {
+                idValue = ++maxId;
+                id.set(model, idValue);
+            } else {
+                maxId = Math.max(idValue, maxId);
+            }
+            store.put(idValue, model);
+        }
+        return this;
+    }
+
+    private void updateVersion(T model) {
+        Property version = versionProp(model);
+        if (version != null) {
+            version.set(model, fromNullable((Long) version.get(model)).or(-1l)+1);
+        }
     }
 }

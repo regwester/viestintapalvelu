@@ -1,5 +1,9 @@
 package fi.vm.sade.viestintapalvelu.service;
 
+import java.util.Arrays;
+
+import javax.ws.rs.BadRequestException;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,8 +22,10 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserCompon
 import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.structure.StructureService;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.converter.StructureDtoConverter;
 import fi.vm.sade.viestintapalvelu.structure.impl.StructureServiceImpl;
@@ -30,12 +36,11 @@ import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.DaoVault;
 
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.*;
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doCallRealMethod;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TemplateServiceTest {
@@ -64,16 +69,24 @@ public class TemplateServiceTest {
     public void testStoreTemplateDTO() {
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
 
+        mockStructureCreation();
+        mockTemplateDao();
+        assertEquals(1l, templateService.storeTemplateDTO(DocumentProviderTestData.getTemplate()));
+        
+        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(1l));
+    }
+
+    private DaoVault<Structure> mockStructureCreation() {
         doCallRealMethod().when(structureService).setStructureDAO(any(StructureDAO.class));
         doCallRealMethod().when(structureService).setDtoConverter(any(StructureDtoConverter.class));
         structureService.setStructureDAO(structureDAO);
         structureService.setDtoConverter(new StructureDtoConverter());
         doCallRealMethod().when(structureService).storeStructure(any(StructureSaveDto.class));
-        new DaoVault<Structure>(structureDAO, Structure.class);
-        new DaoVault<Template>(mockedTemplateDAO, Template.class);
-        assertEquals(1l, templateService.storeTemplateDTO(DocumentProviderTestData.getTemplate()));
-        
-        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(1l));
+        return new DaoVault<Structure>(structureDAO, Structure.class);
+    }
+
+    private DaoVault<Template> mockTemplateDao() {
+        return new DaoVault<Template>(mockedTemplateDAO, Template.class);
     }
 
     @Test
@@ -293,7 +306,89 @@ public class TemplateServiceTest {
         when(mockedTemplateDAO.findByIdAndState(id, State.luonnos)).thenReturn(givenTemplateWithStateAndId(id, State.luonnos));
         assertEquals(State.luonnos, templateService.findByIdAndState(id, ContentStructureType.letter, State.luonnos).getState());
     }
-    
+
+    @Test
+    public void testUpdateTemplateCanUpdateApplicationPeriods() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setVersion(1l);
+        template.setStructure(structure(contentStructure(ContentStructureType.letter,
+                content(ContentRole.body, ContentType.html))));
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setId(1l);
+        dto.setApplicationPeriods(Arrays.asList("ap", "other"));
+        templateService.updateTemplate(dto);
+
+        assertEquals(2, template.getApplicationPeriods().size());
+        // Update called twice:
+        assertEquals(Long.valueOf(3l), template.getVersion());
+    }
+
+    private fi.vm.sade.viestintapalvelu.template.Template withoutStructure(fi.vm.sade.viestintapalvelu.template.Template dto) {
+        dto.setStructure(null);
+        dto.setStructureName(null);
+        dto.setStructureId(null);
+        return dto;
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testValidateStructureOnUpdate() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setStructure(with(structure(
+                        contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))),
+                replacement("required")));
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setId(1l);
+        templateService.updateTemplate(dto);
+    }
+
+    @Test
+    public void testChangeStructureById() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setStructure(with(structure(
+                        contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))),
+                replacement("required")));
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+
+        mockStructureCreation().insert(123l, structure(
+                contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))));
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setStructureId(123l);
+        dto.setId(1l);
+        templateService.updateTemplate(dto);
+
+        assertEquals(Long.valueOf(123l), template.getStructure().getId());
+    }
+
+    @Test
+    public void testChangeStructureByNew() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setVersion(1l);
+        Structure original = with(structure(
+                        contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))),
+                replacement("required"));
+        template.setStructure(original);
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+
+        mockStructureCreation().insert(20l, original);
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setId(1l);
+        dto.setStructure(structureSaveDto(contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.body, ContentType.html))));
+        templateService.updateTemplate(dto);
+
+        assertEquals(Long.valueOf(21l), template.getStructure().getId());
+    }
+
     @Test
     public void updatesTemplateThatIsInDraftState() {
         ArgumentCaptor<Template> captor = ArgumentCaptor.forClass(Template.class);
@@ -314,7 +409,10 @@ public class TemplateServiceTest {
     private void verifyTemplateStateChange(State oldState, State newState, ArgumentCaptor<Template> captor, fi.vm.sade.viestintapalvelu.template.Template template) {
         template.setState(newState);
         when(mockedTemplateDAO.read(template.getId())).thenReturn(givenTemplateWithStateAndId(template.getId(), oldState));
+        when(structureDAO.read(any(Long.TYPE))).thenReturn(structure(contentStructure(ContentStructureType.letter,
+                content(ContentRole.body, ContentType.html))));
         templateService.updateTemplate(template);
+
         verify(mockedTemplateDAO).update(captor.capture());
         assertEquals(newState, captor.getValue().getState());
     }
