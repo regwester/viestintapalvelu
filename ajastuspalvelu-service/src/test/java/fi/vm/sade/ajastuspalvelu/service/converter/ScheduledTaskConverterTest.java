@@ -43,7 +43,7 @@ public class ScheduledTaskConverterTest {
     public void convertsModelToDto() {
         long id = 3l;
         ScheduledTaskListDto dto = converter.convert(givenScheduledTask(id));
-        assertEquals(new ScheduledTaskListDto(id, null, HAKU_OID_TASK, RUNTIME_TASK), dto);
+        assertEquals(new ScheduledTaskListDto(id, null, HAKU_OID_TASK, RUNTIME_TASK, null), dto);
     }
 
     private void assertModel(ScheduledTask task, Long expectedId) {

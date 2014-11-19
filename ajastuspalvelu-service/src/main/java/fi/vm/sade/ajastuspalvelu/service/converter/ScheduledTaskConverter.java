@@ -21,7 +21,7 @@ public class ScheduledTaskConverter {
 
     public ScheduledTaskListDto convert(ScheduledTask model) {
         return new ScheduledTaskListDto(model.getId(), model.getTask().getName(),
-                model.getHakuOid(), model.getRuntimeForSingle());
+                model.getHakuOid(), model.getRuntimeForSingle(), model.getRemoved());
     }
 
     public ScheduledTask convert(ScheduledTaskSaveDto from, ScheduledTask to) {

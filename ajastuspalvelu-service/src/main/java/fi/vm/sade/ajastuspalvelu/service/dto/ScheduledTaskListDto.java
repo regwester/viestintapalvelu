@@ -17,12 +17,15 @@ public class ScheduledTaskListDto implements Serializable {
     private final String hakuOid;
 
     private final DateTime runtimeForSingle;
+    
+    private final DateTime removed;
 
-    public ScheduledTaskListDto(Long id, String taskName, String hakuOid, DateTime runtimeForSingle) {
+    public ScheduledTaskListDto(Long id, String taskName, String hakuOid, DateTime runtimeForSingle, DateTime removed) {
         this.id = id;
         this.taskName = taskName;
         this.hakuOid = hakuOid;
         this.runtimeForSingle = runtimeForSingle;
+        this.removed = removed;
     }
 
     @Override
@@ -50,6 +53,10 @@ public class ScheduledTaskListDto implements Serializable {
 
     public DateTime getRuntimeForSingle() {
         return runtimeForSingle;
+    }
+    
+    public DateTime getRemoved() {
+        return removed;
     }
 
     @Override

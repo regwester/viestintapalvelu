@@ -112,6 +112,6 @@ public class ScheduledTaskServiceImplTest {
     }
 
     private ScheduledTaskListDto givenScheduledTaskDto(Long id) {
-        return new ScheduledTaskListDto(id, "test_task", "1.9.2.3.4", new DateTime());
+        return new ScheduledTaskListDto(id, "test_task", "1.9.2.3.4", new DateTime(), null);
     }
 }
