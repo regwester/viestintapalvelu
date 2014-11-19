@@ -5,7 +5,7 @@ angular.module('core.directives')
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: 'views/partials/input-list.html',
+            templateUrl: 'views/core/views/partials/input-list.html',
             scope: {
                 'label': '@',
                 'items': '=',

@@ -24,7 +24,7 @@ angular.module('letter-templates')
             $scope.openCreateDialog = function() {
                 $modal.open({
                     size: 'lg',
-                    templateUrl: 'views/partials/new.html',
+                    templateUrl: 'views/letter-templates/views/partials/new.html',
                     controller: 'TemplateDialogCtrl'
                 });
             };

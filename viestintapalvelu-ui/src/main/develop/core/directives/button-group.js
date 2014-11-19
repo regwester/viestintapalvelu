@@ -5,7 +5,7 @@ angular.module('core.directives')
         return {
             restrict: 'E',
             replace: true,
-            templateUrl: 'views/partials/button-group.html',
+            templateUrl: 'views/core/views/partials/button-group.html',
             scope: {
                 'commonClass': '@class',
                 'buttons': '='

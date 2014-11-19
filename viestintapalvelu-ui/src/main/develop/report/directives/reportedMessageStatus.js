@@ -22,7 +22,7 @@ angular.module('report').directive('reportedMessageStatus', function() {
   return {
     restrict: 'E',
     replace: true,
-    templateUrl: 'views/partials/reportedMessageStatus.html',
+    templateUrl: 'views/report/views/partials/reportedMessageStatus.html',
     scope: {
       'status': '=sendingStatus'
     },

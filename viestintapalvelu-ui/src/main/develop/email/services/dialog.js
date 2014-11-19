@@ -6,7 +6,7 @@ angular.module('viestintapalvelu')
       /* Define a set of default values for the modal. */
       var defaults = {
         size: 'lg',
-        templateUrl: 'views/partials/dialog.html',
+        templateUrl: 'views/email/views/partials/dialog.html',
         controller: 'DialogCtrl'
       };
 

@@ -5,7 +5,7 @@ angular.module('core.directives')
         return {
             restrict: 'E',
             transclude: true,
-            templateUrl: 'views/partials/form-item.html',
+            templateUrl: 'views/core/views/partials/form-item.html',
             scope: {
                 'label': '@',
                 'required': '='

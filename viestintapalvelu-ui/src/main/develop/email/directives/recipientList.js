@@ -5,7 +5,7 @@ angular.module('email')
       return {
         restrict: 'E',
         replace: true,
-        templateUrl: 'views/partials/recipientList.html',
+        templateUrl: 'views/email/views/partials/recipientList.html',
         scope: {
           'recipients': '=',
           'form': '=',
