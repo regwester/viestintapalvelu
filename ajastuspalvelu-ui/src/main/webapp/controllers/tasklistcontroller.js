@@ -61,6 +61,15 @@ app.controller('TaskListController', ['$scope', '$location', '$filter', '$modal'
 	});
     }
     
+     $scope.determineSortClass = function(column) {
+	 if ($scope.selectedColumn === column) {
+	     if ($scope.reverse) {
+		 return 'sortedColumn-desc'
+	     } 
+	     return 'sortedColumn-asc'
+	 }
+     }
+    
 }]);
 
 app.controller('DeleteTaskModal', ['$scope', '$modalInstance', 'RemoveScheduledTask', 'taskId', function ($scope, $modalInstance, RemoveScheduledTask, taskId) {

@@ -1,11 +1,45 @@
 input.icon-actionmenu {
     background-image: url("../img/icon-treetable-button.png");
     background-color: Transparent;
-    background-repeat:no-repeat;
+    background-repeat: no-repeat;
     overflow: hidden;
     outline: none;
     cursor: pointer;
     border: none;
     width: 20px;
     height: 18px;
+}
+
+div.main-container {
+	padding-left: 15px;
+	padding-right: 15px;
+}
+
+.padding-bottom {
+	padding-bottom: 20px;
+}
+
+.unsortedColumn {
+	background-image: url("../img/sort_both.png");
+	background-repeat: no-repeat;
+	width: 19px;
+	height: 19px;
+	margin: 0;
+	padding: 0;
+}
+
+.sortedColumn-asc {
+	background-image: url("../img/sort_asc.png") !important;
+}
+
+.sortedColumn-desc {
+	background-image: url("../img/sort_desc.png") !important;
+}
+
+.taskTable span {
+	float: left;
+}
+
+.clickable {
+	cursor: pointer !important;
 }
