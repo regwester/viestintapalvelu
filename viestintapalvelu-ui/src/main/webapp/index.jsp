@@ -125,6 +125,7 @@
     <script type="text/javascript" src="letter-templates/controllers/templateTree.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/letterTemplateList.js"></script>
     <script type="text/javascript" src="letter-templates/controllers/letterTemplateCreate.js"></script>
+
     <script type="text/javascript" src="letter-templates/controllers/templateDialog.js"></script>
 
     <!-- Routes -->
