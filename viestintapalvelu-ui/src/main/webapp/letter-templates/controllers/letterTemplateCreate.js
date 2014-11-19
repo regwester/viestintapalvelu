@@ -10,12 +10,25 @@ angular.module('letter-templates')
 
             $scope.cancel = function(){
                 console.log('Cancelled');
-            }
-            $scope.saveLetter = function(){
+            };
+            $scope.save = function(){
                 console.log('Saved');
-            }
+            };
             $scope.previewLetter = function(){
-                console.log('Preview');
-            }
+                console.log('Preview letter');
+            };
+            $scope.previewPDF = function() {
+                console.log('Preview PDF');
+            };
+            $scope.publish = function() {
+                console.log('Published');
+            };
+
+            $scope.buttons = [
+                {label: 'Peruuta', click: $scope.cancel, type: 'default'},
+                {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
+                {label: 'Esikatsele sähköposti', click: $scope.previewLetter, type: 'default'},
+                {label: 'Tallenna', click: $scope.save, primary: true},
+                {label: 'Julkaise', click: $scope.publish}];
         }
     ]);

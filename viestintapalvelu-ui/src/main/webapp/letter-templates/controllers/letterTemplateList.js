@@ -3,45 +3,28 @@
 angular.module('letter-templates')
     .controller('LetterTemplateListCtrl', ['$scope', '$modal', 'TemplateService',
         function($scope, $modal, TemplateService) {
+            $scope.radioSelection = 'default';
+            $scope.showTable = true;
 
-            $scope.radioSelection;
-            $scope.applicationTarget;
-
-            TemplateService.getHakus().success(function(data) {
+            TemplateService.getApplicationTargets().then(function(data) {
                 $scope.applicationTargets = data;
             });
 
-            $scope.selectTarget = function() {
+            $scope.changeTarget = function() {
                 TemplateService.getByApplicationPeriod($scope.applicationTarget).success(function(data) {
                     $scope.letterTemplates = data;
                 });
-                /*[
-                    {
-                        applicationTarget: 'Korkeakoulujen yhteishaku syksy 2014',
-                        type: 'Koekutsukirje',
-                        languages: ['suomi', 'ruotsi'],
-                        status: 'Keskeneräinen',
-                        saveDate: '16.10.2140 10:17'
-                    },{
-                        applicationTarget: 'Korkeakoulujen yhteishaku syksy 2014',
-                        type: 'Hyväksymistesti',
-                        languages: ['suomi', 'ruotsi', 'englanti'],
-                        status: 'Käytössä',
-                        saveDate: '16.10.2140 10:17'
-                    },{
-                        applicationTarget: 'Korkeakoulujen yhteishaku syksy 2014',
-                        type: 'Jälkiohjauskirje',
-                        languages: ['suomi'],
-                        status: 'Poistettu käytöstä',
-                        saveDate: '16.10.2140 10:17'
-                    }
-                ];*/
+                TemplateService.setApplicationTarget($scope.applicationTarget);
+            };
+
+            $scope.changeRadio = function() {
+                ($scope.radioSelection === 'organization') ? $scope.showTable = false : $scope.showTable = true;
             };
 
             $scope.openCreateDialog = function() {
                 $modal.open({
                     size: 'lg',
-                    templateUrl: 'letter-templates/views/partials/create.html',
+                    templateUrl: 'letter-templates/views/partials/new.html',
                     controller: 'TemplateDialogCtrl'
                 });
             };
@@ -53,6 +36,9 @@ angular.module('letter-templates')
                 },{
                     value: 'applicationTarget',
                     text: 'Hakukohtaiset kirjepohjat'
+                },{
+                    value: 'organization',
+                    text: 'Organisaatioiden kirjeluonnokset'
                 }
             ];
         }

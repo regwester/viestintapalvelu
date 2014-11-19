@@ -107,6 +107,7 @@
     <script type="text/javascript" src="report/directives/limitedParagraph.js"></script>
     <script type="text/javascript" src="core/directives/input-list.js"></script>
     <script type="text/javascript" src="core/directives/form-item.js"></script>
+    <script type="text/javascript" src="core/directives/button-group.js"></script>
 
     <!-- Controllers -->
     <script type="text/javascript" src="email/controllers/tab.js"></script>
