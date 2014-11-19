@@ -32,6 +32,8 @@ import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
 import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
 
+import static com.google.common.base.Optional.fromNullable;
+
 @Service
 @Transactional
 public class TemplateServiceImpl implements TemplateService {
@@ -83,7 +85,20 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
+        model.setState(fromNullable(template.getState()).or(State.julkaistu));
+        if (model.getState() == State.suljettu) {
+            throw BeanValidatorImpl.badRequest("Storing a new template in closed (suljettu) state makes no sense, " +
+                    "does it? Allowed states: draft (luonnos) or published (julkaistu, by default).");
+        }
         convertTemplate(template, model);
+        setTemplateStructure(template, model);
+        updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
+        return storeTemplate(model);
+    }
+
+    private void setTemplateStructure(fi.vm.sade.viestintapalvelu.template.Template template, Template model) {
+        // When called upon update, does not require structure being defined (in which case leaves it to existing one
+        // against which only validation is done)
         if (template.getStructureId() != null) {
             model.setStructure(structureDAO.read(template.getStructureId()));
         } else if (template.getStructureName() != null
@@ -97,11 +112,10 @@ public class TemplateServiceImpl implements TemplateService {
             model.setStructure(structureDAO.read(structureId));
         }
         if (model.getStructure() == null) {
-            throw BeanValidatorImpl.badRequest("Structure required. Please specify structureId / structureName or structure to create.");
+            throw BeanValidatorImpl.badRequest("Structure required. Please specify structureId / structureName " +
+                    "or structure to create.");
         }
         validateTemplateAgainstStructure(template, model.getStructure());
-        updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
-        return storeTemplate(model);
     }
 
     private void convertTemplate(fi.vm.sade.viestintapalvelu.template.Template from, Template to) {
@@ -596,11 +610,17 @@ public class TemplateServiceImpl implements TemplateService {
         final State newState = template.getState();
         final State oldState = model.getState();
         verifyState(oldState, newState);
-        if (newState != State.suljettu && oldState == State.luonnos) {
+        final boolean editingAllowed = oldState == State.luonnos && newState != State.suljettu;
+        if (editingAllowed) {
             convertTemplate(template, model);
+            setTemplateStructure(template, model);
+            updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         }
         model.setState(newState);
         templateDAO.update(model);
+        if (editingAllowed) {
+            ensureNoOtherDefaults(model);
+        }
     }
 
     private void verifyState(State oldState, State newState) {
