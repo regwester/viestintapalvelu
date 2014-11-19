@@ -1,1 +1,0 @@
-Tänne AngularJS yksikkötestit.
