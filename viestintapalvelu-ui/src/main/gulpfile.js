@@ -18,7 +18,8 @@ var input = {
         'develop/letter-templates.js',
         'develop/init.js',
         'develop/**/*.js'],
-    styles: ['webapp/assets/css/**/*']
+    styles: ['develop/assets/css/**/*'],
+    html: ['develop/**/views/**/*.html']
 };
 
 var output = {
@@ -29,7 +30,7 @@ var output = {
 };
 
 gulp.task('clean', function(cb){
-    del(['webapp/js', 'webapp/css', 'webapp/views', ''], cb);
+    del(['webapp/js', 'webapp/css', 'webapp/views', 'webapp/lib'], cb);
 });
 
 /* Script prosessing tasks */
@@ -66,9 +67,9 @@ var html = function() {
 gulp.task('html', ['clean'], html);
 gulp.task('html-watch', html);
 
-gulp.task('bower', function() {
+gulp.task('bower', ['scripts', 'styles', 'html'], function() {
     return bower();
-        //.pipe(gulp.dest(output.lib)); Optional: defaults to directory set in ./.bowerrc
+        //.pipe(gulp.dest(output.lib)); //Optional: defaults to directory set in ./.bowerrc
 });
 
 gulp.task('watch', function(){
@@ -77,4 +78,4 @@ gulp.task('watch', function(){
     gulp.watch(input.html, ['html-watch']);
 });
 
-gulp.task('build', ['styles', 'scripts', 'html']);
+gulp.task('build', ['styles', 'scripts', 'html', 'bower']);

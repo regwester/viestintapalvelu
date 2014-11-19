@@ -12,8 +12,8 @@
     <title>OPH - Viestint&aumlpalvelu</title>
 
     <!-- css -->
-    <link rel="stylesheet" type="text/css" href="lib/bootstrap/bootstrap.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/tree-grid/src/treeGrid.css">
+    <link rel="stylesheet" type="text/css" href="lib/bootstrap-css/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="lib/angular-bootstrap-grid-tree/src/treeGrid.css">
     <link rel="stylesheet" type="text/css" href="css/all.css"/>
 </head>
 
@@ -23,31 +23,30 @@
     </div>
 
     <!-- libs -->
-    <script type="text/javascript" src="lib/jquery/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script>
-    <script type="text/javascript" src="lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js"></script>
+    <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
+    <script type="text/javascript" src="lib/jquery-i18n-properties/jquery.i18n.properties-min.js"></script>
+    <script type="text/javascript" src="lib/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
 
-    <script type="text/javascript" src="lib/angular/angular.js"></script>
-    <script type="text/javascript" src="lib/angular/angular-resource.js"></script>
-    <script type="text/javascript" src="lib/angular/angular-animate.js"></script>
-    <script type="text/javascript" src="lib/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js"></script>
-    <script type="text/javascript" src="lib/ui-router/angular-ui-router.min.js"></script>
+    <script type="text/javascript" src="lib/angular/angular.min.js"></script>
+    <script type="text/javascript" src="lib/angular-resource/angular-resource.js"></script>
+    <script type="text/javascript" src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
+    <script type="text/javascript" src="lib/ui-router/release/angular-ui-router.min.js"></script>
      
-    <script type="text/javascript" src="lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js"></script>
-    <script type="text/javascript" src="lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js"></script>
-    <script type="text/javascript" src="lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js"></script>
-    <script type="text/javascript" src="lib/tree-grid/src/tree-grid-directive.js"></script>
+    <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.fileupload.js"></script>
+    <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.iframe-transport.js"></script>
+    <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.fileupload-ui.js"></script>
+    <script type="text/javascript" src="lib/angular-bootstrap-grid-tree/src/tree-grid-directive.js"></script>
 
     <!-- HTML5 saveAs() polyfill, IE 10+, Firefox, Chrome, Opera, Safari supported -->
-    <script type="text/javascript" src="lib/file/FileSaver.js"></script>
+    <script type="text/javascript" src="lib/file-saver/FileSaver.min.js"></script>
     <!-- HTML5 Blob polyfill -->
-    <script type="text/javascript" src="lib/file/Blob.js"></script>
+    <script type="text/javascript" src="lib/blob/Blob.js"></script>
 
     <!-- Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
 
     <script type="text/javascript" src="lib/tinymce/tinymce.min.js"></script>
-    <script type="text/javascript" src="lib/tinymce/ui-angular-tinymce.js"></script>
+    <script type="text/javascript" src="lib/angular-ui-tinymce/src/tinymce.js"></script>
     
     <%
         request.setCharacterEncoding("UTF-8");
