@@ -23,16 +23,23 @@ package fi.vm.sade.ajastuspalvelu.dao;
  */
 public interface ScheduledTaskCriteria {
 
+    ScheduledTaskCriteria withPagination(Integer index, Integer maxResultCount);
+
     public enum OrderBy {
         CREATED_AT,
         TASK_NAME,
         APPLICATION_PERIOD,
         SINGLE_RUNTIME
     }
+
     public enum OrderDirection {
         ASC,
         DESC
-    };
+    }
+
+    Integer getIndex();
+
+    Integer getMaxResultCount();
 
     OrderBy getOrderBy();
 

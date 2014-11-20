@@ -29,13 +29,27 @@ import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskCriteria;
 public class ScheduledTaskCriteriaDto implements ScheduledTaskCriteria {
     private OrderBy orderBy = OrderBy.CREATED_AT;
     private OrderDirection orderDirection = OrderDirection.DESC;
+    private Integer index;
+    private Integer maxResultCount;
 
     public ScheduledTaskCriteriaDto() {
     }
 
-    public ScheduledTaskCriteriaDto(OrderBy orderBy, OrderDirection orderDirection) {
+    public ScheduledTaskCriteriaDto(OrderBy orderBy, OrderDirection orderDirection, Integer index, Integer maxResultCount) {
         this.orderBy = orderBy;
         this.orderDirection = orderDirection;
+        this.index = index;
+        this.maxResultCount = maxResultCount;
+    }
+
+    @Override
+    public Integer getIndex() {
+        return index;
+    }
+
+    @Override
+    public Integer getMaxResultCount() {
+        return maxResultCount;
     }
 
     @Override
@@ -52,6 +66,8 @@ public class ScheduledTaskCriteriaDto implements ScheduledTaskCriteria {
         ScheduledTaskCriteriaDto copy = new ScheduledTaskCriteriaDto();
         copy.orderBy = this.orderBy;
         copy.orderDirection = this.orderDirection;
+        copy.index = this.index;
+        copy.maxResultCount = this.maxResultCount;
         return copy;
     }
 
@@ -66,6 +82,14 @@ public class ScheduledTaskCriteriaDto implements ScheduledTaskCriteria {
     public ScheduledTaskCriteria withOrderDirection(OrderDirection orderDirection) {
         ScheduledTaskCriteriaDto copy = copy();
         copy.orderDirection = orderDirection;
+        return copy;
+    }
+
+    @Override
+    public ScheduledTaskCriteria withPagination(Integer index, Integer maxResultCount) {
+        ScheduledTaskCriteriaDto copy = copy();
+        copy.index = index;
+        copy.maxResultCount = maxResultCount;
         return copy;
     }
 }

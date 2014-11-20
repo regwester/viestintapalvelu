@@ -24,7 +24,6 @@
         <module>ryhmasahkoposti-api</module>
         <module>ryhmasahkoposti-service</module>
         <module>ajastuspalvelu-api</module>
-        <module>ajastuspalvelu-ui</module>
         <module>ajastuspalvelu-service</module>
     </modules>
 

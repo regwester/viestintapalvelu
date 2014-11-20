@@ -14,22 +14,31 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.ajastuspalvelu.dao;
+package fi.vm.sade.ajastuspalvelu.service.dto;
 
+import java.io.Serializable;
 import java.util.List;
-
-import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskCriteriaDto;
-import fi.vm.sade.generic.dao.JpaDAO;
 
 /**
  * User: ratamaa
- * Date: 23.10.2014
- * Time: 13:37
+ * Date: 20.11.2014
+ * Time: 16:57
  */
-public interface ScheduledTaskDao extends JpaDAO<ScheduledTask, Long> {
+public class ScheduledTaskListWrapperDto implements Serializable  {
+    private static final long serialVersionUID = -8011781874704718715L;
+    private final int count;
+    private final List<ScheduledTaskListDto> results;
 
-    List<ScheduledTask> find(ScheduledTaskCriteria criteria);
+    public ScheduledTaskListWrapperDto(int count, List<ScheduledTaskListDto> results) {
+        this.count = count;
+        this.results = results;
+    }
 
-    int count(ScheduledTaskCriteriaDto criteria);
+    public int getCount() {
+        return count;
+    }
+
+    public List<ScheduledTaskListDto> getResults() {
+        return results;
+    }
 }

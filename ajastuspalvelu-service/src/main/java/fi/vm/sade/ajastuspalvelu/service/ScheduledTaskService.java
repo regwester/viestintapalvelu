@@ -18,6 +18,8 @@ public interface ScheduledTaskService {
     void remove(long id) throws SchedulerException;
     
     List<ScheduledTaskListDto> list(ScheduledTaskCriteriaDto criteria);
+
+    int count(ScheduledTaskCriteriaDto criteria);
     
     ScheduledTaskModifyDto findById(long id);
 }

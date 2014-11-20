@@ -18,11 +18,14 @@ package fi.vm.sade.ajastuspalvelu.dao.impl;
 
 import java.util.List;
 
+import javax.persistence.TypedQuery;
+
 import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskCriteria;
 import fi.vm.sade.ajastuspalvelu.dao.ScheduledTaskDao;
 import fi.vm.sade.ajastuspalvelu.model.ScheduledTask;
+import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskCriteriaDto;
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 
 /**
@@ -36,8 +39,22 @@ public class ScheduledTaskDaoImpl extends AbstractJpaDAOImpl<ScheduledTask, Long
 
     @Override
     public List<ScheduledTask> find(ScheduledTaskCriteria criteria) {
-        return getEntityManager().createQuery("select st from ScheduledTask st order by "
-            + buildOrderBy("st", criteria), ScheduledTask.class).getResultList();
+        TypedQuery<ScheduledTask> q = getEntityManager().createQuery("select st from ScheduledTask st " +
+                " where st.removed is null order by "
+                + buildOrderBy("st", criteria), ScheduledTask.class);
+        if (criteria.getIndex() != null) {
+            q.setFirstResult(criteria.getIndex());
+        }
+        if (criteria.getMaxResultCount() != null) {
+            q.setMaxResults(criteria.getMaxResultCount());
+        }
+        return q.getResultList();
+    }
+
+    @Override
+    public int count(ScheduledTaskCriteriaDto criteria) {
+        return getEntityManager().createQuery("select count(st.id) from ScheduledTask st where st.removed is null", Number.class)
+                .getSingleResult().intValue();
     }
 
     private String buildOrderBy(String alias, ScheduledTaskCriteria criteria) {

@@ -17,10 +17,7 @@ import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.ajastuspalvelu.service.ScheduledTaskService;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskCriteriaDto;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskListDto;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskModifyDto;
-import fi.vm.sade.ajastuspalvelu.service.dto.ScheduledTaskSaveDto;
+import fi.vm.sade.ajastuspalvelu.service.dto.*;
 import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 
 @PreAuthorize("isAuthenticated()")
@@ -48,7 +45,7 @@ public class ScheduledTaskResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON_VALUE)
     @Path("/list")
-    @ApiOperation(value = "Hakee kaikki ajastetut tehtävät",responseContainer = "list", response = ScheduledTaskListDto.class)
+    @ApiOperation(value = "Hakee kaikki ajastetut tehtävät",response = ScheduledTaskListWrapperDto.class)
     public Response getScheduledTasks() {
         List<ScheduledTaskListDto> dtos = service.list(new ScheduledTaskCriteriaDto());
         return Response.status(Status.OK).entity(dtos).build();
@@ -58,10 +55,12 @@ public class ScheduledTaskResource {
     @Consumes(MediaType.APPLICATION_JSON_VALUE+"; charset=UTF-8")
     @Produces(MediaType.APPLICATION_JSON_VALUE)
     @Path("/list")
-    @ApiOperation(value = "Hakee ajastetut tehtävät",responseContainer = "list", response = ScheduledTaskListDto.class)
+    @ApiOperation(value = "Hakee ajastetut tehtävät", response = ScheduledTaskListWrapperDto.class)
     public Response getScheduledTasksByCriteria(ScheduledTaskCriteriaDto criteria) {
-        List<ScheduledTaskListDto> dtos = service.list(criteria);
-        return Response.status(Status.OK).entity(dtos).build();
+        return Response.status(Status.OK).entity(new ScheduledTaskListWrapperDto(
+                service.count(criteria),
+                service.list(criteria)
+        )).build();
     }
 
     @POST

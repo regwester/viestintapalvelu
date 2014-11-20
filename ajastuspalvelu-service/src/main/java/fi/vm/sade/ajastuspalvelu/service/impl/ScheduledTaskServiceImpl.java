@@ -79,6 +79,12 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
 
     @Override
     @Transactional(readOnly = true)
+    public int count(ScheduledTaskCriteriaDto criteria) {
+        return dao.count(criteria);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ScheduledTaskModifyDto findById(long id) {
         return scheduledTaskConverter.convert(fromNullable(dao.read(id))
                 .or(OptionalHelper.<ScheduledTask>notFound("ScheduledTask not found by id=" + id)),

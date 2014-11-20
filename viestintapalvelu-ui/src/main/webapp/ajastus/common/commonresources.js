@@ -1,6 +1,6 @@
 'use strict';
 
-app.factory('Hakus', function($resource) {
+ajastusApp.factory('Hakus', function($resource) {
     return $resource(SERVICE_REST_PATH + "options/hakus", {}, {
         get : {
             method : "GET",
@@ -9,7 +9,7 @@ app.factory('Hakus', function($resource) {
     });
 });
 
-app.factory('Tasks', function($resource) {
+ajastusApp.factory('Tasks', function($resource) {
     return $resource(SERVICE_REST_PATH + "task", {}, {
         get : {
             method : "GET",
