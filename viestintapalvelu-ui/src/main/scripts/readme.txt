@@ -1,1 +1,0 @@
-Tänne mahdolliset projetin testauksessa yms. tarvittavat skriptit ja ajoketjut.

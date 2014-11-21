@@ -1,0 +1,27 @@
+<div class="modal info-dialog">
+    <div class="modal-header dialog-header-info">
+        <h3>Luo uusi kirjepohja</h3>
+    </div>
+    <div class="modal-body">
+        <div>
+            <p class="bold">Luo kirjepohja haulle:</p>
+            <select class="full-width" ng-model="$parent.applicationTarget" ng-options="t.oid as t.nimi.kieli_fi for t in applicationTargets | orderBy: 'nimi.kieli_fi'" ng-change="selectTarget()"></select>
+        </div>
+        <div>
+            <p class="bold">Käytä pohjana hakua:</p>
+            <select class="full-width" ng-model="baseTemplate" ng-change="selectBase()">
+                <option value="empty" ng-selected="selected"><b>Tyhjä dokumentti</b></option>
+                <option value="default"><b>Oletuskirjepohja</b></option>
+                <option value="t.oid" ng-repeat="t in applicationTargets">{{t.nimi.kieli_fi}}</option>
+            </select>
+        </div>
+        <p class="subnote">Valitse uuden kirjepohjan lähtökohdaksi jokin haku, oletuskirjepohja tai tyhjä dokumentti.</p>
+        <input-list label="Luotava kirjepohjatyyppi:" items="applicationTypes" model="applicationTypeSelection" input="radio"></input-list>
+        <input-list label="Luotava kieliversio:" items="languages" model="languageSelection" input="radio"></input-list>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn" ng-click="cancel()">Peruuta</button>
+        <button type="button" class="btn btn-primary" ng-click="confirm()">Luo</button>
+    </div>
+</div>

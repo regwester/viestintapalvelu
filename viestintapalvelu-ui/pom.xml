@@ -15,6 +15,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <webapp.dir>${project.basedir}/src/main/webapp</webapp.dir>
+        <develop.dir>${project.basedir}/src/main/develop</develop.dir>
     </properties>
     <dependencies>
         <dependency>
@@ -29,6 +30,46 @@
     <build>
         <finalName>viestintapalvelu-ui</finalName>
         <plugins>
+            <plugin>
+                <groupId>com.github.eirslett</groupId>
+                <artifactId>frontend-maven-plugin</artifactId>
+                <version>0.0.16</version>
+
+                <!-- optional: default location is where you have your pom.xml file -->
+                <configuration>
+                    <workingDirectory>src/main/</workingDirectory>
+                </configuration>
+
+                <executions>
+                    <execution>
+                        <id>install node and npm</id>
+                        <goals>
+                            <goal>install-node-and-npm</goal>
+                        </goals>
+                        <configuration>
+                            <nodeVersion>v0.10.28</nodeVersion>
+                            <npmVersion>1.4.9</npmVersion>
+                            <!-- optional: where to download node and npm from. Defaults to http://nodejs.org/dist/ -->
+                            <!-- <downloadRoot>http://myproxy.example.org/nodejs/dist/</downloadRoot> -->
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>npm install</id>
+                        <goals>
+                            <goal>npm</goal>
+                        </goals>
+                    </execution>
+                    <execution>
+                        <id>gulp build</id>
+                        <goals>
+                            <goal>gulp</goal>
+                        </goals>
+                        <configuration>
+                            <arguments>build</arguments>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-war-plugin</artifactId>
@@ -66,25 +107,27 @@
                         </goals>
                         <configuration>
                             <preloadSources>
-                                <source>${webapp.dir}/assets/lib/jquery/jquery-1.10.2.min.js</source>
-                                <source>${webapp.dir}/assets/lib/jquery/jquery.i18n.properties-min-1.0.9.js</source>
-                                <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/vendor/jquery.ui.widget.js</source>
-                                <source>${webapp.dir}/assets/lib/angular/angular.js</source>
-                                <source>${webapp.dir}/assets/lib/angular/angular-mocks.js</source>
-                                <source>${webapp.dir}/assets/lib/angular/angular-resource.js</source>
-                                <source>${webapp.dir}/assets/lib/angular/angular-animate.js</source>
-                                <source>${webapp.dir}/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.0.min.js</source>
-                                <source>${webapp.dir}/assets/lib/ui-router/angular-ui-router.min.js</source>
-                                <source>${webapp.dir}/assets/lib/tinymce/tinymce.min.js</source>
-                                <source>${webapp.dir}/assets/lib/tinymce/ui-angular-tinymce.js</source>
-                                <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload.js</source>
-                                <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/jquery.iframe-transport.js</source>
-                                <source>${webapp.dir}/assets/lib/jQuery-File-Upload-9.5.2/jquery.fileupload-ui.js</source>
-                                <source>${webapp.dir}/email/init.js</source>
-                                <source>${webapp.dir}/report/init.js</source>
-                                <source>${webapp.dir}/core/init.js</source>
-                                <source>${webapp.dir}/letter-templates/init.js</source>
-                                <source>${webapp.dir}/init.js</source>
+                                <source>${webapp.dir}/lib/jquery/jquery.js</source>
+                                <source>${webapp.dir}/lib/jquery-i18n-properties/jquery.i18n.properties.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/vendor/jquery.ui.widget.js</source>
+                                <source>${webapp.dir}/lib/angular/angular.js</source>
+                                <source>${webapp.dir}/lib/angular-mocks/angular-mocks.js</source>
+                                <source>${webapp.dir}/lib/angular-resource/angular-resource.js</source>
+                                <source>${webapp.dir}/lib/angular-bootstrap/ui-bootstrap-tpls.js</source>
+                                <source>${webapp.dir}/lib/ui-router/release/angular-ui-router.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.iframe-transport.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload-ui.js</source>
+                                <source>${webapp.dir}/lib/angular-bootstrap-grid-tree/src/tree-grid-directive.js</source>
+                                <source>${webapp.dir}/lib/file-saver/FileSaver.js</source>
+                                <source>${webapp.dir}/lib/blob/Blob.js</source>
+                                <source>${webapp.dir}/lib/tinymce/tinymce.js</source>
+                                <source>${webapp.dir}/lib/angular-ui-tinymce/src/tinymce.js</source>
+                                <source>${develop.dir}/core/init.js</source>
+                                <source>${develop.dir}/report/init.js</source>
+                                <source>${develop.dir}/email/init.js</source>
+                                <source>${develop.dir}/letter-templates/init.js</source>
+                                <source>${develop.dir}/init.js</source>
                             </preloadSources>
                             <jsSrcDir>${webapp.dir}</jsSrcDir>
                             <sourceExcludes>
