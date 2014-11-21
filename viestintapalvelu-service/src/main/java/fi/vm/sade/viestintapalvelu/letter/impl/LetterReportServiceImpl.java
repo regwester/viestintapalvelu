@@ -212,7 +212,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         LetterBatchReportDTO letterBatchReport = new LetterBatchReportDTO();
         
         letterBatchReport.setApplicationPeriod(letterBatch.getApplicationPeriod());
-        letterBatchReport.setDeliveryTypeIPosti(isLetterBatchSentByIPosti(letterBatch));
+        letterBatchReport.setDeliveryTypeIPosti(letterBatch.isIposti());
         letterBatchReport.setFetchTarget(letterBatch.getFetchTarget());
         letterBatchReport.setLetterBatchID(letterBatch.getId());
         letterBatchReport.setTag(letterBatch.getTag());
@@ -248,18 +248,7 @@ public class LetterReportServiceImpl implements LetterReportService {
             
             letterReceiverDTOs.add(letterReceiverDTO);
         }
-        
         return letterReceiverDTOs;
-    }
-    
-    private boolean isLetterBatchSentByIPosti(LetterBatch letterBatch) {
-        List<IPosti> iPostis = iPostiDAO.findMailById(letterBatch.getId());
-        
-        if (iPostis == null || iPostis.isEmpty()) {
-            return false;
-        }
-        
-        return true;
     }
 
 }
