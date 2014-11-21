@@ -133,6 +133,7 @@
                             <jsSrcDir>${develop.dir}</jsSrcDir>
                             <sourceExcludes>
                                 <exclude>${webapp.dir}/**/*.js</exclude>
+                                <exclude>ajastus/**/*.js</exclude>
                                 <exclude>**/init.js</exclude>
                             </sourceExcludes>
                             <jsTestSrcDir>${project.basedir}/src/test/spec/viestinta</jsTestSrcDir>
