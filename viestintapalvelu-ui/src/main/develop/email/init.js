@@ -1,5 +1,3 @@
 'use strict';
 
-var modules = ['ui.tinymce'];
-
-angular.module('email', modules);
+angular.module('email', ['ui.tinymce']);
