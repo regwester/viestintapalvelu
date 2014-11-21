@@ -97,7 +97,7 @@
                         <source>${webapp.dir}/lib/angular-bootstrap-grid-tree/src/tree-grid-directive.js</source>
                         <source>${webapp.dir}/lib/file-saver/FileSaver.js</source>
                         <source>${webapp.dir}/lib/blob/Blob.js</source>
-                        <source>${webapp.dir}/lib/tinymce/tinymce.js</source>
+                        <source>${webapp.dir}/lib/tinymce/tinymce.min.js</source>
                         <source>${webapp.dir}/lib/angular-ui-tinymce/src/tinymce.js</source>
                         <source>${develop.dir}/core/init.js</source>
                         <source>${develop.dir}/report/init.js</source>
