@@ -26,7 +26,7 @@ angular.module('core.services').factory('Global', function () {
                 height: 400,
                 width: 650,
                 menubar: false,
-                language: getUserLanguage(),
+                language_url: 'i18n/tinymce/' + getUserLanguage() + '.js',
                 //paste plugin to avoid ms word tags and similar content
                 plugins: "paste textcolor",
                 toolbar: "undo redo | styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | forecolor backcolor",

@@ -22,7 +22,7 @@ var input = {
         'develop/**/directives/*.js',
         'develop/**/controllers/*.js',
         'develop/**/*.js'],
-    styles: ['develop/assets/css/**/*'],
+    styles: ['develop/assets/styles/**/*'],
     html: ['develop/**/views/**/*.html']
 };
 
@@ -40,7 +40,7 @@ gulp.task('clean', function(cb){
 /* Script prosessing tasks */
 var scripts = function() {
     return gulp.src(input.scripts)
-        .pipe(sourcemaps.init({loadMaps: true}))
+        .pipe(sourcemaps.init())
             .pipe(concat('all.min.js'))
             .pipe(uglify({outSourceMap: true}))
         .pipe(sourcemaps.write('./'))
@@ -55,15 +55,11 @@ var styles = function() {
     return gulp.src(input.styles)
         //First write inline sourcemaps then strip them to external file (cannot get it working otherwise)
         .pipe(sourcemaps.init())
-            .pipe(sass())
+            .pipe(sass({
+                errLogToConsole: true,
+                outputStyle: 'compressed'
+            }))
             .pipe(concat('all.css'))
-            // Catch any SCSS errors and prevent them from crashing gulp
-            .on('error', function (error) {
-                console.error(error);
-                this.emit('end');
-            })
-        .pipe(sourcemaps.write())
-        .pipe(sourcemaps.init({loadMaps: true}))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(output.styles));
 };

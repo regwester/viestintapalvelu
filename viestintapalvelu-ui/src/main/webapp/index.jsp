@@ -29,7 +29,6 @@
 
     <script type="text/javascript" src="lib/angular/angular.js"></script>
     <script type="text/javascript" src="lib/angular-resource/angular-resource.js"></script>
-    <script type="text/javascript" src="lib/angular-animate/angular-animate.js"></script>
     <script type="text/javascript" src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script type="text/javascript" src="lib/ui-router/release/angular-ui-router.js"></script>
      
