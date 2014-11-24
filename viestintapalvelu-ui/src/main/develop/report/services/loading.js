@@ -11,14 +11,14 @@ angular.module('loading')
   return service;
 })
 
-.factory('onStartInterceptor', function(loadingService) {
+.factory('onStartInterceptor', ['loadingService', function(loadingService) {
     return function (data, headersGetter) {
         loadingService.requestCount++;
         return data;
     };
-})
+}])
 
-.factory('onCompleteInterceptor', function(loadingService, $q) {
+.factory('onCompleteInterceptor', ['loadingService', '$q', function(loadingService, $q) {
   return function(promise) {
     var decrementRequestCountSuccess = function(response) {
         loadingService.requestCount--;
@@ -30,17 +30,17 @@ angular.module('loading')
     };
     return promise.then(decrementRequestCountSuccess, decrementRequestCountError);
   };
-})
+}])
 
-.config(function($httpProvider) {
+.config(['$httpProvider', function($httpProvider) {
     $httpProvider.responseInterceptors.push('onCompleteInterceptor');
-})
+}])
 
-.run(function($http, onStartInterceptor) {
+.run(['$http', 'onStartInterceptor', function($http, onStartInterceptor) {
     $http.defaults.transformRequest.push(onStartInterceptor);
-})
+}])
 
-.controller('LoadingCtrl', function($scope, $rootElement, loadingService) {
+.controller('LoadingCtrl', ['$scope', '$rootElement', 'loadingService', function($scope, $rootElement, loadingService) {
     $scope.$watch(function() {
         return loadingService.isLoading();
     }, function(value) {
@@ -51,4 +51,4 @@ angular.module('loading')
           $rootElement.removeClass('spinner');
         }
     });
-});
+}]);

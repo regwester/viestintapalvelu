@@ -5,9 +5,9 @@ angular.module('core')
         function ($stateProvider, $urlRouterProvider) {
             $urlRouterProvider.otherwise('/email');
 
-            var emailUrl = 'views/email/';
-            var reportUrl = 'views/report/';
-            var templateUrl = 'views/letter-templates';
+            var emailUrl = 'views/email/views/';
+            var reportUrl = 'views/report/views/';
+            var templateUrl = 'views/letter-templates/views/';
 
             $stateProvider
                 .state('email', {

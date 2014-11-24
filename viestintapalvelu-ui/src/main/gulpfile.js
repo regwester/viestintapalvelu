@@ -15,10 +15,14 @@ var input = {
         'develop/core/init.js',
         'develop/email/init.js',
         'develop/report/init.js',
-        'develop/letter-templates.js',
+        'develop/letter-templates/init.js',
         'develop/init.js',
+        'develop/**/filters/*.js',
+        'develop/**/services/*.js',
+        'develop/**/directives/*.js',
+        'develop/**/controllers/*.js',
         'develop/**/*.js'],
-    styles: ['develop/assets/css/**/*'],
+    styles: ['develop/assets/styles/**/*'],
     html: ['develop/**/views/**/*.html']
 };
 
@@ -37,9 +41,9 @@ gulp.task('clean', function(cb){
 var scripts = function() {
     return gulp.src(input.scripts)
         .pipe(sourcemaps.init())
-        .pipe(uglify())
-        .pipe(concat('all.min.js'))
-        .pipe(sourcemaps.write())
+            .pipe(concat('all.min.js'))
+            .pipe(uglify({outSourceMap: true}))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(output.scripts));
 };
 gulp.task('scripts', ['clean'], scripts);
@@ -49,10 +53,14 @@ gulp.task('scripts-watch', scripts);
 /* Style processing tasks */
 var styles = function() {
     return gulp.src(input.styles)
+        //First write inline sourcemaps then strip them to external file (cannot get it working otherwise)
         .pipe(sourcemaps.init())
-        .pipe(sass())
-        .pipe(concat('all.css'))
-        .pipe(sourcemaps.write())
+            .pipe(sass({
+                errLogToConsole: true,
+                outputStyle: 'compressed'
+            }))
+            .pipe(concat('all.css'))
+        .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(output.styles));
 };
 gulp.task('styles', ['clean'], styles);

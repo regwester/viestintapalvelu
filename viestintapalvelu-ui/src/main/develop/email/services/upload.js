@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('email')
-.factory('uploadManager', function ($rootScope) {
+.factory('uploadManager',['$rootScope', function ($rootScope) {
   return {
     add: function (file) {
       file.submit();
@@ -13,4 +13,4 @@ angular.module('email')
       $rootScope.$broadcast('fileLoaded', result);
     }
   };
-});
+}]);

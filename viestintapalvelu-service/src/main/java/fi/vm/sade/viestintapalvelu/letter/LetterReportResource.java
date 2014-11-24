@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -15,8 +16,12 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.sun.istack.Nullable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -60,6 +65,13 @@ public class LetterReportResource extends AsynchronousResource {
 
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
+    private LoadingCache<String, List<OrganizationDTO>> currentUserOrganisaatiosCache = CacheBuilder.newBuilder()
+            .maximumSize(100).expireAfterAccess(3l, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, List<OrganizationDTO>>() {
+                public List<OrganizationDTO> load(String oid) throws Exception {
+                    return letterReportService.getUserOrganizations();
+                }
+            });
 
     /**
      * Hakee käyttäjän organisaation kirjelähetysten tiedot
@@ -89,7 +101,7 @@ public class LetterReportResource extends AsynchronousResource {
         @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
-        List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
+        List<OrganizationDTO> organizations = currentUserOrganisaatiosCache.getUnchecked(getLoggedInUserOid());
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
@@ -233,7 +245,7 @@ public class LetterReportResource extends AsynchronousResource {
         @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
-        List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
+        List<OrganizationDTO> organizations = currentUserOrganisaatiosCache.getUnchecked(getLoggedInUserOid());
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
         
         LetterReportQueryDTO query = new LetterReportQueryDTO();
@@ -258,6 +270,10 @@ public class LetterReportResource extends AsynchronousResource {
         }
 
         return Response.ok(letterBatchesReport).build();
+    }
+
+    private String getLoggedInUserOid() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,

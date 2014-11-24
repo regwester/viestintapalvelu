@@ -14,6 +14,8 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.mysema.query.BooleanBuilder;
+import com.mysema.query.jpa.JPASubQuery;
+import com.mysema.query.jpa.hibernate.HibernateSubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
@@ -141,20 +143,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 
     @Override
     public List<LetterBatch> findLetterBatchesBySearchArgument(LetterReportQueryDTO query,
-        PagingAndSortingDTO pagingAndSorting) {
+                                                               PagingAndSortingDTO pagingAndSorting) {
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
-        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
-        QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
-        
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, letterBatch, letterReceiverAddress);        
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-
-        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
-            letterBatch.letterReceivers, letterReceivers).leftJoin(
-            letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression).orderBy(orderBy).limit(
-            pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
-        
-        return findBySearchCriteria.list(letterBatch);
+        return from(letterBatch)
+            .where(whereExpressionForSearchCriteria(query, letterBatch))
+            .orderBy(orderBy(pagingAndSorting))
+            .limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex())
+            .list(letterBatch);
     }
 
     @Override
@@ -189,15 +184,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery) {
     	QLetterBatch letterBatch = QLetterBatch.letterBatch;
-        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
-        QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
-        
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(letterReportQuery, letterBatch, letterReceiverAddress);        
-        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
-                letterBatch.letterReceivers, letterReceivers).leftJoin(
-                letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
-        
-    	return findBySearchCriteria.count();
+    	return from(letterBatch)
+                .where(whereExpressionForSearchCriteria(letterReportQuery, letterBatch)).count();
     }
 
     @Override
@@ -254,7 +242,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             if (pagingAndSorting.getSortOrder() == null || pagingAndSorting.getSortOrder().isEmpty()) {
                 return pb.getString(pagingAndSorting.getSortedBy()).asc();
             }
-            
+
             if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
                 return pb.getString(pagingAndSorting.getSortedBy()).asc();
             }
@@ -264,10 +252,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         
         return pb.getString("timestamp").asc();
     }
-    
+
     protected BooleanBuilder whereExpressionForSearchCriteria(LetterReportQueryDTO query,
-                                                              final QLetterBatch letterBatch,
-        QLetterReceiverAddress letterReceiverAddress) {
+                                                              final QLetterBatch letterBatch) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
         
         if (query.getOrganizationOids() != null) {
@@ -281,13 +268,23 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
         
         if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
+            QLetterBatch subQueryLetterBatch = QLetterBatch.letterBatch;
+            QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
+            QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
             booleanBuilder.andAnyOf(
                     letterBatch.templateName.containsIgnoreCase(query.getSearchArgument()),
                     letterBatch.fetchTarget.containsIgnoreCase(query.getSearchArgument()),
                     letterBatch.applicationPeriod.contains(query.getSearchArgument()),
-                    letterReceiverAddress.lastName.concat(" ").concat(
-                            letterReceiverAddress.firstName).containsIgnoreCase(query.getSearchArgument()),
-                    letterReceiverAddress.postalCode.contains(query.getSearchArgument())
+                    new JPASubQuery().from(letterReceivers).innerJoin(letterReceivers.letterBatch, subQueryLetterBatch)
+                            .leftJoin(letterReceivers.letterReceiverAddress, letterReceiverAddress)
+                        .where(subQueryLetterBatch.id.eq(letterBatch.id)
+                            .andAnyOf(
+                                    letterReceiverAddress.lastName.concat(" ")
+                                            .concat(letterReceiverAddress.firstName)
+                                            .containsIgnoreCase(query.getSearchArgument()),
+                                    letterReceiverAddress.postalCode.contains(query.getSearchArgument())
+                            )
+                        ).exists()
             );
         }
 

@@ -7,7 +7,7 @@ Viestintäpalvelun käyttöliittymä on tehty [AngularJS](https://angularjs.org/
 
 ```mvn clean install```
 
-Projektissa on käytössä maven lisäosa, joka lataa nodejs:n ja npm:n. Kun npm on ladattu voidaan sitä käyttää asentamaan gulp komennolla ```npm install -g gulp```.
+Projektissa on käytössä maven lisäosa, joka lataa nodejs:n ja npm:n. Kun npm on ladattu voidaan sitä käyttää asentamaan gulp komennolla ```npm install -g gulp```. Ubuntu 14.04 repoissa ei ole uusinta nodejs:ää. Kannattaa siis lisätä uusi repo komennolla ```sudo add-apt-repository ppa:chris-lea/node.js ``` jos koittaa asentaa sitä paketinhallinan kautta.
 Tämän jälkeen gulpin tehtäviä voidaan ajaa suoraan komentoriviltä kirjoittamalla ```gulp [taskin nimi]```.
 
 Kehitystyössä hyödyllinen komento on ```gulp watch```, jolloin gulp vahtii muutoksia kehityskansiossa oleviin javascript-, html- ja tyylitiedostoihin ja kääntää ne automaattisesti.
