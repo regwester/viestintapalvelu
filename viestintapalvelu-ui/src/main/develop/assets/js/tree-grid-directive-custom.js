@@ -105,7 +105,6 @@
                         scope.colDefinitions = _col_defs;
                     }
                     else{
-                        console.log(scope.colDefs);
                         scope.colDefinitions = scope.colDefs;
                     }
 
@@ -259,7 +258,6 @@
                                     tree_icon = attrs.iconExpand;
                                 }
                             }
-                            console.log(tree_icon);
                             branch.level = level;
                             scope.tree_rows.push({
                                 level: level,

@@ -21,7 +21,8 @@ var input = {
         'develop/**/services/*.js',
         'develop/**/directives/*.js',
         'develop/**/controllers/*.js',
-        'develop/**/*.js'],
+        'develop/**/*.js',
+        'develop/assets/js/**/*.js'],
     styles: ['develop/assets/styles/**/*'],
     html: ['develop/**/views/**/*.html'],
     assets: ['develop/assets/**', '!develop/assets/styles/']
