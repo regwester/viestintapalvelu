@@ -8,7 +8,8 @@ angular.module('core.directives')
             templateUrl: 'views/core/views/partials/form-item.html',
             scope: {
                 'label': '@',
-                'required': '='
+                'required': '=',
+                'subnote': '@'
             }
         };
     }

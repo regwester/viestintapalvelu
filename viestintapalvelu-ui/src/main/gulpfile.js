@@ -5,7 +5,8 @@ var gulp = require('gulp'),
     sourcemaps = require('gulp-sourcemaps'),
     bower = require('gulp-bower'),
     del = require('del'),
-    processhtml = require('gulp-processhtml');
+    processhtml = require('gulp-processhtml'),
+    plumber = require('gulp-plumber');
 
 /*
    The order of init.js files matters, but other files can be added in whatever order.
@@ -21,9 +22,8 @@ var input = {
         'develop/**/services/*.js',
         'develop/**/directives/*.js',
         'develop/**/controllers/*.js',
-        'develop/**/*.js',
-        'develop/assets/js/**/*.js'],
-    styles: ['develop/assets/styles/**/*'],
+        'develop/**/*.js'],
+    styles: ['develop/assets/styles/virkailija.scss', 'develop/assets/styles/**/*'],
     html: ['develop/**/views/**/*.html'],
     assets: ['develop/assets/**', '!develop/assets/styles/']
 };
@@ -43,6 +43,7 @@ gulp.task('clean', function(cb){
 /* Script prosessing tasks */
 var scripts = function() {
     return gulp.src(input.scripts)
+        .pipe(plumber())
         .pipe(sourcemaps.init())
             .pipe(concat('all.min.js'))
             .pipe(uglify({outSourceMap: true}))
@@ -56,6 +57,7 @@ gulp.task('scripts-watch', scripts);
 /* Style processing tasks */
 var styles = function() {
     return gulp.src(input.styles)
+        .pipe(plumber())
         //First write inline sourcemaps then strip them to external file (cannot get it working otherwise)
         .pipe(sourcemaps.init())
             .pipe(sass({

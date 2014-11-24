@@ -49,25 +49,30 @@ angular.module('core')
                     url: '/reportMessages/list',
                     templateUrl: reportUrl + 'reportedMessageList.html',
                     controller: 'ReportedMessageListCtrl'
-                }).state('report_search', {
+                })
+                .state('report_search', {
                     url: '/reportMessages/search',
                     templateUrl: reportUrl + 'reportedMessageList.html',
                     controller: 'ReportedMessageListCtrl'
-                }).state('report_view', {
+                })
+                .state('report_view', {
                     url: '/reportMessages/view/:messageID',
                     templateUrl: reportUrl + 'reportedMessageView.html',
                     controller: 'ReportedMessageViewCtrl'
-                }).state('letter-templates_overview', {
+                })
+                .state('letter-templates_overview', {
                     url: '/letter-templates',
                     templateUrl: templateUrl + 'overview.html',
                     controller: 'LetterTemplateListCtrl'
-                }).state('letter-templates_create', {
+                })
+                .state('letter-templates_create', {
                     url: '/letter-templates/create',
                     templateUrl: templateUrl + 'create.html',
                     controller: 'LetterTemplateCreateCtrl'
-                }).state('templateTreeList', {
+                })
+                .state('templateTreeList', {
                     url: "/templateTreeList",
-                    templateUrl: templateUrl+"templateTreeList.html",
+                    templateUrl: templateUrl + "templateTreeList.html",
                     controller: "TemplateController"
                 })
                 .state('letter_reports', {
