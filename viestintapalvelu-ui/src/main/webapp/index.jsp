@@ -13,7 +13,6 @@
 
     <!-- css -->
     <link rel="stylesheet" type="text/css" href="lib/bootstrap-css/css/bootstrap.min.css"/>
-    <link rel="stylesheet" type="text/css" href="lib/angular-bootstrap-grid-tree/src/treeGrid.css">
     <link rel="stylesheet" type="text/css" href="css/all.css"/>
 </head>
 
@@ -35,7 +34,6 @@
     <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.fileupload.js"></script>
     <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.iframe-transport.js"></script>
     <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.fileupload-ui.js"></script>
-    <script type="text/javascript" src="lib/angular-bootstrap-grid-tree/src/tree-grid-directive.js"></script>
 
     <!-- HTML5 saveAs() polyfill, IE 10+, Firefox, Chrome, Opera, Safari supported -->
     <script type="text/javascript" src="lib/file-saver/FileSaver.min.js"></script>

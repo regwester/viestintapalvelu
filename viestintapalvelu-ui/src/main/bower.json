@@ -12,7 +12,6 @@
         "ui-router": "0.2.10",
         "bootstrap-css": "2.3.2",
         "angular-bootstrap": "0.11.0",
-        "angular-bootstrap-grid-tree": "*",
         "tinymce-dist": "4.0.11",
         "angular-ui-tinymce": "0.0.5",
         "lodash": "2.4.1",
