@@ -23,18 +23,20 @@ var input = {
         'develop/**/controllers/*.js',
         'develop/**/*.js'],
     styles: ['develop/assets/styles/**/*'],
-    html: ['develop/**/views/**/*.html']
+    html: ['develop/**/views/**/*.html'],
+    assets: ['develop/assets/**', '!develop/assets/styles/']
 };
 
 var output = {
     scripts: 'webapp/js/',
     styles: 'webapp/css/',
     html: 'webapp/views/',
-    lib: 'webapp/lib/'
+    lib: 'webapp/lib/',
+    assets: 'webapp/'
 };
 
 gulp.task('clean', function(cb){
-    del(['webapp/js', 'webapp/css', 'webapp/views', 'webapp/lib'], cb);
+    del(['webapp/js', 'webapp/css', 'webapp/views', 'webapp/lib', 'webapp/img', 'webapp/i18n', 'webapp/styles'], cb);
 });
 
 /* Script prosessing tasks */
@@ -75,15 +77,25 @@ var html = function() {
 gulp.task('html', ['clean'], html);
 gulp.task('html-watch', html);
 
+/* Other assets */
+var assets = function() {
+    return gulp.src(input.assets)
+        //process images and other assets as needed, but for now just move them into webapp folder
+        .pipe(gulp.dest(output.assets));
+};
+gulp.task('assets', ['clean'], assets);
+gulp.task('assets-watch', assets);
+
 gulp.task('bower', ['scripts', 'styles', 'html'], function() {
     return bower();
         //.pipe(gulp.dest(output.lib)); //Optional: defaults to directory set in ./.bowerrc
 });
 
-gulp.task('watch', function(){
+gulp.task('watch', function() {
     gulp.watch(input.scripts, ['scripts-watch']);
     gulp.watch(input.styles, ['styles-watch']);
     gulp.watch(input.html, ['html-watch']);
+    gulp.watch(input.assets, ['assets-watch'])
 });
 
-gulp.task('build', ['styles', 'scripts', 'html', 'bower']);
+gulp.task('build', ['styles', 'scripts', 'html', 'assets', 'bower']);

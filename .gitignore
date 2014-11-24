@@ -10,8 +10,10 @@
 ## Build
 *.class
 target
-webapp/
-
+webapp
+!webapp/index.jsp
+!webapp/initpage.jsp
+!webapp/WEB-INF/
 ## Package Files
 *.war
 *.ear
