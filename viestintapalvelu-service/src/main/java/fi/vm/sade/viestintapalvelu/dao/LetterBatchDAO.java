@@ -7,6 +7,7 @@ import com.google.common.base.Optional;
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
@@ -59,7 +60,7 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      * @param pagingAndSorting Sivutus- ja lajittelutiedot
      * @return Lista kirjelähetysten tietoja
      */
-    List<LetterBatch> findLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery, PagingAndSortingDTO pagingAndSorting);
+    List<LetterBatchReportDTO> findLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee kirjelähetysten lukumäärän

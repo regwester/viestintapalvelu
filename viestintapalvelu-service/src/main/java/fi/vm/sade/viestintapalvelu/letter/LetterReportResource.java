@@ -235,8 +235,12 @@ public class LetterReportResource extends AsynchronousResource {
         response = LetterBatchesReportDTO.class, responseContainer = "List")
     public Response searchLetterBatchReports(@ApiParam(value="Organisaation oid-tunnus", required=false) 
         @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, 
-        @ApiParam(value="Näytöllä annettu hakutekijä esim. kirjeen saajan nimi", required=false) 
-        @QueryParam(Constants.PARAM_SEARCH_ARGUMENT) String searchArgument,         
+        @ApiParam(value="Näytöllä annettu kirjelähetykseen liittyvä hakutekijä esim. kirjepohjan nimi", required=false)
+        @QueryParam(Constants.PARAM_LETTER_BATCH_SEARCH_ARGUMENT) String searchArgument,
+        @ApiParam(value="Näytöllä annettu vastaanottajaan liittyvä hakutekijä esim. kirjeen saajan nimi", required=false)
+        @QueryParam(Constants.PARAM_RECEIVER_SEARCH_ARGUMENT) String receiverSearchArgument,
+        @ApiParam(value="Haun kohde: kirjelähetys=batch, vastaanottajakirje=receiver", required=true)
+        @QueryParam(Constants.PARAM_SEARCH_TARGET) LetterReportQueryDTO.SearchTarget searchTarget,
         @ApiParam(value="Haettavien rivien lukumäärä", required=true)
         @QueryParam(Constants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
         @ApiParam(value="Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required=true) 
@@ -254,7 +258,8 @@ public class LetterReportResource extends AsynchronousResource {
         } else {
             query.setOrganizationOids(organisaatioService.findHierarchyOids(organizationOid));
         }
-        query.setSearchArgument(searchArgument);
+        query.setLetterBatchSearchArgument(searchArgument);
+        query.setReceiverSearchArgument(receiverSearchArgument);
         
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
 

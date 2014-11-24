@@ -81,10 +81,10 @@ public class LetterReportServiceImpl implements LetterReportService {
         LetterReceivers letterReceivers = letterReceiverList.get(0);
         LetterBatch letterBatch = letterReceivers.getLetterBatch();
         
-        LetterBatchReportDTO letterBatchReport = getLetterBatchReport(letterBatch);
+        LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
         
         List<LetterReceiverDTO> letterReceiverDTOs = 
-            getLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);        
+            convertLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);
         letterBatchReport.setLetterReceivers(letterReceiverDTOs);
         letterBatchReport.setNumberOfReceivers(numberOfReceivers);
         
@@ -103,9 +103,10 @@ public class LetterReportServiceImpl implements LetterReportService {
 
     @Override
     public LetterBatchesReportDTO getLetterBatchesReport(LetterReportQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
-        List<LetterBatch> letterBatches = letterBatchDAO.findLetterBatchesBySearchArgument(query, pagingAndSorting);
-        
-        LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
+        List<LetterBatchReportDTO> letterBatches = letterBatchDAO.findLetterBatchesBySearchArgument(query, pagingAndSorting);
+
+        LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
+        letterBatchesReport.setLetterBatchReports(letterBatches);
         letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatchesBySearchArgument(query));
         
         return letterBatchesReport;
@@ -125,7 +126,7 @@ public class LetterReportServiceImpl implements LetterReportService {
             numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches(oids);
         }
 
-        LetterBatchesReportDTO letterBatchesReport = getLetterBatchesReport(letterBatches);
+        LetterBatchesReportDTO letterBatchesReport = convertLetterBatchesReport(letterBatches);
         letterBatchesReport.setNumberOfLetterBatches(numberOfLetterBatches);
         return letterBatchesReport;
     }
@@ -192,14 +193,14 @@ public class LetterReportServiceImpl implements LetterReportService {
         
         return iPostiDTOList;
     }
-    
-    private LetterBatchesReportDTO getLetterBatchesReport(List<LetterBatch> letterBatches) {
+
+    private LetterBatchesReportDTO convertLetterBatchesReport(List<LetterBatch> letterBatches) {
         LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
         
         List<LetterBatchReportDTO> letterBatchReports = new ArrayList<LetterBatchReportDTO>();
         
         for (LetterBatch letterBatch : letterBatches) {
-            LetterBatchReportDTO letterBatchReport = getLetterBatchReport(letterBatch);            
+            LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
             letterBatchReports.add(letterBatchReport);
         }
 
@@ -208,9 +209,10 @@ public class LetterReportServiceImpl implements LetterReportService {
         return letterBatchesReport;
     }
 
-    private LetterBatchReportDTO getLetterBatchReport(LetterBatch letterBatch) {
+    private LetterBatchReportDTO convertLetterBatchReport(LetterBatch letterBatch) {
         LetterBatchReportDTO letterBatchReport = new LetterBatchReportDTO();
-        
+
+        letterBatchReport.setTemplateName(letterBatch.getTemplateName());
         letterBatchReport.setApplicationPeriod(letterBatch.getApplicationPeriod());
         letterBatchReport.setDeliveryTypeIPosti(letterBatch.isIposti());
         letterBatchReport.setFetchTarget(letterBatch.getFetchTarget());
@@ -219,17 +221,20 @@ public class LetterReportServiceImpl implements LetterReportService {
         letterBatchReport.setTimestamp(letterBatch.getTimestamp());
         letterBatchReport.setOrganisaatioOid(letterBatch.getOrganizationOid());
 
-        Template template = templateService.findById(letterBatch.getTemplateId(), ContentStructureType.letter);
+        Template template = templateService.findByIdAndState(letterBatch.getTemplateId(), ContentStructureType.letter, null);
         letterBatchReport.setTemplate(template);
+        if (template != null) {
+            letterBatchReport.setTemplateName(template.getName());
+        }
         if (letterBatch.getBatchStatus() != null) {
             letterBatchReport.setStatus(letterBatch.getBatchStatus().name());
         }
         return letterBatchReport;
     }
-    
-    private List<LetterReceiverDTO> getLetterReceiver(LetterBatch letterBatch, List<LetterReceivers> letterReceiverList) {
+
+    private List<LetterReceiverDTO> convertLetterReceiver(LetterBatch letterBatch, List<LetterReceivers> letterReceiverList) {
         List<LetterReceiverDTO> letterReceiverDTOs = new ArrayList<LetterReceiverDTO>();
-               
+
         for (LetterReceivers letterReceivers : letterReceiverList) {
             LetterReceiverDTO letterReceiverDTO = new LetterReceiverDTO();
             

@@ -113,8 +113,19 @@ public class LetterReportServiceTest {
     @Test
     public void testGetLetterBatchesBySearchArgument() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
-        List<LetterBatch> mockedLetterBatches = new ArrayList<LetterBatch>();
-        mockedLetterBatches.add(letterBatch);
+        List<LetterBatchReportDTO> mockedLetterBatches = new ArrayList<LetterBatchReportDTO>();
+        mockedLetterBatches.add(new LetterBatchReportDTO(
+                letterBatch.getId(),
+                letterBatch.getTemplateId(),
+                letterBatch.getTemplateName(),
+                letterBatch.getApplicationPeriod(),
+                letterBatch.getFetchTarget(),
+                letterBatch.getTag(),
+                letterBatch.isIposti(),
+                letterBatch.getTimestamp(),
+                letterBatch.getOrganizationOid(),
+                letterBatch.getBatchStatus()
+        ));
         when(mockedLetterBatchDAO.findLetterBatchesBySearchArgument(
             any(LetterReportQueryDTO.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterBatches);
 
@@ -127,7 +138,7 @@ public class LetterReportServiceTest {
 
         LetterReportQueryDTO query = new LetterReportQueryDTO();
         query.setOrganizationOids(Arrays.asList("1.2.246.562.10.00000000001"));
-        query.setSearchArgument("hakutekija");
+        query.setLetterBatchSearchArgument("hakutekija");
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
      
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(query, pagingAndSorting);
