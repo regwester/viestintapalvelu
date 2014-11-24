@@ -1,7 +1,9 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateController', ['$scope', '$state', 'TemplateService', function($scope, $state, TemplateService) {
+    .controller('TemplateController', ['$scope', '$state', 'templateService', function($scope, $state, templateService) {
+
+        console.log("hallo");
 
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = "Select one";
@@ -10,28 +12,56 @@ angular.module('letter-templates')
             { field: "status", displayName: "Tila"}
         ];
 
+        $scope.user_oid = '';
+
         $scope.placeholder_valitse_haku = "Valitse haku";
 
         $scope.my_tree_handler = function(branch){
-        };
+            console.log(branch);
+        }
 
         $scope.updateTreeData = function(applicationPeriod) {
-            console.log(applicationPeriod);
-            TemplateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
-                var newData = [];
+            templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
+
+                var map = function(fn, arr) {
+                    var result = [];
+
+                    arr.forEach(function(element) {
+                        result.push(fn(element)) ;
+                    });
+                    return result;
+                };
+
+
                 var parseData = function(item) {
                     var firstColum18nStr = "Organisaatio ja kirjetyyppi";
                     var newRow = {};
-                    newRow[firstColum18nStr] = item.name;
+
+                    //TODO handle localization
+                    if(item.nimi && item.nimi.fi) {
+                        newRow[firstColum18nStr] = item.nimi.fi;
+                    } else if (item.nimi && item.nimi.sv) {
+                        newRow[firstColum18nStr] = item.nimi.sv;
+                    } else if (item.nimi && item.nimi.en) {
+                        newRow[firstColum18nStr] = item.nimi.en;
+                    }
+
                     newRow["lang"] = item.language;
                     newRow["status"] = item.state;
-                    newData.push(newRow);
+                    if(item.children && item.children.length > 0) {
+                        var childrenRows = map(parseData, item.children);
+                        newRow["children"] = childrenRows;
+                    }
+                    return newRow;
                 };
 
-                response.data.forEach(parseData);
+                var newData = [];
+                console.log(response.data[0].children);
+                newData = map(parseData, response.data[0].children)
                 $scope.test_tree_data = newData;
             });
-        };
+        }
+
 
         $scope.test_tree_data = [
             {"Organisaatio ja kirjetyyppi":"Aalto-yliopisto", lang: "", status:"", children: [
@@ -82,7 +112,12 @@ angular.module('letter-templates')
             ]}
         ];
 
-        TemplateService.getApplicationTarget().then(function(data) {
+
+        //templateService.getHakus().success(function(data) {
+        //    $scope.applicationPeriodList = data;
+        //});
+
+        templateService.getApplicationTargets().then(function(data) {
             $scope.applicationPeriodList = data;
         });
 }]);

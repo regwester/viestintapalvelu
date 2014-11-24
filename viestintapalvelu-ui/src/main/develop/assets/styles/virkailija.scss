@@ -48,7 +48,7 @@
 .btn[disabled] {
     cursor: default;
     color: #333333;    
-    background-image:url("img/disabled-pat.png");
+    background-image:url("../img/disabled-pat.png");
     background-repeat: repeat;
     border: 1px solid #ababab;
     box-shadow: none;    
@@ -162,7 +162,7 @@ h6 {
 
 /*dialogin headerin tyyli*/
 .modal-header {
-    background-image:url("img/dialog-pat.png");
+    background-image:url("../img/dialog-pat.png");
     border-bottom:1px solid #24a4cc;
 }
 
@@ -331,7 +331,7 @@ hr {
 
 .table-bordered thead tr th {
     border-top-color: #dddddd;
-    background-image:url("img/dialog-pat.png");
+    background-image:url("../img/dialog-pat.png");
 }
 
 .table-bordered tbody tr td {
@@ -351,7 +351,7 @@ hr {
 /* muutetaan disabloidun kentän tausta*/
 input[disabled], select[disabled], textarea[disabled], input[readonly], select[readonly], textarea[readonly] {
     color: #333333;
-    background-image:url("img/disabled-pat.png");
+    background-image:url("../img/disabled-pat.png");
     background-repeat: repeat;
 }
 

@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('TemplateService', ['$resource', '$http','$q', function ($resource, $http, $q) {
+    .factory('templateService', ['$resource', '$http','$q', function ($resource, $http, $q) {
 
         var serviceUrl = '/viestintapalvelu/api/v1/',
             templateBaseUrl = serviceUrl + 'template/',
@@ -14,6 +14,10 @@ angular.module('letter-templates')
         });
 
         return {
+            getHakus: function() {
+                return $http.get(serviceUrl + 'options/hakus');
+            },
+
             getByApplicationPeriod: function (applicationPeriod) {
                 return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationPeriod);
             },
