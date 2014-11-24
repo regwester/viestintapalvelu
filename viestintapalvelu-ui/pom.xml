@@ -71,51 +71,106 @@
                 </executions>
             </plugin>
             <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-war-plugin</artifactId>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+            </plugin>
+
+            <plugin>
+                <groupId>com.github.klieber</groupId>
+                <artifactId>phantomjs-maven-plugin</artifactId>
+                <version>${phantomjs-maven-plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>install</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <version>${phantomjs.version}</version>
+                </configuration>
+            </plugin>
+
+            <plugin>
                 <groupId>com.github.searls</groupId>
                 <artifactId>jasmine-maven-plugin</artifactId>
                 <version>1.3.1.3</version>
                 <executions>
                     <execution>
+                        <id>test-viesintapalavelu</id>
                         <goals>
                             <goal>test</goal>
                         </goals>
+                        <configuration>
+                            <preloadSources>
+                                <source>${webapp.dir}/lib/jquery/jquery.js</source>
+                                <source>${webapp.dir}/lib/jquery-i18n-properties/jquery.i18n.properties.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/vendor/jquery.ui.widget.js</source>
+                                <source>${webapp.dir}/lib/angular/angular.js</source>
+                                <source>${webapp.dir}/lib/angular-mocks/angular-mocks.js</source>
+                                <source>${webapp.dir}/lib/angular-resource/angular-resource.js</source>
+                                <source>${webapp.dir}/lib/angular-bootstrap/ui-bootstrap-tpls.js</source>
+                                <source>${webapp.dir}/lib/ui-router/release/angular-ui-router.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.iframe-transport.js</source>
+                                <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload-ui.js</source>
+                                <source>${webapp.dir}/lib/angular-bootstrap-grid-tree/src/tree-grid-directive.js
+                                </source>
+                                <source>${webapp.dir}/lib/file-saver/FileSaver.js</source>
+                                <source>${webapp.dir}/lib/blob/Blob.js</source>
+                                <source>${webapp.dir}/lib/tinymce/tinymce.min.js</source>
+                                <source>${webapp.dir}/lib/angular-ui-tinymce/src/tinymce.js</source>
+                                <source>${develop.dir}/core/init.js</source>
+                                <source>${develop.dir}/report/init.js</source>
+                                <source>${develop.dir}/email/init.js</source>
+                                <source>${develop.dir}/letter-templates/init.js</source>
+                                <source>${develop.dir}/init.js</source>
+                            </preloadSources>
+                            <jsSrcDir>${develop.dir}</jsSrcDir>
+                            <sourceExcludes>
+                                <exclude>${webapp.dir}/**/*.js</exclude>
+                                <exclude>ajastus/**/*.js</exclude>
+                                <exclude>**/init.js</exclude>
+                            </sourceExcludes>
+                            <jsTestSrcDir>${project.basedir}/src/test/spec/viestinta</jsTestSrcDir>
+                            <debug>true</debug>
+                            <!-- IE9 is used because jQuery 1.10.2 for some reason does not work with any other browserVersion that HtmlUnit can simulate.
+                            As a side benefit, the tests will fail if your Javascript is not IE9 -compatible! -->
+                            <browserVersion>INTERNET_EXPLORER_9</browserVersion>
+                        </configuration>
+                    </execution>
+                    <execution>
+                        <id>testa-ajastus</id>
+                        <goals>
+                            <goal>test</goal>
+                        </goals>
+                        <configuration>
+                            <webDriverClassName>org.openqa.selenium.phantomjs.PhantomJSDriver</webDriverClassName>
+                            <webDriverCapabilities>
+                                <phantomjs.binary.path>${phantomjs.binary}</phantomjs.binary.path>
+                            </webDriverCapabilities>
+                            <preloadSources>
+                                <source>${webapp.dir}/ajastus/assets/lib/jquery/jquery-2.1.1.min.js</source>
+                                <source>${webapp.dir}/ajastus/assets/lib/angular/angular.js</source>
+                                <source>${webapp.dir}/ajastus/assets/lib/angular/angular-mocks.js</source>
+                                <source>${webapp.dir}/ajastus/assets/lib/angular/angular-resource.js</source>
+                                <source>${webapp.dir}/ajastus/assets/lib/angular/angular-route.js</source>
+                                <source>${webapp.dir}/ajastus/assets/lib/angular/angular-animate.js</source>
+                                <source>${webapp.dir}/ajastus/assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.2.min.js
+                                </source>
+                            </preloadSources>
+                            <jsSrcDir>${webapp.dir}/ajastus</jsSrcDir>
+                            <sourceExcludes>
+                                <exclude>assets/**/*.js</exclude>
+                            </sourceExcludes>
+                            <jsTestSrcDir>${project.basedir}/src/test/spec/ajastus</jsTestSrcDir>
+                        </configuration>
                     </execution>
                 </executions>
-                <configuration>
-                    <preloadSources>
-                        <source>${webapp.dir}/lib/jquery/jquery.js</source>
-                        <source>${webapp.dir}/lib/jquery-i18n-properties/jquery.i18n.properties.js</source>
-                        <source>${webapp.dir}/lib/jquery-file-upload/js/vendor/jquery.ui.widget.js</source>
-                        <source>${webapp.dir}/lib/angular/angular.js</source>
-                        <source>${webapp.dir}/lib/angular-mocks/angular-mocks.js</source>
-                        <source>${webapp.dir}/lib/angular-resource/angular-resource.js</source>
-                        <source>${webapp.dir}/lib/angular-bootstrap/ui-bootstrap-tpls.js</source>
-                        <source>${webapp.dir}/lib/ui-router/release/angular-ui-router.js</source>
-                        <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload.js</source>
-                        <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.iframe-transport.js</source>
-                        <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload-ui.js</source>
-                        <source>${webapp.dir}/lib/angular-bootstrap-grid-tree/src/tree-grid-directive.js</source>
-                        <source>${webapp.dir}/lib/file-saver/FileSaver.js</source>
-                        <source>${webapp.dir}/lib/blob/Blob.js</source>
-                        <source>${webapp.dir}/lib/tinymce/tinymce.min.js</source>
-                        <source>${webapp.dir}/lib/angular-ui-tinymce/src/tinymce.js</source>
-                        <source>${develop.dir}/core/init.js</source>
-                        <source>${develop.dir}/report/init.js</source>
-                        <source>${develop.dir}/email/init.js</source>
-                        <source>${develop.dir}/letter-templates/init.js</source>
-                        <source>${develop.dir}/init.js</source>
-                    </preloadSources>
-                    <jsSrcDir>${develop.dir}</jsSrcDir>
-                    <sourceExcludes>
-                        <exclude>${webapp.dir}/**/*.js</exclude>
-                        <exclude>**/init.js</exclude>
-                    </sourceExcludes>
-                    <jsTestSrcDir>${project.basedir}/src/test/spec</jsTestSrcDir>
-                    <debug>true</debug>
-                    <!-- IE9 is used because jQuery 1.10.2 for some reason does not work with any other browserVersion that HtmlUnit can simulate.
-                    As a side benefit, the tests will fail if your Javascript is not IE9 -compatible! -->
-                    <browserVersion>INTERNET_EXPLORER_9</browserVersion>
-                </configuration>
             </plugin>
         </plugins>
     </build>
