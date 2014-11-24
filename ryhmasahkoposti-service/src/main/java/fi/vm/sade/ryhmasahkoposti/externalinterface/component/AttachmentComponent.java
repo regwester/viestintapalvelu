@@ -25,9 +25,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.UrisContainerDto;
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**
  * User: ratamaa

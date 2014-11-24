@@ -28,9 +28,9 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentReplacementSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureContentSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
-import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 import fi.vm.sade.viestintapalvelu.util.dtoconverter.AbstractDtoConverter;
-import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
+import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 
 /**
  * User: ratamaa
@@ -68,7 +68,7 @@ public class StructureDtoConverter extends AbstractDtoConverter {
 
         if (from.getStyleName() != null && from.getStyle() == null) {
             to.setStyle(styleDAO.findLatestByName(from.getStyleName())
-                    .or(OptionalHelpper.<Style>notFound("Style not found by name="+from.getStyleName())));
+                    .or(OptionalHelper.<Style>notFound("Style not found by name="+from.getStyleName())));
         } else if (to.getStyle() != null && to.getStyle().getId() == null) {
             styleDAO.insert(to.getStyle());
         }

@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html id="ng-app" ng-app="ajastuspalvelu">
+
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>OPH - Ajastuspalvelu</title>
+
+    <link rel="stylesheet" type="text/css" href="assets/lib/bootstrap/css/bootstrap.min.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/virkailija.css"/>
+    <link rel="stylesheet" type="text/css" href="assets/css/ajastus.css"/>
+
+</head>
+
+<body>
+    <div id="application-wrapper" class="main-container">
+        <div id="angularbox" ng-view></div>
+    </div>
+	
+    <!-- libs -->
+    <script type="text/javascript" src="assets/lib/jquery/jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="assets/lib/jquery/jquery.i18n.properties-min-1.0.9.js"></script>
+    <script type="text/javascript" src="assets/lib/bootstrap/js/bootstrap.min.js"></script>
+    
+    <script type="text/javascript" src="assets/lib/angular/angular.js"></script>
+    <script type="text/javascript" src="assets/lib/angular/angular-resource.js"></script>
+    <script type="text/javascript" src="assets/lib/angular/angular-route.js"></script>
+    <script type="text/javascript" src="assets/lib/angular/angular-animate.js"></script>
+    <script type="text/javascript" src="assets/lib/ui-bootstrap/ui-bootstrap-tpls-0.11.2.min.js"></script>
+     
+    <!--Virkailija layout script -->
+    <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
+
+	<!-- Main -->
+	<script type="text/javascript" src="app.js"></script>
+    
+    <!-- Filters-->
+    <script type="text/javascript" src="filters/localization.js"></script>
+
+    <!-- Services -->
+    <script type="text/javascript" src="common/commonresources.js"></script>
+    <script type="text/javascript" src="common/localizationutils.js"></script>
+    
+    <!-- Directives -->
+
+    <!-- Controllers -->
+    <script type="text/javascript" src="controllers/tasklistcontroller.js"></script>
+    <script type="text/javascript" src="controllers/createtaskcontroller.js"></script>
+    <script type="text/javascript" src="controllers/edittaskcontroller.js"></script>
+
+</body>

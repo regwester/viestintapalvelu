@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:http="http://cxf.apache.org/transports/http/configuration"
+       xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
+           http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
+           http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd">
+
+    <context:component-scan base-package="fi.vm.sade.ajastuspalvelu"/>
+    <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
+
+    <context:property-placeholder
+            location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+            ignore-resource-not-found="true" properties-ref="defaultProps"/>
+
+    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+        <property name="properties">
+            <util:properties local-override="true">
+                <prop key="cas_mode">front</prop>
+                <prop key="cas_key">ajastuspalvelu</prop>
+                <prop key="cas_service">${cas.service.ajastuspalvelu}</prop>
+                <prop key="cas_callback_url">${cas.callback.ajastuspalvelu}</prop>
+                <prop key="spring_security_default_access">isAuthenticated()</prop>
+            </util:properties>
+        </property>
+    </bean>
+
+    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
+
+    <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
+        <property name="initOnMigrate" value="true"/>
+        <property name="dataSource" ref="dbDataSource" />
+    </bean>
+
+    <!-- Add EntityManagerFactory (required by JTA) support -->
+    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
+        <property name="loadTimeWeaver">
+            <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+        </property>
+        <property name="jpaPropertyMap">
+            <map>
+                <entry key="hibernate.hbm2ddl.auto" value="${jpa.schemaUpdate}" />
+                <entry key="hibernate.show_sql" value="${jpa.showSql}" />
+            </map>
+        </property>
+    </bean>
+
+    <!-- transaction manager -->
+    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+        <property name="entityManagerFactory" ref="emf" />
+    </bean>
+    <tx:annotation-driven transaction-manager="transactionManager"/>
+
+    <!-- Flyway definitions for creating the database -->
+    <bean id="dbDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property name="jndiName" value="java:comp/env/jdbc/ajastus"/>
+    </bean>
+
+    <bean id="schedulerJDBC" class="org.springframework.scheduling.quartz.SchedulerFactoryBean"  depends-on="flyway">
+        <property name="dataSource" ref="dbDataSource" />
+        <property name="jobFactory" ref="autowiringBeanJobFactory"/>
+        <property name="transactionManager" ref="transactionManager"/>
+        <property name="overwriteExistingJobs" value="true" />
+        <property name="startupDelay" value="60"/>
+        <property name="quartzProperties">
+            <props>
+                <prop key="org.quartz.jobStore.isClustered">false</prop>
+                <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.PostgreSQLDelegate</prop>
+                <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+                <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+            </props>
+        </property>
+    </bean>
+
+
+    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+    </bean>
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target" ref="ticketInterceptorTarget"/>
+        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
+    </bean>
+    <bean id="ticketInterceptorInternalServiceUser" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
+        <property name="target">
+            <bean class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+                <property name="webCasUrl" value="${web.url.cas}" />
+                <property name="targetService" value="${cas.service.viestintapalvelu}" />
+                <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+                <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+            </bean>
+        </property>
+        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
+        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+    </bean>
+
+    <import resource="runners-config.xml"/>
+
+    <!-- viestintapalvelu options service: -->
+    <jaxrs-client:client id="viestintapalveluOptionsClient"
+                         serviceClass="fi.vm.sade.ajastuspalvelu.service.external.api.ViestintapalveluOptionsResource"
+                         address="${viestintapalvelu.rest.api.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ticketInterceptorRestInternal"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
+    <!-- Swagger configuration -->
+    <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+        <property name="resourcePackage" value="fi.vm.sade.ajastuspalvelu.resource"/>
+        <property name="version" value="1.0.0"/>
+        <property name="basePath" value="/ajastuspalvelu-service/api/v1"/>
+        <property name="title" value="Ajastuspalvelu resources"/>
+        <property name="description" value="Ajastuspalvelu offered REST resources"/>
+        <property name="contact" value="Yllapito 2"/>
+        <property name="scan" value="true"/>
+    </bean>
+    
+</beans>

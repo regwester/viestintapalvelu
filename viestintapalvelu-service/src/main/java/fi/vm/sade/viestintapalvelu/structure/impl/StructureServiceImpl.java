@@ -29,7 +29,7 @@ import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.converter.StructureDtoConverter;
-import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 
 import static com.google.common.base.Optional.fromNullable;
 
@@ -56,7 +56,7 @@ public class StructureServiceImpl implements StructureService {
     @Transactional(readOnly = true)
     public StructureViewDto getStructure(long id) {
         Structure structure = fromNullable(structureDAO.read(id)).or(
-                OptionalHelpper.<Structure>notFound("Structure not found by id="+id));
+                OptionalHelper.<Structure>notFound("Structure not found by id="+id));
         return dtoConverter.convert(structure, new StructureViewDto());
     }
 
@@ -64,7 +64,7 @@ public class StructureServiceImpl implements StructureService {
     @Transactional(readOnly = true)
     public StructureViewDto getLatestStructureByNameAndLanguage(String name, String language) {
         Structure structure = structureDAO.findLatestStructrueByNameAndLanguage(name, language).or(
-                OptionalHelpper.<Structure>notFound("Structure not found by name="+name + ", language="+language));
+                OptionalHelper.<Structure>notFound("Structure not found by name="+name + ", language="+language));
         return dtoConverter.convert(structure, new StructureViewDto());
     }
 

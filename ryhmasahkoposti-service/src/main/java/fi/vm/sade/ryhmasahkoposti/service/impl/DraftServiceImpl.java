@@ -3,7 +3,6 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import java.util.ArrayList;
 import java.util.List;
 
-import fi.vm.sade.ryhmasahkoposti.exception.PersistenceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,6 +14,7 @@ import fi.vm.sade.ryhmasahkoposti.converter.DraftConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.DraftDAO;
 import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
 import fi.vm.sade.ryhmasahkoposti.service.DraftService;
+import fi.vm.sade.viestintapalvelu.common.exception.PersistenceException;
 
 @Service
 public class DraftServiceImpl implements DraftService {

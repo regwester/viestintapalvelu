@@ -28,7 +28,7 @@ import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.util.CollectionUtils;
+import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
@@ -215,7 +215,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     }
 
     private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
-        List<List<String>> oidChunks = CollectionUtils.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
         Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks,
                 new Function<List<String>, BooleanExpression>() {
                     public BooleanExpression apply(@Nullable List<String> oidsChunk) {
@@ -229,7 +229,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     private String splittedInExpression(List<String> values, final String hqlColumn,
                                         final Map<String, Object> params,
                                         final String valPrefix) {
-        final List<List<String>> oidChunks = CollectionUtils.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+        final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
         final AtomicInteger n = new AtomicInteger(0);
         Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks,
                 new Function<List<String>, String>() {

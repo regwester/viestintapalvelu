@@ -66,7 +66,7 @@
     <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
     </bean>
-    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean -->
@@ -137,7 +137,7 @@
     <jaxrs-client:client id="tarjontaHakuResourceClient"
                     serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
                     address="${viestintapalvelu.tarjontapalvelu.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
+      <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
       <jaxrs-client:inInterceptors>

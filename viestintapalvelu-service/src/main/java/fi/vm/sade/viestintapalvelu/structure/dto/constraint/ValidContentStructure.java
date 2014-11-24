@@ -21,8 +21,6 @@ import java.lang.annotation.*;
 import javax.validation.Constraint;
 import javax.validation.Payload;
 
-import fi.vm.sade.viestintapalvelu.util.HetuValidator;
-
 /**
  * User: ratamaa
  * Date: 11.11.2014

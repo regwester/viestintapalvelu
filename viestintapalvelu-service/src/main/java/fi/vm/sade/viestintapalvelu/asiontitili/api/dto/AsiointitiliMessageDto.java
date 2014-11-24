@@ -29,7 +29,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.util.ValidHetu;
+import fi.vm.sade.viestintapalvelu.common.util.ValidHetu;
 
 /**
  * User: ratamaa
