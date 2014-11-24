@@ -118,7 +118,6 @@
                                 <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload.js</source>
                                 <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.iframe-transport.js</source>
                                 <source>${webapp.dir}/lib/jquery-file-upload/js/jquery.fileupload-ui.js</source>
-                                </source>
                                 <source>${webapp.dir}/lib/file-saver/FileSaver.js</source>
                                 <source>${webapp.dir}/lib/blob/Blob.js</source>
                                 <source>${webapp.dir}/lib/tinymce/tinymce.min.js</source>
