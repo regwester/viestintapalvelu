@@ -11,9 +11,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,11 +50,22 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 public class TemplateResource extends AsynchronousResource {
     public static final String DEFAULT_STRUCTURE_TYPE = ContentStructureType.letter.name();
 
+    public static final Logger log = LoggerFactory.getLogger(TemplateResource.class);
+
     @Autowired
     private TemplateService templateService;
 
     @Autowired
     private LetterService letterService;
+
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
+
+    @Autowired
+    private LearningOpportunityProviderComponent learningOpportunityProviderComponent;
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
 
     @Autowired
     TarjontaComponent tarjontaComponent;
@@ -629,16 +648,90 @@ public class TemplateResource extends AsynchronousResource {
                 .withApplicationPeriod(applicationPeriod), true);
     }
 
+
+
+
+
     @GET
     @Produces("application/json")
     @Path("/listByApplicationPeriod/{applicationPeriod}")
-    public List<Template> getTemplatesByApplicationPeriod(
+    //public List<Template> getTemplatesByApplicationPeriod(
+    public List<OrganisaatioHierarchyDto> getTemplatesByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
-        List<Template> templates = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
-        return templates;
+
+
+
+        /*
+        First find a list of all templates for the given application period. After that we use this list to filter
+        the big list of different organizations to a group that only have templates for this application period.
+         */
+        //"1.2.246.562.5.2013112910452702965370"
+        Set<String> organizationOIDs = new HashSet<String>();
+
+        //search for all schools and organizations that provide teaching for the given application period
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, Locale.forLanguageTag("FI"));
+
+        for(LOPDto lop : providers) {
+            organizationOIDs.add(lop.getId());
+        }
+
+        List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
+        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
+
+        for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
+            String organisaatioOid = orgHenkilo.getOrganisaatioOid();
+            OrganisaatioHierarchyDto root = organisaatioService.getOrganizationHierarchy(organisaatioOid);
+
+            /*
+            Depth first search and search if the org OID is one that has templates.
+            If a leaf node has templates assigned to it, we need to include all parents of the hierarchy.
+             */
+            filterHierarchy(root, organizationOIDs);
+
+            userRootOrganizations.add(root);
+        }
+        //todo still need to fetch the actual templates
+        /*
+        List<Template> byCriteria = templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
+
+        for (Template template : byCriteria) {
+            organizationOIDs.add(template.getOrganizationOid());
+        }
+*/
+        return userRootOrganizations;
     }
-    
+
+    /*
+     * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false
+     */
+    private boolean filterHierarchy(OrganisaatioHierarchyDto node, Set<String> OIDs) {
+        if(node.getChildren().isEmpty())
+            return OIDs.contains(node.getOid());
+
+        boolean anyChildInOids = false;
+        List<OrganisaatioHierarchyDto> childrenWithoutMatches = new ArrayList<OrganisaatioHierarchyDto>();
+        for(OrganisaatioHierarchyDto child : node.getChildren()) {
+            boolean someChildInOids = filterHierarchy(child, OIDs);
+            if(!anyChildInOids) {
+                anyChildInOids = someChildInOids;
+            }
+            if(!someChildInOids) { //the current child didn't have any, so we remove it from this parent
+                childrenWithoutMatches.add(child); //remove all these after for each loop
+            }
+        }
+
+        node.getChildren().removeAll(childrenWithoutMatches);
+
+        if(!anyChildInOids) {
+            node.setChildren(new ArrayList<OrganisaatioHierarchyDto>());
+        }
+
+        return anyChildInOids;
+    }
+
+
+
     private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
         for (String s : serviceResult) {

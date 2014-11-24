@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Singleton;
 
+import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -61,6 +62,19 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
             return dto.getOid();
         }
     };
+    private static final HierarchyVisitor<OrganisaatioHierarchyDto> EXTRACT_OBJECT = new HierarchyVisitor<OrganisaatioHierarchyDto>() {
+        @Override
+        public OrganisaatioHierarchyDto visit(OrganisaatioHierarchyDto dto, OrganisaatioHierarchyDto parent) {
+            return dto;
+        }
+    };
+
+    public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid) {
+        ensureCacheFresh();
+        //return visitDown(this.hierarchyByOids.get(organizationOid), null, EXTRACT_OBJECT, new ArrayList<OrganisaatioHierarchyDto>());
+        OrganisaatioHierarchyDto hierarchyDto = this.hierarchyByOids.get(organizationOid);
+        return hierarchyDto;
+    }
 
     @Override
     public List<String> findHierarchyOids(String organisaatioOid) {

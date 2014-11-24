@@ -29,6 +29,12 @@ angular.module('letter-templates')
             },
             setApplicationTarget: function(value) {
                 selectedApplicationTarget = value;
+            },
+            saveTemplate: function(template) {
+                return $http.post(templateBaseUrl + 'insert/', template);
+            },
+            publishTemplate : function() {
+                return true;
             }
 
         };

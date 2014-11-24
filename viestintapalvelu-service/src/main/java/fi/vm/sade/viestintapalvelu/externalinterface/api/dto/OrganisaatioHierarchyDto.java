@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -32,7 +33,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrganisaatioHierarchyDto implements Serializable {
     private static final long serialVersionUID = -4472354752997371430L;
-
+    @JsonIgnore(value = true)
     private OrganisaatioHierarchyDto parent;
     private String oid;
     private String parentOid;
@@ -86,5 +87,25 @@ public class OrganisaatioHierarchyDto implements Serializable {
 
     public void setParent(OrganisaatioHierarchyDto parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrganisaatioHierarchyDto that = (OrganisaatioHierarchyDto) o;
+
+        if (oid != null ? !oid.equals(that.oid) : that.oid != null) return false;
+        if (parentOid != null ? !parentOid.equals(that.parentOid) : that.parentOid != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = oid != null ? oid.hashCode() : 0;
+        result = 31 * result + (parentOid != null ? parentOid.hashCode() : 0);
+        return result;
     }
 }

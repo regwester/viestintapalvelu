@@ -3,7 +3,6 @@
 angular.module('letter-templates')
     .controller('TemplateController', ['$scope', '$state', 'templateService', function($scope, $state, templateService) {
 
-        console.log("hallo");
 
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = "Select one";
@@ -17,8 +16,8 @@ angular.module('letter-templates')
         $scope.placeholder_valitse_haku = "Valitse haku";
 
         $scope.my_tree_handler = function(branch){
-            console.log(branch);
-        }
+
+        };
 
         $scope.updateTreeData = function(applicationPeriod) {
             templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
@@ -56,7 +55,6 @@ angular.module('letter-templates')
                 };
 
                 var newData = [];
-                console.log(response.data[0].children);
                 newData = map(parseData, response.data[0].children)
                 $scope.test_tree_data = newData;
             });

@@ -7,7 +7,7 @@ angular.module('core.directives')
             replace: true,
             templateUrl: 'views/core/views/partials/button-group.html',
             scope: {
-                'commonClass': '@class',
+                'buttonClass': '@',
                 'buttons': '='
             }
         };
