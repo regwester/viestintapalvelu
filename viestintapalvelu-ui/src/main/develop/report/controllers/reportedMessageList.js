@@ -1,6 +1,7 @@
 'use strict';
 
 angular.module('report').controller('ReportedMessageListCtrl',
+    ['$scope', '$state', 'GetReportedMessagesByOrganization', 'GetReportedMessagesBySearchArgument', 'SharedVariables', 'ErrorDialog',
   function ReportedMessageListCtrl($scope, $state, GetReportedMessagesByOrganization, GetReportedMessagesBySearchArgument, SharedVariables, ErrorDialog) {
     $scope.pagination = {
       page: 1,
@@ -184,4 +185,4 @@ angular.module('report').controller('ReportedMessageListCtrl',
 
     // Alustetaan ensimmäinen sivu
     $scope.fetch();
-  });
+  }]);

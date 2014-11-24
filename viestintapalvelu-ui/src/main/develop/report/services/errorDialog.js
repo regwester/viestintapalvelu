@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('report')
-.factory('ErrorDialog',
+.factory('ErrorDialog', ['$modal',
     function($modal) {
         return {
             showError : function(msg) {
@@ -21,5 +21,4 @@ angular.module('report')
                 });
             }
         };
-    }
-);
+    }]);
