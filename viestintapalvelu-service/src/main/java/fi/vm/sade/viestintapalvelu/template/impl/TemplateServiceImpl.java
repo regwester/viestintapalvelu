@@ -393,7 +393,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<fi.vm.sade.viestintapalvelu.template.Template> getByApplicationPeriod(TemplateCriteria criteria) {
+    public List<fi.vm.sade.viestintapalvelu.template.Template> findByCriteria(TemplateCriteria criteria) {
         List<fi.vm.sade.viestintapalvelu.template.Template> templates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
         for (Template t : templateDAO.findTemplates(criteria)) {
             fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(t);

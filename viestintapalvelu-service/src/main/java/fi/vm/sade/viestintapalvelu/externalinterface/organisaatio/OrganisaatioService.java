@@ -16,6 +16,8 @@
 
 package fi.vm.sade.viestintapalvelu.externalinterface.organisaatio;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+
 import java.util.List;
 
 /**
@@ -24,6 +26,12 @@ import java.util.List;
  * Time: 14:51
  */
 public interface OrganisaatioService {
+
+    /**
+     * @param organizationOid
+     * @return all children organization DTO objects for the given organizationOid
+     */
+    public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid);
 
     /**
      * @param organisaatioOid
