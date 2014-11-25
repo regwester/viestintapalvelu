@@ -81,9 +81,10 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 	 * Hakee kirjelähetysten lukumäärän annettujen hakuparametrien mukaisesti
 	 * 
 	 * @param  letterReportQuery Kirjelähetysten raportoinnin hakuparametrit
-	 * @return Hakuparametreja vastaavien kirjelähetysten lukumäärä
+	 * @param maxCount
+     * @return Hakuparametreja vastaavien kirjelähetysten lukumäärä
 	 */
-	Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery);
+	Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery, Long maxCount);
 
     /**
      * @param letterBatchId id of a LetterBatch

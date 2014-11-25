@@ -42,6 +42,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 @Transactional(readOnly=true)
 @Service
 public class LetterReportServiceImpl implements LetterReportService {
+    public static final long MAX_COUNT_FOR_LETTER_BATCH_SEARCH = 1000l;
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiversDAO letterReceiversDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
@@ -107,14 +108,16 @@ public class LetterReportServiceImpl implements LetterReportService {
 
         LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
         letterBatchesReport.setLetterBatchReports(letterBatches);
-        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatchesBySearchArgument(query));
-        
+        letterBatchesReport.setMaxNumber(Math.max(MAX_COUNT_FOR_LETTER_BATCH_SEARCH,
+                pagingAndSorting.getFromIndex()+pagingAndSorting.getNumberOfRows()));
+        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatchesBySearchArgument(query,
+                letterBatchesReport.getMaxNumber()));
+
         return letterBatchesReport;
     }
 
     @Override
     public LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting) {
-
         final List<LetterBatch> letterBatches;
         final long numberOfLetterBatches;
         if(organizationOID != null && organizationOID.equals(rekisterinpitajaOID)) {

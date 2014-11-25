@@ -6,7 +6,7 @@ import java.util.List;
 public class LetterReportQueryDTO implements Serializable {
     public enum SearchTarget {
         batch,
-        receiver;
+        receiver
     }
 
     private static final long serialVersionUID = -8516467453321234990L;

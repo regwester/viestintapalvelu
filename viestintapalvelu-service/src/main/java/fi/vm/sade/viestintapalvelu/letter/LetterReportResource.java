@@ -240,7 +240,7 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Näytöllä annettu vastaanottajaan liittyvä hakutekijä esim. kirjeen saajan nimi", required=false)
         @QueryParam(Constants.PARAM_RECEIVER_SEARCH_ARGUMENT) String receiverSearchArgument,
         @ApiParam(value="Haun kohde: kirjelähetys=batch, vastaanottajakirje=receiver", required=true)
-        @QueryParam(Constants.PARAM_SEARCH_TARGET) LetterReportQueryDTO.SearchTarget searchTarget,
+        @QueryParam(Constants.PARAM_SEARCH_TARGET) String searchTarget,
         @ApiParam(value="Haettavien rivien lukumäärä", required=true)
         @QueryParam(Constants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
         @ApiParam(value="Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required=true) 
@@ -260,7 +260,9 @@ public class LetterReportResource extends AsynchronousResource {
         }
         query.setLetterBatchSearchArgument(searchArgument);
         query.setReceiverSearchArgument(receiverSearchArgument);
-        
+        query.setTarget(searchTarget == null ? LetterReportQueryDTO.SearchTarget.batch
+                : LetterReportQueryDTO.SearchTarget.valueOf(searchTarget));
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
 
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(query, pagingAndSorting);

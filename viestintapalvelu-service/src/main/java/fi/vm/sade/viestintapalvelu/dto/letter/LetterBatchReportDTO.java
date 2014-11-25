@@ -4,11 +4,27 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
+
 import fi.vm.sade.viestintapalvelu.dto.iposti.IPostiDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 public class LetterBatchReportDTO implements Serializable {
+    public static final Function<LetterBatchReportDTO, String> RECEIVER_NAME = new Function<LetterBatchReportDTO, String>() {
+        @Nullable
+        @Override
+        public String apply(@Nullable LetterBatchReportDTO input) {
+            if (input == null) {
+                return null;
+            }
+            return input.getReceiverName();
+        }
+    };
+
+
     private static final long serialVersionUID = 7920118110257531390L;
     private Long letterBatchID;
     private Template template;

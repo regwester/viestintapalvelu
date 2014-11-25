@@ -112,7 +112,7 @@ public class LetterReportServiceTest {
     
     @Test
     public void testGetLetterBatchesBySearchArgument() {
-        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         List<LetterBatchReportDTO> mockedLetterBatches = new ArrayList<LetterBatchReportDTO>();
         mockedLetterBatches.add(new LetterBatchReportDTO(
                 letterBatch.getId(),
@@ -130,7 +130,7 @@ public class LetterReportServiceTest {
             any(LetterReportQueryDTO.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterBatches);
 
         when(mockedLetterBatchDAO.findNumberOfLetterBatchesBySearchArgument(
-            any(LetterReportQueryDTO.class))).thenReturn(new Long(1));
+            any(LetterReportQueryDTO.class), any(Long.class))).thenReturn(1l);
         
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
