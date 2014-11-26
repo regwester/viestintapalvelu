@@ -2,10 +2,25 @@
 $img-folder: '../img/';
 
 // Colors
+/* Name the color uniquely and then use it in another variable based on purpose to keep code reusable
+ * http://chir.ag/projects/name-that-color/ */
 $light-grey: #eeeeee;
 $medium-grey: #bab6b6;
 $grey: #bdbdbd;
+$color-dusty-gray: #999999;
 
+$color-help-text: $color-dusty-gray;
+
+// Font weights
+$light: 100;
+$regular: 400;
+$bold: 700;
+
+// Base font
+$base-font-family: sans-serif;
+$base-font-size: 13px;
+$base-font-weight: $regular;
+$base-line-height: 1.4;
 
 .hakuVirheet .valintakoe:nth-child(odd), .hakuVirheet .jonosija:nth-child(odd) {
   background: #F0fafF;
@@ -103,7 +118,7 @@ $grey: #bdbdbd;
   text-align: left;
   margin-bottom: 28px;
   color: #4d4d4d;
-  font-size: 13px;
+  font-size: $base-font-size;
 }
 
 .results table th, .results table td {
@@ -462,6 +477,10 @@ ul.attachments-list {
   margin-right: 5px;
 }
 
+.margin-left-oneandquarter {
+  margin-left: 1.25em;
+}
+
 .margin-right-half {
   margin-right: 0.5em;
 }
@@ -478,6 +497,10 @@ ul.attachments-list {
   margin-bottom: 1em;
 }
 
+.center-div {
+  margin: 0 auto;
+
+}
 .input-list input {
   top: 0px;
   margin-top: 0px;
@@ -509,6 +532,23 @@ ul.attachments-list {
 .subnote {
   color: $medium-grey;
   font-style: italic;
+}
+
+.help-text {
+  color: $color-help-text;
+  font-size: $base-font-size;
+}
+
+.help-text-bold {
+  @extend .help-text;
+  font-weight: $bold;
+}
+
+.center {
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+  text-align: center;
 }
 
 /*

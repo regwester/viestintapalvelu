@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateController', ['$scope', '$state', 'templateService', function($scope, $state, templateService) {
+    .controller('TemplateController', ['$scope', '$state', 'TemplateService', function($scope, $state, TemplateService) {
 
 
         $scope.applicationPeriodList = [];
@@ -20,7 +20,7 @@ angular.module('letter-templates')
         };
 
         $scope.updateTreeData = function(applicationPeriod) {
-            templateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
+            TemplateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
 
                 var map = function(fn, arr) {
                     var result = [];
@@ -111,11 +111,11 @@ angular.module('letter-templates')
         ];
 
 
-        //templateService.getHakus().success(function(data) {
+        //TemplateService.getHakus().success(function(data) {
         //    $scope.applicationPeriodList = data;
         //});
 
-        templateService.getApplicationTargets().then(function(data) {
+        TemplateService.getApplicationTargets().then(function(data) {
             $scope.applicationPeriodList = data;
         });
 }]);
