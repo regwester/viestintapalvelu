@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('LetterTemplateCreateCtrl', ['$scope', 'Global', '$state', 'templateService',
-        function($scope, Global, $state, templateService) {
+    .controller('LetterTemplateCreateCtrl', ['$scope', 'Global', '$state', 'TemplateService',
+        function($scope, Global, $state, TemplateService) {
 
             $scope.editorOptions = Global.getEditorOptions();
 
@@ -33,7 +33,7 @@ angular.module('letter-templates')
                 $state.go('letter-templates_overview');
             };
             $scope.save = function() {
-                LetterService.saveTemplate($scope.template);
+                TemplateService.saveTemplate($scope.template);
             };
             $scope.previewLetter = function() {
                 console.log('Preview letter');

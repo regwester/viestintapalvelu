@@ -6,16 +6,20 @@ angular.module('letter-templates')
             $scope.radioSelection = 'default';
             $scope.showTable = true;
 
-            TemplateService.getApplicationTargets().then(function(data) {
-                $scope.applicationTargets = data;
-            });
+            function updateTarget(applicationTarget) {
+                TemplateService.getByApplicationPeriod(applicationTarget.oid)
+                .success(function(data) {
+                    $scope.$parent.letterTemplates = data;
+                }).error(function(e){
 
-            $scope.changeTarget = function() {
-                TemplateService.getByApplicationPeriod($scope.applicationTarget).success(function(data) {
-                    $scope.letterTemplates = data;
                 });
-                TemplateService.setApplicationTarget($scope.applicationTarget);
-            };
+                TemplateService.setApplicationTarget(applicationTarget);
+                console.log("Update");
+            }
+
+            TemplateService.getApplicationTargets().then(function(data) {
+                $scope.letterTypes[1].list = data;
+            });
 
             $scope.changeRadio = function() {
                 ($scope.radioSelection === 'organization') ? $scope.showTable = false : $scope.showTable = true;
@@ -35,7 +39,8 @@ angular.module('letter-templates')
                     text: 'Oletuskirjepohja'
                 },{
                     value: 'applicationTarget',
-                    text: 'Hakukohtaiset kirjepohjat'
+                    text: 'Hakukohtaiset kirjepohjat',
+                    update: updateTarget
                 },{
                     value: 'organization',
                     text: 'Organisaatioiden kirjeluonnokset'

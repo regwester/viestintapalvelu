@@ -1,12 +1,11 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('templateService', ['$resource', '$http','$q', function ($resource, $http, $q) {
+    .factory('TemplateService', ['$resource', '$http','$q', function ($resource, $http, $q) {
 
         var serviceUrl = '/viestintapalvelu/api/v1/',
             templateBaseUrl = serviceUrl + 'template/',
             selectedApplicationTarget,
-            applicationTargets,
             deferred = $q.defer();
 
         $http.get(serviceUrl + 'options/hakus').success(function(data) {

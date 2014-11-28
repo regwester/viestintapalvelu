@@ -58,7 +58,6 @@ gulp.task('scripts-watch', scripts);
 var styles = function() {
     return gulp.src(input.styles)
         .pipe(plumber())
-        //First write inline sourcemaps then strip them to external file (cannot get it working otherwise)
         .pipe(sourcemaps.init())
             .pipe(sass({
                 errLogToConsole: true,
@@ -89,7 +88,7 @@ var assets = function() {
 gulp.task('assets', ['clean'], assets);
 gulp.task('assets-watch', assets);
 
-gulp.task('bower', ['scripts', 'styles', 'html'], function() {
+gulp.task('bower', ['scripts', 'styles', 'html', 'assets'], function() {
     return bower();
         //.pipe(gulp.dest(output.lib)); //Optional: defaults to directory set in ./.bowerrc
 });
