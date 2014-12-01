@@ -14,13 +14,15 @@ angular.module('report')
             },
             _form = {
                 organization: ''
-            };
+            },
+            _includeOlder=false;
         this.store = function($scope) {
             _searchTarget = $scope.searchTarget;
             _searchArgument = $scope.searchArgument;
             _sortAndOrder = $scope.sortAndOrder;
             _pagination = $scope.pagination;
             _form = $scope.form;
+            _includeOlder = $scope.includeOlder;
         };
         this.restore = function($scope) {
             $scope.searchTarget = _searchTarget;
@@ -28,6 +30,7 @@ angular.module('report')
             $scope.sortAndOrder = _sortAndOrder;
             $scope.pagination = _pagination;
             $scope.form = _form;
+            $scope.includeOlder = _includeOlder;
             $scope.fetch();
         };
     })
@@ -46,12 +49,14 @@ angular.module('report')
       }
       params.searchTarget = $scope.searchTarget || 'batch';
       if ($scope.searchTarget == 'batch' && $scope.searchArgument) {
-        params.searchArgument = $scope.searchArgument;
-        url = reportedLettersSearchUrl;
+          params.searchArgument = $scope.searchArgument;
+          params.includeOlder = $scope.includeOlder;
+          url = reportedLettersSearchUrl;
       }
       if ($scope.searchTarget == 'receiver' && $scope.searchArgument) {
-        params.receiverSearchArgument = $scope.searchArgument;
-        url = reportedLettersSearchUrl;
+          params.receiverSearchArgument = $scope.searchArgument;
+          params.includeOlder = $scope.includeOlder;
+          url = reportedLettersSearchUrl;
       }
 
       angular.extend(params, {

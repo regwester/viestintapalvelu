@@ -17,35 +17,43 @@
     </div>
 
     <div class="search form-inline span8">
-      <table>
-          <tr>
-              <td rowspan="2" style="vertical-align: top">
-                  {{'reportedletterlist.searchTarget.label' | i18n}}
-              </td>
-              <td>
-                 <input id="searchTargetBatch" type="radio" name="searchTarget" value="batch"
-                        ng-model="searchTarget" />
-              </td>
-              <td>
-                  <label for="searchTargetBatch">{{'reportedletterlist.searchTarget.batch' | i18n}}</label>
-              </td>
-          </tr>
-          <tr>
-              <td>
-                  <input id="searchTargetReceiver" type="radio" name="searchTarget" value="receiver"
-                         ng-model="searchTarget" />
-              </td>
-              <td>
-                  <label for="searchTargetReceiver">{{'reportedletterlist.searchTarget.receiver' | i18n}}</label>
-              </td>
-          </tr>
-      </table>
-      <input type="text" ng-model="searchArgument" placeholder="{{'reportedletterlist.searchTarget.'+searchTarget+'.placeholder' | i18n}}" />
-      <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument">{{'reportedletterlist.button.hae' | i18n}}</button>
-      <button class="btn" ng-click="emptySearch()">{{'reportedletterlist.button.tyhjenna' | i18n}}</button>
-      <div style="color:gray; font-style: italic">
-          {{'reportedletterlist.searchTarget.'+searchTarget+'.description' | i18n}}
-      </div>
+        <table>
+            <tr>
+                <td rowspan="2" style="vertical-align: top">
+                    {{'reportedletterlist.searchTarget.label' | i18n}}
+                </td>
+                <td>
+                    <input id="searchTargetBatch" type="radio" name="searchTarget" value="batch"
+                           ng-model="searchTarget"/>
+                </td>
+                <td>
+                    <label for="searchTargetBatch">{{'reportedletterlist.searchTarget.batch' | i18n}}</label>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <input id="searchTargetReceiver" type="radio" name="searchTarget" value="receiver"
+                           ng-model="searchTarget"/>
+                </td>
+                <td>
+                    <label for="searchTargetReceiver">{{'reportedletterlist.searchTarget.receiver' | i18n}}</label>
+                </td>
+            </tr>
+        </table>
+        <table><tr><td style="vertical-align: top;">
+            <input type="checkbox" ng-model="includeOlder" id="includeOlder"/>
+        </td><td>
+            <label for="includeOlder">{{'reportedletterlist.includeOlder' | i18n}}</label>
+        </td></tr></table>
+        <input type="text" ng-model="searchArgument" ng-enter="search()"
+               placeholder="{{'reportedletterlist.searchTarget.'+searchTarget+'.placeholder' | i18n}}"/>
+        <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument">
+            {{'reportedletterlist.button.hae' | i18n}}
+        </button>
+        <button class="btn" ng-click="emptySearch()">{{'reportedletterlist.button.tyhjenna' | i18n}}</button>
+        <div style="color:gray; font-style: italic">
+            {{'reportedletterlist.searchTarget.'+searchTarget+'.description' | i18n}}
+        </div>
     </div>
 
   </div>

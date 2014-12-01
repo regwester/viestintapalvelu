@@ -320,7 +320,22 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                                                               final QLetterReceivers letterReceivers,
                                                               final QLetterReceiverAddress letterReceiverAddress) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        
+
+        if (query.getBeginDate() != null) {
+            // gte missing from QueryDSL
+            booleanBuilder.andAnyOf(
+                    letterBatch.timestamp.after(query.getBeginDate().toDateTimeAtStartOfDay().toDate()),
+                    letterBatch.timestamp.eq(query.getBeginDate().toDateTimeAtStartOfDay().toDate())
+            );
+        }
+        if (query.getEndDate() != null) {
+            // as well as lte
+            booleanBuilder.andAnyOf(
+                    letterBatch.timestamp.before(query.getEndDate().toDateTimeAtStartOfDay().toDate()),
+                    letterBatch.timestamp.eq(query.getEndDate().toDateTimeAtStartOfDay().toDate())
+            );
+        }
+
         if (query.getOrganizationOids() != null) {
             if (query.getOrganizationOids().isEmpty()) {
                 // no organisaatios should yield no results, thus:
