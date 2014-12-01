@@ -20,44 +20,7 @@ angular.module('letter-templates')
 
         $scope.updateTreeData = function(applicationPeriod) {
             TemplateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
-
-                var map = function(fn, arr) {
-                    var result = [];
-
-                    arr.forEach(function(element) {
-                        result.push(fn(element)) ;
-                    });
-                    return result;
-                };
-
-
-                var parseData = function(item) {
-                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
-                    var newRow = {};
-
-                    //TODO handle localization
-                    if(item.nimi && item.nimi.fi) {
-                        newRow[firstColum18nStr] = item.nimi.fi;
-                    } else if (item.nimi && item.nimi.sv) {
-                        newRow[firstColum18nStr] = item.nimi.sv;
-                    } else if (item.nimi && item.nimi.en) {
-                        newRow[firstColum18nStr] = item.nimi.en;
-                    }
-
-                    newRow["lang"] = item.language;
-                    newRow["status"] = item.state;
-                    if(item.children && item.children.length > 0) {
-                        var childrenRows = map(parseData, item.children);
-                        newRow["children"] = childrenRows;
-                    }
-                    return newRow;
-                };
-
-                var newData = [];
-                var dataArr = [];
-                dataArr.push(response.data[0]);
-                newData = map(parseData, dataArr);
-                $scope.template_tree_data = newData;
+                $scope.template_tree_data = TemplateService.getParsedTreeGrid(response);
             });
         }
 
