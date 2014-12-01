@@ -3,7 +3,6 @@
 angular.module('letter-templates')
     .controller('TemplateController', ['$scope', '$state', 'TemplateService', function($scope, $state, TemplateService) {
 
-
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = "Select one";
         $scope.col_defs = [
@@ -16,7 +15,7 @@ angular.module('letter-templates')
         $scope.placeholder_valitse_haku = "Valitse haku";
 
         $scope.my_tree_handler = function(branch){
-
+            console.log(branch);
         };
 
         $scope.updateTreeData = function(applicationPeriod) {
@@ -55,13 +54,14 @@ angular.module('letter-templates')
                 };
 
                 var newData = [];
-                newData = map(parseData, response.data[0].children)
-                $scope.test_tree_data = newData;
+                var dataArr = [];
+                dataArr.push(response.data[0]);
+                newData = map(parseData, dataArr);
+                $scope.template_tree_data = newData;
             });
         }
 
-
-        $scope.test_tree_data = [
+        $scope.template_tree_data = [
             {"Organisaatio ja kirjetyyppi":"Aalto-yliopisto", lang: "", status:"", children: [
                 {"Organisaatio ja kirjetyyppi":"Koekutsukirje", lang: "Suomi", status:"Käytössä, muokattu 16.0.2014"},
                 {"Organisaatio ja kirjetyyppi":"Koekutsukirje", lang: "Ruotsi", status:"Käytössä, muokattu 16.0.2014"},
@@ -97,7 +97,7 @@ angular.module('letter-templates')
             ]}
         ];
 
-        $scope.test_tree_data2 = [
+        $scope.draft_tree_data = [
             {"Organisaatio ja kirjetyyppi":"Aalto-yliopisto", lang: "", status:"", children: [
                 {"Organisaatio ja kirjetyyppi":"Koekutsukirje (luonnos)", lang: "Suomi", status:"Käytössä, muokattu 16.0.2014"},
                 {"Organisaatio ja kirjetyyppi":"Koekutsukirje (luonnos)", lang: "Ruotsi", status:"Käytössä, muokattu 16.0.2014"},
@@ -109,7 +109,6 @@ angular.module('letter-templates')
                 {"Organisaatio ja kirjetyyppi":"Koekutsukirje (luonnos)", lang: "Englanti", status:"Käytössä, muokattu 16.0.2014"},
             ]}
         ];
-
 
         //TemplateService.getHakus().success(function(data) {
         //    $scope.applicationPeriodList = data;
