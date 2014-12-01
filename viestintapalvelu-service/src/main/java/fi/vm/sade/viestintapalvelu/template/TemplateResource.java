@@ -670,7 +670,7 @@ public class TemplateResource extends AsynchronousResource {
         Set<String> organizationOIDs = new HashSet<String>();
 
         //search for all schools and organizations that provide teaching for the given application period
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, Locale.forLanguageTag("FI"));
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI"));
 
         for(LOPDto lop : providers) {
             organizationOIDs.add(lop.getId());
