@@ -99,6 +99,7 @@
     <div class="pagination pagination-centered row-fluid" ng-if="reportedMessagesDTO.reportedMessages.length > 0">
         <pagination total-items="reportedMessagesDTO.numberOfReportedMessages" items-per-page="{{pagination.pageSize}}"
                     ng-model="pagination.page" ng-change="pageChanged()"
+                    max-size="10"  boundary-links="true"
                     previous-text="{{'pagination.button.edellinen' | i18n}}"
                     next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
     </div>
