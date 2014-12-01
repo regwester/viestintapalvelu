@@ -21,22 +21,22 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
 										String applicationPeriod, String fetchTarget, String tag) {
 		EntityManager em = getEntityManager();		
 		
-		boolean ap = true;
-		boolean ft = true;
-		boolean ta = true;
+		boolean hasApplicationPeriod = true;
+		boolean hasFetchTarget = true;
+		boolean hasTag = true;
 		
-		if ((applicationPeriod == null) || ("".equals(applicationPeriod))) ap = false;		
-		if ((fetchTarget == null) || ("".equals(fetchTarget))) ft = false;		
-		if ((tag == null) || ("".equals(tag))) ta = false;		
+		if ((applicationPeriod == null) || ("".equals(applicationPeriod))) hasApplicationPeriod = false;
+		if ((fetchTarget == null) || ("".equals(fetchTarget))) hasFetchTarget = false;
+		if ((tag == null) || ("".equals(tag))) hasTag = false;
 		
 		String findDraft = "SELECT a FROM Draft a WHERE "
 				+ "a.templateName = :templateName AND "
 				+ "a.templateLanguage = :templateLanguage AND "
 				+ "a.organizationOid = :organizationOid ";
 		
-		if (ap) findDraft = findDraft + "AND a.applicationPeriod = :applicationPeriod ";
-		if (ft) findDraft = findDraft + "AND a.fetchTarget = :fetchTarget ";
-		if (ta) findDraft = findDraft + "AND a.tag = :tag ";
+		if (hasApplicationPeriod) findDraft = findDraft + "AND a.applicationPeriod = :applicationPeriod ";
+		if (hasFetchTarget) findDraft = findDraft + "AND a.fetchTarget = :fetchTarget ";
+		if (hasTag) findDraft = findDraft + "AND a.tag = :tag ";
 		
 		findDraft = findDraft + "ORDER BY a.timestamp DESC";
 		
@@ -54,9 +54,9 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
 		query.setParameter("templateName", templateName);
 		query.setParameter("templateLanguage", templateLanguage);
         query.setParameter("organizationOid", organizationOid);		        
-        if (ap) query.setParameter("applicationPeriod", applicationPeriod);		        
-        if (ft) query.setParameter("fetchTarget", fetchTarget);		                
-        if (ta) query.setParameter("tag", tag);		
+        if (hasApplicationPeriod) query.setParameter("applicationPeriod", applicationPeriod);
+        if (hasFetchTarget) query.setParameter("fetchTarget", fetchTarget);
+        if (hasTag) query.setParameter("tag", tag);
 		query.setFirstResult(0);	// LIMIT 1
 		query.setMaxResults(1);  	//
 			
