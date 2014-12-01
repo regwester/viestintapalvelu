@@ -64,6 +64,7 @@ input.icon-actionmenu {
     border: none;
     width: 20px;
     height: 18px;
+    box-shadow: none;
 }
 
 div.main-container {
