@@ -104,7 +104,8 @@
   </div>
 
   <div class="pagination pagination-centered row-fluid" ng-if="reportedLettersDTO.numberOfLetterBatches > pagination.pageSize">
-    <pagination total-items="reportedLettersDTO.numberOfLetterBatches" 
+    <pagination total-items="reportedLettersDTO.numberOfLetterBatches"
+                max-size="10" boundary-links="true"
                 items-per-page="{{ pagination.pageSize }}"
                 ng-model="pagination.page"
                 ng-change="fetch()"
