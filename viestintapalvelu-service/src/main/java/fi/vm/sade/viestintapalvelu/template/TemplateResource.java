@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.dto.OrganizationTemplatesAndDrafts;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -649,35 +650,54 @@ public class TemplateResource extends AsynchronousResource {
     }
 
 
+    @GET
+    @Produces("application/json")
+    @Path("/draft/listByApplicationperiod/{applicationPeriod}")
+    public List<OrganisaatioHierarchyDto> getDraftsByApplicationPeriod(@ApiParam(name ="applicationPeriod", value = "haku (OID)", required = true)
+                                                                       @PathParam("applicationPeriod") String applicationPeriod) {
+
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, Locale.forLanguageTag("FI")); //todo handle locale
+        Set<String> providerOrgIds = new HashSet<String>();
+        for(LOPDto lop : providers) {
+            providerOrgIds.add(lop.getId());
+        }
+
+        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
+        for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
+
+        }
 
 
+        return new ArrayList<OrganisaatioHierarchyDto>();
+    }
 
     @GET
     @Produces("application/json")
     @Path("/listByApplicationPeriod/{applicationPeriod}")
-    //public List<Template> getTemplatesByApplicationPeriod(
     public List<OrganisaatioHierarchyDto> getTemplatesByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
-
-
 
         /*
         First find a list of all templates for the given application period. After that we use this list to filter
         the big list of different organizations to a group that only have templates for this application period.
          */
-        //"1.2.246.562.5.2013112910452702965370"
-        Set<String> organizationOIDs = new HashSet<String>();
+
 
         //search for all schools and organizations that provide teaching for the given application period
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI"));
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, Locale.forLanguageTag("FI")); //todo handle locale
 
+        Set<String> providerOrgIds = new HashSet<String>();
         for(LOPDto lop : providers) {
-            organizationOIDs.add(lop.getId());
+            providerOrgIds.add(lop.getId());
         }
 
         List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
         List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
+
+        //todo still need to fetch the actual templates
+        List<Template> byApplicationPeriod = templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
+
 
         for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
             String organisaatioOid = orgHenkilo.getOrganisaatioOid();
@@ -687,26 +707,23 @@ public class TemplateResource extends AsynchronousResource {
             Depth first search and search if the org OID is one that has templates.
             If a leaf node has templates assigned to it, we need to include all parents of the hierarchy.
              */
-            filterHierarchy(root, organizationOIDs);
+            filterHierarchy(root, providerOrgIds);
 
             userRootOrganizations.add(root);
         }
-        //todo still need to fetch the actual templates
-        /*
-        List<Template> byCriteria = templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
 
-        for (Template template : byCriteria) {
-            organizationOIDs.add(template.getOrganizationOid());
-        }
-*/
+        //now find drafts for all organizations
         return userRootOrganizations;
     }
+
+
+
 
     /*
      * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false
      */
     private boolean filterHierarchy(OrganisaatioHierarchyDto node, Set<String> OIDs) {
-        if(node.getChildren().isEmpty())
+        if(node.getChildren() == null || node.getChildren().isEmpty())
             return OIDs.contains(node.getOid());
 
         boolean anyChildInOids = false;
@@ -720,13 +737,7 @@ public class TemplateResource extends AsynchronousResource {
                 childrenWithoutMatches.add(child); //remove all these after for each loop
             }
         }
-
         node.getChildren().removeAll(childrenWithoutMatches);
-
-        if(!anyChildInOids) {
-            node.setChildren(new ArrayList<OrganisaatioHierarchyDto>());
-        }
-
         return anyChildInOids;
     }
 
