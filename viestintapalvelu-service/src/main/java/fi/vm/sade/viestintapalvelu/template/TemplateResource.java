@@ -19,6 +19,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserCompon
 import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -49,6 +50,7 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {
+
     public static final String DEFAULT_STRUCTURE_TYPE = ContentStructureType.letter.name();
 
     public static final Logger log = LoggerFactory.getLogger(TemplateResource.class);
@@ -105,6 +107,7 @@ public class TemplateResource extends AsynchronousResource {
 
     private final static String GetTemplateContent = "Palauttaa kirjepohjan sisällön";
     private final static String GetTemplateContent400 = "Kirjepohjan palautus epäonnistui.";
+    private static final String DEFAULT_TEMPLATES = "Palauttaa oletus kirjepohjat annetun tilan mukaan";
 
     @GET
     @Path("/get")
@@ -277,6 +280,15 @@ public class TemplateResource extends AsynchronousResource {
         @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query")})
     public Template templateByNameAndState(@Context HttpServletRequest request, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam ("state") State state) throws IOException, DocumentException {
         return templateService.getTemplateByName(templateCriteriaParams(request).withState(state), parseBoolean(request, "content"));
+    }
+    
+    @GET
+    @Path("/defaults/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = DEFAULT_TEMPLATES, notes = DEFAULT_TEMPLATES, response = Template.class)
+    public List<Template> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
     }
 
     private TemplateCriteria templateCriteriaParams(HttpServletRequest request) {
@@ -656,7 +668,7 @@ public class TemplateResource extends AsynchronousResource {
     public List<OrganisaatioHierarchyDto> getDraftsByApplicationPeriod(@ApiParam(name ="applicationPeriod", value = "haku (OID)", required = true)
                                                                        @PathParam("applicationPeriod") String applicationPeriod) {
 
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, Locale.forLanguageTag("FI")); //todo handle locale
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
         Set<String> providerOrgIds = new HashSet<String>();
         for(LOPDto lop : providers) {
             providerOrgIds.add(lop.getId());
@@ -685,7 +697,7 @@ public class TemplateResource extends AsynchronousResource {
 
 
         //search for all schools and organizations that provide teaching for the given application period
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, Locale.forLanguageTag("FI")); //todo handle locale
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
 
         Set<String> providerOrgIds = new HashSet<String>();
         for(LOPDto lop : providers) {
