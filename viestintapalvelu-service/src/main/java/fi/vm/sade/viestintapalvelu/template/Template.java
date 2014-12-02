@@ -29,7 +29,7 @@ public class Template {
     @ApiModelProperty("Kirjepohjan kielikoodi")
     private String language;
 
-    @ApiModelProperty("Kirjepohjan uvaus")
+    @ApiModelProperty("Kirjepohjan kuvaus")
     private String description;
 
     private String styles;
