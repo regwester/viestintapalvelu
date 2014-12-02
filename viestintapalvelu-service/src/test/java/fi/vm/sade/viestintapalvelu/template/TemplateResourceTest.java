@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,6 +26,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -41,10 +44,10 @@ import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
-
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
 import static org.junit.Assert.*;
+
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -189,9 +192,27 @@ public class TemplateResourceTest {
         assertNotNull(resource.templateByNameAndState(constructRequest(template), State.luonnos));
     }
     
+    @Test
+    public void fetchesDefaultTemplates() throws Exception {
+        givenSavedDefaultTemplateWithStatus(State.julkaistu, true);
+        assertFalse(resource.getDefaultTemplates(State.julkaistu).isEmpty());
+        assertTrue(resource.getDefaultTemplates(State.luonnos).isEmpty());
+    }
+    
     private Template givenSavedTemplateInDraftStatus() throws Exception{
-        Long id = (Long) resource.insert(givenTemplateWithStructure()).getEntity();
-        return resource.getTemplateByIDAndState(id, State.luonnos, null);
+        return givenSavedTemplateWithStatus(State.luonnos);
+    }
+
+    private Template givenSavedTemplateWithStatus(State state) throws IOException, DocumentException {
+        return givenSavedDefaultTemplateWithStatus(state, false);
+    }
+
+    private Template givenSavedDefaultTemplateWithStatus(State state, boolean usedAsDefault) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setUsedAsDefault(usedAsDefault);
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
     }
     
     private HttpServletRequest constructRequest(Template template) {
