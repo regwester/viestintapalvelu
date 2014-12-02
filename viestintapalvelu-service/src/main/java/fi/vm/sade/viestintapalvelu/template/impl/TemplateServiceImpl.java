@@ -468,6 +468,7 @@ public class TemplateServiceImpl implements TemplateService {
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTemplateVersio(from.getVersionro());
         to.setDescription(from.getDescription());
+        to.setState(from.getState());
         return to;
     }
 
