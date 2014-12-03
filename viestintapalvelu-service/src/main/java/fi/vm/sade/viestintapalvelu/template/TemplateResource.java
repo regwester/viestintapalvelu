@@ -12,12 +12,10 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.viestintapalvelu.dto.OrganizationTemplatesAndDrafts;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 
 import org.slf4j.Logger;
@@ -284,12 +282,15 @@ public class TemplateResource extends AsynchronousResource {
     }
     
     @GET
-    @Path("/defaults/{state}")
+    @Path("/defaults")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @ApiOperation(value = DEFAULT_TEMPLATES, notes = DEFAULT_TEMPLATES, response = Template.class)
-    public List<Template> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
-        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
+    public List<Template> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @QueryParam("state") State state) {
+        if(state != null){
+            return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
+        }
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired());
     }
     
     @GET
