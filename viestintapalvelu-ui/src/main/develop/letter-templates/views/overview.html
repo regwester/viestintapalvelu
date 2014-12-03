@@ -14,8 +14,8 @@
             <input-list label="Valitse näytettävä kirjepohja:" items="letterTypes" model="radioSelection" input="radio" change="changeRadio()"/>
         </div>
     </div>
-    <div class="row" ng-if="showTable">
-        <div class="span12" ng-show="letterTemplates">
+    <div class="row">
+        <div class="span12" ng-show="(radioSelection !== 'organization') && getTemplates()">
             <table class="table table-striped clickable-table-row">
                 <thead>
                     <tr>
@@ -27,7 +27,7 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="letterTemplate in letterTemplates"
+                    <tr ng-repeat="letterTemplate in getTemplates()"
                         ng-click="editTemplate(letterTemplate)">
                         <td>{{letterTemplate.applicationTarget}}</td>
                         <td>{{letterTemplate.type}}</td>
@@ -38,14 +38,12 @@
                 </tbody>
             </table>
         </div>
-        <div class="span12" ng-show="!letterTemplates && applicationTarget">
+        <div class="span12" ng-show="(radioSelection === 'applicationTarget') && !getTemplates() && applicationTarget">
             <h5 class="center help-text-bold">Tälle haulle ei ole vielä kirjepohjia</h5>
             <p class="center help-text margin-bottom-one">Lisää hakukohtainen kirjepohja klikkaamalla Luo uusi -painiketta</p>
             <button class="center btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
         </div>
-    </div>
-    <div class="row" ng-if="!showTable" >
-        <div class="span12">
+        <div class="span12" ng-show="radioSelection === 'organization'">
             <p>TODO: Jonin direktiivi tänne!</p>
         </div>
     </div>

@@ -4,19 +4,14 @@ angular.module('letter-templates')
     .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state',
         function($scope, $modalInstance, TemplateService, $state) {
 
-            $scope.languageSelection = 'FI';
-            $scope.applicationTypeSelection = 'admission';
-
             $scope.applicationTarget = TemplateService.getApplicationTarget();
             TemplateService.getApplicationTargets().then(function(data) {
-                $scope.applicationTargets = data;
+                var list = [];
+                for(var i = 0, max = data.length; i < max; i++){
+                    list.push({name: data[i].nimi.kieli_fi, value: data[i].oid});
+                }
+                $scope.applicationTargets = list;
             });
-
-            //Show a list of applicationTargets that have the selected type
-            $scope.previousApplicationTargets = [
-                'Korkeakoulujen yhteishaku syksy 2013',
-                'Korkeakoulujen yhteishaku syksy 2012'
-            ];
 
             $scope.languages = [
                 {value: 'FI', text: 'suomi'},

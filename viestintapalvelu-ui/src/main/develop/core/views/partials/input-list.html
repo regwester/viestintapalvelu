@@ -3,7 +3,7 @@
     <div ng-repeat="item in items">
         <input class="margin-right-half" type="{{input}}" ng-model="$parent.model" value="{{item.value}}" ng-change="change">{{item.text}}
         <div class="margin-left-oneandquarter" ng-if="item.list && $parent.model == item.value" >
-            <select class="span5" ng-model="applicationTarget" ng-options="t as t.nimi.kieli_fi for t in item.list | orderBy: 'nimi.kieli_fi'" ng-change="item.update(applicationTarget)"></select>
+            <select class="span5" ng-model="selectItem" ng-options="t as t.name for t in item.list | orderBy: 'name'" ng-change="item.update(selectItem)"></select>
         </div>
     </div>
 </div>

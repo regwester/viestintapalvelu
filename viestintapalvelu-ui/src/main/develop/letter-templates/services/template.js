@@ -35,6 +35,9 @@ angular.module('letter-templates')
             publishTemplate : function() {
                 return true;
             },
+            getDefaultTemplates: function(status) {
+                return $http.get(templateBaseUrl + 'defaults', {params: {state: status}});
+            },
             getParsedTreeGrid : function(response) {
                 console.log("getParsedTreeGrid");
                 console.log(response);
