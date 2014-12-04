@@ -50,11 +50,6 @@ public interface TemplateCriteria {
      * @return the state used with this criteria to filter the result (defaults to {@link State#julkaistu}
      */
     State getState();
-    
-    /**
-     * @return the hakuOid used with this criteria to filter the result
-     */
-    String getHakuOid();
 
     /**
      * @return true if the matching template should be the default one (for given name and language)
@@ -100,10 +95,4 @@ public interface TemplateCriteria {
      * @return a criteria with state condition set to given value
      */
     TemplateCriteria withState(State state);
-    
-    /**
-     * @param hakuOid to use (or not to use if null)
-     * @return a criteria with hakuOid condition set to given value
-     */
-    TemplateCriteria withHakuOid(String hakuOid);
 }

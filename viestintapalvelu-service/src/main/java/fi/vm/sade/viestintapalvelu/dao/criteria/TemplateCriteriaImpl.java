@@ -32,7 +32,6 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     private String applicationPeriod;
     private boolean defaultRequirement;
     private State state = State.julkaistu;
-    private String hakuOid;
 
     @Override
     public String getName() {
@@ -63,11 +62,6 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     public State getState() {
         return state;
     }
-    
-    @Override
-    public String getHakuOid() {
-        return hakuOid;
-    }
 
     public TemplateCriteriaImpl() {
     }
@@ -88,7 +82,6 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         copy.applicationPeriod = this.applicationPeriod;
         copy.defaultRequirement = this.defaultRequirement;
         copy.state = this.state;
-        copy.hakuOid = this.hakuOid;
         return copy;
     }
 
@@ -140,20 +133,17 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         copy.state = state;
         return copy;
     }
-    
-    @Override
-    public TemplateCriteria withHakuOid(String hakuOid) {
-        TemplateCriteriaImpl copy = copy();
-        copy.hakuOid = hakuOid;
-        return copy;
-    }
-
-
 
     @Override
     public String toString() {
-        return "TemplateCriteriaImpl [name=" + name + ", language=" + language + ", type=" + type + ", applicationPeriod=" + applicationPeriod
-                + ", defaultRequirement=" + defaultRequirement + ", state=" + state + ", hakuOid=" + hakuOid + "]";
+        return "TemplateCriteriaImpl{" +
+                "name='" + name + '\'' +
+                ", language='" + language + '\'' +
+                ", type='" + type + '\'' +
+                ", applicationPeriod='" + applicationPeriod + '\'' +
+                ", defaultRequirement="+defaultRequirement +
+                ", state="+defaultRequirement +
+                '}';
     }
 
     @Override
@@ -185,9 +175,6 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         if (state != null ? state != that.getState() : that.getState() != null) {
             return false;
         }
-        if (hakuOid != null ? hakuOid != that.getHakuOid() : that.getHakuOid() != null) {
-            return false;
-        }
         return true;
     }
 
@@ -198,7 +185,6 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         result = HASH_FACTOR * result + (type != null ? type.hashCode() : 0);
         result = HASH_FACTOR * result + (applicationPeriod != null ? applicationPeriod.hashCode() : 0);
         result = HASH_FACTOR * result + (defaultRequirement ? 1 : 0);
-        result = HASH_FACTOR * result + (hakuOid != null ? hakuOid.hashCode() : 0);
         return result;
     }
 
