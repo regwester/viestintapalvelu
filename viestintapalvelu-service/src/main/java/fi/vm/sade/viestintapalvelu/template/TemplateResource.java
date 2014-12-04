@@ -108,6 +108,7 @@ public class TemplateResource extends AsynchronousResource {
     private final static String GetTemplateContent = "Palauttaa kirjepohjan sisällön";
     private final static String GetTemplateContent400 = "Kirjepohjan palautus epäonnistui.";
     private static final String DEFAULT_TEMPLATES = "Palauttaa oletus kirjepohjat annetun tilan mukaan";
+    private static final String TEMPLATES_BY_HAKU = "Hakee kirjepohjat hakutunnisteen ja tilan perusteella";
 
     @GET
     @Path("/get")
@@ -289,6 +290,16 @@ public class TemplateResource extends AsynchronousResource {
     @ApiOperation(value = DEFAULT_TEMPLATES, notes = DEFAULT_TEMPLATES, response = Template.class)
     public List<Template> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
         return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
+    }
+    
+    @GET
+    @Path("/byHakuOid/{hakuOid}/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = TEMPLATES_BY_HAKU, notes= TEMPLATES_BY_HAKU, response = Template.class)
+    public List<Template> getTemplatesByApplicationPeriodAndState(@ApiParam(name = "hakuOid", value = "hakutunniste mille kirjepohjia haetaan") @PathParam("hakuOid") String hakuOid,
+            @ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(state));
     }
 
     private TemplateCriteria templateCriteriaParams(HttpServletRequest request) {

@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -41,12 +43,13 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
 import static org.mockito.Mockito.when;
 
@@ -195,8 +198,27 @@ public class TemplateResourceTest {
     @Test
     public void fetchesDefaultTemplates() throws Exception {
         givenSavedDefaultTemplateWithStatus(State.julkaistu, true);
-        assertFalse(resource.getDefaultTemplates(State.julkaistu).isEmpty());
+        List<Template> templates = resource.getDefaultTemplates(State.julkaistu);
+        assertEquals(1, templates.size());
+        assertEquals(State.julkaistu, templates.get(0).getState());
         assertTrue(resource.getDefaultTemplates(State.luonnos).isEmpty());
+    }
+    
+    @Test
+    public void fetchesDefaultTemplatesUsingDraftState() throws Exception {
+        givenSavedDefaultTemplateWithStatus(State.luonnos, true);
+        List<Template> templates = resource.getDefaultTemplates(State.luonnos);
+        assertEquals(1, templates.size());
+        assertEquals(State.luonnos, templates.get(0).getState());
+    }
+    
+    @Test
+    public void fetchesTemplatesByUsingApplicationPeriod() throws Exception {
+        String hakuOid = "1.9.3.4.200";
+        givenSavedTemplateWIthApplicationPeriodAndState(hakuOid, State.julkaistu);
+        assertEquals(1, resource.getTemplatesByApplicationPeriodAndState(hakuOid, State.julkaistu).size());
+        assertTrue(resource.getTemplatesByApplicationPeriodAndState(hakuOid, State.luonnos).isEmpty());
+        assertTrue(resource.getTemplatesByApplicationPeriodAndState("12334.23", State.julkaistu).isEmpty());
     }
     
     private Template givenSavedTemplateInDraftStatus() throws Exception{
@@ -230,6 +252,14 @@ public class TemplateResourceTest {
         template.setStructureId(structure.getId());
         template.setStructureName(structure.getName());
         return template;
+    }
+    
+    private Template givenSavedTemplateWIthApplicationPeriodAndState(String hakuOid, State state) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setApplicationPeriods(Arrays.asList(hakuOid));
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
     }
     
     @Configuration
