@@ -2,6 +2,7 @@ package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
 import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
@@ -211,6 +212,15 @@ public class TemplateResourceTest {
         assertEquals(State.luonnos, templates.get(0).getState());
     }
     
+    @Test
+    public void fetchesTemplatesByUsingApplicationPeriod() throws Exception {
+        String hakuOid = "1.9.3.4.200";
+        givenSavedTemplateWIthApplicationPeriodAndState(hakuOid, State.julkaistu);
+        assertEquals(1, resource.getTemplatesByApplicationPeriodAndState(hakuOid, State.julkaistu).size());
+        assertTrue(resource.getTemplatesByApplicationPeriodAndState(hakuOid, State.luonnos).isEmpty());
+        assertTrue(resource.getTemplatesByApplicationPeriodAndState("12334.23", State.julkaistu).isEmpty());
+    }
+    
     private Template givenSavedTemplateInDraftStatus() throws Exception{
         return givenSavedTemplateWithStatus(State.luonnos);
     }
@@ -242,6 +252,14 @@ public class TemplateResourceTest {
         template.setStructureId(structure.getId());
         template.setStructureName(structure.getName());
         return template;
+    }
+    
+    private Template givenSavedTemplateWIthApplicationPeriodAndState(String hakuOid, State state) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setApplicationPeriods(Arrays.asList(hakuOid));
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
     }
     
     @Configuration
