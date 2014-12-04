@@ -44,6 +44,12 @@ public class DocumentProviderTestData {
     public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) {
         return getIPosti(id, letterBatch, 1);
     }
+    
+    public static TemplateApplicationPeriod getTemplateApplicationPeriod(Template template, String hakuOid) {
+        TemplateApplicationPeriod period = new TemplateApplicationPeriod(template, hakuOid);
+        template.addApplicationPeriod(period);
+        return period;
+    }
 
     public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch, int count) {
         List<IPosti> iPostis = new ArrayList<IPosti>();
