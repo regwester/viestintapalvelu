@@ -54,6 +54,7 @@ import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
 import static com.google.common.base.Optional.fromNullable;
 
 @Service
@@ -65,16 +66,18 @@ public class TemplateServiceImpl implements TemplateService {
     private StructureDAO structureDAO;
     private StructureService structureService;
     private StructureConverter structureConverter;
+    private TemplatesByApplicationPeriodConverter templatesByApplicationPeriodconverter;
 
     @Autowired
     public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO,
-                               StructureDAO structureDAO, StructureService structureService, StructureConverter structureConverter) {
+                               StructureDAO structureDAO, StructureService structureService, StructureConverter structureConverter, TemplatesByApplicationPeriodConverter templatesByApplicationPeriodConverter) {
         this.templateDAO = templateDAO;
         this.currentUserComponent = currentUserComponent;
         this.draftDAO = draftDAO;
         this.structureDAO = structureDAO;
         this.structureService = structureService;
         this.structureConverter = structureConverter;
+        this.templatesByApplicationPeriodconverter = templatesByApplicationPeriodConverter;
     }
 
     /* (non-Javadoc)
@@ -646,59 +649,13 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public TemplatesByApplicationPeriod findByApplicationPeriod(String applicationPeriod) {
         TemplateCriteria criteria = new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod);
-        List<Template> publisheds = filterLatests(templateDAO.findTemplates(criteria.withState(State.julkaistu)));
-        List<Template> drafts = filterLatests(templateDAO.findTemplates(criteria.withState(State.luonnos)));
-        List<Template> closeds = filterCloseds(filterLatests(templateDAO.findTemplates(criteria.withState(State.suljettu))), publisheds, drafts);
-        return new TemplatesByApplicationPeriod(applicationPeriod, convertTemplateToInfo(publisheds), convertTemplateToInfo(drafts), convertTemplateToInfo(closeds));
+        List<Template> publisheds = templateDAO.findTemplates(criteria.withState(State.julkaistu));
+        List<Template> drafts = templateDAO.findTemplates(criteria.withState(State.luonnos));
+        List<Template> closeds = templateDAO.findTemplates(criteria.withState(State.suljettu));
+        return templatesByApplicationPeriodconverter.convert(applicationPeriod, publisheds, drafts, closeds);
     }
 
-    private List<Template> filterCloseds(List<Template> closeds, final List<Template> publisheds, final List<Template> drafts) {
-        @SuppressWarnings("unchecked")
-        final List<Template> pubDrafts = ListUtils.union(publisheds, drafts);
-        return new ArrayList<Template>(Collections2.filter(closeds, new Predicate<Template>() {
-
-            @Override
-            public boolean apply(final Template template) {
-                return !Iterables.tryFind(pubDrafts, new Predicate<Template>() {
-
-                    @Override
-                    public boolean apply(Template input) {
-                        return input.getLanguage().equals(template.getLanguage()) && input.getName().equals(template.getName());
-                    }
-                    
-                }).isPresent();
-            }
-            
-        }));
-    }
-    
-    private List<TemplateInfo> convertTemplateToInfo(List<Template> templates) {
-        return Lists.transform(templates, new Function<Template, TemplateInfo>() {
-            
-            @Override
-            public TemplateInfo apply(Template input) {
-                return new TemplateInfo(input.getId(), input.getName(), input.getLanguage(), input.getState(), input.getTimestamp());
-            }
-        });
-    }
-
-    private List<Template> filterLatests(final List<Template> templates) {
-        return new ArrayList<Template>(Collections2.filter(templates, new Predicate<Template>() {
-
-            @Override
-            public boolean apply(final Template template) {
-                return !Iterables.tryFind(templates, new Predicate<Template>() {
-
-                    @Override
-                    public boolean apply(Template input) {
-                        return input.getLanguage().equals(template.getLanguage()) && input.getName().equals(template.getName()) && input.getTimestamp().after(template.getTimestamp());
-                    }
-                    
-                }).isPresent();
-            }
-            
-        }));
-    }
+   
 
     private void verifyState(State oldState, State newState) {
         if (oldState == State.suljettu && newState != State.julkaistu) {

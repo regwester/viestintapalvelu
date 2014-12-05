@@ -34,8 +34,10 @@ import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
 import fi.vm.sade.viestintapalvelu.template.impl.StructureConverterImpl;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
+import fi.vm.sade.viestintapalvelu.template.impl.TemplatesByApplicationPeriodConverterImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.DaoVault;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
@@ -72,11 +74,12 @@ public class TemplateServiceTest {
     private StructureServiceImpl structureService;
     private TemplateService templateService;
     private StructureConverter structureConverter = new StructureConverterImpl();
+    private TemplatesByApplicationPeriodConverter applicationPeriodConverter = new TemplatesByApplicationPeriodConverterImpl();
 
     @Before
     public void setup() {
         this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent, mockedDraftDAO,
-                structureDAO, structureService, structureConverter);
+                structureDAO, structureService, structureConverter, applicationPeriodConverter);
     }
 
     @Test
