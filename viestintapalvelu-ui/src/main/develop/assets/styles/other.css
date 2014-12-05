@@ -1,9 +1,11 @@
+/*
 // Paths
-$img-folder: '../img/';
+//$img-folder: '../img/';
 
 // Colors
 /* Name the color uniquely and then use it in another variable based on purpose to keep code reusable
  * http://chir.ag/projects/name-that-color/ */
+/*
 $light-grey: #eeeeee;
 $medium-grey: #bab6b6;
 $grey: #bdbdbd;
@@ -12,15 +14,18 @@ $color-dusty-gray: #999999;
 $color-help-text: $color-dusty-gray;
 
 // Font weights
+
 $light: 100;
 $regular: 400;
 $bold: 700;
 
 // Base font
+
 $base-font-family: sans-serif;
 $base-font-size: 13px;
 $base-font-weight: $regular;
 $base-line-height: 1.4;
+*/
 
 .hakuVirheet .valintakoe:nth-child(odd), .hakuVirheet .jonosija:nth-child(odd) {
   background: #F0fafF;
@@ -30,7 +35,7 @@ $base-line-height: 1.4;
 }
 
 .jonosija, .valintakoe {
-  border-top: 5px solid $light-grey;
+  border-top: 5px solid #eeeeee;
   padding-left: 20px;
 }
 
@@ -74,7 +79,7 @@ $base-line-height: 1.4;
 }
 
 #hakuKentta {
-  background: url($img-folder + "search-icon.png") 5px 5px no-repeat;
+  background: url("../img/search-icon.png") 5px 5px no-repeat;
   border-radius: 3px;
   font-size: 12px;
   height: 20px;
@@ -83,15 +88,15 @@ $base-line-height: 1.4;
 }
 
 #hakuKentta:hover, #hakuKentta:focus {
-  background: #fff6da url($img-folder + "search-icon.png") 5px 5px no-repeat;
+  background: #fff6da url("../img/search-icon.png") 5px 5px no-repeat;
 }
 
 .select-style {
-  border: 1px solid $grey;
+  border: 1px solid #bdbdbd;
   width: 160px;
   height: 23px;
   overflow: hidden;
-  background: #fff url($img-folder + "select-icon.png") no-repeat 90% 50%;
+  background: #fff url("../img/select-icon.png") no-repeat 90% 50%;
 }
 
 .select-style select {
@@ -118,7 +123,7 @@ $base-line-height: 1.4;
   text-align: left;
   margin-bottom: 28px;
   color: #4d4d4d;
-  font-size: $base-font-size;
+  font-size: 13px;
 }
 
 .results table th, .results table td {
@@ -142,7 +147,7 @@ $base-line-height: 1.4;
 }
 
 .bbutton {
-  background-image: url($img-folder + icon-back.gif);
+  background-image: url("../img/icon-back.gif");
   background-position: left center;
   background-repeat: no-repeat;
   text-align: right;
@@ -159,7 +164,7 @@ $base-line-height: 1.4;
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
-  background-image: url($img-folder + "settings.gif");
+  background-image: url("../img/settings.gif");
   background-position: center center;
   background-repeat: no-repeat;
   width: 120px;
@@ -271,7 +276,7 @@ a, .clickable-header-cell {
 
 .sort-true,
 .sort-desc {
-  background-image: url($img-folder + "desc.gif");
+  background-image: url("../img/desc.gif");
   background-position: right center;
   background-repeat: no-repeat;
   text-align: left;
@@ -279,14 +284,14 @@ a, .clickable-header-cell {
 
 .sort-false,
 .sort-asc {
-  background-image: url($img-folder + "asc.gif");
+  background-image: url("../img/asc.gif");
   background-position: right center;
   background-repeat: no-repeat;
   text-align: left;
 }
 
 .datepicker {
-  background: url($img-folder + "calendar.png") no-repeat scroll 0 0;
+  background: url("../img/calendar.png") no-repeat scroll 0 0;
   background-position: 95% 50%;
 }
 
@@ -420,7 +425,7 @@ ul.normal-margin {
   width: 10%;
   height: 20px; /* same as progress bar */
 
-  background-image: url($img-folder + "ajax-loader-big.gif");
+  background-image: url("../img/ajax-loader-big.gif");
   background-repeat: no-repeat;
   background-size: auto 100%;
   background-position: center;
@@ -530,18 +535,19 @@ ul.attachments-list {
 }
 
 .subnote {
-  color: $medium-grey;
+  color: #bab6b6;
   font-style: italic;
 }
 
 .help-text {
-  color: $color-help-text;
-  font-size: $base-font-size;
+  color: #999999;
+  font-size: 13px;
 }
 
 .help-text-bold {
-  @extend .help-text;
-  font-weight: $bold;
+  color: #999999;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .center {

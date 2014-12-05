@@ -1,7 +1,7 @@
 var gulp = require('gulp'),
     concat = require('gulp-concat'),
     uglify = require('gulp-uglify'),
-    sass = require('gulp-sass'),
+    //sass = require('gulp-sass'),
     sourcemaps = require('gulp-sourcemaps'),
     bower = require('gulp-bower'),
     del = require('del'),
@@ -59,10 +59,12 @@ var styles = function() {
     return gulp.src(input.styles)
         .pipe(plumber())
         .pipe(sourcemaps.init())
+            /*
             .pipe(sass({
                 errLogToConsole: true,
                 outputStyle: 'compressed'
             }))
+            */
             .pipe(concat('all.css'))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(output.styles));
