@@ -221,6 +221,17 @@ public class TemplateResourceTest {
         assertTrue(resource.getTemplatesByApplicationPeriodAndState("12334.23", State.julkaistu).isEmpty());
     }
     
+    @Test
+    public void listsTemplatesByApplicationPeriod() throws Exception {
+        String hakuOid = "1.9.3.4.213323";
+        givenSavedTemplateWithApplicationPeriodAndStatus(hakuOid, State.julkaistu);
+        TemplatesByApplicationPeriod dto = resource.listTemplatesByApplicationPeriod(hakuOid);
+        assertEquals(1, dto.publishedTemplates.size());
+        assertTrue(dto.closedTemplates.isEmpty());
+        assertTrue(dto.draftTemplates.isEmpty());
+        assertEquals(hakuOid, dto.hakuOid);
+    }
+    
     private Template givenSavedTemplateInDraftStatus() throws Exception{
         return givenSavedTemplateWithStatus(State.luonnos);
     }
@@ -232,6 +243,14 @@ public class TemplateResourceTest {
     private Template givenSavedDefaultTemplateWithStatus(State state, boolean usedAsDefault) throws IOException, DocumentException {
         Template template = givenTemplateWithStructure();
         template.setUsedAsDefault(usedAsDefault);
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
+    }
+    
+    private Template givenSavedTemplateWithApplicationPeriodAndStatus(String applicationPeriod, State state) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setApplicationPeriods(Arrays.asList(applicationPeriod));
         template.setState(state);
         Long id = (Long) resource.insert(template).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);

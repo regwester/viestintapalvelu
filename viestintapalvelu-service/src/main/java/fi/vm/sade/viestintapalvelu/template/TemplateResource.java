@@ -307,7 +307,7 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @ApiOperation(value = "Hakee uusimmat kirjepohjat hakutunnisteen perusteella", notes = "Palauttaa myös suljettuja kirjepohjia, olettaen ettei samanlaista löydy julkaistu tai luonnostilassa")
-    public TemplatesByApplicationPeriod getTemplatesByApplicationPeriod(@ApiParam(name = "applicationPeriod", value = "hakutunniste millä kirjepohjia haetaan") @PathParam("applicationPeriod") String applicationPeriod) {
+    public TemplatesByApplicationPeriod listTemplatesByApplicationPeriod(@ApiParam(name = "applicationPeriod", value = "hakutunniste millä kirjepohjia haetaan") @PathParam("applicationPeriod") String applicationPeriod) {
         return templateService.findByApplicationPeriod(applicationPeriod);
     }
 
