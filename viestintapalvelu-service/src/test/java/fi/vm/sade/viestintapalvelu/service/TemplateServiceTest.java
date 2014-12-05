@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.service;
 
 import java.util.Arrays;
+import java.util.Date;
 
 import javax.ws.rs.BadRequestException;
 
@@ -31,16 +32,29 @@ import fi.vm.sade.viestintapalvelu.structure.dto.converter.StructureDtoConverter
 import fi.vm.sade.viestintapalvelu.structure.impl.StructureServiceImpl;
 import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.impl.StructureConverterImpl;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.DaoVault;
-
-import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.*;
-import static org.junit.Assert.*;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentSaveDto;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructureSaveDto;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.replacement;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.structure;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.structureSaveDto;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.with;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class TemplateServiceTest {
@@ -397,6 +411,42 @@ public class TemplateServiceTest {
         template.setUsedAsDefault(true);
         verifyTemplateStateChange(State.luonnos, State.luonnos, captor, template);
         assertTrue(captor.getValue().isUsedAsDefault());
+    }
+    
+    @Test
+    public void returnsLatestTemplatesByApplicationPeriod() {
+        String hakuOid = "1.2.3.4.5600";
+        Template latestPublishedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.julkaistu);
+        Template publishedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(0), State.julkaistu);
+        Template latestDraftTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.luonnos);
+        Template draftTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(0), State.luonnos);
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.julkaistu)))).thenReturn(Arrays.asList(latestPublishedTemplate, publishedTemplate));
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.luonnos)))).thenReturn(Arrays.asList(latestDraftTemplate, draftTemplate));
+        TemplatesByApplicationPeriod dto = templateService.findByApplicationPeriod(hakuOid);
+        assertEquals(hakuOid, dto.hakuOid);
+        assertEquals(1, dto.draftTemplates.size());
+        assertEquals(1, dto.publishedTemplates.size());
+        assertTemplateInfo(latestPublishedTemplate, dto.publishedTemplates.get(0));
+        assertTemplateInfo(latestDraftTemplate, dto.draftTemplates.get(0));
+    }
+    
+
+    @Test
+    public void returnsTemplatesByApplicationPeriodByFilteringOutClosedTemplates() {
+        
+    }
+    
+    private void assertTemplateInfo(Template expectedValues, TemplateInfo info) {
+        assertEquals(expectedValues.getState(), info.state);
+        assertEquals(expectedValues.getTimestamp(), info.timeStamp);
+    }
+    
+    private Template givenTemplateWithApplicationPeriodTimeAndState(String hakuOid, Date date, State state) {
+        Template template = DocumentProviderTestData.getTemplate(1l);
+        template.addApplicationPeriod(DocumentProviderTestData.getTemplateApplicationPeriod(template, hakuOid));
+        template.setTimestamp(date);
+        template.setState(state);
+        return template;
     }
     
     private void verifyTemplateStateChange(State oldState, State newState) {

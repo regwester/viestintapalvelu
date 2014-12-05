@@ -43,4 +43,6 @@ public interface TemplateService {
     List<Template> listTemplateVersionsByName(TemplateCriteria templateCriteria, boolean content, boolean periods);
 
     List<Template> findByCriteria(TemplateCriteria criteria);
+    
+    TemplatesByApplicationPeriod findByApplicationPeriod(String applicationPeriod);
 }

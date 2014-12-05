@@ -3,35 +3,57 @@ package fi.vm.sade.viestintapalvelu.template.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import fi.vm.sade.viestintapalvelu.model.Draft;
-import fi.vm.sade.viestintapalvelu.model.Replacement;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
-import fi.vm.sade.viestintapalvelu.template.*;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
+import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.ContentReplacement;
+import fi.vm.sade.viestintapalvelu.model.ContentStructure;
+import fi.vm.sade.viestintapalvelu.model.Draft;
+import fi.vm.sade.viestintapalvelu.model.DraftReplacement;
+import fi.vm.sade.viestintapalvelu.model.Replacement;
+import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
-import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
-import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
-
+import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
+import fi.vm.sade.viestintapalvelu.template.StructureConverter;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
 import static com.google.common.base.Optional.fromNullable;
 
 @Service
@@ -602,9 +624,6 @@ public class TemplateServiceImpl implements TemplateService {
         return replacements;
     }
 
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#updateTemplate(fi.vm.sade.viestintapalvelu.template.Template)
-     */
     @Override
     public void updateTemplate(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = templateDAO.read(template.getId());
@@ -622,6 +641,63 @@ public class TemplateServiceImpl implements TemplateService {
         if (editingAllowed) {
             ensureNoOtherDefaults(model);
         }
+    }
+    
+    @Override
+    public TemplatesByApplicationPeriod findByApplicationPeriod(String applicationPeriod) {
+        TemplateCriteria criteria = new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod);
+        List<Template> publisheds = filterLatests(templateDAO.findTemplates(criteria.withState(State.julkaistu)));
+        List<Template> drafts = filterLatests(templateDAO.findTemplates(criteria.withState(State.luonnos)));
+        List<Template> closeds = filterCloseds(filterLatests(templateDAO.findTemplates(criteria.withState(State.suljettu))), publisheds, drafts);
+        return new TemplatesByApplicationPeriod(applicationPeriod, convertTemplateToInfo(publisheds), convertTemplateToInfo(drafts), convertTemplateToInfo(closeds));
+    }
+
+    private List<Template> filterCloseds(List<Template> closeds, final List<Template> publisheds, final List<Template> drafts) {
+        @SuppressWarnings("unchecked")
+        final List<Template> pubDrafts = ListUtils.union(publisheds, drafts);
+        return new ArrayList<Template>(Collections2.filter(closeds, new Predicate<Template>() {
+
+            @Override
+            public boolean apply(final Template template) {
+                return !Iterables.tryFind(pubDrafts, new Predicate<Template>() {
+
+                    @Override
+                    public boolean apply(Template input) {
+                        return input.getLanguage().equals(template.getLanguage()) && input.getName().equals(template.getName());
+                    }
+                    
+                }).isPresent();
+            }
+            
+        }));
+    }
+    
+    private List<TemplateInfo> convertTemplateToInfo(List<Template> templates) {
+        return Lists.transform(templates, new Function<Template, TemplateInfo>() {
+            
+            @Override
+            public TemplateInfo apply(Template input) {
+                return new TemplateInfo(input.getId(), input.getName(), input.getLanguage(), input.getState(), input.getTimestamp());
+            }
+        });
+    }
+
+    private List<Template> filterLatests(final List<Template> templates) {
+        return new ArrayList<Template>(Collections2.filter(templates, new Predicate<Template>() {
+
+            @Override
+            public boolean apply(final Template template) {
+                return !Iterables.tryFind(templates, new Predicate<Template>() {
+
+                    @Override
+                    public boolean apply(Template input) {
+                        return input.getLanguage().equals(template.getLanguage()) && input.getName().equals(template.getName()) && input.getTimestamp().after(template.getTimestamp());
+                    }
+                    
+                }).isPresent();
+            }
+            
+        }));
     }
 
     private void verifyState(State oldState, State newState) {
