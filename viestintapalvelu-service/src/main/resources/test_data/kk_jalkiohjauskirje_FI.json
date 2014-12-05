@@ -35,4 +35,31 @@
         "timestamp": null,
         "mandatory": false
     }
-], "applicationPeriods": null, "templateVersio": null, "usedAsDefault": false, "type": null}
+], "applicationPeriods": null,
+ "templateVersio": null,
+ "usedAsDefault": false,
+ "type": null,
+ "structureId": null,
+ "structureName": null,
+ "structure": {
+     "name": "kk_jalkiohjauskirje structure",
+     "language": "FI",
+     "description": null,
+     "contentStructures": [
+         {
+             "type": "letter",
+             "styleName": null,
+             "style": null,
+             "contents": [
+                 {
+                     "role": "body",
+                     "name": "name",
+                     "contentType": "html",
+                     "content": "content"
+                 }
+             ]
+         }
+     ],
+     "replacements": []
+ },
+ "state": null}
