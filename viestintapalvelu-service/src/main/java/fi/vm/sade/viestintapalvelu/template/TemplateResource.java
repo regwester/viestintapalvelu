@@ -293,13 +293,22 @@ public class TemplateResource extends AsynchronousResource {
     }
     
     @GET
-    @Path("/byHakuOid/{hakuOid}/{state}")
+    @Path("/listByApplicationPeriod/{applicationPeriod}/{state}")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @ApiOperation(value = TEMPLATES_BY_HAKU, notes= TEMPLATES_BY_HAKU, response = Template.class)
-    public List<Template> getTemplatesByApplicationPeriodAndState(@ApiParam(name = "hakuOid", value = "hakutunniste mille kirjepohjia haetaan") @PathParam("hakuOid") String hakuOid,
+    public List<Template> getTemplatesByApplicationPeriodAndState(@ApiParam(name = "applicationPeriod", value = "hakutunniste mille kirjepohjia haetaan") @PathParam("applicationPeriod") String applicationPeriod,
             @ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
-        return templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(state));
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod).withState(state));
+    }
+    
+    @GET
+    @Path("/listByApplicationPeriod/{applicationPeriod}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = "Hakee uusimmat kirjepohjat hakutunnisteen perusteella", notes = "Palauttaa myös suljettuja kirjepohjia, olettaen ettei samanlaista löydy julkaistu tai luonnostilassa")
+    public TemplatesByApplicationPeriod getTemplatesByApplicationPeriod(@ApiParam(name = "applicationPeriod", value = "hakutunniste millä kirjepohjia haetaan") @PathParam("applicationPeriod") String applicationPeriod) {
+        return templateService.findByApplicationPeriod(applicationPeriod);
     }
 
     private TemplateCriteria templateCriteriaParams(HttpServletRequest request) {
@@ -696,8 +705,8 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Produces("application/json")
-    @Path("/listByApplicationPeriod/{applicationPeriod}")
-    public List<OrganisaatioHierarchyDto> getTemplatesByApplicationPeriod(
+    @Path("/listOrganizationsByApplicationPeriod/{applicationPeriod}")
+    public List<OrganisaatioHierarchyDto> getOrganizationHierarchyByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
 
