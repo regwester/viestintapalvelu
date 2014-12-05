@@ -433,12 +433,26 @@ public class TemplateServiceTest {
 
     @Test
     public void returnsTemplatesByApplicationPeriodByFilteringOutClosedTemplates() {
-        
+        String hakuOid = "1.2.3.4.57700";
+        Template publishedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.julkaistu);
+        Template closedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.suljettu);
+        Template closedTemplateEn = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.suljettu);
+        closedTemplateEn.setLanguage("EN");
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.julkaistu)))).thenReturn(Arrays.asList(publishedTemplate));
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.suljettu)))).thenReturn(Arrays.asList(closedTemplate, closedTemplateEn));
+        TemplatesByApplicationPeriod dto = templateService.findByApplicationPeriod(hakuOid);
+        assertEquals(hakuOid, dto.hakuOid);
+        assertTrue(dto.draftTemplates.isEmpty());
+        assertEquals(1, dto.publishedTemplates.size());
+        assertEquals(1, dto.closedTemplates.size());
+        assertTemplateInfo(publishedTemplate, dto.publishedTemplates.get(0));
+        assertTemplateInfo(closedTemplateEn, dto.closedTemplates.get(0));
     }
     
     private void assertTemplateInfo(Template expectedValues, TemplateInfo info) {
         assertEquals(expectedValues.getState(), info.state);
         assertEquals(expectedValues.getTimestamp(), info.timeStamp);
+        assertEquals(expectedValues.getLanguage(), info.language);
     }
     
     private Template givenTemplateWithApplicationPeriodTimeAndState(String hakuOid, Date date, State state) {
