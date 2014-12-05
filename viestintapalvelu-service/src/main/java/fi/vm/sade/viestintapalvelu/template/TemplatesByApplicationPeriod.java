@@ -16,17 +16,22 @@
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.Serializable;
+import java.util.Date;
 import java.util.List;
 
 import javax.validation.constraints.NotNull;
 
+import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+
+import fi.vm.sade.viestintapalvelu.model.Template.State;
 
 
 /**
  * @author risal1
  *
  */
+@ApiModel("Hakutunnisteeseen liittyvät kirjepohjat")
 public class TemplatesByApplicationPeriod implements Serializable {
 
     private static final long serialVersionUID = -6852022531900885586L;
@@ -36,19 +41,47 @@ public class TemplatesByApplicationPeriod implements Serializable {
     public final String hakuOid;
     
     @ApiModelProperty("Viimeisimmät versiot julkaistuista kirjepohjista")
-    public final List<Template> publishedTemplates;
+    public final List<TemplateInfo> publishedTemplates;
     
     @ApiModelProperty("Viimeisimmät versiot luonnostilaisista kirjepohjista")
-    public final List<Template> draftTemplates;
+    public final List<TemplateInfo> draftTemplates;
     
     @ApiModelProperty("Viimeisimmät suljetut versiot kirjepohjista, sisältää vain suljetut versiot kirjepohjista mistä ei löydy julkaistua- tai luonnostilaista versiota")
-    public final List<Template> closedTemplates;
+    public final List<TemplateInfo> closedTemplates;
 
-    public TemplatesByApplicationPeriod(String hakuOid, List<Template> publishedTemplates, List<Template> draftTemplates, List<Template> closedTemplates) {
+    public TemplatesByApplicationPeriod(String hakuOid, List<TemplateInfo> publishedTemplates, List<TemplateInfo> draftTemplates, List<TemplateInfo> closedTemplates) {
         this.hakuOid = hakuOid;
         this.publishedTemplates = publishedTemplates;
         this.draftTemplates = draftTemplates;
         this.closedTemplates = closedTemplates;
+    }
+    
+    @ApiModel("Kirjepohjan tiedot listanäkymiä varten")
+    public static class TemplateInfo {
+        
+        @ApiModelProperty("Kirjepohjan tunniste")
+        public final Long id;
+        
+        @ApiModelProperty("Kirjepohjan nimi")
+        public final String name;
+        
+        @ApiModelProperty("Kirjepohjan kieli")
+        public final String language;
+        
+        @ApiModelProperty("Kirjepohjan tila")
+        public final State state;
+        
+        public final Date timeStamp;
+        
+        public TemplateInfo(Long id, String name, String language, State state, Date timeStamp) {
+            this.id = id;
+            this.name = name;
+            this.language = language;
+            this.state = state;
+            this.timeStamp = timeStamp;
+        }
+        
+        
     }
 
 }
