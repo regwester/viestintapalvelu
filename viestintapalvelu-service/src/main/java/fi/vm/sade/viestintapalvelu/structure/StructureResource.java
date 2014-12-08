@@ -22,7 +22,6 @@ import java.util.List;
 import javax.ws.rs.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
@@ -31,10 +30,10 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.dao.dto.StructureListDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
-import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 
 /**
  * User: ratamaa
@@ -70,8 +69,18 @@ public class StructureResource {
         return structureService.getStructure(id);
     }
 
+    @GET
+    @Path("/{id}/edit")
+    @Produces("application/json;charset=utf-8")
+    @ApiOperation(value = "Hakee rakenteen tiedot id:llä muokattavaksi", response = StructureViewDto.class)
+    public StructureSaveDto getStructureByIdForEditing(@ApiParam(value = "id", name = "Rakenteen id") @PathParam("id") long id) {
+        return structureService.getStructureForEditing(id);
+    }
+
     @POST
     @Path("/")
+    @Consumes("application/json")
+    @Produces("application/json;charset=utf-8")
     @ApiOperation(value = "Tallentaa uuden rakenteen. Palauttaa tallennetun rakenteen tiedot",
             response = StructureViewDto.class)
     public StructureViewDto storeStructure(StructureSaveDto structure) {

@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
-import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
+import com.google.common.base.Function;import com.google.common.collect.Ordering;import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
 import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructureContent;
 
@@ -34,6 +34,12 @@ import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructureContent;
     uniqueConstraints = @UniqueConstraint(columnNames = {"sisalto_rakenne", "jarjestys"}))
 public class ContentStructureContent implements Serializable, TypedContentStructureContent {
     private static final long serialVersionUID = 2783410302027964815L;
+
+    public static final Ordering<ContentStructureContent> BY_ORDER_NUMBER = Ordering.natural().onResultOf(new Function<ContentStructureContent, Integer>() {
+        public Integer apply(ContentStructureContent input) {
+            return input.getOrderNumber();
+        }
+    });
 
     @EmbeddedId
     @AttributeOverrides({

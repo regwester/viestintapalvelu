@@ -1,5 +1,31 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
+
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
+
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
@@ -620,6 +646,29 @@ public class TemplateResource extends AsynchronousResource {
         Long id = Long.parseLong(templateId);
         ContentStructureType type = parseStructureType(request.getParameter("type"));
         return templateService.findById(id, type);
+    }
+
+    @GET
+    @Path("{name}/{languageCode}/edit")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = "Palauttaa kirjepohjan kirjepohjan sekä rakenteen muokkausta varten", response = Template.class)
+    public Template getTemplateByIDForEditing(@PathParam("name") String name,
+                                              @PathParam("languageCode") String languageCode,
+                                              @Context HttpServletRequest request) {
+        return templateService.findByIdForEditing(new TemplateCriteriaImpl(name, languageCode)
+                .withApplicationPeriod(request.getParameter("applicationPeriod"))); // any state can be used (as new)
+    }
+
+    @GET
+    @Path("/{templateId}/edit")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Transactional
+    @ApiOperation(value = "Palauttaa kirjepohjan kirjepohjan sekä rakenteen muokkausta varten", response = Template.class)
+    public Template getTemplateByIDForEditing(@PathParam("templateId") Long templateId) {
+        return templateService.findByIdForEditing(templateId, null); // any state can be used (as new)
     }
     
     @GET

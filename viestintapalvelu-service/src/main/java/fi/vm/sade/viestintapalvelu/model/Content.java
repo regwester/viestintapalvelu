@@ -29,7 +29,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
  */
 @Entity
 @Table(name = "rakenne_sisalto", schema = "kirjeet")
-public class Content implements Serializable {
+public class Content implements Serializable, NamedContent {
     private static final long serialVersionUID = 8808015115199460274L;
 
     @Id

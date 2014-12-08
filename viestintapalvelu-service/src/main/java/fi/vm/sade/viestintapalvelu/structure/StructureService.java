@@ -58,4 +58,11 @@ public interface StructureService {
      * @return the id of the saved structure
      */
     long storeStructure(StructureSaveDto structure);
+
+    /**
+     * @param id of the structure
+     * @return the details for the structure for editing, containing only first contents of content for the same name
+     * @throws NotFoundException if not found by id
+     */
+    StructureSaveDto getStructureForEditing(Long id);
 }

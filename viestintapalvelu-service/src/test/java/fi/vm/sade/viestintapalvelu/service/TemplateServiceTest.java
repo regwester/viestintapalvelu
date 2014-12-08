@@ -400,7 +400,7 @@ public class TemplateServiceTest {
         fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
         dto.setId(1l);
         dto.setStructure(structureSaveDto(contentStructureSaveDto(ContentStructureType.letter,
-                contentSaveDto(ContentRole.body, ContentType.html))));
+                contentSaveDto("name", ContentRole.body, ContentType.html))));
         templateService.updateTemplate(dto);
 
         assertEquals(Long.valueOf(21l), template.getStructure().getId());

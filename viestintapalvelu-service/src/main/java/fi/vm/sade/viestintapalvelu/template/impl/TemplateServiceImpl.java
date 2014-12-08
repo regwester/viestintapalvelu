@@ -16,6 +16,8 @@ import java.util.Set;
 import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import javax.ws.rs.NotFoundException;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,6 +59,10 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
+import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
+import fi.vm.sade.viestintapalvelu.template.StructureConverter;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
+
 import static com.google.common.base.Optional.fromNullable;
 
 @Service
@@ -126,20 +132,22 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private void setTemplateStructure(fi.vm.sade.viestintapalvelu.template.Template template, Template model) {
-        // When called upon update, does not require structure being defined (in which case leaves it to existing one
-        // against which only validation is done)
-        if (template.getStructureId() != null) {
-            model.setStructure(structureDAO.read(template.getStructureId()));
-        } else if (template.getStructureName() != null
-                && template.getLanguage() != null) {
-            model.setStructure(structureDAO.findLatestStructrueByNameAndLanguage(template.getStructureName(),
-                    template.getLanguage()).orNull());
-        } else if (template.getStructure() != null) {
+        if (template.getStructure() != null) {
             // new structure:
             long structureId = structureService.storeStructure(template.getStructure());
             template.setStructureId(structureId);
             model.setStructure(structureDAO.read(structureId));
+        } else  if (template.getStructureId() != null) {
+            // When called upon update, does not require structure being defined (in which case leaves it to existing one
+            // against which only validation is done)
+            model.setStructure(structureDAO.read(template.getStructureId()));
+        } else if (template.getStructureName() != null
+                && template.getLanguage() != null) {
+            // If structure name specified, attach to latest structure with the given name (and Template's language):
+            model.setStructure(structureDAO.findLatestStructrueByNameAndLanguage(template.getStructureName(),
+                    template.getLanguage()).orNull());
         }
+        // We should have a structure by now:
         if (model.getStructure() == null) {
             throw BeanValidatorImpl.badRequest("Structure required. Please specify structureId / structureName " +
                     "or structure to create.");
@@ -279,8 +287,42 @@ public class TemplateServiceImpl implements TemplateService {
      * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
      */
     @Override
+    public fi.vm.sade.viestintapalvelu.template.Template findByIdForEditing(long id, State state) {
+        Template searchResult = state == null ? templateDAO.read(id) : templateDAO.findByIdAndState(id, state);
+        if (searchResult == null) {
+            throw new NotFoundException("Template not found by id: " + id + " and state="+state);
+        }
+        return convertForEditing(searchResult);
+    }
+
+    private fi.vm.sade.viestintapalvelu.template.Template convertForEditing(Template template) {
+        fi.vm.sade.viestintapalvelu.template.Template result = convert(template);
+        result.setState(null); // julkaistu becomes the default when saving again.
+        result.setStructure(structureService.getStructureForEditing(result.getStructureId()));
+        return result;
+    }
+
+    @Override
+    public fi.vm.sade.viestintapalvelu.template.Template findByIdForEditing(TemplateCriteria criteria) {
+        Template template = findTemplate(criteria);
+        if (template == null) {
+            throw new NotFoundException("No template found.");
+        }
+        return convertForEditing(template);
+    }
+
+    /* (non-Javadoc)
+         * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
+         */
+    @Override
     public fi.vm.sade.viestintapalvelu.template.Template findByIdAndState(long id, ContentStructureType structureType, State state) {
         Template searchResult = state == null ? templateDAO.read(id) : templateDAO.findByIdAndState(id, state);
+        fi.vm.sade.viestintapalvelu.template.Template result = convert(searchResult);
+        convertContent(searchResult, result, structureType);
+        return result;
+    }
+
+    private fi.vm.sade.viestintapalvelu.template.Template convert(Template searchResult) {
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
@@ -288,8 +330,6 @@ public class TemplateServiceImpl implements TemplateService {
         result.setStructureName(searchResult.getStructure().getName());
         result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
-        convertContent(searchResult, result, structureType);
-
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setState(searchResult.getState());
         return result;
@@ -445,7 +485,22 @@ public class TemplateServiceImpl implements TemplateService {
 
     public fi.vm.sade.viestintapalvelu.template.Template getTemplateByName(
             TemplateCriteria criteria, boolean content) {
+        Template template = findTemplate(criteria);
+        if (template == null) {
+            return null;
+        }
+
         fi.vm.sade.viestintapalvelu.template.Template searchTempl = new fi.vm.sade.viestintapalvelu.template.Template();
+        convertBasicData(template, searchTempl);
+        convertReplacements(template, searchTempl);
+        if (content) {
+            convertContent(template, searchTempl, criteria.getType());
+        }
+        searchTempl.setState(template.getState());
+        return searchTempl;
+    }
+
+    private Template findTemplate(TemplateCriteria criteria) {
         if (criteria.getName() == null) {
             return null;
         }
@@ -465,14 +520,7 @@ public class TemplateServiceImpl implements TemplateService {
         if (template == null) {
             return null;
         }
-
-        convertBasicData(template, searchTempl);
-        convertReplacements(template, searchTempl);
-        if (content) {
-            convertContent(template, searchTempl, criteria.getType());
-        }
-        searchTempl.setState(template.getState());
-        return searchTempl;
+        return template;
     }
 
     private Template resolveTemplatePreferringDefault(TemplateCriteria criteria) {
