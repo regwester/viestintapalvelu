@@ -103,7 +103,7 @@ public class OrganizationComponent {
             root.setNimi(nimi);
             return root;
         } catch (Exception e) {
-            LOGGER.error(e.getMessage());
+            LOGGER.error("Exception occurred while fetching OrganisaatioHierarchyDto", e);
             throw new ExternalInterfaceException("error.msg.getOrganizationHierarchyFailed", e);
         }
     }

@@ -1,23 +1,26 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
+import com.google.common.base.Optional;
+import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.*;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
-
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,22 +29,15 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Optional;
-import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.*;
-
-import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.Utils;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
-import fi.vm.sade.viestintapalvelu.model.Template.State;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
-import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
+import javax.servlet.http.HttpServletRequest;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
+import java.io.IOException;
+import java.security.NoSuchAlgorithmException;
+import java.util.*;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -703,54 +699,6 @@ public class TemplateResource extends AsynchronousResource {
 
         return new ArrayList<OrganisaatioHierarchyDto>();
     }
-
-    @GET
-    @Produces("application/json")
-    @Path("/listOrganizationsByApplicationPeriod/{applicationPeriod}")
-    public List<OrganisaatioHierarchyDto> getOrganizationHierarchyByApplicationPeriod(
-            @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
-            @PathParam("applicationPeriod") String applicationPeriod) {
-
-        /*
-        First find a list of all templates for the given application period. After that we use this list to filter
-        the big list of different organizations to a group that only have templates for this application period.
-         */
-
-
-        //search for all schools and organizations that provide teaching for the given application period
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
-
-        Set<String> providerOrgIds = new HashSet<String>();
-        for(LOPDto lop : providers) {
-            providerOrgIds.add(lop.getId());
-        }
-
-        List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
-        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
-
-        //todo still need to fetch the actual templates
-        List<Template> byApplicationPeriod = templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
-
-
-        for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
-            String organisaatioOid = orgHenkilo.getOrganisaatioOid();
-            OrganisaatioHierarchyDto root = organisaatioService.getOrganizationHierarchy(organisaatioOid);
-
-            /*
-            Depth first search and search if the org OID is one that has templates.
-            If a leaf node has templates assigned to it, we need to include all parents of the hierarchy.
-             */
-            filterHierarchy(root, providerOrgIds);
-
-            userRootOrganizations.add(root);
-        }
-
-        //now find drafts for all organizations
-        return userRootOrganizations;
-    }
-
-
-
 
     /*
      * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false

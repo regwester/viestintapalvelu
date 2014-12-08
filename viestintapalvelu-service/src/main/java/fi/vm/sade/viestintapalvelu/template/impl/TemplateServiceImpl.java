@@ -14,6 +14,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.ListUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -60,6 +62,8 @@ import static com.google.common.base.Optional.fromNullable;
 @Service
 @Transactional
 public class TemplateServiceImpl implements TemplateService {
+    private static final Logger log = LoggerFactory.getLogger(TemplateServiceImpl.class);
+
     private CurrentUserComponent currentUserComponent;
     private TemplateDAO templateDAO;
     private DraftDAO draftDAO;
@@ -425,6 +429,17 @@ public class TemplateServiceImpl implements TemplateService {
             templates.add(convertedTemplate);
         }
         return templates;
+    }
+
+    @Override
+    public List<fi.vm.sade.viestintapalvelu.template.Template> findByOrganizationOIDs(List<String> oids) {
+        List<Template> templates = templateDAO.findByOrganizationOIDs(oids);
+        List<fi.vm.sade.viestintapalvelu.template.Template> convertedTemplates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
+        for(Template template : templates) {
+            fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(template);
+            convertedTemplates.add(convertedTemplate);
+        }
+        return convertedTemplates;
     }
 
 
