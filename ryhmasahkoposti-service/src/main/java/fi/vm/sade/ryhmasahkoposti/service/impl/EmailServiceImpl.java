@@ -27,9 +27,9 @@ import fi.vm.sade.ryhmasahkoposti.service.dto.EmailRecipientDtoConverter;
 import fi.vm.sade.ryhmasahkoposti.service.dto.ReportedRecipientAttachmentSaveDto;
 import fi.vm.sade.ryhmasahkoposti.util.TemplateBuilder;
 
-import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.addToMappedList;
-import static fi.vm.sade.ryhmasahkoposti.util.CollectionUtils.combine;
-import static fi.vm.sade.ryhmasahkoposti.util.OptionalHelper.as;
+import static fi.vm.sade.viestintapalvelu.common.util.CollectionHelper.addToMappedList;
+import static fi.vm.sade.viestintapalvelu.common.util.CollectionHelper.combine;
+import static fi.vm.sade.viestintapalvelu.common.util.OptionalHelper.as;
 
 @Service
 public class EmailServiceImpl implements EmailService {

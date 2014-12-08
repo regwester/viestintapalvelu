@@ -23,6 +23,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Henkilöpalvelu -->
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>
@@ -61,11 +67,6 @@
         </dependency>
 
         <!-- Dokumenttipalvelu -->
-        <dependency>
-            <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
-            <artifactId>dokumenttipalvelu-api</artifactId>
-            <version>${dokumenttipalvelu.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -94,9 +95,9 @@
             </exclusions>
         </dependency>
         <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-            </dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -159,6 +160,10 @@
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cas-client-core</artifactId>
+                    <groupId>org.jasig.cas.client</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -452,6 +457,10 @@
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jasig.cas</groupId>
+                    <artifactId>cas-client-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -542,10 +551,10 @@
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>asm-all-repackaged</artifactId>
-            		<groupId>org.glassfish.hk2.external</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>asm-all-repackaged</artifactId>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -591,6 +600,17 @@
             <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
             <artifactId>dokumenttipalvelu-api</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>cas-client-support-distributed-ehcache</artifactId>
+                    <groupId>org.jasig.cas.client</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.1.12</version>
         </dependency>
     </dependencies>
 

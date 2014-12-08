@@ -11,6 +11,7 @@ public class LetterBatchesReportDTO implements Serializable {
     private List<OrganizationDTO> organizations;
     private Integer selectedOrganization;
     private Long numberOfLetterBatches;
+    private Long maxNumber;
     private List<LetterBatchReportDTO> letterBatchReports;
     
     public List<OrganizationDTO> getOrganizations() {
@@ -43,5 +44,13 @@ public class LetterBatchesReportDTO implements Serializable {
     
     public void setLetterBatchReports(List<LetterBatchReportDTO> letterBatchReports) {
         this.letterBatchReports = letterBatchReports;
+    }
+
+    public Long getMaxNumber() {
+        return maxNumber;
+    }
+
+    public void setMaxNumber(Long maxNumber) {
+        this.maxNumber = maxNumber;
     }
 }

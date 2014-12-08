@@ -4,10 +4,27 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
+import com.google.common.base.Function;
+
 import fi.vm.sade.viestintapalvelu.dto.iposti.IPostiDTO;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 public class LetterBatchReportDTO implements Serializable {
+    public static final Function<LetterBatchReportDTO, String> RECEIVER_NAME = new Function<LetterBatchReportDTO, String>() {
+        @Nullable
+        @Override
+        public String apply(@Nullable LetterBatchReportDTO input) {
+            if (input == null) {
+                return null;
+            }
+            return input.getReceiverName();
+        }
+    };
+
+
     private static final long serialVersionUID = 7920118110257531390L;
     private Long letterBatchID;
     private Template template;
@@ -22,7 +39,49 @@ public class LetterBatchReportDTO implements Serializable {
     private List<IPostiDTO> iPostis;
     private String organisaatioOid;
     private String status;
-    
+    private Long templateId;
+    private String receiverName;
+    private Long receiverLetterId;
+    private String templateName;
+
+    public LetterBatchReportDTO() {
+    }
+
+    public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName,
+                                String applicationPeriod, String fetchTarget,
+                                String tag, boolean deliveryTypeIPosti, Date timestamp,
+                                String organisaatioOid, LetterBatch.Status status) {
+        this.letterBatchID = letterBatchID;
+        this.templateId = templateId;
+        this.templateName = templateName;
+        this.applicationPeriod = applicationPeriod;
+        this.fetchTarget = fetchTarget;
+        this.tag = tag;
+        this.deliveryTypeIPosti = deliveryTypeIPosti;
+        this.timestamp = timestamp;
+        this.organisaatioOid = organisaatioOid;
+        this.status = status == null ? null : status.name();
+    }
+
+    public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName,
+                                String applicationPeriod, String fetchTarget,
+                                String tag, boolean deliveryTypeIPosti, Date timestamp,
+                                String organisaatioOid, LetterBatch.Status status,
+                                Long receiverLetterId, String receiverName) {
+        this.letterBatchID = letterBatchID;
+        this.templateId = templateId;
+        this.templateName = templateName;
+        this.applicationPeriod = applicationPeriod;
+        this.fetchTarget = fetchTarget;
+        this.tag = tag;
+        this.deliveryTypeIPosti = deliveryTypeIPosti;
+        this.timestamp = timestamp;
+        this.organisaatioOid = organisaatioOid;
+        this.status = status == null ? null : status.name();
+        this.receiverName = receiverName;
+        this.receiverLetterId = receiverLetterId;
+    }
+
     public Long getLetterBatchID() {
         return letterBatchID;
     }
@@ -125,5 +184,37 @@ public class LetterBatchReportDTO implements Serializable {
 
     public String getOrganisaatioOid() {
         return organisaatioOid;
+    }
+
+    public Long getReceiverLetterId() {
+        return receiverLetterId;
+    }
+
+    public void setReceiverLetterId(Long receiverLetterId) {
+        this.receiverLetterId = receiverLetterId;
+    }
+
+    public String getReceiverName() {
+        return receiverName;
+    }
+
+    public void setReceiverName(String receiverName) {
+        this.receiverName = receiverName;
+    }
+
+    public Long getTemplateId() {
+        return templateId;
+    }
+
+    public void setTemplateId(Long templateId) {
+        this.templateId = templateId;
+    }
+
+    public String getTemplateName() {
+        return templateName;
+    }
+
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
     }
 }

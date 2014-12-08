@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
@@ -12,11 +13,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.joda.time.LocalDate;
+import org.joda.time.Period;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 import com.sun.istack.Nullable;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -60,6 +67,13 @@ public class LetterReportResource extends AsynchronousResource {
 
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
+    private LoadingCache<String, List<OrganizationDTO>> currentUserOrganisaatiosCache = CacheBuilder.newBuilder()
+            .maximumSize(100).expireAfterAccess(3l, TimeUnit.MINUTES)
+            .build(new CacheLoader<String, List<OrganizationDTO>>() {
+                public List<OrganizationDTO> load(String oid) throws Exception {
+                    return letterReportService.getUserOrganizations();
+                }
+            });
 
     /**
      * Hakee käyttäjän organisaation kirjelähetysten tiedot
@@ -89,7 +103,7 @@ public class LetterReportResource extends AsynchronousResource {
         @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
         @QueryParam(Constants.PARAM_ORDER) String order) {
-        List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
+        List<OrganizationDTO> organizations = currentUserOrganisaatiosCache.getUnchecked(getLoggedInUserOid());
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
@@ -222,18 +236,24 @@ public class LetterReportResource extends AsynchronousResource {
         + "Palauttaa tietojen mukana käyttäjän kaikki organisaatiot", 
         response = LetterBatchesReportDTO.class, responseContainer = "List")
     public Response searchLetterBatchReports(@ApiParam(value="Organisaation oid-tunnus", required=false) 
-        @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, 
-        @ApiParam(value="Näytöllä annettu hakutekijä esim. kirjeen saajan nimi", required=false) 
-        @QueryParam(Constants.PARAM_SEARCH_ARGUMENT) String searchArgument,         
-        @ApiParam(value="Haettavien rivien lukumäärä", required=true)
-        @QueryParam(Constants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows, 
-        @ApiParam(value="Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required=true) 
-        @QueryParam(Constants.PARAM_PAGE) Integer page, 
-        @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
-        @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy, 
-        @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
-        @QueryParam(Constants.PARAM_ORDER) String order) {
-        List<OrganizationDTO> organizations = letterReportService.getUserOrganizations();
+            @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid,
+            @ApiParam(value="Näytöllä annettu kirjelähetykseen liittyvä hakutekijä esim. kirjepohjan nimi", required=false)
+            @QueryParam(Constants.PARAM_LETTER_BATCH_SEARCH_ARGUMENT) String searchArgument,
+            @ApiParam(value="Näytöllä annettu vastaanottajaan liittyvä hakutekijä esim. kirjeen saajan nimi", required=false)
+            @QueryParam(Constants.PARAM_RECEIVER_SEARCH_ARGUMENT) String receiverSearchArgument,
+            @ApiParam(value="Haun kohde: kirjelähetys=batch, vastaanottajakirje=receiver", required=true)
+            @QueryParam(Constants.PARAM_SEARCH_TARGET) String searchTarget,
+            @ApiParam(value="Kirjeen luontikaika::jos true, sisällytetään myös puoli vuotta vanhemmat tulokset", required=true)
+            @QueryParam(Constants.PARAM_INCLUDE_OLDER_RESULTS) Boolean includeOlder,
+            @ApiParam(value="Haettavien rivien lukumäärä", required=true)
+            @QueryParam(Constants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows,
+            @ApiParam(value="Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required=true)
+            @QueryParam(Constants.PARAM_PAGE) Integer page,
+            @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
+            @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy,
+            @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false)
+            @QueryParam(Constants.PARAM_ORDER) String order) {
+        List<OrganizationDTO> organizations = currentUserOrganisaatiosCache.getUnchecked(getLoggedInUserOid());
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
         
         LetterReportQueryDTO query = new LetterReportQueryDTO();
@@ -242,8 +262,14 @@ public class LetterReportResource extends AsynchronousResource {
         } else {
             query.setOrganizationOids(organisaatioService.findHierarchyOids(organizationOid));
         }
-        query.setSearchArgument(searchArgument);
-        
+        query.setLetterBatchSearchArgument(searchArgument);
+        query.setReceiverSearchArgument(receiverSearchArgument);
+        query.setTarget(searchTarget == null ? LetterReportQueryDTO.SearchTarget.batch
+                : LetterReportQueryDTO.SearchTarget.valueOf(searchTarget));
+        if (includeOlder == null || !includeOlder) {
+            query.setBeginDate(LocalDate.now().minus(Period.months(6)));
+        }
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
 
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(query, pagingAndSorting);
@@ -258,6 +284,10 @@ public class LetterReportResource extends AsynchronousResource {
         }
 
         return Response.ok(letterBatchesReport).build();
+    }
+
+    private String getLoggedInUserOid() {
+        return SecurityContextHolder.getContext().getAuthentication().getName();
     }
 
     protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,

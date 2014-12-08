@@ -46,6 +46,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
 
         StringBuffer queryStr = new StringBuffer(),
             where = new StringBuffer();
+
         queryStr.append("SELECT a FROM Template a ");
         if (criteria.getName() != null) {
             and(where).append("a.name = :name");
@@ -69,6 +70,8 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
         if (criteria.isDefaultRequired()) {
             and(where).append("a.usedAsDefault = true");
         }
+        
+        
         if (where.length() > 0) {
             queryStr.append(" WHERE ").append(where);
         }

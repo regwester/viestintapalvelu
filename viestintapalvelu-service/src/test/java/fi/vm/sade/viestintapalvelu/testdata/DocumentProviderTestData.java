@@ -44,6 +44,12 @@ public class DocumentProviderTestData {
     public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch) {
         return getIPosti(id, letterBatch, 1);
     }
+    
+    public static TemplateApplicationPeriod getTemplateApplicationPeriod(Template template, String hakuOid) {
+        TemplateApplicationPeriod period = new TemplateApplicationPeriod(template, hakuOid);
+        template.addApplicationPeriod(period);
+        return period;
+    }
 
     public static List<IPosti> getIPosti(Long id, fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch, int count) {
         List<IPosti> iPostis = new ArrayList<IPosti>();
@@ -490,6 +496,30 @@ public class DocumentProviderTestData {
             structure.getContentStructures().add(contentStructure);
         }
         return structure;
+    }
+
+    public static Structure with(Structure structure, ContentReplacement ...contentReplacements) {
+        int orderNumber = 0;
+        for (ContentReplacement replacement : contentReplacements) {
+            replacement.setOrderNumber(++orderNumber);
+            replacement.setStructure(structure);
+            structure.getReplacements().add(replacement);
+        }
+        return structure;
+    }
+
+    public static ContentReplacement replacement(String key) {
+        return replacement(key, ContentType.plain, 1);
+    }
+
+    public static ContentReplacement replacement(String key, ContentType contentType, int numberOfRows) {
+        ContentReplacement replacement = new ContentReplacement();
+        replacement.setKey(key);
+        replacement.setName(key);
+        replacement.setDescription(key);
+        replacement.setContentType(contentType);
+        replacement.setNumberOfRows(numberOfRows);
+        return replacement;
     }
 
     public static ContentStructure contentStructure(ContentStructureType type, ContentStructureContent... contents) {

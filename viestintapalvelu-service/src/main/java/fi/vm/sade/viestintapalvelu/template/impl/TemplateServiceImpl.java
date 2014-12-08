@@ -3,34 +3,59 @@ package fi.vm.sade.viestintapalvelu.template.impl;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
-import fi.vm.sade.viestintapalvelu.model.Draft;
-import fi.vm.sade.viestintapalvelu.model.Replacement;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
-import fi.vm.sade.viestintapalvelu.template.*;
+import org.apache.commons.collections.ListUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
+import com.google.common.collect.Sets;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
+import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.ContentReplacement;
+import fi.vm.sade.viestintapalvelu.model.ContentStructure;
+import fi.vm.sade.viestintapalvelu.model.Draft;
+import fi.vm.sade.viestintapalvelu.model.DraftReplacement;
+import fi.vm.sade.viestintapalvelu.model.Replacement;
+import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
-import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
-import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
+import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
+import fi.vm.sade.viestintapalvelu.template.StructureConverter;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
+import static com.google.common.base.Optional.fromNullable;
 
 @Service
 @Transactional
@@ -41,16 +66,18 @@ public class TemplateServiceImpl implements TemplateService {
     private StructureDAO structureDAO;
     private StructureService structureService;
     private StructureConverter structureConverter;
+    private TemplatesByApplicationPeriodConverter templatesByApplicationPeriodconverter;
 
     @Autowired
     public TemplateServiceImpl(TemplateDAO templateDAO, CurrentUserComponent currentUserComponent, DraftDAO draftDAO,
-                               StructureDAO structureDAO, StructureService structureService, StructureConverter structureConverter) {
+                               StructureDAO structureDAO, StructureService structureService, StructureConverter structureConverter, TemplatesByApplicationPeriodConverter templatesByApplicationPeriodConverter) {
         this.templateDAO = templateDAO;
         this.currentUserComponent = currentUserComponent;
         this.draftDAO = draftDAO;
         this.structureDAO = structureDAO;
         this.structureService = structureService;
         this.structureConverter = structureConverter;
+        this.templatesByApplicationPeriodconverter = templatesByApplicationPeriodConverter;
     }
 
     /* (non-Javadoc)
@@ -83,7 +110,20 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public long storeTemplateDTO(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = new Template();
+        model.setState(fromNullable(template.getState()).or(State.julkaistu));
+        if (model.getState() == State.suljettu) {
+            throw BeanValidatorImpl.badRequest("Storing a new template in closed (suljettu) state makes no sense, " +
+                    "does it? Allowed states: draft (luonnos) or published (julkaistu, by default).");
+        }
         convertTemplate(template, model);
+        setTemplateStructure(template, model);
+        updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
+        return storeTemplate(model);
+    }
+
+    private void setTemplateStructure(fi.vm.sade.viestintapalvelu.template.Template template, Template model) {
+        // When called upon update, does not require structure being defined (in which case leaves it to existing one
+        // against which only validation is done)
         if (template.getStructureId() != null) {
             model.setStructure(structureDAO.read(template.getStructureId()));
         } else if (template.getStructureName() != null
@@ -97,11 +137,10 @@ public class TemplateServiceImpl implements TemplateService {
             model.setStructure(structureDAO.read(structureId));
         }
         if (model.getStructure() == null) {
-            throw BeanValidatorImpl.badRequest("Structure required. Please specify structureId / structureName or structure to create.");
+            throw BeanValidatorImpl.badRequest("Structure required. Please specify structureId / structureName " +
+                    "or structure to create.");
         }
         validateTemplateAgainstStructure(template, model.getStructure());
-        updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
-        return storeTemplate(model);
     }
 
     private void convertTemplate(fi.vm.sade.viestintapalvelu.template.Template from, Template to) {
@@ -379,7 +418,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     @Override
-    public List<fi.vm.sade.viestintapalvelu.template.Template> getByApplicationPeriod(TemplateCriteria criteria) {
+    public List<fi.vm.sade.viestintapalvelu.template.Template> findByCriteria(TemplateCriteria criteria) {
         List<fi.vm.sade.viestintapalvelu.template.Template> templates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
         for (Template t : templateDAO.findTemplates(criteria)) {
             fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(t);
@@ -454,6 +493,7 @@ public class TemplateServiceImpl implements TemplateService {
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTemplateVersio(from.getVersionro());
         to.setDescription(from.getDescription());
+        to.setState(from.getState());
         return to;
     }
 
@@ -491,7 +531,7 @@ public class TemplateServiceImpl implements TemplateService {
                                                                          ContentStructureType structureType) {
         Structure structure = from.getStructure();
         ContentStructure contentStructure = contentStructure(structure, structureType)
-                .or(OptionalHelpper.<ContentStructure>notFound("Template id="
+                .or(OptionalHelper.<ContentStructure>notFound("Template id="
                         +from.getId()+" does not have ContentStructure for type="+structureType));
         to.setStyles(contentStructure.getStyle() != null ? contentStructure.getStyle().getStyle() : null);
         to.setContents(structureConverter.toContents(contentStructure));
@@ -587,21 +627,35 @@ public class TemplateServiceImpl implements TemplateService {
         return replacements;
     }
 
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#updateTemplate(fi.vm.sade.viestintapalvelu.template.Template)
-     */
     @Override
     public void updateTemplate(fi.vm.sade.viestintapalvelu.template.Template template) {
         Template model = templateDAO.read(template.getId());
         final State newState = template.getState();
         final State oldState = model.getState();
         verifyState(oldState, newState);
-        if (newState != State.suljettu && oldState == State.luonnos) {
+        final boolean editingAllowed = oldState == State.luonnos && newState != State.suljettu;
+        if (editingAllowed) {
             convertTemplate(template, model);
+            setTemplateStructure(template, model);
+            updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         }
         model.setState(newState);
         templateDAO.update(model);
+        if (editingAllowed) {
+            ensureNoOtherDefaults(model);
+        }
     }
+    
+    @Override
+    public TemplatesByApplicationPeriod findByApplicationPeriod(String applicationPeriod) {
+        TemplateCriteria criteria = new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod);
+        List<Template> publisheds = templateDAO.findTemplates(criteria.withState(State.julkaistu));
+        List<Template> drafts = templateDAO.findTemplates(criteria.withState(State.luonnos));
+        List<Template> closeds = templateDAO.findTemplates(criteria.withState(State.suljettu));
+        return templatesByApplicationPeriodconverter.convert(applicationPeriod, publisheds, drafts, closeds);
+    }
+
+   
 
     private void verifyState(State oldState, State newState) {
         if (oldState == State.suljettu && newState != State.julkaistu) {

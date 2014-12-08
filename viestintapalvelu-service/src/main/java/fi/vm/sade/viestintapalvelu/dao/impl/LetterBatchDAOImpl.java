@@ -14,24 +14,26 @@ import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.collect.Collections2;
 import com.mysema.query.BooleanBuilder;
+import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
+import com.mysema.query.types.ConstructorExpression;
 import com.mysema.query.types.EntityPath;
+import com.mysema.query.types.Expression;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.expr.ComparableExpressionBase;
 import com.mysema.query.types.path.PathBuilder;
 import com.mysema.query.types.path.StringPath;
 import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.QLetterBatch;
-import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
-import fi.vm.sade.viestintapalvelu.model.QLetterReceivers;
-import fi.vm.sade.viestintapalvelu.util.CollectionHelper;
+import fi.vm.sade.viestintapalvelu.model.*;
 
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
@@ -109,7 +111,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     public List<LetterBatch> findAll(PagingAndSortingDTO pagingAndSorting) {
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
 
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting, null);
         JPAQuery findLetterBatches = from(letterBatch).orderBy(orderBy);
 
         if (pagingAndSorting.getNumberOfRows() != 0) {
@@ -127,7 +129,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
 
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting, null);
         BooleanExpression whereExpression = anyOf(splittedInExpression(organizationOIDs,
                 letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
@@ -140,21 +142,43 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public List<LetterBatch> findLetterBatchesBySearchArgument(LetterReportQueryDTO query,
-        PagingAndSortingDTO pagingAndSorting) {
+    public List<LetterBatchReportDTO> findLetterBatchesBySearchArgument(LetterReportQueryDTO query,
+                                                               PagingAndSortingDTO pagingAndSorting) {
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
-        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
+        QLetterReceivers receiver = QLetterReceivers.letterReceivers;
         QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
-        
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, letterBatch, letterReceiverAddress);        
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-
-        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
-            letterBatch.letterReceivers, letterReceivers).leftJoin(
-            letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression).orderBy(orderBy).limit(
-            pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
-        
-        return findBySearchCriteria.list(letterBatch);
+        JPAQuery q = fromSearchTarget(query.getTarget(), letterBatch, receiver, letterReceiverAddress)
+            .where(whereExpressionForSearchCriteria(query, letterBatch, receiver, letterReceiverAddress))
+            .orderBy(orderBy(pagingAndSorting, letterReceiverAddress))
+            .limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
+        if (query.getTarget() == LetterReportQueryDTO.SearchTarget.receiver) {
+            return q.list(ConstructorExpression.create(LetterBatchReportDTO.class,
+                    letterBatch.id,
+                    letterBatch.templateId,
+                    letterBatch.templateName,
+                    letterBatch.applicationPeriod,
+                    letterBatch.fetchTarget,
+                    letterBatch.tag,
+                    letterBatch.iposti,
+                    letterBatch.timestamp,
+                    letterBatch.organizationOid,
+                    letterBatch.batchStatus,
+                    receiver.letterReceiverLetter.id,
+                    letterReceiverAddress.lastName.concat(" ").concat(letterReceiverAddress.firstName)
+            ));
+        }
+        return q.list(ConstructorExpression.create(LetterBatchReportDTO.class,
+                    letterBatch.id,
+                    letterBatch.templateId,
+                    letterBatch.templateName,
+                    letterBatch.applicationPeriod,
+                    letterBatch.fetchTarget,
+                    letterBatch.tag,
+                    letterBatch.iposti,
+                    letterBatch.timestamp,
+                    letterBatch.organizationOid,
+                    letterBatch.batchStatus
+            ));
     }
 
     @Override
@@ -187,17 +211,37 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery) {
+    public Long findNumberOfLetterBatchesBySearchArgument(LetterReportQueryDTO letterReportQuery, Long maxCount) {
     	QLetterBatch letterBatch = QLetterBatch.letterBatch;
-        QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
+        QLetterReceivers receiver = QLetterReceivers.letterReceivers;
         QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
-        
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(letterReportQuery, letterBatch, letterReceiverAddress);        
-        JPAQuery findBySearchCriteria = from(letterBatch).distinct().leftJoin(
-                letterBatch.letterReceivers, letterReceivers).leftJoin(
-                letterReceivers.letterReceiverAddress, letterReceiverAddress).where(whereExpression);
-        
-    	return findBySearchCriteria.count();
+        JPAQuery q = fromSearchTarget(letterReportQuery.getTarget(), letterBatch, receiver, letterReceiverAddress)
+                    .where(whereExpressionForSearchCriteria(letterReportQuery, letterBatch, receiver, letterReceiverAddress));
+        if (maxCount != null) {
+            // can not get count effectively (runtime of receiver join explodes), just tell if we got more than maxCount
+            return (long) q.limit(maxCount + 1l).orderBy(letterBatch.timestamp.desc())
+                    .list(letterReportQuery.getTarget() == LetterReportQueryDTO.SearchTarget.receiver ?
+                            new Expression<?>[]{receiver.letterReceiverLetter.id, letterBatch.timestamp}
+                          : new Expression<?>[]{letterBatch.timestamp}).size();
+        }
+        return q.count();
+    }
+
+    protected JPAQuery fromSearchTarget(LetterReportQueryDTO.SearchTarget target,
+                                        QLetterBatch letterBatch,
+                                        QLetterReceivers receiver,
+                                        QLetterReceiverAddress letterReceiverAddress) {
+        switch (target) {
+        case batch:
+            return from(letterBatch)
+                    .innerJoin(letterBatch.letterReceivers, receiver)
+                    .leftJoin(receiver.letterReceiverAddress, letterReceiverAddress);
+        case receiver:
+            return from(letterBatch)
+                    .leftJoin(letterBatch.letterReceivers, receiver)
+                    .leftJoin(receiver.letterReceiverAddress, letterReceiverAddress);
+        default: throw new IllegalArgumentException("Unknown SearchTarget" + target);
+        }
     }
 
     @Override
@@ -228,9 +272,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public List<Long> findAllLetterReceiverIdsByBatch(long batchId) {
         return getEntityManager().createQuery(
-                    "select lr.id from LetterReceivers lr"
-                    + " inner join lr.letterBatch batch with batch.id = :batchId"
-                    + " order by lr.id", Long.class)
+                "select lr.id from LetterReceivers lr"
+                        + " inner join lr.letterBatch batch with batch.id = :batchId"
+                        + " order by lr.id", Long.class)
             .setParameter("batchId", batchId).getResultList();
     }
     
@@ -247,29 +291,51 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return new JPAQuery(getEntityManager()).from(o);
     }
 
-    protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting) {
+    protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting, QLetterReceiverAddress receiverAddress) {
         PathBuilder<LetterBatch> pb = new PathBuilder<LetterBatch>(LetterBatch.class, "letterBatch");
         
         if (pagingAndSorting.getSortedBy() != null && !pagingAndSorting.getSortedBy().isEmpty()) {
-            if (pagingAndSorting.getSortOrder() == null || pagingAndSorting.getSortOrder().isEmpty()) {
-                return pb.getString(pagingAndSorting.getSortedBy()).asc();
+            if (receiverAddress != null && "receiverName".equals(pagingAndSorting.getSortedBy())) {
+                return direction(receiverAddress.lastName.concat(" ").concat(receiverAddress.firstName),
+                        pagingAndSorting.getSortOrder());
             }
-            
-            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
-                return pb.getString(pagingAndSorting.getSortedBy()).asc();
-            }
-            
-            return pb.getString(pagingAndSorting.getSortedBy()).desc();
+            return direction(pb.getString(pagingAndSorting.getSortedBy()),
+                    pagingAndSorting.getSortOrder());
         }
-        
         return pb.getString("timestamp").asc();
     }
-    
+
+    protected OrderSpecifier<?> direction(ComparableExpressionBase<?> exp, String sortOrder) {
+        if (sortOrder == null || sortOrder.isEmpty()) {
+            return exp.asc();
+        }
+        if (sortOrder.equalsIgnoreCase("asc")) {
+            return exp.asc();
+        }
+        return exp.desc();
+    }
+
     protected BooleanBuilder whereExpressionForSearchCriteria(LetterReportQueryDTO query,
                                                               final QLetterBatch letterBatch,
-        QLetterReceiverAddress letterReceiverAddress) {
+                                                              final QLetterReceivers letterReceivers,
+                                                              final QLetterReceiverAddress letterReceiverAddress) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
-        
+
+        if (query.getBeginDate() != null) {
+            // gte missing from QueryDSL
+            booleanBuilder.andAnyOf(
+                    letterBatch.timestamp.after(query.getBeginDate().toDateTimeAtStartOfDay().toDate()),
+                    letterBatch.timestamp.eq(query.getBeginDate().toDateTimeAtStartOfDay().toDate())
+            );
+        }
+        if (query.getEndDate() != null) {
+            // as well as lte
+            booleanBuilder.andAnyOf(
+                    letterBatch.timestamp.before(query.getEndDate().toDateTimeAtStartOfDay().toDate()),
+                    letterBatch.timestamp.eq(query.getEndDate().toDateTimeAtStartOfDay().toDate())
+            );
+        }
+
         if (query.getOrganizationOids() != null) {
             if (query.getOrganizationOids().isEmpty()) {
                 // no organisaatios should yield no results, thus:
@@ -279,19 +345,80 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                         letterBatch.organizationOid));
             }
         }
-        
-        if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
-            booleanBuilder.andAnyOf(
-                    letterBatch.templateName.containsIgnoreCase(query.getSearchArgument()),
-                    letterBatch.fetchTarget.containsIgnoreCase(query.getSearchArgument()),
-                    letterBatch.applicationPeriod.contains(query.getSearchArgument()),
-                    letterReceiverAddress.lastName.concat(" ").concat(
-                            letterReceiverAddress.firstName).containsIgnoreCase(query.getSearchArgument()),
-                    letterReceiverAddress.postalCode.contains(query.getSearchArgument())
-            );
+
+        int subQueryNum = 0;
+        if (query.getLetterBatchSearchArgument() != null && !query.getLetterBatchSearchArgument().isEmpty()) {
+            for (String word : words(query.getLetterBatchSearchArgument())) {
+                booleanBuilder.andAnyOf(
+                    anyOfLetterBatchRelatedConditions(letterBatch, word),
+                    letterBatchReplacementsContain(letterBatch, word, ++subQueryNum)
+                );
+            }
+        }
+        if (query.getReceiverSearchArgument() != null && !query.getReceiverSearchArgument().isEmpty()) {
+            for (String word : words(query.getReceiverSearchArgument())) {
+                booleanBuilder.andAnyOf(
+                    anyOfLetterBatchRelatedConditions(letterBatch, word),
+                    anyOfReceiverAddressFieldsContains(letterReceiverAddress, word),
+                    letterBatchReplacementsContain(letterBatch, word, ++subQueryNum),
+                    receiverReplacementsContain(letterReceivers, word, ++subQueryNum)
+                );
+            }
         }
 
         return booleanBuilder;
+    }
+
+    private BooleanExpression anyOfReceiverAddressFieldsContains(QLetterReceiverAddress letterReceiverAddress, String word) {
+        return anyOf(
+                letterReceiverAddress.firstName.trim().containsIgnoreCase(word),
+                letterReceiverAddress.lastName.trim().containsIgnoreCase(word),
+                letterReceiverAddress.addressline.trim().containsIgnoreCase(word),
+                letterReceiverAddress.addressline2.trim().containsIgnoreCase(word),
+                letterReceiverAddress.addressline3.trim().containsIgnoreCase(word),
+                letterReceiverAddress.city.trim().containsIgnoreCase(word),
+                letterReceiverAddress.postalCode.trim().contains(word)
+        );
+    }
+
+    private BooleanExpression letterBatchReplacementsContain(QLetterBatch letterBatch, String word, int subQueryNumber) {
+        QLetterBatch subQueryLetterBatch = new QLetterBatch("sqLetterBatch_"+subQueryNumber);
+        QLetterReplacement replacement = new QLetterReplacement("sqLetterReplacement_"+subQueryNumber);
+        return new JPASubQuery().from(subQueryLetterBatch)
+                .innerJoin(subQueryLetterBatch.letterReplacements, replacement)
+                .where(subQueryLetterBatch.id.eq(letterBatch.id)
+                .andAnyOf(
+                        replacement.defaultValue.containsIgnoreCase(word),
+                        replacement.jsonValue.containsIgnoreCase(word)
+                )
+                ).exists();
+    }
+
+    private BooleanExpression receiverReplacementsContain(QLetterReceivers letterReceivers, String word, int subQueryNumber) {
+        QLetterReceivers subQueryLetterReceiver = new QLetterReceivers("sqLetterReceiver_"+subQueryNumber);
+        QLetterReceiverReplacement replacement = new QLetterReceiverReplacement("sqLetterReceiverReplacement_"+subQueryNumber);
+        return new JPASubQuery().from(subQueryLetterReceiver)
+                .innerJoin(subQueryLetterReceiver.letterReceiverReplacement, replacement)
+                .where(subQueryLetterReceiver.id.eq(letterReceivers.id)
+                        .andAnyOf(
+                                replacement.defaultValue.containsIgnoreCase(word),
+                                replacement.jsonValue.containsIgnoreCase(word)
+                        )
+                ).exists();
+    }
+
+    private BooleanExpression anyOfLetterBatchRelatedConditions(QLetterBatch letterBatch, String word) {
+        return letterBatch.templateName.containsIgnoreCase(word)
+                .or(
+                    letterBatch.fetchTarget.containsIgnoreCase(word)
+                    .or(
+                            letterBatch.applicationPeriod.containsIgnoreCase(word)
+                    )
+                );
+    }
+
+    private String[] words(String searchArgument) {
+        return searchArgument.trim().split("\\s+");
     }
 
     private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {

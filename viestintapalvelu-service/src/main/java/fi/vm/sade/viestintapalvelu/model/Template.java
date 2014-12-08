@@ -181,6 +181,10 @@ public class Template extends BaseEntity {
     protected void setApplicationPeriods(Set<TemplateApplicationPeriod> hakus) {
         this.applicationPeriods = hakus;
     }
+    
+    public void addApplicationPeriod(TemplateApplicationPeriod haku) {
+        this.applicationPeriods.add(haku);
+    }
 
     public Structure getStructure() {
         return structure;

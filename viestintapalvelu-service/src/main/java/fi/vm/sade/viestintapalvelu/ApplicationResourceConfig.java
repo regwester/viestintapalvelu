@@ -3,7 +3,10 @@ package fi.vm.sade.viestintapalvelu;
 import com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;
 import com.wordnik.swagger.jersey.listing.JerseyApiDeclarationProvider;
 import com.wordnik.swagger.jersey.listing.JerseyResourceListingProvider;
+
+import fi.vm.sade.viestintapalvelu.common.exception.WebExceptionMapper;
 import fi.vm.sade.viestintapalvelu.feature.JacksonFeature;
+
 import org.glassfish.jersey.server.ResourceConfig;
 
 public class ApplicationResourceConfig extends ResourceConfig {
@@ -18,5 +21,6 @@ public class ApplicationResourceConfig extends ResourceConfig {
         register(ApiListingResourceJSON.class);
         register(JerseyApiDeclarationProvider.class);
         register(JerseyResourceListingProvider.class);
+        register(WebExceptionMapper.class);
     }
 }

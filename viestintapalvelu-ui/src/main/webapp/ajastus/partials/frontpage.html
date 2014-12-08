@@ -1,0 +1,67 @@
+<div>
+	<div ng-include="'partials/deletemodaldialog.html'"/>
+	<div class="padding-bottom">
+		<h1 class>{{'common.scheduleservice.header' | i18n}}</h1>
+		<button ng-click="create()" class="btn btn-primary"><i class="glyphicon glyphicon-plus-sign margin-right-half"></i> {{'front.create' | i18n}}</button>
+	</div>
+    <div ng-if="count > 0">
+        <div class="span3 ng-binding">{{count}} {{'front.tasks.count' | i18n}}</div>
+    </div>
+    <div ng-if="loading">
+        {{"front.loading.results" | i18n}}
+    </div>
+    <div ng-if="!count &amp;&amp; !loading">
+        {{"front.no.results" | i18n}}
+    </div>
+    <table class="table table-hover taskTable" ng-if="count > 0">
+        <thead>
+            <tr>
+                <th></th>
+                <th ng:click="sort('taskName')" class="sortable clickable">
+                    <span>{{'front.task' | i18n}}</span>
+                    <span ng-class="determineSortClass('taskName')" class="unsortedColumn"></span>
+                </th>
+                <th ng:click="sort('hakuName')" class="sortable clickable">
+                    <span>{{'common.fetch' | i18n}}</span>
+                    <span ng-class="determineSortClass('hakuName')" class="unsortedColumn"></span>
+                </th>
+                <th ng:click="sort('runtime')" class="sortable clickable">
+                    <span>{{'front.scheduled.for' | i18n}}</span>
+                    <span ng-class="determineSortClass('runtime')" class="unsortedColumn"></span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr ng-repeat="task in tasks">
+                <td>
+                    <div class="btn-group dropdown">
+                        <input type="button" class="icon-actionmenu dropdown-toggle"/>
+                        <ul class="dropdown-menu" role="menu">
+                            <li><a ng-click="edit(task.id)">{{'common.edit' | i18n}}</a></li>
+                            <li><a ng-click="deleteTask(task.id)">{{'common.delete' | i18n}}</a></li>
+                        </ul>
+                    </div>
+                </td>
+                <td>{{task.taskName}}</td>
+                <td>{{task.hakuName}}</td>
+                <td>{{task.runtimeForSingle | date:'d.M.yyyy H:mm'}}</td>
+            </tr>
+        </tbody>
+    </table>
+    <div class="pagination pagination-centered" ng-if="count > 0">
+        <ul class="pagination">
+            <li ng-class="{disabled: !previousNavigatable}">
+                <a class="pointer" ng-click="previousPage()" href="" ng-if="previousNavigatable">{{'common.previous' | i18n}}</a>
+                <a href="" ng-if="!previousNavigatable">{{'common.previous' | i18n}}</a>
+            </li>
+            <li ng-class="{active: page.active, disalbled: !clickable}" ng-repeat="page in pages">
+                <a class="pointer" ng-click="gotoPage(page.number)" href="" ng-if="page.clickable">{{page.number}}</a>
+                <a href="" ng-if="!page.clickable">{{page.number}}</a>
+            </li>
+            <li ng-class="{disabled: !nextNavigatable}">
+                <a class="pointer" ng-click="nextPage()" ng-if="nextNavigatable">{{'common.next' | i18n}}</a>
+                <a href="" ng-if="!nextNavigatable">{{'common.next' | i18n}}</a>
+            </li>
+        </ul>
+    </div>
+</div>

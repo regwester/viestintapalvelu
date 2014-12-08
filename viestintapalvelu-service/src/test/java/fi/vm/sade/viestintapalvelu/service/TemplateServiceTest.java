@@ -1,5 +1,10 @@
 package fi.vm.sade.viestintapalvelu.service;
 
+import java.util.Arrays;
+import java.util.Date;
+
+import javax.ws.rs.BadRequestException;
+
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -18,21 +23,37 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserCompon
 import fi.vm.sade.viestintapalvelu.model.Structure;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.structure.StructureService;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.converter.StructureDtoConverter;
 import fi.vm.sade.viestintapalvelu.structure.impl.StructureServiceImpl;
 import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
 import fi.vm.sade.viestintapalvelu.template.impl.StructureConverterImpl;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
+import fi.vm.sade.viestintapalvelu.template.impl.TemplatesByApplicationPeriodConverterImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.DaoVault;
-
-import static org.junit.Assert.*;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentSaveDto;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructureSaveDto;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.replacement;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.structure;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.structureSaveDto;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.with;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.eq;
+
 import static org.mockito.Mockito.doCallRealMethod;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -53,27 +74,36 @@ public class TemplateServiceTest {
     private StructureServiceImpl structureService;
     private TemplateService templateService;
     private StructureConverter structureConverter = new StructureConverterImpl();
+    private TemplatesByApplicationPeriodConverter applicationPeriodConverter = new TemplatesByApplicationPeriodConverterImpl();
 
     @Before
     public void setup() {
         this.templateService = new TemplateServiceImpl(mockedTemplateDAO, mockedCurrentUserComponent, mockedDraftDAO,
-                structureDAO, structureService, structureConverter);
+                structureDAO, structureService, structureConverter, applicationPeriodConverter);
     }
 
     @Test
     public void testStoreTemplateDTO() {
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
 
+        mockStructureCreation();
+        mockTemplateDao();
+        assertEquals(1l, templateService.storeTemplateDTO(DocumentProviderTestData.getTemplate()));
+        
+        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(1l));
+    }
+
+    private DaoVault<Structure> mockStructureCreation() {
         doCallRealMethod().when(structureService).setStructureDAO(any(StructureDAO.class));
         doCallRealMethod().when(structureService).setDtoConverter(any(StructureDtoConverter.class));
         structureService.setStructureDAO(structureDAO);
         structureService.setDtoConverter(new StructureDtoConverter());
         doCallRealMethod().when(structureService).storeStructure(any(StructureSaveDto.class));
-        new DaoVault<Structure>(structureDAO, Structure.class);
-        new DaoVault<Template>(mockedTemplateDAO, Template.class);
-        assertEquals(1l, templateService.storeTemplateDTO(DocumentProviderTestData.getTemplate()));
-        
-        verify(mockedTemplateDAO).insert(DocumentProviderTestData.getTemplate(1l));
+        return new DaoVault<Structure>(structureDAO, Structure.class);
+    }
+
+    private DaoVault<Template> mockTemplateDao() {
+        return new DaoVault<Template>(mockedTemplateDAO, Template.class);
     }
 
     @Test
@@ -293,7 +323,89 @@ public class TemplateServiceTest {
         when(mockedTemplateDAO.findByIdAndState(id, State.luonnos)).thenReturn(givenTemplateWithStateAndId(id, State.luonnos));
         assertEquals(State.luonnos, templateService.findByIdAndState(id, ContentStructureType.letter, State.luonnos).getState());
     }
-    
+
+    @Test
+    public void testUpdateTemplateCanUpdateApplicationPeriods() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setVersion(1l);
+        template.setStructure(structure(contentStructure(ContentStructureType.letter,
+                content(ContentRole.body, ContentType.html))));
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setId(1l);
+        dto.setApplicationPeriods(Arrays.asList("ap", "other"));
+        templateService.updateTemplate(dto);
+
+        assertEquals(2, template.getApplicationPeriods().size());
+        // Update called twice:
+        assertEquals(Long.valueOf(3l), template.getVersion());
+    }
+
+    private fi.vm.sade.viestintapalvelu.template.Template withoutStructure(fi.vm.sade.viestintapalvelu.template.Template dto) {
+        dto.setStructure(null);
+        dto.setStructureName(null);
+        dto.setStructureId(null);
+        return dto;
+    }
+
+    @Test(expected = BadRequestException.class)
+    public void testValidateStructureOnUpdate() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setStructure(with(structure(
+                        contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))),
+                replacement("required")));
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setId(1l);
+        templateService.updateTemplate(dto);
+    }
+
+    @Test
+    public void testChangeStructureById() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setStructure(with(structure(
+                        contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))),
+                replacement("required")));
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+
+        mockStructureCreation().insert(123l, structure(
+                contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))));
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setStructureId(123l);
+        dto.setId(1l);
+        templateService.updateTemplate(dto);
+
+        assertEquals(Long.valueOf(123l), template.getStructure().getId());
+    }
+
+    @Test
+    public void testChangeStructureByNew() {
+        Template template = givenTemplateWithStateAndId(1l, State.luonnos);
+        template.setVersion(1l);
+        Structure original = with(structure(
+                        contentStructure(ContentStructureType.letter, content(ContentRole.body, ContentType.html))),
+                replacement("required"));
+        template.setStructure(original);
+        template.getApplicationPeriods().add(new TemplateApplicationPeriod(template, "ap"));
+
+        mockStructureCreation().insert(20l, original);
+        mockTemplateDao().insert(template);
+
+        fi.vm.sade.viestintapalvelu.template.Template dto = withoutStructure(DocumentProviderTestData.getTemplate());
+        dto.setId(1l);
+        dto.setStructure(structureSaveDto(contentStructureSaveDto(ContentStructureType.letter,
+                contentSaveDto(ContentRole.body, ContentType.html))));
+        templateService.updateTemplate(dto);
+
+        assertEquals(Long.valueOf(21l), template.getStructure().getId());
+    }
+
     @Test
     public void updatesTemplateThatIsInDraftState() {
         ArgumentCaptor<Template> captor = ArgumentCaptor.forClass(Template.class);
@@ -302,6 +414,56 @@ public class TemplateServiceTest {
         template.setUsedAsDefault(true);
         verifyTemplateStateChange(State.luonnos, State.luonnos, captor, template);
         assertTrue(captor.getValue().isUsedAsDefault());
+    }
+    
+    @Test
+    public void returnsLatestTemplatesByApplicationPeriod() {
+        String hakuOid = "1.2.3.4.5600";
+        Template latestPublishedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.julkaistu);
+        Template publishedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(0), State.julkaistu);
+        Template latestDraftTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.luonnos);
+        Template draftTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(0), State.luonnos);
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.julkaistu)))).thenReturn(Arrays.asList(latestPublishedTemplate, publishedTemplate));
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.luonnos)))).thenReturn(Arrays.asList(latestDraftTemplate, draftTemplate));
+        TemplatesByApplicationPeriod dto = templateService.findByApplicationPeriod(hakuOid);
+        assertEquals(hakuOid, dto.hakuOid);
+        assertEquals(1, dto.draftTemplates.size());
+        assertEquals(1, dto.publishedTemplates.size());
+        assertTemplateInfo(latestPublishedTemplate, dto.publishedTemplates.get(0));
+        assertTemplateInfo(latestDraftTemplate, dto.draftTemplates.get(0));
+    }
+    
+
+    @Test
+    public void returnsTemplatesByApplicationPeriodByFilteringOutClosedTemplates() {
+        String hakuOid = "1.2.3.4.57700";
+        Template publishedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.julkaistu);
+        Template closedTemplate = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.suljettu);
+        Template closedTemplateEn = givenTemplateWithApplicationPeriodTimeAndState(hakuOid, new Date(), State.suljettu);
+        closedTemplateEn.setLanguage("EN");
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.julkaistu)))).thenReturn(Arrays.asList(publishedTemplate));
+        when(mockedTemplateDAO.findTemplates(eq(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid).withState(State.suljettu)))).thenReturn(Arrays.asList(closedTemplate, closedTemplateEn));
+        TemplatesByApplicationPeriod dto = templateService.findByApplicationPeriod(hakuOid);
+        assertEquals(hakuOid, dto.hakuOid);
+        assertTrue(dto.draftTemplates.isEmpty());
+        assertEquals(1, dto.publishedTemplates.size());
+        assertEquals(1, dto.closedTemplates.size());
+        assertTemplateInfo(publishedTemplate, dto.publishedTemplates.get(0));
+        assertTemplateInfo(closedTemplateEn, dto.closedTemplates.get(0));
+    }
+    
+    private void assertTemplateInfo(Template expectedValues, TemplateInfo info) {
+        assertEquals(expectedValues.getState(), info.state);
+        assertEquals(expectedValues.getTimestamp(), info.timeStamp);
+        assertEquals(expectedValues.getLanguage(), info.language);
+    }
+    
+    private Template givenTemplateWithApplicationPeriodTimeAndState(String hakuOid, Date date, State state) {
+        Template template = DocumentProviderTestData.getTemplate(1l);
+        template.addApplicationPeriod(DocumentProviderTestData.getTemplateApplicationPeriod(template, hakuOid));
+        template.setTimestamp(date);
+        template.setState(state);
+        return template;
     }
     
     private void verifyTemplateStateChange(State oldState, State newState) {
@@ -314,7 +476,10 @@ public class TemplateServiceTest {
     private void verifyTemplateStateChange(State oldState, State newState, ArgumentCaptor<Template> captor, fi.vm.sade.viestintapalvelu.template.Template template) {
         template.setState(newState);
         when(mockedTemplateDAO.read(template.getId())).thenReturn(givenTemplateWithStateAndId(template.getId(), oldState));
+        when(structureDAO.read(any(Long.TYPE))).thenReturn(structure(contentStructure(ContentStructureType.letter,
+                content(ContentRole.body, ContentType.html))));
         templateService.updateTemplate(template);
+
         verify(mockedTemplateDAO).update(captor.capture());
         assertEquals(newState, captor.getValue().getState());
     }

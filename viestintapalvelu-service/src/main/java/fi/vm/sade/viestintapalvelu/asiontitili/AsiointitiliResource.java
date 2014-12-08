@@ -35,11 +35,11 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliCommunicationService;
 import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 
 /**
  * User: ratamaa
@@ -70,8 +70,10 @@ public class AsiointitiliResource {
     @ApiOperation(value="Viestin lähetys asiointitilipalveluun",
             notes= AsiointitiliResource.SEND_NOTES, response = AsiointitiliAsyncResponseDto.class)
     public Response send(@ApiParam("Viestien lähetyspyyntö") AsiointitiliSendBatchDto sendBatch) {
+        logger.info("Ajastuspalvelu send start");
         beanValidator.validate(sendBatch);
         AsiointitiliAsyncResponseDto response = asiointitiliService.send(sendBatch);
+        logger.info("Ajastuspalvelu send end");
         return Response.status(statusCode(response.getStatusCode())).entity(response).build();
     }
 

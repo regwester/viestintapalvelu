@@ -3,7 +3,7 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
-import fi.vm.sade.ryhmasahkoposti.exception.PersistenceException;
+import fi.vm.sade.viestintapalvelu.common.exception.PersistenceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;

@@ -1,0 +1,50 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="span12">
+            <h1>Kirjepohjat</h1>
+        </div>
+    </div>
+    <div class="row margin-bottom-one">
+        <div class="span12">
+            <button class="btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
+        </div>
+    </div>
+    <div class="row margin-bottom-one">
+        <div class="span12">
+            <input-list label="Valitse näytettävä kirjepohja:" items="letterTypes" model="radioSelection" input="radio" change="changeRadio()"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12" ng-show="(radioSelection !== 'organization') && getTemplates()">
+            <table class="table table-striped clickable-table-row">
+                <thead>
+                    <tr>
+                        <th class="span4">KIRJEPOHJA</th>
+                        <th class="span2">TYYPPI</th>
+                        <th class="span2">KIELI</th>
+                        <th class="span2">TILA</th>
+                        <th class="span2">TALLENNETTU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="letterTemplate in getTemplates()"
+                        ng-click="editTemplate(letterTemplate)">
+                        <td>{{letterTemplate.applicationTarget}}</td>
+                        <td>{{letterTemplate.type}}</td>
+                        <td>{{letterTemplate.languages.join(', ')}}</td>
+                        <td>{{letterTemplate.status}}</td>
+                        <td>{{letterTemplate.saveDate}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="span12" ng-show="(radioSelection === 'applicationTarget') && !getTemplates() && applicationTarget">
+            <h5 class="center help-text-bold">Tälle haulle ei ole vielä kirjepohjia</h5>
+            <p class="center help-text margin-bottom-one">Lisää hakukohtainen kirjepohja klikkaamalla Luo uusi -painiketta</p>
+            <button class="center btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
+        </div>
+        <div class="span12" ng-show="radioSelection === 'organization'">
+            <p>TODO: Jonin direktiivi tänne!</p>
+        </div>
+    </div>
+</div>

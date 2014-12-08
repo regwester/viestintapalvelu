@@ -11,9 +11,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.Resource;
-import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -28,12 +36,11 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 
 @Component
@@ -41,13 +48,25 @@ import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 @Path(Urls.TEMPLATE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.TEMPLATE_RESOURCE_PATH, description = "Kirjepohjarajapinta")
 public class TemplateResource extends AsynchronousResource {
+
     public static final String DEFAULT_STRUCTURE_TYPE = ContentStructureType.letter.name();
+
+    public static final Logger log = LoggerFactory.getLogger(TemplateResource.class);
 
     @Autowired
     private TemplateService templateService;
 
     @Autowired
     private LetterService letterService;
+
+    @Autowired
+    private CurrentUserComponent currentUserComponent;
+
+    @Autowired
+    private LearningOpportunityProviderComponent learningOpportunityProviderComponent;
+
+    @Autowired
+    private OrganisaatioService organisaatioService;
 
     @Autowired
     TarjontaComponent tarjontaComponent;
@@ -86,6 +105,8 @@ public class TemplateResource extends AsynchronousResource {
 
     private final static String GetTemplateContent = "Palauttaa kirjepohjan sisällön";
     private final static String GetTemplateContent400 = "Kirjepohjan palautus epäonnistui.";
+    private static final String DEFAULT_TEMPLATES = "Palauttaa oletus kirjepohjat annetun tilan mukaan";
+    private static final String TEMPLATES_BY_HAKU = "Hakee kirjepohjat hakutunnisteen ja tilan perusteella";
 
     @GET
     @Path("/get")
@@ -258,6 +279,37 @@ public class TemplateResource extends AsynchronousResource {
         @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query")})
     public Template templateByNameAndState(@Context HttpServletRequest request, @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam ("state") State state) throws IOException, DocumentException {
         return templateService.getTemplateByName(templateCriteriaParams(request).withState(state), parseBoolean(request, "content"));
+    }
+    
+    @GET
+    @Path("/defaults")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = DEFAULT_TEMPLATES, notes = DEFAULT_TEMPLATES, response = Template.class)
+    public List<Template> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @QueryParam("state") State state) {
+        if(state != null){
+            return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
+        }
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired());
+    }
+    
+    @GET
+    @Path("/listByApplicationPeriod/{applicationPeriod}/{state}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = TEMPLATES_BY_HAKU, notes= TEMPLATES_BY_HAKU, response = Template.class)
+    public List<Template> getTemplatesByApplicationPeriodAndState(@ApiParam(name = "applicationPeriod", value = "hakutunniste mille kirjepohjia haetaan") @PathParam("applicationPeriod") String applicationPeriod,
+            @ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @PathParam("state") State state) {
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod).withState(state));
+    }
+    
+    @GET
+    @Path("/listByApplicationPeriod/{applicationPeriod}")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @ApiOperation(value = "Hakee uusimmat kirjepohjat hakutunnisteen perusteella", notes = "Palauttaa myös suljettuja kirjepohjia, olettaen ettei samanlaista löydy julkaistu tai luonnostilassa")
+    public TemplatesByApplicationPeriod listTemplatesByApplicationPeriod(@ApiParam(name = "applicationPeriod", value = "hakutunniste millä kirjepohjia haetaan") @PathParam("applicationPeriod") String applicationPeriod) {
+        return templateService.findByApplicationPeriod(applicationPeriod);
     }
 
     private TemplateCriteria templateCriteriaParams(HttpServletRequest request) {
@@ -630,16 +682,100 @@ public class TemplateResource extends AsynchronousResource {
                 .withApplicationPeriod(applicationPeriod), true);
     }
 
+
     @GET
     @Produces("application/json")
-    @Path("/listByApplicationPeriod/{applicationPeriod}")
-    public List<Template> getTemplatesByApplicationPeriod(
+    @Path("/draft/listByApplicationperiod/{applicationPeriod}")
+    public List<OrganisaatioHierarchyDto> getDraftsByApplicationPeriod(@ApiParam(name ="applicationPeriod", value = "haku (OID)", required = true)
+                                                                       @PathParam("applicationPeriod") String applicationPeriod) {
+
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
+        Set<String> providerOrgIds = new HashSet<String>();
+        for(LOPDto lop : providers) {
+            providerOrgIds.add(lop.getId());
+        }
+
+        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
+        for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
+
+        }
+
+
+        return new ArrayList<OrganisaatioHierarchyDto>();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/listOrganizationsByApplicationPeriod/{applicationPeriod}")
+    public List<OrganisaatioHierarchyDto> getOrganizationHierarchyByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true)
             @PathParam("applicationPeriod") String applicationPeriod) {
-        List<Template> templates = templateService.getByApplicationPeriod(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
-        return templates;
+
+        /*
+        First find a list of all templates for the given application period. After that we use this list to filter
+        the big list of different organizations to a group that only have templates for this application period.
+         */
+
+
+        //search for all schools and organizations that provide teaching for the given application period
+        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
+
+        Set<String> providerOrgIds = new HashSet<String>();
+        for(LOPDto lop : providers) {
+            providerOrgIds.add(lop.getId());
+        }
+
+        List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
+        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
+
+        //todo still need to fetch the actual templates
+        List<Template> byApplicationPeriod = templateService.findByCriteria(new TemplateCriteriaImpl().withApplicationPeriod(applicationPeriod));
+
+
+        for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
+            String organisaatioOid = orgHenkilo.getOrganisaatioOid();
+            OrganisaatioHierarchyDto root = organisaatioService.getOrganizationHierarchy(organisaatioOid);
+
+            /*
+            Depth first search and search if the org OID is one that has templates.
+            If a leaf node has templates assigned to it, we need to include all parents of the hierarchy.
+             */
+            filterHierarchy(root, providerOrgIds);
+
+            userRootOrganizations.add(root);
+        }
+
+        //now find drafts for all organizations
+        return userRootOrganizations;
     }
-    
+
+
+
+
+    /*
+     * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false
+     */
+    private boolean filterHierarchy(OrganisaatioHierarchyDto node, Set<String> OIDs) {
+        if(node.getChildren() == null || node.getChildren().isEmpty())
+            return OIDs.contains(node.getOid());
+
+        boolean anyChildInOids = false;
+        List<OrganisaatioHierarchyDto> childrenWithoutMatches = new ArrayList<OrganisaatioHierarchyDto>();
+        for(OrganisaatioHierarchyDto child : node.getChildren()) {
+            boolean someChildInOids = filterHierarchy(child, OIDs);
+            if(!anyChildInOids) {
+                anyChildInOids = someChildInOids;
+            }
+            if(!someChildInOids) { //the current child didn't have any, so we remove it from this parent
+                childrenWithoutMatches.add(child); //remove all these after for each loop
+            }
+        }
+        node.getChildren().removeAll(childrenWithoutMatches);
+        return anyChildInOids;
+    }
+
+
+
     private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
         for (String s : serviceResult) {

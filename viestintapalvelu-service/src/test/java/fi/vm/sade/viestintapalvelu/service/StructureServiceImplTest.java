@@ -48,9 +48,9 @@ import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.converter.StructureDtoConverter;
 import fi.vm.sade.viestintapalvelu.structure.impl.StructureServiceImpl;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.util.DaoVault;
-import fi.vm.sade.viestintapalvelu.util.impl.BeanValidatorImpl;
+import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

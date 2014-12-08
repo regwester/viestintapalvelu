@@ -1,6 +1,9 @@
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
@@ -25,6 +28,8 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -38,13 +43,14 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -189,9 +195,65 @@ public class TemplateResourceTest {
         assertNotNull(resource.templateByNameAndState(constructRequest(template), State.luonnos));
     }
     
+    @Test
+    public void fetchesDefaultTemplates() throws Exception {
+        givenSavedDefaultTemplateWithStatus(State.julkaistu, true);
+        List<Template> templates = resource.getDefaultTemplates(State.julkaistu);
+        assertEquals(1, templates.size());
+        assertEquals(State.julkaistu, templates.get(0).getState());
+        assertTrue(resource.getDefaultTemplates(State.luonnos).isEmpty());
+    }
+    
+    @Test
+    public void fetchesDefaultTemplatesUsingDraftState() throws Exception {
+        givenSavedDefaultTemplateWithStatus(State.luonnos, true);
+        List<Template> templates = resource.getDefaultTemplates(State.luonnos);
+        assertEquals(1, templates.size());
+        assertEquals(State.luonnos, templates.get(0).getState());
+    }
+    
+    @Test
+    public void fetchesTemplatesByUsingApplicationPeriod() throws Exception {
+        String hakuOid = "1.9.3.4.200";
+        givenSavedTemplateWIthApplicationPeriodAndState(hakuOid, State.julkaistu);
+        assertEquals(1, resource.getTemplatesByApplicationPeriodAndState(hakuOid, State.julkaistu).size());
+        assertTrue(resource.getTemplatesByApplicationPeriodAndState(hakuOid, State.luonnos).isEmpty());
+        assertTrue(resource.getTemplatesByApplicationPeriodAndState("12334.23", State.julkaistu).isEmpty());
+    }
+    
+    @Test
+    public void listsTemplatesByApplicationPeriod() throws Exception {
+        String hakuOid = "1.9.3.4.213323";
+        givenSavedTemplateWithApplicationPeriodAndStatus(hakuOid, State.julkaistu);
+        TemplatesByApplicationPeriod dto = resource.listTemplatesByApplicationPeriod(hakuOid);
+        assertEquals(1, dto.publishedTemplates.size());
+        assertTrue(dto.closedTemplates.isEmpty());
+        assertTrue(dto.draftTemplates.isEmpty());
+        assertEquals(hakuOid, dto.hakuOid);
+    }
+    
     private Template givenSavedTemplateInDraftStatus() throws Exception{
-        Long id = (Long) resource.insert(givenTemplateWithStructure()).getEntity();
-        return resource.getTemplateByIDAndState(id, State.luonnos, null);
+        return givenSavedTemplateWithStatus(State.luonnos);
+    }
+
+    private Template givenSavedTemplateWithStatus(State state) throws IOException, DocumentException {
+        return givenSavedDefaultTemplateWithStatus(state, false);
+    }
+
+    private Template givenSavedDefaultTemplateWithStatus(State state, boolean usedAsDefault) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setUsedAsDefault(usedAsDefault);
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
+    }
+    
+    private Template givenSavedTemplateWithApplicationPeriodAndStatus(String applicationPeriod, State state) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setApplicationPeriods(Arrays.asList(applicationPeriod));
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
     }
     
     private HttpServletRequest constructRequest(Template template) {
@@ -209,6 +271,14 @@ public class TemplateResourceTest {
         template.setStructureId(structure.getId());
         template.setStructureName(structure.getName());
         return template;
+    }
+    
+    private Template givenSavedTemplateWIthApplicationPeriodAndState(String hakuOid, State state) throws IOException, DocumentException {
+        Template template = givenTemplateWithStructure();
+        template.setApplicationPeriods(Arrays.asList(hakuOid));
+        template.setState(state);
+        Long id = (Long) resource.insert(template).getEntity();
+        return resource.getTemplateByIDAndState(id, state, null);
     }
     
     @Configuration

@@ -15,6 +15,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService;
 
 @Singleton
 @Component
+@RecovererPriority(1000)
 public class LetterPDFRecoverer implements Recoverer {
     private static final Logger LOGGER = LoggerFactory.getLogger(LetterPDFRecoverer.class);
     

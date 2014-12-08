@@ -49,7 +49,7 @@ import fi.vm.sade.ryhmasahkoposti.model.SendQueueState;
 import fi.vm.sade.ryhmasahkoposti.service.EmailSendQueueService;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDtoConverter;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;
-import fi.vm.sade.ryhmasahkoposti.util.CollectionUtils;
+import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 
 /**
  * User: ratamaa
@@ -119,7 +119,7 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
     }
 
     private List<EmailRecipientDTO> getRecipientDtos(List<ReportedRecipient> recipients) {
-        List<Long> recipientIds = CollectionUtils.extractIds(recipients);
+        List<Long> recipientIds = CollectionHelper.extractIds(recipients);
 
         // Find recipient specific attachment for each unhandled recipients (in a single query):
         List<RecipientReportedAttachmentQueryResult> recipientAttachments = sendQueueDao
@@ -130,7 +130,7 @@ public class EmailSendQueueServiceImpl implements EmailSendQueueService {
         // Convert recipients:
         List<EmailRecipientDTO> recipientDtos = emailRecipientDTOConverter.convert(recipients);
         // RecipientDTOs by recipient id:
-        Map<Long, EmailRecipientDTO> unhandledByIds = CollectionUtils.map(recipientDtos, new Function<EmailRecipientDTO, Long>() {
+        Map<Long, EmailRecipientDTO> unhandledByIds = CollectionHelper.map(recipientDtos, new Function<EmailRecipientDTO, Long>() {
             public Long apply(EmailRecipientDTO reportedRecipient) {
                 return reportedRecipient == null ? null : reportedRecipient.getRecipientID();
             }

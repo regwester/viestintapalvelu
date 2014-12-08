@@ -22,7 +22,6 @@ import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -186,10 +185,24 @@ public class TemplateDAOTest {
         assertNotNull(templateDAO.findByIdAndState(template.getId(), State.luonnos));
         templateDAO.findByIdAndState(template.getId(), State.suljettu);
     }
+    
+    @Test
+    public void returnsTemplateUsingHakuOid() {
+        String hakuOid = "1.9.2.1234";
+        givenPublishedTemplateWithApplicationPeriod(hakuOid);
+        assertEquals(1, templateDAO.findTemplates(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid)).size());
+        assertTrue(templateDAO.findTemplates(new TemplateCriteriaImpl().withApplicationPeriod("1323")).isEmpty());
+    }
 
     private Template givenTemplateWithNameAndState(String templateNamePrefix, State state) {
         Template template = DocumentProviderTestData.getTemplateWithGivenNamePrefix(null, templateNamePrefix);
         template.setState(state);
+        return templateDAO.insert(template);
+    }
+    
+    private Template givenPublishedTemplateWithApplicationPeriod(String hakuOid) {
+        Template template = givenPublishedTemplate();
+        DocumentProviderTestData.getTemplateApplicationPeriod(template, hakuOid);
         return templateDAO.insert(template);
     }
 

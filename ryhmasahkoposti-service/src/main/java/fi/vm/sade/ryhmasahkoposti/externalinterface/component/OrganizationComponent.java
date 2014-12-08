@@ -11,10 +11,10 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**
  * Komponenttiluokka organisaation tietojen hakemiseksi käyttäen CXF:ää

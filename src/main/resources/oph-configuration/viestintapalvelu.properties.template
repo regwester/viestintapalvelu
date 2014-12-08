@@ -68,6 +68,7 @@ activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
 cas.callback.ryhmasahkoposti=http://${server.name}:8309/ryhmasahkoposti-service
 cas.callback.viestintapalvelu=http://${server.name}:8309/viestintapalvelu
+cas.callback.ajastuspalvelu=http://${server.name}:8309/ajastuspalvelu
 cas.group-role-attribute=cn
 cas.group-search-base=ou\=groups
 cas.group-search-filter=(uniqueMember\={0})
@@ -76,11 +77,13 @@ cas.user-search-base=ou\=people
 cas.user-search-filter=(|(mail\={0})(uid\={0}))
 cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti-service
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
+cas.service.ajastuspalvelu=https\://${host.virkailija}/ajastuspalvelu
 customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
 dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
 flyway.initOnMigrate=true
 koodi.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodiService
 koodisto.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodistoService
+koulutusinformaatio.learningOrganizationProvider.url=https://itest-oppija.oph.ware.fi/lop/
 jpa.schemaUpdate=validate
 jpa.showSql=false
 ldap.cache.size=10000
@@ -116,7 +119,8 @@ viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkai
 viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
 viestintapalvelu.tarjontapalvelu.rest.url = https://${host.virkailija}/tarjonta-service/rest
-viestintapalvelu.options.cache.valid.millis=3600000
+viestintapalvelu.rest.api.url = https://${host.virkailija}/viestintapalvelu/api/v1
+viestintapalvelu.options.cache.valid.millis=86400000
 # kuinka monta LetterBatch-käsittelyä sallitaan rinnakkain:
 viestintapalvelu.letter.batch.jobs.pool.size=3
 # kuinka monta vastaanottajan prosessointisäiettä yksi LetterBatch-käsittelijä käynnistää:
@@ -139,5 +143,13 @@ viestintapalvelu.swagger.base.bath=/viestintapalvelu
 viestintapalvelu.asiointitili.wss.keystore.instance = JKS
 viestintapalvelu.asiointitili.ws.log.requests = true
 viestintapalvelu.asiointitili.ws.log.responses = true
-
 viestintapalvelu.rekisterinpitajaOID=1.2.246.562.10.00000000001
+
+
+##############################################################################
+#
+# Ajastuspalvelu
+#
+##############################################################################
+ajastuspalvelu.task.dummyEmail.endpoint = https\://${host.virkailija}/ajastuspalvelu-service/testdata/response.json
+ajastuspalvelu.ryhmasahkoposti.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/

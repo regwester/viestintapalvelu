@@ -1,0 +1,7 @@
+
+create index kirjeet_lahetyskorvauskentat_kirjelahetys_index on kirjeet.lahetyskorvauskentat(kirjelahetys_id);
+create index kirjeet_vastaanottajakorvauskentat_vastaanottaja_index on kirjeet.vastaanottajakorvauskentat(vastaanottaja_id);
+
+drop index kirjeet_vastaanottajaosoite_vastaanotta_ja_kirjelahetyshakuehdot_index;
+create index kirjeet_vastaanottajaosoite_vastaanotta_ja_kirjelahetyshakuehdot_index on kirjeet.vastaanottajaosoite(vastaanottaja_id,
+    etunimi, sukunimi, osoite, osoite2, osoite3, kaupunki, postinumero);
