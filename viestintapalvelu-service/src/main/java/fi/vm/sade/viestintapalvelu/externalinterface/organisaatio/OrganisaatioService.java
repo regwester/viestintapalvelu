@@ -39,6 +39,14 @@ public interface OrganisaatioService {
      */
     List<String> findHierarchyOids(String organisaatioOid);
 
+
+    /**
+     *
+     * @param hierarchyDto
+     * @return all child organization OIDs for given hierarchy including the organization itself
+     */
+    List<String> findHierarchyOids(OrganisaatioHierarchyDto hierarchyDto);
+
     /**
      * @param organisaatioOid
      * @return all child organisaatio OIDs for given organisaatio without including the orgnaisaatio itself
@@ -50,4 +58,6 @@ public interface OrganisaatioService {
      * @return the parent OIDs for given organisaatio without including the orgnisaatio itself
      */
     List<String> findParentOids(String organisaatioOid);
+
+
 }
