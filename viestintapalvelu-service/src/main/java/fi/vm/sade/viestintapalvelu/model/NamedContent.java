@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
  *
  * This program is free software: Licensed under the EUPL, Version 1.1 or - as
@@ -13,14 +13,14 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * European Union Public Licence for more details.
  */
-package fi.vm.sade.viestintapalvelu.dto;
 
-import java.io.Serializable;
+package fi.vm.sade.viestintapalvelu.model;
 
 /**
- * @author risal1
- *
+ * User: ratamaa
+ * Date: 8.12.2014
+ * Time: 13:42
  */
-public class OrganizationTemplatesAndDrafts implements Serializable {
-
+public interface NamedContent {
+    String getName();
 }

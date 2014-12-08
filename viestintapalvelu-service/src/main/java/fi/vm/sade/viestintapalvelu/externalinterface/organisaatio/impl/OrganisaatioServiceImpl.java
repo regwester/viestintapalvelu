@@ -71,9 +71,14 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
 
     public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid) {
         ensureCacheFresh();
-        //return visitDown(this.hierarchyByOids.get(organizationOid), null, EXTRACT_OBJECT, new ArrayList<OrganisaatioHierarchyDto>());
         OrganisaatioHierarchyDto hierarchyDto = this.hierarchyByOids.get(organizationOid);
         return hierarchyDto;
+    }
+
+    @Override
+    public List<String> findHierarchyOids(OrganisaatioHierarchyDto hierarchyDto) {
+        ensureCacheFresh();
+        return visitDown(hierarchyDto, null, EXTRACT_OID, new ArrayList<String>());
     }
 
     @Override

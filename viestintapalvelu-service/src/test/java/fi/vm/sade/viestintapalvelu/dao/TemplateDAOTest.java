@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.NoResultException;
@@ -192,6 +193,44 @@ public class TemplateDAOTest {
         givenPublishedTemplateWithApplicationPeriod(hakuOid);
         assertEquals(1, templateDAO.findTemplates(new TemplateCriteriaImpl().withApplicationPeriod(hakuOid)).size());
         assertTrue(templateDAO.findTemplates(new TemplateCriteriaImpl().withApplicationPeriod("1323")).isEmpty());
+    }
+
+    @Test
+    public void findByOrganizationOID() {
+        Template template1 = givenPublishedTemplate();
+        template1.setOrganizationOid("org1");
+        templateDAO.insert(template1);
+
+        Template template2 = givenPublishedTemplate();
+        template2.setOrganizationOid("org2");
+        templateDAO.insert(template2);
+
+        Template template3 = givenPublishedTemplate();
+        template3.setOrganizationOid("org3");
+        templateDAO.insert(template3);
+
+        List<String> oids = new ArrayList<String>();
+        oids.add("org1");
+        oids.add("org3");
+
+        List<Template> byOrganizationOIDs = templateDAO.findByOrganizationOIDs(oids);
+        assertEquals(2, byOrganizationOIDs.size());
+
+
+        oids = new ArrayList<String>();
+        oids.add("org1");
+        oids.add("org2");
+        oids.add("org3");
+        byOrganizationOIDs = templateDAO.findByOrganizationOIDs(oids);
+        assertEquals(3, byOrganizationOIDs.size());
+
+        oids = new ArrayList<String>();
+        oids.add("org2");
+        oids.add("org3");
+
+        byOrganizationOIDs = templateDAO.findByOrganizationOIDs(oids);
+        assertEquals(2, byOrganizationOIDs.size());
+
     }
 
     private Template givenTemplateWithNameAndState(String templateNamePrefix, State state) {

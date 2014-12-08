@@ -18,7 +18,6 @@ package fi.vm.sade.viestintapalvelu.structure.dto;
 
 import java.io.Serializable;
 
-import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoOrderBy;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
 import fi.vm.sade.viestintapalvelu.model.types.ContentRole;

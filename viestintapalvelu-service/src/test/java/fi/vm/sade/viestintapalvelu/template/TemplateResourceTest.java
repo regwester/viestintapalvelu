@@ -268,6 +268,7 @@ public class TemplateResourceTest {
     private Template givenTemplateWithStructure() {
         Structure structure = actions.createStructure();
         Template template = DocumentProviderTestData.getTemplate();
+        template.setStructure(null);
         template.setStructureId(structure.getId());
         template.setStructureName(structure.getName());
         return template;

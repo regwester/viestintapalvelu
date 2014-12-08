@@ -28,9 +28,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.ratamaa.dtoconverter.annotation.DtoConversion;
 import fi.ratamaa.dtoconverter.annotation.DtoPath;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.ratamaa.dtoconverter.annotation.DtoSkipped;import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.dto.constraint.ValidContentStructure;
 
 /**
@@ -55,7 +54,7 @@ public class ContentStructureSaveDto implements Serializable, TypedContentStruct
     private String style;
     @NotNull @Size(min=1) @Valid
     @ApiModelProperty("Sisältää tämän rakenteen sisällöt ja liitteet halutussa järjestyksessä")
-    @DtoConversion(exported = false)
+    @DtoSkipped
     private List<ContentStructureContentSaveDto> contents = new ArrayList<ContentStructureContentSaveDto>();
 
     @Override

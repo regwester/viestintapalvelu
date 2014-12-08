@@ -393,11 +393,11 @@ public class DocumentProviderTestData {
         template.setName("test_template");
         template.setStructure(structureSaveDto(
                 contentStructureSaveDto(ContentStructureType.letter,
-                        contentSaveDto(ContentRole.body, ContentType.html)
+                        contentSaveDto("name", ContentRole.body, ContentType.html)
                 ),
                 contentStructureSaveDto(ContentStructureType.email,
-                        contentSaveDto(ContentRole.header, ContentType.plain),
-                        contentSaveDto(ContentRole.body, ContentType.html)
+                        contentSaveDto("name", ContentRole.header, ContentType.plain),
+                        contentSaveDto("name2", ContentRole.body, ContentType.html)
                 )
         ));
         template.setOrganizationOid("1.2.246.562.10.00000000001");
@@ -540,7 +540,7 @@ public class DocumentProviderTestData {
         Content content = new Content();
         content.setContent(type == ContentType.html ? "<html><head><title>T</title></head><body>B</body></html>"
                 : "content");
-        content.setName("name");
+        content.setName("name_"+role.name()+"_"+type.name());
         content.setContentType(type);
         csc.setContent(content);
         return csc;
@@ -567,7 +567,11 @@ public class DocumentProviderTestData {
     }
 
     public static ContentStructureContentSaveDto contentSaveDto(ContentRole role, ContentType type) {
-        return new ContentStructureContentSaveDto(role, "name", type,
+        return contentSaveDto("name_"+role.name(), role, type);
+    }
+
+    public static ContentStructureContentSaveDto contentSaveDto(String name, ContentRole role, ContentType type) {
+        return new ContentStructureContentSaveDto(role, name, type,
                 type == ContentType.html ? "<html><head><title>T</title></head><body>B</body></html>"
                         : "content");
     }

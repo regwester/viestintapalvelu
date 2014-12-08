@@ -1,7 +1,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateController', ['$scope', '$state', 'TemplateService', function($scope, $state, TemplateService) {
+    .controller('TemplateController', ['$scope', '$state', 'TemplateService', 'TemplateTreeService', function($scope, $state, TemplateService, TemplateTreeService) {
 
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = "Select one";
@@ -16,11 +16,27 @@ angular.module('letter-templates')
 
         $scope.my_tree_handler = function(branch){
             console.log(branch);
-        };
+        }
 
         $scope.updateTreeData = function(applicationPeriod) {
-            TemplateService.getByApplicationPeriod(applicationPeriod.oid).then(function(response) {
-                $scope.template_tree_data = TemplateService.getParsedTreeGrid(response);
+            console.log(applicationPeriod);
+
+            var setTemplates = function (templates) {
+
+            };
+
+            var query = TemplateTreeService.getOrganizationHierarchy(applicationPeriod.oid);
+            query.then(function(response){
+                var treedata = TemplateTreeService.getParsedTreeGrid(response).tree;
+                var organizationOIDS = TemplateTreeService.getParsedTreeGrid(response).oids;
+                $scope.template_tree_data = treedata;
+                TemplateService.getTemplatesByOid(organizationOIDS).then(function(response) {
+                    console.log(response.data);
+                    treedata = TemplateTreeService.addTemplatesToTree(treedata, response.data);
+                    //$scope.template_tree_data = treedata;
+                });
+
+
             });
         }
 

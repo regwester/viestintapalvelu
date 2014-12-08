@@ -76,6 +76,14 @@ public class StructureServiceImpl implements StructureService {
         return structure.getId();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public StructureSaveDto getStructureForEditing(Long id) {
+        Structure structure = fromNullable(structureDAO.read(id)).or(
+                OptionalHelper.<Structure>notFound("Structure not found by id="+id));
+        return dtoConverter.convert(structure, new StructureSaveDto());
+    }
+
     public void setStructureDAO(StructureDAO structureDAO) {
         this.structureDAO = structureDAO;
     }

@@ -29,4 +29,6 @@ public interface TemplateDAO extends JpaDAO<Template, Long> {
 	List<String> getAvailableTemplatesByType(Template.State state);
 	
 	Template findByIdAndState(Long id, State state);
+
+    List<Template> findByOrganizationOIDs(List<String> oids);
 }

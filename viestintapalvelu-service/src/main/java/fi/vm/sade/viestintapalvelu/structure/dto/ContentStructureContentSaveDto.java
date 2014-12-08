@@ -47,12 +47,10 @@ public class ContentStructureContentSaveDto implements Serializable, TypedConten
     @DtoPath("content.name")
     @ApiModelProperty("Sisältäosan nimi")
     private String name;
-    @NotNull
     @DtoPath("content.contentType")
     @ApiModelProperty("Sisällön tyyppi html/plain. Asiointilillä body ja sms oltava aina plain.")
     private ContentType contentType;
-    @NotNull
-    @ApiModelProperty("Sisältö, joka vastaa contentTypen muotoa: html-tyyppisessä HTML-dokumentti ja plain-muodossa pelkkää tekstiä")
+    @ApiModelProperty("Sisältö, joka vastaa contentTypen muotoa: html-tyyppisessä HTML-dokumentti ja plain-muodossa pelkkää tekstiä. Jos ei annettu haetaan aiemmin annettuista nimellä.")
     @DtoPath("content.content")
     private String content;
 

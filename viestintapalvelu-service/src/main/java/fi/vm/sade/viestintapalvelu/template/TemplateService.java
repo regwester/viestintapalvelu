@@ -32,6 +32,16 @@ public interface TemplateService {
 
     Template findById(long id, ContentStructureType structureType);
 
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
+     */
+    Template findByIdForEditing(TemplateCriteria criteria);
+
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.template.TemplateService#findById(long)
+     */
+    Template findByIdForEditing(long id, State state);
+
     Template findByIdAndState(long id, ContentStructureType structureType, State state);
     
     fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode) throws IOException, DocumentException;
@@ -45,4 +55,6 @@ public interface TemplateService {
     List<Template> findByCriteria(TemplateCriteria criteria);
     
     TemplatesByApplicationPeriod findByApplicationPeriod(String applicationPeriod);
+
+    List<Template> findByOrganizationOIDs(List<String> oids);
 }
