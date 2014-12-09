@@ -35,12 +35,13 @@ angular.module('report')
         };
     })
   .controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', '$window', 'ReportedLetterListCtrlState',
-        function ($scope, $state, $http, $window, ReportedLetterListCtrlState) {
+function ($scope, $state, $http, $window, ReportedLetterListCtrlState) {
     var  serviceAPIUrl = '/viestintapalvelu/api/v1',
         reportingAPIUrl = serviceAPIUrl + '/reporting',
         reportedLettersListUrl = serviceAPIUrl+'/reporting/list',
         reportedLettersSearchUrl = serviceAPIUrl+'/reporting/search';
     $scope.doneSearchTarget = 'batch';
+    $scope.loading = false;
 
     $scope.fetch = function () {
       var params = {}, url = reportedLettersListUrl;
@@ -64,13 +65,16 @@ angular.module('report')
         nbrofrows: $scope.pagination.pageSize
       }, $scope.sortAndOrder);
 
+      $scope.loading = true;
       $http.get(url, {params: params})
         .success(function (reportedLettersDTO) {
           $scope.doneSearchTarget = params.searchTarget;
           $scope.reportedLettersDTO = reportedLettersDTO;
+          $scope.loading = false;
         })
         .error(function (err) {
-          console.log(err);
+          $scope.loading = false;
+          try {console.log(err);}catch(e) {}
         });
     };
 

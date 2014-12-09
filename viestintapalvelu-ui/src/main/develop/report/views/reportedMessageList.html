@@ -46,6 +46,7 @@
             </button>
             <button class="btn" type="button" ng-click="clean()">
                 <span>{{'reportedmessagelist.button.tyhjenna' | i18n}}</span></button>
+            <div class="loadingIndicator" ng-show="loading"></div>
         </div>
     </div>
 
@@ -101,7 +102,9 @@
                     ng-model="pagination.page" ng-change="pageChanged()"
                     max-size="10"  boundary-links="true"
                     previous-text="{{'pagination.button.edellinen' | i18n}}"
-                    next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+                    next-text="{{'pagination.button.seuraava' | i18n}}"
+                    first-text="{{'pagination.button.ensimmainen' | i18n}}"
+                    last-text="{{'pagination.button.viimeinen' | i18n}}"></pagination>
     </div>
 </div>
 
