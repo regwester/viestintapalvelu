@@ -57,7 +57,7 @@ public class StructureConverterImpl implements StructureConverter {
         switch (structure.getType()) {
         case email:
             add(results, convert(Contents.EMAIL_SUBJECT, predicate, firstContent(structure,
-                    where(predicate, ContentRole.body).type(ContentType.html))));
+                    where(predicate, ContentRole.header).type(ContentType.html))));
             add(results, convert(Contents.EMAIL_BODY, predicate, firstContent(structure,
                     where(predicate, ContentRole.body).type(ContentType.html))));
             add(results, convert(Contents.ATTACHMENT, predicate, contents(structure,
