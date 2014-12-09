@@ -19,6 +19,7 @@
             <table class="table table-striped clickable-table-row">
                 <thead>
                     <tr>
+                    	<th></th>
                         <th class="span4">KIRJEPOHJA</th>
                         <th class="span2">TYYPPI</th>
                         <th class="span2">KIELI</th>
@@ -27,8 +28,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    <tr ng-repeat="letterTemplate in getTemplates()"
-                        ng-click="editTemplate(letterTemplate)">
+                    <tr ng-repeat="letterTemplate in getTemplates()">
+                        <td>
+                    		<div class="btn-group dropdown">
+                        		<input type="button" class="icon-actionmenu dropdown-toggle"/>
+                        		<ul class="dropdown-menu" role="menu">
+                        			<li><a ng-click="publishTemplate(letterTemplate)" ng-enabled="letterTemplate.state == 'luonnos'">Julkaise</a>
+                            		<li><a ng-click="editTemplate(letterTemplate)" ng-enabled="letterTemplate.state == 'luonnos'">{{'common.edit' | i18n}}</a></li>
+                            		<li><a ng-click="removeTemplate(letterTemplate.id)" ng-disabled="letterTemplate.state == 'suljettu'">{{'common.delete' | i18n}}</a></li>
+                        		</ul>
+                    		</div>
+                		</td>
                         <td>{{letterTemplate.name}}</td>
                         <td>{{letterTemplate.type}}</td>
                         <td>{{letterTemplate.language}}</td>

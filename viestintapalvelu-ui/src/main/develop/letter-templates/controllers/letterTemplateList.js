@@ -60,5 +60,41 @@ angular.module('letter-templates')
                     text: 'Organisaatioiden kirjeluonnokset'
                 }
             ];
+            
+            $scope.removeTemplate = function(templateId) {
+        	var modalInstance = $modal.open({
+                    templateUrl: 'views/letter-templates/views/partials/removedialog.html',
+                    controller: 'RemoveTemplateModalFromUse',
+                    size: 'sm',
+                    resolve: {
+                	templateId: function () {
+                            return templateId
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (taskId) {
+                    //TODO: update list
+                });
+            };
         }
     ]);
+
+angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$scope', '$modalInstance', 'TemplateService', 'templateId', function ($scope, $modalInstance, TemplateService, templateId) {
+    $scope.templateIdToRemove = templateId;
+
+    $scope.cancel = function () {
+	$modalInstance.dismiss('cancel');
+    };
+
+    $scope.remove = function () {
+	TemplateService.getTemplateForEditing($scope.templateIdToRemove).then(function(result) {
+	    var template = result.data
+	    template.state = 'suljettu';
+	    TemplateService.updateTemplate().put({}, template, function () {
+		$modalInstance.close($scope.templateIdToRemove);
+	    });
+	});
+    };
+
+}]);
