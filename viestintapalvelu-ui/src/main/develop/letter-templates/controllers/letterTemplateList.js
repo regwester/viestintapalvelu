@@ -73,7 +73,24 @@ angular.module('letter-templates')
                     }
                 });
 
-                modalInstance.result.then(function (taskId) {
+                modalInstance.result.then(function (templateId) {
+                    //TODO: update list
+                });
+            };
+            
+            $scope.publishTemplate = function(templateId) {
+        	var modalInstance = $modal.open({
+                    templateUrl: 'views/letter-templates/views/partials/publishdialog.html',
+                    controller: 'PublishTemplate',
+                    size: 'sm',
+                    resolve: {
+                	templateId: function () {
+                            return templateId
+                        }
+                    }
+                });
+
+                modalInstance.result.then(function (templateId) {
                     //TODO: update list
                 });
             };
@@ -93,6 +110,25 @@ angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$s
 	    template.state = 'suljettu';
 	    TemplateService.updateTemplate().put({}, template, function () {
 		$modalInstance.close($scope.templateIdToRemove);
+	    });
+	});
+    };
+
+}]);
+
+angular.module('letter-templates').controller('PublishTemplate', ['$scope', '$modalInstance', 'TemplateService', 'templateId', function ($scope, $modalInstance, TemplateService, templateId) {
+    $scope.templateIdToPublish = templateId;
+
+    $scope.cancel = function () {
+	$modalInstance.dismiss('cancel');
+    };
+
+    $scope.remove = function () {
+	TemplateService.getTemplateForEditing($scope.templateIdToPublish).then(function(result) {
+	    var template = result.data
+	    template.state = 'julkaistu';
+	    TemplateService.updateTemplate().put({}, template, function () {
+		$modalInstance.close($scope.templateIdToPublish);
 	    });
 	});
     };
