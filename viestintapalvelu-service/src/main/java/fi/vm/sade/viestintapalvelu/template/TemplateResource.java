@@ -312,7 +312,7 @@ public class TemplateResource extends AsynchronousResource {
         if(state != null){
             return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
         }
-        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired());
+        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(null));
     }
     
     @GET

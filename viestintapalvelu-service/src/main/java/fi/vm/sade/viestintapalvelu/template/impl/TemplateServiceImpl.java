@@ -332,6 +332,7 @@ public class TemplateServiceImpl implements TemplateService {
         result.setTimestamp(searchResult.getTimestamp());
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setState(searchResult.getState());
+        result.setUsedAsDefault(searchResult.isUsedAsDefault());
         return result;
     }
 
