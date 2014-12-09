@@ -432,6 +432,15 @@ ul.normal-margin {
 
 }
 
+.loadingIndicator {
+  width: 20px; height: 20px;
+  float:right;
+  background-image: url("../img/ajax-loader-big.gif");
+  background-repeat: no-repeat;
+  background-size: auto 100%;
+  background-position: center;
+}
+
 ul.attachments-list {
   list-style-type: none;
   margin-left: 0;

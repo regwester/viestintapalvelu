@@ -31,6 +31,19 @@ angular.module('letter-templates')
             saveTemplate: function(template) {
                 return $http.post(templateBaseUrl + 'insert/', template);
             },
+            getTemplateForEditing: function(id) {
+        	return $http.get(templateBaseUrl + id + '/edit');
+            },
+            updateTemplate: function() {
+        	return $resource(templateBaseUrl + 'update', {}, {
+        	        put: {
+        	            method: "PUT"
+        	        }
+        	    });
+            },
+            getDefaultTemplates: function() {
+        	return $http.get(templateBaseUrl + 'defaults');
+            },
             publishTemplate : function() {
                 return true;
             }

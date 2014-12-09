@@ -51,6 +51,7 @@
             {{'reportedletterlist.button.hae' | i18n}}
         </button>
         <button class="btn" ng-click="emptySearch()">{{'reportedletterlist.button.tyhjenna' | i18n}}</button>
+        <div class="loadingIndicator" ng-show="loading"></div>
         <div style="color:gray; font-style: italic">
             {{'reportedletterlist.searchTarget.'+searchTarget+'.description' | i18n}}
         </div>
@@ -110,6 +111,8 @@
                 ng-model="pagination.page"
                 ng-change="fetch()"
                 previous-text="{{'pagination.button.edellinen' | i18n}}"
-                next-text="{{'pagination.button.seuraava' | i18n}}"></pagination>
+                next-text="{{'pagination.button.seuraava' | i18n}}"
+                first-text="{{'pagination.button.ensimmainen' | i18n}}"
+                last-text="{{'pagination.button.viimeinen' | i18n}}"></pagination>
   </div>
 </div>
