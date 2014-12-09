@@ -29,11 +29,11 @@
                 <tbody>
                     <tr ng-repeat="letterTemplate in getTemplates()"
                         ng-click="editTemplate(letterTemplate)">
-                        <td>{{letterTemplate.applicationTarget}}</td>
+                        <td>{{letterTemplate.name}}</td>
                         <td>{{letterTemplate.type}}</td>
-                        <td>{{letterTemplate.languages.join(', ')}}</td>
-                        <td>{{letterTemplate.status}}</td>
-                        <td>{{letterTemplate.saveDate}}</td>
+                        <td>{{letterTemplate.language}}</td>
+                        <td>{{letterTemplate.state}}</td>
+                        <td>{{letterTemplate.timestamp | date:'d.M.yyyy H:mm'}}</td>
                     </tr>
                 </tbody>
             </table>
