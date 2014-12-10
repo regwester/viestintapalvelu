@@ -25,6 +25,7 @@ angular.module('letter-templates')
 
 
                 var oidList = [];
+                var oidMap = {};
 
                 var parseData = function(item) {
                     var firstColum18nStr = "Organisaatio ja kirjetyyppi";
@@ -47,6 +48,7 @@ angular.module('letter-templates')
                         var childrenRows = map(parseData, item.children);
                         newRow["children"] = childrenRows;
                     }
+                    oidMap[item.oid] = newRow;
                     return newRow;
                 };
 
@@ -54,11 +56,23 @@ angular.module('letter-templates')
                 var dataArr = [];
                 dataArr.push(response.data[0]);
                 newData = map(parseData, dataArr);
-                return {"tree": newData, "oids":oidList};
+                return {"tree": newData, "oids":oidList, "oidToRowMap": oidMap};
             },
-            addTemplatesToTree : function (tree, templates) {
 
+            addTemplatesToTree : function (tree, templates, oidMap) {
 
+                templates.forEach(function(item) {
+                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
+                    var orgOid = item.organizationOid;
+                    var letterRow = item;
+
+                    letterRow[firstColum18nStr] = item.name;
+                    letterRow["lang"] = item.language;
+                    letterRow["status"] = item.state;
+                    letterRow["isLetter"] = true;
+
+                    oidMap[orgOid].children.push(letterRow);
+                });
 
                 return tree;
             }

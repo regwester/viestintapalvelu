@@ -17,7 +17,7 @@ angular.module('letter-templates')
                 return $http.get(serviceUrl + 'options/hakus');
             },
             getTemplatesByOid: function(oidList) {
-                return $http.get(templateBaseUrl+"byOrganizationOid", {params: {oids: oidList}})
+                return $http.get(templateBaseUrl, {params: {organizationid: oidList }})
             },
             getApplicationTargets: function() {
                 return deferred.promise;
