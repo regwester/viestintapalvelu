@@ -45,7 +45,7 @@ public class LetterBatchValidator {
                 if (hakemusOid == null) {
                     hakemusOid = letter.getAddressLabel().getFirstName() + " " +letter.getAddressLabel().getLastName() ;
                 }
-                result.put((String)letter.getTemplateReplacements().get("hakemusOid"), t.getMessage());
+                result.put(hakemusOid, t.getMessage());
             }
         }
         if (result.size() > 0) {
