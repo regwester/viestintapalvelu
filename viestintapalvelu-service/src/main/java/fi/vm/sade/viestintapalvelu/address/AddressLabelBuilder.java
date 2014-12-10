@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.address;
 
 import java.io.IOException;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -9,6 +10,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import fi.vm.sade.viestintapalvelu.Constants;
+
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -29,7 +31,9 @@ public class AddressLabelBuilder {
     }
 
     public byte[] printPDF(AddressLabelBatch input) throws DocumentException, IOException {
-        Map<String, Object> context = createDataContext(input.getAddressLabels(), new AddressLabelDecoratorBuilder() {
+        List<AddressLabel> addresses = input.getAddressLabels();
+        Collections.sort(addresses);
+        Map<String, Object> context = createDataContext(addresses, new AddressLabelDecoratorBuilder() {
             protected AddressLabelDecorator newAddressLabelDecorator(AddressLabel addressLabel) {
                 return new HtmlAddressLabelDecorator(addressLabel);
             }
