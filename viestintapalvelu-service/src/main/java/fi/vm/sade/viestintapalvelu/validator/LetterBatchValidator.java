@@ -1,5 +1,8 @@
 package fi.vm.sade.viestintapalvelu.validator;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -24,13 +27,29 @@ public class LetterBatchValidator {
      * 
      * @param letters
      */
-    public static void validate(LetterBatchDetails letters) throws Exception {
+
+    /**
+     * Validoi annetun <code>LetterBatch</code>:n.
+     * 
+     * @param letters
+     */
+    public static Map<String, String> validate(LetterBatchDetails letters) throws Exception {
+        Map<String, String> result = new HashMap<String, String>();
         validateLetterBatch(letters);
+
         for (LetterDetails letter : letters.getLetters()) {
-            validate(letter);
+            try {
+                validate(letter);
+            } catch (Throwable t) {
+                result.put((String)letter.getTemplateReplacements().get("hakemusOid"), t.getMessage());
+            }
+        }
+        if (result.size() > 0) {
+            return result;
+        } else {
+            return null;
         }
     }
-
 
     public static boolean isValid(LetterBatchDetails letters) {
         try {

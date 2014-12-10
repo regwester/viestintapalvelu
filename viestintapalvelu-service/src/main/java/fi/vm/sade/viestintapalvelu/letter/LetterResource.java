@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -34,7 +35,6 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
-
 import static org.joda.time.DateTime.now;
 
 @Component
@@ -246,7 +246,10 @@ public class LetterResource extends AsynchronousResource {
     public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
         try {
-            LetterBatchValidator.validate(input);
+            Map<String, String> errors = LetterBatchValidator.validate(input);
+            if (errors != null) {
+                return Response.status(Status.BAD_REQUEST).entity(errors).build();
+            }
         } catch (Exception e) {
             LOG.error("Validation error", e);
             return Response.status(Status.BAD_REQUEST).build();
