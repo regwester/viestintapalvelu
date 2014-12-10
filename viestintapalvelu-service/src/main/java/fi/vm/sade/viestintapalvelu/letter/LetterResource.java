@@ -248,7 +248,7 @@ public class LetterResource extends AsynchronousResource {
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
             if (errors != null) {
-                return Response.status(Status.BAD_REQUEST).entity(errors).build();
+                return Response.ok(errors).build();
             }
         } catch (Exception e) {
             LOG.error("Validation error", e);
