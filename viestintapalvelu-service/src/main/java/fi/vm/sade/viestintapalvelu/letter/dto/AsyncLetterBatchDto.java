@@ -191,4 +191,13 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     public void setIPostiData(Map<String, byte[]> IPostiData) {
         this.iPostiData = IPostiData;
     }
+
+    @Override
+    public String toString() {
+        return "AsyncLetterBatchDto [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements="
+                + templateReplacements + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid
+                + ", organizationOid=" + organizationOid + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag
+                + ", iposti=" + iposti + ", iPostiData=" + iPostiData + "]";
+    }
+    
 }

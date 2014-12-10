@@ -219,6 +219,7 @@ public class LetterResource extends AsynchronousResource {
         notes = "")
     public Response asyncPdf(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
+        
         input.setIposti(false);
         return asyncLetter(input);
     }
@@ -245,6 +246,9 @@ public class LetterResource extends AsynchronousResource {
         notes = "")
     public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
+        LOG.debug("creating letter");
+        LOG.debug(input.toString());
+        
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
             if (errors != null) {
