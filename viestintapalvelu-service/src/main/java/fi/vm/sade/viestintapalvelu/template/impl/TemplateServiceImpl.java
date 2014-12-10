@@ -466,7 +466,7 @@ public class TemplateServiceImpl implements TemplateService {
     public List<fi.vm.sade.viestintapalvelu.template.Template> findByCriteria(TemplateCriteria criteria) {
         List<fi.vm.sade.viestintapalvelu.template.Template> templates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
         for (Template t : templateDAO.findTemplates(criteria)) {
-            fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(t);
+            fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(t, true, false);
             templates.add(convertedTemplate);
         }
         return templates;
@@ -477,7 +477,7 @@ public class TemplateServiceImpl implements TemplateService {
         List<Template> templates = templateDAO.findByOrganizationOIDs(oids);
         List<fi.vm.sade.viestintapalvelu.template.Template> convertedTemplates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
         for(Template template : templates) {
-            fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(template);
+            fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(template, true, false);
             convertedTemplates.add(convertedTemplate);
         }
         return convertedTemplates;
@@ -535,10 +535,16 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     // TODO: move to separate DTO converter:
-    private fi.vm.sade.viestintapalvelu.template.Template getConvertedTemplate(Template from) {
+    private fi.vm.sade.viestintapalvelu.template.Template getConvertedTemplate(Template from, boolean convertApplicationPeriods, boolean convertReplacements) {
         fi.vm.sade.viestintapalvelu.template.Template template = convertBasicData(from, new fi.vm.sade.viestintapalvelu.template.Template());
-        template = convertApplicationPeriods(from, template);
-        template = convertReplacements(from, template);
+
+        if(convertApplicationPeriods) {
+            template = convertApplicationPeriods(from, template);
+        }
+
+        if(convertReplacements) {
+            template = convertReplacements(from, template);
+        }
         return template;
     }
 

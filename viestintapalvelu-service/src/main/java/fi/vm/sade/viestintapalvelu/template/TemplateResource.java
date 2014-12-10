@@ -57,9 +57,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
+import javax.ws.rs.core.*;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -129,6 +127,17 @@ public class TemplateResource extends AsynchronousResource {
     private final static String GetTemplateContent400 = "Kirjepohjan palautus epäonnistui.";
     private static final String DEFAULT_TEMPLATES = "Palauttaa oletus kirjepohjat annetun tilan mukaan";
     private static final String TEMPLATES_BY_HAKU = "Hakee kirjepohjat hakutunnisteen ja tilan perusteella";
+
+    /**
+     * @param organizationIds list of organization ids of templates
+     * @return a list of templates matching the organizationIds list
+     */
+    @GET
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Produces("application/json")
+    public List<Template> listByOids(@QueryParam("organizationid") List<String> organizationIds) {
+        return templateService.findByOrganizationOIDs(organizationIds);
+    }
 
     @GET
     @Path("/get")
@@ -287,7 +296,7 @@ public class TemplateResource extends AsynchronousResource {
     public Template templateByName(@Context HttpServletRequest request) throws IOException, DocumentException {
         return templateService.getTemplateByName(templateCriteriaParams(request), parseBoolean(request, "content"));
     }
-    
+
     @GET
     @Path("/getByName/{state}")
     @Produces("application/json")
@@ -747,28 +756,6 @@ public class TemplateResource extends AsynchronousResource {
 
 
         return new ArrayList<OrganisaatioHierarchyDto>();
-    }
-
-    /*
-     * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false
-     */
-    private boolean filterHierarchy(OrganisaatioHierarchyDto node, Set<String> OIDs) {
-        if(node.getChildren() == null || node.getChildren().isEmpty())
-            return OIDs.contains(node.getOid());
-
-        boolean anyChildInOids = false;
-        List<OrganisaatioHierarchyDto> childrenWithoutMatches = new ArrayList<OrganisaatioHierarchyDto>();
-        for(OrganisaatioHierarchyDto child : node.getChildren()) {
-            boolean someChildInOids = filterHierarchy(child, OIDs);
-            if(!anyChildInOids) {
-                anyChildInOids = someChildInOids;
-            }
-            if(!someChildInOids) { //the current child didn't have any, so we remove it from this parent
-                childrenWithoutMatches.add(child); //remove all these after for each loop
-            }
-        }
-        node.getChildren().removeAll(childrenWithoutMatches);
-        return anyChildInOids;
     }
 
 

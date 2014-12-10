@@ -62,17 +62,17 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
             return dto.getOid();
         }
     };
-    private static final HierarchyVisitor<OrganisaatioHierarchyDto> EXTRACT_OBJECT = new HierarchyVisitor<OrganisaatioHierarchyDto>() {
-        @Override
-        public OrganisaatioHierarchyDto visit(OrganisaatioHierarchyDto dto, OrganisaatioHierarchyDto parent) {
-            return dto;
-        }
-    };
 
     public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid) {
         ensureCacheFresh();
         OrganisaatioHierarchyDto hierarchyDto = this.hierarchyByOids.get(organizationOid);
-        return hierarchyDto;
+        if(hierarchyDto == null)
+            return null;
+        /*
+        Be sure to return a copy in case the dto is somehow modified later on.
+        This prevents corruption of the cache.
+         */
+        return new OrganisaatioHierarchyDto(hierarchyDto);
     }
 
     @Override
