@@ -33,9 +33,9 @@
                     		<div class="btn-group dropdown">
                         		<input type="button" class="icon-actionmenu dropdown-toggle"/>
                         		<ul class="dropdown-menu" role="menu">
-                        			<li><button type="button" class="btn btn-link" ng-click="publishTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state != 'luonnos'">Julkaise</button>
-                            		<li><button type="button" class="btn btn-link" ng-click="editTemplate(letterTemplate)" ng-disabled="letterTemplate.state != 'luonnos'">{{'common.edit' | i18n}}</button></li>
-                            		<li><button type="button" class="btn btn-link" ng-click="removeTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state == 'suljettu'">{{'common.delete' | i18n}}</button></li>
+                        			<li><button type="button" class="link-button" ng-click="publishTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state != 'luonnos'">Julkaise</button>
+                            		<li><button type="button" class="link-button" ng-click="editTemplate(letterTemplate)" ng-disabled="letterTemplate.state != 'luonnos'">{{'common.edit' | i18n}}</button></li>
+                            		<li><button type="button" class="link-button" ng-click="removeTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state == 'suljettu'">{{'common.delete' | i18n}}</button></li>
                         		</ul>
                     		</div>
                 		</td>
