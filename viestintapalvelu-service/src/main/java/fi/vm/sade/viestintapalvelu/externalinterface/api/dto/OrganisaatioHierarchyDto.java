@@ -41,6 +41,26 @@ public class OrganisaatioHierarchyDto implements Serializable {
     private Map<String,String> nimi = new HashMap<String, String>();
     private List<OrganisaatioHierarchyDto> children = new ArrayList<OrganisaatioHierarchyDto>();
 
+    public OrganisaatioHierarchyDto(){}
+
+    public OrganisaatioHierarchyDto(OrganisaatioHierarchyDto other) {
+        if(other == null) {
+            return;
+        }
+        //this.parent = new OrganisaatioHierarchyDto(other.parent);
+        this.oid = other.oid;
+        this.parentOid = other.parentOid;
+        this.ytunnus = other.ytunnus;
+        this.nimi = new HashMap<String, String>();
+        this.nimi.putAll(other.nimi);
+        this.children = new ArrayList<OrganisaatioHierarchyDto>();
+        for (OrganisaatioHierarchyDto otherChild : other.children) {
+            OrganisaatioHierarchyDto newChild = new OrganisaatioHierarchyDto(otherChild);
+            newChild.setParent(this);
+            this.children.add(newChild);
+        }
+    }
+
     public String getOid() {
         return oid;
     }

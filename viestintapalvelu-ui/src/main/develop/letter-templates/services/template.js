@@ -17,7 +17,7 @@ angular.module('letter-templates')
                 return $http.get(serviceUrl + 'options/hakus');
             },
             getTemplatesByOid: function(oidList) {
-                return $http.get(templateBaseUrl+"byOrganizationOid", {params: {oids: oidList}})
+                return $http.get(templateBaseUrl, {params: {organizationid: oidList }})
             },
             getApplicationTargets: function() {
                 return deferred.promise;
@@ -31,8 +31,8 @@ angular.module('letter-templates')
             saveTemplate: function(template) {
                 return $http.post(templateBaseUrl + 'insert/', template);
             },
-            getTemplateForEditing: function(id) {
-        	return $http.get(templateBaseUrl + id + '/edit');
+            getTemplateByIdAndState: function(id, state) {
+        	return $http.get(templateBaseUrl + id + '/getTemplateContent/' + state);
             },
             updateTemplate: function() {
         	return $resource(templateBaseUrl + 'update', {}, {

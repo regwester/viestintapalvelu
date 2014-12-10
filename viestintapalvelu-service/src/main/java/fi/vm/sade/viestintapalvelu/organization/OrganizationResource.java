@@ -73,8 +73,6 @@ public class OrganizationResource extends AsynchronousResource {
             If a leaf node has templates assigned to it, we need to include all parents of the hierarchy.
              */
             filterHierarchy(root, providerOrgIds);
-            //List<String> hierarchyOids = organisaatioService.findHierarchyOids(root);
-            //allOrganisationOids.add(hierarchyOids);
             userRootOrganizations.add(root);
         }
 

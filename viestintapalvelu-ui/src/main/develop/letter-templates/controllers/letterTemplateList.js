@@ -61,7 +61,7 @@ angular.module('letter-templates')
                 }
             ];
             
-            $scope.removeTemplate = function(templateId) {
+            $scope.removeTemplate = function(templateId, state) {
         	var modalInstance = $modal.open({
                     templateUrl: 'views/letter-templates/views/partials/removedialog.html',
                     controller: 'RemoveTemplateModalFromUse',
@@ -69,6 +69,9 @@ angular.module('letter-templates')
                     resolve: {
                 	templateId: function () {
                             return templateId
+                        },
+                        state: function() {
+                            return state
                         }
                     }
                 });
@@ -78,7 +81,7 @@ angular.module('letter-templates')
                 });
             };
             
-            $scope.publishTemplate = function(templateId) {
+            $scope.publishTemplate = function(templateId, state) {
         	var modalInstance = $modal.open({
                     templateUrl: 'views/letter-templates/views/partials/publishdialog.html',
                     controller: 'PublishTemplate',
@@ -86,7 +89,10 @@ angular.module('letter-templates')
                     resolve: {
                 	templateId: function () {
                             return templateId
-                        }
+                        },
+        		state: function() {
+        		    return state
+        		}
                     }
                 });
 
@@ -97,15 +103,16 @@ angular.module('letter-templates')
         }
     ]);
 
-angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$scope', '$modalInstance', 'TemplateService', 'templateId', function ($scope, $modalInstance, TemplateService, templateId) {
+angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$scope', '$modalInstance', 'TemplateService', 'templateId', 'state', function ($scope, $modalInstance, TemplateService, templateId, state) {
     $scope.templateIdToRemove = templateId;
+    $scope.state = state;
 
     $scope.cancel = function () {
 	$modalInstance.dismiss('cancel');
     };
 
     $scope.remove = function () {
-	TemplateService.getTemplateForEditing($scope.templateIdToRemove).then(function(result) {
+	TemplateService.getTemplateByIdAndState($scope.templateIdToRemove, $scope.state).then(function(result) {
 	    var template = result.data
 	    template.state = 'suljettu';
 	    TemplateService.updateTemplate().put({}, template, function () {
@@ -116,15 +123,16 @@ angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$s
 
 }]);
 
-angular.module('letter-templates').controller('PublishTemplate', ['$scope', '$modalInstance', 'TemplateService', 'templateId', function ($scope, $modalInstance, TemplateService, templateId) {
+angular.module('letter-templates').controller('PublishTemplate', ['$scope', '$modalInstance', 'TemplateService', 'templateId', 'state', function ($scope, $modalInstance, TemplateService, templateId, state) {
     $scope.templateIdToPublish = templateId;
-
+    $scope.state = state;
+    
     $scope.cancel = function () {
 	$modalInstance.dismiss('cancel');
     };
 
     $scope.remove = function () {
-	TemplateService.getTemplateForEditing($scope.templateIdToPublish).then(function(result) {
+	TemplateService.getTemplateByIdAndState($scope.templateIdToPublish, $scope.state).then(function(result) {
 	    var template = result.data
 	    template.state = 'julkaistu';
 	    TemplateService.updateTemplate().put({}, template, function () {
