@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import javax.annotation.Resource;
@@ -50,7 +51,10 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input, 
             boolean anonymousRequest) {
         try {
-            LetterBatchValidator.validate(input);
+            Map<String, String> errors = LetterBatchValidator.validate(input);
+            if (errors != null) {
+                return Response.status(Status.BAD_REQUEST).entity(errors).build();
+            }
         } catch (Exception e) {
             LOG.error("Validation error", e);
             return Response.status(Status.BAD_REQUEST).build();
