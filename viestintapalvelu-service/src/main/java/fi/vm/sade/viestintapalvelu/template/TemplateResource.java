@@ -317,11 +317,11 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @ApiOperation(value = DEFAULT_TEMPLATES, notes = DEFAULT_TEMPLATES, response = Template.class)
-    public List<Template> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @QueryParam("state") State state) {
+    public List<TemplateInfo> getDefaultTemplates(@ApiParam(name = "state", value = "kirjepohjan tila millä haetaan") @QueryParam("state") State state) {
         if(state != null){
-            return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
+            return templateService.findTemplateInfoByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(state));
         }
-        return templateService.findByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(null));
+        return templateService.findTemplateInfoByCriteria(new TemplateCriteriaImpl().withDefaultRequired().withState(null));
     }
     
     @GET

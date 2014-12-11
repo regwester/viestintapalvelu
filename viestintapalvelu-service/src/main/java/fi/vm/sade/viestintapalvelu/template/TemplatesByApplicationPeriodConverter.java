@@ -18,7 +18,7 @@ package fi.vm.sade.viestintapalvelu.template;
 import java.util.List;
 
 import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplateInfo;
 
 /**
  * @author risal1
@@ -30,4 +30,6 @@ public interface TemplatesByApplicationPeriodConverter {
     TemplatesByApplicationPeriod convert(String applicationPeriod, List<Template> publisheds, List<Template> drafts, List<Template> closeds);
     
     TemplateInfo convert(Template template);
+    
+    List<TemplateInfo> convert(List<Template> templates);
 }

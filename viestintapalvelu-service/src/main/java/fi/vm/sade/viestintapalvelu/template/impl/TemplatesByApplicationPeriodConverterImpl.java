@@ -22,10 +22,12 @@ import java.util.Set;
 
 import org.apache.commons.collections.ListUtils;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
@@ -33,13 +35,14 @@ import fi.vm.sade.viestintapalvelu.model.ContentStructure;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
-import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
 
 /**
  * @author risal1
  *
  */
+@Transactional
 @Component
 public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApplicationPeriodConverter {
 
@@ -54,6 +57,11 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
     @Override
     public TemplateInfo convert(Template template) {
         return new TemplateInfo(template.getId(), template.getName(), template.getLanguage(), template.getState(), template.getTimestamp(), parseStructureTypes(template));
+    }
+    
+    @Override
+    public List<TemplateInfo> convert(List<Template> templates) {
+        return ImmutableList.copyOf(convertTemplatesToInfo(templates));
     }
     
     private Set<ContentStructureType> parseStructureTypes(Template template) {

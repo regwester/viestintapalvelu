@@ -40,12 +40,18 @@ angular.module('letter-templates')
             };
             
             $scope.updateTemplatesList = function() {
-        	if($scope.radioSelection === 'default') {
+        	if ($scope.radioSelection === 'default') {
         	    return $scope.fetchDefaultTemplates();
         	} else if($scope.radioSelection === 'applicationTarget') {
         	    return updateTarget($scope.currentApplicationTarget);
         	}
             };
+            
+            $scope.parseTypes = function(template) {
+        	if ($scope.radioSelection === 'default') {
+        	    template.structure.cont
+        	}
+            }
 
             $scope.changeRadio = function() {
 

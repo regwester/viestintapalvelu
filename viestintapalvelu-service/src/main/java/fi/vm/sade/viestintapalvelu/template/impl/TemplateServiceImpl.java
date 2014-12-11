@@ -13,22 +13,16 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.collections.ListUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import javax.ws.rs.NotFoundException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
-import com.google.common.collect.Sets;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -55,14 +49,10 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
 import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
 import fi.vm.sade.viestintapalvelu.template.StructureConverter;
+import fi.vm.sade.viestintapalvelu.template.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
-import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
-import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
-import fi.vm.sade.viestintapalvelu.template.StructureConverter;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
-
 import static com.google.common.base.Optional.fromNullable;
 
 @Service
@@ -725,8 +715,6 @@ public class TemplateServiceImpl implements TemplateService {
         return templatesByApplicationPeriodconverter.convert(applicationPeriod, publisheds, drafts, closeds);
     }
 
-   
-
     private void verifyState(State oldState, State newState) {
         if (oldState == State.suljettu && newState != State.julkaistu) {
             throw new IllegalArgumentException("Updating closed template to anything other than published is not supported");
@@ -734,6 +722,12 @@ public class TemplateServiceImpl implements TemplateService {
         if (oldState == State.julkaistu && newState != State.suljettu) {
             throw new IllegalArgumentException("Published template can only be closed via update");
         }
+    }
+
+    @Override
+    public List<TemplateInfo> findTemplateInfoByCriteria(TemplateCriteria criteria) {
+        List<Template> templates = templateDAO.findTemplates(criteria);
+        return templatesByApplicationPeriodconverter.convert(templates);
     }
 
 

@@ -58,36 +58,4 @@ public class TemplatesByApplicationPeriod implements Serializable {
         this.closedTemplates = closedTemplates;
     }
     
-    @ApiModel("Kirjepohjan tiedot listanäkymiä varten")
-    public static class TemplateInfo {
-        
-        @ApiModelProperty("Kirjepohjan tunniste")
-        public final Long id;
-        
-        @ApiModelProperty("Kirjepohjan nimi")
-        public final String name;
-        
-        @ApiModelProperty("Kirjepohjan kieli")
-        public final String language;
-        
-        @ApiModelProperty("Kirjepohjan tila")
-        public final State state;
-        
-        @ApiModelProperty("Tuetut viestityypit")
-        public final Set<ContentStructureType> types;
-        
-        public final Date timeStamp;
-        
-        public TemplateInfo(Long id, String name, String language, State state, Date timeStamp, Set<ContentStructureType> types) {
-            this.id = id;
-            this.name = name;
-            this.language = language;
-            this.state = state;
-            this.timeStamp = timeStamp;
-            this.types = types;
-        }
-        
-        
-    }
-
 }
