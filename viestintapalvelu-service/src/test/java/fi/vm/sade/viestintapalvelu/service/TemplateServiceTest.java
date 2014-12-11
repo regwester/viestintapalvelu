@@ -454,7 +454,7 @@ public class TemplateServiceTest {
     
     private void assertTemplateInfo(Template expectedValues, TemplateInfo info) {
         assertEquals(expectedValues.getState(), info.state);
-        assertEquals(expectedValues.getTimestamp(), info.timeStamp);
+        assertEquals(expectedValues.getTimestamp(), info.timestamp);
         assertEquals(expectedValues.getLanguage(), info.language);
     }
     
