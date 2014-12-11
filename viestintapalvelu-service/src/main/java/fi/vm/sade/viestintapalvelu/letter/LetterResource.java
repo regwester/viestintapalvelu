@@ -246,13 +246,14 @@ public class LetterResource extends AsynchronousResource {
         notes = "")
     public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
-        LOG.debug("creating letter");
-        LOG.debug(input.toString());
         
+        LetterResponse letterResponse = new LetterResponse();
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
             if (errors != null) {
-                return Response.ok(errors).build();
+                letterResponse.setErrors(errors);
+                letterResponse.setStatus(LetterResponse.STATUS_ERROR);
+                return Response.ok(letterResponse).build();
             }
         } catch (Exception e) {
             LOG.error("Validation error", e);
@@ -264,7 +265,9 @@ public class LetterResource extends AsynchronousResource {
             fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
             Long id = letter.getId();
             letterPDFProcessor.processLetterBatch(id);
-            return Response.status(Status.OK).entity(getPrefixedLetterBatchID(id, input.isIposti())).build();
+            letterResponse.setStatus(LetterResponse.STATUS_SUCCESS);
+            letterResponse.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
+            return Response.status(Status.OK).entity(letterResponse).build();
         } catch (Exception e) {
             LOG.error("Letter async failed", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
