@@ -50,10 +50,14 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
 
     protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input, 
             boolean anonymousRequest) {
+        
+        LetterResponse response = new LetterResponse();
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
             if (errors != null) {
-                return Response.status(Status.BAD_REQUEST).entity(errors).build();
+                response.setStatus(LetterResponse.STATUS_ERROR);
+                response.setErrors(errors);
+                return Response.ok(errors).build();
             }
         } catch (Exception e) {
             LOG.error("Validation error", e);
@@ -65,7 +69,9 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
             fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input, anonymousRequest);
             Long id = letter.getId();
             letterPDFProcessor.processLetterBatch(id);
-            return Response.status(Status.OK).entity(getPrefixedLetterBatchID(id, input.isIposti())).build();
+            response.setStatus(LetterResponse.STATUS_SUCCESS);
+            response.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
+            return Response.ok(response).build();
         } catch (Exception e) {
             LOG.error("Letter async failed", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
