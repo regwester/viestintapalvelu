@@ -4,7 +4,7 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
 	
 	$scope.editorOptions = Global.getEditorOptions();
 
-        TemplateService.getTemplateByIdAndState($state.params.templateId).success(function(result) {
+        TemplateService.getTemplateByIdAndState($state.params.templateId, 'luonnos').success(function(result) {
             $scope.template = result;
         }).error(function(result) {
             //TODO handle errors
