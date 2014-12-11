@@ -49,6 +49,9 @@ angular.module('letter-templates')
             },
             publishTemplate : function() {
                 return true;
+            },
+            getStructureById : function(structureId) {
+        	return $http.get(serviceUrl + 'structure/' + structureId);
             }
         }
     }]);
