@@ -22,9 +22,9 @@ angular.module('letter-templates')
 
             function updateTarget(applicationTarget) {
         	$scope.currentApplicationTarget = applicationTarget;
-                TemplateService.getByApplicationPeriod(applicationTarget.oid)
+                TemplateService.getTemplatesByApplicationPeriod(applicationTarget.value)
                 .success(function(data) {
-                    $scope.$parent.applicationTemplates = data;
+                    $scope.$parent.applicationTemplates = data.publishedTemplates.concat(data.draftTemplates).concat(data.closedTemplates);
                 }).error(function(e){
 
                 });

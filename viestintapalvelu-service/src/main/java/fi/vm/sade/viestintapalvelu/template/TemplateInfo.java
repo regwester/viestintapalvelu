@@ -49,14 +49,14 @@ public class TemplateInfo implements Serializable {
     @ApiModelProperty("Tuetut viestityypit")
     public final Set<ContentStructureType> types;
 
-    public final Date timeStamp;
+    public final Date timestamp;
 
-    public TemplateInfo(Long id, String name, String language, State state, Date timeStamp, Set<ContentStructureType> types) {
+    public TemplateInfo(Long id, String name, String language, State state, Date timestamp, Set<ContentStructureType> types) {
         this.id = id;
         this.name = name;
         this.language = language;
         this.state = state;
-        this.timeStamp = timeStamp;
+        this.timestamp = timestamp;
         this.types = types;
     }
 
