@@ -48,9 +48,9 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
 
     @Override
     public TemplatesByApplicationPeriod convert(String applicationPeriod, List<Template> publisheds, List<Template> drafts, List<Template> closeds) {
-        List<TemplateInfo> publishedInfos = convertTemplatesToInfo(filterLatests(publisheds));
-        List<TemplateInfo> draftInfos = convertTemplatesToInfo(filterLatests(drafts));
-        List<TemplateInfo> closedInfos = convertTemplatesToInfo(filterCloseds(filterLatests(closeds), publishedInfos, draftInfos));
+        List<TemplateInfo> publishedInfos = ImmutableList.copyOf(convertTemplatesToInfo(filterLatests(publisheds)));
+        List<TemplateInfo> draftInfos = ImmutableList.copyOf(convertTemplatesToInfo(filterLatests(drafts)));
+        List<TemplateInfo> closedInfos = ImmutableList.copyOf(convertTemplatesToInfo(filterCloseds(filterLatests(closeds), publishedInfos, draftInfos)));
         return new TemplatesByApplicationPeriod(applicationPeriod, publishedInfos, draftInfos, closedInfos);
     }
 
