@@ -18,6 +18,12 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
             return found.length ? found[0] : {name: key, defaultValue: ''};
         }
         
+        $scope.save = function() {
+            TemplateService.updateTemplate().put({}, $scope.template, function() {
+        	//TODO: some feedback to the user
+            });
+        }
+        
         $scope.buttons = [
                           {label: 'Peruuta', click: $scope.cancel, type: 'default'},
                           {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
