@@ -1,9 +1,11 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('LetterTemplateListCtrl', ['$scope', '$modal', '$filter', 'TemplateService',
-        function($scope, $modal, $filter, TemplateService) {
-            $scope.radioSelection = 'default';
+    .controller('LetterTemplateListCtrl', ['$scope', '$modal', '$filter', '$state', 'TemplateService',
+        function($scope, $modal, $filter, $state, TemplateService) {
+            
+	    $scope.radioSelection = 'default';
+            
             $scope.fetchDefaultTemplates = function() {
         	TemplateService.getDefaultTemplates().success(function(data){
         	    $scope.defaultTemplates = data;
@@ -47,16 +49,6 @@ angular.module('letter-templates')
         	}
             };
             
-            $scope.parseTypes = function(template) {
-        	if ($scope.radioSelection === 'default') {
-        	    template.structure.cont
-        	}
-            }
-
-            $scope.changeRadio = function() {
-
-            };
-
             $scope.openCreateDialog = function() {
                 $modal.open({
                     size: 'lg',
@@ -83,6 +75,10 @@ angular.module('letter-templates')
         	    'julkaistu': $filter('i18n')('template.state.published'),
         	    'luonnos': $filter('i18n')('template.state.draft'),
         	    'suljettu': $filter('i18n')('template.state.closed')
+            }
+            
+            $scope.editTemplate = function(templateId) {
+        	$state.go('letter-templates_edit', {'templateId': templateId});
             }
             
             $scope.removeTemplate = function(templateId, state) {
