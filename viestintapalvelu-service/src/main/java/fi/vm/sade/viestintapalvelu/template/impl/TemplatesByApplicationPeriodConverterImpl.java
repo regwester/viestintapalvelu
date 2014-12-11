@@ -16,7 +16,9 @@
 package fi.vm.sade.viestintapalvelu.template.impl;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.ListUtils;
 import org.springframework.stereotype.Component;
@@ -27,7 +29,9 @@ import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
+import fi.vm.sade.viestintapalvelu.model.ContentStructure;
 import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
@@ -49,9 +53,17 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
 
     @Override
     public TemplateInfo convert(Template template) {
-        return new TemplateInfo(template.getId(), template.getName(), template.getLanguage(), template.getState(), template.getTimestamp());
+        return new TemplateInfo(template.getId(), template.getName(), template.getLanguage(), template.getState(), template.getTimestamp(), parseStructureTypes(template));
     }
     
+    private Set<ContentStructureType> parseStructureTypes(Template template) {
+        Set<ContentStructureType> types = new HashSet<>();
+        for (ContentStructure cs : template.getStructure().getContentStructures()) {
+            types.add(cs.getType());
+        }
+        return types;
+    }
+
     private List<Template> filterCloseds(List<Template> closeds, final List<TemplateInfo> publisheds, final List<TemplateInfo> drafts) {
         @SuppressWarnings("unchecked")
         final List<TemplateInfo> pubDrafts = ListUtils.union(publisheds, drafts);
