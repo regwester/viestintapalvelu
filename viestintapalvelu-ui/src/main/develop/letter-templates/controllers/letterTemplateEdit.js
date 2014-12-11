@@ -24,6 +24,17 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
             });
         }
         
+        $scope.cancel = function() {
+            $state.go('letter-templates_overview');
+        };
+        
+        $scope.publish = function() {
+            $scope.template.state = 'julkaistu';
+            TemplateService.updateTemplate().put({}, $scope.template, function() {
+        	//TODO: some feedback to the user or just redirect to overview?        	
+            });
+        }
+        
         $scope.buttons = [
                           {label: 'Peruuta', click: $scope.cancel, type: 'default'},
                           {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
