@@ -198,18 +198,18 @@ public class TemplateResourceTest {
     @Test
     public void fetchesDefaultTemplates() throws Exception {
         givenSavedDefaultTemplateWithStatus(State.julkaistu, true);
-        List<Template> templates = resource.getDefaultTemplates(State.julkaistu);
+        List<TemplateInfo> templates = resource.getDefaultTemplates(State.julkaistu);
         assertEquals(1, templates.size());
-        assertEquals(State.julkaistu, templates.get(0).getState());
+        assertEquals(State.julkaistu, templates.get(0).state);
         assertTrue(resource.getDefaultTemplates(State.luonnos).isEmpty());
     }
     
     @Test
     public void fetchesDefaultTemplatesUsingDraftState() throws Exception {
         givenSavedDefaultTemplateWithStatus(State.luonnos, true);
-        List<Template> templates = resource.getDefaultTemplates(State.luonnos);
+        List<TemplateInfo> templates = resource.getDefaultTemplates(State.luonnos);
         assertEquals(1, templates.size());
-        assertEquals(State.luonnos, templates.get(0).getState());
+        assertEquals(State.luonnos, templates.get(0).state);
     }
     
     @Test

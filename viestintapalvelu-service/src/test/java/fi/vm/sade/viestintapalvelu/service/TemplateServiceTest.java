@@ -33,7 +33,7 @@ import fi.vm.sade.viestintapalvelu.structure.impl.StructureServiceImpl;
 import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
-import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod.TemplateInfo;
+import fi.vm.sade.viestintapalvelu.template.TemplateInfo;
 import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
 import fi.vm.sade.viestintapalvelu.template.impl.StructureConverterImpl;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
@@ -454,7 +454,7 @@ public class TemplateServiceTest {
     
     private void assertTemplateInfo(Template expectedValues, TemplateInfo info) {
         assertEquals(expectedValues.getState(), info.state);
-        assertEquals(expectedValues.getTimestamp(), info.timeStamp);
+        assertEquals(expectedValues.getTimestamp(), info.timestamp);
         assertEquals(expectedValues.getLanguage(), info.language);
     }
     

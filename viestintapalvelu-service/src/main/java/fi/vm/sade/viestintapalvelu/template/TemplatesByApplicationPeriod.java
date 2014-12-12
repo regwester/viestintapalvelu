@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.template;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
@@ -25,6 +26,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 
 
 /**
@@ -56,32 +58,4 @@ public class TemplatesByApplicationPeriod implements Serializable {
         this.closedTemplates = closedTemplates;
     }
     
-    @ApiModel("Kirjepohjan tiedot listanäkymiä varten")
-    public static class TemplateInfo {
-        
-        @ApiModelProperty("Kirjepohjan tunniste")
-        public final Long id;
-        
-        @ApiModelProperty("Kirjepohjan nimi")
-        public final String name;
-        
-        @ApiModelProperty("Kirjepohjan kieli")
-        public final String language;
-        
-        @ApiModelProperty("Kirjepohjan tila")
-        public final State state;
-        
-        public final Date timeStamp;
-        
-        public TemplateInfo(Long id, String name, String language, State state, Date timeStamp) {
-            this.id = id;
-            this.name = name;
-            this.language = language;
-            this.state = state;
-            this.timeStamp = timeStamp;
-        }
-        
-        
-    }
-
 }

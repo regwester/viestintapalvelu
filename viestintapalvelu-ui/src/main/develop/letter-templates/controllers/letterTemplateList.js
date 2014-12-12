@@ -1,26 +1,32 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('LetterTemplateListCtrl', ['$scope', '$modal', 'TemplateService',
-        function($scope, $modal, TemplateService) {
-            $scope.radioSelection = 'default';
-
-            TemplateService.getDefaultTemplates().success(function(data){
-                $scope.defaultTemplates = data;
-            });
+    .controller('LetterTemplateListCtrl', ['$scope', '$modal', '$filter', '$state', 'TemplateService',
+        function($scope, $modal, $filter, $state, TemplateService) {
+            
+	    $scope.radioSelection = 'default';
+            
+            $scope.fetchDefaultTemplates = function() {
+        	TemplateService.getDefaultTemplates().success(function(data){
+        	    $scope.defaultTemplates = data;
+        	});
+            };
+            
+            $scope.fetchDefaultTemplates();
 
             TemplateService.getApplicationTargets().then(function(data) {
                 var list = [];
-                for(var i = 0, max = data.length; i < max; i++){
+                for (var i = 0, max = data.length; i < max; i++){
                     list.push({name: data[i].nimi.kieli_fi, value: data[i].oid});
                 }
                 $scope.letterTypes[1].list = list;
             });
 
             function updateTarget(applicationTarget) {
-                TemplateService.getByApplicationPeriod(applicationTarget.oid)
+        	$scope.currentApplicationTarget = applicationTarget;
+                TemplateService.getTemplatesByApplicationPeriod(applicationTarget.value)
                 .success(function(data) {
-                    $scope.$parent.applicationTemplates = data;
+                    $scope.$parent.applicationTemplates = data.publishedTemplates.concat(data.draftTemplates).concat(data.closedTemplates);
                 }).error(function(e){
 
                 });
@@ -34,11 +40,15 @@ angular.module('letter-templates')
                     return $scope.applicationTemplates;
                 }
             };
-
-            $scope.changeRadio = function() {
-
+            
+            $scope.updateTemplatesList = function() {
+        	if ($scope.radioSelection === 'default') {
+        	    return $scope.fetchDefaultTemplates();
+        	} else if($scope.radioSelection === 'applicationTarget') {
+        	    return updateTarget($scope.currentApplicationTarget);
+        	}
             };
-
+            
             $scope.openCreateDialog = function() {
                 $modal.open({
                     size: 'lg',
@@ -61,6 +71,16 @@ angular.module('letter-templates')
                 }
             ];
             
+            $scope.letterStates = {
+        	    'julkaistu': $filter('i18n')('template.state.published'),
+        	    'luonnos': $filter('i18n')('template.state.draft'),
+        	    'suljettu': $filter('i18n')('template.state.closed')
+            }
+            
+            $scope.editTemplate = function(templateId) {
+        	$state.go('letter-templates_edit', {'templateId': templateId});
+            }
+            
             $scope.removeTemplate = function(templateId, state) {
         	var modalInstance = $modal.open({
                     templateUrl: 'views/letter-templates/views/partials/removedialog.html',
@@ -74,10 +94,10 @@ angular.module('letter-templates')
                             return state
                         }
                     }
-                });
+                })
 
-                modalInstance.result.then(function (templateId) {
-                    //TODO: update list
+                modalInstance.result.then(function() {
+                    $scope.updateTemplatesList();
                 });
             };
             
@@ -96,8 +116,8 @@ angular.module('letter-templates')
                     }
                 });
 
-                modalInstance.result.then(function (templateId) {
-                    //TODO: update list
+                modalInstance.result.then(function() {
+                    $scope.updateTemplatesList();
                 });
             };
         }
@@ -116,7 +136,7 @@ angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$s
 	    var template = result.data
 	    template.state = 'suljettu';
 	    TemplateService.updateTemplate().put({}, template, function () {
-		$modalInstance.close($scope.templateIdToRemove);
+		$modalInstance.close();
 	    });
 	});
     };
@@ -136,7 +156,7 @@ angular.module('letter-templates').controller('PublishTemplate', ['$scope', '$mo
 	    var template = result.data
 	    template.state = 'julkaistu';
 	    TemplateService.updateTemplate().put({}, template, function () {
-		$modalInstance.close($scope.templateIdToPublish);
+		$modalInstance.close();
 	    });
 	});
     };

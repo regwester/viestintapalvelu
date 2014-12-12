@@ -34,6 +34,9 @@ angular.module('letter-templates')
             getTemplateByIdAndState: function(id, state) {
         	return $http.get(templateBaseUrl + id + '/getTemplateContent/' + state);
             },
+            getTemplatesByApplicationPeriod: function(applicationOid) {
+        	return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationOid);
+            },
             updateTemplate: function() {
         	return $resource(templateBaseUrl + 'update', {}, {
         	        put: {
@@ -46,6 +49,9 @@ angular.module('letter-templates')
             },
             publishTemplate : function() {
                 return true;
+            },
+            getStructureById : function(structureId) {
+        	return $http.get(serviceUrl + 'structure/' + structureId);
             }
         }
     }]);

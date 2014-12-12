@@ -70,6 +70,11 @@ angular.module('core')
                     templateUrl: templateUrl + 'create.html',
                     controller: 'LetterTemplateCreateCtrl'
                 })
+                .state('letter-templates_edit', {
+                    url: '/letter-templates/edit/:templateId',
+                    templateUrl: templateUrl + 'edit.html',
+                    controller: 'LetterTemplateEditCtrl'
+                })
                 .state('templateTreeList', {
                     url: "/templateTreeList",
                     templateUrl: templateUrl + "templateTreeList.html",

@@ -1,0 +1,49 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2>Muokkaa kirjepohjaa</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <form novalidate="novalidate" class="form-horizontal">
+                <form-item label="Haku:">
+                    <p>Korkeakoulujen yhteishaku, syksy 2014</p>
+                </form-item>
+                <form-item label="Kirjeen tyyppi:">
+                    <p>{{template.name}}</p>
+                </form-item>
+                <form-item label="Kieli">
+                    <p>{{template.language}}</p>
+                </form-item>
+                <form-item label="Tila:">
+                    <p>{{template.state}}</p>
+                </form-item>
+                <h4>Varsinainen kirje</h4>
+                <div ng-repeat="repl in contentReplacements | orderBy:orderNumber">
+                	<form-item label="{{repl.name}}">
+                	
+                		<div ng-if="repl.contentType === 'plain'">
+	                		<input type="text" size="input-lg" ng-model="getMatchingTemplateReplacement(repl.key).defaultValue" />
+                		</div>
+                		
+                		<div ng-if="repl.contentType === 'html'">
+	                		<textarea ui-tinymce="editorOptions" ng-model="getMatchingTemplateReplacement(repl.key).defaultValue"></textarea>
+                		</div>
+                		
+                	</form-item>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+</div>
