@@ -26,7 +26,7 @@
                 </form-item>
                 <h4>Varsinainen kirje</h4>
                 <div ng-repeat="repl in contentReplacements | orderBy:orderNumber">
-                	<form-item label="{{repl.name | capitalize}}">
+                	<form-item label="{{repl.name}}">
                 	
                 		<div ng-if="repl.contentType === 'plain'">
 	                		<input type="text" size="input-lg" ng-model="getMatchingTemplateReplacement(repl.key).defaultValue" />
