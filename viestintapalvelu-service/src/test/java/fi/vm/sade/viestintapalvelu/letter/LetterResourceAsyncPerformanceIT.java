@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
+import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -193,7 +194,9 @@ public class LetterResourceAsyncPerformanceIT {
                 roundSeconds(duration), roundSeconds(MAX_DURATION));
     }
 
-    private long parseId(String s) {
+    private long parseId(LetterResponse response) {
+        String s = response.getBatchId();
+        s = FilenameHelper.withoutExtension(s);
         if (s.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
             return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length()).split("-")[0]);
         }
@@ -244,12 +247,12 @@ public class LetterResourceAsyncPerformanceIT {
         return batch;
     }
 
-    protected String asyncLetter(AsyncLetterBatchDto letterBatchDto) {
+    protected LetterResponse asyncLetter(AsyncLetterBatchDto letterBatchDto) {
         Response response = letterResource.asyncLetter(letterBatchDto);
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             throw new IllegalStateException("Response status not OK: " + response.getStatus());
         }
-        return (String) response.getEntity();
+        return (LetterResponse) response.getEntity();
     }
 
     protected class ProcessMonitor implements Callable<Boolean> {

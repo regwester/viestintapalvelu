@@ -172,7 +172,14 @@ public class LetterReportResource extends AsynchronousResource {
                     letterReceiverLetter.getContentType(),
                     letterReceiverLetter.getTemplateName() + determineExtension(letterReceiverLetter.getContentType()),
                     letterReceiverLetter.getLetter()));
-            return createResponse(request, documentId);
+            String ext = "pdf";
+            if (letterReceiverLetter.getContentType() != null) {
+                String prts[] = letterReceiverLetter.getContentType().split("/");
+                if (prts.length > 1) {
+                    ext = prts[1];
+                }
+            }
+            return createResponse(request, documentId+"."+ext);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
@@ -210,7 +217,7 @@ public class LetterReportResource extends AsynchronousResource {
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
             String documentId = downloadCache.addDocument(new Download(
                     "application/pdf", "letterContents" + id + ".pdf", letterContents));
-            return createResponse(request, documentId);
+            return createResponse(request, documentId+".pdf");
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
