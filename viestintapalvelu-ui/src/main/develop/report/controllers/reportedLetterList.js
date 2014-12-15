@@ -137,7 +137,7 @@ function ($scope, $state, $http, $window, ReportedLetterListCtrlState, Options) 
             //       this way naturally exposes the user to security risks
             var acceptableDownloadLink = $window.location.origin + serviceAPIUrl + '/download/';
             if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
-                $window.location = downloadLink;
+                $window.location = downloadLink+".pdf";
             }
         });
     };

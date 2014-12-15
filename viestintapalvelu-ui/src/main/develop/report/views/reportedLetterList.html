@@ -7,7 +7,7 @@
 
         <div class="organisation-select form-inline span4">
             <table cellpadding="5">
-                <tr>
+                <tr ng-if="reportedLettersDTO.organizations">
                     <th class="searchLabelColumn">
                         <label for="organisationSelect">{{'reportedletterlist.otsikko.organisaatio' | i18n}}</label>
                     </th>
@@ -16,8 +16,7 @@
                                 ng-model="form.organization"
                                 ng-change="fetch()"
                                 ng-options="organization.name for organization in reportedLettersDTO.organizations track by organization.oid"
-                                ng-init="form.organization = reportedLettersDTO.organizations[reportedLettersDTO.selectedOrganization]"
-                                ng-if="reportedLettersDTO.organizations">
+                                ng-init="form.organization = reportedLettersDTO.organizations[reportedLettersDTO.selectedOrganization]">
                         </select>
                     </td>
                 </tr>
@@ -29,39 +28,43 @@
                     </th>
                     <td colspan="2">
                         <input type="text" ng-model="searchArgument" ng-enter="search()" class="form-control letterSearchField"
-                               placeholder="{{'reportedletterlist.searchTarget.'+searchTarget+'.description' | i18n}}"></input>
+                               placeholder="{{'reportedletterlist.searchTarget.'+searchTarget+'.description' | i18n}}"
+                                title="{{'reportedletterlist.searchTarget.'+searchTarget+'.description' | i18n}}"></input>
                     </td>
                 </tr>
                 <tr>
-                    <th rowspan="2" class="searchLabelColumn">
+                    <th rowspan="2" class="searchLabelColumn"  style="padding-top: 6px;">
                         {{'reportedletterlist.searchTarget.label' | i18n}}
                     </th>
-                    <td class="searchRadioColumn">
+                    <td class="searchRadioColum" style="padding-bottom: 0px;padding-top:0px;">
                         <input id="searchTargetBatch" type="radio" name="searchTarget" value="batch"
-                               ng-model="searchTarget"></input>
+                               ng-model="searchTarget" style="padding:0px;margin:0px;"></input>
                     </td>
-                    <td>
-                        <label for="searchTargetBatch">{{'reportedletterlist.searchTarget.batch' | i18n}}</label>
+                    <td style="vertical-align:middle;padding:0px;">
+                        <label for="searchTargetBatch"
+                               style="padding:0px;margin:0px;position:relative;top:3px;">{{'reportedletterlist.searchTarget.batch' | i18n}}</label>
                     </td>
                 </tr>
                 <tr>
-                    <td class="searchRadioColumn">
+                    <td class="searchRadioColumn" style="padding-top: 0px;padding-bottom:0px;">
                         <input id="searchTargetReceiver" type="radio" name="searchTarget" value="receiver"
-                               ng-model="searchTarget"></input>
+                               ng-model="searchTarget"
+                               style="padding:0px;margin:0px;"></input>
                     </td>
-                    <td>
-                        <label for="searchTargetReceiver">{{'reportedletterlist.searchTarget.receiver' | i18n}}</label>
+                    <td style="vertical-align:middle;padding:0px">
+                        <label for="searchTargetReceiver"
+                               style="padding:0px;margin:0px;position:relative;top:3px;">{{'reportedletterlist.searchTarget.receiver' | i18n}}</label>
                     </td>
                 </tr>
                 <tr>
-                    <th class="searchLabelColumn">
+                    <th class="searchLabelColumn" style="padding-top:10px;">
                         <label for="applicationPeriod">
                             {{'reportedletterlist.applicationPeriod.label' | i18n}}
                         </label>
                     </th>
-                    <td colspan="2">
+                    <td colspan="2" style="padding-top:10px;">
                         <select id="applicationPeriod" ng-model="applicationPeriod"
-                                ui-select2 class="form-control letterSearchField" class="width">
+                                ui-select2 class="form-control letterSearchField">
                             <option class="placeholder select2-disabled" value=""
                                     class="placeholder">{{'reportedletterlist.applicationPeriod.placeholder' | i18n}}</option>
                             <option ng-repeat="ap in applicationPeriods | orderBy:'nimi.kieli_fi'" value="{{ap.oid}}">{{ap.nimi.kieli_fi}}</option>
@@ -119,7 +122,7 @@
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.templateName }}</td>
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.applicationPeriod }}</td>
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.fetchTarget }}</td>
-                <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.status }} <img ng-show="reportedLetter.status == 'error'" style="margin-right:10px;" src="./assets/img/error-icon28x29.png"></td>
+                <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.status }} <img ng-show="reportedLetter.status == 'error'" style="margin-right:10px;" src="./img/error-icon28x29.png"></td>
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.tag }}</td>
                 <td ng-show="doneSearchTarget == 'receiver'"><a ng-show="reportedLetter.status != 'error'" ng-click="downloadLetter(reportedLetter.receiverLetterId)">{{reportedLetter.templateName}}.pdf</a></td>
             </tr>

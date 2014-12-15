@@ -13,8 +13,8 @@
 
     <!-- css -->
     <link rel="stylesheet" type="text/css" href="lib/bootstrap-css/css/bootstrap.min.css"/>
-    <link rel="stylesheet" href="jslib/select2-3.4.5/select2.css"/>
-    <link rel="stylesheet" href="jslib/select2-3.4.5/select2-bootstrap.css"/>
+    <link rel="stylesheet" href="lib/select2/select2.css"/>
+    <link rel="stylesheet" href="lib/select2/select2-bootstrap.css"/>
     <link rel="stylesheet" type="text/css" href="css/all.css"/>
 </head>
 
@@ -33,8 +33,8 @@
     <script type="text/javascript" src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>
     <script type="text/javascript" src="lib/ui-router/release/angular-ui-router.js"></script>
 
-    <script src="jslib/select2-3.4.5/select2.min.js"></script>
-    <script src="jslib/select2-3.4.5/select2_locale_fi.js"></script>
+    <script src="lib/select2/select2.min.js"></script>
+    <script src="lib/select2/select2_locale_fi.js"></script>
 
 
     <script type="text/javascript" src="lib/jquery-file-upload/js/jquery.fileupload.js"></script>
