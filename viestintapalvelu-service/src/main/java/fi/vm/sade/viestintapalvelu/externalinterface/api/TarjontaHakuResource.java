@@ -21,6 +21,8 @@ import java.util.List;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
@@ -32,17 +34,20 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuListDto;
  * Time: 12:49
  */
 @Component
-@Path("/haku")
 public interface TarjontaHakuResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("")
-    List<HakuListDto> hakus(@QueryParam(value="count") Integer count) throws Exception;
+    @Path("/haku/findAll")
+    HakuRDTO<List<HakuDetailsDto>> hakus(@QueryParam(value="count") Integer count) throws Exception;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/{oid}")
-    HakuDetailsDto hakuByOid(@PathParam("oid") String oid) throws Exception;
+    @Path("/haku/{oid}")
+    HakuRDTO<HakuDetailsDto> hakuByOid(@PathParam("oid") String oid) throws Exception;
 
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/hakukohde/{oid}")
+    HakuRDTO<HakukohdeDTO> getHakuhdeByOid(@PathParam("oid") String oid) throws Exception;
 }

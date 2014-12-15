@@ -14,6 +14,8 @@ import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
 import fi.vm.sade.viestintapalvelu.model.Draft;
 import fi.vm.sade.viestintapalvelu.model.QDraft;
 
+import java.util.List;
+
 @Repository
 public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements DraftDAO {
 
@@ -92,7 +94,16 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
                 
 		return findDraf.singleResult(draft);
 	}
-	
+
+	@Override
+	public List<Draft> findByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod) {
+		final String querySql = "select a FROM Draft a where a.applicationPeriod = :applicationPeriod and a.organizationOid in :oids";
+		TypedQuery<Draft> query = getEntityManager().createQuery(querySql, Draft.class);
+		query.setParameter("applicationPeriod", applicationPeriod);
+		query.setParameter("oids", oids);
+		return query.getResultList();
+	}
+
 	protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }

@@ -59,7 +59,7 @@ angular.module('letter-templates')
                 return {"tree": newData, "oids":oidList, "oidToRowMap": oidMap};
             },
 
-            addTemplatesToTree : function (tree, templates, oidMap) {
+            addTemplatesToTree : function (tree, templates, oidMap, control) {
 
                 templates.forEach(function(item) {
                     var firstColum18nStr = "Organisaatio ja kirjetyyppi";
@@ -70,8 +70,10 @@ angular.module('letter-templates')
                     letterRow["lang"] = item.language;
                     letterRow["status"] = item.state;
                     letterRow["isLetter"] = true;
+                    var parent = oidMap[orgOid];
 
-                    oidMap[orgOid].children.push(letterRow);
+                    var newRow = control.add_branch(parent, letterRow);
+                    control.expand_all_parents(parent);
                 });
 
                 return tree;

@@ -26,27 +26,29 @@
         </select>
     </div>
     <tabset>
-        <tab heading="Organisaation oletuskirjepohjat">
+        <tab heading="Organisaation oletuskirjepohjat" select="templateTab()">
             <tree-grid
                     tree-data       = "template_tree_data"
+                    tree-control    = "template_tree_control"
                     col-defs        = "col_defs"
                     icon-leaf       = "icon-actionmenu"
                     icon-expand     = "icon-expand"
                     icon-collapse   = "icon-expanded"
                     on-select       = "my_tree_handler(branch)"
-                    expand-level    = "2"
+                    expand-level    = "5"
                     >
             </tree-grid>
         </tab>
-        <tab heading="Hakukohteiden kirjeluonnokset">
+        <tab heading="Hakukohteiden kirjeluonnokset" select="draftTab()">
             <tree-grid
                     tree-data       = "draft_tree_data"
+                    tree-control    = "draft_tree_control"
                     col-defs        = "col_defs"
                     icon-leaf       = "icon-actionmenu"
                     icon-expand     = "icon-expand"
                     icon-collapse   = "icon-expanded"
                     on-select       = "my_tree_handler(branch)"
-                    expand-level    = "1"
+                    expand-level    = "5"
                     >
             </tree-grid>
         </tab>

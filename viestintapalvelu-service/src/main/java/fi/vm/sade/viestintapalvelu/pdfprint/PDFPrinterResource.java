@@ -96,7 +96,7 @@ public class PDFPrinterResource extends AsynchronousResource {
             LOG.error("Sync PDF failed: {}", e.getMessage());
             return createFailureResponse(request);
         }
-        return createResponse(request, documentId);
+        return createResponse(request, documentId+".pdf");
     }
 
     /**
@@ -183,7 +183,7 @@ public class PDFPrinterResource extends AsynchronousResource {
                 }
             }
         });
-        return createResponse(request, documentId);
+        return createResponse(request, documentId+".pdf");
     }
     
     @GET

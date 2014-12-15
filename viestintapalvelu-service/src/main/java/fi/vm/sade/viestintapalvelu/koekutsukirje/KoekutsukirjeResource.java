@@ -89,7 +89,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 			LOG.error("Koekutsukirje PDF failed: {}", e.getMessage());
 			return createFailureResponse(request);
 		}
-		return createResponse(request, documentId);
+		return createResponse(request, documentId+".pdf");
 	}
 
 	/**
@@ -165,7 +165,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
 				}
 			}
 		});
-		return createResponse(request, documentId);
+		return createResponse(request, documentId+".pdf");
 	}
 
 }

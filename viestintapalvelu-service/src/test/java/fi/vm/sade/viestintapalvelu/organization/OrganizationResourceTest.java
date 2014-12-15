@@ -1,14 +1,17 @@
 package fi.vm.sade.viestintapalvelu.organization;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,13 +25,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -45,13 +50,10 @@ public class OrganizationResourceTest {
     OrganizationResource organizationResource;
 
     @Autowired
-    OrganisaatioService organisaatioServiceSpy;
+    OrganisaatioResourceWithoutAuthentication organisaatioResourceWithoutAuthenticationClientMock;
 
     @Autowired
-    OrganizationComponent organizationComponentSpy;
-
-    @Autowired
-    OrganisaatioResourceWithoutAuthentication organisaatioResourceWithoutAuthenticationClientSpy;
+    TarjontaHakuResource tarjontaHakuResourceMock;
 
 
     @Test
@@ -63,8 +65,8 @@ public class OrganizationResourceTest {
         organisaatioHierarchyDto.setOid(organisaatioOid);
 
         ArrayList<OrganisaatioHierarchyDto> children = new ArrayList<OrganisaatioHierarchyDto>();
-        OrganisaatioHierarchyDto child1 = new OrganisaatioHierarchyDto();
-        OrganisaatioHierarchyDto child2 = new OrganisaatioHierarchyDto();
+        final OrganisaatioHierarchyDto child1 = new OrganisaatioHierarchyDto();
+        final OrganisaatioHierarchyDto child2 = new OrganisaatioHierarchyDto();
 
         child1.setOid("child1");
         Map<String, String> name = new HashMap<String, String>();
@@ -79,7 +81,26 @@ public class OrganizationResourceTest {
         organisaatioHierarchyDtos.add(organisaatioHierarchyDto);
         result.setOrganisaatiot(organisaatioHierarchyDtos);
 
-        when(organisaatioResourceWithoutAuthenticationClientSpy.hierarchy(eq(true))).thenReturn(result);
+        //TODO this necessarily doesn't reflect the methods that tarjonta v1 api will provide
+        HakuDetailsDto details = new HakuDetailsDto();
+        final ArrayList<String> strings = new ArrayList<String>();
+        strings.add("child1");
+        details.setOrganisaatioOids(strings);
+        details.setHakukohdeOids(strings);
+        details.setTarjoajaOids(strings);
+        final HakuRDTO<HakuDetailsDto> rdto = new HakuRDTO<HakuDetailsDto>();
+        rdto.setResult(details);
+
+        HakuRDTO<HakukohdeDTO> kohdeRDTO = new HakuRDTO<HakukohdeDTO>();
+        HakukohdeDTO kohde = new HakukohdeDTO();
+        Set<String> tarjoajaoids = new HashSet<>();
+        tarjoajaoids.add(child1.getOid());
+        kohde.setTarjoajaOids(tarjoajaoids);
+        kohdeRDTO.setResult(kohde);
+
+        when(tarjontaHakuResourceMock.getHakuhdeByOid(eq("child1"))).thenReturn(kohdeRDTO);
+        when(tarjontaHakuResourceMock.hakuByOid(eq(applicationPeriod))).thenReturn(rdto);
+        when(organisaatioResourceWithoutAuthenticationClientMock.hierarchy(eq(true))).thenReturn(result);
 
         List<OrganisaatioHierarchyDto> applicationPeriodHere = organizationResource.getOrganizationHierarchy(applicationPeriod);
         assertEquals("resource should return one organization hierarchy", 1,applicationPeriodHere.size());
@@ -92,19 +113,6 @@ public class OrganizationResourceTest {
     @Configuration
     @ImportResource(value = "classpath:test-application-context.xml")
     public static class Config {
-
-        @Bean
-        LearningOpportunityProviderComponent learningOpportunityProviderComponent() {
-            LearningOpportunityProviderComponent mock = mock(LearningOpportunityProviderComponent.class);
-            List<LOPDto> list = new ArrayList<LOPDto>();
-            LOPDto lopDto = new LOPDto();
-            lopDto.setId("child1");
-            lopDto.setName("test org name");
-            lopDto.setProviderOrg(true);
-            list.add(lopDto);
-            when(mock.searchProviders(eq(applicationPeriod), any(Locale.class))).thenReturn(list);
-            return mock;
-        }
 
         @Bean
         CurrentUserComponent currentUserComponent() {

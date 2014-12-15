@@ -1,14 +1,11 @@
 package fi.vm.sade.viestintapalvelu.organization;
 
-import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -18,7 +15,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -26,14 +25,13 @@ import java.util.*;
 public class OrganizationResource extends AsynchronousResource {
 
     @Autowired
-    LearningOpportunityProviderComponent learningOpportunityProviderComponent;
+    TarjontaComponent tarjontaComponent;
 
     @Autowired
     OrganisaatioService organisaatioService;
 
     @Autowired
     CurrentUserComponent currentUserComponent;
-
 
     /**
      *
@@ -53,19 +51,25 @@ public class OrganizationResource extends AsynchronousResource {
         the big list of different organizations to a group that only have templates for this application period.
          */
         //search for all schools and organizations that provide teaching for the given application period
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
-
+        //List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
+        Set<String> providerOrgIds = tarjontaComponent.findByOid(applicationPeriod);
+  /*
+        System.out.println("hakuDetails.getNimi().toString() = " + hakuDetails.getNimi().toString());
         Set<String> providerOrgIds = new HashSet<String>();
-        for(LOPDto lop : providers) {
-            providerOrgIds.add(lop.getId());
-        }
 
+        if(hakuDetails.getOrganisaatioOids() != null ) {
+            for (String oid : hakuDetails.getOrganisaatioOids()) {
+                providerOrgIds.add(oid);
+            }
+        }
+*/
         List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
         List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
 
         for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
             String organisaatioOid = orgHenkilo.getOrganisaatioOid();
             OrganisaatioHierarchyDto root = organisaatioService.getOrganizationHierarchy(organisaatioOid);
+
             if(root == null)
                 continue;
             /*
@@ -83,6 +87,7 @@ public class OrganizationResource extends AsynchronousResource {
     * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false
     */
     private boolean filterHierarchy(OrganisaatioHierarchyDto node, Set<String> OIDs) {
+        if(OIDs == null) return false;
         if(node.getChildren() == null || node.getChildren().isEmpty())
             return OIDs.contains(node.getOid());
 
