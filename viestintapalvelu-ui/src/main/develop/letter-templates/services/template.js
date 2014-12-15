@@ -19,6 +19,9 @@ angular.module('letter-templates')
             getTemplatesByOid: function(oidList) {
                 return $http.get(templateBaseUrl, {params: {organizationid: oidList }})
             },
+            getDraftsByOid: function(applicationPeriod, oidList) {
+                return $http.get(templateBaseUrl+"draft/applicationPeriod/"+applicationPeriod, {params: {organizationid: oidList }})
+            },
             getApplicationTargets: function() {
                 return deferred.promise;
             },
