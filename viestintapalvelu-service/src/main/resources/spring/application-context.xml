@@ -78,20 +78,6 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
-    <jaxrs-client:client id="learningOpportunityProviderResourceClient"
-                         serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.LearningOpportunityProviderResource"
-                         address="${koulutusinformaatio.learningOrganizationProvider.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
-
     <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
