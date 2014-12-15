@@ -16,13 +16,13 @@
 
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
+import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
@@ -39,7 +39,9 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuListDto;
  */
 @Component
 public class TarjontaComponent {
-    public static final String DELETED_STATE = "POISTETTU";
+
+    private static final Logger log = org.slf4j.LoggerFactory.getLogger(TarjontaComponent.class);
+    private static final String DELETED_STATE = "POISTETTU";
     private static final Integer MAX_COUNT = 10000;
     private static final Comparator<? super HakuDetailsDto> HAKUS_IN_FINNISH_ORDER = new Comparator<HakuDetailsDto>() {
         public int compare(HakuDetailsDto o1, HakuDetailsDto o2) {
@@ -53,18 +55,45 @@ public class TarjontaComponent {
 
     public List<HakuDetailsDto> findPublished(Integer countLimit) {
         try {
-            List<HakuListDto> hakus = tarjontaHakuResourceClient.hakus(Optional.fromNullable(countLimit).or(MAX_COUNT));
+            final HakuRDTO<List<HakuDetailsDto>> hakus1 = tarjontaHakuResourceClient.hakus(Optional.fromNullable(countLimit).or(MAX_COUNT));
+            List<HakuDetailsDto> hakus = hakus1.getResult();
             List<HakuDetailsDto> hakuDetails = new ArrayList<HakuDetailsDto>();
-            for (HakuListDto haku : hakus) {
-                HakuDetailsDto details = tarjontaHakuResourceClient.hakuByOid(haku.getOid());
-                if (!DELETED_STATE.equals(details.getTila())) {
-                    hakuDetails.add(details);
+            for (HakuDetailsDto haku : hakus) {
+                if (!DELETED_STATE.equals(haku.getTila())) {
+                    hakuDetails.add(haku);
                 }
             }
             Collections.sort(hakuDetails, HAKUS_IN_FINNISH_ORDER);
             return hakuDetails;
         } catch(Exception e) {
+            log.error("Error getting published hakus", e);
             throw new ExternalInterfaceException("Error fetching list of tarjonta's hakus", e);
+        }
+    }
+
+    public Set<String> findByOid(String applicationPeriod) {
+        try {
+            final HakuRDTO<HakuDetailsDto> hakuDetailsDtoHakuRDTO = tarjontaHakuResourceClient.hakuByOid(applicationPeriod);
+
+            if(hakuDetailsDtoHakuRDTO.getResult() == null)
+                return null;
+
+
+            //todo bulk query
+            Set<String> tarjoajaOrgOids = new HashSet<>();
+            for (String hakukohdeOid : hakuDetailsDtoHakuRDTO.getResult().getHakukohdeOids()) {
+                final HakuRDTO<HakukohdeDTO> hakuhdeByOid = tarjontaHakuResourceClient.getHakuhdeByOid(hakukohdeOid);
+                if(hakuhdeByOid == null || hakuhdeByOid.getResult() == null)
+                    continue;
+                tarjoajaOrgOids.addAll(hakuhdeByOid.getResult().tarjoajaOids);
+
+            }
+
+            return tarjoajaOrgOids;
+
+        } catch (Exception e) {
+            log.error("Error finding haku by application period", e);
+            throw new ExternalInterfaceException(e);
         }
     }
 
