@@ -1,31 +1,5 @@
 package fi.vm.sade.viestintapalvelu.template;
 
-import java.io.IOException;
-import java.security.NoSuchAlgorithmException;
-import java.util.*;
-
-import javax.servlet.http.HttpServletRequest;
-import javax.ws.rs.*;
-import javax.ws.rs.core.Context;
-import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
-
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.Resource;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
@@ -40,7 +14,6 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
@@ -57,7 +30,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
-import javax.ws.rs.core.*;
+import javax.ws.rs.core.Context;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
@@ -81,9 +56,6 @@ public class TemplateResource extends AsynchronousResource {
 
     @Autowired
     private CurrentUserComponent currentUserComponent;
-
-    @Autowired
-    private LearningOpportunityProviderComponent learningOpportunityProviderComponent;
 
     @Autowired
     private OrganisaatioService organisaatioService;
@@ -739,23 +711,13 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Produces("application/json")
-    @Path("/draft/listByApplicationperiod/{applicationPeriod}")
-    public List<OrganisaatioHierarchyDto> getDraftsByApplicationPeriod(@ApiParam(name ="applicationPeriod", value = "haku (OID)", required = true)
-                                                                       @PathParam("applicationPeriod") String applicationPeriod) {
-
-        List<LOPDto> providers = learningOpportunityProviderComponent.searchProviders(applicationPeriod, new Locale("fi", "FI")); //todo handle locale
-        Set<String> providerOrgIds = new HashSet<String>();
-        for(LOPDto lop : providers) {
-            providerOrgIds.add(lop.getId());
-        }
-
-        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
-        for(OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
-
-        }
-
-
-        return new ArrayList<OrganisaatioHierarchyDto>();
+    @Path("/draft/applicationPeriod/{applicationPeriod}")
+    public List<Draft> getDraftsByApplicationPeriod(@ApiParam(name ="applicationPeriod", value = "haku (OID)", required = true)
+                                                                       @PathParam("applicationPeriod") String applicationPeriod,
+                                                                       @ApiParam(name ="organizationid", value = "organizaatioiden OID", required = false)
+                                                                       @QueryParam("organizationid") List<String> organizationId) {
+        final List<Draft> draftsByOrgOidsAndApplicationPeriod = templateService.getDraftsByOrgOidsAndApplicationPeriod(organizationId, applicationPeriod);
+        return draftsByOrgOidsAndApplicationPeriod;
     }
 
 

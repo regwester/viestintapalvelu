@@ -1,15 +1,10 @@
 package fi.vm.sade.viestintapalvelu.organization;
 
-import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.LOPDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,7 +15,9 @@ import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
 
 @Component
 @PreAuthorize("isAuthenticated()")
@@ -90,6 +87,7 @@ public class OrganizationResource extends AsynchronousResource {
     * Checks if Node has any children that are in the OIDs set. Returns true if set contains at least one child, false
     */
     private boolean filterHierarchy(OrganisaatioHierarchyDto node, Set<String> OIDs) {
+        if(OIDs == null) return false;
         if(node.getChildren() == null || node.getChildren().isEmpty())
             return OIDs.contains(node.getOid());
 

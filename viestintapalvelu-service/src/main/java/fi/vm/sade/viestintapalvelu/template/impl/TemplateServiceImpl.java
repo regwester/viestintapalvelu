@@ -663,8 +663,12 @@ public class TemplateServiceImpl implements TemplateService {
                                                                             String applicationPeriod, String fetchTarget, String tag) {
 
         fi.vm.sade.viestintapalvelu.template.Draft result = new fi.vm.sade.viestintapalvelu.template.Draft();
-
         Draft draft = draftDAO.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
+        return getConvertedDraft(draft);
+    }
+
+    private fi.vm.sade.viestintapalvelu.template.Draft getConvertedDraft(Draft draft) {
+        fi.vm.sade.viestintapalvelu.template.Draft result = new fi.vm.sade.viestintapalvelu.template.Draft();
         if (draft != null) {
             // kirjeet.luonnos
             result.setDraftId(draft.getId());
@@ -720,6 +724,16 @@ public class TemplateServiceImpl implements TemplateService {
         }
 
         return replacements;
+    }
+
+    @Override
+    public List<fi.vm.sade.viestintapalvelu.template.Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod){
+        List<Draft> drafts = draftDAO.findByOrgOidsAndApplicationPeriod(oids, applicationPeriod);
+        List<fi.vm.sade.viestintapalvelu.template.Draft> convertedDrafts = new ArrayList<>();
+        for (Draft draft : drafts) {
+            convertedDrafts.add(getConvertedDraft(draft));
+        }
+        return convertedDrafts;
     }
 
     @Override
