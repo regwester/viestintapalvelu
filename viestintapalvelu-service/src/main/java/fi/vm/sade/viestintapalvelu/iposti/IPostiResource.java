@@ -21,6 +21,7 @@ import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
@@ -94,9 +95,10 @@ public class IPostiResource {
     @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
-    public Response getBatchById(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id,
+    public Response getBatchById(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") String idStr,
                                  @Context HttpServletRequest request,
                                  @Context HttpServletResponse response) throws Exception {
+        Long id = Long.parseLong(FilenameHelper.withoutExtension(idStr));
         try {
             IPosti iposti = iPostiService.findBatchById(id);
             byte[] zip = iposti.getContent();
@@ -113,9 +115,10 @@ public class IPostiResource {
     @Transactional(readOnly = true)
     @ApiOperation(value = ApiReadItem, notes = ApiReadItem)
     @ApiResponses({@ApiResponse(code = 400, message = ReadResponse400), @ApiResponse(code = 200, message = ReadResponse200)})
-    public Response getIPostiById(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id,
+    public Response getIPostiById(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") String idStr,
                                   @Context HttpServletRequest request,
                                   @Context HttpServletResponse response) throws Exception {
+        Long id = Long.parseLong(FilenameHelper.withoutExtension(idStr));
         try {
             Map<String, byte[]> batches = new LinkedHashMap<String, byte[]>();
             List<IPosti> iposts = iPostiService.findMailById(id);

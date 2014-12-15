@@ -25,6 +25,7 @@ import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 
 import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 
 @Service
 @Singleton
@@ -57,7 +58,7 @@ public class DownloadResource {
     @ApiOperation(value = "Lataa valmis PDF/ZIP-tiedosto", notes = "Lataa valmis PDF/ZIP-tiedosto kirje- tai osoitetarra-palveluiden palauttamalla dokumentin tunnisteella")
     @ApiResponses(@ApiResponse(code = 400, message = "BAD_REQUEST; annetulla ID:llä ei löydy ladattavaa dokumenttia"))    
     public Response download(@ApiParam(value = "Ladattavan dokumentin ID", required = true) @PathParam("documentId") String input, @Context HttpServletResponse response) {
-        Download download = downloadCache.get(input);
+        Download download = downloadCache.get(FilenameHelper.withoutExtension(input));
         if (download == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }

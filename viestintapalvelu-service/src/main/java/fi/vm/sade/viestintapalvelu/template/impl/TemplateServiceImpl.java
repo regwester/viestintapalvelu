@@ -23,6 +23,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -115,7 +117,7 @@ public class TemplateServiceImpl implements TemplateService {
             throw BeanValidatorImpl.badRequest("Storing a new template in closed (suljettu) state makes no sense, " +
                     "does it? Allowed states: draft (luonnos) or published (julkaistu, by default).");
         }
-        convertTemplate(template, model);
+        convertTemplate(template, model, false);
         setTemplateStructure(template, model);
         updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         return storeTemplate(model);
@@ -145,7 +147,7 @@ public class TemplateServiceImpl implements TemplateService {
         validateTemplateAgainstStructure(template, model.getStructure());
     }
 
-    private void convertTemplate(fi.vm.sade.viestintapalvelu.template.Template from, Template to) {
+    private void convertTemplate(fi.vm.sade.viestintapalvelu.template.Template from, Template to, boolean isUpdate) {
         to.setName(from.getName());
         to.setDescription(from.getDescription());
         to.setTimestamp(new Date());
@@ -153,7 +155,38 @@ public class TemplateServiceImpl implements TemplateService {
         to.setLanguage(from.getLanguage());
         to.setOrganizationOid(from.getOrganizationOid());
         if (from.getReplacements() != null) {
-            to.setReplacements(parseReplacementModels(from.getReplacements(), to));
+            if (isUpdate) {
+                mapReplacements(from, to);
+            } else {
+                to.setReplacements(parseReplacementModels(from.getReplacements(), to, isUpdate));
+            }
+        }
+    }
+
+    private void mapReplacements(fi.vm.sade.viestintapalvelu.template.Template from, Template to) {
+        for (fi.vm.sade.viestintapalvelu.template.Replacement replacement : from.getReplacements()) {
+            final String name = replacement.getName();
+            Optional<Replacement> repl = Iterables.tryFind(to.getReplacements(), new Predicate<Replacement>() {
+
+                @Override
+                public boolean apply(Replacement input) {
+                    return name.equalsIgnoreCase(input.getName());
+                }
+            });
+            if (repl.isPresent()) {
+                Replacement toAdd = repl.get();
+                to.getReplacements().remove(toAdd);
+                toAdd.setDefaultValue(replacement.getDefaultValue());
+                to.addReplacement(toAdd);
+            } else {
+                Replacement model = new Replacement();
+                model.setDefaultValue(model.getDefaultValue());
+                model.setMandatory(replacement.isMandatory());
+                model.setName(replacement.getName());
+                model.setTimestamp(new Date());
+                model.setTemplate(to);
+                to.addReplacement(model);
+            }
         }
     }
 
@@ -375,12 +408,14 @@ public class TemplateServiceImpl implements TemplateService {
         return result;
     }
 
-    private Set<Replacement> parseReplacementModels(List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements, Template template) {
+    private Set<Replacement> parseReplacementModels(List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements, Template template, boolean isUpdate) {
         Set<Replacement> result = new HashSet<Replacement>();
         for (fi.vm.sade.viestintapalvelu.template.Replacement r : replacements) {
             Replacement model = new Replacement();
             model.setDefaultValue(r.getDefaultValue());
-            // model.setId(r.getId());
+            if (isUpdate) {
+                model.setId(r.getId());
+            }
             model.setMandatory(r.isMandatory());
             model.setName(r.getName());
             model.setTimestamp(new Date()); //r.getTimestamp());
@@ -695,7 +730,7 @@ public class TemplateServiceImpl implements TemplateService {
         verifyState(oldState, newState);
         final boolean editingAllowed = oldState == State.luonnos && newState != State.suljettu;
         if (editingAllowed) {
-            convertTemplate(template, model);
+            convertTemplate(template, model, true);
             setTemplateStructure(template, model);
             updateApplicationPeriodRelation(template.getApplicationPeriods(), model);
         }

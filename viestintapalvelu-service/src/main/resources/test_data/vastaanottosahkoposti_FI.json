@@ -1,0 +1,35 @@
+{
+    "name":"omattiedot_email",
+    "language":"FI",
+    "contents":[
+        {
+            "name":"email_body",
+            "order":1,
+            "content":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hei $etunimi</p> <p>Olet hakenut opiskelupaikkaa Opintopolku-verkkopalvelussa. Sinulle on nyt my&ouml;nnetty opiskelupaikka! K&auml;y hyv&auml;ksym&auml;ss&auml; opiskelupaikka Opintopolussa $deadline</p> <p><a href=\"https://opintopolku.fi/omatsivut/login\">Kirjaudu opintopolkuun</a></p> </body></html>"
+        }
+    ],
+    "replacements":[
+        {
+            "name":"etunimi",
+            "defaultValue":"Etunimi",
+            "mandatory":false
+        },
+        {
+            "name":"sukunimi",
+            "defaultValue":"Sukunimi",
+            "mandatory":false
+        },
+        {
+            "name":"deadline",
+            "defaultValue":"-",
+            "mandatory":false
+        },
+        {
+            "name":"otsikko",
+            "defaultValue":"Opiskelupaikka vastaanotettavissa Opintopolussa",
+            "mandatory":false
+        }
+    ],
+    "usedAsDefault":false,
+    "type":"email"
+}

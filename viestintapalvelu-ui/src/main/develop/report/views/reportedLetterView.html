@@ -83,7 +83,7 @@
     <div class="row-fluid" ng-if="reportedLetterDTO.deliveryTypeIPosti">
         <div class="span2">{{ 'reportedletterview.label.lahetyksen_kooste' | i18n }}</div>
         <div class="span6"><a
-                ng-href="/viestintapalvelu/api/v1/iposti/getIPostiById/{{ reportedLetterDTO.letterBatchID }}">{{
+                ng-href="/viestintapalvelu/api/v1/iposti/getIPostiById/{{ reportedLetterDTO.letterBatchID }}.zip">{{
             reportedLetterDTO.template.name }}.zip</a></div>
     </div>
 
@@ -101,7 +101,7 @@
                 <tbody>
                 <tr ng-repeat="iPosti in reportedLetterDTO.iPostis">
                     <td>{{ $index }}</td>
-                    <td><a ng-href="/viestintapalvelu/api/v1/iposti/getBatchById/{{ iPosti.id }}">{{ iPosti.contentName
+                    <td><a ng-href="/viestintapalvelu/api/v1/iposti/getBatchById/{{ iPosti.id }}.zip.">{{ iPosti.contentName
                         }}</a></td>
                     <td>{{ iPosti.sentDate === null ? 'reportedletterview.text.ei_lahetetty' :
                         'reportedletterview.text.toimitettu_lahetettavaksi' | i18n }}
@@ -117,7 +117,7 @@
 
     <div class="row-fluid">
         <img ng-show="reportedLetterDTO.status == 'error'" style="margin-right:10px;"
-             src="./assets/img/error-icon28x29.png">
+             src="./img/error-icon28x29.png">
 
         <div ng-show="reportedLetterDTO.status != 'error'" class="span2">{{'reportedletterview.label.kooste_kirjeista' |
             i18n}}
