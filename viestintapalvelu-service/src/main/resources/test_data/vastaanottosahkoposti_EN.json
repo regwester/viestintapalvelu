@@ -1,0 +1,35 @@
+{
+    "name":"omattiedot_email",
+    "language":"EN",
+    "contents":[
+        {
+            "name":"email_body",
+            "order":1,
+            "content":"<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Dear $etunimi</p> <p>You have applied for a study place in the Studyinfo web service. You have been granted a study place! Please confirm the study place in Studyinfo $deadline.</p> <p><a href=\"https://opintopolku.fi/omatsivut/login\">Log in to Studyinfo</a></p> </body></html>"
+        }
+    ],
+    "replacements":[
+        {
+            "name":"etunimi",
+            "defaultValue":"Etunimi",
+            "mandatory":false
+        },
+        {
+            "name":"sukunimi",
+            "defaultValue":"Sukunimi",
+            "mandatory":false
+        },
+        {
+            "name":"deadline",
+            "defaultValue":"-",
+            "mandatory":false
+        },
+        {
+            "name":"otsikko",
+            "defaultValue":"The study place can be confirmed in Studyinfo",
+            "mandatory":false
+        }
+    ],
+    "usedAsDefault":false,
+    "type":"email"
+}
