@@ -16,6 +16,8 @@
         <class>fi.vm.sade.viestintapalvelu.model.LetterReceivers</class>
         <class>fi.vm.sade.viestintapalvelu.model.LetterReplacement</class>
         <class>fi.vm.sade.viestintapalvelu.model.Replacement</class>
+        <class>fi.vm.sade.viestintapalvelu.model.Draft</class>
+        <class>fi.vm.sade.viestintapalvelu.model.DraftReplacement</class>
         <class>fi.vm.sade.viestintapalvelu.model.Template</class>
         <class>fi.vm.sade.viestintapalvelu.model.TemplateContent</class>
         <class>fi.vm.sade.viestintapalvelu.model.IPosti</class>

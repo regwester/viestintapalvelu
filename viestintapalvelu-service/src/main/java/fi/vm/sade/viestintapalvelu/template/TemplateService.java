@@ -59,4 +59,6 @@ public interface TemplateService {
     List<Template> findByOrganizationOIDs(List<String> oids);
 
     List<TemplateInfo> findTemplateInfoByCriteria(TemplateCriteria withState);
+
+    public List<Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod);
 }

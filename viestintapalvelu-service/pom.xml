@@ -512,16 +512,34 @@
             <groupId>com.googlecode.flyway</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.googlecode.lambdaj</groupId>
+            <artifactId>lambdaj</artifactId>
+            <version>2.3.3</version>
+        </dependency>
         <dependency>
             <groupId>fi.ratamaa</groupId>
             <artifactId>dtoconverter</artifactId>
             <version>${dtoconverter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.lambdaj</groupId>
+                    <artifactId>lambdaj</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>fi.ratamaa</groupId>
             <artifactId>dtoconverter-hibernate</artifactId>
             <version>${dtoconverter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.lambdaj</groupId>
+                    <artifactId>lambdaj</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
         <!-- Apache PDFBox API library for PDF document handling -->

@@ -2,4 +2,4 @@
 
 angular.module('listpaging', []);
 angular.module('loading', []);
-angular.module('report', ['listpaging', 'loading']);
+angular.module('report', ['listpaging', 'loading', 'ui.select2']);

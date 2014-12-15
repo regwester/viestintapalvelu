@@ -365,6 +365,14 @@
                                 tree.add_branch(null, new_branch);
                                 return new_branch;
                             };
+                            tree.expand_all_parents = function(b) {
+                                if(b == null) {
+                                    b = tree.get_selected_branch();
+                                }
+                                if(b != null) {
+                                    expand_all_parents(b);
+                                }
+                            };
                             tree.expand_branch = function(b) {
                                 if (b == null) {
                                     b = tree.get_selected_branch();

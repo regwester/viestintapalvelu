@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
 import java.io.Serializable;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -42,6 +43,20 @@ public class HakuDetailsDto implements Serializable {
     // in format: kieli_<code> -> nimi
     private Map<String,String> nimi = new HashMap<String, String>();
 
+    @ApiModelProperty("Tarjoajan oid")
+    private List<String> tarjoajaOids;
+
+    @ApiModelProperty("Tarjoaja organisatio oidit.")
+    private List<String> organisaatioOids;
+
+    public List<String> getHakukohdeOids() {
+        return hakukohdeOids;
+    }
+
+    public void setHakukohdeOids(List<String> hakukohdeOids) {
+        this.hakukohdeOids = hakukohdeOids;
+    }
+
     public String getOid() {
         return oid;
     }
@@ -65,4 +80,25 @@ public class HakuDetailsDto implements Serializable {
     public void setNimi(Map<String, String> nimi) {
         this.nimi = nimi;
     }
+
+    public List<String> getTarjoajaOids() {
+        return tarjoajaOids;
+    }
+
+    public void setTarjoajaOids(List<String> tarjoajaOids) {
+        this.tarjoajaOids = tarjoajaOids;
+    }
+
+    public List<String> getOrganisaatioOids() {
+        return organisaatioOids;
+    }
+
+    public void setOrganisaatioOids(List<String> organisaatioOids) {
+        this.organisaatioOids = organisaatioOids;
+    }
+
+    @ApiModelProperty("Hakukohteiden oidit")
+
+    private List<String> hakukohdeOids;
+
 }

@@ -201,4 +201,8 @@ public class Template extends BaseEntity {
     public void setState(State state) {
         this.state = state;
     }
+    
+    public void addReplacement(Replacement replacement) {
+        replacements.add(replacement);
+    }
 }

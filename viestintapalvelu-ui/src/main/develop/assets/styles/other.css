@@ -585,3 +585,72 @@ input.icon-actionmenu {
     height: 18px;
     box-shadow: none;
 }
+
+th.searchLabelColumn, th.searchLabelColumn label {
+  font-weight: normal;
+}
+.searchRadioColumn {
+  width: 15px; padding-top: 0px;
+}
+.searchLabelColumn {
+  min-width: 140px;
+  text-align: right;
+  vertical-align: top;
+  padding-top: 3px;
+}
+.letterSearchField {
+  min-width: 400px;
+}
+input[type='text'].letterSearchField {
+  min-width: 385px;
+}
+
+
+/** Select2 tweak */
+
+.select2-container {
+  border-radius: 4px;
+  font-family: inherit;
+  font-size: 14px;
+  background-color: #fff; background-image:none;
+  border: 1px solid #ccc;
+}
+.select2-container .select2-choice {
+  background-image: none;
+  font-family: inherit;
+  color: #555555;
+  font-size: 14px;
+}
+.select2-container .placeholder {
+  color: #999999;
+}
+.select2-container-multi.select2-container-active {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+}
+.select2-drop {
+  -webkit-box-shadow: none;
+  box-shadow: none;
+  color: inherit;
+}
+.select2-drop input[type='text']:focus {
+  border-color: #CCCCCC;
+  -webkit-box-shadow: none;
+  box-shadow: inherit;
+}
+.select2-drop-active, .form-control.select2-container.select2-dropdown-open, .form-control.select2-container.select2-dropdown-open {
+  border-left-color: #CCCCCC;
+  border-top-color: #CCCCCC;
+  border-bottom-color: #CCCCCC;
+  border-right-color: #CCCCCC;
+}
+.select2-dropdown-open.select2-drop-above .select2-choice, .select2-dropdown-open.select2-drop-above .select2-choices {
+  background-image: none;
+}
+.select2-dropdown-open .select2-choice {
+  background-image: none;
+}
+.select2-result-selectable .select2-match,
+.select2-result-unselectable .select2-match {
+  text-decoration: none;
+}

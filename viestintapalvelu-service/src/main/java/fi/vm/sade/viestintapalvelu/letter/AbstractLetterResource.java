@@ -16,6 +16,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
@@ -89,7 +90,8 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     }
 
     protected long getLetterBatchId(String id) {
-        // Expect format: VIES-<tyyppi>-id-<HASH(suola+"VIES-"+tyyppi+id+tallentaja-oid)>
+        id = FilenameHelper.withoutExtension(id);
+                // Expect format: VIES-<tyyppi>-id-<HASH(suola+"VIES-"+tyyppi+id+tallentaja-oid)>
         if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
             return dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
         } else if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
