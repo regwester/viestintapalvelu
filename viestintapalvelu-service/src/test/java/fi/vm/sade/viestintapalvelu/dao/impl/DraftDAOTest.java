@@ -23,7 +23,7 @@ import java.util.List;
 import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("classpath:test-application-context.xml")
+@ContextConfiguration("/test-dao-context.xml")
 @TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
         DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -62,7 +62,7 @@ public class DraftDAOTest {
         draftDAO.insert(draft3);
     }
 
- //   @Test
+    @Test
     public void testFindByOrgOidsAndApplicationPeriod() throws Exception {
 
         List<String> oids = new ArrayList<>();
