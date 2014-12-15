@@ -62,7 +62,7 @@ public class DraftDAOTest {
         draftDAO.insert(draft3);
     }
 
-    @Test
+ //   @Test
     public void testFindByOrgOidsAndApplicationPeriod() throws Exception {
 
         List<String> oids = new ArrayList<>();
