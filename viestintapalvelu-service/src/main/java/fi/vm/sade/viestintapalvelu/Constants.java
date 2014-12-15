@@ -26,6 +26,7 @@ public class Constants {
     public static final String PARAM_ORGANIZATION_OID = "orgOid";
     public static final String PARAM_LETTER_BATCH_SEARCH_ARGUMENT = "searchArgument";
     public static final String PARAM_RECEIVER_SEARCH_ARGUMENT = "receiverSearchArgument";
+    public static final String PARAM_APPLICATION_PERIOD = "applicationPeriod";
     public static final String PARAM_INCLUDE_OLDER_RESULTS = "includeOlder";
     public static final String PARAM_SEARCH_TARGET = "searchTarget";
     public static final String PARAM_NUMBER_OF_ROWS = "nbrofrows";
@@ -33,8 +34,9 @@ public class Constants {
     public static final String PARAM_SORTED_BY = "sortedby";
     public static final String PARAM_ORDER = "order";
     public static final String PARAM_PROCESS = "process";
+
     public static final String PARAM_ID = "id";
-    
+
     // Error message
     public static final Object INTERNAL_SERVICE_ERROR = "Internal service error";
 }

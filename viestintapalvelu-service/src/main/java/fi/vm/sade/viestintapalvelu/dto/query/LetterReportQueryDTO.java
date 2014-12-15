@@ -18,11 +18,12 @@ public class LetterReportQueryDTO implements Serializable {
     private String receiverSearchArgument;
     private LocalDate beginDate;
     private LocalDate endDate;
-    
+    private String applicationPeriod;
+
     public List<String> getOrganizationOids() {
         return organizationOids;
     }
-    
+
     public void setOrganizationOids(List<String> organizationOids) {
         this.organizationOids = organizationOids;
     }
@@ -65,5 +66,13 @@ public class LetterReportQueryDTO implements Serializable {
 
     public void setEndDate(LocalDate endDate) {
         this.endDate = endDate;
+    }
+
+    public void setApplicationPeriod(String applicationPeriod) {
+        this.applicationPeriod = applicationPeriod;
+    }
+
+    public String getApplicationPeriod() {
+        return applicationPeriod;
     }
 }

@@ -237,7 +237,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                     .innerJoin(letterBatch.letterReceivers, receiver)
                     .leftJoin(receiver.letterReceiverAddress, letterReceiverAddress);
         case receiver:
-            return from(letterBatch)
+            return from(letterBatch).distinct()
                     .leftJoin(letterBatch.letterReceivers, receiver)
                     .leftJoin(receiver.letterReceiverAddress, letterReceiverAddress);
         default: throw new IllegalArgumentException("Unknown SearchTarget" + target);
@@ -344,6 +344,10 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 booleanBuilder.andAnyOf(splittedInExpression(query.getOrganizationOids(),
                         letterBatch.organizationOid));
             }
+        }
+
+        if (query.getApplicationPeriod() != null && !query.getApplicationPeriod().isEmpty()) {
+            booleanBuilder.and(letterBatch.applicationPeriod.eq(query.getApplicationPeriod()));
         }
 
         int subQueryNum = 0;

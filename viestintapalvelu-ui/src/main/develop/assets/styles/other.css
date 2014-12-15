@@ -585,3 +585,31 @@ input.icon-actionmenu {
     height: 18px;
     box-shadow: none;
 }
+
+th.searchLabelColumn, th.searchLabelColumn label {
+  font-weight: normal;
+}
+.searchRadioColumn {
+  width: 20px; padding-top: 0px;
+}
+.searchLabelColumn {
+  min-width: 180px;
+  text-align: right;
+  vertical-align: top;
+  padding-top: 3px;
+}
+.letterSearchField {
+  min-width: 400px;
+}
+.select2-container {
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: #fff; background-image:none;
+  border: 1px solid #ccc;
+  box-shadow: 0 1px 1px rgba(0, 0, 0, 0.075) inset;
+  transition: border 0.2s linear 0s, box-shadow 0.2s linear 0s;
+}
+.select2-container .select2-choice {
+  /*background-image: -moz-linear-gradient(center bottom , #eee 0%, #fff 50%);*/
+  background-image: none;
+}

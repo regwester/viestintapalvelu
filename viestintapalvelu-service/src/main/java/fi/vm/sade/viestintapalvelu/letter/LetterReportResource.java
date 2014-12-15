@@ -243,8 +243,8 @@ public class LetterReportResource extends AsynchronousResource {
             @QueryParam(Constants.PARAM_RECEIVER_SEARCH_ARGUMENT) String receiverSearchArgument,
             @ApiParam(value="Haun kohde: kirjelähetys=batch, vastaanottajakirje=receiver", required=true)
             @QueryParam(Constants.PARAM_SEARCH_TARGET) String searchTarget,
-            @ApiParam(value="Kirjeen luontikaika::jos true, sisällytetään myös puoli vuotta vanhemmat tulokset", required=true)
-            @QueryParam(Constants.PARAM_INCLUDE_OLDER_RESULTS) Boolean includeOlder,
+            @ApiParam(value="Haun oid, jolla rajata hakua", required=false)
+            @QueryParam(Constants.PARAM_APPLICATION_PERIOD) String applicationPeriod,
             @ApiParam(value="Haettavien rivien lukumäärä", required=true)
             @QueryParam(Constants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows,
             @ApiParam(value="Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required=true)
@@ -266,9 +266,7 @@ public class LetterReportResource extends AsynchronousResource {
         query.setReceiverSearchArgument(receiverSearchArgument);
         query.setTarget(searchTarget == null ? LetterReportQueryDTO.SearchTarget.batch
                 : LetterReportQueryDTO.SearchTarget.valueOf(searchTarget));
-        if (includeOlder == null || !includeOlder) {
-            query.setBeginDate(LocalDate.now().minus(Period.months(6)));
-        }
+        query.setApplicationPeriod(applicationPeriod);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
 

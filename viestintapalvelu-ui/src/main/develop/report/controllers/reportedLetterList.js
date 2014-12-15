@@ -4,6 +4,7 @@ angular.module('report')
     .service('ReportedLetterListCtrlState', function() {
         var _searchTarget = "batch",
             _searchArgument = "",
+            _applicationPeriod = null,
             _sortAndOrder = {
                 sortedby: 'timestamp',
                 order: 'desc'
@@ -14,15 +15,15 @@ angular.module('report')
             },
             _form = {
                 organization: ''
-            },
-            _includeOlder=false;
+            };
+
         this.store = function($scope) {
             _searchTarget = $scope.searchTarget;
             _searchArgument = $scope.searchArgument;
             _sortAndOrder = $scope.sortAndOrder;
             _pagination = $scope.pagination;
             _form = $scope.form;
-            _includeOlder = $scope.includeOlder;
+            _applicationPeriod = $scope.applicationPeriod;
         };
         this.restore = function($scope) {
             $scope.searchTarget = _searchTarget;
@@ -30,20 +31,27 @@ angular.module('report')
             $scope.sortAndOrder = _sortAndOrder;
             $scope.pagination = _pagination;
             $scope.form = _form;
-            $scope.includeOlder = _includeOlder;
+            $scope.applicationPeriod = _applicationPeriod;
             $scope.fetch();
         };
     })
-  .controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', '$window', 'ReportedLetterListCtrlState',
-function ($scope, $state, $http, $window, ReportedLetterListCtrlState) {
+  .controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', '$window', 'ReportedLetterListCtrlState', 'Options',
+function ($scope, $state, $http, $window, ReportedLetterListCtrlState, Options) {
     var  serviceAPIUrl = '/viestintapalvelu/api/v1',
         reportingAPIUrl = serviceAPIUrl + '/reporting',
         reportedLettersListUrl = serviceAPIUrl+'/reporting/list',
         reportedLettersSearchUrl = serviceAPIUrl+'/reporting/search';
     $scope.doneSearchTarget = 'batch';
     $scope.loading = false;
+    $scope.applicationPeriods = [];
+    Options.hakus(function(aps) {
+        $scope.applicationPeriods = aps;
+    });
 
     $scope.fetch = function () {
+      if ($scope.loading) {
+        return;
+      }
       var params = {}, url = reportedLettersListUrl;
       if ($scope.form.organization) {
         params.orgOid = $scope.form.organization.oid;
@@ -51,14 +59,13 @@ function ($scope, $state, $http, $window, ReportedLetterListCtrlState) {
       params.searchTarget = $scope.searchTarget || 'batch';
       if ($scope.searchTarget == 'batch' && $scope.searchArgument) {
           params.searchArgument = $scope.searchArgument;
-          params.includeOlder = $scope.includeOlder;
           url = reportedLettersSearchUrl;
       }
       if ($scope.searchTarget == 'receiver' && $scope.searchArgument) {
           params.receiverSearchArgument = $scope.searchArgument;
-          params.includeOlder = $scope.includeOlder;
           url = reportedLettersSearchUrl;
       }
+      params.applicationPeriod = $scope.applicationPeriod;
 
       angular.extend(params, {
         page: $scope.pagination.page,
@@ -108,6 +115,7 @@ function ($scope, $state, $http, $window, ReportedLetterListCtrlState) {
       $scope.doneSearchTarget = 'batch';
       $scope.searchArgument = '';
       $scope.pagination.page = 1;
+      $scope.applicationPeriod = null;
       $scope.fetch();
     };
 
