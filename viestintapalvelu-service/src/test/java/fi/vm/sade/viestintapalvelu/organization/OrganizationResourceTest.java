@@ -1,12 +1,17 @@
 package fi.vm.sade.viestintapalvelu.organization;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.*;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.LearningOpportunityProviderComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
+import static org.junit.Assert.assertEquals;
+import static org.mockito.Matchers.eq;
+import static org.powermock.api.mockito.PowerMockito.mock;
+import static org.powermock.api.mockito.PowerMockito.when;
+
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,12 +25,15 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
-import java.util.*;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.eq;
-import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 
 
 @RunWith(SpringJUnit4ClassRunner.class)
