@@ -195,10 +195,10 @@ public class IPostiResource {
     
     private void upload(IPosti iposti, Boolean force) throws Exception {
         if(iposti.getSentDate() == null || (force != null && true == force)) {
-            ipostiUpload.upload(iposti.getContent(), "iposti-"+iposti.getId()+".zip");
+            IPosti iPostiWithContent = iPostiService.findBatchById(iposti.getId());
+            ipostiUpload.upload(iPostiWithContent.getContent(), "iposti-"+iPostiWithContent.getId()+".zip");
             iposti.setSentDate(new Date());
-            iPostiService.markAsSent(iposti);
-            //iPostiService.update(iposti);
+            iPostiService.markAsSent(iPostiWithContent);
         }
     }
 

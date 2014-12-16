@@ -42,7 +42,7 @@ public class IPostiServiceImpl implements IPostiService {
     @Override
     @Transactional(readOnly = true)
     public List<IPosti> findMailById(Long mailId) {
-        return iPostiDAO.findMailById(mailId);
+        return iPostiDAO.findByLetterBatchId(mailId);
     }
     
     @Override

@@ -19,7 +19,6 @@ public class IPostiDAOImpl extends AbstractJpaDAOImpl<IPosti, Long> implements I
     public List<IPosti> findUnSent() {
         EntityManager em = getEntityManager();
         TypedQuery<IPosti> q = em.createQuery("SELECT new IPosti(p.id, p.version, p.createDate, p.letterBatch) from IPosti p left join p.letterBatch where p.sentDate is null", IPosti.class);
-        //TypedQuery<IPosti> q = em.createQuery("SELECT p from IPosti p where p.sentDate is null", IPosti.class);
         return q.getResultList();
     }
 
@@ -29,6 +28,15 @@ public class IPostiDAOImpl extends AbstractJpaDAOImpl<IPosti, Long> implements I
         TypedQuery<IPosti> query = em.createQuery("Select p from IPosti p where p.letterBatch.id = :value", IPosti.class);
         query.setParameter("value", id);
         return query.getResultList();
+    }
+    
+    @Override
+    public List<IPosti> findByLetterBatchId(Long id) {
+        
+        EntityManager em = getEntityManager();
+        TypedQuery<IPosti> q = em.createQuery("SELECT new IPosti(p.id, p.version, p.createDate, p.letterBatch, p.sentDate) from IPosti p left join p.letterBatch where p.letterBatch.id = :value", IPosti.class);
+        q.setParameter("value", id);
+        return q.getResultList();
     }
     
     public int markAsSent(IPosti iPosti) {

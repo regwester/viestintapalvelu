@@ -66,6 +66,15 @@ public class IPosti extends BaseEntity {
         this.setLetterBatch(lb);
         
     }
+
+    public IPosti(long id, long version , Date createDate, LetterBatch lb, Date sentDate) {
+        this.setId(id);
+        this.setVersion(version);
+        this.setCreateDate(createDate);
+        this.setLetterBatch(lb);
+        this.setSentDate(sentDate);
+    }
+
     
     public LetterBatch getLetterBatch() {
         return letterBatch;
