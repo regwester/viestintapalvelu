@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope', '$state', '$filter', 'Global', 'TemplateService', function($scope, $state, $filter, Global, TemplateService) {
+angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope', '$state', '$filter', 'Global', 'PersonService', 'TemplateService', function($scope, $state, $filter, Global, PersonService, TemplateService) {
 	
 	$scope.editorOptions = Global.getEditorOptions();
 
@@ -9,6 +9,9 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
             TemplateService.getStructureById($scope.template.structureId).success(function(structure) {
         	$scope.contentReplacements = structure.replacements;
             });
+            PersonService.getPerson(result.storingOid).success(function(result) {
+        	$scope.saverName = result.etunimet + " " + result.sukunimi;
+            })
         }).error(function(result) {
             //TODO handle errors
         });
