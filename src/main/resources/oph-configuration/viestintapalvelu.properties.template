@@ -144,7 +144,7 @@ viestintapalvelu.asiointitili.wss.keystore.instance = JKS
 viestintapalvelu.asiointitili.ws.log.requests = true
 viestintapalvelu.asiointitili.ws.log.responses = true
 viestintapalvelu.rekisterinpitajaOID=1.2.246.562.10.00000000001
-
+viestintapalvelu.dev.session-required=true
 
 ##############################################################################
 #
