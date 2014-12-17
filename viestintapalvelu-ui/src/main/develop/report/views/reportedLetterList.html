@@ -102,10 +102,11 @@
     </div>
 
     <div class="reported-letters row-fluid">
-        <table class="table table-striped clickable-table-row" ng-if="reportedLettersDTO.numberOfLetterBatches > 0">
+        <table class="table table-striped clickable-table-row" ng-if="reportedLettersDTO.numberOfLetterBatches > 0"
+               style="min-width:1150px">
             <thead>
             <tr>
-                <th class="span1 clickable-header-cell" ng-click="sortBy('timestamp')" ng-class="getSortClass('timestamp')">{{ 'reportedletterlist.otsikko.ajankohta' | i18n | uppercase }}</th>
+                <th style="min-width:130px" class="span1 clickable-header-cell" ng-click="sortBy('timestamp')" ng-class="getSortClass('timestamp')">{{ 'reportedletterlist.otsikko.ajankohta' | i18n | uppercase }}</th>
                 <th ng-show="doneSearchTarget == 'receiver'" ng-click="sortBy('receiverName')" ng-class="getSortClass('receiverName')" class="span1 clickable-header-cell" >{{ 'reportedletterlist.otsikko.nimi' | i18n | uppercase }}</th>
                 <th class="span1 clickable-header-cell" ng-click="sortBy('templateName')" ng-class="getSortClass('templateName')">{{ 'reportedletterlist.otsikko.kirjepohja' | i18n | uppercase }}</th>
                 <th class="span2 clickable-header-cell" ng-click="sortBy('applicationPeriod')" ng-class="getSortClass('applicationPeriod')">{{ 'reportedletterlist.otsikko.haku' | i18n | uppercase }}</th>

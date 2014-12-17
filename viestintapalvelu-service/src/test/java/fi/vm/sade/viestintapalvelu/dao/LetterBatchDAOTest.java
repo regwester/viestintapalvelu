@@ -1,6 +1,5 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashSet;
 

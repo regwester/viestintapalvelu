@@ -97,6 +97,8 @@ public class LetterReportServiceTest {
         
         List<IPosti> mockedIPostis = DocumentProviderTestData.getIPosti(new Long(3), letterBatch);
         when(mockedIPostiDAO.findMailById(any(Long.class))).thenReturn(mockedIPostis);
+        when(mockedIPostiDAO.findByLetterBatchId(any(Long.class))).thenReturn(mockedIPostis);
+        
         when(mockedHenkiloComponent.getHenkilo(any(String.class))).thenReturn(new Henkilo());
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
         

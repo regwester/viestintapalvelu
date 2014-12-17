@@ -906,4 +906,9 @@ public class LetterServiceImpl implements LetterService {
     public void setDokumenttiIdProvider(DokumenttiIdProvider dokumenttiIdProvider) {
         this.dokumenttiIdProvider = dokumenttiIdProvider;
     }
+
+    @Override
+    public String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception {
+        return letterBatchDAO.findTemplateNameForLetterBatch(letterBatchID);
+    }
 }

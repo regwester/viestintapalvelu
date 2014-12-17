@@ -89,7 +89,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         letterBatchReport.setLetterReceivers(letterReceiverDTOs);
         letterBatchReport.setNumberOfReceivers(numberOfReceivers);
         
-        List<IPosti> iPostis = iPostiDAO.findMailById(letterBatchID);
+        List<IPosti> iPostis = iPostiDAO.findByLetterBatchId(letterBatchID);
         List<IPostiDTO> iPostiDTOs = getListOfIPostiDTO(iPostis);
         letterBatchReport.setiPostis(iPostiDTOs);
         

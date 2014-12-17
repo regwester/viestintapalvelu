@@ -27,6 +27,13 @@ public interface IPostiDAO extends JpaDAO<IPosti, Long>{
      */
     public List<IPosti> findMailById(Long id);
 
+    /**
+     * Hakee iPostien lähetystiedot kirjelähetyksen tunnuksella
+     * 
+     * @param id Kirjelähetyksen tunnus
+     * @return Lista IPosti-luokan ilmentymiä ilman binaari sisältöä
+     */
+    public List<IPosti> findByLetterBatchId(Long id);
     
     public int markAsSent(IPosti iposti);
 }

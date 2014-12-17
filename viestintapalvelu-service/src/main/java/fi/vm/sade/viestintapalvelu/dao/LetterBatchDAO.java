@@ -120,4 +120,12 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      * @return Lista kirjelähetysten tietoja
      */
     List<LetterBatch> findAll(PagingAndSortingDTO pagingAndSorting);
+    
+    /**
+     * Hakee kirjelähetyksen kirjepohjan nimen kirjelähetystunnuksen mukaan
+     * @param batchId
+     * @return
+     */
+    
+    String findTemplateNameForLetterBatch(long batchId);
 }

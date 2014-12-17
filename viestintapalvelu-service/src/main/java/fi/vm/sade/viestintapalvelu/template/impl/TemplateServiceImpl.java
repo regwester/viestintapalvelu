@@ -356,6 +356,7 @@ public class TemplateServiceImpl implements TemplateService {
         result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setState(searchResult.getState());
         result.setUsedAsDefault(searchResult.isUsedAsDefault());
+        result.setStoringOid(searchResult.getStoringOid());
         return result;
     }
 

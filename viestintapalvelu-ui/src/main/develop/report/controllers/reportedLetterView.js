@@ -57,7 +57,7 @@ angular.module('report')
         //       this way naturally exposes the user to security risks
         var acceptableDownloadLink = $window.location.origin + serviceAPIUrl + '/download/';
         if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
-          $window.location = downloadLink+".pdf";
+          $window.location = downloadLink;
         }
       });
     };
@@ -70,7 +70,7 @@ angular.module('report')
       getContentsDownloadLink.success(function (downloadLink) {
         var acceptableDownloadLink = $window.location.origin + serviceAPIUrl + '/download/';
         if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
-          $window.location = downloadLink+".zip";
+          $window.location = downloadLink;
         }
       });
     };
