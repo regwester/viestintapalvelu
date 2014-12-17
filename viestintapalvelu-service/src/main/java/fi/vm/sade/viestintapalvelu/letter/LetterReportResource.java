@@ -161,26 +161,18 @@ public class LetterReportResource extends AsynchronousResource {
      */
     @GET
     @Path(Urls.REPORTING_LETTER_PATH)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces({"application/pdf", "application/zip"})
     @ApiOperation(value = "Hakee vastaanottajan kirjeen ja palauttaa linkin ko. kirjeeseen", notes = "Hakee "
         + "vastaanottajan kirjeen. Kirjeelle tehdään unzipo ja sisältö laitetaan talteen cacheen. Palautetaan linkin"
         + " ko. kirjeeseen", response=String.class)
     public Response getReceiversLetter(@ApiParam(value="Vastaanottajan kirjeen avain")
-                                       @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request) {
+                                       @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request, 
+                                       @Context HttpServletResponse response) {
         try {
             LetterReceiverLetterDTO letterReceiverLetter = letterReportService.getLetterReceiverLetter(id);
-            String documentId = downloadCache.addDocument(new Download(
-                    letterReceiverLetter.getContentType(),
-                    letterReceiverLetter.getTemplateName() + determineExtension(letterReceiverLetter.getContentType()),
-                    letterReceiverLetter.getLetter()));
-            String ext = "pdf";
-            if (letterReceiverLetter.getContentType() != null) {
-                String prts[] = letterReceiverLetter.getContentType().split("/");
-                if (prts.length > 1) {
-                    ext = prts[1];
-                }
-            }
-            return createResponse(request, documentId+"."+ext);
+            byte[] letterContents = letterReceiverLetter.getLetter();
+            return downloadPdfResponse(letterReceiverLetter.getTemplateName() + 
+                    determineExtension(letterReceiverLetter.getContentType()), response, letterContents);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
@@ -216,7 +208,8 @@ public class LetterReportResource extends AsynchronousResource {
                                       @Context HttpServletRequest request, @Context HttpServletResponse response) {
         try {
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
-            return downloadPdfResponse(id+".pdf", response, letterContents);
+            String type = letterService.getLetterTypeByLetterBatchID(id);
+            return downloadPdfResponse(type+".pdf", response, letterContents);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }

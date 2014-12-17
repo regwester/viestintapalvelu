@@ -34,7 +34,6 @@ import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.model.*;
-
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
 @Repository
@@ -119,6 +118,14 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
 
         return findLetterBatches.list(letterBatch);
+    }
+
+    @Override
+    public String findTemplateNameForLetterBatch(long batchId) {
+        EntityManager em = getEntityManager();
+        TypedQuery<String> query = em.createQuery("SELECT a.templateName FROM LetterBatch a WHERE a.id = :value", String.class);
+        query.setParameter("value", batchId);
+        return query.getSingleResult();
     }
 
     @Override
@@ -453,4 +460,5 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 });
         return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
+    
 }
