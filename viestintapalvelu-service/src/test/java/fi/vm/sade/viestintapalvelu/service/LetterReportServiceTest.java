@@ -97,6 +97,8 @@ public class LetterReportServiceTest {
         
         List<IPosti> mockedIPostis = DocumentProviderTestData.getIPosti(new Long(3), letterBatch);
         when(mockedIPostiDAO.findMailById(any(Long.class))).thenReturn(mockedIPostis);
+        when(mockedIPostiDAO.findByLetterBatchId(any(Long.class))).thenReturn(mockedIPostis);
+        
         when(mockedHenkiloComponent.getHenkilo(any(String.class))).thenReturn(new Henkilo());
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
         
@@ -107,7 +109,7 @@ public class LetterReportServiceTest {
         assertEquals(letterBatchReport.getFetchTarget(), "fetchTarget");
         assertTrue(letterBatchReport.getLetterBatchID().equals(new Long(1)));
         assertTrue(letterBatchReport.getLetterReceivers().size() == 1);
-//        assertTrue(letterBatchReport.getiPostis().size() > 0);
+        assertTrue(letterBatchReport.getiPostis().size() > 0);
     }
     
     @Test
