@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
@@ -207,17 +208,15 @@ public class LetterReportResource extends AsynchronousResource {
      */
     @GET
     @Path(Urls.REPORTING_CONTENTS_PATH)
-    @Produces(MediaType.TEXT_PLAIN)
+    @Produces({"application/pdf", "application/zip"})
     @ApiOperation(value = "Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä", notes = "Hakee kirjelähetyksen"
         + "vastaanottajien kirjeet. Kirjeille tehdään unzip ja ne yhdistetään yhdeksi PDF:ksi. "
         + "Sisältö laitetaan talteen cacheen. Palautetaan linkin ko. PDF-dokumenteihin", response=String.class)
     public Response getLetterContents(@ApiParam(value="Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id,
-                                      @Context HttpServletRequest request) {
+                                      @Context HttpServletRequest request, @Context HttpServletResponse response) {
         try {
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
-            String documentId = downloadCache.addDocument(new Download(
-                    "application/pdf", "letterContents" + id + ".pdf", letterContents));
-            return createResponse(request, documentId+".pdf");
+            return downloadPdfResponse(id+".pdf", response, letterContents);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
@@ -306,4 +305,13 @@ public class LetterReportResource extends AsynchronousResource {
         }
         return allowedOrganizations.get(0).getOid();
     }
+    
+    private Response downloadPdfResponse(String filename, HttpServletResponse response, byte[] data) {
+        response.setHeader("Content-Type", "application/pdf");
+        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".pdf\"");
+        response.setHeader("Content-Length", String.valueOf(data.length));
+        response.setHeader("Cache-Control", "private");
+        return Response.ok(data).type("application/pdf").build();
+    }
+
 }
