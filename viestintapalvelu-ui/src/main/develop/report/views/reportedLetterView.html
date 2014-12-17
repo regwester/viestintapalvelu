@@ -123,7 +123,7 @@
             i18n}}
         </div>
         <div ng-show="reportedLetterDTO.status != 'error'" class="span6"><a
-                ng-click="downloadContents(reportedLetterDTO.letterBatchID)">{{'reportedLetterview.text.naytakooste' |
+                ng-href="/viestintapalvelu/api/v1/reporting/contents?id={{ reportedLetterDTO.letterBatchID }}">{{'reportedLetterview.text.naytakooste' |
             i18n}}</a></div>
     </div>
 
@@ -142,7 +142,8 @@
                 <tr ng-repeat="recipient in reportedLetterDTO.letterReceivers">
                     <td>{{ recipient.name }}</td>
                     <td>{{ recipient.address1 }}, {{ recipient.postalCode }} {{ recipient.city | uppercase }}</td>
-                    <td><a ng-show="reportedLetterDTO.status != 'error'" ng-click="downloadLetter(recipient)">{{recipient.templateName}}.pdf</a>
+                    <td><a ng-show="reportedLetterDTO.status != 'error'" 
+                    ng-href="/viestintapalvelu/api/v1/reporting/letter?id={{ recipient.letterReceiverLetterID }}">{{recipient.templateName}}.pdf</a>
                     </td>
                 </tr>
                 </tbody>
