@@ -34,7 +34,11 @@ public class TemplateComponent {
      */
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type, String applicationPeriod) {
         try {
-            return templateResourceClient.getTemplateContent(""+templateName, ""+languageCode, ""+type, ""+applicationPeriod);
+            if (applicationPeriod != null && !applicationPeriod.isEmpty()) {
+                return templateResourceClient.getTemplateContent(""+templateName, ""+languageCode, ""+type, ""+applicationPeriod);
+            } else {
+                return templateResourceClient.getTemplateContent(""+templateName, ""+languageCode, ""+type);
+            }
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingTemplateDataFailed", e);
