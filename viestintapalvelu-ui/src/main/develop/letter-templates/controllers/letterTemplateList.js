@@ -146,6 +146,7 @@ angular.module('letter-templates').controller('RemoveTemplateModalFromUse', ['$s
 angular.module('letter-templates').controller('PublishTemplate', ['$scope', '$modalInstance', 'TemplateService', 'templateId', 'state', function ($scope, $modalInstance, TemplateService, templateId, state) {
     $scope.templateIdToPublish = templateId;
     $scope.state = state;
+    $scope.modalData = {};
     
     $scope.cancel = function () {
 	$modalInstance.dismiss('cancel');
@@ -153,8 +154,9 @@ angular.module('letter-templates').controller('PublishTemplate', ['$scope', '$mo
 
     $scope.remove = function () {
 	TemplateService.getTemplateByIdAndState($scope.templateIdToPublish, $scope.state).then(function(result) {
-	    var template = result.data
+	    var template = result.data;
 	    template.state = 'julkaistu';
+	    template.usedAsDefault = $scope.modalData.usedAsDefault;
 	    TemplateService.updateTemplate().put({}, template, function () {
 		$modalInstance.close();
 	    });
