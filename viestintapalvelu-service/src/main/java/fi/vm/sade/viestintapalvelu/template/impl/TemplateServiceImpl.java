@@ -229,7 +229,7 @@ public class TemplateServiceImpl implements TemplateService {
         if (model.isUsedAsDefault()) {
             // Can not have multiple defaults for the templates with the same name and language:
             List<Template> templates = templateDAO.findTemplates(
-                    new TemplateCriteriaImpl(model.getName(), model.getLanguage()));
+                    new TemplateCriteriaImpl(model.getName(), model.getLanguage()).withState(null));
             for (Template otherTemplate : templates) {
                 if (!otherTemplate.getId().equals(model.getId())
                         && otherTemplate.isUsedAsDefault()) {

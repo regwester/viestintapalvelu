@@ -49,9 +49,16 @@ where exists(
   select * from kirjeet.sisalto_korvauskentta cr
   where cr.rakenne = s.id and cr.avain = 'subject'
 );
+
+create or replace function kirjeet.nextHibernateSequence(_var int8) returns int8 as $$
+begin
+  return (select nextval('hibernate_sequence'));
+end;
+$$ language plpgsql;
+
 insert into kirjeet.korvauskentat(id, kirjepohja_id, nimi, oletus_arvo, aikaleima, version, pakollinen)
 select
-  (select nextval('hibernate_sequence')) as id,
+  kirjeet.nextHibernateSequence(t.id) as id,
   t.id as kirjepohja_id,
   'subject' as nimi,
   (select r.oletus_arvo from kirjeet.korvauskentat r where r.kirjepohja_id = t.id and r.nimi = 'otsikko') as oletus_arvo,
