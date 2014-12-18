@@ -11,8 +11,7 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
         	$scope.contentReplacements = structure.replacements;
             });
             PersonService.getPerson(result.storingOid).success(function(person) {
-        	$scope.saverName = person.etunimet + " " + person.sukunimi;
-        	console.log(person);
+        	$scope.saverName = person.firstNames + " " + person.lastName;
             })
         }).error(function(result) {
             //TODO handle errors

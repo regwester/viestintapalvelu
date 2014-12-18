@@ -39,7 +39,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 @Component
 @Path("person")
 @PreAuthorize("isAuthenticated()")
-public class PersonResource extends AsynchronousResource {
+public class PersonResource {
 
     @Autowired
     private HenkiloComponent component;
@@ -48,7 +48,7 @@ public class PersonResource extends AsynchronousResource {
     @JsonView(JsonViews.Basic.class)
     @GET
     @Path("/{oid}")
-    public Henkilo getHenkiloByOid(@PathParam("oid") String oid) {
-        return component.getHenkilo(oid);
+    public Person getHenkiloByOid(@PathParam("oid") String oid) {
+        return new Person(component.getHenkilo(oid));
     }
 }
