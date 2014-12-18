@@ -1,0 +1,71 @@
+<div class="row" ng-if="isEmailState()">
+    <div>
+        <h2 class="align-with-form">{{'email.header.viesti' | i18n}}</h2>
+    </div>
+    <div class="span8">
+        <form novalidate="novalidate" class="form-horizontal">
+            <recipient-list recipients="recipients" form="true" limit="30"></recipient-list>
+            <form-item label="{{'email.label.sender' | i18n}}">
+                <input type="text" size="40" ng-model="email.sender"/>
+            </form-item>
+            <form-item label="{{'email.label.from' | i18n}}">
+                <span>&lt;{{email.from}}&gt;</span>
+                <input type="hidden" ng-model="email.organizationOid"/>
+            </form-item>
+            <form-item label="{{'email.label.replyto' | i18n}}">
+                <input type="text" size="40" ng-model="email.replyTo"/>
+            </form-item>
+            <form-item label="{{'email.label.subject' | i18n}}" required="true">
+                <input type="text" size="40" ng-model="email.subject"/>
+            </form-item>
+            <form-item label="{{'email.label.viesti' | i18n}}" required="true">
+                <textarea ui-tinymce="editorOptions" ng-model="email.body"></textarea>
+            </form-item>
+            <input type="hidden" ng-model="email.templateName"/>
+            <form-item label="{{'email.label.attachments' | i18n}}">
+                <span class="bold" ng-show="!email.attachInfo.length">{{'email.liitteet.ei' | i18n}}</span>
+                <ul class="filelist">
+                    <li ng-repeat="attachment in email.attachInfo">{{attachment.fileName | limitSizeWithMiddleEllipsis : 15}} ({{attachment.fileSize | bytesToSize}})
+                        <a ng-click="remove($index)"><i class="icon-remove"></i>Poista</a>
+                    </li>
+                </ul>
+            </form-item>
+            <form-item ng-show="percentage">
+                <div class="span3 progress">
+                    <div class="bar" ng-style="percentage2"></div>
+                </div>
+            </form-item>
+            <form-item>
+                <span class="btn btn-small fileinput-button">
+                        <span>{{'email.button.attachment.choose' | i18n}}</span>
+                        <input  id="attachment-input" type="file" name="file" data-url="/ryhmasahkoposti-service/email/attachment" multiple upload>
+                    </span>
+            </form-item>
+            <form-item>
+                <button ng-click="cancelEmail()" class="inline-operation btn btn-small">
+                    {{'email.button.peruuta' | i18n}}
+                </button>
+                <button ng-click="saveDraft()" class="inline-operation btn btn-small">
+                    {{'email.button.tallenna' | i18n}}
+                </button>
+                <button ng-click="previewEmail()" class="inline-operation btn-primary btn-small">
+                    {{'email.button.preview' | i18n}}
+                </button>
+            </form-item>
+        </form>
+    </div>
+    <div class="span4">
+        <div class="notification">
+            <h5>{{'email.notification.choose' | i18n}}</h5>
+            <p>{{'email.notification.description' | i18n }}</p>
+            <ul class="linklist">
+                <!-- <li><a ui-sref=".savedContent.templates" ui-sref-active="active">Valmiit viestipohjat</a></li> -->
+                <li><a ui-sref=".savedContent.sentEmails" ui-sref-active="active">{{'email.sentEmails' | i18n}} (<span ng-bind="counts.emails"></span>)</a></li>
+                <li><a ui-sref=".savedContent.drafts" ui-sref-active="active">{{'email.drafts' | i18n}} (<span ng-bind="counts.drafts"></span>)</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div ng-if="!isEmailState()">
+    <div class="span8" ui-view></div>
+</div>

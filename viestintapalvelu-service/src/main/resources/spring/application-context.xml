@@ -53,14 +53,23 @@
         <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
     </util:map>
 
-    <bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
+  <bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache">
+    </bean>
+    <bean id="ticketInterceptorRest" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
+        <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
+        <property name="sessionRequired" value="${viestintapalvelu.dev.session-required:false}"/>
+        <!--property name="appClientUsername" value="${viestintapalvelu.dev.username:}"/>
+        <property name="appClientPassword" value="${viestintapalvelu.dev.password:}"/  -->
+    </bean>
+
+    <!--bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
     <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
     </bean>
-    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
         <property name="target" ref="ticketInterceptorTarget"/>
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
-    </bean>
+    </bean -->
 
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
                          address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
@@ -73,6 +82,9 @@
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
+        <jaxrs-client:inInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
@@ -85,11 +97,13 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
-
     <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
+      <jaxrs-client:inInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
@@ -99,6 +113,9 @@
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
+      <jaxrs-client:inInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
@@ -106,8 +123,11 @@
 
     <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRestInternal"/>
+            <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
+      <jaxrs-client:inInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
@@ -116,9 +136,12 @@
     <jaxrs-client:client id="tarjontaHakuResourceClient"
                     serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
                     address="${viestintapalvelu.tarjontapalvelu.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
+      <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
+      <jaxrs-client:inInterceptors>
+            <ref bean="ticketInterceptorRest"/>
+        </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>

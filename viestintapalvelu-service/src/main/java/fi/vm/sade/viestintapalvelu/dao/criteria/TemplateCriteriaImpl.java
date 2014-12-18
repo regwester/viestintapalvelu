@@ -16,6 +16,9 @@
 
 package fi.vm.sade.viestintapalvelu.dao.criteria;
 
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+
 /**
  * User: ratamaa
  * Date: 9.9.2014
@@ -25,9 +28,10 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     private static final int HASH_FACTOR = 31;
     private String name;
     private String language;
-    private String type;
+    private ContentStructureType type;
     private String applicationPeriod;
     private boolean defaultRequirement;
+    private State state = State.julkaistu;
 
     @Override
     public String getName() {
@@ -40,7 +44,7 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     }
 
     @Override
-    public String getType() {
+    public ContentStructureType getType() {
         return type;
     }
 
@@ -54,6 +58,11 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         return this.defaultRequirement;
     }
 
+    @Override
+    public State getState() {
+        return state;
+    }
+
     public TemplateCriteriaImpl() {
     }
 
@@ -62,11 +71,17 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         this.language = language;
     }
 
+    public TemplateCriteriaImpl(String name, String language, ContentStructureType type) {
+        this.name = name;
+        this.language = language;
+        this.type = type;
+    }
+
     protected TemplateCriteriaImpl copy() {
-        TemplateCriteriaImpl copy = new TemplateCriteriaImpl(this.name, this.language);
-        copy.type = this.type;
+        TemplateCriteriaImpl copy = new TemplateCriteriaImpl(this.name, this.language, this.type);
         copy.applicationPeriod = this.applicationPeriod;
         copy.defaultRequirement = this.defaultRequirement;
+        copy.state = this.state;
         return copy;
     }
 
@@ -85,7 +100,7 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     }
 
     @Override
-    public TemplateCriteria withType(String type) {
+    public TemplateCriteria withType(ContentStructureType type) {
         TemplateCriteriaImpl copy = copy();
         copy.type = type;
         return copy;
@@ -113,6 +128,13 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
     }
 
     @Override
+    public TemplateCriteria withState(State state) {
+        TemplateCriteriaImpl copy = copy();
+        copy.state = state;
+        return copy;
+    }
+
+    @Override
     public String toString() {
         return "TemplateCriteriaImpl{" +
                 "name='" + name + '\'' +
@@ -120,6 +142,7 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
                 ", type='" + type + '\'' +
                 ", applicationPeriod='" + applicationPeriod + '\'' +
                 ", defaultRequirement="+defaultRequirement +
+                ", state="+defaultRequirement +
                 '}';
     }
 
@@ -146,7 +169,10 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         if (name != null ? !name.equals(that.getName()) : that.getName() != null) {
             return false;
         }
-        if (type != null ? !type.equals(that.getType()) : that.getType() != null) {
+        if (type != null ? type != that.getType() : that.getType() != null) {
+            return false;
+        }
+        if (state != null ? state != that.getState() : that.getState() != null) {
             return false;
         }
         return true;
@@ -161,4 +187,5 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         result = HASH_FACTOR * result + (defaultRequirement ? 1 : 0);
         return result;
     }
+
 }

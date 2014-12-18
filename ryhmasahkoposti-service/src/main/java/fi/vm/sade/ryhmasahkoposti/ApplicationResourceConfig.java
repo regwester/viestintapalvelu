@@ -1,14 +1,14 @@
 package fi.vm.sade.ryhmasahkoposti;
 
+import org.glassfish.jersey.server.ResourceConfig;
+
 import com.wordnik.swagger.jersey.listing.ApiListingResourceJSON;
 import com.wordnik.swagger.jersey.listing.JerseyApiDeclarationProvider;
 import com.wordnik.swagger.jersey.listing.JerseyResourceListingProvider;
-import fi.vm.sade.ryhmasahkoposti.exception.WebExceptionMapper;
-import fi.vm.sade.ryhmasahkoposti.feature.JacksonFeature;
-import fi.vm.sade.ryhmasahkoposti.resource.filter.CORSFilter;
-import org.glassfish.jersey.server.ResourceConfig;
 
-import javax.annotation.Resource;
+import fi.vm.sade.ryhmasahkoposti.feature.JacksonFeature;
+import fi.vm.sade.viestintapalvelu.common.exception.WebExceptionMapper;
+import fi.vm.sade.viestintapalvelu.common.resource.filter.CORSFilter;
 
 public class ApplicationResourceConfig extends ResourceConfig {
 
@@ -32,6 +32,5 @@ public class ApplicationResourceConfig extends ResourceConfig {
         register(ApiListingResourceJSON.class);
         register(JerseyApiDeclarationProvider.class);
         register(JerseyResourceListingProvider.class);
-
     }
 }

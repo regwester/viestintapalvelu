@@ -56,6 +56,7 @@ import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
@@ -145,7 +146,7 @@ public class LetterEmailServiceImplTest {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(1l);
         letterBatch.setBatchStatus(LetterBatch.Status.ready);
         when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
-        when(templateService.findById(eq(1l))).thenReturn(DocumentProviderTestData.getTemplate());
+        when(templateService.findById(eq(1l), eq(ContentStructureType.email))).thenReturn(DocumentProviderTestData.getTemplate());
         doCallRealMethod().when(letterService).updateBatchProcessingStarted(eq(1l), eq(LetterService.LetterBatchProcess.EMAIL));
         doCallRealMethod().when(letterService).updateBatchProcessingFinished(eq(1l), eq(LetterService.LetterBatchProcess.EMAIL));
 
@@ -173,7 +174,7 @@ public class LetterEmailServiceImplTest {
         when(letterBatchDAO.read(eq(Long.valueOf(1l)))).thenReturn(letterBatch);
         Template template = DocumentProviderTestData.getTemplate();
         template.setId(1l);
-        when(templateService.findById(eq(1l))).thenReturn(template);
+        when(templateService.findById(eq(1l), eq(ContentStructureType.email))).thenReturn(template);
         CatchSingleParameterAnswer<Boolean,EmailData> catchEmailInvocations = catchParameters(atFirstReturn(true)
                 .thenThrow(new IllegalStateException("Only one email expected.")));
         when(emailComponent.sendEmail(any(EmailData.class))).then(catchEmailInvocations);
@@ -324,7 +325,7 @@ public class LetterEmailServiceImplTest {
         template.setName(name);
         template.setLanguage(language);
         template.setId(id);
-        when(templateService.findById(eq(id))).thenReturn(template);
+        when(templateService.findById(eq(id), eq(ContentStructureType.email))).thenReturn(template);
         when(templateService.getTemplateByName(eq(new TemplateCriteriaImpl()
                         .withName(template.getName())
                         .withLanguage(template.getLanguage().toUpperCase())

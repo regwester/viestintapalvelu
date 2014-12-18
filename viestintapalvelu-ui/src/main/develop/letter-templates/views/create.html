@@ -1,0 +1,52 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2>Muokkaa kirjepohjaa</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <form novalidate="novalidate" class="form-horizontal">
+                <form-item label="Haku:">
+                    <p>Korkeakoulujen yhteishaku, syksy 2014</p>
+                </form-item>
+                <form-item label="Kirjeen tyyppi:">
+                    <p>Hyväksymiskirje</p>
+                </form-item>
+                <form-item label="Kieli">
+                    <p>suomi</p>
+                </form-item>
+                <form-item label="Tila:">
+                    <p>Keskeneräinen</p>
+                </form-item>
+                <h4>Varsinainen kirje</h4>
+                <form-item label="Otsikko:" subnote="Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen otsikko ja sähköpostiviestin otsikko">
+                    <input type="text" size="input-lg" ng-model="template.subject"/>
+                </form-item>
+                <form-item label="Viesti, osa yksi:" subnote="Oppilaitosvirkailijan muokattavissa oleva viestiosio">
+                    <textarea ui-tinymce="editorOptions" ng-model="template.content."></textarea>
+                </form-item>
+                <form-item label="Viesti, osa kaksi:" subnote="Vain OPH:n virkailijan muokattavissa oleva viestiosio">
+                    <textarea ui-tinymce="editorOptions" ng-model="template.content."></textarea>
+                </form-item>
+                <h4>Liite</h4>
+                <form-item label="Liitteen otsikko:" subnote="Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen liitteen otsikko ja sähköpostin PDF-liitteen otsikko">
+                    <input type="text" class="input-lg" ng-model="letter.subject"/>
+                </form-item>
+                <form-item label="Liitteen tekstiosio:" subnote="Vain OPH:n virkailijan muokattavissa oleva liitteen tekstiosio">
+                    <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
+                </form-item>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+</div>

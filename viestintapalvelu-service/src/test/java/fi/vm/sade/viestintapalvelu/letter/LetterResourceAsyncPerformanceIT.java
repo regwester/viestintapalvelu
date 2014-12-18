@@ -46,6 +46,7 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
+import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -53,11 +54,16 @@ import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.letter.impl.DokumenttiIdProviderImpl;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateContent;
+import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
+import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.structure;
 import static org.junit.Assert.*;
 
 /**
@@ -188,7 +194,9 @@ public class LetterResourceAsyncPerformanceIT {
                 roundSeconds(duration), roundSeconds(MAX_DURATION));
     }
 
-    private long parseId(String s) {
+    private long parseId(LetterResponse response) {
+        String s = response.getBatchId();
+        s = FilenameHelper.withoutExtension(s);
         if (s.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
             return Long.parseLong(s.substring(LetterService.DOKUMENTTI_ID_PREFIX_PDF.length()).split("-")[0]);
         }
@@ -239,12 +247,12 @@ public class LetterResourceAsyncPerformanceIT {
         return batch;
     }
 
-    protected String asyncLetter(AsyncLetterBatchDto letterBatchDto) {
+    protected LetterResponse asyncLetter(AsyncLetterBatchDto letterBatchDto) {
         Response response = letterResource.asyncLetter(letterBatchDto);
         if (response.getStatus() != Response.Status.OK.getStatusCode()) {
             throw new IllegalStateException("Response status not OK: " + response.getStatus());
         }
-        return (String) response.getEntity();
+        return (LetterResponse) response.getEntity();
     }
 
     protected class ProcessMonitor implements Callable<Boolean> {
@@ -296,9 +304,18 @@ public class LetterResourceAsyncPerformanceIT {
 
         public long createTemplate() {
             Template template = DocumentProviderTestData.getTemplate(null);
-            for (TemplateContent content : template.getContents()) {
-                content.setContent(testHtmlContent());
-            }
+            template.setState(Template.State.julkaistu);
+            template.setStructure(structure(
+                contentStructure(ContentStructureType.letter,
+                        content(ContentRole.body, ContentType.html),
+                        content(ContentRole.body, ContentType.html)
+                ),
+                contentStructure(ContentStructureType.email,
+                        content(ContentRole.header, ContentType.plain),
+                        content(ContentRole.body, ContentType.html),
+                        content(ContentRole.attachment, ContentType.html)
+                )
+            ));
             templateDAO.insert(template);
             return template.getId();
         }

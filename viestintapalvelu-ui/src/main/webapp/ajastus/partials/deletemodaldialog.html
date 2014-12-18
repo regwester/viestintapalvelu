@@ -1,0 +1,16 @@
+<script type="text/ng-template" id="deleteTaskModal.html">
+    <div class="modal-header">
+        <h3>
+            {{'front.delete.header' | i18n}}
+        </h3>
+    </div>
+
+    <div class="modal-body">
+    	<p class="bold">{{'front.delete.question' | i18n}}</p>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="btn" ng-click="cancel()">{{'common.cancel' | i18n}}</button>
+        <button type="button" class="btn btn-primary" ng-click="remove()">{{'common.delete' | i18n}}</button>
+    </div>
+</script>

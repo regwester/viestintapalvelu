@@ -1,8 +1,7 @@
 package fi.vm.sade.viestintapalvelu.dao;
 
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
+import java.util.HashSet;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -23,7 +22,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
@@ -192,12 +190,10 @@ public class LetterBatchDAOTest {
     public void insertNullError() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.error);
-        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
         LetterBatchProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
-        errors.add(error);
-        letterBatch.setProcessingErrors(errors);
+        letterBatch.addProcessingErrors(error);
         letterBatchDAO.insert(letterBatch).getId();
     }
 
@@ -205,7 +201,6 @@ public class LetterBatchDAOTest {
     public void getBatchStatus() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.processing);
-        letterBatch.setProcessingErrors(null);
         long idA = letterBatchDAO.insert(letterBatch).getId();
 
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
@@ -214,18 +209,16 @@ public class LetterBatchDAOTest {
 
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatch.setBatchStatus(LetterBatch.Status.error);
-        List<LetterBatchProcessingError> errors = new ArrayList<LetterBatchProcessingError>();
         LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
         error.setErrorTime(new Date());
         error.setLetterReceivers(letterBatch.getLetterReceivers().iterator().next());
-        errors.add(error);
-        letterBatch.setProcessingErrors(errors);
+        letterBatch.addProcessingErrors(error);
         long idC = letterBatchDAO.insert(letterBatch).getId();
 
         letterBatch = letterBatchDAO.read(idA);
-        assertEquals(null, letterBatch.getProcessingErrors());
+        assertEquals(new HashSet<LetterBatchProcessingError>(), letterBatch.getProcessingErrors());
 
         letterBatch = letterBatchDAO.read(idB);
         assertTrue(letterBatch.getProcessingErrors().isEmpty());
@@ -233,7 +226,7 @@ public class LetterBatchDAOTest {
         letterBatch = letterBatchDAO.read(idC);
         assertEquals(1, letterBatch.getProcessingErrors().size());
         System.out.println(letterBatch.getProcessingErrors().toString());
-        assertEquals("Testing failure case", letterBatch.getProcessingErrors().get(0).getErrorCause());
+        assertEquals("Testing failure case", letterBatch.getProcessingErrors().iterator().next().getErrorCause());
     }
     
     @Test

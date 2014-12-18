@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
@@ -32,13 +33,33 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrganisaatioHierarchyDto implements Serializable {
     private static final long serialVersionUID = -4472354752997371430L;
-
+    @JsonIgnore(value = true)
     private OrganisaatioHierarchyDto parent;
     private String oid;
     private String parentOid;
     private String ytunnus;
     private Map<String,String> nimi = new HashMap<String, String>();
     private List<OrganisaatioHierarchyDto> children = new ArrayList<OrganisaatioHierarchyDto>();
+
+    public OrganisaatioHierarchyDto(){}
+
+    public OrganisaatioHierarchyDto(OrganisaatioHierarchyDto other) {
+        if(other == null) {
+            return;
+        }
+        //this.parent = new OrganisaatioHierarchyDto(other.parent);
+        this.oid = other.oid;
+        this.parentOid = other.parentOid;
+        this.ytunnus = other.ytunnus;
+        this.nimi = new HashMap<String, String>();
+        this.nimi.putAll(other.nimi);
+        this.children = new ArrayList<OrganisaatioHierarchyDto>();
+        for (OrganisaatioHierarchyDto otherChild : other.children) {
+            OrganisaatioHierarchyDto newChild = new OrganisaatioHierarchyDto(otherChild);
+            newChild.setParent(this);
+            this.children.add(newChild);
+        }
+    }
 
     public String getOid() {
         return oid;
@@ -86,5 +107,25 @@ public class OrganisaatioHierarchyDto implements Serializable {
 
     public void setParent(OrganisaatioHierarchyDto parent) {
         this.parent = parent;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        OrganisaatioHierarchyDto that = (OrganisaatioHierarchyDto) o;
+
+        if (oid != null ? !oid.equals(that.oid) : that.oid != null) return false;
+        if (parentOid != null ? !parentOid.equals(that.parentOid) : that.parentOid != null) return false;
+
+        return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int result = oid != null ? oid.hashCode() : 0;
+        result = 31 * result + (parentOid != null ? parentOid.hashCode() : 0);
+        return result;
     }
 }

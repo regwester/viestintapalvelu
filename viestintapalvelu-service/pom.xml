@@ -7,7 +7,7 @@
     <parent>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
         <artifactId>viestintapalvelu</artifactId>
-        <version>11.1</version>
+        <version>13.0</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -23,6 +23,12 @@
     </properties>
 
     <dependencies>
+        <dependency>
+            <groupId>fi.vm.sade.viestintapalvelu</groupId>
+            <artifactId>common</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
         <!-- Henkilöpalvelu -->
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>
@@ -61,11 +67,6 @@
         </dependency>
 
         <!-- Dokumenttipalvelu -->
-        <dependency>
-            <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
-            <artifactId>dokumenttipalvelu-api</artifactId>
-            <version>${dokumenttipalvelu.version}</version>
-        </dependency>
 
         <dependency>
             <groupId>org.hibernate</groupId>
@@ -94,9 +95,9 @@
             </exclusions>
         </dependency>
         <dependency>
-                <groupId>org.springframework</groupId>
-                <artifactId>spring-context-support</artifactId>
-            </dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-context-support</artifactId>
+        </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
@@ -159,6 +160,10 @@
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>cas-client-core</artifactId>
+                    <groupId>org.jasig.cas.client</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -280,8 +285,8 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <scope>test</scope>
-            <exclusions>
+                <scope>compile</scope>
+	            <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
@@ -333,7 +338,7 @@
             <artifactId>jcl-over-slf4j</artifactId>
         </dependency>
         <dependency>
-            <groupId>javassist</groupId>
+            <groupId>org.javassist</groupId>
             <artifactId>javassist</artifactId>
         </dependency>
         <dependency>
@@ -452,6 +457,10 @@
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
                 </exclusion>
+                <exclusion>
+                    <groupId>org.jasig.cas</groupId>
+                    <artifactId>cas-client-core</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -503,16 +512,34 @@
             <groupId>com.googlecode.flyway</groupId>
             <artifactId>flyway-core</artifactId>
         </dependency>
-
+        <dependency>
+            <groupId>com.googlecode.lambdaj</groupId>
+            <artifactId>lambdaj</artifactId>
+            <version>2.3.3</version>
+        </dependency>
         <dependency>
             <groupId>fi.ratamaa</groupId>
             <artifactId>dtoconverter</artifactId>
             <version>${dtoconverter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.lambdaj</groupId>
+                    <artifactId>lambdaj</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
+
         <dependency>
             <groupId>fi.ratamaa</groupId>
             <artifactId>dtoconverter-hibernate</artifactId>
             <version>${dtoconverter.version}</version>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.googlecode.lambdaj</groupId>
+                    <artifactId>lambdaj</artifactId>
+                </exclusion>
+            </exclusions>
+
         </dependency>
 
         <!-- Apache PDFBox API library for PDF document handling -->
@@ -542,10 +569,10 @@
             <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
             <scope>test</scope>
             <exclusions>
-            	<exclusion>
-            		<artifactId>asm-all-repackaged</artifactId>
-            		<groupId>org.glassfish.hk2.external</groupId>
-            	</exclusion>
+                <exclusion>
+                    <artifactId>asm-all-repackaged</artifactId>
+                    <groupId>org.glassfish.hk2.external</groupId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -591,6 +618,17 @@
             <groupId>fi.vm.sade.dokumenttipalvelu</groupId>
             <artifactId>dokumenttipalvelu-api</artifactId>
             <version>1.0-SNAPSHOT</version>
+            <exclusions>
+                <exclusion>
+                    <artifactId>cas-client-support-distributed-ehcache</artifactId>
+                    <groupId>org.jasig.cas.client</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.jasig.cas.client</groupId>
+            <artifactId>cas-client-core</artifactId>
+            <version>3.1.12</version>
         </dependency>
     </dependencies>
 
@@ -740,8 +778,8 @@
                         <artifactId>maven-compiler-plugin</artifactId>
                         <version>2.3.2</version>
                         <configuration>
-                            <source>1.6</source>
-                            <target>1.6</target>
+                            <source>1.7</source>
+                            <target>1.7</target>
                             <compilerArguments>
                                 <!-- tell compiler to use endorsed dir -->
                                 <endorseddirs>${endorsed.dir}</endorseddirs>

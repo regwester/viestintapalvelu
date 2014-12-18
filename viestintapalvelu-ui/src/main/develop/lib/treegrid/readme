@@ -1,0 +1,3 @@
+Treegrid is an angular directive ( https://github.com/khan4019/tree-grid-directive ).
+The reason why this isn't a bower dependency is that it was required to change the html template of the directive. A proper
+approach would've been forking the github project, but it was deemed to take too much time.

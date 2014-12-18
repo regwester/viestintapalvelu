@@ -44,32 +44,8 @@ import static org.joda.time.DateTime.now;
 // swagger-ui.js treats model's description as HTML and does not escape it
 // properly
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.LETTER_PATH, description = "Kirjeiden muodostusrajapinnat")
-public class LetterResource extends AsynchronousResource {
+public class LetterResource extends AbstractLetterResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
-
-    @Autowired
-    private LetterBuilder letterBuilder;
-
-    @Resource
-    private DokumenttiResource dokumenttipalveluRestClient;
-
-    @Resource(name="otherAsyncResourceJobsExecutorService")
-    private ExecutorService executor;
-
-    @Autowired
-    private LetterService letterService;
-
-    @Autowired
-    private UserRightsValidator userRightsValidator;
-
-    @Autowired
-    private LetterBatchProcessor letterPDFProcessor;
-
-    @Autowired
-    private LetterEmailService letterEmailService;
-
-    @Autowired
-    private DokumenttiIdProvider dokumenttiIdProvider;
 
     private final static String ApiEmailPreview = "Tuottaa esikatselun yhdestä kirjelähetykseen liittyvästä sähköpostiviestistä";
     private final static String ApiLetterLanguageOptions = "Kertoo, mitä kieliä annetun kirjeen vastaanottajissa on";
@@ -246,32 +222,7 @@ public class LetterResource extends AsynchronousResource {
         notes = "")
     public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
-        
-        LetterResponse letterResponse = new LetterResponse();
-        try {
-            Map<String, String> errors = LetterBatchValidator.validate(input);
-            if (errors != null) {
-                letterResponse.setErrors(errors);
-                letterResponse.setStatus(LetterResponse.STATUS_ERROR);
-                return Response.ok(letterResponse).build();
-            }
-        } catch (Exception e) {
-            LOG.error("Validation error", e);
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-        
-        try {
-            letterBuilder.initTemplateId(input);
-            fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input);
-            Long id = letter.getId();
-            letterPDFProcessor.processLetterBatch(id);
-            letterResponse.setStatus(LetterResponse.STATUS_SUCCESS);
-            letterResponse.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
-            return Response.status(Status.OK).entity(letterResponse).build();
-        } catch (Exception e) {
-            LOG.error("Letter async failed", e);
-            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
-        }
+        return createAsyncLetter(input, false);
     }
 
     // /aync/pdf -> /async/letter
@@ -284,13 +235,7 @@ public class LetterResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id")  String prefixedLetterBatchId) {
-        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
-        LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
-        if(status == null) {
-            return Response.status(Status.BAD_REQUEST).build();
-        }
-
-        return Response.status(Status.OK).entity(status).build();
+        return getLetterBatchStatus(prefixedLetterBatchId);
     }
     
     @GET
@@ -314,6 +259,9 @@ public class LetterResource extends AsynchronousResource {
             Collection<MetaData> documents = dokumenttipalveluRestClient.hae(tags);
             if(documents.isEmpty()) {
                 byte[] bytes = letterService.getLetterContentsByLetterBatchID(letterBatchId);
+                
+                
+                
                 dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
                         now().plusDays(1).toDate().getTime(),
                         tags,
@@ -328,22 +276,4 @@ public class LetterResource extends AsynchronousResource {
         }
     }
 
-    private long getLetterBatchId(String id) {
-        // Expect format: VIES-<tyyppi>-id-<HASH(suola+"VIES-"+tyyppi+id+tallentaja-oid)>
-        if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
-            return dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
-        } else if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
-            return dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId(id, LetterService.DOKUMENTTI_ID_PREFIX_ZIP);
-        } else {
-            return Long.parseLong(id);
-        }
-    }
-
-    private String getPrefixedLetterBatchID(long id, boolean isZip) {
-        if (isZip) {
-            return dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_ZIP);
-        } else {
-            return dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
-        }
-    }
 }

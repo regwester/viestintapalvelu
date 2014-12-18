@@ -33,6 +33,7 @@ import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.asiontitili.AsiointitiliService;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.*;
+import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -41,11 +42,11 @@ import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.html.TextWithoutHtmlCleaner;
 import fi.vm.sade.viestintapalvelu.letter.html.XhtmlCleaner;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
-import fi.vm.sade.viestintapalvelu.util.BeanValidator;
 
 import static com.google.common.base.Optional.fromNullable;
 import static fi.vm.sade.viestintapalvelu.util.HetuPrinterUtil.clearHetu;
@@ -60,7 +61,6 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     private static final Logger logger = LoggerFactory.getLogger(AsiointitiliServiceImpl.class);
 
     public static final String HETU_ASIKAS_TUNNUS_TYYPP = "SSN";
-    public static final String ASIOINTITILI_TEMPLATE_TYPE = "asiointitili";
     public static final String VIRANOMAISTUNNISTE_PREFIX = "oph-viestinta-";
     public static final int ASIAKASTILI_EXISTS_STATUS = 300;
     public static final int SINGLE_MESSAGE_SMS_LENGTH = 160;
@@ -133,8 +133,8 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
 
     private Template resolveTemplate(AsiointitiliSendBatchDto sendBatch) throws NotFoundException {
         TemplateCriteria templateCriteria =
-                new TemplateCriteriaImpl(sendBatch.getTemplateName(), sendBatch.getLanguageCode())
-                        .withType(ASIOINTITILI_TEMPLATE_TYPE)
+                new TemplateCriteriaImpl(sendBatch.getTemplateName(), sendBatch.getLanguageCode(),
+                                ContentStructureType.asiointitili)
                         .withApplicationPeriod(sendBatch.getApplicationPeriod());
         Template template = templateService.getTemplateByName(templateCriteria, true);
         if (template == null) {

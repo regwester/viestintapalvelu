@@ -36,5 +36,32 @@
             "id": 1
         }
     ],
-    "templateVersio": null
+    "applicationPeriods": null,
+    "templateVersio": null,
+    "usedAsDefault": false,
+    "type": null,
+    "structureId": null,
+    "structureName": null,
+    "structure": {
+        "name": "koekutsukirje structure",
+        "language": "FI",
+        "description": null,
+        "contentStructures": [
+            {
+                "type": "letter",
+                "styleName": null,
+                "style": null,
+                "contents": [
+                    {
+                        "role": "body",
+                        "name": "name",
+                        "contentType": "html",
+                        "content": "content"
+                    }
+                ]
+            }
+        ],
+        "replacements": []
+    },
+    "state": null
 }

@@ -168,7 +168,12 @@ public class IntegrationTestConfig {
             }
 
             @Override
-            public TemplateDTO getTemplateByID(String templateId) {
+            public TemplateDTO getTemplateContent(String templateName, String languageCode, String type) throws IOException, DocumentException {
+                throw new IllegalStateException("Please mock me when needed!");
+            }
+            
+            @Override
+            public TemplateDTO getTemplateByID(String templateId, String type) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };

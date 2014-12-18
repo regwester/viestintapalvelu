@@ -2,6 +2,7 @@ package fi.vm.sade.viestintapalvelu.validator;
 
 import java.lang.reflect.Field;
 import java.util.Arrays;
+import java.util.Map;
 
 import org.junit.Test;
 
@@ -21,29 +22,31 @@ public class LetterBatchValidatorTest {
         LetterBatchValidator.validate((LetterBatchDetails)null);
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfFirstNameIsNull() throws Exception {
-        LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("firstName")));
+    @Test()
+    public void FirstNameIsNull() throws Exception {
+        Map<String, String> map = LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("firstName")));
+        assertTrue(map != null && map.size() == 1);
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfSurnameIsNull() throws Exception {
-        LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("lastName")));
+    public void containsErrorMessagesIfSurnameIsNull() throws Exception {
+        Map<String, String> map = LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("lastName")));
+        assertTrue(map != null && map.size() == 1);
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfStreetAddressIsNull() throws Exception {
-        LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("addressline")));
+    public void containsErrorMessagesIfStreetAddressIsNull() throws Exception {
+        Map<String, String> map = LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("addressline")));
+        assertTrue(map != null && map.size() == 1);
+        
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfPostOfficeIsNull() throws Exception {
-        LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("city")));
+    public void containsErrorMessagesIfPostOfficeIsNull() throws Exception {
+        Map<String, String> map = LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("city")));
+        assertTrue(map != null && map.size() == 1);
     }
     
-    @Test(expected = IllegalArgumentException.class)
-    public void throwsExceptionIfPostalCodeIsNull() throws Exception {
-        LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("postalCode")));
+    public void containsErrorMessagesIfPostalCodeIsNull() throws Exception {
+        Map<String, String> map = LetterBatchValidator.validate(givenBatchWithLetters(givenLetterWithAddressLabelWithNullField("postalCode")));
+        assertTrue(map != null && map.size() == 1);
     }
     
     @Test

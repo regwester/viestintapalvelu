@@ -1,22 +1,24 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
-import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
-import org.springframework.stereotype.Repository;
-
-import javax.persistence.EntityManager;
-import javax.persistence.Query;
-import javax.persistence.TypedQuery;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
+
+import org.springframework.stereotype.Repository;
+
+import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
+
 @Repository
-public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
-        implements TemplateDAO {
+public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implements TemplateDAO {
 
     @Override
     public Template findTemplate(TemplateCriteria criteria) {
@@ -27,7 +29,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         Template templ = new Template();
         try {
             templ = query.getSingleResult();
-        } catch (Exception e) {
+        } catch (NoResultException e) {
             templ = null;
         }
         return templ;
@@ -44,6 +46,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
 
         StringBuffer queryStr = new StringBuffer(),
             where = new StringBuffer();
+
         queryStr.append("SELECT a FROM Template a ");
         if (criteria.getName() != null) {
             and(where).append("a.name = :name");
@@ -52,8 +55,14 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
             and(where).append("a.language = :language");
         }
         if (criteria.getType() != null) {
-            and(where).append("a.type = :type");
+            queryStr.append(" INNER JOIN a.structure s INNER JOIN s.contentStructures cs");
+            and(where).append("cs.type = :type");
         }
+        
+        if (criteria.getState() != null) {
+            and(where).append("a.state = :state");
+        }
+        
         if (criteria.getApplicationPeriod() != null) {
             queryStr.append(" INNER JOIN a.applicationPeriods templateApplicationPeriod ");
             and(where).append("templateApplicationPeriod.id.applicationPeriod = :applicationPeriodOid");
@@ -61,6 +70,8 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         if (criteria.isDefaultRequired()) {
             and(where).append("a.usedAsDefault = true");
         }
+        
+        
         if (where.length() > 0) {
             queryStr.append(" WHERE ").append(where);
         }
@@ -80,6 +91,10 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         }
         if (criteria.getApplicationPeriod() != null) {
             query.setParameter("applicationPeriodOid", criteria.getApplicationPeriod());
+        }
+        
+        if (criteria.getState() != null) {
+            query.setParameter("state", criteria.getState());
         }
         return query;
     }
@@ -108,26 +123,24 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         return b;
     }
 
-    /**
-     * Find template by name
-     */
-    public Template findTemplateByName(String name, String language) {
-        return findTemplate(new TemplateCriteriaImpl(name, language));
-    }
-
-    /**
-     * Find template by name
-     */
-    public Template findTemplateByName(String name, String language, String type) {
-        return findTemplate(new TemplateCriteriaImpl(name, language).withType(type));
-    }
-
     public List<String> getAvailableTemplates() {
         EntityManager em = getEntityManager();
-        Query q = em
-                .createQuery("SELECT DISTINCT name, language from Template");
+        Query q = em.createQuery("SELECT DISTINCT name, language from Template");
         @SuppressWarnings("unchecked")
-        List<Object[]> qResult = (List<Object[]>) q.getResultList();
+        List<String> result = resultsToNameLanguage((List<Object[]>) q.getResultList());
+        return result;
+    }
+
+    public List<String> getAvailableTemplatesByType(Template.State state) {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery("SELECT DISTINCT name, language from Template WHERE state = :state");
+        query.setParameter("state", state);
+        @SuppressWarnings("unchecked")
+        List<String> result = resultsToNameLanguage((List<Object[]>) query.getResultList());
+        return result;
+    }
+    
+    private List<String> resultsToNameLanguage(List<Object[]> qResult) {
         List<String> result = new ArrayList<String>();
         for (Object[] o : qResult) {
             StringBuilder current = new StringBuilder();
@@ -144,4 +157,25 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long>
         }
         return result;
     }
+
+    /* (non-Javadoc)
+     * @see fi.vm.sade.viestintapalvelu.dao.TemplateDAO#findByIdAndState(java.lang.Long, fi.vm.sade.viestintapalvelu.model.Template.State)
+     */
+    @Override
+    public Template findByIdAndState(Long id, State state) {
+        EntityManager em = getEntityManager();
+        Query query = em.createQuery("SELECT templ from Template templ WHERE id = :id AND state = :state");
+        query.setParameter("id", id);
+        query.setParameter("state", state);
+        return (Template) query.getSingleResult();
+    }
+
+    @Override
+    public List<Template> findByOrganizationOIDs(List<String> oids) {
+        TypedQuery<Template> query = getEntityManager().createQuery("SELECT templ from Template templ WHERE organizationOid in :oids", Template.class);
+        query.setParameter("oids", oids);
+        return query.getResultList();
+
+    }
+
 }

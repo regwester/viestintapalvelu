@@ -1,0 +1,132 @@
+<!doctype>
+<html>
+<head>
+    <meta http-equiv="content-type" content="text/html; charset=UTF-8"/>
+    <meta charset="UTF-8"/>
+    <script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.2.25/angular.min.js"></script>
+    <script language="javascript" type="text/javascript">
+        function getBaseUrl() {
+            var url = window.location.href;
+            var arr = url.split("/");
+            return arr[0] + "//" + arr[2]; // should return e.g. http(s)://host:port
+        }
+
+        function TestController ($scope,$http) {
+            var actionPath = "/viestintapalvelu/api/v1/asiointitili/send";
+            $scope.virkailjaServer = getBaseUrl();
+            $scope.senderName = "Lähettäjän nimi";
+            $scope.senderOid = "OID";
+
+            $scope.oid = "OID";
+            $scope.hetu = "010101-123N";
+
+            $scope.header = "Viestin otsikko";
+            $scope.content = "Testiviestin varsinainen sisältö.";
+            $scope.linkName = "OPH";
+            $scope.url = "http://oph.fi/";
+
+            $scope.result = null;
+            $scope.ok = false;
+            $scope.status = null;
+            $scope.requestedUrl = null;
+            $scope.requestModel = null;
+
+            var baseModel = {
+                "templateName": "asiointitili_test",
+                "languageCode": "FI",
+                "templateReplacements": {},
+                "messages": [
+                    {}
+                ]
+            };
+            $scope.result = null;
+
+            $scope.send = function () {
+                var model = angular.copy(baseModel);
+                model.senderName = $scope.senderName;
+                model.storingOid = $scope.senderOid;
+                angular.forEach(model.messages, function (msg) {
+                    msg.receiverHetu = $scope.hetu;
+                    msg.receiverHenkiloOid = $scope.oid;
+                    if ($scope.linkName && $scope.url)
+                    {
+                        msg.links = [
+                            {
+                                "name": $scope.linkName,
+                                "description": $scope.linkName +" (kuvaus)",
+                                "url": $scope.url
+                            }
+                        ];
+                    }
+                });
+                model.overriddenHeader = $scope.header;
+                model.templateReplacements["sisalto"] = $scope.content;
+
+                var url = $scope.virkailjaServer +actionPath;
+                $scope.requestedUrl = url;
+                $scope.requestModel = model;
+                $scope.result = null;
+                $scope.status = "Odotellaan vastausta..."
+                $http.post(url, model).success(function(data, status) {
+                    $scope.ok = status == 200;
+                    $scope.status = status;
+                    $scope.result = data;
+                }).error(function(data, status) {
+                    $scope.ok = false;
+                    $scope.status = status;
+                    $scope.result = data;
+                });
+            }
+        }
+    </script>
+</head>
+<body>
+<div ng-app>
+    <div ng-controller="TestController">
+        <h1>Asiointitiliviestin lähetystesti</h1>
+        <small>
+            Esiehdot:
+            <ol>
+                <li>Olet kirjautunut kohdepalvelimelle käyttäjänä, jolla on oikeus Asiakirjapalvelu / Asiointitilipalvelun luku- ja lähetysoikeudet
+                    ()ROLE_APP_ASIAKIRJAPALVELU_ASIOINTITILICRUD).</li>
+                <li>Kohdepalvelimella on asiointitili_test / FI -kirjepohja (Ympäristössä polussa /viestintapalvelu käyttäjänä, jolla on oikeus Asiakirjapalvelu / Asiakirjapohjan luonti valittu Mallien tuonti -välilehdeltä enmmäisestä pudotusvalikosta asiointitili_test_FI.json ja tallennetu).
+                    (404 vastaus voi liittyä siihen, että kirjepohjaa ei löydy (tai uudessa tilamassa ei ole julkaistu))</li>
+            </ol>
+            (HUOM: jos yrität pyyntöä eri orignista voi cross-site policy estää pyynnön)<br/><br/>
+
+            Tarkemmin pyyntö on kuvattu swagger-dokumentaatiossa.<br/><br/>
+        </small>
+
+        Kohde virkailija-palvelimen osoite: <input type="text" ng-model="virkailjaServer" size="40" /><small>(esim. https://itest-virkailija.oph.ware.fi)</small><br/>
+        Lähettäjän nimi: <input type="text" ng-model="senderName" size="40" /><br/>
+        Lähettäjän OID: <input type="text" ng-model="senderOid" size="30" />(ei validoida)<br/>
+
+        <h2>Vastaanottaja</h2>
+        HETU: <input type="text" ng-model="hetu" size="20" /><br/>
+        OID:  <input type="text" ng-model="oid" size="30" />(ei validoida)<br/>
+
+        <h2>Viestin sisältö</h2>
+        Otsikko: <input type="text" ng-model="header" size="50" /><br/>
+        Linkkiteksti: <input type="text" ng-model="linkName" /><br/>
+        Linkin URL: <input type="text" ng-model="url" size="50" /><br/>
+        Viesti:<br/>
+        <textarea ng-model="content" rows="10" cols="50"></textarea><br/>
+
+        <button ng-click="send()">Testaa</button>
+
+        <div ng-show="result"><br/><br/>
+            Pyydetty URL (POST): {{requestedUrl}}<br/>
+            Pyyntö: {{requestModel}}<br/><br/>
+
+            <b><span ng-show="ok">{{status}} OK<br/></span>
+            <span ng-show="!ok">{{status}} VIRHE<br/></span></b>
+            <i>Vastaus:</i><br/> {{result}}
+        </div>
+        <div ng-show="!result &amp;&amp; status"><br/><br/><b>{{status}}</b><br/>
+            Pyydetty URL (POST): {{requestedUrl}}<br/>
+            Pyyntö: {{requestModel}}<br/><br/>
+        </div>
+    </div>
+</div>
+</body>
+</html>

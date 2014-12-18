@@ -12,8 +12,10 @@ public class Urls {
     public static final String JALKIOHJAUSKIRJE_RESOURCE_PATH = "jalkiohjauskirje";
     public static final String KOEKUTSUKIRJE_RESOURCE_PATH = "koekutsukirje";
     public static final String LETTER_PATH = "letter";
+    public static final String TRUSTED_PATH = "luotettu";
     public static final String PRINTER_PATH = "printer";
     public static final String TEMPLATE_RESOURCE_PATH = "template";
+    public static final String STRUCTURE_RESOURCE_PATH = "structure";
     public static final String IPOSTI_RESOURCE_PATH = "iposti";
     public static final String REPORTING_PATH = "reporting";
     public static final String REPORTING_LIST_PATH = "list";

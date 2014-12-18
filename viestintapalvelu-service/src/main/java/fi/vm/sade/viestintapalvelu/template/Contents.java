@@ -33,6 +33,7 @@ public class Contents implements Predicate<String> {
     public static final String ASIOINTITILI_HEADER = "asiointitili_header";
     public static final String ASIOINTITILI_CONTENT = "asiointitili_content";
     public static final String ASIOINTITILI_SMS_CONTENT = "sms_content";
+    public static final String EMAIL_SUBJECT = "email_subject";
     public static final String EMAIL_BODY = "email_body";
     public static final String ATTACHMENT = "liite";
 
@@ -40,6 +41,7 @@ public class Contents implements Predicate<String> {
             ASIOINTITILI_HEADER,
             ASIOINTITILI_CONTENT,
             ASIOINTITILI_SMS_CONTENT,
+            EMAIL_SUBJECT,
             EMAIL_BODY
     };
 
@@ -68,10 +70,10 @@ public class Contents implements Predicate<String> {
     }
 
     public Collection<TemplateContent> filter(Collection<TemplateContent> contents) {
-        return Collections2.filter(contents, forContent());
+        return Collections2.filter(contents, forTemplateContent());
     }
 
-    public Predicate<? super TemplateContent> forContent() {
+    public Predicate<? super TemplateContent> forTemplateContent() {
         return new Predicate<TemplateContent>() {
             public boolean apply(TemplateContent content) {
                 return Contents.this.apply(content.getName());

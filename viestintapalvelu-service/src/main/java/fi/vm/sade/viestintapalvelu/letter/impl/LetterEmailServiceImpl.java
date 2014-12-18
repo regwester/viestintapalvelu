@@ -32,6 +32,7 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.viestintapalvelu.attachment.impl.AttachmentUri;
+import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.email.TemplateEmailField;
@@ -42,10 +43,10 @@ import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.EmailSendDataDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.ReadableReplacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
-import fi.vm.sade.viestintapalvelu.util.OptionalHelpper;
 
 /**
  * User: ratamaa
@@ -139,7 +140,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
         EmailSendDataDto emailSendData = buildEmails(letterBatch,
                 Arrays.asList( firstWithEmail(letterBatch.getLetterReceivers(), languageCode, templateLanguage)
-                    .or(OptionalHelpper.<LetterReceivers>notFound("LetterBatch=" + letterBatchId
+                    .or(OptionalHelper.<LetterReceivers>notFound("LetterBatch=" + letterBatchId
                             + " does not have any handled recipients with email address"))),
                 template);
         if (emailSendData.getEmails().isEmpty()) {
@@ -191,7 +192,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         if (letterBatch.getTemplateId() == null) {
             throw new IllegalStateException("LetterBatch="+letterBatch.getTemplateId()+" does not have a templateId!");
         }
-        Template template = templateService.findById(letterBatch.getTemplateId());
+        Template template = templateService.findById(letterBatch.getTemplateId(), ContentStructureType.email);
         if (template == null) {
             throw new NotFoundException("Template not found by id="+letterBatch.getTemplateId());
         }

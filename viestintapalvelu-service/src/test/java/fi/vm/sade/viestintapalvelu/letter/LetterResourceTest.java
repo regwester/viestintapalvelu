@@ -14,10 +14,12 @@ import org.springframework.test.context.ContextConfiguration;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 
 @ContextConfiguration(locations = "/test-application-context.xml")
@@ -26,7 +28,6 @@ public class LetterResourceTest {
     
     private static final Long LETTERBATCH_ID = 1l;
 
-    private LetterResource resource;
     
     @Mock
     private LetterService service;
@@ -37,20 +38,22 @@ public class LetterResourceTest {
     @Mock
     private LetterBatchProcessor processor;
     
+    private LetterResource resource;
+    
     @Before
     public void init() throws Exception {
         resource = new LetterResource();
         injectObject("letterService", service);
         injectObject("letterBuilder", builder);
         injectObject("letterPDFProcessor", processor);
-        when(service.createLetter(any(AsyncLetterBatchDto.class)))
+        when(service.createLetter(any(AsyncLetterBatchDto.class), any(Boolean.class)))
                 .thenReturn(DocumentProviderTestData.getLetterBatch(LETTERBATCH_ID));
     }
     
     @Test
     public void usesLetterService() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
-        verify(service, times(1)).createLetter(any(AsyncLetterBatchDto.class));
+        verify(service, times(1)).createLetter(any(AsyncLetterBatchDto.class), any(Boolean.class));
     }
     
     @Test
@@ -72,12 +75,12 @@ public class LetterResourceTest {
     
     @Test
     public void returnsServerErrorWhenExceptionIsThrownDuringAsyncLetter() {
-        when(service.createLetter(any(AsyncLetterBatchDto.class))).thenThrow(new NullPointerException());
+        when(service.createLetter(any(AsyncLetterBatchDto.class), any(Boolean.class))).thenThrow(new NullPointerException());
         assertEquals(Status.INTERNAL_SERVER_ERROR.getStatusCode(), resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getStatus());
     }
 
     private void injectObject(String field, Object object) throws NoSuchFieldException, IllegalAccessException {
-        Field letterService = resource.getClass().getDeclaredField(field);
+        Field letterService = resource.getClass().getSuperclass().getDeclaredField(field);
         letterService.setAccessible(true);
         letterService.set(resource, object);
     }

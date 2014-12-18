@@ -1,0 +1,60 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="span12">
+            <h1>Kirjepohjat</h1>
+        </div>
+    </div>
+    <div class="row margin-bottom-one">
+        <div class="span12">
+            <button class="btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
+        </div>
+    </div>
+    <div class="row margin-bottom-one">
+        <div class="span12">
+            <input-list label="Valitse näytettävä kirjepohja:" items="letterTypes" model="radioSelection" input="radio"/>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12" ng-show="(radioSelection !== 'organization') && getTemplates()">
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                    	<th></th>
+                        <th class="span4">KIRJEPOHJA</th>
+                        <th class="span2">TYYPPI</th>
+                        <th class="span2">KIELI</th>
+                        <th class="span2">TILA</th>
+                        <th class="span2">TALLENNETTU</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr ng-repeat="letterTemplate in getTemplates()">
+                        <td>
+                    		<div class="btn-group dropdown">
+                        		<input type="button" class="icon-actionmenu dropdown-toggle"/>
+                        		<ul class="dropdown-menu" role="menu">
+                        			<li><button type="button" class="link-button" ng-click="publishTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state !== 'luonnos'">Julkaise</button>
+                            		<li><button type="button" class="link-button" ng-click="editTemplate(letterTemplate.id)" ng-disabled="letterTemplate.state !== 'luonnos'">{{'common.edit' | i18n}}</button></li>
+                            		<li><button type="button" class="link-button" ng-click="removeTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state === 'suljettu'">Poista käytöstä</button></li>
+                        		</ul>
+                    		</div>
+                		</td>
+                        <td>{{letterTemplate.name}}</td>
+                        <td>{{letterTemplate.types.join(', ')}}</td>
+                        <td>{{letterTemplate.language}}</td>
+                        <td>{{letterStates[letterTemplate.state]}}</td>
+                        <td>{{letterTemplate.timestamp | date:'d.M.yyyy H:mm'}}</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <div class="span12" ng-show="(radioSelection === 'applicationTarget') && !getTemplates() && applicationTarget">
+            <h5 class="center help-text-bold">Tälle haulle ei ole vielä kirjepohjia</h5>
+            <p class="center help-text margin-bottom-one">Lisää hakukohtainen kirjepohja klikkaamalla Luo uusi -painiketta</p>
+            <button class="center btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
+        </div>
+        <div class="span12" ng-show="radioSelection === 'organization'">
+
+        </div>
+    </div>
+</div>

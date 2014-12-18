@@ -15,5 +15,4 @@ public interface IPostiService {
     void update(IPosti iposti);
     
     boolean markAsSent(IPosti iposti);
-
 }

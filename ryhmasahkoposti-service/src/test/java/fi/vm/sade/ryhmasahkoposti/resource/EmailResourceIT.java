@@ -55,7 +55,6 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.AttachmentComponen
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.TemplateComponent;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import fi.vm.sade.ryhmasahkoposti.util.AnswerChain;
-import junit.framework.TestCase;
 
 import static fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData.*;
 import static fi.vm.sade.ryhmasahkoposti.util.AnswerChain.atFirst;
@@ -268,7 +267,8 @@ public class EmailResourceIT {
         TemplateDTO template = RaportointipalveluTestData.template(templateName, languageCode);
         when(templateClient.getTemplateContent(eq(templateName), eq(languageCode), eq(TemplateDTO.TYPE_EMAIL),
                 any(String.class))).thenReturn(template);
-        when(templateClient.getTemplateByID(eq(""+template.getId()))).thenReturn(template);
+        when(templateClient.getTemplateByID(eq(""+template.getId()),
+                eq("email"))).thenReturn(template);
 
         return template;
     }

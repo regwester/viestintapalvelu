@@ -21,6 +21,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Singleton;
 
+import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -29,12 +30,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import com.google.common.collect.Collections2;
-
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.recovery.Recoverer;
+import fi.vm.sade.viestintapalvelu.recovery.RecovererPriority;
 
 import static org.joda.time.DateTime.now;
 
@@ -45,6 +45,7 @@ import static org.joda.time.DateTime.now;
  */
 @Service
 @Singleton
+@RecovererPriority(100)
 public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
     private static final Logger logger = LoggerFactory.getLogger(OrganisaatioServiceImpl.class);
 
@@ -61,6 +62,24 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
             return dto.getOid();
         }
     };
+
+    public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid) {
+        ensureCacheFresh();
+        OrganisaatioHierarchyDto hierarchyDto = this.hierarchyByOids.get(organizationOid);
+        if(hierarchyDto == null)
+            return null;
+        /*
+        Be sure to return a copy in case the dto is somehow modified later on.
+        This prevents corruption of the cache.
+         */
+        return new OrganisaatioHierarchyDto(hierarchyDto);
+    }
+
+    @Override
+    public List<String> findHierarchyOids(OrganisaatioHierarchyDto hierarchyDto) {
+        ensureCacheFresh();
+        return visitDown(hierarchyDto, null, EXTRACT_OID, new ArrayList<String>());
+    }
 
     @Override
     public List<String> findHierarchyOids(String organisaatioOid) {

@@ -32,6 +32,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailSendId;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import fi.vm.sade.ryhmasahkoposti.service.EmailService;

@@ -1,14 +1,9 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.*;
-import static org.mockito.Mockito.*;
-
 import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -28,9 +23,13 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.resource.MessageReportingResource;
 import fi.vm.sade.ryhmasahkoposti.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
-import fi.vm.sade.ryhmasahkoposti.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")

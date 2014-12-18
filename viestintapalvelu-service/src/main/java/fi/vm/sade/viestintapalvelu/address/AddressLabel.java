@@ -11,7 +11,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
 
 @ApiModel(value = "Kirjeen vastaanottajan osoitetiedot")
-public class AddressLabel implements AddressLabelDetails {
+public class AddressLabel implements AddressLabelDetails, Comparable<AddressLabel> {
     public AddressLabel() {
     }
 
@@ -156,4 +156,15 @@ public class AddressLabel implements AddressLabelDetails {
                 + countryCode + "]";
     }
 
+    @Override
+    public int compareTo(AddressLabel o) {
+        if (o != null) {
+            int result = getLastName().compareTo(o.getLastName());
+            if (result == 0) {
+                result = getFirstName().compareTo(o.getFirstName());
+            }
+            return result;
+        }
+        return 0;
+    }
 }

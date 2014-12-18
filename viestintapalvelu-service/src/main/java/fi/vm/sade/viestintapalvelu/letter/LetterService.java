@@ -34,7 +34,7 @@ public interface LetterService {
      *            Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
-    LetterBatch createLetter(AsyncLetterBatchDto letterBatch);
+    LetterBatch createLetter(AsyncLetterBatchDto letterBatch, boolean anonymous);
 
     /**
      * Luo kirjelähetyksen
@@ -43,7 +43,7 @@ public interface LetterService {
      *            Annetun kirjelähetyksen tiedot
      * @return Luodun kirjelähetyksen tiedot
      */
-    LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch);
+    LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous);
 
     /**
      * Hakee kirjelähetyksen tiedot annetun avaimen perusteella
@@ -97,6 +97,7 @@ public interface LetterService {
      */
     fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
 
+    
     /**
      * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi
      * PDF-dokumentiksi
@@ -108,6 +109,9 @@ public interface LetterService {
      */
     byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
 
+    String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception;
+
+    
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
     void processLetterReceiver(long receiverId) throws Exception;
@@ -144,4 +148,5 @@ public interface LetterService {
      * @param e the exception
      */
     void errorProcessingBatch(long letterBatchId, Exception e);
+    
 }

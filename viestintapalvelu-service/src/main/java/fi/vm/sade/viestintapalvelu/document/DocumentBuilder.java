@@ -69,7 +69,7 @@ public class DocumentBuilder {
     /**
      * Merge xhtml file contents
      * 
-     * @param input
+     * @param inputs
      * @return
      * @throws DocumentException
      * @throws IOException

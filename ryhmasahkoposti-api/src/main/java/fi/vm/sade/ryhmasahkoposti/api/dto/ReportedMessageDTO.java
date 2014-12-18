@@ -4,12 +4,12 @@ import java.util.List;
 
 public class ReportedMessageDTO extends EmailMessageDTO {
     private String senderName;
-	private List<EmailRecipientDTO> emailRecipients;
-	private SendingStatusDTO sendingStatus;
-	private String statusReport;
-	private String sendingReport;
+    private List<EmailRecipientDTO> emailRecipients;
+    private SendingStatusDTO sendingStatus;
+    private String statusReport;
+    private String sendingReport;
 
-	public String getSenderName() {
+    public String getSenderName() {
         return senderName;
     }
 
@@ -18,34 +18,34 @@ public class ReportedMessageDTO extends EmailMessageDTO {
     }
 
     public List<EmailRecipientDTO> getEmailRecipients() {
-		return emailRecipients;
-	}
-	
-	public void setEmailRecipients(List<EmailRecipientDTO> emailRecipients) {
-		this.emailRecipients = emailRecipients;
-	}
-	
-	public SendingStatusDTO getSendingStatus() {
-		return sendingStatus;
-	}
+        return emailRecipients;
+    }
 
-	public void setSendingStatus(SendingStatusDTO sendingStatus) {
-		this.sendingStatus = sendingStatus;
-	}
+    public void setEmailRecipients(List<EmailRecipientDTO> emailRecipients) {
+        this.emailRecipients = emailRecipients;
+    }
 
-	public String getStatusReport() {
-		return statusReport;
-	}
+    public SendingStatusDTO getSendingStatus() {
+        return sendingStatus;
+    }
 
-	public void setStatusReport(String statusReport) {
-		this.statusReport = statusReport;
-	}
+    public void setSendingStatus(SendingStatusDTO sendingStatus) {
+        this.sendingStatus = sendingStatus;
+    }
 
-	public String getSendingReport() {
-		return sendingReport;
-	}
+    public String getStatusReport() {
+        return statusReport;
+    }
 
-	public void setSendingReport(String sendingReport) {
-		this.sendingReport = sendingReport;
-	}
+    public void setStatusReport(String statusReport) {
+        this.statusReport = statusReport;
+    }
+
+    public String getSendingReport() {
+        return sendingReport;
+    }
+
+    public void setSendingReport(String sendingReport) {
+        this.sendingReport = sendingReport;
+    }
 }

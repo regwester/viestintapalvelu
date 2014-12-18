@@ -87,7 +87,7 @@ public class AddressLabelResource extends AsynchronousResource {
 			LOG.error("AddressLabel PDF failed: {}", e.getMessage());
 			return createFailureResponse(request);
 		}
-		return createResponse(request, documentId);
+		return createResponse(request, documentId+".pdf");
 	}
 
 	@POST
@@ -109,7 +109,7 @@ public class AddressLabelResource extends AsynchronousResource {
 			LOG.error("AddressLabel Excel failed: {}", e.getMessage());
 			return createFailureResponse(request);
 		}
-		return createResponse(request, documentId);
+		return createResponse(request, documentId+".xls");
 	}
 
 	@POST
@@ -159,7 +159,7 @@ public class AddressLabelResource extends AsynchronousResource {
 				}
 			}
 		});
-		return createResponse(request, documentId);
+		return createResponse(request, documentId+".pdf");
 	}
 
 	@POST
@@ -195,6 +195,6 @@ public class AddressLabelResource extends AsynchronousResource {
 				}
 			}
 		});
-		return createResponse(request, documentId);
+		return createResponse(request, documentId+".xls");
 	}
 }

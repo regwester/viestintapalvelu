@@ -16,6 +16,8 @@
 
 package fi.vm.sade.viestintapalvelu.externalinterface.organisaatio;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
+
 import java.util.List;
 
 /**
@@ -26,10 +28,24 @@ import java.util.List;
 public interface OrganisaatioService {
 
     /**
+     * @param organizationOid
+     * @return all children organization DTO objects for the given organizationOid
+     */
+    public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid);
+
+    /**
      * @param organisaatioOid
      * @return all child organisaatio OIDs for given organisaatio including the organisaatio itself
      */
     List<String> findHierarchyOids(String organisaatioOid);
+
+
+    /**
+     *
+     * @param hierarchyDto
+     * @return all child organization OIDs for given hierarchy including the organization itself
+     */
+    List<String> findHierarchyOids(OrganisaatioHierarchyDto hierarchyDto);
 
     /**
      * @param organisaatioOid
@@ -42,4 +58,6 @@ public interface OrganisaatioService {
      * @return the parent OIDs for given organisaatio without including the orgnisaatio itself
      */
     List<String> findParentOids(String organisaatioOid);
+
+
 }
