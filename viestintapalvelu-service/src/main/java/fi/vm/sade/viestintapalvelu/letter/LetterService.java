@@ -97,6 +97,7 @@ public interface LetterService {
      */
     fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
 
+    
     /**
      * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi
      * PDF-dokumentiksi
@@ -108,6 +109,9 @@ public interface LetterService {
      */
     byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
 
+    String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception;
+
+    
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
     void processLetterReceiver(long receiverId) throws Exception;
@@ -144,4 +148,5 @@ public interface LetterService {
      * @param e the exception
      */
     void errorProcessingBatch(long letterBatchId, Exception e);
+    
 }

@@ -1,6 +1,7 @@
 'use strict';
 
-angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope', '$state', '$filter', 'Global', 'PersonService', 'TemplateService', function($scope, $state, $filter, Global, PersonService, TemplateService) {
+angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope', '$state', '$filter', '$modal', 'Global', 'PersonService', 'TemplateService', 
+                                                                         function($scope, $state, $filter, $modal, Global, PersonService, TemplateService) {
 	
 	$scope.editorOptions = Global.getEditorOptions();
 
@@ -9,8 +10,8 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
             TemplateService.getStructureById($scope.template.structureId).success(function(structure) {
         	$scope.contentReplacements = structure.replacements;
             });
-            PersonService.getPerson(result.storingOid).success(function(result) {
-        	$scope.saverName = result.etunimet + " " + result.sukunimi;
+            PersonService.getPerson(result.storingOid).success(function(person) {
+        	$scope.saverName = person.firstNames + " " + person.lastName;
             })
         }).error(function(result) {
             //TODO handle errors
@@ -32,11 +33,27 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl', ['$scope
         };
         
         $scope.publish = function() {
-            $scope.template.state = 'julkaistu';
-            TemplateService.updateTemplate().put({}, $scope.template, function() {
-        	//TODO: some feedback to the user or just redirect to overview?        	
+            var modalInstance = $modal.open({
+        	templateUrl: 'views/letter-templates/views/partials/publishdialog.html',
+        	controller: 'PublishTemplate',
+        	size: 'sm',
+        	resolve: {
+        	    templateId: function () {
+        		return $scope.template.id
+        	    },
+        	    state: function() {
+        		return $scope.template.state
+        	    },
+        	    template: function () {
+        		return $scope.template
+        	    }
+        	}
             });
-        }
+
+            modalInstance.result.then(function() {
+        	$state.go('letter-templates_overview');
+            });
+        };
         
         $scope.buttons = [
                           {label: 'Peruuta', click: $scope.cancel, type: 'default'},
