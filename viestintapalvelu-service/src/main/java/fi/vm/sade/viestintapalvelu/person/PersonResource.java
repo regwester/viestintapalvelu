@@ -22,6 +22,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.annotation.JsonView;
@@ -37,6 +38,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
  */
 @Component
 @Path("person")
+@PreAuthorize("isAuthenticated()")
 public class PersonResource extends AsynchronousResource {
 
     @Autowired
