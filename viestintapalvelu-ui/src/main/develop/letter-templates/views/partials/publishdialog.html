@@ -1,10 +1,11 @@
 <div class="modal info-dialog">
 	<div class="modal-body">
 		<p class="bold">{{'dialog.publishtemplate' | i18n}}</p>
+		<label><input type="checkbox" ng-model="modalData.usedAsDefault" /> {{'dialog.useasdefault' | i18n}} </label>
 	</div>
 	
 	<div class="modal-footer">
 		<button type="button" class="btn" ng-click="cancel()">{{'dialog.cancel' | i18n}}</button>
-		<button type="button" class="btn btn-primary" ng-click="remove()">{{'dialog.publish'	| i18n}}</button>
+		<button type="button" class="btn btn-primary" ng-click="publish()">{{'dialog.publish'	| i18n}}</button>
 	</div>
 </div>
