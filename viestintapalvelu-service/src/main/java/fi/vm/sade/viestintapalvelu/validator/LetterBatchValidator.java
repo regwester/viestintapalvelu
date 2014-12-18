@@ -41,11 +41,14 @@ public class LetterBatchValidator {
             try {
                 validate(letter);
             } catch (Throwable t) {
-                String hakemusOid = (String)letter.getTemplateReplacements().get("hakemusOid");
-                if (hakemusOid == null) {
-                    hakemusOid = letter.getAddressLabel().getFirstName() + " " +letter.getAddressLabel().getLastName() ;
+                String key = null;
+                if (letter.getTemplateReplacements() != null) {
+                    key = (String)letter.getTemplateReplacements().get("hakemusOid");
                 }
-                result.put(hakemusOid, t.getMessage());
+                if (key == null) {
+                    key = " " + letter.getAddressLabel().getFirstName() + " " +letter.getAddressLabel().getLastName();
+                }
+                result.put(key, t.getMessage());
             }
         }
         if (result.size() > 0) {
