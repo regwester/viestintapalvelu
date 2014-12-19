@@ -7,10 +7,10 @@ import javax.persistence.TypedQuery;
 
 import org.springframework.stereotype.Repository;
 
+import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
-import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.path.PathBuilder;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -27,14 +27,25 @@ public class LetterReceiversDAOImpl extends AbstractJpaDAOImpl<LetterReceivers, 
 
     @Override
     public List<LetterReceivers> findLetterReceiversByLetterBatchID(Long letterBatchID, PagingAndSortingDTO pagingAndSorting) {
+        return findLetterReceiversByLetterBatchID(letterBatchID, pagingAndSorting, null);
+    }
+
+    @Override
+    public List<LetterReceivers> findLetterReceiversByLetterBatchID(Long letterBatchID, PagingAndSortingDTO pagingAndSorting, String query) {
         QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
         QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
         QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
 
-        BooleanExpression whereExpression = letterReceivers.letterBatch.id.eq(letterBatchID);
+        BooleanBuilder whereExpression = new BooleanBuilder();
+        whereExpression.and(letterReceivers.letterBatch.id.eq(letterBatchID));
 
+        if (query != null && !query.isEmpty()) {
+            for (String word : ExpressionHelper.words(query)) {
+                whereExpression.andAnyOf(ExpressionHelper.anyOfReceiverAddressFieldsContains(letterReceiverAddress, word));
+            }
+        }
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-
+        
         JPAQuery findLetterReceivers = from(letterReceivers).leftJoin(letterReceivers.letterReceiverAddress, letterReceiverAddress)
                 .leftJoin(letterReceivers.letterReceiverLetter, letterReceiverLetter).where(whereExpression).orderBy(orderBy)
                 .limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
@@ -53,6 +64,29 @@ public class LetterReceiversDAOImpl extends AbstractJpaDAOImpl<LetterReceivers, 
         return query.getSingleResult();
     }
 
+    @Override
+    public Long findNumberOfReciversByLetterBatchID(Long letterBatchID, String queryString) {
+        if (queryString != null && !queryString.isEmpty()) {
+            QLetterReceivers letterReceivers = QLetterReceivers.letterReceivers;
+            QLetterReceiverAddress letterReceiverAddress = QLetterReceiverAddress.letterReceiverAddress;
+            QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
+
+            BooleanBuilder whereExpression = new BooleanBuilder();
+            whereExpression.and(letterReceivers.letterBatch.id.eq(letterBatchID));
+
+            for (String word : ExpressionHelper.words(queryString)) {
+                whereExpression.andAnyOf(ExpressionHelper.anyOfReceiverAddressFieldsContains(letterReceiverAddress, word));
+            }
+
+            JPAQuery findLetterReceivers = from(letterReceivers).leftJoin(letterReceivers.letterReceiverAddress, letterReceiverAddress)
+                    .leftJoin(letterReceivers.letterReceiverLetter, letterReceiverLetter).where(whereExpression);
+            
+            return findLetterReceivers.count();
+        } else {
+            return findNumberOfReciversByLetterBatchID(letterBatchID);
+        }
+    }
+    
     @Override
     public List<Long> findLetterRecieverIdsByLetterBatchId(long letterBatchId) {
         return getEntityManager()
@@ -82,4 +116,6 @@ public class LetterReceiversDAOImpl extends AbstractJpaDAOImpl<LetterReceivers, 
 
         return pb.getString("lastName").asc();
     }
+    
+
 }
