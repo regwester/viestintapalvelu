@@ -7,6 +7,9 @@ angular.module('core.services').factory('PersonService', ['$http', function ($ht
     return {
 	getPerson : function(oid) {
 	    return $http({method:"GET", withCredentials:true, url:serviceUrl + 'person/' + oid});
+	},
+	getRights : function() {
+	    return $http({method:"GET", withCredentials:true, url:serviceUrl + 'person/userRights'});
 	}
     } 
 }]);
