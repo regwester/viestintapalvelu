@@ -25,7 +25,7 @@ public interface LetterReportService {
      * @param pagingAndSorting Sivutus- ja lajittelutiedot
      * @return Kirjelähetyksen tiedot
      */
-    LetterBatchReportDTO getLetterBatchReport(Long id, PagingAndSortingDTO pagingAndSorting);
+    LetterBatchReportDTO getLetterBatchReport(Long id, PagingAndSortingDTO pagingAndSorting, String query);
     
     /**
      * Hakee käyttäjän organisaation raportoitavat kirjelähetykset lajiteltuna ja sivutettuna. Jos organizationOID on yhtä
