@@ -15,21 +15,29 @@
  */
 package fi.vm.sade.viestintapalvelu.person;
 
+import java.util.List;
+
+import javax.annotation.Nonnull;
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.web.servletapi.SecurityContextHolderAwareRequestWrapper;
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonView;
+import com.google.common.base.Function;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Lists;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.JsonViews;
-import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 
 /**
@@ -42,13 +50,37 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 public class PersonResource {
 
     @Autowired
-    private HenkiloComponent component;
+    private HenkiloComponent henkiloComponent;
+    
+    @Autowired
+    private CurrentUserComponent userComponent;
 
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
     @GET
     @Path("/{oid}")
     public Person getHenkiloByOid(@PathParam("oid") String oid) {
-        return new Person(component.getHenkilo(oid));
+        return new Person(henkiloComponent.getHenkilo(oid));
+    }
+    
+    @Produces(MediaType.APPLICATION_JSON)
+    @GET
+    @Path("/userRights")
+    public Rights getUserRights(@Context HttpServletRequest request) {
+        return buildRights(request, userComponent.getCurrentUserOrganizations());
+    }
+
+    private Rights buildRights(HttpServletRequest request, List<OrganisaatioHenkilo> currentUserOrganizations) {
+        List<String> organizations = ImmutableList.copyOf(Lists.transform(currentUserOrganizations, new Function<OrganisaatioHenkilo, String>() {
+            
+            @Override
+            public String apply(@Nonnull OrganisaatioHenkilo input) {
+                return input.getOrganisaatioOid();
+            }
+            
+        }));
+        boolean canRead = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_READ);
+        boolean canEditTemplate = request.isUserInRole(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE);
+        boolean canEditDraft = request.isUserInRole(Constants.ASIAKIRJAPALVELU_CREATE_LETTER);
+        return new Rights(organizations, canRead, canEditTemplate, canEditDraft);
     }
 }
