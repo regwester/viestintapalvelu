@@ -92,6 +92,7 @@ public class LetterReportServiceTest {
             any(Long.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterReceivers);
         when(mockedLetterReceiversDAO.findLetterReceiversByLetterBatchID(
                 any(Long.class), any(PagingAndSortingDTO.class), any(String.class))).thenReturn(mockedLetterReceivers);
+        when(mockedLetterReceiversDAO.findNumberOfReciversByLetterBatchID(any(Long.class), any(String.class))).thenReturn(1L);
         
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
@@ -105,7 +106,6 @@ public class LetterReportServiceTest {
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
         
         LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(new Long(1), pagingAndSorting, null);
-        
         assertNotNull(letterBatchReport);
         assertEquals(letterBatchReport.getApplicationPeriod(), letterBatch.getApplicationPeriod());
         assertEquals(letterBatchReport.getFetchTarget(), "fetchTarget");

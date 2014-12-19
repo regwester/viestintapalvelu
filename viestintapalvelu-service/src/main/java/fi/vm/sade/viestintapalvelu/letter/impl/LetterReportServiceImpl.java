@@ -85,11 +85,16 @@ public class LetterReportServiceImpl implements LetterReportService {
         
         LetterReceivers letterReceivers = letterReceiverList.get(0);
         LetterBatch letterBatch = letterReceivers.getLetterBatch();
+        
         LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
         
-        List<LetterReceiverDTO> letterReceiverDTOs = convertLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);
-        letterBatchReport.setLetterReceivers(letterReceiverDTOs);
         letterBatchReport.setNumberOfReceivers(numberOfReceivers);
+        if (numberOfReceivers > 0) {
+            List<LetterReceiverDTO> letterReceiverDTOs = convertLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);
+            letterBatchReport.setLetterReceivers(letterReceiverDTOs);
+        } else {
+            letterBatchReport.setLetterReceivers(new ArrayList<LetterReceiverDTO>());
+        }
         
         List<IPosti> iPostis = iPostiDAO.findByLetterBatchId(letterBatchID);
         List<IPostiDTO> iPostiDTOs = getListOfIPostiDTO(iPostis);
