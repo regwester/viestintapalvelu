@@ -11,16 +11,17 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
+import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 
 import static org.mockito.Mockito.when;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-
 @RunWith(MockitoJUnitRunner.class)
 public class PersonResourceTest {
+    
+    private static final String OPH_ORGANIZATION_OID = "1.2.246.562.10.00000000001";
     
     @Mock
     private CurrentUserComponent userComponent;
@@ -30,12 +31,21 @@ public class PersonResourceTest {
     
     @Test
     public void returnsRightsOfCurrentUser() {
-        HttpServletRequest request = givenMockedRequest();
         final String orgOid = "1.2.3.45434";
         when(userComponent.getCurrentUserOrganizations()).thenReturn(Arrays.asList(givenOrganisaatioHenkiloWithOid(orgOid)));
-        Rights rights = resource.getUserRights(request);
+        assertRights(false, orgOid, resource.getUserRights(givenMockedRequest()));
+    }
+
+    @Test
+    public void returnsRightsOfCurrentOphUser() {
+        when(userComponent.getCurrentUserOrganizations()).thenReturn(Arrays.asList(givenOrganisaatioHenkiloWithOid(OPH_ORGANIZATION_OID)));
+        assertRights(true, OPH_ORGANIZATION_OID, resource.getUserRights(givenMockedRequest()));
+    }
+
+    private void assertRights(boolean isOphUser, String orgOid, Rights rights) {
         assertTrue(rights.rightToEditDrafts && rights.rightToEditTemplates && rights.rightToViewTemplates);
         assertTrue(rights.organizationOids.contains(orgOid));
+        assertTrue(isOphUser == rights.ophUser);
     }
 
     private HttpServletRequest givenMockedRequest() {

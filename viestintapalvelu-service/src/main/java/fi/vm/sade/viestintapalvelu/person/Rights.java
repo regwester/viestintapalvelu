@@ -28,14 +28,17 @@ public class Rights implements Serializable {
     
     public final List<String> organizationOids;
     
+    public final boolean ophUser;
+    
     public final boolean rightToViewTemplates;
     
     public final boolean rightToEditTemplates;
     
     public final boolean rightToEditDrafts;
 
-    public Rights(List<String> organizationOids, boolean rightToViewTemplates, boolean rightToEditTemplates, boolean rightToEditDrafts) {
+    public Rights(List<String> organizationOids, boolean ophUser, boolean rightToViewTemplates, boolean rightToEditTemplates, boolean rightToEditDrafts) {
         this.organizationOids = organizationOids;
+        this.ophUser = ophUser;
         this.rightToViewTemplates = rightToViewTemplates;
         this.rightToEditTemplates = rightToEditTemplates;
         this.rightToEditDrafts = rightToEditDrafts;
