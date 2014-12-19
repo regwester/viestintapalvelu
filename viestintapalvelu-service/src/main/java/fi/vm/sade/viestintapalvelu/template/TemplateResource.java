@@ -403,7 +403,7 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/storeDraft")
     @Consumes("application/json")
     @Produces("application/json")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = StoreDraft, notes = StoreDraft)
     public Draft storeDraft(Draft draft) throws IOException, DocumentException {
         templateService.storeDraftDTO(draft);

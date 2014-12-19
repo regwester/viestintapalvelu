@@ -114,7 +114,23 @@
             </button>
         </div>
     </div>
-
+    <div class="row-fluid">&nbsp;</div>
+    
+    <div class="row-fluid">
+            <div class="span2">{{ 'reportedletterview.label.haevastaanottajia' | i18n }}</div>
+            <div class="span6">
+                <input type="text" ng-model="searchArgument" ng-enter="search()" class="form-control letterSearchField"
+                               placeholder="{{'reportedletterview.search.description' | i18n}}"
+                                title="{{'reportedletterview.search.description' | i18n}}"></input>
+                                   <button class="btn" ng-click="emptySearch()">{{'reportedletterlist.button.tyhjenna' | i18n}}</button>
+          <button class="btn btn-primary" ng-click="search()" ng-disabled="!searchArgument || loading">
+              {{'reportedletterlist.button.hae' | i18n}}
+          </button>
+                    <div class="loadingIndicator" ng-show="loading"></div>
+    	</div>
+    </div>
+    
+    
     <div class="row-fluid">
         <img ng-show="reportedLetterDTO.status == 'error'" style="margin-right:10px;"
              src="./img/error-icon28x29.png">

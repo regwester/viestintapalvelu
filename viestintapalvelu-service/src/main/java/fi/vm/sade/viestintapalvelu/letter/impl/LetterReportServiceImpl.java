@@ -73,21 +73,28 @@ public class LetterReportServiceImpl implements LetterReportService {
     }
     
     @Override
-    public LetterBatchReportDTO getLetterBatchReport(Long letterBatchID, PagingAndSortingDTO pagingAndSorting) {               
+    public LetterBatchReportDTO getLetterBatchReport(Long letterBatchID, PagingAndSortingDTO pagingAndSorting, String query) {
         List<LetterReceivers> letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(
-            letterBatchID, pagingAndSorting);
+            letterBatchID, pagingAndSorting, query);
         
-        Long numberOfReceivers = letterReceiversDAO.findNumberOfReciversByLetterBatchID(letterBatchID); 
+        Long numberOfReceivers = letterReceiversDAO.findNumberOfReciversByLetterBatchID(letterBatchID, query); 
+        
+        if (numberOfReceivers == 0) {
+            letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(letterBatchID, pagingAndSorting, null);
+        }
         
         LetterReceivers letterReceivers = letterReceiverList.get(0);
         LetterBatch letterBatch = letterReceivers.getLetterBatch();
         
         LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
         
-        List<LetterReceiverDTO> letterReceiverDTOs = 
-            convertLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);
-        letterBatchReport.setLetterReceivers(letterReceiverDTOs);
         letterBatchReport.setNumberOfReceivers(numberOfReceivers);
+        if (numberOfReceivers > 0) {
+            List<LetterReceiverDTO> letterReceiverDTOs = convertLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);
+            letterBatchReport.setLetterReceivers(letterReceiverDTOs);
+        } else {
+            letterBatchReport.setLetterReceivers(new ArrayList<LetterReceiverDTO>());
+        }
         
         List<IPosti> iPostis = iPostiDAO.findByLetterBatchId(letterBatchID);
         List<IPostiDTO> iPostiDTOs = getListOfIPostiDTO(iPostis);

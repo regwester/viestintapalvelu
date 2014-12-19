@@ -146,9 +146,11 @@ public class LetterReportResource extends AsynchronousResource {
         @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
         @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy, 
         @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false) 
-        @QueryParam(Constants.PARAM_ORDER) String order) {
+        @QueryParam(Constants.PARAM_ORDER) String order, 
+        @ApiParam(value="Hakusanat", required=false) 
+        @QueryParam(Constants.PARAM_QUERY) String query) {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(id, pagingAndSorting);
+        LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(id, pagingAndSorting, query);
         return Response.ok(letterBatchReport).build();
     }
 
