@@ -102,7 +102,7 @@ public class LetterReportServiceTest {
         when(mockedHenkiloComponent.getHenkilo(any(String.class))).thenReturn(new Henkilo());
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
         
-        LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(new Long(1), pagingAndSorting);
+        LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(new Long(1), pagingAndSorting, null);
         
         assertNotNull(letterBatchReport);
         assertEquals(letterBatchReport.getApplicationPeriod(), letterBatch.getApplicationPeriod());
