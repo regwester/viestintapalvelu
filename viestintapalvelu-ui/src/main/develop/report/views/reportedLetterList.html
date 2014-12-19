@@ -125,7 +125,7 @@
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.fetchTarget }}</td>
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.status }} <img ng-show="reportedLetter.status == 'error'" style="margin-right:10px;" src="./img/error-icon28x29.png"></td>
                 <td ng-click="showReportedLetter(reportedLetter)">{{ reportedLetter.tag }}</td>
-                <td ng-show="doneSearchTarget == 'receiver'"><a ng-show="reportedLetter.status != 'error'" ng-click="downloadLetter(reportedLetter.receiverLetterId)">{{reportedLetter.templateName}}.pdf</a></td>
+                <td ng-show="doneSearchTarget == 'receiver'"><a ng-show="reportedLetterDTO.status != 'error'" ng-href="/viestintapalvelu/api/v1/reporting/letter?id={{ reportedLetter.receiverLetterId }}">{{reportedLetter.templateName}}.pdf</a></td>
             </tr>
             </tbody>
         </table>
