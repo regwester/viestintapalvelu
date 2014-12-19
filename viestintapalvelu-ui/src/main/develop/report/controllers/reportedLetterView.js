@@ -31,6 +31,28 @@ angular.module('report')
         });
     };
 
+    $scope.emptySearch = function () {
+        $scope.searchArgument = '';
+        $scope.fetch();
+    };
+    
+    $scope.search = function () {
+        var params = {
+          id: $stateParams.letterBatchID,
+          page: $scope.pagination.page,
+          nbrofrows: $scope.pagination.pageSize,
+          query: $scope.searchArgument
+        };
+
+        $http.get(reportedLetterUrl, { params: params })
+          .success(function (reportedLetter) {
+            $scope.reportedLetterDTO = reportedLetter;
+          })
+          .error(function (err) {
+            console.log(err);
+          });
+      };
+    
     $scope.getLetterContent = function () {
       var template, content = '';
 

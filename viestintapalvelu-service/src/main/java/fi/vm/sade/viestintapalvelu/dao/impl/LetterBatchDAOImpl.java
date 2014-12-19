@@ -359,7 +359,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 
         int subQueryNum = 0;
         if (query.getLetterBatchSearchArgument() != null && !query.getLetterBatchSearchArgument().isEmpty()) {
-            for (String word : words(query.getLetterBatchSearchArgument())) {
+            for (String word : ExpressionHelper.words(query.getLetterBatchSearchArgument())) {
                 booleanBuilder.andAnyOf(
                     anyOfLetterBatchRelatedConditions(letterBatch, word),
                     letterBatchReplacementsContain(letterBatch, word, ++subQueryNum)
@@ -367,12 +367,12 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             }
         }
         if (query.getReceiverSearchArgument() != null && !query.getReceiverSearchArgument().isEmpty()) {
-            for (String word : words(query.getReceiverSearchArgument())) {
+            for (String word : ExpressionHelper.words(query.getReceiverSearchArgument())) {
                 booleanBuilder.andAnyOf(
                     anyOfLetterBatchRelatedConditions(letterBatch, word),
-                    anyOfReceiverAddressFieldsContains(letterReceiverAddress, word),
+                    ExpressionHelper.anyOfReceiverAddressFieldsContains(letterReceiverAddress, word),
                     letterBatchReplacementsContain(letterBatch, word, ++subQueryNum),
-                    receiverReplacementsContain(letterReceivers, word, ++subQueryNum)
+                    ExpressionHelper.receiverReplacementsContain(letterReceivers, word, ++subQueryNum)
                 );
             }
         }
@@ -380,17 +380,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return booleanBuilder;
     }
 
-    private BooleanExpression anyOfReceiverAddressFieldsContains(QLetterReceiverAddress letterReceiverAddress, String word) {
-        return anyOf(
-                letterReceiverAddress.firstName.trim().containsIgnoreCase(word),
-                letterReceiverAddress.lastName.trim().containsIgnoreCase(word),
-                letterReceiverAddress.addressline.trim().containsIgnoreCase(word),
-                letterReceiverAddress.addressline2.trim().containsIgnoreCase(word),
-                letterReceiverAddress.addressline3.trim().containsIgnoreCase(word),
-                letterReceiverAddress.city.trim().containsIgnoreCase(word),
-                letterReceiverAddress.postalCode.trim().contains(word)
-        );
-    }
 
     private BooleanExpression letterBatchReplacementsContain(QLetterBatch letterBatch, String word, int subQueryNumber) {
         QLetterBatch subQueryLetterBatch = new QLetterBatch("sqLetterBatch_"+subQueryNumber);
@@ -405,19 +394,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 ).exists();
     }
 
-    private BooleanExpression receiverReplacementsContain(QLetterReceivers letterReceivers, String word, int subQueryNumber) {
-        QLetterReceivers subQueryLetterReceiver = new QLetterReceivers("sqLetterReceiver_"+subQueryNumber);
-        QLetterReceiverReplacement replacement = new QLetterReceiverReplacement("sqLetterReceiverReplacement_"+subQueryNumber);
-        return new JPASubQuery().from(subQueryLetterReceiver)
-                .innerJoin(subQueryLetterReceiver.letterReceiverReplacement, replacement)
-                .where(subQueryLetterReceiver.id.eq(letterReceivers.id)
-                        .andAnyOf(
-                                replacement.defaultValue.containsIgnoreCase(word),
-                                replacement.jsonValue.containsIgnoreCase(word)
-                        )
-                ).exists();
-    }
-
     private BooleanExpression anyOfLetterBatchRelatedConditions(QLetterBatch letterBatch, String word) {
         return letterBatch.templateName.containsIgnoreCase(word)
                 .or(
@@ -428,9 +404,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 );
     }
 
-    private String[] words(String searchArgument) {
-        return searchArgument.trim().split("\\s+");
-    }
 
     private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
         List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
