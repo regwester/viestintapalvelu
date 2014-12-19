@@ -90,6 +90,8 @@ public class LetterReportServiceTest {
         
         when(mockedLetterReceiversDAO.findLetterReceiversByLetterBatchID(
             any(Long.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterReceivers);
+        when(mockedLetterReceiversDAO.findLetterReceiversByLetterBatchID(
+                any(Long.class), any(PagingAndSortingDTO.class), any(String.class))).thenReturn(mockedLetterReceivers);
         
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);
