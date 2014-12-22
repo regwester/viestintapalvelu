@@ -9,15 +9,18 @@
         </div>
         <input-list label="Luotava kirjepohjatyyppi:" items="applicationTypes" model="applicationTypeSelection" input="radio"></input-list>
         <input-list label="Luotava kieliversio:" items="languages" model="languageSelection" input="radio"></input-list>
-        <div ng-if="applicationTypeSelection && languageSelection">
-            <p class="bold">Käytä pohjana hakua:</p>
-            <select class="full-width" ng-model="baseTemplate" ng-change="selectBase()">
-                <option value="empty" ng-selected="selected"><b>Tyhjä dokumentti</b></option>
-                <option value="default"><b>Oletuskirjepohja</b></option>
-                <option value="t" ng-repeat="t in applicationTargets">{{t.name}}</option>
+        <p class="bold">Käytä pohjana:</p>
+        <div ng-if="!applicationTypeSelection || !languageSelection">
+            <select class="full-width" disabled>
+                <option value="none">Valitse ensin kirjepohjan tyyppi ja kieliversio</option>
             </select>
-            <p class="subnote">Valitse uuden kirjepohjan lähtökohdaksi jokin haku, oletuskirjepohja tai tyhjä dokumentti.</p>
         </div>
+        <div ng-if="applicationTypeSelection && languageSelection">
+            <select class="full-width" ng-model="baseTemplate" ng-options="t.value as t.name for t in applicationTargets | orderBy: 'name'" ng-change="selectBase()">
+                <option value=""><b>Oletuskirjepohja</b></option>
+            </select>
+        </div>
+        <p class="subnote">Valitse uuden kirjepohjan lähtökohdaksi jokin haku, oletuskirjepohja tai tyhjä dokumentti.</p>
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" ng-click="cancel()">Peruuta</button>

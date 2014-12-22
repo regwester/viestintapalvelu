@@ -2,12 +2,12 @@
 	<div auth="read">
     <div class="row">
         <div class="span12">
-            <h1>Kirjepohjat</h1>
+            <h1 ng-bind="'template.header' | i18n"></h1>
         </div>
     </div>
     <div class="row margin-bottom-one">
         <div class="span12">
-            <button class="btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
+            <button class="btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
         </div>
     </div>
     <div class="row margin-bottom-one">
@@ -20,26 +20,26 @@
             <table class="table table-striped">
                 <thead>
                     <tr>
-                    	<th></th>
-                        <th class="span4">KIRJEPOHJA</th>
-                        <th class="span2">TYYPPI</th>
-                        <th class="span2">KIELI</th>
-                        <th class="span2">TILA</th>
-                        <th class="span2">TALLENNETTU</th>
+                        <th></th>
+                        <th class="span4" ng-bind="'common.header.lettertemplate' | i18n | uppercase"></th>
+                        <th class="span2" ng-bind="'common.header.tyyppi' | i18n | uppercase"></th>
+                        <th class="span2" ng-bind="'common.header.language' | i18n | uppercase"></th>
+                        <th class="span2" ng-bind="'common.header.status' | i18n | uppercase"></th>
+                        <th class="span2" ng-bind="'common.header.saved' | i18n | uppercase"></th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr ng-repeat="letterTemplate in getTemplates()">
                         <td>
-                    		<div auth="crudOph" class="btn-group dropdown">
-                        		<input type="button" class="icon-actionmenu dropdown-toggle"/>
-                        		<ul class="dropdown-menu" role="menu">
-                            		<li><button type="button" class="link-button" ng-click="editTemplate(letterTemplate.id)" ng-disabled="letterTemplate.state !== 'luonnos'">{{'common.edit' | i18n}}</button></li>
-                        			<li><button type="button" class="link-button" ng-click="publishTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state !== 'luonnos'">Julkaise</button>
-                            		<li><button type="button" class="link-button" ng-click="removeTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state === 'suljettu'">Poista käytöstä</button></li>
-                        		</ul>
-                    		</div>
-                		</td>
+                            <div auth="crudOph" class="btn-group dropdown">
+                                <input type="button" class="icon-actionmenu dropdown-toggle"/>
+                                <ul class="dropdown-menu" role="menu">
+                                    <li><button type="button" class="link-button" ng-click="editTemplate(letterTemplate.id)" ng-disabled="letterTemplate.state !== 'luonnos'" ng-bind="'common.btn.edit' | i18n"></button></li>
+                                    <li><button type="button" class="link-button" ng-click="publishTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state !== 'luonnos'" ng-bind="'common.btn.publish' | i18n"></button>
+                                    <li><button type="button" class="link-button" ng-click="removeTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state === 'suljettu'" ng-bind="'common.btn.remove' | i18n"></button></li>
+                                </ul>
+                            </div>
+                        </td>
                         <td>{{letterTemplate.name}}</td>
                         <td>{{letterTemplate.types.join(', ')}}</td>
                         <td>{{letterTemplate.language}}</td>
@@ -50,12 +50,44 @@
             </table>
         </div>
         <div class="span12" ng-show="(radioSelection === 'applicationTarget') && !getTemplates() && applicationTarget">
-            <h5 class="center help-text-bold">Tälle haulle ei ole vielä kirjepohjia</h5>
-            <p class="center help-text margin-bottom-one">Lisää hakukohtainen kirjepohja klikkaamalla Luo uusi -painiketta</p>
-            <button class="center btn btn-primary" ng-click="openCreateDialog()"><i class="icon-plus-sign margin-right-half"></i>Luo uusi</button>
+            <h5 class="center help-text-bold" ng-bind="'template.text.zero.templates' | i18n"></h5>
+            <p class="center help-text margin-bottom-one" ng-bind="'template.text.add.new.template' | i18n"></p>
+            <button class="center btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
         </div>
         <div class="span12" ng-show="radioSelection === 'organization'">
-
+            <!-- TODO: create a proper directive for this -->
+            <div class="control-group">
+                <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.nimi.kieli_fi for Object in applicationTargets" class="selectpicker span6 placeholder">
+                </select>
+            </div>
+            <tabset>
+                <tab heading="Organisaation oletuskirjepohjat" select="templateTab()">
+                    <tree-grid
+                            tree-data       = "template_tree_data"
+                            tree-control    = "template_tree_control"
+                            col-defs        = "col_defs"
+                            icon-leaf       = "icon-actionmenu"
+                            icon-expand     = "icon-expand"
+                            icon-collapse   = "icon-expanded"
+                            on-select       = "my_tree_handler(branch)"
+                            expand-level    = "5"
+                            >
+                    </tree-grid>
+                </tab>
+                <tab heading="Hakukohteiden kirjeluonnokset" select="draftTab()">
+                    <tree-grid
+                            tree-data       = "draft_tree_data"
+                            tree-control    = "draft_tree_control"
+                            col-defs        = "col_defs"
+                            icon-leaf       = "icon-actionmenu"
+                            icon-expand     = "icon-expand"
+                            icon-collapse   = "icon-expanded"
+                            on-select       = "my_tree_handler(branch)"
+                            expand-level    = "5"
+                            >
+                    </tree-grid>
+                </tab>
+            </tabset>
         </div>
     </div>
     </div>

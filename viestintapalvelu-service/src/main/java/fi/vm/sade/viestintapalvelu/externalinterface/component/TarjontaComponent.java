@@ -96,5 +96,4 @@ public class TarjontaComponent {
             throw new ExternalInterfaceException(e);
         }
     }
-
 }

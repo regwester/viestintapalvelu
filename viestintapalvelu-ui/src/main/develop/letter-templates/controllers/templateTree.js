@@ -55,7 +55,7 @@ angular.module('letter-templates')
             if(branch["isLetter"]) {
                 //TODO handle letter opening here
             }
-        }
+        };
 
         $scope.updateTreeData = function(applicationPeriod) {
 
@@ -81,9 +81,7 @@ angular.module('letter-templates')
                     });
                 }
             });
-        }
-
-
+        };
 
         TemplateService.getApplicationTargets().then(function(data) {
             $scope.applicationPeriodList = data;
