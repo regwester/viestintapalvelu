@@ -81,8 +81,8 @@ public class PersonResource {
         }));
         boolean ophUser = organizations.contains(OPH_ORGANIZATION_OID);
         boolean canRead = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_READ);
-        boolean canEditTemplate = request.isUserInRole(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE);
-        boolean canEditDraft = request.isUserInRole(Constants.ASIAKIRJAPALVELU_CREATE_LETTER);
+        boolean canEditTemplate = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_CREATE_TEMPLATE);
+        boolean canEditDraft = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_CREATE_LETTER);
         return new Rights(organizations, ophUser, canRead, canEditTemplate, canEditDraft);
     }
 }
