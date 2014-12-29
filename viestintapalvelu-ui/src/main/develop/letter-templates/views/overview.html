@@ -30,7 +30,7 @@
                 <tbody>
                     <tr ng-repeat="letterTemplate in getTemplates()">
                         <td>
-                    		<div class="btn-group dropdown">
+                    		<div auth="crudOph" class="btn-group dropdown">
                         		<input type="button" class="icon-actionmenu dropdown-toggle"/>
                         		<ul class="dropdown-menu" role="menu">
                             		<li><button type="button" class="link-button" ng-click="editTemplate(letterTemplate.id)" ng-disabled="letterTemplate.state !== 'luonnos'">{{'common.edit' | i18n}}</button></li>
