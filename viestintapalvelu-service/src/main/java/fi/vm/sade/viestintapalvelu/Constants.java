@@ -46,4 +46,7 @@ public class Constants {
 
     // Error message
     public static final Object INTERNAL_SERVICE_ERROR = "Internal service error";
+    
+    // OPH Organization identification
+    public static final String OPH_ORGANIZATION_OID = "1.2.246.562.10.00000000001";
 }

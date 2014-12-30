@@ -46,7 +46,6 @@ import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -80,7 +79,7 @@ public class TemplateResourceTest {
         };
         Field currentUserComponentField = TemplateServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);
-        currentUserComponentField.set(((Advised)service).getTargetSource().getTarget(), currentUserComponent);
+        currentUserComponentField.set(((Advised)service).getTargetSource().getTarget(), currentUserComponent);       
     }
     
     @Test

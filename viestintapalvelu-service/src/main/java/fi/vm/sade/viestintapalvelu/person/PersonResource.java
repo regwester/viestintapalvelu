@@ -48,7 +48,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 @PreAuthorize("isAuthenticated()")
 public class PersonResource {
 
-    private static final String OPH_ORGANIZATION_OID = "1.2.246.562.10.00000000001";
+    
     
     @Autowired
     private HenkiloComponent henkiloComponent;
@@ -79,7 +79,7 @@ public class PersonResource {
             }
             
         }));
-        boolean ophUser = organizations.contains(OPH_ORGANIZATION_OID);
+        boolean ophUser = organizations.contains(Constants.OPH_ORGANIZATION_OID);
         boolean canRead = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_READ);
         boolean canEditTemplate = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_CREATE_TEMPLATE);
         boolean canEditDraft = request.isUserInRole(Constants.ROLE_APP_ASIAKIRJAPALVELU_CREATE_LETTER);
