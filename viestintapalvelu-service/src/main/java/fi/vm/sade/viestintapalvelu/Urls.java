@@ -26,6 +26,7 @@ public class Urls {
     public static final String ATTACHMENT_RESOURCE_PATH = "attachment";
     public static final String OPTIONS_PATH = "options";
     public static final String ASIOINTITILI = "asiointitili";
+    public static final String PERSON_PATH = "person";
 
     public static RestServer localhost() {
         return new Localhost();

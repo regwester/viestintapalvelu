@@ -33,9 +33,13 @@ import org.springframework.stereotype.Component;
 import com.google.common.base.Function;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Lists;
+import com.wordnik.swagger.annotations.Api;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 
@@ -46,6 +50,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
 @Component
 @Path("person")
 @PreAuthorize("isAuthenticated()")
+@Api(value = "/" + Urls.API_PATH + "/" + Urls.PERSON_PATH, description = "Rajapinta henkilö- ja oikeustietojen hakuun")
 public class PersonResource {
 
     
@@ -59,13 +64,15 @@ public class PersonResource {
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     @Path("/{oid}")
-    public Person getHenkiloByOid(@PathParam("oid") String oid) {
+    @ApiOperation(value = "Hakee henkilön tiedot", notes = "", response = Person.class)
+    public Person getHenkiloByOid(@ApiParam(name="oid", value="Henkilön tunniste") @PathParam("oid") String oid) {
         return new Person(henkiloComponent.getHenkilo(oid));
     }
     
     @Produces(MediaType.APPLICATION_JSON)
     @GET
     @Path("/userRights")
+    @ApiOperation(value = "Hakee käyttäjän oikeudet", notes = "Koskee vain tämän hetkistä käyttäjää", response = Rights.class)
     public Rights getUserRights(@Context HttpServletRequest request) {
         return buildRights(request, userComponent.getCurrentUserOrganizations());
     }
