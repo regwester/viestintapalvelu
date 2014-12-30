@@ -68,7 +68,7 @@ angular.module('core')
                 .state('letter-templates_create', {
                     url: '/letter-templates/create',
                     templateUrl: templateUrl + 'create.html',
-                    controller: 'LetterTemplateCreateCtrl'
+                    controller: 'LetterTemplateCreateCtrl as CreateCtrl'
                 })
                 .state('letter-templates_edit', {
                     url: '/letter-templates/edit/:templateId',

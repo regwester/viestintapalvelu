@@ -11,9 +11,12 @@ angular.module('letter-templates')
                 selectAppPeriod = "Select one";
 
             $scope.radioSelection = 'default';
+            $scope.languageSelection = 'suomi';
             $scope.template_tree_control = {};
             $scope.draft_tree_control = {};
             $scope.applicationPeriodList = [];
+            $scope.template_tree_data = [];
+            $scope.draft_tree_data = [];
             $scope.selectedApplicationPeriod = selectAppPeriod;
 
             $scope.col_defs = [

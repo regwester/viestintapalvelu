@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('LetterTemplateCreateCtrl', ['$scope', 'Global', '$state', 'TemplateService',
-        function($scope, Global, $state, TemplateService) {
+    .controller('LetterTemplateCreateCtrl', ['$scope', 'Global', '$state', 'TemplateService', '$filter',
+        function($scope, Global, $state, TemplateService, $filter) {
 
             $scope.editorOptions = Global.getEditorOptions();
 
@@ -46,10 +46,10 @@ angular.module('letter-templates')
             };
 
             $scope.buttons = [
-                {label: 'Peruuta', click: $scope.cancel, type: 'default'},
-                {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
-                {label: 'Esikatsele sähköposti', click: $scope.previewLetter, type: 'default'},
-                {label: 'Tallenna', click: $scope.save, primary: true},
-                {label: 'Julkaise', click: $scope.publish}];
+                {label: $filter('i18n')('common.btn.cancel'), click: $scope.cancel, type: 'default'},
+                {label: $filter('i18n')('template.btn.preview.pdf'), click: $scope.previewPDF, type: 'default'},
+                {label: $filter('i18n')('template.btn.preview.email'), click: $scope.previewLetter, type: 'default'},
+                {label: $filter('i18n')('common.btn.save'), click: $scope.save, primary: true},
+                {label: $filter('i18n')('common.btn.publish'), click: $scope.publish}];
         }
     ]);

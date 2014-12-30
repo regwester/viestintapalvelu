@@ -1,29 +1,29 @@
 <div class="modal info-dialog">
     <div class="modal-header dialog-header-info">
-        <h3>Luo uusi kirjepohja</h3>
+        <h3 ng-bind="'template.header.create.new.template' | i18n"></h3>
     </div>
     <div class="modal-body">
         <div>
-            <p class="bold">Luo kirjepohja haulle:</p>
+            <p class="bold" ng-bind="'template.label.select.template.application' | i18n"></p>
             <select class="full-width" ng-model="applicationTarget.value" ng-options="t.value as t.name for t in applicationTargets | orderBy: 'name'" ng-change="selectTarget()"></select>
         </div>
-        <input-list label="Luotava kirjepohjatyyppi:" items="applicationTypes" model="applicationTypeSelection" input="radio"></input-list>
-        <input-list label="Luotava kieliversio:" items="languages" model="languageSelection" input="radio"></input-list>
-        <p class="bold">Käytä pohjana:</p>
+        <input-list label="{{'template.label.select.template.type' | i18n}}" items="applicationTypes" model="applicationTypeSelection" input="radio"></input-list>
+        <input-list label="{{'template.label.select.template.language' | i18n}}" items="languages" model="languageSelection" input="radio"></input-list>
+        <p class="bold" ng-bind="'template.label.select.template.base' | i18n"></p>
         <div ng-if="!applicationTypeSelection || !languageSelection">
             <select class="full-width" disabled>
-                <option value="none">Valitse ensin kirjepohjan tyyppi ja kieliversio</option>
+                <option value="none" ng-bind="'template.text.choose.type.and.language' | i18n"></option>
             </select>
         </div>
         <div ng-if="applicationTypeSelection && languageSelection">
             <select class="full-width" ng-model="baseTemplate" ng-options="t.value as t.name for t in applicationTargets | orderBy: 'name'" ng-change="selectBase()">
-                <option value=""><b>Oletuskirjepohja</b></option>
+                <option value="" ng-bind="'template.common.default.template' | i18n"></option>
             </select>
         </div>
-        <p class="subnote">Valitse uuden kirjepohjan lähtökohdaksi jokin haku, oletuskirjepohja tai tyhjä dokumentti.</p>
+        <p class="subnote" ng-bind="'template.info.text.template.base' | i18n"></p>
     </div>
     <div class="modal-footer">
-        <button type="button" class="btn" ng-click="cancel()">Peruuta</button>
-        <button type="button" class="btn btn-primary" ng-click="confirm()">Luo</button>
+        <button type="button" class="btn" ng-click="cancel()" ng-bind="'common.btn.cancel' | i18n"></button>
+        <button type="button" class="btn btn-primary" ng-click="confirm()" ng-bind="'common.btn.create' | i18n"></button>
     </div>
 </div>

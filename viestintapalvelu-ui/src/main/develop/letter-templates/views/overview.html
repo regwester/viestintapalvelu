@@ -7,7 +7,7 @@
     </div>
     <div class="row margin-bottom-one">
         <div class="span12">
-            <button class="btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
+            <button class="btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.create.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
         </div>
     </div>
     <div class="row margin-bottom-one">
@@ -52,7 +52,7 @@
         <div class="span12" ng-show="(radioSelection === 'applicationTarget') && !getTemplates() && applicationTarget">
             <h5 class="center help-text-bold" ng-bind="'template.text.zero.templates' | i18n"></h5>
             <p class="center help-text margin-bottom-one" ng-bind="'template.text.add.new.template' | i18n"></p>
-            <button class="center btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
+            <button class="center btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.create.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
         </div>
         <div class="span12" ng-show="radioSelection === 'organization'">
             <!-- TODO: create a proper directive for this -->
