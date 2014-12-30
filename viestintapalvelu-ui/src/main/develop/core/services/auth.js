@@ -17,42 +17,23 @@ angular.module('core.services').factory('RightsModel', ['$q', 'PersonService', f
 
 angular.module('core.services').factory('AuthService', ['$q', 'RightsModel', function($q, RightsModel) {
 
-    var readAccess = function(org, model) {
-	return model.organizationOids.indexOf(org) > -1 && model.rightToViewTemplates;
+    var readAccess = function(model) {
+	return model.rightToViewTemplates;
     };
 
-    var crudDraftAccess = function(org, model) {
+    var crudDraftAccess = function(model, org) {
 	return model.organizationOids.indexOf(org) > -1  && model.rightToEditDrafts;
     };
-
-    var accessCheck = function(orgOid, accessFunction) {
-	var deferred = $q.defer();
-
-        RightsModel.then(function(model){
-            if(accessFunction(orgOid, model)) {
-                deferred.resolve();
-            } else {
-                deferred.reject();
-            }
-        });
-
-        return deferred.promise;
-    };
-
-    var ophRead = function(model) {
-        return model.rightToViewTemplates && model.ophUser;
-
-    };
-
+    
     var ophCrud = function(model) {
 	return model.rightToEditTemplates && model.ophUser;
     };
 
-    var ophAccessCheck = function(accessFunction) {
-        var deferred = $q.defer();
+    var accessCheck = function(accessFunction, orgOid) {
+	var deferred = $q.defer();
 
-        RightsModel.then(function(model) {
-            if(accessFunction(model)) {
+        RightsModel.then(function(model){
+            if(accessFunction(model, orgOid)) {
                 deferred.resolve();
             } else {
                 deferred.reject();
@@ -63,20 +44,16 @@ angular.module('core.services').factory('AuthService', ['$q', 'RightsModel', fun
     };
 
     return {
-        readOrg : function(orgOid) {
-            return accessCheck(orgOid, readAccess);
+        read : function() {
+            return accessCheck(readAccess);
         },
 
         crudDraftOrg : function(orgOid) {
-            return accessCheck(orgOid, crudDraftAccess);
-        },
-
-        readOph : function() {
-            return ophAccessCheck(ophRead);
+            return accessCheck(crudDraftAccess, orgOid);
         },
 
         crudOph : function() {
-            return ophAccessCheck(ophCrud);
+            return accessCheck(ophCrud);
         }
         
     };
