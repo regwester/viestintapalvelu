@@ -137,6 +137,7 @@ public class TemplateServiceTest {
         assertNotNull(templateFindByName.getReplacements().size() == 1);
         assertTrue(templateFindByName.getType() != null);
         assertTrue(templateFindByName.getType().equals("letter"));
+        assertEquals(1, templateFindByName.getApplicationPeriods().size());
     }
 
 

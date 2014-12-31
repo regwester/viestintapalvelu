@@ -22,8 +22,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.google.common.base.Function;
 import com.google.common.base.Optional;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
+import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.lowagie.text.DocumentException;
 
@@ -357,9 +360,10 @@ public class TemplateServiceImpl implements TemplateService {
         result.setState(searchResult.getState());
         result.setUsedAsDefault(searchResult.isUsedAsDefault());
         result.setStoringOid(searchResult.getStoringOid());
+        convertApplicationPeriods(searchResult, result);
         return result;
     }
-
+    
     @Deprecated
     private List<fi.vm.sade.viestintapalvelu.template.TemplateContent> parseContentDTOs(Set<TemplateContent> contents) {
         List<fi.vm.sade.viestintapalvelu.template.TemplateContent> result = new ArrayList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
@@ -523,6 +527,7 @@ public class TemplateServiceImpl implements TemplateService {
         if (content) {
             convertContent(template, searchTempl, criteria.getType());
         }
+        convertApplicationPeriods(template, searchTempl);
         searchTempl.setState(template.getState());
         return searchTempl;
     }
