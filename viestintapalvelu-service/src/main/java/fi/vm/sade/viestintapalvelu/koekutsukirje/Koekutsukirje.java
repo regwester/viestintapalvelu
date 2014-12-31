@@ -8,7 +8,7 @@ import org.apache.cxf.common.util.StringUtils;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 
 @ApiModel(value = "Koekutsukirjemallipohjaan sisällytettävät kirjekohtaiset tiedot")
 public class Koekutsukirje {

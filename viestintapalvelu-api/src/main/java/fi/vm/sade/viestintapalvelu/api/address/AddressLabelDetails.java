@@ -14,24 +14,31 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.letter.dto;
-
-import java.util.Map;
-
-import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.api.address.AddressLabelDetails;
+package fi.vm.sade.viestintapalvelu.api.address;
 
 /**
  * User: ratamaa
  * Date: 18.9.2014
- * Time: 14:50
+ * Time: 14:51
  */
-public interface LetterDetails {
-    AddressLabelDetails getAddressLabel();
+public interface AddressLabelDetails {
+    String getFirstName();
 
-    String getEmailAddress();
+    String getLastName();
 
-    String getLanguageCode();
+    String getAddressline();
 
-    Map<String, Object> getTemplateReplacements();
+    String getAddressline2();
+
+    String getAddressline3();
+
+    String getPostalCode();
+
+    String getCity();
+
+    String getRegion();
+
+    String getCountry();
+
+    String getCountryCode();
 }

@@ -30,7 +30,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Supplier;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.asiontitili.AsiointitiliService;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.*;
 import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
@@ -47,7 +47,6 @@ import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
-
 import static com.google.common.base.Optional.fromNullable;
 import static fi.vm.sade.viestintapalvelu.util.HetuPrinterUtil.clearHetu;
 

@@ -5,6 +5,8 @@ import java.util.List;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
+
 @ApiModel(value = "Joukko osoitteita tarratulostuksessa käytettävän dokumentin luontiin")
 public class AddressLabelBatch {
 	@ApiModelProperty(value = "Yhteen tarratulostuksessa käytettävään dokumenttiin lisättävät osoitteet", required=true)	

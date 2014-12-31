@@ -4,12 +4,12 @@ import org.glassfish.jersey.server.ResourceConfig;
 import org.junit.Test;
 
 import static org.assertj.core.api.Assertions.*;
-
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 
 import javax.ws.rs.client.Entity;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+
 import java.util.ArrayList;
 import java.util.List;
 

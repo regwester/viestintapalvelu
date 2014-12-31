@@ -26,8 +26,8 @@ import org.springframework.stereotype.Component;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabelDetails;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
-import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.model.*;

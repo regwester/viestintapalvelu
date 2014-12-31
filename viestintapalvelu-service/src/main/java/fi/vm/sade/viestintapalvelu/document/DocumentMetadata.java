@@ -1,6 +1,6 @@
 package fi.vm.sade.viestintapalvelu.document;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 
 public class DocumentMetadata {
     private AddressLabel addressLabel;

@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.address;
 
 import org.apache.commons.lang.StringEscapeUtils;
 
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
+
 public class HtmlAddressLabelDecorator extends AddressLabelDecorator {
 
     public HtmlAddressLabelDecorator(AddressLabel addressLabel) {

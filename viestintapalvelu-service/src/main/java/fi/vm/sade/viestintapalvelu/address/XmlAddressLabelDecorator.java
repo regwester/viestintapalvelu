@@ -1,6 +1,8 @@
 package fi.vm.sade.viestintapalvelu.address;
 
 import fi.vm.sade.viestintapalvelu.IPostCountryCodes;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
+
 import org.apache.commons.lang.StringEscapeUtils;
 
 public class XmlAddressLabelDecorator extends AddressLabelDecorator {

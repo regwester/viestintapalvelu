@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.address;
 
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
+
 public abstract class AddressLabelDecorator {
 
     protected AddressLabel decoratedLabel;

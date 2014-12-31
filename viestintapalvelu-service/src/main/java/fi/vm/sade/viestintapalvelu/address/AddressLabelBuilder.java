@@ -17,6 +17,7 @@ import com.google.common.base.Function;
 import com.google.common.collect.Lists;
 import com.lowagie.text.DocumentException;
 
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 
 @Service

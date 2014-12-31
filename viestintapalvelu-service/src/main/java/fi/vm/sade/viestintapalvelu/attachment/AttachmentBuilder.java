@@ -13,8 +13,8 @@ import org.springframework.stereotype.Service;
 
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 
 @Service

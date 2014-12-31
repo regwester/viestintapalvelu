@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
  *
  * This program is free software: Licensed under the EUPL, Version 1.1 or - as
@@ -13,25 +13,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
  * European Union Public Licence for more details.
  */
+package fi.vm.sade.viestintapalvelu.api.message;
 
-package fi.vm.sade.viestintapalvelu.letter.dto;
+import java.io.Serializable;
 
-import java.util.Map;
-
-import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
-import fi.vm.sade.viestintapalvelu.api.address.AddressLabelDetails;
-
-/**
- * User: ratamaa
- * Date: 18.9.2014
- * Time: 14:50
- */
-public interface LetterDetails {
-    AddressLabelDetails getAddressLabel();
-
-    String getEmailAddress();
-
-    String getLanguageCode();
-
-    Map<String, Object> getTemplateReplacements();
+public class AddressLabel implements Serializable {
+    
+   //TODO: Placeholder, move the AddressLabel from service to here.
 }

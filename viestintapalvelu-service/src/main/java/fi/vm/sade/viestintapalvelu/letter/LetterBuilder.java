@@ -18,9 +18,9 @@ import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
