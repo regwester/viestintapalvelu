@@ -17,6 +17,7 @@ package fi.vm.sade.viestintapalvelu.api.message;
 
 import java.io.Serializable;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
@@ -24,23 +25,26 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
  * @author risal1
  *
  */
+@JsonIgnoreProperties(ignoreUnknown = true)
 @ApiModel(value = "Viestin tila")
 public class MessageStatusResponse implements Serializable {
-    
+
+    private static final long serialVersionUID = 9067950805818927163L;
+
     public enum State {
         PROCESSED, PROCESSING, ERROR;
     }
-    
-    @ApiModelProperty(value = "Virheviesti")
-    public final String errorMessage;
     
     @ApiModelProperty(value = "tila")
     public final State state;
     
     @ApiModelProperty(value = "url mistä viestin tilaa voi kysellä")
     public final String statusUrl;
+    
+    @ApiModelProperty(value = "Virheviesti")
+    public final String errorMessage;
 
-    public MessageStatusResponse(String errorMessage, State state, String statusUrl) {
+    public MessageStatusResponse(State state, String errorMessage, String statusUrl) {
         this.errorMessage = errorMessage;
         this.state = state;
         this.statusUrl = statusUrl;
@@ -48,7 +52,7 @@ public class MessageStatusResponse implements Serializable {
 
     @Override
     public String toString() {
-        return "MessageStatusResponse [errorMessage=" + errorMessage + ", state=" + state + ", statusUrl=" + statusUrl + "]";
+        return "MessageStatusResponse [state=" + state + ", statusUrl=" + statusUrl + ", errorMessage=" + errorMessage + "]";
     }
-    
+
 }
