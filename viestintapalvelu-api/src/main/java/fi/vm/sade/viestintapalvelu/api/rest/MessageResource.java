@@ -21,9 +21,12 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 
+import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.api.message.MessageData;
 import fi.vm.sade.viestintapalvelu.api.message.MessageStatusResponse;
 
@@ -33,6 +36,7 @@ import fi.vm.sade.viestintapalvelu.api.message.MessageStatusResponse;
  */
 @Path("message")
 @Api(value = "/api/v1/message", description = "Resurssi viestien lähetykseen")
+@PreAuthorize("isAuthenticated()")
 public interface MessageResource {
 
     
@@ -40,6 +44,7 @@ public interface MessageResource {
     @Path("sendMessageViaAsiointiTiliOrEmail")
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
+    @PreAuthorize(Constants.ASIOINTITILI_CRUD)
     @ApiOperation(value = "Lähettää viestin ensisijaisesti käyttäen asiointitiliä", notes = "Jos asiointitiliä ei ole saatavana vastaanottajalle, lähetetään viesti sähköpostitse mikäli mahdollista",  response = MessageStatusResponse.class)
     public MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData);
 }
