@@ -36,7 +36,7 @@ public class MessageDataResource implements MessageResource {
     
     @Autowired
     private AsiointitiliService asiointitiliService;
-
+    
     private MessageToAsiointiTiliConverter asiointiliConverter = new MessageToAsiointiTiliConverter();
     
     /* (non-Javadoc)
@@ -46,6 +46,8 @@ public class MessageDataResource implements MessageResource {
     public MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData) {
         ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
         AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
+        //TODO: Additional checks
+        //TODO: email sending, how will we proceed? should we store something to db
         return null;
     }
 
