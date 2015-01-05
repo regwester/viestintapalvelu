@@ -47,7 +47,9 @@ public class MessageDataResource implements MessageResource {
         ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
         AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
         //TODO: Additional checks
-        //TODO: email sending, how will we proceed? should we store something to db
+        if (!wrapper.incompatibleReceivers.isEmpty()) {
+            //TODO: email sending, how will we proceed? should we store something to db
+        }
         return null;
     }
 
