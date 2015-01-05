@@ -15,22 +15,37 @@
  */
 package fi.vm.sade.viestintapalvelu.message;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+
 import fi.vm.sade.viestintapalvelu.api.message.MessageData;
 import fi.vm.sade.viestintapalvelu.api.message.MessageStatusResponse;
 import fi.vm.sade.viestintapalvelu.api.rest.MessageResource;
+import fi.vm.sade.viestintapalvelu.asiontitili.AsiointitiliService;
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
+import fi.vm.sade.viestintapalvelu.message.conversion.ConvertedMessageWrapper;
+import fi.vm.sade.viestintapalvelu.message.conversion.MessageToAsiointiTiliConverter;
 
 /**
  * @author risal1
  *
  */
+@Component
 public class MessageDataResource implements MessageResource {
+    
+    @Autowired
+    private AsiointitiliService asiointitiliService;
 
+    private MessageToAsiointiTiliConverter asiointiliConverter = new MessageToAsiointiTiliConverter();
+    
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.api.rest.MessageResource#sendMessageViaAsiointiTiliOrEmail(fi.vm.sade.viestintapalvelu.api.message.MessageData)
      */
     @Override
     public MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData) {
-        // TODO Auto-generated method stub
+        ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
+        AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
         return null;
     }
 

@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
@@ -36,7 +35,6 @@ import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
  * @author risal1
  *
  */
-@Component
 public class MessageToAsiointiTiliConverter implements MessageDataConverter<MessageData, AsiointitiliSendBatchDto> {
 
     @Override
