@@ -15,13 +15,23 @@
  */
 package fi.vm.sade.viestintapalvelu.message.conversion;
 
+import java.util.List;
+
+import fi.vm.sade.viestintapalvelu.api.message.Receiver;
+
 /**
  * @author risal1
- * @param <T>
  *
  */
-public interface MessageDataConverter<MessageData, T> {
-    
-    ConvertedMessageWrapper<T> convert(MessageData data);
+public class ConvertedMessageWrapper<T> {
 
+    public final T wrapped;
+    
+    public final List<Receiver> incompatibleReceivers;
+
+    public ConvertedMessageWrapper(T wrapped, List<Receiver> incompatibleReceivers) {
+        this.wrapped = wrapped;
+        this.incompatibleReceivers = incompatibleReceivers;
+    }
+    
 }

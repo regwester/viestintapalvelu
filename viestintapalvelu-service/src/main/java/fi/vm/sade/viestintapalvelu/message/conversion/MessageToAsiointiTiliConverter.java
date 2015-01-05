@@ -15,11 +15,16 @@
  */
 package fi.vm.sade.viestintapalvelu.message.conversion;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.viestintapalvelu.api.message.MessageData;
@@ -35,14 +40,32 @@ import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
 public class MessageToAsiointiTiliConverter implements MessageDataConverter<MessageData, AsiointitiliSendBatchDto> {
 
     @Override
-    public AsiointitiliSendBatchDto convert(MessageData data) {
+    public ConvertedMessageWrapper<AsiointitiliSendBatchDto> convert(MessageData data) {
         AsiointitiliSendBatchDto batch = new AsiointitiliSendBatchDto();
         batch.setTemplateName(data.templateName);
         batch.setTemplateReplacements(data.commonReplacements);
         batch.setLanguageCode(data.language);
-        batch.setMessages(convertMessages(data.receivers));
+        List<Receiver> incompatibleReceivers = filterIncompatibleReceivers(data);
+        batch.setMessages(convertMessages(filterCompatibleReceivers(data, incompatibleReceivers)));
         //TODO optional fields? are they necessary to convert here?
-        return batch;
+        return new ConvertedMessageWrapper<AsiointitiliSendBatchDto>(batch, incompatibleReceivers);
+    }
+
+    private List<Receiver> filterCompatibleReceivers(MessageData data, List<Receiver> incompatibleReceivers) {
+        List<Receiver> receiversToProcess = new ArrayList<>(data.receivers);
+        receiversToProcess.removeAll(incompatibleReceivers);
+        return receiversToProcess;
+    }
+
+    private ImmutableList<Receiver> filterIncompatibleReceivers(MessageData data) {
+        return ImmutableList.copyOf(Iterables.filter(data.receivers, new Predicate<Receiver>() {
+
+            @Override
+            public boolean apply(Receiver input) {
+                return StringUtils.isBlank(input.hetu);
+            }
+
+        }));
     }
 
     private List<AsiointitiliMessageDto> convertMessages(List<Receiver> receivers) {

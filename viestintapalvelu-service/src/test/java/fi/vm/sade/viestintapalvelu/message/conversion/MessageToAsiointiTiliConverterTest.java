@@ -7,16 +7,15 @@ import java.util.List;
 import org.junit.Test;
 
 import com.google.common.base.Predicate;
-import com.google.common.collect.Collections2;
 import com.google.common.collect.Iterables;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.api.message.MessageData;
 import fi.vm.sade.viestintapalvelu.api.message.Receiver;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliMessageDto;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
 public class MessageToAsiointiTiliConverterTest {
     
@@ -25,7 +24,15 @@ public class MessageToAsiointiTiliConverterTest {
     @Test
     public void convertsToAsiointiTiliSendBatchDto() {
         MessageData message = givenMessageData();
-        assertBatch(message, converter.convert(message));
+        assertBatch(message, converter.convert(message).wrapped);
+    }
+    
+    @Test
+    public void addsReceiversWithoutHetuToIncompatibles() {
+        Receiver receiver = givenReceiver("");
+        ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = converter.convert(givenMessageData(Arrays.asList(receiver)));
+        assertTrue(wrapper.incompatibleReceivers.contains(receiver));
+        assertTrue(wrapper.wrapped.getMessages().isEmpty());
     }
 
     private void assertBatch(MessageData message, AsiointitiliSendBatchDto batch) {
@@ -50,7 +57,14 @@ public class MessageToAsiointiTiliConverterTest {
     }
 
     private MessageData givenMessageData() {
-        Receiver receiver = new Receiver("test@test.com", new AddressLabel(), new HashMap<String, Object>(), "010101-123N");
-        return new MessageData("templateName", "FI", Arrays.asList(receiver), new HashMap<String, Object>());
+        return givenMessageData(Arrays.asList(givenReceiver("010101-123N")));
+    }
+    
+    private MessageData givenMessageData(List<Receiver> receivers) {
+        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>());
+    }
+
+    private Receiver givenReceiver(String ssn) {
+        return new Receiver("test@test.com", new AddressLabel(), new HashMap<String, Object>(), ssn);
     }
 }
