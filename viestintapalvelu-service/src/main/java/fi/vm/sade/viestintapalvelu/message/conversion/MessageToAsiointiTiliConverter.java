@@ -75,7 +75,7 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
                 dto.setAddressLabel(input.addressLabel);
                 dto.setTemplateReplacements(input.replacements);
                 dto.setReceiverHetu(input.ssn);
-                //TODO: dto.setLanguageCode()?
+                dto.setLanguageCode(input.language);
                 return dto;
             }
             
