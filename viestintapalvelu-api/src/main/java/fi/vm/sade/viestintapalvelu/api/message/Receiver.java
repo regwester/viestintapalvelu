@@ -44,18 +44,26 @@ public class Receiver implements Serializable {
     public final Map<String,Object> replacements;
     
     @ApiModelProperty(value = "Vastaanottajan henkilöturvatunnus", required = false)
-    public final String hetu;
+    public final String ssn;
+    
+    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
+    public final String language;
 
-    public Receiver(String email, AddressLabel addressLabel, Map<String, Object> replacements, String hetu) {
+    public Receiver(String email, String language, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
         this.email = email;
+        this.language = language;
         this.addressLabel = addressLabel;
         this.replacements = replacements;
-        this.hetu = hetu;
+        this.ssn = ssn;
+    }
+    
+    public Receiver(String email, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
+        this(email, "FI", addressLabel, replacements, ssn);
     }
 
     @Override
     public String toString() {
-        return "Receiver [email=" + email + ", addressLabel=" + addressLabel + ", replacements=" + replacements + ", hetu=" + hetu + "]";
+        return "Receiver [email=" + email + ", addressLabel=" + addressLabel + ", replacements=" + replacements + ", hetu=" + ssn + "]";
     }
     
 }

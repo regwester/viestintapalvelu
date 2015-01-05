@@ -60,7 +60,7 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
 
             @Override
             public boolean apply(Receiver input) {
-                return StringUtils.isBlank(input.hetu);
+                return StringUtils.isBlank(input.ssn);
             }
 
         }));
@@ -74,7 +74,7 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
                 AsiointitiliMessageDto dto = new AsiointitiliMessageDto();
                 dto.setAddressLabel(input.addressLabel);
                 dto.setTemplateReplacements(input.replacements);
-                dto.setReceiverHetu(input.hetu);
+                dto.setReceiverHetu(input.ssn);
                 //TODO: dto.setLanguageCode()?
                 return dto;
             }

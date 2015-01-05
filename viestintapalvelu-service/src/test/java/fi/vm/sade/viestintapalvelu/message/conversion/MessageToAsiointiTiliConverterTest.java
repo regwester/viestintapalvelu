@@ -48,7 +48,7 @@ public class MessageToAsiointiTiliConverterTest {
 
                 @Override
                 public boolean apply(AsiointitiliMessageDto input) {
-                    return receiver.addressLabel.equals(input.getAddressLabel()) && receiver.hetu.equals(input.getReceiverHetu()) && receiver.replacements.equals(input.getTemplateReplacements());
+                    return receiver.addressLabel.equals(input.getAddressLabel()) && receiver.ssn.equals(input.getReceiverHetu()) && receiver.replacements.equals(input.getTemplateReplacements());
                 }
                 
             }).isPresent());
