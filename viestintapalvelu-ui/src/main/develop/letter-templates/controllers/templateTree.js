@@ -50,11 +50,7 @@ angular.module('letter-templates')
             }
         };
 
-        $scope.my_tree_handler = function(branch){
-            console.log("click handler");
-            if(branch["isLetter"]) {
-                //TODO handle letter opening here
-            }
+        $scope.my_tree_handler = function(branch, event){
         };
 
         $scope.updateTreeData = function(applicationPeriod) {

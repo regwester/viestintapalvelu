@@ -4,7 +4,6 @@
 
 (function() {
     var module;
-
     module = angular.module('treeGrid', []);
     module.directive('treeGrid', [
         '$timeout', function($timeout) {
@@ -24,11 +23,30 @@
                             <tbody>\
                             <tr ng-repeat=\"row in tree_rows | filter:{visible:true} track by row.branch.uid\"\
                                 ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\
-                                <td class=\"text-primary\"><a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\"\
-                                           ng-click=\"row.branch.expanded = !row.branch.expanded\"\
-                                           class=\"indented tree-icon\"></i>\
-                                    </a><span class=\"indented tree-label\" ng-click=\"user_clicks_branch(row.branch)\">\
-                                      {{row.branch[expandingProperty]}}</span>\
+                                <!--\
+                                <td>\
+                                <ul class=\"dropdown-menu\" role=\"menu\">\
+                                    <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(letterTemplate.id)\" ng-disabled=\"letterTemplate.state !== 'luonnos'\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
+                                    <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(letterTemplate.id, letterTemplate.state)\" ng-disabled=\"letterTemplate.state !== 'luonnos'\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
+                                    <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(letterTemplate.id, letterTemplate.state)\" ng-disabled=\"letterTemplate.state === 'suljettu'\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
+                                </ul>\
+                                </td>\
+                                -->\
+                                <td class=\"text-primary\">\
+                                    <a ng-click=\"user_clicks_branch(row.branch, $event)\">\
+                                        <i ng-class=\"row.tree_icon\" ng-click=\"row.branch.expanded = !row.branch.expanded\" class=\"indented tree-icon\"></i>\
+                                    </a>\
+                                    <span class=\"indented tree-label\" ng-click=\"user_clicks_branch(row.branch, $event)\">\
+                                        <div auth=\"crudOph\" class=\"btn-group dropdown\">\
+                                            <input type=\"button\" class=\"dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\" style=\"display: none\"/>\
+                                            <ul class=\"dropdown-menu\" role=\"menu\">\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"console.log('button1')\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"console.log('button2')\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"console.log('button3')\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
+                                            </ul>\
+                                        </div>\
+                                        {{row.branch[expandingProperty]}}\
+                                    </span>\
                                 </td>\
                                 <td ng-repeat=\"col in colDefinitions\">{{row.branch[col.field]}}</td>\
                             </tr>\
@@ -132,7 +150,7 @@
                         return _results;
                     };
                     selected_branch = null;
-                    select_branch = function(branch) {
+                    select_branch = function(branch, event) {
                         if (!branch) {
                             if (selected_branch != null) {
                                 selected_branch.selected = false;
@@ -149,22 +167,31 @@
                             expand_all_parents(branch);
                             if (branch.onSelect != null) {
                                 return $timeout(function() {
-                                    return branch.onSelect(branch);
+                                    return branch.onSelect(branch, event);
                                 });
                             } else {
                                 if (scope.onSelect != null) {
                                     return $timeout(function() {
                                         return scope.onSelect({
-                                            branch: branch
+                                            branch: branch,
+                                            event: event
                                         });
                                     });
                                 }
                             }
                         }
                     };
-                    scope.user_clicks_branch = function(branch) {
+                    scope.user_clicks_branch = function(branch, event) {
+                        console.log(branch);
+                        if(branch.children.length == 0) {
+                            console.log(event);
+                            var e = $(event.target).parent().siblings().children().children('.dropdown-toggle');
+                            return $timeout(function() {
+                                e.click();
+                            });
+                        }
                         if (branch !== selected_branch) {
-                            return select_branch(branch);
+                            return select_branch(branch, event);
                         }
                     };
                     get_parent = function(child) {
@@ -552,5 +579,5 @@
             };
         }
     ]);
-
 }).call(this);
+
