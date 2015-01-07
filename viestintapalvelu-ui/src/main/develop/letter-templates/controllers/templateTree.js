@@ -35,7 +35,6 @@ angular.module('letter-templates')
             templateTabActive = true;
             draftTabActive = false;
             if(!templatesUpdated && $scope.selectedApplicationPeriod !== selectAppPeriod ) {
-                console.log("updating templates");
                 $scope.updateTreeData($scope.selectedApplicationPeriod);
             }
         };
@@ -44,7 +43,6 @@ angular.module('letter-templates')
             templateTabActive = false;
             draftTabActive = true;
             if(!draftsUpdated && $scope.selectedApplicationPeriod !== selectAppPeriod) {
-                console.log("updating drafts");
                 $scope.updateTreeData($scope.selectedApplicationPeriod);
 
             }

@@ -390,9 +390,13 @@
                                     }
                                 }
                             };
-                            tree.add_branch = function(parent, new_branch) {
+                            tree.add_branch = function(parent, new_branch, unshift) {
                                 if (parent != null) {
-                                    parent.children.push(new_branch);
+                                    if(unshift) {
+                                        parent.children.unshift(new_branch);
+                                    } else {
+                                        parent.children.push(new_branch);
+                                    }
                                     parent.expanded = true;
                                 } else {
                                     scope.treeData.push(new_branch);

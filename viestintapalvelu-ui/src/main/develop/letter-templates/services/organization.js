@@ -72,7 +72,7 @@ angular.module('letter-templates')
                     letterRow["isLetter"] = true;
                     var parent = oidMap[orgOid];
 
-                    var newRow = control.add_branch(parent, letterRow);
+                    var newRow = control.add_branch(parent, letterRow, true);
                     control.expand_all_parents(parent);
                 });
 
