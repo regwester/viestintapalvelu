@@ -6,7 +6,13 @@ angular.module('letter-templates')
 
             // Default values
             $scope.editorOptions = Global.getEditorOptions();
-            $scope.template = TemplateService.getTemplateInfo();
+            $scope.template = TemplateService.getTemplate();
+            $scope.templateContent = TemplateService.getTemplateContent()
+                .success(function(data) {
+                    console.log(data);
+                }).error(function(error) {
+                    console.log(error);
+                });
 
             /*
             $scope.template.content = [

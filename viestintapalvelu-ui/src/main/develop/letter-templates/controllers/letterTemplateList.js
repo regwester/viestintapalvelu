@@ -5,6 +5,7 @@ angular.module('letter-templates')
         function ($scope, $modal, $filter, $state, TemplateService) {
 
             $scope.radioSelection = 'default';
+            $scope.treeTemplateId = -1;
 
             $scope.fetchDefaultTemplates = function () {
                 TemplateService.getDefaultTemplates().success(function (data) {
@@ -13,6 +14,10 @@ angular.module('letter-templates')
             };
 
             $scope.fetchDefaultTemplates();
+
+            $scope.$on("templateIdChanged", function(event, args) {
+                $scope.treeTemplateId = args;
+            });
 
             TemplateService.getApplicationTargets().then(function (data) {
                 var list = [];
@@ -32,6 +37,7 @@ angular.module('letter-templates')
 
                     });
                 TemplateService.setApplicationTarget(applicationTarget);
+                TemplateService.setTarget(applicationTarget);
             }
 
             $scope.getTemplates = function () {

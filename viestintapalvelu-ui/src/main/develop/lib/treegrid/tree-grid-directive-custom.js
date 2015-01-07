@@ -6,7 +6,7 @@
     var module;
     module = angular.module('treeGrid', []);
     module.directive('treeGrid', [
-        '$timeout', function($timeout) {
+        '$timeout', '$rootScope', function($timeout, $rootScope) {
             return {
                 restrict: 'E',
                 //templateUrl:'tree-grid-template.html',
@@ -23,26 +23,17 @@
                             <tbody>\
                             <tr ng-repeat=\"row in tree_rows | filter:{visible:true} track by row.branch.uid\"\
                                 ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\
-                                <!--\
-                                <td>\
-                                <ul class=\"dropdown-menu\" role=\"menu\">\
-                                    <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(letterTemplate.id)\" ng-disabled=\"letterTemplate.state !== 'luonnos'\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
-                                    <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(letterTemplate.id, letterTemplate.state)\" ng-disabled=\"letterTemplate.state !== 'luonnos'\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
-                                    <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(letterTemplate.id, letterTemplate.state)\" ng-disabled=\"letterTemplate.state === 'suljettu'\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
-                                </ul>\
-                                </td>\
-                                -->\
                                 <td class=\"text-primary\">\
                                     <a ng-click=\"user_clicks_branch(row.branch, $event)\">\
                                         <i ng-class=\"row.tree_icon\" ng-click=\"row.branch.expanded = !row.branch.expanded\" class=\"indented tree-icon\"></i>\
                                     </a>\
                                     <span class=\"indented tree-label\" ng-click=\"user_clicks_branch(row.branch, $event)\">\
                                         <div auth=\"crudOph\" class=\"btn-group dropdown\">\
-                                            <input type=\"button\" class=\"dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\" style=\"display: none\"/>\
-                                            <ul class=\"dropdown-menu\" role=\"menu\">\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"console.log('button1')\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"console.log('button2')\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"console.log('button3')\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
+                                            <input type=\"button\" class=\"dropdown-toggle tree-grid-dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\"/>\
+                                            <ul class=\"dropdown-menu tree-grid-dropdown\" role=\"menu\">\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
                                             </ul>\
                                         </div>\
                                         {{row.branch[expandingProperty]}}\
@@ -60,7 +51,10 @@
                     expandOn:'=',
                     onSelect: '&',
                     initialSelection: '@',
-                    treeControl: '='
+                    treeControl: '=',
+                    editTemplateHandler: '&',
+                    publishTemplateHandler: '&',
+                    removeTemplateHandler: '&'
                 },
                 link: function(scope, element, attrs) {
                     var error, expandingProperty, expand_all_parents, expand_level, for_all_ancestors, for_each_branch, get_parent, n, on_treeData_change, select_branch, selected_branch, tree;
@@ -69,7 +63,6 @@
                         debugger;
                         return void 0;
                     };
-
                     if (attrs.iconExpand == null) {
                         attrs.iconExpand = 'icon-plus  glyphicon glyphicon-plus  fa fa-plus';
                     }
@@ -181,16 +174,34 @@
                             }
                         }
                     };
+                    scope.editTemplate = function(branch, event) {
+                        $rootScope.$broadcast("templateIdChanged", branch.id)
+                        scope.editTemplateHandler(branch.templateId);
+
+                    };
+                    scope.publishTemplate = function(branch, event) {
+                        $rootScope.$broadcast("templateIdChanged", branch.id)
+                        scope.publishTemplateHandler(branch.templateId);
+                    };
+                    scope.removeTemplate = function(branch, event) {
+                        $rootScope.$broadcast("templateIdChanged", branch.id);
+                        scope.removeTemplateHandler(branch.templateId);
+                    };
+
                     scope.user_clicks_branch = function(branch, event) {
-                        console.log(branch);
-                        if(branch.children.length == 0) {
-                            console.log(event);
-                            var e = $(event.target).parent().siblings().children().children('.dropdown-toggle');
+                        if(event.originalEvent && branch.children.length == 0) {
+                            var e = null;
+
+                            //different selectors for handling clicking of either the icon or the row text
+                            if(event.target.tagName === 'SPAN') {
+                                e = $(event.target).children().children('.dropdown-toggle');
+                            } else {
+                                e = $(event.target).parent().siblings().children().children('.dropdown-toggle');
+                            }
                             return $timeout(function() {
                                 e.click();
                             });
-                        }
-                        if (branch !== selected_branch) {
+                        } else if (branch !== selected_branch) {
                             return select_branch(branch, event);
                         }
                     };
