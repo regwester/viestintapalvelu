@@ -6,7 +6,8 @@ angular.module('letter-templates')
         var serviceUrl = '/viestintapalvelu/api/v1/',
             templateBaseUrl = serviceUrl + 'template/',
             selectedApplicationTarget,
-            deferred = $q.defer();
+            deferred = $q.defer(),
+            templateInfo;
 
         $http.get(serviceUrl + 'options/hakus').success(function(data) {
             deferred.resolve(data);
@@ -30,6 +31,12 @@ angular.module('letter-templates')
             },
             setApplicationTarget: function(value) {
                 selectedApplicationTarget = value;
+            },
+            setTemplateInfo: function(value) {
+                templateInfo = value;
+            },
+            getTemplateInfo: function() {
+                return templateInfo;
             },
             saveTemplate: function(template) {
                 return $http.post(templateBaseUrl + 'insert/', template);

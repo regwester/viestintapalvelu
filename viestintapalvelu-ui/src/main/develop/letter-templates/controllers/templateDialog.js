@@ -4,7 +4,12 @@ angular.module('letter-templates')
     .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state',
         function($scope, $modalInstance, TemplateService, $state) {
 
+            //Default values
             $scope.applicationTarget = TemplateService.getApplicationTarget();
+            $scope.languageSelection = 'FI';
+            //$scope.applicationTypeSelection = '';
+            //$scope.baseTemplate = '';
+
             TemplateService.getApplicationTargets().then(function(data) {
                 var list = [];
                 for(var i = 0, max = data.length; i < max; i++){
@@ -23,9 +28,20 @@ angular.module('letter-templates')
                 {value: 'acceptance', text: 'Hyväksymiskirje'},
                 {value: 'rejection', text: 'Jälkiohjauskirje'}];
 
+            function getTemplate() {
+                return {
+                    name: $scope.applicationTarget.name,
+                    language: $scope.languageSelection,
+                    type: $scope.applicationTypeSelection,
+                    oid: $scope.applicationTarget.value,
+                    base: $scope.baseTemplate
+                }
+            }
+
             $scope.confirm = function() {
                 $modalInstance.close();
-                $state.go('letter-templates_create', {language: $scope.languageSelection, applicationType: $scope.applicationTypeSelection});
+                TemplateService.setTemplateInfo(getTemplate());
+                $state.go('letter-templates.create');
             };
 
             $scope.cancel = function () {
