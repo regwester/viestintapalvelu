@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.api.resource;
 
 import java.io.IOException;
@@ -41,10 +56,12 @@ import org.springframework.stereotype.Component;
 @Api(value = "/email", description = "Ryhm&auml;s&auml;hk&oumlpostin l&auml;hett&auml;minen")
 public interface EmailResource {
     /**
-     * Lisää ryhmäshköpostin liitteen 
+     * Lisää ryhmäshköpostin liitteen
      * 
-     * @param request Http pyyntö
-     * @param response Http vastaus
+     * @param request
+     *            Http pyyntö
+     * @param response
+     *            Http vastaus
      * @return Lisätyn liitteen tiedot
      * @throws IOException
      * @throws URISyntaxException
@@ -55,15 +72,14 @@ public interface EmailResource {
     @Produces("text/plain")
     @Path("attachment")
     @PreAuthorize(SecurityConstants.SEND)
-    @ApiOperation(value = "Lisää käyttäjän valitsemat liitetiedostot tietokantaan", 
-        notes = "Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä",  
-        response = String.class)
-    @ApiResponses({@ApiResponse(code = 400, message = "Not a multipart request")})
-    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)	
-        throws IOException, URISyntaxException, ServletException ;
+    @ApiOperation(value = "Lisää käyttäjän valitsemat liitetiedostot tietokantaan", notes = "Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä", response = String.class)
+    @ApiResponses({ @ApiResponse(code = 400, message = "Not a multipart request") })
+    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException, URISyntaxException,
+            ServletException;
 
     /**
-     * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen käyttöliittymälle
+     * Alustaa ryhmäsähköpostilähetyksen palauttamalla OK-vastauksen
+     * käyttöliittymälle
      * 
      * @return OK-vastaus
      */
@@ -73,28 +89,27 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa OK-vastauksen käyttöliittymälle")
     public Response ok();
-    
+
     /**
      * Lähettää ryhmäsähköpostin vastaanottajille ilman alaviitettä
      *
-     * @param emailData Lähetettävän ryhmäsähköpostin tiedot
+     * @param emailData
+     *            Lähetettävän ryhmäsähköpostin tiedot
      * @return Lähetettävän ryhmäsähköpostiviestin tunnus
      */
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @PreAuthorize(SecurityConstants.SEND)
-    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", 
-        notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
-    @ApiResponses({@ApiResponse(code = 500, 
-        message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi")})
-    public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true)
-        EmailData emailData) throws Exception;
+    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
+    @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
+    public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot
      * 
-     * @param sendId Ryhmäsähköpostin tunnus
+     * @param sendId
+     *            Ryhmäsähköpostin tunnus
      * @return Lähetettävän ryhmäsähköpostin tilannetiedot
      */
     @POST
@@ -108,7 +123,8 @@ public interface EmailResource {
     /**
      * Pyytää tiedot raportoittavista ryhmäsähköposteista
      * 
-     * @param sendId Ryhmäsähköpostin tunnus
+     * @param sendId
+     *            Ryhmäsähköpostin tunnus
      * @return Raportoitavan ryhmäsähköpostin tiedot
      */
     @POST
@@ -117,7 +133,7 @@ public interface EmailResource {
     @Path("result")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa lähetetyn ryhmäsähköpostin raportin", response = ReportedMessageDTO.class)
-    @ApiResponses({@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
+    @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirhe") })
     public Response getResult(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) String sendId);
 
     @GET
@@ -125,14 +141,13 @@ public interface EmailResource {
     @Path("count")
     @PreAuthorize(SecurityConstants.READ)
     @ApiOperation(value = "Palauttaa sähköpostien lukumäärän")
-    @ApiResponses({@ApiResponse(code = 500, message = "Internal service error")})
+    @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error") })
     public Response getCount() throws Exception;
-    
+
     @POST
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON)
     @Path("preview")
-    public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true)
-        EmailData emailData) throws Exception;
-    
+    public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
+
 }

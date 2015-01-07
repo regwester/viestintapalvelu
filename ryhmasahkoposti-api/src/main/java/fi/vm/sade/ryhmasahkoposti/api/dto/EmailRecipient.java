@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.ArrayList;
@@ -37,7 +52,7 @@ public class EmailRecipient implements AttachmentContainer {
     }
 
     public EmailRecipient() {
-	super();
+        super();
     }
 
     public EmailRecipient(String oid) {
@@ -59,9 +74,7 @@ public class EmailRecipient implements AttachmentContainer {
         this.languageCode = languageCode;
     }
 
-    public EmailRecipient(String oid, String oidType, String email,
-                          String languageCode,
-                          List<ReportedRecipientReplacementDTO> recipientReplacements) {
+    public EmailRecipient(String oid, String oidType, String email, String languageCode, List<ReportedRecipientReplacementDTO> recipientReplacements) {
         super();
         this.oid = oid;
         this.oidType = oidType;
@@ -90,17 +103,10 @@ public class EmailRecipient implements AttachmentContainer {
         this.email = email;
     }
 
-    
-    /**
-     * @return the recipientReplacements
-     */
     public List<ReportedRecipientReplacementDTO> getRecipientReplacements() {
         return recipientReplacements;
     }
 
-    /**
-     * @param recipientReplacements the recipientReplacements to set
-     */
     public void setRecipientReplacements(List<ReportedRecipientReplacementDTO> recipientReplacements) {
         this.recipientReplacements = recipientReplacements;
     }
@@ -110,7 +116,7 @@ public class EmailRecipient implements AttachmentContainer {
     }
 
     public void setName(String name) {
-       this.name = name;
+        this.name = name;
     }
 
     public List<EmailAttachment> getAttachments() {
@@ -137,14 +143,9 @@ public class EmailRecipient implements AttachmentContainer {
         this.attachInfo = attachInfo;
     }
 
-    /* (non-Javadoc)
-                 * @see java.lang.Object#toString()
-                 */
     @Override
     public String toString() {
-        return "EmailRecipient [oid=" + oid + ", oidType=" + oidType
-                + ", email=" + email + ", languageCode=" + languageCode
-                + ", name=" + name
+        return "EmailRecipient [oid=" + oid + ", oidType=" + oidType + ", email=" + email + ", languageCode=" + languageCode + ", name=" + name
                 + ", recipientReplacements=" + recipientReplacements + "]";
     }
 }

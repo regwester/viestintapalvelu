@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2012 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.Date;
@@ -45,14 +60,13 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
         return name;
     }
 
-
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
     }
-
 
     /**
      * @return the order
@@ -61,14 +75,13 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
         return order;
     }
 
-
     /**
-     * @param order the order to set
+     * @param order
+     *            the order to set
      */
     public void setOrder(int order) {
         this.order = order;
     }
-
 
     /**
      * @return the content
@@ -77,14 +90,13 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
         return content;
     }
 
-
     /**
-     * @param content the content to set
+     * @param content
+     *            the content to set
      */
     public void setContent(String content) {
         this.content = content;
     }
-
 
     /**
      * @return the contentType
@@ -93,14 +105,13 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
         return contentType;
     }
 
-
     /**
-     * @param contentType the contentType to set
+     * @param contentType
+     *            the contentType to set
      */
     public void setContentType(String contentType) {
         this.contentType = contentType;
     }
-
 
     /**
      * @return the timestamp
@@ -109,25 +120,19 @@ public class TemplateContentDTO extends BaseDTO implements Comparable<TemplateCo
         return timestamp;
     }
 
-
     /**
-     * @param timestamp the timestamp to set
+     * @param timestamp
+     *            the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
-
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "TemplateContentDTO [name=" + name + ", order=" + order
-                + ", content=" + content + ", contentType=" + contentType
-                + ", timestamp=" + timestamp + ", getId()=" + getId() + "]";
+        return "TemplateContentDTO [name=" + name + ", order=" + order + ", content=" + content + ", contentType=" + contentType + ", timestamp=" + timestamp
+                + ", getId()=" + getId() + "]";
     }
-
 
     /**
      * Compare
