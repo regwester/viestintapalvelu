@@ -37,6 +37,7 @@ angular.module('letter-templates')
 
                     });
                 TemplateService.setApplicationTarget(applicationTarget);
+                TemplateService.setTarget(applicationTarget);
             }
 
             $scope.getTemplates = function () {
