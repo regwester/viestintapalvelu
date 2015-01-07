@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -30,8 +45,8 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @Transactional(readOnly = true)
 public class ReportedMessageDAOTest {
     @Rule
@@ -78,8 +93,7 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageFoundByRecipientOID() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
         reportedRecipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(reportedRecipients);
@@ -94,8 +108,7 @@ public class ReportedMessageDAOTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(1 <= searchedReportedMessages.size());
@@ -104,8 +117,7 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageFoundByRecipientName() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
@@ -121,8 +133,7 @@ public class ReportedMessageDAOTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(1 <= searchedReportedMessages.size());
@@ -131,8 +142,7 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageFoundBySearchArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
@@ -148,8 +158,7 @@ public class ReportedMessageDAOTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(1 <= searchedReportedMessages.size());
@@ -158,8 +167,7 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageNotFoundBySearchCriteria() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
@@ -174,8 +182,7 @@ public class ReportedMessageDAOTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertTrue(searchedReportedMessages.size() == 0);
@@ -184,16 +191,15 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageFoundBySenderOidAndProcessWhenProcessIsNotNull() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
         reportedMessageDAO.insert(reportedMessage);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi", pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Hakuprosessi",
+                pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertEquals(searchedReportedMessages.size(), 1);
@@ -206,16 +212,14 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageFoundBySenderOidAndProcessWhenProcessIsNull() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
         reportedMessageDAO.insert(reportedMessage);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySenderOid("1.2.246.562.24.42645159413", pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySenderOid("1.2.246.562.24.42645159413", pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertEquals(searchedReportedMessages.size(), 1);
@@ -228,16 +232,15 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageNotFoundBySenderOidAndProcessWhenProcessIsNotNull() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
         reportedMessageDAO.insert(reportedMessage);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Osoitetietojarjestelma", pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Osoitetietojarjestelma",
+                pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertEquals(searchedReportedMessages.size(), 0);
@@ -246,16 +249,14 @@ public class ReportedMessageDAOTest {
     @Test
     public void testReportedMessageNotFoundBySenderOidAndProcessWhenProcessIsPartial() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-        ReportedRecipient reportedRecipient =
-                RaportointipalveluTestData.getReportedRecipient(reportedMessage);
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
         recipients.add(reportedRecipient);
         reportedMessage.setReportedRecipients(recipients);
         reportedMessageDAO.insert(reportedMessage);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
-        List<ReportedMessage> searchedReportedMessages =
-                reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Haku", pagingAndSorting);
+        List<ReportedMessage> searchedReportedMessages = reportedMessageDAO.findBySenderOidAndProcess("1.2.246.562.24.42645159413", "Haku", pagingAndSorting);
 
         assertNotNull(searchedReportedMessages);
         assertEquals(searchedReportedMessages.size(), 0);

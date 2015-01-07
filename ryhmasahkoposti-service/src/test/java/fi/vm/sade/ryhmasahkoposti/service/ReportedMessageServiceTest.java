@@ -1,7 +1,22 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.mockito.Matchers.any;
@@ -33,15 +48,14 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.service.impl.ReportedMessageServiceImpl;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @Transactional(readOnly = true)
 public class ReportedMessageServiceTest {
     @Rule
@@ -77,8 +91,7 @@ public class ReportedMessageServiceTest {
         List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
         reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 
-        when(mockedReportedMessageDAO.findByOrganizationOids(any(List.class),
-                any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
+        when(mockedReportedMessageDAO.findByOrganizationOids(any(List.class), any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
@@ -117,11 +130,9 @@ public class ReportedMessageServiceTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 
-        when(mockedReportedMessageDAO.findBySearchCriteria(
-                reportedMessageQuery, pagingAndSorting)).thenReturn(mockedReportedMessages);
+        when(mockedReportedMessageDAO.findBySearchCriteria(reportedMessageQuery, pagingAndSorting)).thenReturn(mockedReportedMessages);
 
-        List<ReportedMessage> reportedMessages =
-                reportedMessageService.getReportedMessages(reportedMessageQuery, pagingAndSorting);
+        List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(reportedMessageQuery, pagingAndSorting);
 
         assertNotNull(reportedMessages);
         assertNotEquals(0, reportedMessages.size());

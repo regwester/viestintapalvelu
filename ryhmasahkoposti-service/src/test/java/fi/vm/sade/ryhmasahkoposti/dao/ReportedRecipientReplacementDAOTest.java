@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import java.io.IOException;
@@ -30,8 +45,8 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @Transactional(readOnly = true)
 public class ReportedRecipientReplacementDAOTest {
 
@@ -64,8 +79,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         ReportedRecipient savedReportedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipientReplacement reportedRecipientReplacement =
-                RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
+        ReportedRecipientReplacement reportedRecipientReplacement = RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
 
         ReportedRecipientReplacement savedReportedRecipientReplacement = reportedRecipientReplacementDAO.insert(reportedRecipientReplacement);
 
@@ -83,8 +97,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         ReportedRecipient savedReportedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipientReplacement reportedRecipientReplacement =
-                RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
+        ReportedRecipientReplacement reportedRecipientReplacement = RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
         ReportedRecipientReplacement savedReportedRecipientReplacement = reportedRecipientReplacementDAO.insert(reportedRecipientReplacement);
 
         List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementDAO.findAll();
@@ -103,8 +116,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         ReportedRecipient savedReportedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipientReplacement reportedRecipientReplacement =
-                RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
+        ReportedRecipientReplacement reportedRecipientReplacement = RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
         ReportedRecipientReplacement savedReportedRecipientReplacement = reportedRecipientReplacementDAO.insert(reportedRecipientReplacement);
 
         Long id = savedReportedRecipientReplacement.getId();
@@ -124,12 +136,11 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         ReportedRecipient savedReportedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipientReplacement reportedRecipientReplacement =
-                RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
+        ReportedRecipientReplacement reportedRecipientReplacement = RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
         ReportedRecipientReplacement savedReportedRecipientReplacement = reportedRecipientReplacementDAO.insert(reportedRecipientReplacement);
 
-        List<ReportedRecipientReplacement> reportedRecipientReplacements =
-                reportedRecipientReplacementDAO.findReportedRecipientReplacements(savedReportedRecipient);
+        List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementDAO
+                .findReportedRecipientReplacements(savedReportedRecipient);
 
         assertNotNull(reportedRecipientReplacements);
         assertNotEquals(0, reportedRecipientReplacements.size());
@@ -145,8 +156,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         ReportedRecipient savedReportedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipientReplacement reportedRecipientReplacement =
-                RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
+        ReportedRecipientReplacement reportedRecipientReplacement = RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
         ReportedRecipientReplacement savedReportedRecipientReplacement = reportedRecipientReplacementDAO.insert(reportedRecipientReplacement);
 
         assertEquals(new Long(0), savedReportedRecipientReplacement.getVersion());
@@ -167,8 +177,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
         ReportedRecipient savedReportedRecipient = reportedRecipientDAO.insert(reportedRecipient);
 
-        ReportedRecipientReplacement reportedRecipientReplacement =
-                RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
+        ReportedRecipientReplacement reportedRecipientReplacement = RaportointipalveluTestData.getReportedRecipientReplacement(savedReportedRecipient);
         ReportedRecipientReplacement savedReportedRecipientReplacement = reportedRecipientReplacementDAO.insert(reportedRecipientReplacement);
 
         long id = savedReportedRecipientReplacement.getId();
@@ -195,7 +204,7 @@ public class ReportedRecipientReplacementDAOTest {
 
         ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
         replacementDTO.setName("testi");
-        replacementDTO.setValue(Arrays.asList("a","b","c"));
+        replacementDTO.setValue(Arrays.asList("a", "b", "c"));
         List<ReportedRecipientReplacement> replacements = replacementConverter.convert(recipient, Arrays.asList(replacementDTO));
         assertEquals(1, replacements.size());
         ReportedRecipientReplacement replacement = replacements.get(0);

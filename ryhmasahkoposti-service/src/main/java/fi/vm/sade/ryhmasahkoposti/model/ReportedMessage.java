@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.model;
 
 import fi.vm.sade.generic.model.BaseEntity;
@@ -211,7 +226,8 @@ public class ReportedMessage extends BaseEntity {
     }
 
     /**
-     * @param type the type to set
+     * @param type
+     *            the type to set
      */
     public void setType(String type) {
         this.type = type;
@@ -222,37 +238,23 @@ public class ReportedMessage extends BaseEntity {
      */
     public static final String TYPE_TEMPLATE = "T";
 
-
     /**
      * Email content is in email body
      */
     public static final String TYPE_EMAIL = "E";
 
-
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-        return "ReportedMessage{" +
-                "process='" + process + '\'' +
-                ", senderOid='" + senderOid + '\'' +
-                ", templateId='" + templateId + '\'' +
-                ", senderName='" + senderName + '\'' +
-                ", senderEmail='" + senderEmail + '\'' +
-                ", senderDisplayText='" + senderDisplayText + '\'' +
-                ", senderOrganizationOid='" + senderOrganizationOid + '\'' +
-                ", replyToEmail='" + replyToEmail + '\'' +
-                ", subject='" + subject + '\'' +
-                ", message='" + message + '\'' +
-                ", htmlMessage='" + htmlMessage + '\'' +
-                ", characterSet='" + characterSet + '\'' +
-                ", reportedRecipients=" + reportedRecipients +
-                ", reportedMessageAttachments=" + reportedMessageAttachments +
-                ", sendingStarted=" + sendingStarted +
-                ", sendingEnded=" + sendingEnded +
-                ", timestamp=" + timestamp +
-                ", type='" + type + '\'' +
-                '}';
+        return "ReportedMessage{" + "process='" + process + '\'' + ", senderOid='" + senderOid + '\'' + ", templateId='" + templateId + '\'' + ", senderName='"
+                + senderName + '\'' + ", senderEmail='" + senderEmail + '\'' + ", senderDisplayText='" + senderDisplayText + '\'' + ", senderOrganizationOid='"
+                + senderOrganizationOid + '\'' + ", replyToEmail='" + replyToEmail + '\'' + ", subject='" + subject + '\'' + ", message='" + message + '\''
+                + ", htmlMessage='" + htmlMessage + '\'' + ", characterSet='" + characterSet + '\'' + ", reportedRecipients=" + reportedRecipients
+                + ", reportedMessageAttachments=" + reportedMessageAttachments + ", sendingStarted=" + sendingStarted + ", sendingEnded=" + sendingEnded
+                + ", timestamp=" + timestamp + ", type='" + type + '\'' + '}';
     }
 }

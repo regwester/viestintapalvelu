@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.model;
 
 import java.util.Date;
@@ -20,47 +35,45 @@ import fi.vm.sade.generic.model.BaseEntity;
 @Table(name = "luonnos", schema = "public")
 @Entity
 public class DraftModel extends BaseEntity {
-    
+
     private static final long serialVersionUID = 1503120178623163485L;
-    
+
     @Column(name = "vastaanottajan_osoite")
     private String replyTo;
-    
+
     @Column(name = "aihe")
     private String subject;
-    
+
     @Column(name = "sisalto")
     private String body;
-    
+
     @Column(name = "html")
     private boolean isHtml;
-    
+
     @Column(name = "lahettajan_oid")
     private String userOid;
 
     @Column(name = "organisaation_oid")
     private String organizationOid;
-    
+
     @Column(name = "lahettajan_osoite")
     private String from;
-    
+
     @Column(name = "lahettajan_nimi")
     private String sender;
 
-    @ManyToMany(cascade=CascadeType.ALL, fetch=FetchType.EAGER)
-    @JoinTable(name="luonnos_liite",
-            joinColumns = @JoinColumn(name="luonnos_id", referencedColumnName="id"),
-            inverseJoinColumns = @JoinColumn(name="liite_id", referencedColumnName="id"))
+    @ManyToMany(cascade = CascadeType.ALL, fetch = FetchType.EAGER)
+    @JoinTable(name = "luonnos_liite", joinColumns = @JoinColumn(name = "luonnos_id", referencedColumnName = "id"), inverseJoinColumns = @JoinColumn(name = "liite_id", referencedColumnName = "id"))
     private Set<ReportedAttachment> attachments;
-    
+
     @Column(name = "tallennettu")
     @Temporal(TemporalType.TIMESTAMP)
     private Date createDate;
-    
-    public DraftModel(){
+
+    public DraftModel() {
         super();
     }
-    
+
     private DraftModel(Builder builder) {
         this.replyTo = builder.replyTo;
         this.subject = builder.subject;
@@ -72,9 +85,9 @@ public class DraftModel extends BaseEntity {
         this.createDate = builder.createDate;
         this.from = builder.from;
         this.sender = builder.sender;
-        
+
     }
-    
+
     public String getReplyTo() {
         return replyTo;
     }
@@ -107,7 +120,9 @@ public class DraftModel extends BaseEntity {
         this.userOid = userOid;
     }
 
-    public String getOrganizationOid() { return organizationOid; }
+    public String getOrganizationOid() {
+        return organizationOid;
+    }
 
     public void setOrganizationOid(String oid) {
         this.organizationOid = oid;
@@ -136,7 +151,7 @@ public class DraftModel extends BaseEntity {
     public void setCreateDate(Date createDate) {
         this.createDate = createDate;
     }
-    
+
     public String getSender() {
         return sender;
     }
@@ -168,72 +183,75 @@ public class DraftModel extends BaseEntity {
         private Date createDate;
         private String sender;
         private String from;
-        
-        public Builder() {}
-        
+
+        public Builder() {
+        }
+
         public Builder replyTo(String replyTo) {
             this.replyTo = replyTo;
             return this;
         }
+
         public Builder subject(String subject) {
             this.subject = subject;
             return this;
         }
+
         public Builder body(String body) {
             this.body = body;
             return this;
         }
+
         public Builder userOid(String oid) {
             this.userOid = oid;
             return this;
         }
+
         public Builder organizationOid(String oid) {
             this.organizationOid = oid;
             return this;
         }
+
         public Builder addAttachment(ReportedAttachment a) {
             this.attachments.add(a);
             return this;
         }
+
         public Builder setAttachments(Set<ReportedAttachment> attachments) {
             this.attachments = attachments;
             return this;
         }
+
         public Builder isHtml(boolean isHtml) {
             this.isHtml = isHtml;
             return this;
         }
+
         public Builder createDate(Date date) {
             this.createDate = date;
             return this;
         }
+
         public Builder sender(String address) {
             this.sender = address;
             return this;
         }
+
         public Builder from(String from) {
             this.from = from;
             return this;
         }
+
         public DraftModel build() {
             return new DraftModel(this);
         }
-        
+
     }
 
     @Override
     public String toString() {
-        return "DraftModel{" +
-                "replyTo='" + replyTo + '\'' +
-                ", subject='" + subject + '\'' +
-                ", body='" + body + '\'' +
-                ", isHtml=" + isHtml +
-                ", userOid='" + userOid + '\'' +
-                ", organizationOid='" + organizationOid + '\'' +
-                ", from='" + from + '\'' +
-                ", sender='" + sender + '\'' +
-                ", attachments=" + attachments +
-                ", createDate=" + createDate +
-                '}';
+        return "DraftModel{" + "replyTo='" + replyTo + '\'' + ", subject='" + subject + '\'' + ", body='" + body + '\'' + ", isHtml=" + isHtml + ", userOid='"
+                + userOid + '\'' + ", organizationOid='" + organizationOid + '\'' + ", from='" + from + '\'' + ", sender='" + sender + '\'' + ", attachments="
+                + attachments + ", createDate=" + createDate + '}';
     }
 }

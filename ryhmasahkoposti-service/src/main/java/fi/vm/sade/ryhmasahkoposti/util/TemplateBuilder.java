@@ -1,19 +1,47 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.util;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.List;
+import java.util.Map;
 
-import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
-import org.dom4j.DocumentException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
+import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
 
 @Component
@@ -31,6 +59,8 @@ public class TemplateBuilder {
 
     private static final int MAX_CACHE_ENTRIES = 10;
     private Map<String, TemplateDTO> templateCacheById = new LinkedHashMap<String, TemplateDTO>() {
+        private static final long serialVersionUID = 1L;
+
         @Override
         protected boolean removeEldestEntry(Map.Entry<String, TemplateDTO> eldest) {
             return size() > MAX_CACHE_ENTRIES;
@@ -233,6 +263,7 @@ public class TemplateBuilder {
         return writer.toString();
     }
 
+    @SuppressWarnings("unchecked")
     private Map<String, Object> createDataContext(TemplateDTO template, EmailRecipientMessage message) {
         Map<String, Object> replacements = new HashMap<String, Object>();
         for (ReplacementDTO r : template.getReplacements()) {
@@ -273,46 +304,5 @@ public class TemplateBuilder {
         
         data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         return data;
-    }
-    
-    /**
-     * Create page
-     * 
-     * @param template
-     * @param pageContent
-     * @return
-     * @throws FileNotFoundException
-     * @throws IOException
-     * @throws DocumentException
-     */
-    private String createPage(TemplateDTO template, EmailData emailData, byte[] pageContent) {
-        Map<String, Object> dataContext = new HashMap<String, Object>();
-        String styles = template.getStyles();
-
-        if (styles == null) {
-            styles = "";
-        }
-
-        dataContext.put("tyylit", styles);
-        dataContext.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-
-        if (emailData.getEmail().getBody() != null) {
-            dataContext.put("sisalto", InputCleaner.cleanHtmlDocument(emailData.getEmail().getBody()));
-        }
-
-        if (emailData.getEmail().getSourceRegister() != null) {
-            Map<String, Boolean> sourceRegisters = new HashMap<String, Boolean>();
-
-            for (SourceRegister sourceRegister : emailData.getEmail().getSourceRegister()) {
-                sourceRegisters.put(sourceRegister.getName(), true);
-            }
-
-            dataContext.put("sourceregisters", sourceRegisters);
-        }
-
-        StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(pageContent)));
-        return writer.toString();
-
     }
 }

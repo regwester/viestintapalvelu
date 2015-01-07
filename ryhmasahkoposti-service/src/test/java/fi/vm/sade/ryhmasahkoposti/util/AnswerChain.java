@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,19 +10,16 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.ryhmasahkoposti.util;
 
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 
 /**
- * User: ratamaa
- * Date: 16.9.2014
- * Time: 10:24
+ * User: ratamaa Date: 16.9.2014 Time: 10:24
  */
 public class AnswerChain<T> implements Answer<T> {
     private int callCount = 0;
@@ -69,19 +66,19 @@ public class AnswerChain<T> implements Answer<T> {
         this.delegate = answer;
     }
 
-    public static<Type> AnswerChain<Type> atFirst(Answer<Type> answer) {
+    public static <Type> AnswerChain<Type> atFirst(Answer<Type> answer) {
         return new AnswerChain<Type>(answer);
     }
 
-    public static<Type> AnswerChain<Type> atFirstReturn(Type answer) {
+    public static <Type> AnswerChain<Type> atFirstReturn(Type answer) {
         return atFirst(new ReturnAnswer<Type>(answer));
     }
 
-    public static<Void> AnswerChain<Void> atFirstDoNothing() {
+    public static <Void> AnswerChain<Void> atFirstDoNothing() {
         return atFirst(new DoNothingAnswer<Void>());
     }
 
-    public static<Type> AnswerChain<Type> atFirstThrow(Throwable exception) {
+    public static <Type> AnswerChain<Type> atFirstThrow(Throwable exception) {
         return atFirst(new ThrowAnswer<Type>(exception));
     }
 

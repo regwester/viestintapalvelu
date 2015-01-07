@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
 import java.util.*;
@@ -47,8 +62,8 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         JPAQuery findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy(pagingAndSorting));
         if (organizationOids != null) {
-            findAllReportedMessagesQuery = findAllReportedMessagesQuery
-                    .where(anyOf(splittedInExpression(organizationOids, reportedMessage.senderOrganizationOid)));
+            findAllReportedMessagesQuery = findAllReportedMessagesQuery.where(anyOf(splittedInExpression(organizationOids,
+                    reportedMessage.senderOrganizationOid)));
         }
 
         if (pagingAndSorting.getNumberOfRows() != 0) {
@@ -61,29 +76,25 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     @Override
     public List<ReportedMessage> findBySenderOid(String senderOid, PagingAndSortingDTO pagingAndSortingDTO) {
         JPAQuery query = new JPAQuery(getEntityManager());
-        return query.from(reportedMessage).where(reportedMessage.senderOid.eq(senderOid))
-                .orderBy(orderBy(pagingAndSortingDTO)).list(reportedMessage);
+        return query.from(reportedMessage).where(reportedMessage.senderOid.eq(senderOid)).orderBy(orderBy(pagingAndSortingDTO)).list(reportedMessage);
     }
 
     @Override
     public List<ReportedMessage> findBySenderOidAndProcess(String senderOid, String process, PagingAndSortingDTO pagingAndSorting) {
         JPAQuery query = new JPAQuery(getEntityManager());
-        return query.from(reportedMessage).where(reportedMessage.senderOid.eq(senderOid)
-                .and(reportedMessage.process.equalsIgnoreCase(process)))
+        return query.from(reportedMessage).where(reportedMessage.senderOid.eq(senderOid).and(reportedMessage.process.equalsIgnoreCase(process)))
                 .orderBy(orderBy(pagingAndSorting)).list(reportedMessage);
     }
 
     @Override
-    public List<ReportedMessage> findBySearchCriteria(ReportedMessageQueryDTO query,
-                                                      PagingAndSortingDTO pagingAndSorting) {
+    public List<ReportedMessage> findBySearchCriteria(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
         ReportedRecipientQueryDTO reportedRecipientQuery = query.getReportedRecipientQueryDTO();
 
         BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery);
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
 
-        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(
-                reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression).orderBy(orderBy).limit(
-                pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
+        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression)
+                .orderBy(orderBy).limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
 
         return findBySearchCriteria.list(reportedMessage);
     }
@@ -96,15 +107,13 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         EntityManager em = getEntityManager();
 
-        Map<String,Object> params = new HashMap<String, Object>();
-        String findNumberOfReportedMessages =
-                "SELECT COUNT(*) FROM ReportedMessage a ";
+        Map<String, Object> params = new HashMap<String, Object>();
+        String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a ";
         if (organizationOids != null) {
-            findNumberOfReportedMessages += " WHERE "
-                    + splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
+            findNumberOfReportedMessages += " WHERE " + splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
         }
         TypedQuery<Long> query = em.createQuery(findNumberOfReportedMessages, Long.class);
-        for (Map.Entry<String,Object> kv : params.entrySet()) {
+        for (Map.Entry<String, Object> kv : params.entrySet()) {
             query.setParameter(kv.getKey(), kv.getValue());
         }
 
@@ -114,9 +123,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     @Override
     public Long findNumberOfUserMessages(String userOid) {
         JPAQuery query = new JPAQuery(getEntityManager());
-        return query.from(reportedMessage)
-                .where(reportedMessage.senderOid.eq(userOid))
-                .count();
+        return query.from(reportedMessage).where(reportedMessage.senderOid.eq(userOid)).count();
     }
 
     @Override
@@ -125,8 +132,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery);
 
-        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(
-                reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression);
+        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression);
 
         return findBySearchCriteria.count();
     }
@@ -175,8 +181,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         return reportedMessage.sendingStarted.asc();
     }
 
-    protected BooleanBuilder whereExpressionForSearchCriteria(ReportedMessageQueryDTO query,
-                                                              ReportedRecipientQueryDTO reportedRecipientQuery) {
+    protected BooleanBuilder whereExpressionForSearchCriteria(ReportedMessageQueryDTO query, ReportedRecipientQueryDTO reportedRecipientQuery) {
         BooleanBuilder booleanBuilder = new BooleanBuilder();
 
         if (query.getOrganizationOids() != null) {
@@ -198,17 +203,14 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         }
 
         if (reportedRecipientQuery.getRecipientSocialSecurityID() != null) {
-            booleanBuilder.and(reportedRecipient.socialSecurityID.eq(
-                    reportedRecipientQuery.getRecipientSocialSecurityID()));
+            booleanBuilder.and(reportedRecipient.socialSecurityID.eq(reportedRecipientQuery.getRecipientSocialSecurityID()));
         }
 
         if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
-            booleanBuilder.andAnyOf(
-                    reportedRecipient.searchName.containsIgnoreCase(reportedRecipientQuery.getRecipientName()),
+            booleanBuilder.andAnyOf(reportedRecipient.searchName.containsIgnoreCase(reportedRecipientQuery.getRecipientName()),
                     reportedMessage.process.containsIgnoreCase(query.getSearchArgument()),
                     reportedMessage.subject.containsIgnoreCase(query.getSearchArgument()),
-                    reportedMessage.message.containsIgnoreCase(query.getSearchArgument())
-            );
+                    reportedMessage.message.containsIgnoreCase(query.getSearchArgument()));
         }
 
         return booleanBuilder;
@@ -216,30 +218,25 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
     private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
         List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks,
-                new Function<List<String>, BooleanExpression>() {
-                    public BooleanExpression apply(@Nullable List<String> oidsChunk) {
-                        return column.in(oidsChunk);
-                    }
-                });
-        return inExcepssionsCollection.toArray(new BooleanExpression[
-                inExcepssionsCollection.size()]);
+        Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, BooleanExpression>() {
+            public BooleanExpression apply(@Nullable List<String> oidsChunk) {
+                return column.in(oidsChunk);
+            }
+        });
+        return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
     }
 
-    private String splittedInExpression(List<String> values, final String hqlColumn,
-                                        final Map<String, Object> params,
-                                        final String valPrefix) {
+    private String splittedInExpression(List<String> values, final String hqlColumn, final Map<String, Object> params, final String valPrefix) {
         final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
         final AtomicInteger n = new AtomicInteger(0);
-        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks,
-                new Function<List<String>, String>() {
-                    public String apply(@Nullable List<String> oidsChunk) {
-                        int pNum = n.incrementAndGet();
-                        String paramName = valPrefix+"_"+pNum;
-                        params.put(paramName, oidsChunk);
-                        return hqlColumn+" in (:"+paramName+")";
-                    }
-                });
+        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, String>() {
+            public String apply(@Nullable List<String> oidsChunk) {
+                int pNum = n.incrementAndGet();
+                String paramName = valPrefix + "_" + pNum;
+                params.put(paramName, oidsChunk);
+                return hqlColumn + " in (:" + paramName + ")";
+            }
+        });
         return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
 }
