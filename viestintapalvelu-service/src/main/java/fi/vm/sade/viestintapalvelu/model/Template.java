@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -11,20 +26,6 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import fi.vm.sade.generic.model.BaseEntity;
-
-/*
- * CREATE TABLE kirjeet.kirjepohja (
- id bigint NOT NULL,
- version bigint NOT NULL,
- nimi character varying(255),
- tyylit character varying(3000),
- kielikoodi character varying (5),
- aikaleima timestamp without time zone,
- oid_tallentaja character varying(255),
- oid_organisaatio character varying(255),
- tyyppi character varying (5)
- );
- */
 
 @ApiModel(value = "Kirjetemplate")
 @Table(name = "kirjepohja", schema= "kirjeet")

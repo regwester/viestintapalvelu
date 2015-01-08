@@ -45,7 +45,7 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
         batch.setLanguageCode(data.language);
         List<Receiver> incompatibleReceivers = filterIncompatibleReceivers(data);
         batch.setMessages(convertMessages(filterCompatibleReceivers(data, incompatibleReceivers)));
-        //TODO optional fields? are they necessary to convert here?
+        // TODO optional fields? are they necessary to convert here?
         return new ConvertedMessageWrapper<AsiointitiliSendBatchDto>(batch, incompatibleReceivers);
     }
 
@@ -79,7 +79,7 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
                 dto.setReceiverHenkiloOid(input.oid);
                 return dto;
             }
-            
+
         });
     }
 

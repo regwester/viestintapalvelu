@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.util.Arrays;
@@ -25,9 +24,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Collections2;
 
 /**
- * User: ratamaa
- * Date: 28.10.2014
- * Time: 13:08
+ * User: ratamaa Date: 28.10.2014 Time: 13:08
  */
 public class Contents implements Predicate<String> {
     public static final String ASIOINTITILI_HEADER = "asiointitili_header";
@@ -37,13 +34,8 @@ public class Contents implements Predicate<String> {
     public static final String EMAIL_BODY = "email_body";
     public static final String ATTACHMENT = "liite";
 
-    protected static final String[] NON_ATTACHMENTS = new String[] {
-            ASIOINTITILI_HEADER,
-            ASIOINTITILI_CONTENT,
-            ASIOINTITILI_SMS_CONTENT,
-            EMAIL_SUBJECT,
-            EMAIL_BODY
-    };
+    protected static final String[] NON_ATTACHMENTS = new String[] { ASIOINTITILI_HEADER, ASIOINTITILI_CONTENT, ASIOINTITILI_SMS_CONTENT, EMAIL_SUBJECT,
+            EMAIL_BODY };
 
     private Set<String> include = new HashSet<String>();
     private Set<String> exclude = new HashSet<String>();
@@ -56,7 +48,7 @@ public class Contents implements Predicate<String> {
         return this;
     }
 
-    protected Contents include(String ...names) {
+    protected Contents include(String... names) {
         this.include.addAll(Arrays.asList(names));
         return this;
     }

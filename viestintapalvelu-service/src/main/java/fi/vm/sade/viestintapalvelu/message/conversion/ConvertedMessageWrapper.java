@@ -1,7 +1,7 @@
 /**
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,9 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
+ **/
 package fi.vm.sade.viestintapalvelu.message.conversion;
 
 import java.util.List;
@@ -26,12 +26,12 @@ import fi.vm.sade.viestintapalvelu.api.message.Receiver;
 public class ConvertedMessageWrapper<T> {
 
     public final T wrapped;
-    
+
     public final List<Receiver> incompatibleReceivers;
 
     public ConvertedMessageWrapper(T wrapped, List<Receiver> incompatibleReceivers) {
         this.wrapped = wrapped;
         this.incompatibleReceivers = incompatibleReceivers;
     }
-    
+
 }

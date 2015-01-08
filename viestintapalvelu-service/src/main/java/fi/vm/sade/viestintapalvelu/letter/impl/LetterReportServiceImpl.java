@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import java.io.IOException;
@@ -39,7 +54,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 @Service
 public class LetterReportServiceImpl implements LetterReportService {
     public static final long MAX_COUNT_FOR_LETTER_BATCH_SEARCH = 1000l;
@@ -57,10 +72,9 @@ public class LetterReportServiceImpl implements LetterReportService {
     private String rekisterinpitajaOID;
 
     @Autowired
-    public LetterReportServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiversDAO letterReceiversDAO, 
-            LetterReceiverLetterDAO letterReceiverLetterDAO, IPostiDAO iPostiDAO, TemplateService templateService,
-            CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent, HenkiloComponent henkiloComponent,
-            OrganisaatioService organisaatioService) {
+    public LetterReportServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiversDAO letterReceiversDAO, LetterReceiverLetterDAO letterReceiverLetterDAO,
+            IPostiDAO iPostiDAO, TemplateService templateService, CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent,
+            HenkiloComponent henkiloComponent, OrganisaatioService organisaatioService) {
         this.letterBatchDAO = letterBatchDAO;
         this.letterReceiversDAO = letterReceiversDAO;
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
@@ -71,23 +85,22 @@ public class LetterReportServiceImpl implements LetterReportService {
         this.henkiloComponent = henkiloComponent;
         this.organisaatioService = organisaatioService;
     }
-    
+
     @Override
     public LetterBatchReportDTO getLetterBatchReport(Long letterBatchID, PagingAndSortingDTO pagingAndSorting, String query) {
-        List<LetterReceivers> letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(
-            letterBatchID, pagingAndSorting, query);
-        
-        Long numberOfReceivers = letterReceiversDAO.findNumberOfReciversByLetterBatchID(letterBatchID, query); 
-        
+        List<LetterReceivers> letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(letterBatchID, pagingAndSorting, query);
+
+        Long numberOfReceivers = letterReceiversDAO.findNumberOfReciversByLetterBatchID(letterBatchID, query);
+
         if (numberOfReceivers == 0) {
             letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(letterBatchID, pagingAndSorting, null);
         }
-        
+
         LetterReceivers letterReceivers = letterReceiverList.get(0);
         LetterBatch letterBatch = letterReceivers.getLetterBatch();
-        
+
         LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
-        
+
         letterBatchReport.setNumberOfReceivers(numberOfReceivers);
         if (numberOfReceivers > 0) {
             List<LetterReceiverDTO> letterReceiverDTOs = convertLetterReceiver(letterReceivers.getLetterBatch(), letterReceiverList);
@@ -95,11 +108,11 @@ public class LetterReportServiceImpl implements LetterReportService {
         } else {
             letterBatchReport.setLetterReceivers(new ArrayList<LetterReceiverDTO>());
         }
-        
+
         List<IPosti> iPostis = iPostiDAO.findByLetterBatchId(letterBatchID);
         List<IPostiDTO> iPostiDTOs = getListOfIPostiDTO(iPostis);
         letterBatchReport.setiPostis(iPostiDTOs);
-        
+
         if (letterBatch.getStoringOid() != null) {
             Henkilo henkilo = henkiloComponent.getHenkilo(letterBatch.getStoringOid());
             letterBatchReport.setCreatorName(henkilo.getSukunimi() + ", " + henkilo.getEtunimet());
@@ -115,10 +128,8 @@ public class LetterReportServiceImpl implements LetterReportService {
 
         LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
         letterBatchesReport.setLetterBatchReports(letterBatches);
-        letterBatchesReport.setMaxNumber(Math.max(MAX_COUNT_FOR_LETTER_BATCH_SEARCH,
-                pagingAndSorting.getFromIndex()+pagingAndSorting.getNumberOfRows()));
-        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatchesBySearchArgument(query,
-                letterBatchesReport.getMaxNumber()));
+        letterBatchesReport.setMaxNumber(Math.max(MAX_COUNT_FOR_LETTER_BATCH_SEARCH, pagingAndSorting.getFromIndex() + pagingAndSorting.getNumberOfRows()));
+        letterBatchesReport.setNumberOfLetterBatches(letterBatchDAO.findNumberOfLetterBatchesBySearchArgument(query, letterBatchesReport.getMaxNumber()));
 
         return letterBatchesReport;
     }
@@ -127,7 +138,7 @@ public class LetterReportServiceImpl implements LetterReportService {
     public LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting) {
         final List<LetterBatch> letterBatches;
         final long numberOfLetterBatches;
-        if(organizationOID != null && organizationOID.equals(rekisterinpitajaOID)) {
+        if (organizationOID != null && organizationOID.equals(rekisterinpitajaOID)) {
             letterBatches = letterBatchDAO.findAll(pagingAndSorting);
             numberOfLetterBatches = letterBatchDAO.findNumberOfLetterBatches();
         } else {
@@ -140,28 +151,27 @@ public class LetterReportServiceImpl implements LetterReportService {
         letterBatchesReport.setNumberOfLetterBatches(numberOfLetterBatches);
         return letterBatchesReport;
     }
-    
+
     @Override
     public LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException {
         LetterReceiverLetterDTO letterReceiverLetterDTO = new LetterReceiverLetterDTO();
-        
+
         LetterReceiverLetter letterReceiverLetter = letterReceiverLetterDAO.read(id);
         LetterBatch letterBatch = letterReceiverLetter.getLetterReceivers().getLetterBatch();
-        
+
         letterReceiverLetterDTO.setContentType(letterReceiverLetter.getOriginalContentType());
         letterReceiverLetterDTO.setId(letterReceiverLetter.getId());
-        
+
         if (letterReceiverLetter.getContentType().equalsIgnoreCase("application/zip")) {
             letterReceiverLetterDTO.setLetter(LetterZipUtil.unZip(letterReceiverLetter.getLetter()));
         } else {
             letterReceiverLetterDTO.setLetter(letterReceiverLetter.getLetter());
         }
-        
+
         letterReceiverLetterDTO.setTemplateName(letterBatch.getTemplateName());
-        
+
         return letterReceiverLetterDTO;
     }
-
 
     @Override
     public List<OrganizationDTO> getUserOrganizations() {
@@ -174,8 +184,7 @@ public class LetterReportServiceImpl implements LetterReportService {
             }
             OrganizationDTO organization = new OrganizationDTO();
 
-            OrganisaatioRDTO organisaatioRDTO = organizationComponent.getOrganization(organisaatioHenkilo
-                    .getOrganisaatioOid());
+            OrganisaatioRDTO organisaatioRDTO = organizationComponent.getOrganization(organisaatioHenkilo.getOrganisaatioOid());
             String organizationName = organizationComponent.getNameOfOrganisation(organisaatioRDTO);
 
             organization.setOid(organisaatioRDTO.getOid());
@@ -189,7 +198,7 @@ public class LetterReportServiceImpl implements LetterReportService {
 
     private List<IPostiDTO> getListOfIPostiDTO(List<IPosti> iPostis) {
         List<IPostiDTO> iPostiDTOList = new ArrayList<IPostiDTO>();
-        
+
         for (IPosti iPosti : iPostis) {
             IPostiDTO iPostiDTO = new IPostiDTO();
             iPostiDTO.setContent(iPosti.getContent());
@@ -197,25 +206,25 @@ public class LetterReportServiceImpl implements LetterReportService {
             iPostiDTO.setContentType(iPosti.getContentType());
             iPostiDTO.setId(iPosti.getId());
             iPostiDTO.setSentDate(iPosti.getSentDate());
-            
+
             iPostiDTOList.add(iPostiDTO);
         }
-        
+
         return iPostiDTOList;
     }
 
     private LetterBatchesReportDTO convertLetterBatchesReport(List<LetterBatch> letterBatches) {
         LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
-        
+
         List<LetterBatchReportDTO> letterBatchReports = new ArrayList<LetterBatchReportDTO>();
-        
+
         for (LetterBatch letterBatch : letterBatches) {
             LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
             letterBatchReports.add(letterBatchReport);
         }
 
         letterBatchesReport.setLetterBatchReports(letterBatchReports);
-        
+
         return letterBatchesReport;
     }
 
@@ -247,7 +256,7 @@ public class LetterReportServiceImpl implements LetterReportService {
 
         for (LetterReceivers letterReceivers : letterReceiverList) {
             LetterReceiverDTO letterReceiverDTO = new LetterReceiverDTO();
-            
+
             letterReceiverDTO.setAddress1(letterReceivers.getLetterReceiverAddress().getAddressline());
             letterReceiverDTO.setAddress2(letterReceivers.getLetterReceiverAddress().getAddressline2());
             letterReceiverDTO.setCity(letterReceivers.getLetterReceiverAddress().getCity());
@@ -255,12 +264,12 @@ public class LetterReportServiceImpl implements LetterReportService {
             letterReceiverDTO.setCountry(letterReceivers.getLetterReceiverAddress().getCountry());
             letterReceiverDTO.setId(letterReceivers.getId());
             letterReceiverDTO.setLetterReceiverLetterID(letterReceivers.getLetterReceiverLetter().getId());
-            letterReceiverDTO.setName(letterReceivers.getLetterReceiverAddress().getLastName() + ", " + 
-                letterReceivers.getLetterReceiverAddress().getFirstName());
+            letterReceiverDTO.setName(letterReceivers.getLetterReceiverAddress().getLastName() + ", "
+                    + letterReceivers.getLetterReceiverAddress().getFirstName());
             letterReceiverDTO.setPostalCode(letterReceivers.getLetterReceiverAddress().getPostalCode());
             letterReceiverDTO.setRegion(letterReceivers.getLetterReceiverAddress().getRegion());
             letterReceiverDTO.setTemplateName(letterBatch.getTemplateName());
-            
+
             letterReceiverDTOs.add(letterReceiverDTO);
         }
         return letterReceiverDTOs;

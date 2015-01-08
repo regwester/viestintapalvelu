@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -11,24 +26,9 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 /**
  * @author migar1
- *
- *CREATE TABLE kirjeet.vastaanottajakirje(
-  id bigint NOT NULL,
-  version bigint,
-  vastaanottaja_id bigint,
-  aikaleima time without time zone,
-  kirje bytea,
-  sisaltotyyppi character varying(255),
-  alkuperainensisaltotyyppi character varying(255),
-  CONSTRAINT vastaanottajakirje_pk PRIMARY KEY (id),
-  CONSTRAINT vastaanottajakirje_vastaanottaja_id_fkey FOREIGN KEY (vastaanottaja_id)
-      REFERENCES kirjeet.vastaanottaja (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-
  */
 
-@Table(name = "vastaanottajakirje", schema= "kirjeet")
+@Table(name = "vastaanottajakirje", schema = "kirjeet")
 @Entity()
 public class LetterReceiverLetter extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -40,10 +40,10 @@ public class LetterReceiverLetter extends BaseEntity {
 
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
-    private Date timestamp;        
-    
+    private Date timestamp;
+
     @Column(name = "kirje", length = 10 * 1024 * 1024)
-	private byte[] letter;    
+    private byte[] letter;
 
     @Column(name = "sisaltotyyppi")
     private String contentType = "";
@@ -55,44 +55,44 @@ public class LetterReceiverLetter extends BaseEntity {
     private Set<LetterReceiverLetterAttachment> attachments = new HashSet<LetterReceiverLetterAttachment>();
 
     public Date getTimestamp() {
-		return timestamp;
-	}
+        return timestamp;
+    }
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
-	
-	public byte[] getLetter() {
-		return letter;
-	}
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public void setLetter(byte[] letter) {
-		this.letter = letter;
-	}
+    public byte[] getLetter() {
+        return letter;
+    }
 
-	public String getContentType() {
-		return contentType;
-	}
+    public void setLetter(byte[] letter) {
+        this.letter = letter;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}
+    public String getContentType() {
+        return contentType;
+    }
 
-	public String getOriginalContentType() {
-		return originalContentType;
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	public void setOriginalContentType(String originalContentType) {
-		this.originalContentType = originalContentType;
-	}
+    public String getOriginalContentType() {
+        return originalContentType;
+    }
 
-	public LetterReceivers getLetterReceivers() {
-		return letterReceivers;
-	}
+    public void setOriginalContentType(String originalContentType) {
+        this.originalContentType = originalContentType;
+    }
 
-	public void setLetterReceivers(LetterReceivers letterReceivers) {
-		this.letterReceivers = letterReceivers;
-	}
+    public LetterReceivers getLetterReceivers() {
+        return letterReceivers;
+    }
+
+    public void setLetterReceivers(LetterReceivers letterReceivers) {
+        this.letterReceivers = letterReceivers;
+    }
 
     public Set<LetterReceiverLetterAttachment> getAttachments() {
         return attachments;
@@ -103,9 +103,8 @@ public class LetterReceiverLetter extends BaseEntity {
     }
 
     @Override
-	public String toString() {
-		return "LetterReceiverLetter [letter=" + letter + ", timestamp=" + timestamp + "]";
-	}
-
+    public String toString() {
+        return "LetterReceiverLetter [letter=" + letter + ", timestamp=" + timestamp + "]";
+    }
 
 }

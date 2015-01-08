@@ -35,29 +35,36 @@ import fi.vm.sade.viestintapalvelu.message.conversion.MessageToLetterBatchConver
  */
 @Component
 public class MessageDataResource implements MessageResource {
-    
+
     @Autowired
     private AsiointitiliService asiointitiliService;
-    
+
     @Autowired
     private LetterService letterService;
-    
+
     private MessageToAsiointiTiliConverter asiointiliConverter = new MessageToAsiointiTiliConverter();
-    
+
     private MessageToLetterBatchConverter letterBatchConverter = new MessageToLetterBatchConverter();
-    
-    /* (non-Javadoc)
-     * @see fi.vm.sade.viestintapalvelu.api.rest.MessageResource#sendMessageViaAsiointiTiliOrEmail(fi.vm.sade.viestintapalvelu.api.message.MessageData)
+
+    /*
+     * (non-Javadoc)
+     * 
+     * @see fi.vm.sade.viestintapalvelu.api.rest.MessageResource#
+     * sendMessageViaAsiointiTiliOrEmail
+     * (fi.vm.sade.viestintapalvelu.api.message.MessageData)
      */
     @Override
     public MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData) {
         ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
         AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
-        //TODO: Additional checks
-        //TODO: need to also use receivers that didn't get message via asiointitili in otherways
+        // TODO: Additional checks
+        // TODO: need to also use receivers that didn't get message via
+        // asiointitili in otherways
         if (!wrapper.incompatibleReceivers.isEmpty()) {
-            //TODO build emaildata and use ryhmasahkoposti //use pdfprinterresource for attachment
-            //TODO: email sending, how will we proceed? should we store something to db even though Asiointitili seems not to do so
+            // TODO build emaildata and use ryhmasahkoposti //use
+            // pdfprinterresource for attachment
+            // TODO: email sending, how will we proceed? should we store
+            // something to db even though Asiointitili seems not to do so
         }
         return null;
     }

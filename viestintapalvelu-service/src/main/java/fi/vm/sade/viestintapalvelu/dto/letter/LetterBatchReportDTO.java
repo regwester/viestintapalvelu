@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.dto.letter;
 
 import java.io.Serializable;
@@ -24,18 +39,17 @@ public class LetterBatchReportDTO implements Serializable {
         }
     };
 
-
     private static final long serialVersionUID = 7920118110257531390L;
     private Long letterBatchID;
     private Template template;
     private String applicationPeriod;
     private String fetchTarget;
     private String creatorName;
-    private String tag;    
+    private String tag;
     private boolean deliveryTypeIPosti;
     private Date timestamp;
     private List<LetterReceiverDTO> letterReceivers;
-    private Long numberOfReceivers; 
+    private Long numberOfReceivers;
     private List<IPostiDTO> iPostis;
     private String organisaatioOid;
     private String status;
@@ -47,10 +61,8 @@ public class LetterBatchReportDTO implements Serializable {
     public LetterBatchReportDTO() {
     }
 
-    public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName,
-                                String applicationPeriod, String fetchTarget,
-                                String tag, boolean deliveryTypeIPosti, Date timestamp,
-                                String organisaatioOid, LetterBatch.Status status) {
+    public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName, String applicationPeriod, String fetchTarget, String tag,
+            boolean deliveryTypeIPosti, Date timestamp, String organisaatioOid, LetterBatch.Status status) {
         this.letterBatchID = letterBatchID;
         this.templateId = templateId;
         this.templateName = templateName;
@@ -63,11 +75,8 @@ public class LetterBatchReportDTO implements Serializable {
         this.status = status == null ? null : status.name();
     }
 
-    public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName,
-                                String applicationPeriod, String fetchTarget,
-                                String tag, boolean deliveryTypeIPosti, Date timestamp,
-                                String organisaatioOid, LetterBatch.Status status,
-                                Long receiverLetterId, String receiverName) {
+    public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName, String applicationPeriod, String fetchTarget, String tag,
+            boolean deliveryTypeIPosti, Date timestamp, String organisaatioOid, LetterBatch.Status status, Long receiverLetterId, String receiverName) {
         this.letterBatchID = letterBatchID;
         this.templateId = templateId;
         this.templateName = templateName;
@@ -85,55 +94,55 @@ public class LetterBatchReportDTO implements Serializable {
     public Long getLetterBatchID() {
         return letterBatchID;
     }
-    
+
     public void setLetterBatchID(Long letterBatchID) {
         this.letterBatchID = letterBatchID;
     }
-    
+
     public Template getTemplate() {
         return template;
     }
-    
+
     public void setTemplate(Template template) {
         this.template = template;
     }
-    
+
     public String getApplicationPeriod() {
         return applicationPeriod;
     }
-    
+
     public void setApplicationPeriod(String applicationPeriod) {
         this.applicationPeriod = applicationPeriod;
     }
-    
+
     public String getFetchTarget() {
         return fetchTarget;
     }
-    
+
     public void setFetchTarget(String fetchTarget) {
         this.fetchTarget = fetchTarget;
     }
-    
+
     public String getCreatorName() {
-		return creatorName;
-	}
+        return creatorName;
+    }
 
-	public void setCreatorName(String creatorName) {
-		this.creatorName = creatorName;
-	}
+    public void setCreatorName(String creatorName) {
+        this.creatorName = creatorName;
+    }
 
-	public String getTag() {
+    public String getTag() {
         return tag;
     }
-    
+
     public void setTag(String tag) {
         this.tag = tag;
     }
-    
+
     public boolean isDeliveryTypeIPosti() {
         return deliveryTypeIPosti;
     }
-    
+
     public void setDeliveryTypeIPosti(boolean deliveryTypeIPosti) {
         this.deliveryTypeIPosti = deliveryTypeIPosti;
     }

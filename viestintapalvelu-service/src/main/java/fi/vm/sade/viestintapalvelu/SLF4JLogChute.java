@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu;
 
 import org.apache.velocity.runtime.RuntimeServices;
@@ -36,22 +51,22 @@ public class SLF4JLogChute implements LogChute {
      */
     public void log(int level, String message) {
         switch (level) {
-            case LogChute.WARN_ID:
-                logger.warn(message);
-                break;
-            case LogChute.INFO_ID:
-                logger.info(message);
-                break;
-            case LogChute.TRACE_ID:
-                logger.trace(message);
-                break;
-            case LogChute.ERROR_ID:
-                logger.error(message);
-                break;
-            case LogChute.DEBUG_ID:
-            default:
-                logger.debug(message);
-                break;
+        case LogChute.WARN_ID:
+            logger.warn(message);
+            break;
+        case LogChute.INFO_ID:
+            logger.info(message);
+            break;
+        case LogChute.TRACE_ID:
+            logger.trace(message);
+            break;
+        case LogChute.ERROR_ID:
+            logger.error(message);
+            break;
+        case LogChute.DEBUG_ID:
+        default:
+            logger.debug(message);
+            break;
         }
     }
 
@@ -61,22 +76,22 @@ public class SLF4JLogChute implements LogChute {
      */
     public void log(int level, String message, Throwable t) {
         switch (level) {
-            case LogChute.WARN_ID:
-                logger.warn(message, t);
-                break;
-            case LogChute.INFO_ID:
-                logger.info(message, t);
-                break;
-            case LogChute.TRACE_ID:
-                logger.trace(message, t);
-                break;
-            case LogChute.ERROR_ID:
-                logger.error(message, t);
-                break;
-            case LogChute.DEBUG_ID:
-            default:
-                logger.debug(message, t);
-                break;
+        case LogChute.WARN_ID:
+            logger.warn(message, t);
+            break;
+        case LogChute.INFO_ID:
+            logger.info(message, t);
+            break;
+        case LogChute.TRACE_ID:
+            logger.trace(message, t);
+            break;
+        case LogChute.ERROR_ID:
+            logger.error(message, t);
+            break;
+        case LogChute.DEBUG_ID:
+        default:
+            logger.debug(message, t);
+            break;
         }
     }
 
@@ -85,18 +100,18 @@ public class SLF4JLogChute implements LogChute {
      */
     public boolean isLevelEnabled(int level) {
         switch (level) {
-            case LogChute.DEBUG_ID:
-                return logger.isDebugEnabled();
-            case LogChute.INFO_ID:
-                return logger.isInfoEnabled();
-            case LogChute.TRACE_ID:
-                return logger.isTraceEnabled();
-            case LogChute.WARN_ID:
-                return logger.isWarnEnabled();
-            case LogChute.ERROR_ID:
-                return logger.isErrorEnabled();
-            default:
-                return true;
+        case LogChute.DEBUG_ID:
+            return logger.isDebugEnabled();
+        case LogChute.INFO_ID:
+            return logger.isInfoEnabled();
+        case LogChute.TRACE_ID:
+            return logger.isTraceEnabled();
+        case LogChute.WARN_ID:
+            return logger.isWarnEnabled();
+        case LogChute.ERROR_ID:
+            return logger.isErrorEnabled();
+        default:
+            return true;
         }
     }
 }

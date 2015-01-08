@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -6,25 +21,10 @@ import javax.persistence.*;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
-/*
- * CREATE TABLE kirjeet.sisalto
- (
- id bigint NOT NULL,
- kirjepohja_id bigint,
- nimi character varying(255),
- sisalto character varying(5000),
- aikaleima timestamp without time zone,
- oid_tallentaja character varying(255),
- CONSTRAINT sisalto_kirjepohja_id_fkey FOREIGN KEY (kirjepohja_id)
- REFERENCES kirjeet.kirjepohja (id) MATCH SIMPLE
- ON UPDATE NO ACTION ON DELETE NO ACTION
- )
- */
 @Deprecated
 @Entity
-@Table(name = "sisalto", schema= "kirjeet")
-public class TemplateContent extends BaseEntity implements
-        Comparable<TemplateContent> {
+@Table(name = "sisalto", schema = "kirjeet")
+public class TemplateContent extends BaseEntity implements Comparable<TemplateContent> {
 
     private static final long serialVersionUID = 1L;
 
@@ -34,10 +34,10 @@ public class TemplateContent extends BaseEntity implements
 
     @Column(name = "jarjestys")
     private int order;
-    
+
     @Column(name = "nimi")
     private String name;
-    
+
     @Column(name = "sisalto")
     private String content;
 
@@ -87,23 +87,22 @@ public class TemplateContent extends BaseEntity implements
     public void setContent(String content) {
         this.content = content;
     }
-    
+
     public String getContentType() {
-		return contentType;
-	}
+        return contentType;
+    }
 
-	public void setContentType(String contentType) {
-		this.contentType = contentType;
-	}    
-	
-	@Override
-	public String toString() {
-		return "TemplateContent [template=" + template + ", order=" + order
-				+ ", name=" + name + ", content=" + content + ", contentType="
-				+ contentType + ", timestamp=" + timestamp + "]";
-	}
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 
-	@Override
+    @Override
+    public String toString() {
+        return "TemplateContent [template=" + template + ", order=" + order + ", name=" + name + ", content=" + content + ", contentType=" + contentType
+                + ", timestamp=" + timestamp + "]";
+    }
+
+    @Override
     public int compareTo(TemplateContent o) {
         Integer ord = new Integer(order);
         return ord.compareTo(o.order);

@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.address;
 
 import java.io.ByteArrayInputStream;
@@ -43,158 +58,123 @@ import static org.joda.time.DateTime.now;
 @Path(Urls.ADDRESS_LABEL_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.ADDRESS_LABEL_RESOURCE_PATH, description = "Osoitetarrojen k&auml;sittelyn rajapinnat")
 public class AddressLabelResource extends AsynchronousResource {
-	private final Logger LOG = LoggerFactory
-			.getLogger(AddressLabelResource.class);
-	@Autowired
-	private DownloadCache downloadCache;
-	@Autowired
-	private AddressLabelBuilder labelBuilder;
-	@Qualifier
-	private DokumenttiResource dokumenttiResource;
-	@Resource(name="otherAsyncResourceJobsExecutorService")
-	private ExecutorService executor;
+    private final Logger LOG = LoggerFactory.getLogger(AddressLabelResource.class);
+    @Autowired
+    private DownloadCache downloadCache;
+    @Autowired
+    private AddressLabelBuilder labelBuilder;
+    @Qualifier
+    private DokumenttiResource dokumenttiResource;
+    @Resource(name = "otherAsyncResourceJobsExecutorService")
+    private ExecutorService executor;
 
-	private final static String FixedTemplateNote = "Tarrapohjan malli on kiinteästi tiedostona jakelupaketissa. ";
-	private final static String ApiPDFSync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa synkronisesti. "
-			+ FixedTemplateNote;
-	private final static String ApiPDFAsync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa asynkronisesti. "
-			+ FixedTemplateNote;
-	private final static String ApiXLSSync = "Palauttaa tarroiksi tulostettavat osoitteet Excel-muodossa synkronisesti. "
-			+ FixedTemplateNote;
-	private final static String ApiXLSAsync = "Palauttaa tarroiksi tulostettavat osoitteet Excel-muodossa asynkronisesti. "
-			+ FixedTemplateNote;
-	private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
-	private final static String XLSResponse400 = "BAD_REQUEST; Excel-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+    private final static String FixedTemplateNote = "Tarrapohjan malli on kiinteästi tiedostona jakelupaketissa. ";
+    private final static String ApiPDFSync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa synkronisesti. " + FixedTemplateNote;
+    private final static String ApiPDFAsync = "Palauttaa tarroiksi tulostettavat osoitteet PDF-muodossa asynkronisesti. " + FixedTemplateNote;
+    private final static String ApiXLSSync = "Palauttaa tarroiksi tulostettavat osoitteet Excel-muodossa synkronisesti. " + FixedTemplateNote;
+    private final static String ApiXLSAsync = "Palauttaa tarroiksi tulostettavat osoitteet Excel-muodossa asynkronisesti. " + FixedTemplateNote;
+    private final static String PDFResponse400 = "BAD_REQUEST; PDF-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
+    private final static String XLSResponse400 = "BAD_REQUEST; Excel-tiedoston luonti epäonnistui eikä tiedostoa voi noutaa download-linkin avulla.";
 
-	// Sync routes
+    // Sync routes
 
-	@POST
-	@Consumes("application/json")
-	@Produces("text/plain")
-	@Path("/pdf")
-	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-	public Response pdf(
-			@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input,
-			@Context HttpServletRequest request) {
-		String documentId;
-		try {
-			byte[] pdf = labelBuilder.printPDF(input); //TODO: add validation?
-			documentId = downloadCache.addDocument(new Download(
-					"application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error("AddressLabel PDF failed: {}", e.getMessage());
-			return createFailureResponse(request);
-		}
-		return createResponse(request, documentId+".pdf");
-	}
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/pdf")
+    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public Response pdf(@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input, @Context HttpServletRequest request) {
+        String documentId;
+        try {
+            byte[] pdf = labelBuilder.printPDF(input); // TODO: add validation?
+            documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("AddressLabel PDF failed: {}", e.getMessage());
+            return createFailureResponse(request);
+        }
+        return createResponse(request, documentId + ".pdf");
+    }
 
-	@POST
-	@Consumes("application/json")
-	@Produces("text/plain")
-	@Path("/xls")
-	@ApiOperation(value = ApiXLSSync, notes = ApiXLSSync)
-	@ApiResponses(@ApiResponse(code = 400, message = XLSResponse400))
-	public Response xls(
-			@ApiParam(value = "Osoitetiedot", required = true) AddressLabelBatch input,
-			@Context HttpServletRequest request) {
-		String documentId;
-		try {
-			byte[] csv = labelBuilder.printCSV(input);
-			documentId = downloadCache.addDocument(new Download(
-					"application/vnd.ms-excel", "addresslabels.xls", csv));
-		} catch (Exception e) {
-			e.printStackTrace();
-			LOG.error("AddressLabel Excel failed: {}", e.getMessage());
-			return createFailureResponse(request);
-		}
-		return createResponse(request, documentId+".xls");
-	}
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/xls")
+    @ApiOperation(value = ApiXLSSync, notes = ApiXLSSync)
+    @ApiResponses(@ApiResponse(code = 400, message = XLSResponse400))
+    public Response xls(@ApiParam(value = "Osoitetiedot", required = true) AddressLabelBatch input, @Context HttpServletRequest request) {
+        String documentId;
+        try {
+            byte[] csv = labelBuilder.printCSV(input);
+            documentId = downloadCache.addDocument(new Download("application/vnd.ms-excel", "addresslabels.xls", csv));
+        } catch (Exception e) {
+            e.printStackTrace();
+            LOG.error("AddressLabel Excel failed: {}", e.getMessage());
+            return createFailureResponse(request);
+        }
+        return createResponse(request, documentId + ".xls");
+    }
 
-	@POST
-	@Consumes("application/json")
-	@Produces("application/octet-stream")
-	@Path("/sync/pdf")
-	@ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
-	@ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
-	public InputStream syncPdf(
-			@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input)
-			throws DocumentException, IOException {
-		return new ByteArrayInputStream(labelBuilder.printPDF(input));
-	}
+    @POST
+    @Consumes("application/json")
+    @Produces("application/octet-stream")
+    @Path("/sync/pdf")
+    @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
+    @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
+    public InputStream syncPdf(@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input) throws DocumentException, IOException {
+        return new ByteArrayInputStream(labelBuilder.printPDF(input));
+    }
 
-	// Async routes
-	@PreAuthorize("isAuthenticated()")
-	@POST
-	@Consumes("application/json")
-	@Produces("text/plain")
-	@Path("/async/pdf")
-	@ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync
-			+ AsyncResponseLogicDocumentation)
-	public Response asyncPdf(
-			@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input,
-			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
-		final Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		final String documentId = globalRandomId();
-		executor.execute(new Runnable() {
-			public void run() {
-				SecurityContextHolder.getContext().setAuthentication(auth);
-				try {
-					byte[] pdf = labelBuilder.printPDF(input);
-					dokumenttiResource
-							.tallenna(
-									null,
-									filenamePrefixWithUsernameAndTimestamp("addresslabels.pdf"),
-									now().plusDays(1).toDate().getTime(),
-									Arrays.asList("viestintapalvelu",
-											"addresslabels", "pdf"),
-									"application/pdf;charset=utf-8",
-									new ByteArrayInputStream(pdf));
-				} catch (Exception e) {
-					e.printStackTrace();
-					LOG.error("AddressLabel PDF failed: {}", e.getMessage());
-				}
-			}
-		});
-		return createResponse(request, documentId+".pdf");
-	}
+    // Async routes
+    @PreAuthorize("isAuthenticated()")
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/async/pdf")
+    @ApiOperation(value = ApiPDFAsync, notes = ApiPDFAsync + AsyncResponseLogicDocumentation)
+    public Response asyncPdf(@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input, @Context HttpServletRequest request)
+            throws IOException, DocumentException {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final String documentId = globalRandomId();
+        executor.execute(new Runnable() {
+            public void run() {
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                try {
+                    byte[] pdf = labelBuilder.printPDF(input);
+                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("addresslabels.pdf"), now().plusDays(1).toDate().getTime(),
+                            Arrays.asList("viestintapalvelu", "addresslabels", "pdf"), "application/pdf;charset=utf-8", new ByteArrayInputStream(pdf));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOG.error("AddressLabel PDF failed: {}", e.getMessage());
+                }
+            }
+        });
+        return createResponse(request, documentId + ".pdf");
+    }
 
-	@POST
-	@Consumes("application/json")
-	@Produces("text/plain")
-	@Path("/async/xls")
-	@ApiOperation(value = ApiXLSAsync, notes = ApiXLSAsync
-			+ AsyncResponseLogicDocumentation)
-	public Response asyncXls(
-			@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input,
-			@Context HttpServletRequest request) throws IOException,
-			DocumentException {
-		final Authentication auth = SecurityContextHolder.getContext()
-				.getAuthentication();
-		final String documentId = globalRandomId();
-		executor.execute(new Runnable() {
-			public void run() {
-				SecurityContextHolder.getContext().setAuthentication(auth);
-				try {
-					byte[] csv = labelBuilder.printCSV(input);
-					dokumenttiResource
-							.tallenna(
-									null,
-									filenamePrefixWithUsernameAndTimestamp("addresslabels.xls"),
-									now().plusDays(1).toDate().getTime(),
-									Arrays.asList("viestintapalvelu",
-											"addresslabels", "xls"),
-									"application/vnd.ms-excel",
-									new ByteArrayInputStream(csv));
-				} catch (Exception e) {
-					e.printStackTrace();
-					LOG.error("AddressLabel PDF failed: {}", e.getMessage());
-				}
-			}
-		});
-		return createResponse(request, documentId+".xls");
-	}
+    @POST
+    @Consumes("application/json")
+    @Produces("text/plain")
+    @Path("/async/xls")
+    @ApiOperation(value = ApiXLSAsync, notes = ApiXLSAsync + AsyncResponseLogicDocumentation)
+    public Response asyncXls(@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input, @Context HttpServletRequest request)
+            throws IOException, DocumentException {
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        final String documentId = globalRandomId();
+        executor.execute(new Runnable() {
+            public void run() {
+                SecurityContextHolder.getContext().setAuthentication(auth);
+                try {
+                    byte[] csv = labelBuilder.printCSV(input);
+                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("addresslabels.xls"), now().plusDays(1).toDate().getTime(),
+                            Arrays.asList("viestintapalvelu", "addresslabels", "xls"), "application/vnd.ms-excel", new ByteArrayInputStream(csv));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    LOG.error("AddressLabel PDF failed: {}", e.getMessage());
+                }
+            }
+        });
+        return createResponse(request, documentId + ".xls");
+    }
 }

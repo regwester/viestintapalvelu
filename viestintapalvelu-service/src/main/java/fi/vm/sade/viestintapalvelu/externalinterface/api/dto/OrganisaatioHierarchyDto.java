@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
 import java.io.Serializable;
@@ -26,9 +25,7 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
- * User: ratamaa
- * Date: 29.10.2014
- * Time: 14:39
+ * User: ratamaa Date: 29.10.2014 Time: 14:39
  */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class OrganisaatioHierarchyDto implements Serializable {
@@ -38,16 +35,17 @@ public class OrganisaatioHierarchyDto implements Serializable {
     private String oid;
     private String parentOid;
     private String ytunnus;
-    private Map<String,String> nimi = new HashMap<String, String>();
+    private Map<String, String> nimi = new HashMap<String, String>();
     private List<OrganisaatioHierarchyDto> children = new ArrayList<OrganisaatioHierarchyDto>();
 
-    public OrganisaatioHierarchyDto(){}
+    public OrganisaatioHierarchyDto() {
+    }
 
     public OrganisaatioHierarchyDto(OrganisaatioHierarchyDto other) {
-        if(other == null) {
+        if (other == null) {
             return;
         }
-        //this.parent = new OrganisaatioHierarchyDto(other.parent);
+        // this.parent = new OrganisaatioHierarchyDto(other.parent);
         this.oid = other.oid;
         this.parentOid = other.parentOid;
         this.ytunnus = other.ytunnus;
@@ -111,13 +109,17 @@ public class OrganisaatioHierarchyDto implements Serializable {
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
+        if (this == o)
+            return true;
+        if (o == null || getClass() != o.getClass())
+            return false;
 
         OrganisaatioHierarchyDto that = (OrganisaatioHierarchyDto) o;
 
-        if (oid != null ? !oid.equals(that.oid) : that.oid != null) return false;
-        if (parentOid != null ? !parentOid.equals(that.parentOid) : that.parentOid != null) return false;
+        if (oid != null ? !oid.equals(that.oid) : that.oid != null)
+            return false;
+        if (parentOid != null ? !parentOid.equals(that.parentOid) : that.parentOid != null)
+            return false;
 
         return true;
     }

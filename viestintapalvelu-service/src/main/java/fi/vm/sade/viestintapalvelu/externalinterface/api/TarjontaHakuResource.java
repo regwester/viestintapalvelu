@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,28 +10,28 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.externalinterface.api;
 
 import java.util.List;
 
-import javax.ws.rs.*;
+import javax.ws.rs.GET;
+import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
+import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuListDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 
 /**
- * User: ratamaa
- * Date: 7.10.2014
- * Time: 12:49
+ * User: ratamaa Date: 7.10.2014 Time: 12:49
  */
 @Component
 public interface TarjontaHakuResource {
@@ -39,7 +39,7 @@ public interface TarjontaHakuResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/haku/findAll")
-    HakuRDTO<List<HakuDetailsDto>> hakus(@QueryParam(value="count") Integer count) throws Exception;
+    HakuRDTO<List<HakuDetailsDto>> hakus(@QueryParam(value = "count") Integer count) throws Exception;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

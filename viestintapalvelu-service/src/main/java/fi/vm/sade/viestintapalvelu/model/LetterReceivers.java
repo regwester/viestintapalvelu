@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -12,20 +27,9 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 /**
  * @author migar1
- *
-CREATE TABLE kirjeet.vastaanottaja (
-  id bigint NOT NULL,
-  version bigint,
-  kirjelahetys_id bigint,
-  aikaleima time with time zone,
-  CONSTRAINT vastaanottaja_pk PRIMARY KEY (id),
-  CONSTRAINT vastaanottaja_kirjelahetys_id_fkey FOREIGN KEY (kirjelahetys_id)
-      REFERENCES kirjeet.kirjelahetys (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
  */
 
-@Table(name = "vastaanottaja", schema= "kirjeet")
+@Table(name = "vastaanottaja", schema = "kirjeet")
 @Entity()
 public class LetterReceivers extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -38,7 +42,7 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-    
+
     @Column(name = "haluttukieli")
     private String wantedLanguage;
 
@@ -48,7 +52,7 @@ public class LetterReceivers extends BaseEntity {
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
-     
+
     @OneToOne(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private LetterReceiverAddress letterReceiverAddress;
 
@@ -59,16 +63,16 @@ public class LetterReceivers extends BaseEntity {
     private LetterReceiverLetter letterReceiverLetter;
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
-    @JoinColumn(name="iposti")
+    @JoinColumn(name = "iposti")
     private IPosti containedInIposti;
 
     public LetterBatch getLetterBatch() {
-		return letterBatch;
-	}
+        return letterBatch;
+    }
 
-	public void setLetterBatch(LetterBatch letterBatch) {
-		this.letterBatch = letterBatch;
-	}
+    public void setLetterBatch(LetterBatch letterBatch) {
+        this.letterBatch = letterBatch;
+    }
 
     public Date getTimestamp() {
         return timestamp;
@@ -78,24 +82,23 @@ public class LetterReceivers extends BaseEntity {
         this.timestamp = timestamp;
     }
 
-	public Set<LetterReceiverReplacement> getLetterReceiverReplacement() {
-		return letterReceiverReplacement;
-	}
+    public Set<LetterReceiverReplacement> getLetterReceiverReplacement() {
+        return letterReceiverReplacement;
+    }
 
-	public void setLetterReceiverReplacement(
-			Set<LetterReceiverReplacement> letterReceiverReplacement) {
-		this.letterReceiverReplacement = letterReceiverReplacement;
-	}
-		
-	public LetterReceiverAddress getLetterReceiverAddress() {
-		return letterReceiverAddress;
-	}
+    public void setLetterReceiverReplacement(Set<LetterReceiverReplacement> letterReceiverReplacement) {
+        this.letterReceiverReplacement = letterReceiverReplacement;
+    }
 
-	public void setLetterReceiverAddress(LetterReceiverAddress letterReceiverAddress) {
-		this.letterReceiverAddress = letterReceiverAddress;
-	}
+    public LetterReceiverAddress getLetterReceiverAddress() {
+        return letterReceiverAddress;
+    }
 
-	public LetterReceiverEmail getLetterReceiverEmail() {
+    public void setLetterReceiverAddress(LetterReceiverAddress letterReceiverAddress) {
+        this.letterReceiverAddress = letterReceiverAddress;
+    }
+
+    public LetterReceiverEmail getLetterReceiverEmail() {
         return letterReceiverEmail;
     }
 
@@ -104,18 +107,18 @@ public class LetterReceivers extends BaseEntity {
     }
 
     public LetterReceiverLetter getLetterReceiverLetter() {
-		return letterReceiverLetter;
-	}
+        return letterReceiverLetter;
+    }
 
-	public void setLetterReceiverLetter(LetterReceiverLetter letterReceiverLetter) {
-		this.letterReceiverLetter = letterReceiverLetter;
-	}
-	
-	public String getWantedLanguage() {
+    public void setLetterReceiverLetter(LetterReceiverLetter letterReceiverLetter) {
+        this.letterReceiverLetter = letterReceiverLetter;
+    }
+
+    public String getWantedLanguage() {
         return wantedLanguage;
     }
-	
-	public void setWantedLanguage(String wantedLanguage) {
+
+    public void setWantedLanguage(String wantedLanguage) {
         this.wantedLanguage = wantedLanguage;
     }
 
