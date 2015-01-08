@@ -34,6 +34,9 @@ public class Receiver implements Serializable {
 
     private static final long serialVersionUID = 3726211657144795272L;
     
+    @ApiModelProperty(value = "vastaanottajan tunniste")
+    public final String oid;
+    
     @ApiModelProperty(value = "Vastaanottajan sähköpostiosoite", required = false)
     public final String email;
     
@@ -49,7 +52,8 @@ public class Receiver implements Serializable {
     @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
     public final String language;
 
-    public Receiver(String email, String language, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
+    public Receiver(String oid, String email, String language, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
+        this.oid = oid;
         this.email = email;
         this.language = language;
         this.addressLabel = addressLabel;
@@ -57,8 +61,8 @@ public class Receiver implements Serializable {
         this.ssn = ssn;
     }
     
-    public Receiver(String email, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
-        this(email, "FI", addressLabel, replacements, ssn);
+    public Receiver(String oid, String email, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
+        this(oid, email, "FI", addressLabel, replacements, ssn);
     }
 
     @Override

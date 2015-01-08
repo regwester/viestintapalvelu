@@ -66,6 +66,6 @@ public class MessageToAsiointiTiliConverterTest {
     }
 
     private Receiver givenReceiver(String ssn) {
-        return new Receiver("test@test.com", new AddressLabel(), new HashMap<String, Object>(), ssn);
+        return new Receiver("1.9.2.345", "test@test.com", new AddressLabel(), new HashMap<String, Object>(), ssn);
     }
 }
