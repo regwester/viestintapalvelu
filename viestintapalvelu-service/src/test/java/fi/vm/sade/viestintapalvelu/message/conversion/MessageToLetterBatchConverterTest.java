@@ -58,6 +58,6 @@ public class MessageToLetterBatchConverterTest {
     }
 
     private Receiver givenReceiver(String ssn) {
-        return new Receiver("test@test.com", new AddressLabel(), new HashMap<String, Object>(), ssn);
+        return new Receiver("1.9.2.455", "test@test.com", new AddressLabel(), new HashMap<String, Object>(), ssn);
     }
 }

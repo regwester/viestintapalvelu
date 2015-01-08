@@ -61,5 +61,9 @@ public class MessageData implements Serializable {
         return "MessageData [templateName=" + templateName + ", language=" + language + ", receivers=" + receivers + ", commonReplacements="
                 + commonReplacements + "]";
     }
+    
+    public MessageData copyOf(List<Receiver> receivers) {
+        return new MessageData(this.templateName, this.language, receivers, this.commonReplacements);
+    }
 
 }

@@ -24,8 +24,10 @@ import fi.vm.sade.viestintapalvelu.api.rest.MessageResource;
 import fi.vm.sade.viestintapalvelu.asiontitili.AsiointitiliService;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.message.conversion.ConvertedMessageWrapper;
 import fi.vm.sade.viestintapalvelu.message.conversion.MessageToAsiointiTiliConverter;
+import fi.vm.sade.viestintapalvelu.message.conversion.MessageToLetterBatchConverter;
 
 /**
  * @author risal1
@@ -37,7 +39,12 @@ public class MessageDataResource implements MessageResource {
     @Autowired
     private AsiointitiliService asiointitiliService;
     
+    @Autowired
+    private LetterService letterService;
+    
     private MessageToAsiointiTiliConverter asiointiliConverter = new MessageToAsiointiTiliConverter();
+    
+    private MessageToLetterBatchConverter letterBatchConverter = new MessageToLetterBatchConverter();
     
     /* (non-Javadoc)
      * @see fi.vm.sade.viestintapalvelu.api.rest.MessageResource#sendMessageViaAsiointiTiliOrEmail(fi.vm.sade.viestintapalvelu.api.message.MessageData)
@@ -47,8 +54,10 @@ public class MessageDataResource implements MessageResource {
         ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
         AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
         //TODO: Additional checks
+        //TODO: need to also use receivers that didn't get message via asiointitili in otherways
         if (!wrapper.incompatibleReceivers.isEmpty()) {
-            //TODO: email sending, how will we proceed? should we store something to db
+            //TODO build emaildata and use ryhmasahkoposti //use pdfprinterresource for attachment
+            //TODO: email sending, how will we proceed? should we store something to db even though Asiointitili seems not to do so
         }
         return null;
     }

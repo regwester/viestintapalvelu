@@ -16,6 +16,7 @@
 package fi.vm.sade.viestintapalvelu.api.message;
 
 import java.io.Serializable;
+import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
@@ -43,16 +44,21 @@ public class MessageStatusResponse implements Serializable {
     
     @ApiModelProperty(value = "Virheviesti")
     public final String errorMessage;
+    
+    @ApiModelProperty(value = "Vastaanottajien tila (esim. onnistuiko lähetys kyseiselle vastaanottajalle")
+    public final List<ReceiverStatus> receiverStatuses;
 
-    public MessageStatusResponse(State state, String errorMessage, String statusUrl) {
+    public MessageStatusResponse(State state, String errorMessage, String statusUrl, List<ReceiverStatus> receiverStatuses) {
         this.errorMessage = errorMessage;
         this.state = state;
         this.statusUrl = statusUrl;
+        this.receiverStatuses = receiverStatuses;
     }
 
     @Override
     public String toString() {
-        return "MessageStatusResponse [state=" + state + ", statusUrl=" + statusUrl + ", errorMessage=" + errorMessage + "]";
+        return "MessageStatusResponse [state=" + state + ", statusUrl=" + statusUrl + ", errorMessage=" + errorMessage + ", receiverStatuses="
+                + receiverStatuses + "]";
     }
 
 }
