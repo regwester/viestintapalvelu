@@ -15,8 +15,8 @@ angular.module('letter-templates')
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = selectAppPeriod;
         $scope.col_defs = [
-            { field: "lang", displayName: "Kieli"},
-            { field: "status", displayName: "Tila"}
+            { field: "language", displayName: "Kieli"},
+            { field: "state", displayName: "Tila"}
         ];
 
         $scope.template_tree_data = [

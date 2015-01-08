@@ -87,6 +87,7 @@ angular.module('letter-templates')
             };
 
             $scope.editTemplate = function (templateId) {
+                console.log("edit template " + templateId);
                 $state.go('letter-templates_edit', {'templateId': templateId});
             };
 

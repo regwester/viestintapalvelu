@@ -40,8 +40,8 @@ angular.module('letter-templates')
                         newRow[firstColum18nStr] = item.nimi.en;
                     }
 
-                    newRow["lang"] = item.language;
-                    newRow["status"] = item.state;
+                    newRow["language"] = item.language;
+                    newRow["state"] = item.state;
                     newRow["oid"] = item.oid;
                     oidList.push(item.oid);
                     if(item.children && item.children.length > 0) {
@@ -67,8 +67,6 @@ angular.module('letter-templates')
                     var letterRow = item;
 
                     letterRow[firstColum18nStr] = item.name;
-                    letterRow["lang"] = item.language;
-                    letterRow["status"] = item.state;
                     letterRow["isLetter"] = true;
                     var parent = oidMap[orgOid];
 

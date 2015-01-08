@@ -86,6 +86,9 @@
                             icon-collapse   = "icon-expanded"
                             on-select       = "my_tree_handler(branch, event)"
                             expand-level    = "5"
+                            edit-template-handler="editDraft(treeDraftId)"
+                            publish-template-handler="publishDraft(treeDraftId)"
+                            remove-template-handler="deleteDraft(treeDraftId)"
                             >
                     </tree-grid>
                 </tab>

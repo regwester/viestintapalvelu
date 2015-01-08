@@ -31,9 +31,9 @@
                                         <div auth=\"crudOph\" class=\"btn-group dropdown\">\
                                             <input type=\"button\" class=\"dropdown-toggle tree-grid-dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\"/>\
                                             <ul class=\"dropdown-menu tree-grid-dropdown\" role=\"menu\">\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-disabled=\"row.branch.state !== 'luonnos'\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-disabled=\"row.branch.state!== 'luonnos'\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-disabled=\"row.branch.state === 'suljettu'\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
                                             </ul>\
                                         </div>\
                                         {{row.branch[expandingProperty]}}\
@@ -189,9 +189,9 @@
                     };
 
                     scope.user_clicks_branch = function(branch, event) {
-                        if(event.originalEvent && branch.children.length == 0) {
+                        if(branch.isLetter && event.originalEvent && branch.children.length == 0) {
                             var e = null;
-
+                            console.log(branch);
                             //different selectors for handling clicking of either the icon or the row text
                             if(event.target.tagName === 'SPAN') {
                                 e = $(event.target).children().children('.dropdown-toggle');
