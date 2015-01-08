@@ -32,7 +32,7 @@
                                             <input type=\"button\" class=\"dropdown-toggle tree-grid-dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\"/>\
                                             <ul class=\"dropdown-menu tree-grid-dropdown\" role=\"menu\">\
                                                 <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-disabled=\"row.branch.state !== 'luonnos'\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-disabled=\"row.branch.state!== 'luonnos'\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-disabled=\"row.branch.state !== 'luonnos'\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
                                                 <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-disabled=\"row.branch.state === 'suljettu'\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
                                             </ul>\
                                         </div>\
@@ -175,17 +175,17 @@
                         }
                     };
                     scope.editTemplate = function(branch, event) {
-                        $rootScope.$broadcast("templateIdChanged", branch.id)
-                        scope.editTemplateHandler(branch.templateId);
+                        $rootScope.$broadcast("treeTemplateChanged", branch)
+                        scope.editTemplateHandler(branch.templateId, branch.state);
 
                     };
                     scope.publishTemplate = function(branch, event) {
-                        $rootScope.$broadcast("templateIdChanged", branch.id)
-                        scope.publishTemplateHandler(branch.templateId);
+                        $rootScope.$broadcast("treeTemplateChanged", branch)
+                        scope.publishTemplateHandler(branch.templateId, branch.state);
                     };
                     scope.removeTemplate = function(branch, event) {
-                        $rootScope.$broadcast("templateIdChanged", branch.id);
-                        scope.removeTemplateHandler(branch.templateId);
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
+                        scope.removeTemplateHandler(branch.templateId, branch.state);
                     };
 
                     scope.user_clicks_branch = function(branch, event) {
