@@ -31,9 +31,9 @@
                                         <div auth=\"crudOph\" class=\"btn-group dropdown\">\
                                             <input type=\"button\" class=\"dropdown-toggle tree-grid-dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\"/>\
                                             <ul class=\"dropdown-menu tree-grid-dropdown\" role=\"menu\">\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-disabled=\"row.branch.state !== 'luonnos'\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-disabled=\"row.branch.state !== 'luonnos'\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-disabled=\"row.branch.state === 'suljettu'\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-disabled=\"isEditDisabled(row.branch)\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-disabled=\"isPublishDisabled(row.branch)\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
+                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-disabled=\"isRemoveDisabled(row.branch)\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
                                             </ul>\
                                         </div>\
                                         {{row.branch[expandingProperty]}}\
@@ -173,6 +173,18 @@
                                 }
                             }
                         }
+                    };
+
+                    scope.isEditDisabled = function(branch) {
+                        return false;
+                    };
+                    scope.isPublishDisabled = function(branch) {
+                        if(!branch.isLetter) return true;
+                        return branch.state === 'julkaistu';
+                    };
+                    scope.isRemoveDisabled = function(branch) {
+                        if(!branch.isLetter) return true;
+                        return branch.state === 'suljettu';
                     };
                     scope.editTemplate = function(branch, event) {
                         $rootScope.$broadcast("treeTemplateChanged", branch)
