@@ -50,4 +50,9 @@ public interface TarjontaHakuResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/hakukohde/{oid}")
     HakuRDTO<HakukohdeDTO> getHakuhdeByOid(@PathParam("oid") String oid) throws Exception;
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/haku/{oid}/hakukohteidenOrganisaatiot")
+    HakuRDTO<List<String>> getHakuOrganizationOids(@PathParam("oid") String oid);
 }

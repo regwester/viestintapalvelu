@@ -71,7 +71,7 @@ public class OrganizationResource extends AsynchronousResource {
          */
         // search for all schools and organizations that provide teaching for
         // the given application period
-        Set<String> providerOrgIds = tarjontaComponent.findByOid(applicationPeriod);
+        Set<String> providerOrgIds = tarjontaComponent.getProviderOrgOids(applicationPeriod);
         List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
         List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
 

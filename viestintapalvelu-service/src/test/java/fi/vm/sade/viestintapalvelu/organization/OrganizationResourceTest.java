@@ -99,6 +99,12 @@ public class OrganizationResourceTest {
         kohdeRDTO.setResult(kohde);
 
         when(tarjontaHakuResourceMock.getHakuhdeByOid(eq("child1"))).thenReturn(kohdeRDTO);
+        final HakuRDTO<List<String>> listHakuRDTO = new HakuRDTO<List<String>>();
+        List<String> providerOrgOids = new ArrayList<>();
+        providerOrgOids.addAll(tarjoajaoids);
+        listHakuRDTO.setResult(providerOrgOids);
+        when(tarjontaHakuResourceMock.getHakuOrganizationOids(eq(applicationPeriod))).thenReturn(listHakuRDTO);
+
         when(tarjontaHakuResourceMock.hakuByOid(eq(applicationPeriod))).thenReturn(rdto);
         when(organisaatioResourceWithoutAuthenticationClientMock.hierarchy(eq(true))).thenReturn(result);
 

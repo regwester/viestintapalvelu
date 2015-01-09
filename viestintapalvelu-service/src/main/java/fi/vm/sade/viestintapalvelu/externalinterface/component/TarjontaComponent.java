@@ -33,10 +33,11 @@ import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 
 /**
- * User: ratamaa Date: 7.10.2014 Time: 12:44
+ * User: ratamaa
+ * Date: 7.10.2014
+ * Time: 12:44
  */
 @Component
 public class TarjontaComponent {
@@ -71,25 +72,12 @@ public class TarjontaComponent {
         }
     }
 
-    public Set<String> findByOid(String applicationPeriod) {
+    public Set<String> getProviderOrgOids(String applicationPeriod) {
         try {
-            final HakuRDTO<HakuDetailsDto> hakuDetailsDtoHakuRDTO = tarjontaHakuResourceClient.hakuByOid(applicationPeriod);
-
-            if (hakuDetailsDtoHakuRDTO.getResult() == null)
-                return null;
-
-            // todo bulk query
-            Set<String> tarjoajaOrgOids = new HashSet<>();
-            for (String hakukohdeOid : hakuDetailsDtoHakuRDTO.getResult().getHakukohdeOids()) {
-                final HakuRDTO<HakukohdeDTO> hakuhdeByOid = tarjontaHakuResourceClient.getHakuhdeByOid(hakukohdeOid);
-                if (hakuhdeByOid == null || hakuhdeByOid.getResult() == null)
-                    continue;
-                tarjoajaOrgOids.addAll(hakuhdeByOid.getResult().tarjoajaOids);
-
-            }
-
-            return tarjoajaOrgOids;
-
+            final HakuRDTO<List<String>> hakuOrganizationOids = tarjontaHakuResourceClient.getHakuOrganizationOids(applicationPeriod);
+            if(hakuOrganizationOids == null || hakuOrganizationOids.getResult() == null) return new HashSet<>();
+            List<String> oids = hakuOrganizationOids.getResult();
+            return new HashSet<>(oids);
         } catch (Exception e) {
             log.error("Error finding haku by application period", e);
             throw new ExternalInterfaceException(e);
