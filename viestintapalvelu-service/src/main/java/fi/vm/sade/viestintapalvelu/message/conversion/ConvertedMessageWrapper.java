@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.viestintapalvelu.message.conversion;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import fi.vm.sade.viestintapalvelu.api.message.Receiver;
@@ -32,6 +33,10 @@ public class ConvertedMessageWrapper<T> {
     public ConvertedMessageWrapper(T wrapped, List<Receiver> incompatibleReceivers) {
         this.wrapped = wrapped;
         this.incompatibleReceivers = incompatibleReceivers;
+    }
+    
+    public ConvertedMessageWrapper(T wrapped) {
+        this(wrapped, new ArrayList<Receiver>());
     }
     
 }

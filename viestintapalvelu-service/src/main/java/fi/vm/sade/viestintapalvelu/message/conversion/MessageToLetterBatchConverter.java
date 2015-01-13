@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.viestintapalvelu.message.conversion;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import com.google.common.base.Function;
@@ -40,7 +39,7 @@ public class MessageToLetterBatchConverter implements MessageDataConverter<Messa
         batch.setTemplateReplacements(data.commonReplacements);
         batch.setLetters(convertMessages(data.receivers));
         // TODO other optional fields?
-        return new ConvertedMessageWrapper<AsyncLetterBatchDto>(batch, new ArrayList<Receiver>());
+        return new ConvertedMessageWrapper<AsyncLetterBatchDto>(batch);
     }
     
     private List<AsyncLetterBatchLetterDto> convertMessages(List<Receiver> receivers) {
