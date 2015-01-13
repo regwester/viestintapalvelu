@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.ConcurrentModificationException;
@@ -31,14 +46,14 @@ import fi.vm.sade.viestintapalvelu.letter.processing.*;
 public class LetterBatchProcessor {
     private static final Logger logger = LoggerFactory.getLogger(LetterBatchProcessor.class);
 
-    @Resource(name="batchJobExecutorService")
+    @Resource(name = "batchJobExecutorService")
     private ExecutorService batchJobExecutorService;
-    @Resource(name="letterReceiverExecutorService")
+    @Resource(name = "letterReceiverExecutorService")
     private ExecutorService letterReceiverExecutorService;
     @Value("#{poolSizes['threadsPerBatchJob'] != null ? poolSizes['threadsPerBatchJob'] : 4}")
-    private int letterBatchJobThreadCount=4;
+    private int letterBatchJobThreadCount = 4;
     @Value("#{poolSizes['threadsPerBatchJob'] != null ? poolSizes['threadsPerBatchJob'] : 4}")
-    private int iPostZipProcessingJobThreadCount=4;
+    private int iPostZipProcessingJobThreadCount = 4;
 
     private volatile Set<Job<?>> jobsBeingProcessed = new HashSet<Job<?>>();
 
@@ -48,9 +63,7 @@ public class LetterBatchProcessor {
     public LetterBatchProcessor() {
     }
 
-    public LetterBatchProcessor(ExecutorService batchJobExecutorService,
-                                ExecutorService letterReceiverExecutorService,
-                                LetterServiceImpl letterService) {
+    public LetterBatchProcessor(ExecutorService batchJobExecutorService, ExecutorService letterReceiverExecutorService, LetterServiceImpl letterService) {
         this.batchJobExecutorService = batchJobExecutorService;
         this.letterReceiverExecutorService = letterReceiverExecutorService;
         this.letterService = letterService;
@@ -59,21 +72,19 @@ public class LetterBatchProcessor {
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
-        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<LetterReceiverProcessable>(
-                new JobDescription<LetterReceiverProcessable>(job,
-                    LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
-                    letterBatchJobThreadCount));
+        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<LetterReceiverProcessable>(new JobDescription<LetterReceiverProcessable>(job,
+                LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)), letterBatchJobThreadCount));
         return batchJobExecutorService.submit(batchJob);
     }
 
-    /// For testing:
+    // / For testing:
     public boolean isProcessingLetterBatch(long letterBatchId) {
         return jobsBeingProcessed.contains(new LetterReceiverJob(letterBatchId));
     }
 
     private synchronized void reserveJob(Job<?> job) {
         if (!jobsBeingProcessed.add(job)) {
-            throw new ConcurrentModificationException("Trying to process same job "+job+" more than once");
+            throw new ConcurrentModificationException("Trying to process same job " + job + " more than once");
         }
         logger.info("Reserved job={}", job);
     }
@@ -114,21 +125,21 @@ public class LetterBatchProcessor {
 
         @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) throws Exception {
-            Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
-                    letterBatchId, LetterBatchProcess.LETTER);
+            Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
             if (nextToDo.isPresent()) {
                 switch (nextToDo.get()) {
-                    case IPOSTI:
-                        IPostJob job = new IPostJob(this.letterBatchId);
-                        reserveJob(job);
-                        LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
-                        if (splitted.getProcessables().isEmpty()) {
-                            return Optional.absent();
-                        }
-                        JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job , splitted.getProcessables(),
-                                iPostZipProcessingJobThreadCount);
-                        return Optional.of(jobDescription);
-                    default: throw new IllegalStateException(this+" can not start next job " + nextToDo.get());
+                case IPOSTI:
+                    IPostJob job = new IPostJob(this.letterBatchId);
+                    reserveJob(job);
+                    LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
+                    if (splitted.getProcessables().isEmpty()) {
+                        return Optional.absent();
+                    }
+                    JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job, splitted.getProcessables(),
+                            iPostZipProcessingJobThreadCount);
+                    return Optional.of(jobDescription);
+                default:
+                    throw new IllegalStateException(this + " can not start next job " + nextToDo.get());
                 }
             }
             return Optional.absent();
@@ -141,7 +152,7 @@ public class LetterBatchProcessor {
 
         @Override
         public String toString() {
-            return "LetterBatch="+this.letterBatchId+" LETTER processsing";
+            return "LetterBatch=" + this.letterBatchId + " LETTER processsing";
         }
 
         @Override
@@ -201,10 +212,9 @@ public class LetterBatchProcessor {
 
         @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) throws Exception {
-            Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(
-                    letterBatchId, LetterBatchProcess.IPOSTI);
+            Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.IPOSTI);
             if (nextToDo.isPresent()) {
-                throw new IllegalStateException(this+" don't know how to start next job " + nextToDo.get());
+                throw new IllegalStateException(this + " don't know how to start next job " + nextToDo.get());
             }
             return Optional.absent();
         }
@@ -216,7 +226,7 @@ public class LetterBatchProcessor {
 
         @Override
         public String toString() {
-            return "LetterBatch="+this.letterBatchId+" IPOSTI";
+            return "LetterBatch=" + this.letterBatchId + " IPOSTI";
         }
 
         @Override
@@ -261,8 +271,8 @@ public class LetterBatchProcessor {
             logger.info("{} starting", this.jobDescription);
             try {
                 this.jobDescription.getJob().start(this.jobDescription);
-            } catch(Exception e) {
-                logger.error("Error during start with " +this.jobDescription+". Error: "+e.getMessage(), e);
+            } catch (Exception e) {
+                logger.error("Error during start with " + this.jobDescription + ". Error: " + e.getMessage(), e);
                 this.jobDescription.getJob().handleJobStartedFailure(e, this.jobDescription);
                 this.okState.set(false);
             }
@@ -275,15 +285,17 @@ public class LetterBatchProcessor {
                         public void run() {
                             T nextProcessable = unprocessed.poll();
                             while (okState.get() && nextProcessable != null) {
-                                // To ensure that no id is processed twice, you could verify the output of:
-                                // logger.debug("Thread : " + Thread.currentThread().getId() + " processing: " + nextId);
+                                // To ensure that no id is processed twice, you
+                                // could verify the output of:
+                                // logger.debug("Thread : " +
+                                // Thread.currentThread().getId() +
+                                // " processing: " + nextId);
                                 try {
                                     if (okState.get()) {
                                         jobDescription.getJob().process(nextProcessable);
                                     }
                                 } catch (Exception e) {
-                                    logger.error("Error processing processable " + nextProcessable + " in job "
-                                            + jobDescription.getJob(), e);
+                                    logger.error("Error processing processable " + nextProcessable + " in job " + jobDescription.getJob(), e);
                                     jobDescription.getJob().handleFailure(e, nextProcessable);
                                     okState.set(false);
                                 }
@@ -304,12 +316,12 @@ public class LetterBatchProcessor {
                     if (nextJob.isPresent()) {
                         JobDescription<?> job = nextJob.get();
                         logger.info("Next processing: {}", job);
-                        @SuppressWarnings({"unchecked", "rawtypes"})
+                        @SuppressWarnings({ "unchecked", "rawtypes" })
                         BatchJob<?> batchJob = new BatchJob(job);
                         batchJobExecutorService.submit(batchJob);
                     }
-                } catch(Exception e) {
-                    logger.error("Error during jobFinished with " +this.jobDescription+". Error: "+e.getMessage(), e);
+                } catch (Exception e) {
+                    logger.error("Error during jobFinished with " + this.jobDescription + ". Error: " + e.getMessage(), e);
                     this.jobDescription.getJob().handleJobFinnishedFailure(e, this.jobDescription);
                     this.okState.set(false);
                 }

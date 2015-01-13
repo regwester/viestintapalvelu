@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.document;
 
 import java.io.*;
@@ -39,7 +54,7 @@ public class DocumentBuilder {
         return output.toByteArray();
     }
 
-    public byte[] applyTextTemplate(byte[] template, Map<String,Object> data) throws IOException {
+    public byte[] applyTextTemplate(byte[] template, Map<String, Object> data) throws IOException {
         StringWriter writer = new StringWriter();
         templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(template)));
         return writer.toString().getBytes();
@@ -56,7 +71,7 @@ public class DocumentBuilder {
         mergedPDFDocument.flush();
         return mergedPDFDocument;
     }
-    
+
     public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {
         MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
         for (PdfDocument pdfDocument : input) {
@@ -65,7 +80,7 @@ public class DocumentBuilder {
         mergedPDFDocument.flush();
         return mergedPDFDocument;
     }
-    
+
     /**
      * Merge xhtml file contents
      * 
@@ -76,10 +91,10 @@ public class DocumentBuilder {
      */
     public byte[] mergeByte(List<byte[]> inputs) throws DocumentException, IOException {
 
-	ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-	for (byte[] input : inputs) 
-	    outputStream.write(input);
-	return outputStream.toByteArray();	
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+        for (byte[] input : inputs)
+            outputStream.write(input);
+        return outputStream.toByteArray();
     }
 
     public byte[] zip(Map<String, byte[]> documents) throws IOException {
@@ -97,8 +112,7 @@ public class DocumentBuilder {
     private ITextRenderer newITextRenderer(byte[] input) {
         ITextRenderer renderer = new ITextRenderer();
         OPHUserAgent uac = new OPHUserAgent(renderer.getOutputDevice());
-        FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(renderer.getSharedContext()
-                .getReplacedElementFactory());
+        FlyingSaucerReplaceElementFactory mref = new FlyingSaucerReplaceElementFactory(renderer.getSharedContext().getReplacedElementFactory());
         uac.setSharedContext(renderer.getSharedContext());
         renderer.getSharedContext().setUserAgentCallback(uac);
         renderer.getSharedContext().setReplacedElementFactory(mref);

@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
 import java.util.*;
@@ -36,7 +51,8 @@ public class OrganizationComponent {
     /**
      * Hae organisaation tiedot
      * 
-     * @param oid Organisaation oid-tunnus
+     * @param oid
+     *            Organisaation oid-tunnus
      * @return Organisaation tiedot
      */
     public OrganisaatioRDTO getOrganization(String oid) {
@@ -51,29 +67,31 @@ public class OrganizationComponent {
     /**
      * Palauttaa organisaation nimen
      * 
-     * @param organisaatio Organisaation tiedot
+     * @param organisaatio
+     *            Organisaation tiedot
      * @return Organisaation nimi
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-        String[] language = {"fi", "sv", "en"};
+        String[] language = { "fi", "sv", "en" };
         if (organisaatio == null || organisaatio.getNimi() == null) {
             return "";
         }
-        
+
         for (int i = 0; language.length > i; i++) {
             String nameOfOrganisation = organisaatio.getNimi().get(language[i]);
             if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
                 return nameOfOrganisation;
             }
         }
-        
+
         return "";
     }
-    
+
     /**
      * Hae organisaation isätiedot
      * 
-     * @param oid Organisaation oid-tunnus
+     * @param oid
+     *            Organisaation oid-tunnus
      * @return Organisaation isätiedot listana
      */
     public List<String> getOrganizationParents(String oid) {
@@ -92,11 +110,11 @@ public class OrganizationComponent {
     public OrganisaatioHierarchyDto getOrganizationHierarchy() {
         try {
             OrganisaatioHierarchyResultsDto rootResults = organisaatioResourceWithoutAuthenticationClient.hierarchy(true);
-            /// XXX: doesn't include the root:
+            // / XXX: doesn't include the root:
             OrganisaatioHierarchyDto root = new OrganisaatioHierarchyDto();
             root.setChildren(rootResults.getOrganisaatiot());
             root.setOid(rootOrganizationOID);
-            Map<String,String> nimi = new HashMap<String, String>();
+            Map<String, String> nimi = new HashMap<String, String>();
             nimi.put("fi", "Opetushallitus");
             nimi.put("sv", "Utbildningsstyrelsen");
             nimi.put("en", "The Finnish National Board of Education");
@@ -111,14 +129,15 @@ public class OrganizationComponent {
     /**
      * Palauttaa listan organisaation isärakenteesta
      * 
-     * @param parents Organisaation isärakenne merkkijonona eroteltuna "/"-merkillä
+     * @param parents
+     *            Organisaation isärakenne merkkijonona eroteltuna "/"-merkillä
      * @return Lista isärakenteesta
      */
     private List<String> getParentOidList(String parents) {
         if (parents == null || parents.isEmpty()) {
             return new ArrayList<String>();
         }
-        
+
         String[] parentOids = parents.split("/");
         return Arrays.asList(parentOids);
     }

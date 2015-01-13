@@ -21,7 +21,7 @@ package fi.vm.sade.viestintapalvelu.message.conversion;
  *
  */
 public interface MessageDataConverter<MessageData, T> {
-    
+
     ConvertedMessageWrapper<T> convert(MessageData data);
 
 }

@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.ArrayList;
@@ -31,7 +46,7 @@ public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
     private String languageCode;
 
-	@ApiModelProperty(value = "Tallentajan Oid")
+    @ApiModelProperty(value = "Tallentajan Oid")
     private String storingOid;
 
     @ApiModelProperty(value = "Organisaatio Oid")
@@ -42,15 +57,15 @@ public class LetterBatch implements LetterBatchDetails {
 
     @ApiModelProperty(value = "Hakukohde id")
     private String fetchTarget;
-    
+
     @ApiModelProperty(value = "Vapaa teksti tunniste")
     private String tag;
 
     @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
     private boolean iposti = false;
-    
+
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
-    
+
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
     }
@@ -63,8 +78,7 @@ public class LetterBatch implements LetterBatchDetails {
     public boolean isIposti() {
         return this.iposti;
     }
-    
-    
+
     public void setLetters(List<Letter> letters) {
         this.letters = letters;
     }
@@ -126,17 +140,17 @@ public class LetterBatch implements LetterBatchDetails {
 
     public void setOrganizationOid(String organizationOid) {
         this.organizationOid = organizationOid;
-    }    
+    }
 
-	public String getApplicationPeriod() {
-		return applicationPeriod;
-	}
+    public String getApplicationPeriod() {
+        return applicationPeriod;
+    }
 
-	public void setApplicationPeriod(String applicationPeriod) {
-		this.applicationPeriod = applicationPeriod;
-	}
+    public void setApplicationPeriod(String applicationPeriod) {
+        this.applicationPeriod = applicationPeriod;
+    }
 
-	public String getFetchTarget() {
+    public String getFetchTarget() {
         return fetchTarget;
     }
 
@@ -151,7 +165,6 @@ public class LetterBatch implements LetterBatchDetails {
     public void setTag(String tag) {
         this.tag = tag;
     }
-    
 
     public List<LetterBatch> split(int limit) {
         List<LetterBatch> batches = new ArrayList<LetterBatch>();
@@ -174,8 +187,7 @@ public class LetterBatch implements LetterBatchDetails {
         return result;
     }
 
-    private void split(List<Letter> remaining, List<LetterBatch> batches,
-            int limit) {
+    private void split(List<Letter> remaining, List<LetterBatch> batches, int limit) {
         if (limit >= remaining.size()) {
             batches.add(createSubBatch(new ArrayList<Letter>(remaining)));
         } else {
@@ -186,14 +198,9 @@ public class LetterBatch implements LetterBatchDetails {
 
     @Override
     public String toString() {
-        return "LetterBatch [letters=" + letters + ", template=" + template
-                + ", templateId=" + templateId + ", templateReplacements="
-                + templateReplacements + ", templateName=" + templateName
-                + ", languageCode=" + languageCode + ", storingOid="
-                + storingOid + ", organizationOid=" + organizationOid
-                + ", applicationPeriod=" + applicationPeriod 
-                + ", fetchTarget=" + fetchTarget 
-                + ", tag=" + tag + "]";
+        return "LetterBatch [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements=" + templateReplacements
+                + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid
+                + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag + "]";
     }
 
     public Map<String, byte[]> getIPostiData() {

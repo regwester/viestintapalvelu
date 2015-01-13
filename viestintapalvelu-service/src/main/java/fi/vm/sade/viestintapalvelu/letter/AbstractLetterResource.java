@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.Map;
@@ -49,9 +64,9 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     @Autowired
     protected DokumenttiIdProvider dokumenttiIdProvider;
 
-    protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input, 
+    protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input,
             boolean anonymousRequest) {
-        
+
         LetterResponse response = new LetterResponse();
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
@@ -79,10 +94,10 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
         }
     }
 
-    public Response getLetterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id")  String prefixedLetterBatchId) {
+    public Response getLetterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
-        if(status == null) {
+        if (status == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }
 
@@ -91,7 +106,8 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
 
     protected long getLetterBatchId(String id) {
         id = FilenameHelper.withoutExtension(id);
-                // Expect format: VIES-<tyyppi>-id-<HASH(suola+"VIES-"+tyyppi+id+tallentaja-oid)>
+        // Expect format:
+        // VIES-<tyyppi>-id-<HASH(suola+"VIES-"+tyyppi+id+tallentaja-oid)>
         if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_PDF)) {
             return dokumenttiIdProvider.parseLetterBatchIdByDokumenttiId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
         } else if (id.startsWith(LetterService.DOKUMENTTI_ID_PREFIX_ZIP)) {
