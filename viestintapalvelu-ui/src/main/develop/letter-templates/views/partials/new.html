@@ -5,7 +5,7 @@
     <div class="modal-body">
         <div>
             <p class="bold" ng-bind="'template.label.select.template.application' | i18n"></p>
-            <select class="full-width" ng-model="applicationTarget.value" ng-options="t.value as t.name for t in applicationTargets | orderBy: 'name'" ng-change="selectTarget(applicationTarget)"></select>
+            <select class="full-width" ng-model="applicationTarget" ng-options="t as t.name for t in applicationTargets track by t.value | orderBy: 'name'" ng-change="selectTarget(applicationTarget)"></select>
         </div>
         <input-list label="{{'template.label.select.template.type' | i18n}}" items="applicationTypes" model="applicationTypeSelection" change="selectType(applicationTypeSelection)" input="radio"></input-list>
         <input-list label="{{'template.label.select.template.language' | i18n}}" items="languages" model="languageSelection" change="selectLanguage(languageSelection)" input="radio"></input-list>
@@ -16,7 +16,7 @@
             </select>
         </div>
         <div ng-if="applicationTypeSelection && languageSelection">
-            <select class="full-width" ng-model="baseTemplate" ng-options="t.value as t.name for t in baseTemplates | orderBy: 'name'" ng-change="selectBase(baseTemplate)">
+            <select class="full-width" ng-model="baseTemplate" ng-options="t as t.name for t in baseTemplates | orderBy: 'name'" ng-change="selectBase(baseTemplate)">
                 <option value="" ng-bind="'template.common.default.template' | i18n"></option>
             </select>
         </div>

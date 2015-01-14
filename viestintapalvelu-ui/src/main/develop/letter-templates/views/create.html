@@ -25,8 +25,13 @@
                 <form-item label="{{'common.label.status' | i18n}}">
                     <p ng-bind="template.status"></p>
                 </form-item>
-                <h4>Varsinainen kirje</h4>
-                <form-item label="Otsikko:" subnote="Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen otsikko ja sähköpostiviestin otsikko">
+                <h4 ng-bind="'template.text.actual.letter' | i18n"></h4>
+                <form-item ng-repeat="field in template.contents">
+                    <input ng-if="contentType === 'plain'" type="text" size="input-lg" ng-model="template.subject"/>
+                    <textarea ng-if="contentType === 'email'" ui-tinymce="editorOptions" ng-model="field.value"></textarea>
+                </form-item>
+                <!--
+                <form-item label="{{'common.label.subject' | i18n }}" subnote="Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen otsikko ja sähköpostiviestin otsikko">
                     <input type="text" size="input-lg" ng-model="template.subject"/>
                 </form-item>
                 <form-item label="Viesti, osa yksi:" subnote="Oppilaitosvirkailijan muokattavissa oleva viestiosio">
@@ -42,6 +47,7 @@
                 <form-item label="Liitteen tekstiosio:" subnote="Vain OPH:n virkailijan muokattavissa oleva liitteen tekstiosio">
                     <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
                 </form-item>
+                -->
             </form>
         </div>
     </div>

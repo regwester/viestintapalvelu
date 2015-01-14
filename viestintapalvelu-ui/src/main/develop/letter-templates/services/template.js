@@ -24,7 +24,7 @@ angular.module('letter-templates')
                 return deferred.promise;
             },
             getBaseTemplates: function() {
-                return $http.get(templateBaseUrl + '/something')
+                return $http.get(templateBaseUrl + 'list')
             },
             getApplicationTarget: function() {
                 return selectedApplicationTarget;

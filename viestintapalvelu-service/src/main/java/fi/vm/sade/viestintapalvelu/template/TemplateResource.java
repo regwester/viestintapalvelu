@@ -672,6 +672,15 @@ public class TemplateResource extends AsynchronousResource {
         return draftsByOrgOidsAndApplicationPeriod;
     }
 
+    @GET
+    @Produces("application/json")
+    @Path("/list")
+    public List<String> getApplicationPeriodsByLanguageAndType(
+            @ApiParam(name = "type", value = "Kirjepohjan tyyppi (koekutsu-, jälkiohjaus tai hyväksymiskirje)") @QueryParam("type") String type,
+            @ApiParam(name = "language", value = "Kirjepohjan kielikoodi ISO 639-1 muodossa (esim. FI, SV, EN, ...") @QueryParam("language") String language) {
+        return templateService.getTemplateNamesListByState(State.julkaistu);
+    }
+
     private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
         List<Map<String, String>> res = new ArrayList<Map<String, String>>();
         for (String s : serviceResult) {

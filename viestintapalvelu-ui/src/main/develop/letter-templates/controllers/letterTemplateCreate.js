@@ -36,6 +36,7 @@ angular.module('letter-templates')
                 structure = {},
                 state = 'luonnos/suljettu/julkaistu';
             */
+
             $scope.cancel = function() {
                 $state.go('letter-templates_overview');
             };
