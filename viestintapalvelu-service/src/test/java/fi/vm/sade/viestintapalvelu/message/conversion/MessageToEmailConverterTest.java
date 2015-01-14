@@ -41,6 +41,14 @@ public class MessageToEmailConverterTest {
         MessageData message = givenMessageData();
         assertEmail(message, converter.convert(message).wrapped);
     }
+    
+    @Test
+    public void doesNotConvertReceiversWithoutEmail() {
+        MessageData message = givenMessageData(Arrays.asList(givenReceiver("")));
+        ConvertedMessageWrapper<EmailData> wrapper = converter.convert(message);
+        assertTrue(wrapper.wrapped.getRecipient().isEmpty());
+        assertEquals(1, wrapper.incompatibleReceivers.size());
+    }
 
     private void assertEmail(MessageData message, EmailData email) {
         assertEquals(message.templateName, email.getEmail().getTemplateName());
@@ -63,14 +71,14 @@ public class MessageToEmailConverterTest {
     }
 
     private MessageData givenMessageData() {
-        return givenMessageData(Arrays.asList(givenReceiver("010101-123N")));
+        return givenMessageData(Arrays.asList(givenReceiver("test@test.com")));
     }
 
     private MessageData givenMessageData(List<Receiver> receivers) {
         return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>());
     }
 
-    private Receiver givenReceiver(String ssn) {
-        return new Receiver("1.9.2.455", "test@test.com", new AddressLabel(), new HashMap<String, Object>(), ssn);
+    private Receiver givenReceiver(String email) {
+        return new Receiver("1.9.2.455", email, new AddressLabel(), new HashMap<String, Object>(), null);
     }
 }

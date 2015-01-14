@@ -19,8 +19,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
 import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
@@ -42,8 +46,26 @@ public class MessageToEmailConverter implements MessageDataConverter<MessageData
         EmailData email = new EmailData();
         email.setEmail(convertToEmailMessage(data));
         email.setReplacements(convertToEmailReplacements(data.commonReplacements));
-        email.setRecipient(convertToEmailRecipients(data.receivers));
-        return new ConvertedMessageWrapper<EmailData>(email);
+        List<Receiver> incompatibleReceivers = filterIncompatibleReceivers(data);
+        email.setRecipient(convertToEmailRecipients(filterCompatibleReceivers(data, incompatibleReceivers)));
+        return new ConvertedMessageWrapper<EmailData>(email, incompatibleReceivers);
+    }
+
+    private List<Receiver> filterCompatibleReceivers(MessageData data, List<Receiver> incompatibleReceivers) {
+        List<Receiver> receiversToProcess = new ArrayList<>(data.receivers);
+        receiversToProcess.removeAll(incompatibleReceivers);
+        return receiversToProcess;
+    }
+
+    private List<Receiver> filterIncompatibleReceivers(MessageData data) {
+        return ImmutableList.copyOf(Iterables.filter(data.receivers, new Predicate<Receiver>() {
+
+            @Override
+            public boolean apply(Receiver input) {
+                return StringUtils.isBlank(input.email);
+            }
+
+        }));
     }
 
     private List<EmailRecipient> convertToEmailRecipients(List<Receiver> receivers) {
