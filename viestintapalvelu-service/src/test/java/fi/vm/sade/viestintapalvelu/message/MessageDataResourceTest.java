@@ -60,7 +60,7 @@ public class MessageDataResourceTest {
     }
     
     private MessageData givenMessageData(List<Receiver> receivers) {
-        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>());
+        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>(), null, null, null);
     }
 
     private Receiver givenReceiver(String ssn) {
