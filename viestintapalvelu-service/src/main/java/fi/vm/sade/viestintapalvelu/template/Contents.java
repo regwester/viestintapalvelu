@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.util.Arrays;
@@ -33,6 +33,7 @@ public class Contents implements Predicate<String> {
     public static final String EMAIL_SUBJECT = "email_subject";
     public static final String EMAIL_BODY = "email_body";
     public static final String ATTACHMENT = "liite";
+    public static final String  TEST_PLEASE_IGNORE = "test_please_ignore";
 
     protected static final String[] NON_ATTACHMENTS = new String[] { ASIOINTITILI_HEADER, ASIOINTITILI_CONTENT, ASIOINTITILI_SMS_CONTENT, EMAIL_SUBJECT,
             EMAIL_BODY };

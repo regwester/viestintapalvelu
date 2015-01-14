@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,9 +12,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -58,7 +59,7 @@ public class Template {
 
     @NotNull
     @Size(min = 1)
-    private List<Replacement> replacements;
+    private List<Replacement> replacements = new ArrayList<Replacement>();
 
     @ApiModelProperty("Haku OID:t, joihin tämä kirjepohja linkittyy")
     private List<String> applicationPeriods;

@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,12 +12,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.letter;
 
 import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
+import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.template.*;
 
 /**
  * User: ratamaa
@@ -49,4 +52,8 @@ public interface LetterEmailService {
      * @throws java.lang.IllegalStateException if LetterBatch does not have templateId
      */
     String getPreview(Long letterBatchId, Optional<String> languageCode);
+
+    String getPreview(fi.vm.sade.viestintapalvelu.model.LetterBatch letterBatch, Optional<String> languageCode);
+
+    String getPreview(LetterBatch letterBatch, fi.vm.sade.viestintapalvelu.template.Template template, Optional<String> languageCode);
 }

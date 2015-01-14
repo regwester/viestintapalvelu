@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.io.FileNotFoundException;
@@ -178,11 +178,11 @@ public class LetterBuilder {
         Map<String, Object> data = new HashMap<String, Object>();
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements != null) {
-                for (String key : replacements.keySet()) {
-                    if (replacements.get(key) instanceof String) {
-                        data.put(key, cleaner.clean((String) replacements.get(key)));
+                for(Map.Entry<String, Object> entry : replacements.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        data.put(entry.getKey(), cleaner.clean((String) entry.getValue()));
                     } else {
-                        data.put(key, replacements.get(key));
+                        data.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
@@ -274,11 +274,15 @@ public class LetterBuilder {
         return data;
     }
 
-    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+        Template template = determineTemplate(receiver, batch);
+        return constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
+    }
+
+    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, Template template,
             Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
-
-        Template template = determineTemplate(receiver, batch);
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
 
@@ -292,15 +296,17 @@ public class LetterBuilder {
 
         for (TemplateContent tc : Contents.letterContents().filter(contents)) {
             byte[] page = createPagePdf(template, tc.getContent().getBytes(), address, templReplacements, batchReplacements, letterReplacements);
-            if (letter.getLetterReceivers().getEmailAddress() != null && !letter.getLetterReceivers().getEmailAddress().isEmpty()
-                    && Contents.ATTACHMENT.equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
+            if (letter.getLetterReceivers().getEmailAddress() != null
+                    && !letter.getLetterReceivers().getEmailAddress().isEmpty()
+                    && Contents.ATTACHMENT.equals(tc.getName())
+                    && receiver.getLetterReceiverEmail() == null) {
                 saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
             }
             currentDocument.addContent(page);
         }
         letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
         letter.setContentType("application/pdf");
-       
+        return letter;
     }
 
     private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
