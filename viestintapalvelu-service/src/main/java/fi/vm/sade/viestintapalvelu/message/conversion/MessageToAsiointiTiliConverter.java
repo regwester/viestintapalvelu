@@ -43,9 +43,10 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
         batch.setTemplateName(data.templateName);
         batch.setTemplateReplacements(data.commonReplacements);
         batch.setLanguageCode(data.language);
+        batch.setApplicationPeriod(data.applicationTargetOid);        
+        batch.setStoringOid(data.senderOid);
         List<Receiver> incompatibleReceivers = filterIncompatibleReceivers(data);
         batch.setMessages(convertMessages(filterCompatibleReceivers(data, incompatibleReceivers)));
-        // TODO optional fields? are they necessary to convert here?
         return new ConvertedMessageWrapper<AsiointitiliSendBatchDto>(batch, incompatibleReceivers);
     }
 

@@ -107,6 +107,9 @@ public class MessageToEmailConverter implements MessageDataConverter<MessageData
         EmailMessage message = new EmailMessage();
         message.setTemplateName(data.templateName);
         message.setLanguageCode(data.language);
+        message.setSenderOid(data.senderOid);
+        message.setOrganizationOid(data.organizationOid);
+        message.setHakuOid(data.applicationTargetOid);
         return message;        
     }
 

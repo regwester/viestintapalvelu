@@ -54,6 +54,8 @@ public class MessageToAsiointiTiliConverterTest {
         assertEquals(message.templateName, batch.getTemplateName());
         assertEquals(message.language, batch.getLanguageCode());
         assertEquals(message.commonReplacements, batch.getTemplateReplacements());
+        assertEquals(message.senderOid, batch.getStoringOid());
+        assertEquals(message.applicationTargetOid, batch.getApplicationPeriod());
         assertMessages(message.receivers, batch.getMessages());
     }
     
@@ -77,7 +79,7 @@ public class MessageToAsiointiTiliConverterTest {
     }
     
     private MessageData givenMessageData(List<Receiver> receivers) {
-        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>());
+        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>(), "1.5.63", null, "12.32421");
     }
 
     private Receiver givenReceiver(String ssn) {

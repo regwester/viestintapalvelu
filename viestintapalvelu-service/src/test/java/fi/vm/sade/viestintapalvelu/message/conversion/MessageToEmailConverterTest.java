@@ -54,6 +54,9 @@ public class MessageToEmailConverterTest {
         assertEquals(message.templateName, email.getEmail().getTemplateName());
         assertEquals(message.language, email.getEmail().getLanguageCode());
         assertEquals(message.commonReplacements.size(), email.getReplacements().size());
+        assertEquals(message.applicationTargetOid, email.getEmail().getHakuOid());
+        assertEquals(message.organizationOid, email.getEmail().getOrganizationOid());
+        assertEquals(message.senderOid, email.getEmail().getSenderOid());
         assertMessages(message.receivers, email.getRecipient());
     }
 
@@ -75,7 +78,7 @@ public class MessageToEmailConverterTest {
     }
 
     private MessageData givenMessageData(List<Receiver> receivers) {
-        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>());
+        return new MessageData("templateName", "FI", receivers, new HashMap<String, Object>(), "1.9.2.44", "1.2342.2323", "1.2.3323");
     }
 
     private Receiver givenReceiver(String email) {

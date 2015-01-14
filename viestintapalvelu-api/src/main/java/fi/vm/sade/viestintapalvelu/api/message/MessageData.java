@@ -19,6 +19,8 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import javax.validation.constraints.NotNull;
+
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -33,37 +35,54 @@ public class MessageData implements Serializable {
 
     private static final long serialVersionUID = 4631417294997381168L;
     
-    @ApiModelProperty(value = "Kirjepohjan nimi")
+    @NotNull
+    @ApiModelProperty(value = "Kirjepohjan nimi", required = true)
     public final String templateName;
     
-    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'")
+    @NotNull
+    @ApiModelProperty(value = "Kielikoodi ISO 639-1, default = 'FI'", required = true)
     public final String language;
     
-    @ApiModelProperty(value = "Vastaanottajat")
+    @NotNull
+    @ApiModelProperty(value = "Vastaanottajat", required = true)
     public final List<Receiver> receivers;
-
-    @ApiModelProperty(value = "Kaikille vastaanottajille yhteiset korvauskentät")
+    
+    @NotNull
+    @ApiModelProperty(value = "Kaikille vastaanottajille yhteiset korvauskentät", required = true)
     public final Map<String, Object> commonReplacements;
+    
+    @ApiModelProperty(value = "Lähettäjän tunniste")
+    public final String senderOid;
+    
+    @ApiModelProperty(value = "Organisaation tunniste")
+    public final String organizationOid;
+    
+    @ApiModelProperty(value = "Hakukohteen tunniste")
+    public final String applicationTargetOid;
 
-    public MessageData(String templateName, String language, List<Receiver> receivers, Map<String, Object> commonReplacements) {
+    public MessageData(String templateName, String language, List<Receiver> receivers, Map<String, Object> commonReplacements, String senderOid, String organizationOid, String applicationTargetOid) {
         this.templateName = templateName;
         this.language = language;
         this.receivers = receivers;
         this.commonReplacements = commonReplacements;
+        this.senderOid = senderOid;
+        this.organizationOid = organizationOid;
+        this.applicationTargetOid = applicationTargetOid;
     }
     
     public MessageData(String templateName, List<Receiver> receivers, Map<String, Object> commonReplacements) {
-        this(templateName, "FI", receivers, commonReplacements);
+        this(templateName, "FI", receivers, commonReplacements, null, null, null);
+    }
+
+    public MessageData copyOf(List<Receiver> receivers) {
+        return new MessageData(this.templateName, this.language, receivers, this.commonReplacements, this.senderOid, this.organizationOid, this.applicationTargetOid);
     }
 
     @Override
     public String toString() {
         return "MessageData [templateName=" + templateName + ", language=" + language + ", receivers=" + receivers + ", commonReplacements="
-                + commonReplacements + "]";
-    }
-    
-    public MessageData copyOf(List<Receiver> receivers) {
-        return new MessageData(this.templateName, this.language, receivers, this.commonReplacements);
+                + commonReplacements + ", senderOid=" + senderOid + ", organizationOid=" + organizationOid + ", applicationTargetOid=" + applicationTargetOid
+                + "]";
     }
 
 }
