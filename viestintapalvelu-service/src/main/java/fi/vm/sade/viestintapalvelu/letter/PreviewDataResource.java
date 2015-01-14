@@ -16,14 +16,10 @@
 
 package fi.vm.sade.viestintapalvelu.letter;
 
-import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.Api;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
@@ -36,9 +32,6 @@ import org.springframework.stereotype.Component;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 
 /**
  * Created by jonimake on 9.1.2015.
