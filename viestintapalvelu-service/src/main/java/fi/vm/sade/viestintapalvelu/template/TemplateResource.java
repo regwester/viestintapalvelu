@@ -143,55 +143,6 @@ public class TemplateResource extends AsynchronousResource {
         return templateService.findByOrganizationOIDs(organizationIds);
     }
 
-    @GET
-    @Path("/get")
-    @Produces("application/json")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Transactional
-    public Template template(@Context HttpServletRequest request) throws IOException, DocumentException {
-
-        Template result = new Template();
-
-        String language = request.getParameter("lang");
-        result.setLanguage(language);
-
-        String resultName = request.getParameter("templateName");
-        result.setName(resultName);
-
-        String styleFile = request.getParameter("styleFile");
-        if (styleFile != null) {
-            String styleURL = "/template_styles/" + styleFile;
-            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
-        }
-
-        String[] fileNames = request.getParameter("templateFiles").split(",");
-        List<TemplateContent> contents = new ArrayList<TemplateContent>();
-        int order = 1;
-        for (String file : fileNames) {
-            String templateURL = "/templates/" + file;
-            TemplateContent content = new TemplateContent();
-            content.setName(file);
-            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
-            content.setOrder(order);
-            contents.add(content);
-            order++;
-        }
-        result.setContents(contents);
-
-        String replacementFile = request.getParameter("replacementFile");
-        ArrayList<Replacement> rList = new ArrayList<Replacement>();
-        if (replacementFile != null) {
-            String replacementURL = "/replacements/" + replacementFile;
-            Replacement replacement = new Replacement();
-            replacement.setName("sisalto");
-            replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
-            rList.add(replacement);
-        }
-        result.setReplacements(rList);
-
-        return result;
-    }
-
     @Deprecated
     @GET
     @Path("/getById")
@@ -222,32 +173,6 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     public String getTemplateExample(@PathParam("name") String name) throws IOException {
         return getResource("/test_data/" + name);
-    }
-
-    @GET
-    @Path("/partialFiles")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Produces("application/json")
-    @ApiOperation(value = TemplatePartials, notes = TemplatePartials)
-    public List<String> getTemplatePartials() throws IOException {
-        return getResourceList("classpath*:/templates/*.html");
-    }
-
-    @GET
-    @Path("/styleFiles")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Produces("application/json")
-    public List<String> getStyleFiles() throws IOException {
-        return getResourceList("classpath*:/template_styles/*.css");
-    }
-
-    @GET
-    @Path("/replacementFiles")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Produces("application/json")
-    @ApiOperation(value = TemplateReplacements, notes = TemplateReplacements)
-    public List<String> getTemplateReplacements() throws IOException {
-        return getResourceList("classpath*:/replacements/*.html");
     }
 
     private List<String> getResourceList(String pattern) throws IOException {
