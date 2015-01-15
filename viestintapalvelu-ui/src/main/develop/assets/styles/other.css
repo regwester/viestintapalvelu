@@ -585,6 +585,8 @@ input.icon-actionmenu {
     height: 18px;
     box-shadow: none;
     vertical-align: middle;
+    background-size: 36px 18px;
+    background-position: 0px 0px;
 }
 
 input.icon-actionmenu:active, .btn-group.open .icon-actionmenu {
