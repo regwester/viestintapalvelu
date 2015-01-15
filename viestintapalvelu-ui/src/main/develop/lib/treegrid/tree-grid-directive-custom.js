@@ -266,12 +266,13 @@
                             if (branch.expanded == null) {
                                 branch.expanded = false;
                             }
-                            if (!branch.children || branch.children.length === 0) {
+                            //if (!branch.children || branch.children.length === 0) {
+                            if (branch.isLetter) {
                                 tree_icon = attrs.iconLeaf;
                             } else {
                                 if (branch.expanded) {
                                     tree_icon = attrs.iconCollapse;
-                                } else {
+                                } else if(branch.children.length > 0) {
                                     tree_icon = attrs.iconExpand;
                                 }
                             }
