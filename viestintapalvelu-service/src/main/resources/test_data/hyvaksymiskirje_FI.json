@@ -22,12 +22,6 @@
       "mandatory": false
     }
   ],
-  "applicationPeriods": null,
-  "templateVersio": null,
-  "usedAsDefault": false,
-  "type": null,
-  "structureId": null,
-  "structureName": null,
   "structure": {
     "name": "hyvaksymiskirje structure",
     "language": "FI",
