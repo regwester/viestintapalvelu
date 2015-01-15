@@ -210,39 +210,73 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         final LetterReceivers letterReceivers = getLetterReceivers(template, applicationPeriod);
         fi.vm.sade.viestintapalvelu.model.LetterBatch batch = getLetterBatch(1, template, letterReceivers, applicationPeriod);
         Map<String, Object> batchreplacements = new HashMap<>();
-        batchreplacements.put("koulu", "batchReplacementKoulu");
-
 
         Map<String, Object> letterreplacements = getLetterReplacements();
+        final List<Object> tulokset = (List<Object>) letterreplacements.get("tulokset");
+        Map<String, Object> eka = (Map<String, Object>) tulokset.get(0);
+        batchreplacements.putAll(eka);
+        batchreplacements.put("koulu", letterreplacements.get("koulu"));
+        batchreplacements.put("koulutus", letterreplacements.get("koulutus"));
+        batchreplacements.put("henkilotunnus", "123456-7890");
         return letterBuilder.constructPDFForLetterReceiverLetter(letterReceivers, template, batchreplacements, letterreplacements).getLetter();
     }
 
     private Map<String, Object> getLetterReplacements() throws IOException {
         Random rand = new Random();
         ObjectMapper mapper = new ObjectMapper();
+        List<Map<String, Object>> tulokset = new ArrayList<>();
         final List<String> hakutoive = mapper.readValue(resourceLoader.getResource("/generator/hakutoive.json").getFile(), List.class);
         final List<String> koulut = mapper.readValue(resourceLoader.getResource("/generator/koulut.json").getFile(), List.class);
         String koulu = koulut.get(rand.nextInt(koulut.size()));
         String koulutus = hakutoive.get(rand.nextInt(hakutoive.size()));
-        Map<String, Object> row = new HashMap<>();
+        for(int i = 0; i < 3; i++) {
+            final String oppilaitos;
+            final String hakukohde;
+            if (i == 0) {
+                oppilaitos = koulu;
+                hakukohde = koulutus;
+            } else {
+                oppilaitos = koulut.get(rand.nextInt(koulut.size()));
+                hakukohde = hakutoive.get(rand.nextInt(hakutoive.size()));
+            }
 
-        row.put("omatPisteet", rand.nextInt(100)+"/"+100);
-        row.put("paasyJaSoveltuvuuskoe", rand.nextInt(60)+"");
 
-        //List<Map<String, Object>> haku = new ArrayList<>();
-        Map<String, Object> haku = new HashMap<>();
-        haku.put("organisaationNimi", "org nimi");
-        haku.put("oppilaitoksenNimi", koulu);
-        haku.put("hakukohteenNimi", koulutus);
-        int omatpisteet = rand.nextInt(100);
-        haku.put("omatPisteet", omatpisteet + "/" + (omatpisteet / 2));
-        haku.put("paasyJaSoveltuvuuskoe", rand.nextInt(60)+"");
-        haku.put("hyvaksytyt", rand.nextInt(50)+"/"+100);
+            //List<Map<String, Object>> haku = new ArrayList<>();
+            Map<String, Object> haku = new HashMap<>();
+            haku.put("organisaationNimi", "org nimi");
+            haku.put("oppilaitoksenNimi", oppilaitos);
+            haku.put("hakukohteenNimi", hakukohde);
+            int omatpisteet = rand.nextInt(100);
+            haku.put("omatPisteet", omatpisteet + "/" + (omatpisteet / 2));
+            haku.put("paasyJaSoveltuvuuskoe", rand.nextInt(60)+"");
+            haku.put("hyvaksytyt", rand.nextInt(50)+"/"+100);
+            haku.put("valinnanTulos", "Sinut on hylätty");
+            haku.put("hylkaysperuste", "Lorem ipsum");
+            haku.put("oma",123);
+            haku.put("minimi",456);
 
-        List<Map<String, Object>> tulokset = new ArrayList<>();
-        tulokset.add(haku);
+
+
+
+            tulokset.add(haku);
+        }
+
+
+        Map<String, Object> tulos = new HashMap<>();
+        List<Map<String, Object>> pisteet = new ArrayList<>();
+        tulos.put("pisteet", pisteet);
+        tulos.put("sijoitukset", pisteet);
+        for(int i = 0; i < 3; i++){
+            Map<String, Object> pisteRow = new HashMap<>();
+            pisteRow.put("nimi", "pisteet nimi");
+            pisteRow.put("oma", 123);
+            pisteRow.put("minimi", 456);
+            pisteet.add(pisteRow);
+        }
+
         Map<String, Object> letterreplacements = new HashMap<>();
         letterreplacements.put("tulokset", tulokset);
+        letterreplacements.put("tulos", tulos);
         letterreplacements.put("koulu", koulu);
         letterreplacements.put("koulutus", koulutus);
         return letterreplacements;
