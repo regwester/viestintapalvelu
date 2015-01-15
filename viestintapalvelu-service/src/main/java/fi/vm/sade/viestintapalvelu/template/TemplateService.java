@@ -22,6 +22,7 @@ import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 
 public interface TemplateService {
@@ -78,4 +79,6 @@ public interface TemplateService {
     List<TemplateInfo> findTemplateInfoByCriteria(TemplateCriteria withState);
 
     public List<Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod);
+
+    public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames();
 }

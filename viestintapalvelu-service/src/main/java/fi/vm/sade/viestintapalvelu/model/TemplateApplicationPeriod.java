@@ -17,6 +17,7 @@ package fi.vm.sade.viestintapalvelu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -38,6 +39,10 @@ public class TemplateApplicationPeriod implements Serializable {
         @AttributeOverride(name="templateId", column = @Column(name="kirjepohja", nullable = false, updatable = false)),
     })
     private TemplateApplicationPeriodId id;
+
+    @ApiModelProperty(value = "Haulle asetettu nimi")
+    @Column(name = "nimi", nullable = true)
+    private String name;
 
     @MapsId("templateId")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -67,5 +72,13 @@ public class TemplateApplicationPeriod implements Serializable {
 
     public void setTemplate(Template template) {
         this.template = template;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

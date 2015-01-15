@@ -20,6 +20,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
+import fi.vm.sade.viestintapalvelu.template.TemplateListing;
 
 import java.util.List;
 
@@ -46,4 +47,6 @@ public interface TemplateDAO extends JpaDAO<Template, Long> {
     Template findByIdAndState(Long id, State state);
 
     List<Template> findByOrganizationOIDs(List<String> oids);
+
+    List<TemplateListing> getTemplateIdsAndApplicationPeriodNames();
 }

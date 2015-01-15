@@ -32,6 +32,7 @@ import java.util.Set;
 
 import javax.ws.rs.NotFoundException;
 
+import fi.vm.sade.viestintapalvelu.template.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,12 +66,6 @@ import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 import fi.vm.sade.viestintapalvelu.model.TemplateContent;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.StructureService;
-import fi.vm.sade.viestintapalvelu.template.ApplicationPeriodsAttachDto;
-import fi.vm.sade.viestintapalvelu.template.StructureConverter;
-import fi.vm.sade.viestintapalvelu.template.TemplateInfo;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
-import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriod;
-import fi.vm.sade.viestintapalvelu.template.TemplatesByApplicationPeriodConverter;
 
 @Service
 @Transactional
@@ -813,6 +808,11 @@ public class TemplateServiceImpl implements TemplateService {
     public List<TemplateInfo> findTemplateInfoByCriteria(TemplateCriteria criteria) {
         List<Template> templates = templateDAO.findTemplates(criteria);
         return templatesByApplicationPeriodconverter.convert(templates);
+    }
+
+    @Override
+    public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames() {
+        return templateDAO.getTemplateIdsAndApplicationPeriodNames();
     }
 
 }
