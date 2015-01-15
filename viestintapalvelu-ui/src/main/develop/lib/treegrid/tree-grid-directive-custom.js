@@ -176,7 +176,8 @@
                     };
 
                     scope.isEditDisabled = function(branch) {
-                        return false;
+                        if(!branch.isLetter) return true;
+                        return branch.state !== 'luonnos';
                     };
                     scope.isPublishDisabled = function(branch) {
                         if(!branch.isLetter) return true;
