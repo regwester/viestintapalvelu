@@ -10,7 +10,7 @@
         <tr ng-repeat="row in tree_rows | filter:{visible:true} track by row.branch.uid"
             ng-class="'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')" class="tree-grid-row">
             <td class="text-primary">
-                <a ng-click="user_clicks_branch(row.branch, $event)">
+                <a ng-click="user_clicks_branch(row.branch, $event)" ng-hide="hideMenuOnAuthOph(row.tree_icon)">
                     <i ng-class="row.tree_icon" ng-click="row.branch.expanded = !row.branch.expanded" class="indented tree-icon"></i>
                 </a>
                 <span class="indented tree-label" ng-click="user_clicks_branch(row.branch, $event)">

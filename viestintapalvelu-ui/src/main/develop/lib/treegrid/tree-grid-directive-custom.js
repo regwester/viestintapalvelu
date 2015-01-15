@@ -6,7 +6,7 @@
     var module;
     module = angular.module('treeGrid', []);
     module.directive('treeGrid', [
-        '$timeout', '$rootScope', function($timeout, $rootScope) {
+        '$timeout', '$rootScope', 'AuthService', function($timeout, $rootScope, AuthService) {
             return {
                 restrict: 'E',
                 templateUrl:'views/lib/treegrid/views/treegrid.html',
@@ -139,6 +139,16 @@
                                 }
                             }
                         }
+                    };
+                    
+                    scope.crudOph = false;
+                    
+                    $timeout(function() {
+            	    	AuthService.crudOph().then(function() { scope.crudOph = true });
+            	    }, 0);
+                    
+                    scope.hideMenuOnAuthOph = function(iconClass) {
+                	return "icon-actionmenu" === iconClass && !scope.crudOph;
                     };
 
                     scope.isEditDisabled = function(branch) {
