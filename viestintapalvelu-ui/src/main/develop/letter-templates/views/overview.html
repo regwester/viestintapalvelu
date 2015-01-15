@@ -21,7 +21,7 @@
                     <tr>
                         <th></th>
                         <th class="span4" ng-bind="'common.header.lettertemplate' | i18n | uppercase"></th>
-                        <th class="span2" ng-bind="'common.header.tyyppi' | i18n | uppercase"></th>
+                        <th class="span2" ng-bind="'common.header.type' | i18n | uppercase"></th>
                         <th class="span2" ng-bind="'common.header.language' | i18n | uppercase"></th>
                         <th class="span2" ng-bind="'common.header.status' | i18n | uppercase"></th>
                         <th class="span2" ng-bind="'common.header.saved' | i18n | uppercase"></th>
@@ -40,7 +40,7 @@
                             </div>
                         </td>
                         <td>{{letterTemplate.name}}</td>
-                        <td>{{letterTemplate.types.join(', ')}}</td>
+                        <td>{{translateTypes(letterTemplate.types).join(', ')}}</td>
                         <td>{{letterTemplate.language}}</td>
                         <td>{{letterStates[letterTemplate.state]}}</td>
                         <td>{{letterTemplate.timestamp | date:'d.M.yyyy H:mm'}}</td>

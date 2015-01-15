@@ -63,7 +63,7 @@ angular.module('letter-templates')
                     controller: 'TemplateDialogCtrl'
                 });
             };
-
+            
             $scope.letterTypes = [
                 {
                     value: 'default',
@@ -79,6 +79,20 @@ angular.module('letter-templates')
                     text: 'Organisaatioiden kirjeluonnokset'
                 }
             ];
+            
+            $scope.translateTypes = function(types) {
+        	var translated = []
+        	angular.forEach(types, function(value) {
+        	    this.push($scope.contentTypes[value]);
+        	  }, translated);
+        	return translated;
+            }
+            
+            $scope.contentTypes = {
+                'letter': $filter('i18n')('template.contenttype.letter'),
+                'email': $filter('i18n')('template.contenttype.email'),
+                'asiointitili': $filter('i18n')('template.contenttype.asiointitili')
+            };
 
             $scope.letterStates = {
                 'julkaistu': $filter('i18n')('template.state.published'),
@@ -87,7 +101,6 @@ angular.module('letter-templates')
             };
 
             $scope.editTemplate = function (templateId) {
-                console.log("edit template " + templateId);
                 $state.go('letter-templates_edit', {'templateId': templateId});
             };
 
