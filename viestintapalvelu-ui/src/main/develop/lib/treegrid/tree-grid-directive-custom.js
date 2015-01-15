@@ -9,41 +9,7 @@
         '$timeout', '$rootScope', function($timeout, $rootScope) {
             return {
                 restrict: 'E',
-                //templateUrl:'tree-grid-template.html',
-                //template:"<div><table class=\"table table-bordered table-striped tree-grid\"><thead class=\"text-primary\"><tr><th>{{expandingProperty}}</th><th ng-repeat=\"col in colDefinitions\">{{col.displayName || col.field}}</th></tr></thead><tbody><tr ng-repeat=\"row in tree_rows | filter:{visible:true} track by row.branch.uid\" ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\"><td class=\"text-primary\"><a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\" ng-click=\"row.branch.expanded = !row.branch.expanded\" class=\"indented tree-icon\"></i></a><span class=\"indented tree-label\">{{row.branch[expandingProperty]}}</span></td><td ng-repeat=\"col in colDefinitions\">{{row.branch[col.field]}}</td></tr></tbody><table></div>",
-                template:
-                    "<div>\
-                        <table class=\"table tree-grid\">\
-                            <thead class=\"text-primary\">\
-                            <tr>\
-                                <th>{{expandingProperty}}</th>\
-                                <th ng-repeat=\"col in colDefinitions\">{{col.displayName || col.field}}</th>\
-                            </tr>\
-                            </thead>\
-                            <tbody>\
-                            <tr ng-repeat=\"row in tree_rows | filter:{visible:true} track by row.branch.uid\"\
-                                ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\
-                                <td class=\"text-primary\">\
-                                    <a ng-click=\"user_clicks_branch(row.branch, $event)\">\
-                                        <i ng-class=\"row.tree_icon\" ng-click=\"row.branch.expanded = !row.branch.expanded\" class=\"indented tree-icon\"></i>\
-                                    </a>\
-                                    <span class=\"indented tree-label\" ng-click=\"user_clicks_branch(row.branch, $event)\">\
-                                        <div auth=\"crudOph\" class=\"btn-group dropdown\">\
-                                            <input type=\"button\" class=\"dropdown-toggle tree-grid-dropdown-toggle\" aria-haspopup=\"true\" aria-expanded=\"false\"/>\
-                                            <ul class=\"dropdown-menu tree-grid-dropdown\" role=\"menu\">\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"editTemplate(row.branch)\" ng-disabled=\"isEditDisabled(row.branch)\" ng-bind=\"'common.btn.edit' | i18n\"></button></li>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"publishTemplate(row.branch)\" ng-disabled=\"isPublishDisabled(row.branch)\" ng-bind=\"'common.btn.publish' | i18n\"></button>\
-                                                <li><button type=\"button\" class=\"link-button\" ng-click=\"removeTemplate(row.branch)\" ng-disabled=\"isRemoveDisabled(row.branch)\" ng-bind=\"'common.btn.remove' | i18n\"></button></li>\
-                                            </ul>\
-                                        </div>\
-                                        {{row.branch[expandingProperty]}}\
-                                    </span>\
-                                </td>\
-                                <td ng-repeat=\"col in colDefinitions\">{{row.branch[col.field]}}</td>\
-                            </tr>\
-                            </tbody>\
-                        </table>\
-                    </div>",
+                templateUrl:'views/lib/treegrid/views/treegrid.html',
                 replace: true,
                 scope: {
                     treeData: '=',
