@@ -22,6 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
@@ -58,6 +59,7 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
 import static org.junit.Assert.assertEquals;
@@ -94,7 +96,16 @@ public class TemplateResourceTest {
         };
         Field currentUserComponentField = TemplateServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);
-        currentUserComponentField.set(((Advised)service).getTargetSource().getTarget(), currentUserComponent);       
+        currentUserComponentField.set(((Advised)service).getTargetSource().getTarget(), currentUserComponent);
+        UserRightsValidator validator = new UserRightsValidator(null, null) {
+            @Override
+            public Response checkUserRightsToOrganization(String oid) {
+                return Response.status(Status.OK).build();
+            }
+        };
+        Field validatorField = TemplateResource.class.getDeclaredField("userRightsValidator");
+        validatorField.setAccessible(true);
+        validatorField.set(((Advised)resource).getTargetSource().getTarget(), validator);
     }
     
     @Test
