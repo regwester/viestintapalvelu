@@ -316,7 +316,10 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
     public Response insert(Template template) throws IOException, DocumentException {
-        userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
+        Response response = userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
+        if (Status.OK.getStatusCode() != response.getStatus()) {
+            return response;
+        }
         beanValidator.validate(template);
         Long templateId = templateService.storeTemplateDTO(template);
         return Response.status(Status.OK).entity(templateId).build();
@@ -329,7 +332,10 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = "", notes = "")
     public Response update(Template template) {
-        userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
+        Response response = userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
+        if (Status.OK.getStatusCode() != response.getStatus()) {
+            return response;
+        }
         // beanValidator.validate(template);
         templateService.updateTemplate(template);
         return Response.status(Status.OK).build();
@@ -351,10 +357,13 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = StoreDraft, notes = StoreDraft)
-    public Draft storeDraft(Draft draft) throws IOException, DocumentException {
-        userRightsValidator.checkUserRightsToOrganization(draft.getOrganizationOid());
+    public Response storeDraft(Draft draft) throws IOException, DocumentException {
+        Response response = userRightsValidator.checkUserRightsToOrganization(draft.getOrganizationOid());
+        if (Status.OK.getStatusCode() != response.getStatus()) {
+            return response;
+        }
         templateService.storeDraftDTO(draft);
-        return new Draft(); // TODO: return something more meaningful
+        return Response.status(Status.OK).build();
     }
 
     @GET
