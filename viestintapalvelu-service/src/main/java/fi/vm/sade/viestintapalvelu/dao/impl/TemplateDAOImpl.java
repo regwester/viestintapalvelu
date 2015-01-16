@@ -23,6 +23,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.viestintapalvelu.template.TemplateListing;
 import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -190,7 +191,12 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
         TypedQuery<Template> query = getEntityManager().createQuery("SELECT templ from Template templ WHERE organizationOid in :oids", Template.class);
         query.setParameter("oids", oids);
         return query.getResultList();
-
     }
 
+    @Override
+    public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames() {
+        String queryStr = "SELECT new fi.vm.sade.viestintapalvelu.template.TemplateListing(a.id, a.name, a.language, b.name) FROM Template a, TemplateApplicationPeriod b WHERE a.id = b.id.templateId";
+        TypedQuery<TemplateListing> query = getEntityManager().createQuery(queryStr, TemplateListing.class);
+        return query.getResultList();
+    }
 }

@@ -37,6 +37,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,9 +63,7 @@ import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
-import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
@@ -85,12 +84,6 @@ public class TemplateResource extends AsynchronousResource {
 
     @Autowired
     private LetterService letterService;
-
-    @Autowired
-    private CurrentUserComponent currentUserComponent;
-
-    @Autowired
-    private OrganisaatioService organisaatioService;
 
     @Autowired
     TarjontaComponent tarjontaComponent;
@@ -116,8 +109,6 @@ public class TemplateResource extends AsynchronousResource {
     private final static String ApitemplateVersionsByName = "Palauttaa kirjepohjan kaikki versiot nimen perusteella.";
     private final static String TemplateByID = "Palauttaa kirjepohjan Id:n perusteella.";
     private final static String TemplateExamples = "Palauttaa saatavilla olevien kirjepohjien nimet ja sisällöt.";
-    private final static String TemplatePartials = "Palauttaa saatavilla olevien kirjepohjien html-sisällön";
-    private final static String TemplateReplacements = "Palauttaa saatavilla olevien kirjepohjien oletuskorvaussisällön";
     private final static String Store = "Rajapinnalla voi tallentaa kantaan uuden kirjepohjan.";
     private final static String StoreDraft = "Rajapinnalla voi tallentaa kantaa kirjepohjaluonnoksen.";
     private final static String AttachApplicationPeriod = "Rajapinnalla voi liittää haut kirjepohjaan.";
@@ -141,55 +132,6 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     public List<Template> listByOids(@QueryParam("organizationid") List<String> organizationIds) {
         return templateService.findByOrganizationOIDs(organizationIds);
-    }
-
-    @GET
-    @Path("/get")
-    @Produces("application/json")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Transactional
-    public Template template(@Context HttpServletRequest request) throws IOException, DocumentException {
-
-        Template result = new Template();
-
-        String language = request.getParameter("lang");
-        result.setLanguage(language);
-
-        String resultName = request.getParameter("templateName");
-        result.setName(resultName);
-
-        String styleFile = request.getParameter("styleFile");
-        if (styleFile != null) {
-            String styleURL = "/template_styles/" + styleFile;
-            result.setStyles(Utils.getResource(styleURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
-        }
-
-        String[] fileNames = request.getParameter("templateFiles").split(",");
-        List<TemplateContent> contents = new ArrayList<TemplateContent>();
-        int order = 1;
-        for (String file : fileNames) {
-            String templateURL = "/templates/" + file;
-            TemplateContent content = new TemplateContent();
-            content.setName(file);
-            content.setContent(Utils.getResource(templateURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
-            content.setOrder(order);
-            contents.add(content);
-            order++;
-        }
-        result.setContents(contents);
-
-        String replacementFile = request.getParameter("replacementFile");
-        ArrayList<Replacement> rList = new ArrayList<Replacement>();
-        if (replacementFile != null) {
-            String replacementURL = "/replacements/" + replacementFile;
-            Replacement replacement = new Replacement();
-            replacement.setName("sisalto");
-            replacement.setDefaultValue(Utils.getResource(replacementURL).replaceAll("\\r|\\n|\\t|\" \"", ""));
-            rList.add(replacement);
-        }
-        result.setReplacements(rList);
-
-        return result;
     }
 
     @Deprecated
@@ -222,32 +164,6 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     public String getTemplateExample(@PathParam("name") String name) throws IOException {
         return getResource("/test_data/" + name);
-    }
-
-    @GET
-    @Path("/partialFiles")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Produces("application/json")
-    @ApiOperation(value = TemplatePartials, notes = TemplatePartials)
-    public List<String> getTemplatePartials() throws IOException {
-        return getResourceList("classpath*:/templates/*.html");
-    }
-
-    @GET
-    @Path("/styleFiles")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Produces("application/json")
-    public List<String> getStyleFiles() throws IOException {
-        return getResourceList("classpath*:/template_styles/*.css");
-    }
-
-    @GET
-    @Path("/replacementFiles")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
-    @Produces("application/json")
-    @ApiOperation(value = TemplateReplacements, notes = TemplateReplacements)
-    public List<String> getTemplateReplacements() throws IOException {
-        return getResourceList("classpath*:/replacements/*.html");
     }
 
     private List<String> getResourceList(String pattern) throws IOException {
@@ -656,6 +572,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
+    @Deprecated
     @Path("{name}/{languageCode}/edit")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
@@ -664,27 +581,18 @@ public class TemplateResource extends AsynchronousResource {
     public Template getTemplateByIDForEditing(@PathParam("name") String name, @PathParam("languageCode") String languageCode,
             @Context HttpServletRequest request) {
         return templateService
-                .findByIdForEditing(new TemplateCriteriaImpl(name, languageCode).withApplicationPeriod(request.getParameter("applicationPeriod"))); // any
-                                                                                                                                                    // state
-                                                                                                                                                    // can
-                                                                                                                                                    // be
-                                                                                                                                                    // used
-                                                                                                                                                    // (as
-                                                                                                                                                    // new)
+                .findByIdForEditing(new TemplateCriteriaImpl(name, languageCode).withApplicationPeriod(request.getParameter("applicationPeriod")));
     }
 
     @GET
+    @Deprecated
     @Path("/{templateId}/edit")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = "Palauttaa kirjepohjan kirjepohjan sekä rakenteen muokkausta varten", response = Template.class)
     public Template getTemplateByIDForEditing(@PathParam("templateId") Long templateId) {
-        return templateService.findByIdForEditing(templateId, null); // any
-                                                                     // state
-                                                                     // can be
-                                                                     // used (as
-                                                                     // new)
+        return templateService.findByIdForEditing(templateId, null);
     }
 
     @GET
@@ -699,6 +607,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
+    @Deprecated
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
     @ApiOperation(value = GetTemplateContent, notes = GetTemplateContent, response = String.class)
@@ -745,6 +654,15 @@ public class TemplateResource extends AsynchronousResource {
             @ApiParam(name = "organizationid", value = "organizaatioiden OID", required = false) @QueryParam("organizationid") List<String> organizationId) {
         final List<Draft> draftsByOrgOidsAndApplicationPeriod = templateService.getDraftsByOrgOidsAndApplicationPeriod(organizationId, applicationPeriod);
         return draftsByOrgOidsAndApplicationPeriod;
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/list")
+    public List<TemplateListing> getLatestTemplatesByLanguageAndType(
+            @ApiParam(name = "type", value = "Kirjepohjan tyyppi (koekutsu-, jälkiohjaus tai hyväksymiskirje)", required = true) @QueryParam("type") String type,
+            @ApiParam(name = "language", value = "Kirjepohjan kielikoodi ISO 639-1 muodossa (esim. FI, SV, EN, ...", required = true) @QueryParam("language") String language) {
+            return templateService.getTemplateIdsAndApplicationPeriodNames();
     }
 
     private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
