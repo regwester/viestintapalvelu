@@ -11,7 +11,7 @@
     </div>
     <div class="row margin-bottom-one">
         <div class="span12">
-            <input-list label="Valitse näytettävä kirjepohja:" items="letterTypes" model="radioSelection" input="radio"/>
+            <input-list label="{{'template.select' | i18n}}" items="letterTypes" model="radioSelection" input="radio"/>
         </div>
     </div>
     <div class="row">
@@ -41,7 +41,7 @@
                         </td>
                         <td>{{letterTemplate.name}}</td>
                         <td>{{translateTypes(letterTemplate.types).join(', ')}}</td>
-                        <td>{{letterTemplate.language}}</td>
+                        <td>{{languages[letterTemplate.language]}}</td>
                         <td>{{letterStates[letterTemplate.state]}}</td>
                         <td>{{letterTemplate.timestamp | date:'d.M.yyyy H:mm'}}</td>
                     </tr>
