@@ -75,6 +75,9 @@ angular.module('letter-templates')
             },
             getStructureById: function(structureId) {
                 return $http.get(serviceUrl + 'structure/' + structureId);
+            },
+            getDraft: function(templateName, language, applicationPeriod, fetchTarget, organizationOid) {
+                return $http.get(templateBaseUrl + 'getDraft', {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod,'fetchTarget':fetchTarget,'organizationOid':organizationOid}})
             }
         }
     }]);
