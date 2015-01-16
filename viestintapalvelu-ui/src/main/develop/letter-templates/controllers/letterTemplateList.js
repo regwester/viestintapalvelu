@@ -81,12 +81,12 @@ angular.module('letter-templates')
             ];
             
             $scope.translateTypes = function(types) {
-                var translated = []
+                var translated = [];
                 angular.forEach(types, function(value) {
                     this.push($scope.contentTypes[value]);
                 }, translated);
                 return translated;
-            }
+            };
             
             $scope.contentTypes = {
                 'letter': $filter('i18n')('template.contenttype.letter'),
@@ -104,7 +104,7 @@ angular.module('letter-templates')
                 'FI': $filter('i18n')('common.language.fi'),
                 'SV': $filter('i18n')('common.language.sv'),
                 'EN': $filter('i18n')('common.language.en')
-            }
+            };
 
             $scope.editTemplate = function (templateId) {
                 $state.go('letter-templates_edit', {'templateId': templateId});

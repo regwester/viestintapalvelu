@@ -8,37 +8,24 @@ angular.module('letter-templates')
             $scope.applicationTarget = TemplateService.getApplicationTarget();
             $scope.languageSelection = 'FI';
 
-            /*
-            TemplateService.getApplicationTargets().then(function(data) {
-                var list = [];
-                for(var i = 0, max = data.length; i < max; i++){
-                    list.push({name: data[i].nimi.kieli_fi, value: data[i].oid});
-                }
-                $scope.applicationTargets = list;
-            });
-             */
             TemplateService.getApplicationTargets().then(function(data) {
                 $scope.applicationTargets = _.map(data, function(elem) {
                     return {name: elem.nimi.kieli_fi, value: elem.oid};
                 });
             });
             TemplateService.getBaseTemplates().success(function(data) {
-                console.log(data);
-                $scope.baseTemplates = _.map(data, function(elem) {
-                    return {name: elem.name, value: elem.oid};
-                });
-            }).error(function(error) {
-                //TODO: log or display
+                $scope.baseTemplates = data;
             });
+
             $scope.languages = [
                 {value: 'FI', text: 'suomi'},
                 {value: 'SV', text: 'ruotsi'},
                 {value: 'EN', text: 'englanti'}
             ];
             $scope.applicationTypes = [
-                {value: 'admission', text: 'Koekutsukirje'},
-                {value: 'acceptance', text: 'Hyväksymiskirje'},
-                {value: 'rejection', text: 'Jälkiohjauskirje'}];
+                {value: 'koekutsukirje', text: 'Koekutsukirje'},
+                {value: 'hyvaksymiskirje', text: 'Hyväksymiskirje'},
+                {value: 'jalkiohjauskirje', text: 'Jälkiohjauskirje'}];
 
             $scope.selectBase = function(base) {
                 TemplateService.setBase(base);
