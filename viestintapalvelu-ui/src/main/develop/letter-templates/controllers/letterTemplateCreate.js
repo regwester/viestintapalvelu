@@ -8,41 +8,33 @@ angular.module('letter-templates')
             $scope.editorOptions = Global.getEditorOptions();
             $scope.template = TemplateService.getTemplate();
             $scope.baseTemplate = TemplateService.getBase();
-            $scope.templateContent = TemplateService.getTemplateContent()
-                .success(function(data) {
-                    console.log(data);
+            TemplateService.getTemplateById($scope.baseTemplate.id)
+                .success(function(template) {
+                    $scope.templateContent = template;
+                    $scope.structure = TemplateService.getStructureById(template.structureId)
+                        .success(function(structure) {
+                            $scope.replacements = structure.replacements;
+                        }).error(function(error) {
+                            console.log(error);
+                        });
                 }).error(function(error) {
                     console.log(error);
                 });
 
-            /*
-            $scope.template.content = [
-                {name: 'hyvaksymiskirje/liite', order: '1,2,3,4,5,6', content: '<html><p>order on turha</p></html>'}
-            ];
-            $scope.template.replacements = [
-                {name: 'sisalto/liiteSisalto', defaultValue: '<html>replacement</html>', mandatory: 'true'}
-            ];
-            $scope.template.applicationPeriods = ['oidi1', 'oidi2', 'oidi3'];
-
-            var name = '',
-                language = '',
-                description = '',
-                styles = '',
-                storingOid = '',
-                organizationOid = '',
-                usedAsDefault = "true/false",
-                type = 'email/??',
-                structureId = 12,
-                structureName = '???',
-                structure = {},
-                state = 'luonnos/suljettu/julkaistu';
-            */
+            $scope.getMatchingTemplateReplacement = function(key) {
+                var found = $filter('filter')($scope.templateContent.replacements, {name: key});
+                return found.length ? found[0] : {name: key, defaultValue: ''};
+            };
 
             $scope.cancel = function() {
                 $state.go('letter-templates.overview');
             };
             $scope.save = function() {
-                TemplateService.saveTemplate($scope.template);
+                var template = $scope.templateContent;
+                template = clearTemplate(template);
+                template.applicationPeriods = [$scope.template.oid];
+                template.state = 'luonnos';
+                TemplateService.saveTemplate(template);
             };
             $scope.previewLetter = function() {
                 console.log('Preview letter');
@@ -51,7 +43,24 @@ angular.module('letter-templates')
                 console.log('Preview PDF');
             };
             $scope.publish = function() {
-                console.log('Published');
+                var template = $scope.templateContent;
+                template = clearTemplate(template);
+                template.applicationPeriods = [$scope.template.oid];
+                template.state = 'julkaistu';
+                TemplateService.saveTemplate(template);
+            };
+
+            var clearTemplate = function(template) {
+                delete template.id;
+                delete template.timestamp;
+                delete template.storingOid;
+                delete template.organizationOid;
+                template.replacements.forEach(function(repl) {
+                    delete repl.id;
+                    delete repl.timestamp;
+                });
+                delete template.usedAsDefault;
+                return template;
             };
 
             $scope.buttons = [

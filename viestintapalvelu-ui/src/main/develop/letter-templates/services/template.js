@@ -58,6 +58,9 @@ angular.module('letter-templates')
             getTemplateByIdAndState: function(id, state) {
                 return $http.get(templateBaseUrl + id + '/getTemplateContent/' + state);
             },
+            getTemplateById: function(id) {
+                return $http.get(templateBaseUrl + id + '/letter/getTemplateContent/')
+            },
             getTemplatesByApplicationPeriod: function(applicationOid) {
                 return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationOid);
             },
