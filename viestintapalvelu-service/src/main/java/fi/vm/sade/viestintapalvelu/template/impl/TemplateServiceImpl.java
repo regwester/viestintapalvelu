@@ -297,6 +297,16 @@ public class TemplateServiceImpl implements TemplateService {
 
         draftDAO.insert(model);
     }
+    
+    @Override
+    public void updateDraft(fi.vm.sade.viestintapalvelu.template.Draft draft) {
+        if (draft.getDraftId() == null) {
+            throw new IllegalArgumentException("Must provide id for draft being updated");
+        }
+        Draft model = draftDAO.read(draft.getDraftId());
+        model.setReplacements(parseDraftReplacementsModels(draft, model));
+        draftDAO.update(model);        
+    }
 
     /*
      * kirjeet.luonnoskorvauskentat
