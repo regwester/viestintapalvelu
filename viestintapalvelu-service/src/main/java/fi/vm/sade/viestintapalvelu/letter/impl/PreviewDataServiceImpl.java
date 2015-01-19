@@ -1,5 +1,4 @@
-
-/*
+/**
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -20,15 +19,16 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
+
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
 import fi.vm.sade.viestintapalvelu.letter.LetterEmailService;
 import fi.vm.sade.viestintapalvelu.letter.PreviewDataService;
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
+
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,9 +45,12 @@ public class PreviewDataServiceImpl implements PreviewDataService {
 
     public static final Logger log = LoggerFactory.getLogger(PreviewDataServiceImpl.class);
 
-    @Autowired private ResourceLoader resourceLoader;
-    @Autowired private LetterBuilder letterBuilder;
-    @Autowired private LetterEmailService letterEmailService;
+    @Autowired
+    private ResourceLoader resourceLoader;
+    @Autowired
+    private LetterBuilder letterBuilder;
+    @Autowired
+    private LetterEmailService letterEmailService;
 
     @Override
     public Letter getLetter(Template template) {
@@ -74,17 +77,17 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             String region = "Dummy region";
             String country = addressline3;
             String countrycode = cou.get(1);
-            AddressLabel addresslabel = new AddressLabel(firstname, lastname, addressline, addressline2, addressline3, postalcode, city, region, country, countrycode);
+            AddressLabel addresslabel = new AddressLabel(firstname, lastname, addressline, addressline2, addressline3, postalcode, city, region, country,
+                    countrycode);
 
             Letter letter = new Letter(addresslabel, null, null, getTemplateReplacements(template), "email@foo.bar");
             return letter;
-            //letter.setAddressLabel(addresslabel);
+            // letter.setAddressLabel(addresslabel);
         } catch (Exception e) {
             log.error("Error reading preview data json", e);
         }
 
         return new Letter();
-
 
     }
 
@@ -203,12 +206,13 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         return test.getBytes();
     }
 
+    @SuppressWarnings("unchecked")
     @Override
-    @Transactional(readOnly = true) //ensure we don't save anything to database
-    public byte[] getPreviewPdf(Template template, String applicationPeriod) throws IOException, DocumentException {
+    @Transactional(readOnly = true)
+    // ensure we don't save anything to database
+    public byte[] getPreviewPdf(Template template, String applicationPeriod, String letterContents) throws IOException, DocumentException {
 
         final LetterReceivers letterReceivers = getLetterReceivers(template, applicationPeriod);
-        fi.vm.sade.viestintapalvelu.model.LetterBatch batch = getLetterBatch(1, template, letterReceivers, applicationPeriod);
         Map<String, Object> batchreplacements = new HashMap<>();
 
         Map<String, Object> letterreplacements = getLetterReplacements();
@@ -218,6 +222,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         batchreplacements.put("koulu", letterreplacements.get("koulu"));
         batchreplacements.put("koulutus", letterreplacements.get("koulutus"));
         batchreplacements.put("henkilotunnus", "123456-7890");
+        batchreplacements.put("sisalto", letterContents);
         return letterBuilder.constructPDFForLetterReceiverLetter(letterReceivers, template, batchreplacements, letterreplacements).getLetter();
     }
 
@@ -229,7 +234,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         final List<String> koulut = mapper.readValue(resourceLoader.getResource("/generator/koulut.json").getFile(), List.class);
         String koulu = koulut.get(rand.nextInt(koulut.size()));
         String koulutus = hakutoive.get(rand.nextInt(hakutoive.size()));
-        for(int i = 0; i < 3; i++) {
+        for (int i = 0; i < 3; i++) {
             final String oppilaitos;
             final String hakukohde;
             if (i == 0) {
@@ -240,33 +245,28 @@ public class PreviewDataServiceImpl implements PreviewDataService {
                 hakukohde = hakutoive.get(rand.nextInt(hakutoive.size()));
             }
 
-
-            //List<Map<String, Object>> haku = new ArrayList<>();
+            // List<Map<String, Object>> haku = new ArrayList<>();
             Map<String, Object> haku = new HashMap<>();
             haku.put("organisaationNimi", "org nimi");
             haku.put("oppilaitoksenNimi", oppilaitos);
             haku.put("hakukohteenNimi", hakukohde);
             int omatpisteet = rand.nextInt(100);
             haku.put("omatPisteet", omatpisteet + "/" + (omatpisteet / 2));
-            haku.put("paasyJaSoveltuvuuskoe", rand.nextInt(60)+"");
-            haku.put("hyvaksytyt", rand.nextInt(50)+"/"+100);
+            haku.put("paasyJaSoveltuvuuskoe", rand.nextInt(60) + "");
+            haku.put("hyvaksytyt", rand.nextInt(50) + "/" + 100);
             haku.put("valinnanTulos", "Sinut on hylätty");
             haku.put("hylkaysperuste", "Lorem ipsum");
-            haku.put("oma",123);
-            haku.put("minimi",456);
-
-
-
+            haku.put("oma", 123);
+            haku.put("minimi", 456);
 
             tulokset.add(haku);
         }
-
 
         Map<String, Object> tulos = new HashMap<>();
         List<Map<String, Object>> pisteet = new ArrayList<>();
         tulos.put("pisteet", pisteet);
         tulos.put("sijoitukset", pisteet);
-        for(int i = 0; i < 3; i++){
+        for (int i = 0; i < 3; i++) {
             Map<String, Object> pisteRow = new HashMap<>();
             pisteRow.put("nimi", "pisteet nimi");
             pisteRow.put("oma", 123);
@@ -284,14 +284,18 @@ public class PreviewDataServiceImpl implements PreviewDataService {
 
     @Override
     @Transactional(readOnly = true)
-    public String getEmailPreview(Template template, String applicationPeriod) {
+    public String getEmailPreview(Template template, String applicationPeriod, String letterContents) {
         final LetterReceivers letterReceivers = getLetterReceivers(template, applicationPeriod);
         fi.vm.sade.viestintapalvelu.model.LetterBatch batch = getLetterBatch(1, template, letterReceivers, applicationPeriod);
+
+        LetterReplacement sisaltoReplacement = new LetterReplacement();
+        sisaltoReplacement.setDefaultValue(letterContents);
+        sisaltoReplacement.setName("sisalto");
+        batch.getLetterReplacements().add(sisaltoReplacement);
         batch.setBatchStatus(LetterBatch.Status.waiting_for_ipost_processing);
-        final String preview = letterEmailService.getPreview(batch, template, Optional.<String>absent());
+        final String preview = letterEmailService.getPreview(batch, template, Optional.<String> absent());
         return preview;
     }
-
 
     private Map<String, Object> getTemplateReplacements(Template template) {
         Map<String, Object> templateReplacements = new HashMap<>();

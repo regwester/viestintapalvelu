@@ -9,7 +9,7 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         TemplateService.getTemplateByIdAndState($state.params.templateId, 'luonnos').success(function(result) {
             $scope.template = result;
             TemplateService.getStructureById($scope.template.structureId).success(function(structure) {
-                $scope.contentReplacements = structure.replacements;
+            $scope.contentReplacements = structure.replacements;
             });
 
             PersonService.getPerson(result.storingOid).success(function(person) {
@@ -21,15 +21,6 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
                 var templateLanguage = $scope.template.language;
                 $scope.applicationTargetForDisplay = templateLanguage === 'SV' ? target[0].nimi.kieli_sv : templateLanguage === 'EN' ? target[0].nimi.kieli_en : target[0].nimi.kieli_fi;
             })
-                $scope.saverName = person.firstNames + " " + person.lastName;
-            });
-
-            if ($scope.template.applicationPeriods != null && $scope.template.applicationPeriods.length > 0) {
-                TemplateService.getApplicationTargets().then(function(targets) {
-                    var target = $filter('filter')(targets, {oid: $scope.template.applicationPeriods[0]});
-                    var templateLanguage = $scope.template.language;
-                    $scope.applicationTargetForDisplay = templateLanguage === 'SV' ? target[0].nimi.kieli_sv : templateLanguage === 'EN' ? target[0].nimi.kieli_en : target[0].nimi.kieli_fi;
-                })
             }
         }).error(function(result) {
             //TODO handle errors
@@ -74,20 +65,19 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         };
 
         $scope.previewPDF = function(args) {
-            var contents = "";
+            var content = "";
             //$scope.
             angular.forEach($scope.template.replacements,function(value,index){
                 if (value.name == 'sisalto') {
-                    contents = value.defaultValue;
+                    content = value.defaultValue;
                 }
             });
-            
             $http({
                 url: '/viestintapalvelu/api/v1/preview/letterbatch/pdf',
                 method: "POST",
                 data: {'templateId' : $scope.template.id,
                        'templateState' : $scope.template.state,
-                       'letterContent' : contents},
+                       'letterContent' : content},
                 headers: {
                    'Content-type': 'application/json'
                 },
@@ -102,7 +92,29 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         };
 
         $scope.previewLetter = function(args) {
-            $window.open("/viestintapalvelu/api/v1/preview/letterbatch/email?templateId="+$scope.template.id+"&templateState="+$scope.template.state);
+            var content = "";
+            //$scope.
+            angular.forEach($scope.template.replacements,function(value,index){
+                if (value.name == 'sisalto') {
+                    content = value.defaultValue;
+                }
+            });
+            $http({
+                url: '/viestintapalvelu/api/v1/preview/letterbatch/email',
+                method: "POST",
+                data: {'templateId' : $scope.template.id,
+                       'templateState' : $scope.template.state,
+                       'letterContent' : content},
+                headers: {
+                   'Content-type': 'application/json'
+                },
+                responseType: 'arraybuffer'
+            }).success(function (data, status, headers, config) {
+                var blob = new Blob([data], {type: "text/plain"});
+                var objectUrl = URL.createObjectURL(blob);
+                window.open(objectUrl);
+            }).error(function (data, status, headers, config) {
+            });
         };
 
         $scope.buttons = [

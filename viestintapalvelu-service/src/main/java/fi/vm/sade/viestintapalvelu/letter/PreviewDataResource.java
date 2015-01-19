@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -13,25 +13,30 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.viestintapalvelu.letter;
 
-import com.lowagie.text.DocumentException;
-import com.wordnik.swagger.annotations.Api;
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.template.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import java.io.IOException;
+
+import javax.ws.rs.Consumes;
+import javax.ws.rs.POST;
+import javax.ws.rs.Path;
+import javax.ws.rs.Produces;
+import javax.ws.rs.core.Response;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.*;
-import javax.ws.rs.core.Response;
-import java.io.IOException;
+import com.lowagie.text.DocumentException;
+import com.wordnik.swagger.annotations.Api;
+
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 /**
  * Created by jonimake on 9.1.2015.
@@ -45,31 +50,30 @@ public class PreviewDataResource {
     public static final String testApplicationId = "-1";
     public static final Logger log = LoggerFactory.getLogger(PreviewDataResource.class);
 
-    @Autowired private TemplateService templateService;
-    @Autowired private PreviewDataService previewDataService;
+    @Autowired
+    private TemplateService templateService;
+    @Autowired
+    private PreviewDataService previewDataService;
 
-    @GET
+    @POST
     @Path("letterbatch/pdf")
     @Consumes("application/json")
     @Produces("application/pdf")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    public byte[] dummyBatchPdf(@QueryParam("templateId") int templateId,
-                                @QueryParam("templateState") String state) throws IOException, DocumentException {
-        final Template template = templateService.findByIdAndState(templateId, ContentStructureType.letter, null);
-
-        final byte[] previewPdf = previewDataService.getPreviewPdf(template, testApplicationId);
+    public byte[] dummyBatchPdf(PreviewRequest request) throws IOException, DocumentException {
+        final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getState());
+        final byte[] previewPdf = previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
         return previewPdf;
     }
 
-    @GET
+    @POST
     @Path("letterbatch/email")
     @Consumes("application/json")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
-    public Response dummyBatchEmail(@QueryParam("templateId") int templateId,
-                                @QueryParam("templateState") String state) throws IOException, DocumentException {
-        final Template template = templateService.findByIdAndState(templateId, ContentStructureType.letter, null);
-        String email = previewDataService.getEmailPreview(template, "");
+    public Response dummyBatchEmail(PreviewRequest request) throws IOException, DocumentException {
+        final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getState());
+        String email = previewDataService.getEmailPreview(template, "", request.getLetterContent());
         return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
     }
 

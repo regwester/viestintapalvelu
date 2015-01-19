@@ -1,4 +1,4 @@
-/*
+/**
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -32,7 +32,7 @@ public interface PreviewDataService {
 
     LetterReceivers getLetterReceivers(Template template, String applicationPeriod);
 
-    byte[] getPreviewPdf(Template template, String applicationPeriod) throws IOException, DocumentException;
+    byte[] getPreviewPdf(Template template, String applicationPeriod, String letterContents) throws IOException, DocumentException;
 
-    String getEmailPreview(Template template, String applicationPeriod);
+    String getEmailPreview(Template template, String applicationPeriod, String letterContents);
 }
