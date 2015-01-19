@@ -7,6 +7,7 @@ angular.module('letter-templates')
             // Default values
             $scope.editorOptions = Global.getEditorOptions();
             $scope.template = TemplateService.getTemplate();
+            $scope.baseTemplate = TemplateService.getBase();
             $scope.templateContent = TemplateService.getTemplateContent()
                 .success(function(data) {
                     console.log(data);
@@ -38,7 +39,7 @@ angular.module('letter-templates')
             */
 
             $scope.cancel = function() {
-                $state.go('letter-templates_overview');
+                $state.go('letter-templates.overview');
             };
             $scope.save = function() {
                 TemplateService.saveTemplate($scope.template);

@@ -7,7 +7,8 @@ angular.module('letter-templates')
             templateBaseUrl = serviceUrl + 'template/',
             selectedApplicationTarget,
             deferred = $q.defer(),
-            template = {};
+            template = {},
+            baseTemplate;
 
         $http.get(serviceUrl + 'options/hakus').success(function (data) {
             deferred.resolve(data);
@@ -33,7 +34,10 @@ angular.module('letter-templates')
                 selectedApplicationTarget = value;
             },
             setBase: function(base) {
-                template.base = base;
+                baseTemplate = base;
+            },
+            getBase: function() {
+                return baseTemplate;
             },
             setLanguage: function(language) {
                 template.language = language;
