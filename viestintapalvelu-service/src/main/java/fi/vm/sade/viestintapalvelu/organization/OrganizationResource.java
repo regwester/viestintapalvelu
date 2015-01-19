@@ -92,6 +92,13 @@ public class OrganizationResource extends AsynchronousResource {
 
         return userRootOrganizations;
     }
+    
+    @GET
+    @Produces("application/json")
+    @Path("/name/{orgoid}/{languageCode}")
+    public String getOrganizationName(@PathParam("orgoid") String orgoid, @PathParam("languageCode") String languageCode) {
+        return organisaatioService.getOrganizationName(orgoid, languageCode);
+    }
 
     /*
      * Checks if Node has any children that are in the OIDs set. Returns true if

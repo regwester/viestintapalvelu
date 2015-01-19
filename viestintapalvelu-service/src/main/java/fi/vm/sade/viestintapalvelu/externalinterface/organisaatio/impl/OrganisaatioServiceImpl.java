@@ -27,6 +27,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Singleton;
 
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -35,6 +36,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
@@ -105,6 +107,15 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
         visitParents(this.hierarchyByOids.get(organisaatioOid), EXTRACT_OID, results);
         Collections.reverse(results); // the root first
         return results;
+    }
+    
+    @Override
+    public String getOrganizationName(String organisaatioOid, String languageCode) {
+        OrganisaatioRDTO organization = organizationComponent.getOrganization(organisaatioOid);
+        if (StringUtils.isBlank(organization.getNimi().get(languageCode.toLowerCase()))) {
+            return organizationComponent.getNameOfOrganisation(organization);           
+        }
+        return organization.getNimi().get(languageCode.toLowerCase());
     }
 
     public void ensureCacheFresh() {
@@ -194,4 +205,5 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
         }
         return results;
     }
+
 }

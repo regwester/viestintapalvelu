@@ -7,7 +7,8 @@ angular.module('letter-templates')
             templateBaseUrl = serviceUrl + 'template/',
             selectedApplicationTarget,
             deferred = $q.defer(),
-            template = {};
+            template = {},
+            baseTemplate;
 
         $http.get(serviceUrl + 'options/hakus').success(function (data) {
             deferred.resolve(data);
@@ -33,7 +34,10 @@ angular.module('letter-templates')
                 selectedApplicationTarget = value;
             },
             setBase: function(base) {
-                template.base = base;
+                baseTemplate = base;
+            },
+            getBase: function() {
+                return baseTemplate;
             },
             setLanguage: function(language) {
                 template.language = language;
@@ -53,6 +57,9 @@ angular.module('letter-templates')
             },
             getTemplateByIdAndState: function(id, state) {
                 return $http.get(templateBaseUrl + id + '/getTemplateContent/' + state);
+            },
+            getTemplateById: function(id) {
+                return $http.get(templateBaseUrl + id + '/letter/getTemplateContent/')
             },
             getTemplatesByApplicationPeriod: function(applicationOid) {
                 return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationOid);
@@ -77,7 +84,7 @@ angular.module('letter-templates')
                 return $http.get(serviceUrl + 'structure/' + structureId);
             },
             getDraft: function(templateName, language, applicationPeriod, fetchTarget, organizationOid) {
-                return $http.get(templateBaseUrl + 'getDraft', {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod,'fetchTarget':fetchTarget,'organizationOid':organizationOid}})
+                return $http.get(templateBaseUrl + 'getDraft', {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod,'fetchTarget':fetchTarget,'oid':organizationOid}})
             }
         }
     }]);

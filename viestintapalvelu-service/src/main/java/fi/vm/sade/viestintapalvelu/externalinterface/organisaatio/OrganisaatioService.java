@@ -58,5 +58,11 @@ public interface OrganisaatioService {
      */
     List<String> findParentOids(String organisaatioOid);
 
-
+    /**
+     * 
+     * @param organisaatioOid
+     * @param languageCode
+     * @return the organization's name for given languageCode
+     */
+    String getOrganizationName(String organisaatioOid, String languageCode);
 }

@@ -1,4 +1,4 @@
-<div class="container-fluid" ng-controller="LetterTemplateEditCtrl">
+<div class="container-fluid">
     <div class="row">
         <div class="span12">
             <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
@@ -11,7 +11,30 @@
     </div>
     <div class="row">
         <div class="span12">
-            <span>{templateName} {language}</span>
+            <form novalidate="novalidate" class="form-horizontal">
+                <form-item label="Haku:">
+                    <p>{{applicationPeriodForDisplay}}</p>
+                </form-item>
+                <div ng-if="targetIsOrg">
+                	<form-item label="Organisaatio:">
+	                	<p>{{organizationForDisplay}}</p>
+	                </form-item>
+                </div>
+                <div ng-if="!targetIsOrg">
+	                <form-item label="Hakukohde:">
+	                	<p>{{applicationTargetForDisplay}}</p>
+	                </form-item>
+                </div>
+                <form-item label="Kirjeen tyyppi:">
+                    <p>{{draft.templateName}}</p>
+                </form-item>
+                <form-item label="Kieli:">
+                    <p>{{draft.languageCode}}</p>
+                </form-item>
+                <form-item label="Viesti:">
+	            	<textarea ui-tinymce="editorOptions" ng-model="contentModel"></textarea>
+                </form-item>
+            </form>
         </div>
     </div>
     <div class="row">

@@ -9,8 +9,9 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         TemplateService.getTemplateByIdAndState($state.params.templateId, 'luonnos').success(function(result) {
             $scope.template = result;
             TemplateService.getStructureById($scope.template.structureId).success(function(structure) {
-            $scope.contentReplacements = structure.replacements;
+                $scope.contentReplacements = structure.replacements;
             });
+
             PersonService.getPerson(result.storingOid).success(function(person) {
             $scope.saverName = person.firstNames + " " + person.lastName;
             })
@@ -20,6 +21,15 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
                 var templateLanguage = $scope.template.language;
                 $scope.applicationTargetForDisplay = templateLanguage === 'SV' ? target[0].nimi.kieli_sv : templateLanguage === 'EN' ? target[0].nimi.kieli_en : target[0].nimi.kieli_fi;
             })
+                $scope.saverName = person.firstNames + " " + person.lastName;
+            });
+
+            if ($scope.template.applicationPeriods != null && $scope.template.applicationPeriods.length > 0) {
+                TemplateService.getApplicationTargets().then(function(targets) {
+                    var target = $filter('filter')(targets, {oid: $scope.template.applicationPeriods[0]});
+                    var templateLanguage = $scope.template.language;
+                    $scope.applicationTargetForDisplay = templateLanguage === 'SV' ? target[0].nimi.kieli_sv : templateLanguage === 'EN' ? target[0].nimi.kieli_en : target[0].nimi.kieli_fi;
+                })
             }
         }).error(function(result) {
             //TODO handle errors

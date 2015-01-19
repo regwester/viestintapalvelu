@@ -1,60 +1,57 @@
 <div class="container-fluid">
-	<div auth="crudOph">
-    <div class="row">
-        <div class="span12">
-            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+    <div auth="crudOph">
+        <div class="row">
+            <div class="span12">
+                <button-group buttons="buttons"
+                              button-class="inline-operation btn btn-small margin-right-half"></button-group>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <h2 ng-bind="'template.header.edit.template' | i18n"></h2>
+        <div class="row">
+            <div class="span12">
+                <h2 ng-bind="'template.header.edit.template' | i18n"></h2>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <form novalidate="novalidate" class="form-horizontal">
-                <form-item label="{{'common.label.application' | i18n}}">
-                    <p ng-bind="template.name"></p>
-                </form-item>
-                <form-item label="{{'common.label.letter.type' | i18n}}">
-                    <p ng-bind="template.type"></p>
-                </form-item>
-                <form-item label="{{'common.label.language' | i18n}}">
-                    <p ng-bind="template.language"></p>
-                </form-item>
-                <form-item label="{{'common.label.status' | i18n}}">
-                    <p ng-bind="template.status"></p>
-                </form-item>
-                <h4 ng-bind="'template.text.actual.letter' | i18n"></h4>
-                <form-item ng-repeat="field in template.contents">
-                    <input ng-if="contentType === 'plain'" type="text" size="input-lg" ng-model="template.subject"/>
-                    <textarea ng-if="contentType === 'email'" ui-tinymce="editorOptions" ng-model="field.value"></textarea>
-                </form-item>
-                <!--
-                <form-item label="{{'common.label.subject' | i18n }}" subnote="Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen otsikko ja sähköpostiviestin otsikko">
-                    <input type="text" size="input-lg" ng-model="template.subject"/>
-                </form-item>
-                <form-item label="Viesti, osa yksi:" subnote="Oppilaitosvirkailijan muokattavissa oleva viestiosio">
-                    <textarea ui-tinymce="editorOptions" ng-model="template.content.content"></textarea>
-                </form-item>
-                <form-item label="Viesti, osa kaksi:" subnote="Vain OPH:n virkailijan muokattavissa oleva viestiosio">
-                    <textarea ui-tinymce="editorOptions" ng-model="template.content.content"></textarea>
-                </form-item>
-                <h4>Liite</h4>
-                <form-item label="Liitteen otsikko:" subnote="Vain Opetushallituksen virkailijan muokattavissa oleva kirjeen liitteen otsikko ja sähköpostin PDF-liitteen otsikko">
-                    <input type="text" class="input-lg" ng-model="letter.subject"/>
-                </form-item>
-                <form-item label="Liitteen tekstiosio:" subnote="Vain OPH:n virkailijan muokattavissa oleva liitteen tekstiosio">
-                    <textarea ui-tinymce="editorOptions" ng-model="letter.body"></textarea>
-                </form-item>
-                -->
-            </form>
+        <div class="row">
+            <div class="span12">
+                <form novalidate="novalidate" class="form-horizontal">
+                    <form-item label="{{'common.label.application' | i18n}}">
+                        <p ng-bind="template.name"></p>
+                    </form-item>
+                    <form-item label="{{'common.label.letter.type' | i18n}}">
+                        <p ng-bind="template.type"></p>
+                    </form-item>
+                    <form-item label="{{'common.label.language' | i18n}}">
+                        <p ng-bind="template.language"></p>
+                    </form-item>
+                    <form-item label="{{'common.label.status' | i18n}}">
+                        <p ng-bind="'template.text.unsaved.draft' | i18n"></p>
+                    </form-item>
+                    <h4 ng-bind="'template.text.actual.letter' | i18n"></h4>
+                    <form-item ng-repeat="field in template.contents">
+                        <input ng-if="contentType === 'plain'" type="text" size="input-lg" ng-model="template.subject"/>
+                        <textarea ng-if="contentType === 'email'" ui-tinymce="editorOptions"
+                                  ng-model="field.value"></textarea>
+                    </form-item>
+                    <div ng-repeat="repl in replacements | orderBy:orderNumber">
+                        <form-item label="{{repl.name}}" subnote="{{repl.description}}">
+                            <div ng-if="repl.contentType === 'plain'">
+                                <input type="text" size="input-lg"
+                                       ng-model="getMatchingTemplateReplacement(repl.key).defaultValue"/>
+                            </div>
+                            <div ng-if="repl.contentType === 'html'">
+                                <textarea ui-tinymce="editorOptions"
+                                          ng-model="getMatchingTemplateReplacement(repl.key).defaultValue"></textarea>
+                            </div>
+                        </form-item>
+                    </div>
+                </form>
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="span12">
-            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        <div class="row">
+            <div class="span12">
+                <button-group buttons="buttons"
+                              button-class="inline-operation btn btn-small margin-right-half"></button-group>
+            </div>
         </div>
-    </div>
     </div>
 </div>
