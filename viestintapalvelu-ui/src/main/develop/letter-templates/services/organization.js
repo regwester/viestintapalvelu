@@ -18,6 +18,9 @@ angular.module('letter-templates')
         };
 
         return {
+            getOrganizationName: function(orgoid, languageCode) {
+                return $http.get(organizationResUrl + 'name/' + orgoid + '/' + languageCode);   
+            },
             getOrganizationHierarchy: function (applicationPeriod) {
                 return $http.get(organizationResUrl + 'applicationPeriod/' + applicationPeriod);
             },

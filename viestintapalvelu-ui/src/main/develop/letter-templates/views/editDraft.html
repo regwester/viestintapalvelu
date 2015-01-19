@@ -15,9 +15,16 @@
                 <form-item label="Haku:">
                     <p>{{applicationPeriodForDisplay}}</p>
                 </form-item>
-                <form-item label="Hakukohde:">
-                	<p>{{applicationTargetForDisplay}}</p>
-                </form-item>
+                <div ng-if="targetIsOrg">
+                	<form-item label="Organisaatio:">
+	                	<p>{{organizationForDisplay}}</p>
+	                </form-item>
+                </div>
+                <div ng-if="!targetIsOrg">
+	                <form-item label="Hakukohde:">
+	                	<p>{{applicationTargetForDisplay}}</p>
+	                </form-item>
+                </div>
                 <form-item label="Kirjeen tyyppi:">
                     <p>{{draft.templateName}}</p>
                 </form-item>
