@@ -365,6 +365,21 @@ public class TemplateResource extends AsynchronousResource {
         templateService.storeDraftDTO(draft);
         return Response.status(Status.OK).build();
     }
+    
+    @PUT
+    @Path("/updateDraft")
+    @Consumes("application/json")
+    @Produces("application/json")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Päivittää annetun kirjeluonnoksen kantaan", notes = "Vain korvauskentät voi päivittää")
+    public Response updateDraft(Draft draft) {
+        Response response = userRightsValidator.checkUserRightsToOrganization(draft.getOrganizationOid());
+        if (Status.OK.getStatusCode() != response.getStatus()) {
+            return response;
+        }
+        templateService.updateDraft(draft);
+        return Response.status(Status.OK).build();
+    }
 
     @GET
     @Path("/getDraft")
