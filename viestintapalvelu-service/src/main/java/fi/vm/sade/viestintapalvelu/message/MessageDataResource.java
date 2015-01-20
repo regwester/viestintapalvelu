@@ -24,6 +24,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
+import com.google.common.base.Predicate;
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
@@ -75,9 +78,11 @@ public class MessageDataResource implements MessageResource {
         try {
             ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
             AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
+            List<Receiver> failedReceivers = getFailedReceiversForAsiointiTili(response.getReceiverStatuses(), messageData.receivers);
             MessageStatusResponse messageResponse = constructMessageResponse(response);
-            if (!wrapper.incompatibleReceivers.isEmpty()) {
-                ConvertedMessageWrapper<EmailData> emailWrapper = emailConverter.convert(messageData.copyOf(wrapper.incompatibleReceivers));
+            if (!wrapper.incompatibleReceivers.isEmpty() || !failedReceivers.isEmpty()) {
+                failedReceivers.addAll(wrapper.incompatibleReceivers);
+                ConvertedMessageWrapper<EmailData> emailWrapper = emailConverter.convert(messageData.copyOf(failedReceivers));
                 emailComponent.sendEmail(emailWrapper.wrapped);
                 messageResponse = messageResponse.copyWithAdditionalReceiverStatuses(constructMessageResponseReceiverStatusesForEmail(emailWrapper));
             }
@@ -86,6 +91,23 @@ public class MessageDataResource implements MessageResource {
             LOGGER.error(e.getMessage());            
             return constructErrorMessageResponse(messageData, e);
         }
+    }
+
+    private List<Receiver> getFailedReceiversForAsiointiTili(final List<AsiointitiliReceiverStatusDto> receiverStatuses, List<Receiver> receivers) {
+       return ImmutableList.copyOf(Iterables.filter(receivers, new Predicate<Receiver>() {
+
+                @Override
+                public boolean apply(final Receiver receiver) {
+                    return Iterables.tryFind(receiverStatuses, new Predicate<AsiointitiliReceiverStatusDto>() {
+
+                        @Override
+                        public boolean apply(AsiointitiliReceiverStatusDto input) {
+                            return input.getReceiverOid().equals(receiver.oid) && input.getStateCode() != Status.OK.getStatusCode();
+                        }
+                    }).isPresent();
+                }
+                
+            }));
     }
 
     private List<ReceiverStatus> constructMessageResponseReceiverStatusesForEmail(ConvertedMessageWrapper<EmailData> emailWrapper) {

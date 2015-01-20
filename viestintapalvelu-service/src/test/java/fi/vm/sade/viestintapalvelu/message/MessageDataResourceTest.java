@@ -50,11 +50,6 @@ public class MessageDataResourceTest {
         verify(asiointitiliService).send(any(AsiointitiliSendBatchDto.class));
     }
     
-    @Test
-    public void usesEmailServiceForSendingWhenSsnIsMissing() {
-        
-    }
-    
     private MessageData givenMessageData() {
         return givenMessageData(Arrays.asList(givenReceiver("010101-123N")));
     }
