@@ -15,6 +15,7 @@
  */
 package fi.vm.sade.viestintapalvelu.message;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.ws.rs.core.Response.Status;
@@ -25,6 +26,7 @@ import org.springframework.stereotype.Component;
 
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
+import com.google.common.collect.Collections2;
 import com.google.common.collect.ImmutableList;
 import com.google.common.collect.Iterables;
 import com.google.common.collect.Lists;
@@ -94,7 +96,7 @@ public class MessageDataResource implements MessageResource {
     }
 
     private List<Receiver> getFailedReceiversForAsiointiTili(final List<AsiointitiliReceiverStatusDto> receiverStatuses, List<Receiver> receivers) {
-       return ImmutableList.copyOf(Iterables.filter(receivers, new Predicate<Receiver>() {
+       return new ArrayList<Receiver>(Collections2.filter(receivers, new Predicate<Receiver>() {
 
                 @Override
                 public boolean apply(final Receiver receiver) {
