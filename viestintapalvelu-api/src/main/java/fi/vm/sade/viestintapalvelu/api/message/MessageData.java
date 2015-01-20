@@ -73,6 +73,11 @@ public class MessageData implements Serializable {
     public MessageData(String templateName, List<Receiver> receivers, Map<String, Object> commonReplacements) {
         this(templateName, "FI", receivers, commonReplacements, null, null, null);
     }
+   
+    @SuppressWarnings("unused")
+    private MessageData() {
+        this(null, null, null);
+    }
 
     public MessageData copyOf(List<Receiver> receivers) {
         return new MessageData(this.templateName, this.language, receivers, this.commonReplacements, this.senderOid, this.organizationOid, this.applicationTargetOid);

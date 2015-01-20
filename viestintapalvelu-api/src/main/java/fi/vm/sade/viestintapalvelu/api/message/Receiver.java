@@ -64,6 +64,11 @@ public class Receiver implements Serializable {
     public Receiver(String oid, String email, AddressLabel addressLabel, Map<String, Object> replacements, String ssn) {
         this(oid, email, "FI", addressLabel, replacements, ssn);
     }
+    
+    @SuppressWarnings("unused")
+    private Receiver() {
+        this(null, null, null, null, null);
+    }
 
     @Override
     public String toString() {

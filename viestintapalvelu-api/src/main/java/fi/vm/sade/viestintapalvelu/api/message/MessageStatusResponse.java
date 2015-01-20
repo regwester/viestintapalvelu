@@ -16,6 +16,7 @@
 package fi.vm.sade.viestintapalvelu.api.message;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -45,7 +46,7 @@ public class MessageStatusResponse implements Serializable {
     @ApiModelProperty(value = "Virheviesti")
     public final String errorMessage;
     
-    @ApiModelProperty(value = "Vastaanottajien tila (esim. onnistuiko lähetys kyseiselle vastaanottajalle")
+    @ApiModelProperty(value = "Vastaanottajien tila (esim. onnistuiko lähetys kyseiselle vastaanottajalle), saattaa sisältää useamman tilan per vastaanottaja (esim. asiointitililähetys epäonnistui, mutta tehtiin toinen sähköpostitse)")
     public final List<ReceiverStatus> receiverStatuses;
 
     public MessageStatusResponse(State state, String errorMessage, String statusUrl, List<ReceiverStatus> receiverStatuses) {
@@ -53,6 +54,17 @@ public class MessageStatusResponse implements Serializable {
         this.state = state;
         this.statusUrl = statusUrl;
         this.receiverStatuses = receiverStatuses;
+    }
+    
+    @SuppressWarnings("unused")
+    private MessageStatusResponse() {
+        this(null, null, null, null);
+    }
+    
+    public MessageStatusResponse copyWithAdditionalReceiverStatuses(List<ReceiverStatus> additionalReceiverStatuses) {
+        List<ReceiverStatus> statuses = new ArrayList<>(receiverStatuses);
+        statuses.addAll(additionalReceiverStatuses);
+        return new MessageStatusResponse(this.state, this.errorMessage, this.statusUrl, statuses);
     }
 
     @Override

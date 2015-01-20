@@ -15,19 +15,34 @@
  */
 package fi.vm.sade.viestintapalvelu.message;
 
+import java.util.List;
+
+import javax.ws.rs.core.Response.Status;
+
+import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Lists;
+
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
 import fi.vm.sade.viestintapalvelu.api.message.MessageData;
 import fi.vm.sade.viestintapalvelu.api.message.MessageStatusResponse;
+import fi.vm.sade.viestintapalvelu.api.message.MessageStatusResponse.State;
+import fi.vm.sade.viestintapalvelu.api.message.Receiver;
+import fi.vm.sade.viestintapalvelu.api.message.ReceiverStatus;
+import fi.vm.sade.viestintapalvelu.api.message.ReceiverStatus.SendMethod;
 import fi.vm.sade.viestintapalvelu.api.rest.MessageResource;
 import fi.vm.sade.viestintapalvelu.asiontitili.AsiointitiliService;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
+import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliReceiverStatusDto;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.message.conversion.ConvertedMessageWrapper;
 import fi.vm.sade.viestintapalvelu.message.conversion.MessageToAsiointiTiliConverter;
-import fi.vm.sade.viestintapalvelu.message.conversion.MessageToLetterBatchConverter;
+import fi.vm.sade.viestintapalvelu.message.conversion.MessageToEmailConverter;
 
 /**
  * @author risal1
@@ -35,16 +50,18 @@ import fi.vm.sade.viestintapalvelu.message.conversion.MessageToLetterBatchConver
  */
 @Component
 public class MessageDataResource implements MessageResource {
-
+    
+    private static final Logger LOGGER = Logger.getLogger(MessageDataResource.class);
+    
     @Autowired
     private AsiointitiliService asiointitiliService;
-
+    
     @Autowired
-    private LetterService letterService;
+    private EmailComponent emailComponent;
 
     private MessageToAsiointiTiliConverter asiointiliConverter = new MessageToAsiointiTiliConverter();
 
-    private MessageToLetterBatchConverter letterBatchConverter = new MessageToLetterBatchConverter();
+    private MessageToEmailConverter emailConverter = new MessageToEmailConverter();
 
     /*
      * (non-Javadoc)
@@ -55,18 +72,61 @@ public class MessageDataResource implements MessageResource {
      */
     @Override
     public MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData) {
-        ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
-        AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
-        // TODO: Additional checks
-        // TODO: need to also use receivers that didn't get message via
-        // asiointitili in otherways
-        if (!wrapper.incompatibleReceivers.isEmpty()) {
-            // TODO build emaildata and use ryhmasahkoposti //use
-            // pdfprinterresource for attachment
-            // TODO: email sending, how will we proceed? should we store
-            // something to db even though Asiointitili seems not to do so
+        try {
+            ConvertedMessageWrapper<AsiointitiliSendBatchDto> wrapper = asiointiliConverter.convert(messageData);
+            AsiointitiliAsyncResponseDto response = asiointitiliService.send(wrapper.wrapped);
+            MessageStatusResponse messageResponse = constructMessageResponse(response);
+            if (!wrapper.incompatibleReceivers.isEmpty()) {
+                ConvertedMessageWrapper<EmailData> emailWrapper = emailConverter.convert(messageData.copyOf(wrapper.incompatibleReceivers));
+                emailComponent.sendEmail(emailWrapper.wrapped);
+                messageResponse = messageResponse.copyWithAdditionalReceiverStatuses(constructMessageResponseReceiverStatusesForEmail(emailWrapper));
+            }
+            return messageResponse;
+        } catch (final Exception e) {
+            LOGGER.error(e.getMessage());            
+            return constructErrorMessageResponse(messageData, e);
         }
-        return null;
+    }
+
+    private List<ReceiverStatus> constructMessageResponseReceiverStatusesForEmail(ConvertedMessageWrapper<EmailData> emailWrapper) {
+        List<ReceiverStatus> receiverStatuses = Lists.transform(emailWrapper.wrapped.getRecipient(), new Function<EmailRecipient, ReceiverStatus>() {
+
+            @Override
+            public ReceiverStatus apply(EmailRecipient input) {
+                return new ReceiverStatus(input.getOid(), SendMethod.EMAIL);
+            }
+            
+        });
+        for (Receiver receiver : emailWrapper.incompatibleReceivers) {
+            receiverStatuses.add(new ReceiverStatus(receiver.oid, SendMethod.NONE, true, "No suitable email or asiointili given for receiver"));
+        }
+        return receiverStatuses;
+    }
+
+    private MessageStatusResponse constructMessageResponse(AsiointitiliAsyncResponseDto response) {
+        List<ReceiverStatus> receiverStatuses = Lists.transform(response.getReceiverStatuses(), new Function<AsiointitiliReceiverStatusDto, ReceiverStatus>() {
+
+            @Override
+            public ReceiverStatus apply(AsiointitiliReceiverStatusDto input) {
+                boolean sendingFailed = input.getStateCode() != Status.OK.getStatusCode();
+                return new ReceiverStatus(input.getReceiverOid(), SendMethod.ASIOINTITILI, sendingFailed, sendingFailed ? input.getStateDescription() : null);
+            }
+            
+        });
+        boolean sendingSucceeded = response.getStatusCode() == Status.OK.getStatusCode();
+        return new MessageStatusResponse(sendingSucceeded ? State.PROCESSED : State.ERROR, sendingSucceeded ? null : response.getDescription(), null, receiverStatuses);
+    }
+
+    private MessageStatusResponse constructErrorMessageResponse(MessageData messageData, final Exception e) {
+        List<ReceiverStatus> receiverStatuses = Lists.transform(messageData.receivers, new Function<Receiver, ReceiverStatus>() {
+
+            @Override
+            public ReceiverStatus apply(Receiver input) {
+                return new ReceiverStatus(input.oid, SendMethod.ASIOINTITILI, true, e.getMessage());
+            }
+            
+        });
+        return new MessageStatusResponse(State.ERROR, e.getMessage(), null, receiverStatuses);
     }
 
 }

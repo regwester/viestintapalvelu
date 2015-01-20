@@ -28,7 +28,7 @@ import com.wordnik.swagger.annotations.ApiModelProperty;
 public class ReceiverStatus {
 
     public enum SendMethod {
-        ASIOINTITILI, EMAIL
+        ASIOINTITILI, EMAIL, LETTER, NONE
     }
     
     @ApiModelProperty(value = "vastaanottajan tunniste")
@@ -54,6 +54,12 @@ public class ReceiverStatus {
         this(oid, sendMethod, false, null);
     }
 
+    
+    @SuppressWarnings("unused")
+    private ReceiverStatus() {
+        this(null, null);
+    }
+    
     @Override
     public String toString() {
         return "ReceiverStatus [oid=" + oid + ", sendMethod=" + sendMethod + ", sendingFailed=" + sendingFailed + ", errorMessage=" + errorMessage + "]";
