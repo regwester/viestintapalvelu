@@ -30,7 +30,13 @@ angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state
         console.log(err);
     });
     
-
+    $scope.save = function() {
+        var draft = $scope.draft;
+        var draftUpdateObj = {id: draft.draftId.toString(), content: draft.replacements['sisalto'], orgoid: draft.organizationOid};
+        TemplateService.updateDraft().put({}, draftUpdateObj, function() {
+            //TODO: some feedback to the user
+        });
+    }
     
     $scope.buttons = [{label: 'Peruuta', click: $scope.cancel, type: 'default'},
                       {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},

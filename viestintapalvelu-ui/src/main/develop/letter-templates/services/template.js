@@ -88,6 +88,13 @@ angular.module('letter-templates')
             },
             getFetchTargetsByOid: function(oid) {
                 return $http.get(serviceUrl + '/options/hakukohde/' + oid);
+            },
+            updateDraft: function() {
+                return $resource(templateBaseUrl + 'updateDraft', {}, {
+                    put: {
+                        method: "PUT"
+                    }
+                });
             }
         }
     }]);

@@ -372,8 +372,8 @@ public class TemplateResource extends AsynchronousResource {
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Päivittää annetun kirjeluonnoksen kantaan", notes = "Vain korvauskentät voi päivittää")
-    public Response updateDraft(Draft draft) {
-        Response response = userRightsValidator.checkUserRightsToOrganization(draft.getOrganizationOid());
+    public Response updateDraft(DraftUpdateDTO draft) {
+        Response response = userRightsValidator.checkUserRightsToOrganization(draft.orgoid);
         if (Status.OK.getStatusCode() != response.getStatus()) {
             return response;
         }

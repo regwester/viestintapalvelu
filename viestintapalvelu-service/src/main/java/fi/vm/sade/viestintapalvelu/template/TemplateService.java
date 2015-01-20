@@ -81,8 +81,5 @@ public interface TemplateService {
 
     public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames();
 
-    /**
-     * @param draft
-     */
-    void updateDraft(Draft draft);
+    void updateDraft(DraftUpdateDTO draft);
 }

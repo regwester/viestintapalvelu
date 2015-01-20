@@ -42,33 +42,30 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
         boolean hasApplicationPeriod = !StringUtils.isBlank(applicationPeriod);
         boolean hasFetchTarget = !StringUtils.isBlank(fetchTarget);
         boolean hasTag = !StringUtils.isBlank(tag);
-        boolean hasOrganizationOid = !StringUtils.isBlank(organizationOid);
 
-        StringBuilder draftSelect = new StringBuilder("SELECT a FROM Draft a WHERE " + "a.templateName = :templateName AND " + "a.templateLanguage = :templateLanguage");
+        StringBuilder draftSelect = new StringBuilder("SELECT a FROM Draft a WHERE " + "a.templateName = :templateName AND " + "a.templateLanguage = :templateLanguage AND a.organizationOid = :organizationOid");
 
         if (hasApplicationPeriod)
             draftSelect.append(" AND a.applicationPeriod = :applicationPeriod");
         if (hasFetchTarget)
             draftSelect.append(" AND a.fetchTarget = :fetchTarget");
+        else 
+            draftSelect.append(" AND a.fetchTarget IS NULL");
         if (hasTag)
             draftSelect.append(" AND a.tag = :tag");
-        if (hasOrganizationOid) {
-            draftSelect.append(" AND a.organizationOid = :organizationOid");
-        }
         
         draftSelect.append(" ORDER BY a.timestamp DESC");
 
         TypedQuery<Draft> query = em.createQuery(draftSelect.toString(), Draft.class);
         query.setParameter("templateName", templateName);
         query.setParameter("templateLanguage", templateLanguage);
+        query.setParameter("organizationOid", organizationOid);
         if (hasApplicationPeriod)
             query.setParameter("applicationPeriod", applicationPeriod);
         if (hasFetchTarget)
             query.setParameter("fetchTarget", fetchTarget);
         if (hasTag)
             query.setParameter("tag", tag);
-        if (hasOrganizationOid)
-            query.setParameter("organizationOid", organizationOid);
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
 
