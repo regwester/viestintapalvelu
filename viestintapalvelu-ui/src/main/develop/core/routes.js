@@ -94,6 +94,11 @@ angular.module('core')
                     templateUrl: templateUrl + 'editDraft.html',
                     controller: 'EditDraftCtrl'
                 })
+                .state('letter-templates_draft_create', {
+                    url: '/letter-templates/draft_create/:templatename/:language/:applicationPeriod/?orgoid&fetchTarget',
+                    templateUrl: templateUrl + 'editDraft.html',
+                    controller: 'CreateDraftCtrl'
+                })
                 .state('templateTreeList', {
                     url: "/templateTreeList",
                     templateUrl: templateUrl + "templateTreeList.html",

@@ -95,6 +95,13 @@ angular.module('letter-templates')
                         method: "PUT"
                     }
                 });
+            },
+            insertDraft: function() {
+                return $resource(templateBaseUrl + 'storeDraft', {}, {
+                    post: {
+                        method: "POST"
+                    }
+                });
             }
         }
     }]);
