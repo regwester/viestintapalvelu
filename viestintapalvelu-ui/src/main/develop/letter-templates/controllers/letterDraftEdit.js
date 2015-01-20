@@ -10,15 +10,20 @@ angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state
     
     TemplateService.getDraft(stateParams.templatename, stateParams.language, stateParams.applicationPeriod, stateParams.fetchTarget, stateParams.orgoid).success(function(result) {
         $scope.draft = result;
+        var templateLanguage = $scope.draft.languageCode;
         TemplateService.getApplicationTargets().then(function(periods) {
             var period = $filter('filter')(periods, {oid: $scope.draft.applicationPeriod});
-            var templateLanguage = $scope.draft.languageCode;
             $scope.applicationPeriodForDisplay = templateLanguage === 'SV' ? period[0].nimi.kieli_sv : templateLanguage === 'EN' ? period[0].nimi.kieli_en : period[0].nimi.kieli_fi;
         });
         
         if ($scope.targetIsOrg) {
             TemplateTreeService.getOrganizationName($scope.draft.organizationOid, $scope.draft.languageCode).then(function(orgName) {
                 $scope.organizationForDisplay = orgName.data;                
+            });
+        } else {
+            TemplateService.getFetchTargetsByOid($scope.draft.fetchTarget).then(function(target) {
+               var targetNames = target.data.result.hakukohteenNimet; 
+               $scope.fetchTargetForDisplay = templateLanguage === 'SV' ? targetNames['kieli_sv'] : templateLanguage === 'EN' ? targetNames['kieli_en'] : targetNames['kieli_fi'];
             });
         }
     }).error(function(err) {

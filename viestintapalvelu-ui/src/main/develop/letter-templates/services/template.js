@@ -85,6 +85,9 @@ angular.module('letter-templates')
             },
             getDraft: function(templateName, language, applicationPeriod, fetchTarget, organizationOid) {
                 return $http.get(templateBaseUrl + 'getDraft', {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod,'fetchTarget':fetchTarget,'oid':organizationOid}})
+            },
+            getFetchTargetsByOid: function(oid) {
+                return $http.get(serviceUrl + '/options/hakukohde/' + oid);
             }
         }
     }]);

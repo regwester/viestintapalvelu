@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.dao.impl;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -38,39 +39,36 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
             String tag) {
         EntityManager em = getEntityManager();
 
-        boolean hasApplicationPeriod = true;
-        boolean hasFetchTarget = true;
-        boolean hasTag = true;
+        boolean hasApplicationPeriod = !StringUtils.isBlank(applicationPeriod);
+        boolean hasFetchTarget = !StringUtils.isBlank(fetchTarget);
+        boolean hasTag = !StringUtils.isBlank(tag);
+        boolean hasOrganizationOid = !StringUtils.isBlank(organizationOid);
 
-        if ((applicationPeriod == null) || ("".equals(applicationPeriod)))
-            hasApplicationPeriod = false;
-        if ((fetchTarget == null) || ("".equals(fetchTarget)))
-            hasFetchTarget = false;
-        if ((tag == null) || ("".equals(tag)))
-            hasTag = false;
-
-        String findDraft = "SELECT a FROM Draft a WHERE " + "a.templateName = :templateName AND " + "a.templateLanguage = :templateLanguage AND "
-                + "a.organizationOid = :organizationOid ";
+        StringBuilder draftSelect = new StringBuilder("SELECT a FROM Draft a WHERE " + "a.templateName = :templateName AND " + "a.templateLanguage = :templateLanguage");
 
         if (hasApplicationPeriod)
-            findDraft = findDraft + "AND a.applicationPeriod = :applicationPeriod ";
+            draftSelect.append(" AND a.applicationPeriod = :applicationPeriod");
         if (hasFetchTarget)
-            findDraft = findDraft + "AND a.fetchTarget = :fetchTarget ";
+            draftSelect.append(" AND a.fetchTarget = :fetchTarget");
         if (hasTag)
-            findDraft = findDraft + "AND a.tag = :tag ";
+            draftSelect.append(" AND a.tag = :tag");
+        if (hasOrganizationOid) {
+            draftSelect.append(" AND a.organizationOid = :organizationOid");
+        }
+        
+        draftSelect.append(" ORDER BY a.timestamp DESC");
 
-        findDraft = findDraft + "ORDER BY a.timestamp DESC";
-
-        TypedQuery<Draft> query = em.createQuery(findDraft, Draft.class);
+        TypedQuery<Draft> query = em.createQuery(draftSelect.toString(), Draft.class);
         query.setParameter("templateName", templateName);
         query.setParameter("templateLanguage", templateLanguage);
-        query.setParameter("organizationOid", organizationOid);
         if (hasApplicationPeriod)
             query.setParameter("applicationPeriod", applicationPeriod);
         if (hasFetchTarget)
             query.setParameter("fetchTarget", fetchTarget);
         if (hasTag)
             query.setParameter("tag", tag);
+        if (hasOrganizationOid)
+            query.setParameter("organizationOid", organizationOid);
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
 

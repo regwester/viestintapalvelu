@@ -33,6 +33,7 @@ import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 
 /**
  * User: ratamaa
@@ -80,6 +81,15 @@ public class TarjontaComponent {
             return new HashSet<>(oids);
         } catch (Exception e) {
             log.error("Error finding haku by application period", e);
+            throw new ExternalInterfaceException(e);
+        }
+    }
+    
+    public HakuRDTO<HakukohdeDTO> getHakuKohdeByOid(String oid) {
+        try {
+            return tarjontaHakuResourceClient.getHakuhdeByOid(oid);
+        } catch (Exception e) {
+            log.error("Error finding fetchTargets by oid " + oid);
             throw new ExternalInterfaceException(e);
         }
     }
