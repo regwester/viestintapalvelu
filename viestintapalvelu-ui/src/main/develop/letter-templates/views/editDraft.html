@@ -31,6 +31,9 @@
                 <form-item label="Kieli:">
                     <p>{{draft.languageCode}}</p>
                 </form-item>
+                <form-item label="Otsikko:">
+                	<p>{{titleTemplate}}</p>
+                </form-item>
                 <form-item label="Viesti:">
 	            	<textarea ui-tinymce="editorOptions" ng-model="draft.replacements['sisalto']"></textarea>
                 </form-item>

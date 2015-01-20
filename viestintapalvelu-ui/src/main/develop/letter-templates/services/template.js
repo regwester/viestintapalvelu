@@ -64,6 +64,9 @@ angular.module('letter-templates')
             getTemplatesByApplicationPeriod: function(applicationOid) {
                 return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationOid);
             },
+            getTemplateByNameStateApplicationPeriodAndLanguage: function(templateName, language, applicationPeriod, state) {
+                return $http.get(templateBaseUrl + 'getByName/' + state, {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod}})
+            },
             updateTemplate: function() {
                 return $resource(templateBaseUrl + 'update', {}, {
                     put: {

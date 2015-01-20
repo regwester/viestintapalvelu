@@ -228,7 +228,10 @@ public class TemplateResource extends AsynchronousResource {
             @ApiImplicitParam(name = "applicationPeriod", value = "Haku (OID)", required = false, dataType = "string", paramType = "query") })
     public Template templateByNameAndState(@Context HttpServletRequest request,
             @ApiParam(name = "state", value = "Kirjepohjan tila") @PathParam("state") State state) throws IOException, DocumentException {
-        return templateService.getTemplateByName(templateCriteriaParams(request).withState(state), parseBoolean(request, "content"));
+        if (state != null) {
+            return templateService.getTemplateByName(templateCriteriaParams(request).withState(state), parseBoolean(request, "content"));
+        }
+        return templateService.getTemplateByName(templateCriteriaParams(request).withState(null), parseBoolean(request, "content"));
     }
 
     @GET
