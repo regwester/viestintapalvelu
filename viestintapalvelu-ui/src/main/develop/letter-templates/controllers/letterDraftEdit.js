@@ -2,6 +2,8 @@
 
 angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state','$filter','Global','TemplateService','TemplateTreeService', function($scope, $state, $filter, Global, TemplateService, TemplateTreeService) {
     
+    $scope.titleText = "Muokkaa kirjeen luonnosta";
+    
     $scope.editorOptions = Global.getEditorOptions();
     
     var stateParams = $state.params;
@@ -37,6 +39,10 @@ angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state
             //TODO: some feedback to the user
         });
     }
+    
+    $scope.cancel = function() {
+        $state.go('letter-templates.overview');
+    };
     
     $scope.buttons = [{label: 'Peruuta', click: $scope.cancel, type: 'default'},
                       {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},

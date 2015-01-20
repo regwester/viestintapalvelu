@@ -2,6 +2,8 @@
 
 angular.module('letter-templates').controller('CreateDraftCtrl', ['$scope','$state','$filter','Global','TemplateService','TemplateTreeService', function($scope, $state, $filter, Global, TemplateService, TemplateTreeService) {
     
+    $scope.titleText = "Luo uusi kirjeen luonnos";
+    
     $scope.editorOptions = Global.getEditorOptions();
     
     var stateParams = $state.params;
@@ -30,9 +32,13 @@ angular.module('letter-templates').controller('CreateDraftCtrl', ['$scope','$sta
         
     $scope.save = function() {
         TemplateService.insertDraft().post({}, $scope.draft, function() {
-            //TODO: some feedback to the user
+            $state.go('letter-templates_draft_edit', $state.params);
         });
     }
+    
+    $scope.cancel = function() {
+        $state.go('letter-templates.overview');
+    };
     
     $scope.buttons = [{label: 'Peruuta', click: $scope.cancel, type: 'default'},
                       {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
