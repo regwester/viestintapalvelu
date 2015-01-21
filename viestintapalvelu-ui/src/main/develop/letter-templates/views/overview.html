@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+  ~
+  ~ This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+  ~ soon as they will be approved by the European Commission - subsequent versions
+  ~ of the EUPL (the "Licence");
+  ~
+  ~ You may not use this work except in compliance with the Licence.
+  ~ You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ European Union Public Licence for more details.
+  -->
+
 <div>
     <div class="row">
         <div class="span12">
@@ -56,44 +72,50 @@
             <p class="center help-text margin-bottom-one" ng-bind="'template.text.add.new.template' | i18n"></p>
             <button class="center btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.create.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
         </div>
+        <!--<div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="true"/>-->
         <div ng-controller="TemplateController" class="span12" ng-show="radioSelection === 'organization'">
-            <!-- TODO: create a proper directive for this -->
             <div class="control-group">
                 <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.nimi.kieli_fi for Object in applicationPeriodList" class="selectpicker span6 placeholder">
                 </select>
             </div>
             <tabset>
                 <tab heading="Organisaation oletuskirjepohjat" select="templateTab()">
-                    <tree-grid
-                            tree-data       = "template_tree_data"
-                            tree-control    = "template_tree_control"
-                            col-defs        = "col_defs"
-                            icon-leaf       = "icon-actionmenu"
-                            icon-expand     = "icon-expand"
-                            icon-collapse   = "icon-expanded"
-                            on-select       = "my_tree_handler(branch, event)"
-                            expand-level    = "5"
-                            edit-template-handler="editTemplate(treeTemplate.id, treeTemplate.state)"
-                            publish-template-handler="publishTemplate(treeTemplate.id, treeTemplate.state)"
-                            remove-template-handler="removeTemplate(treeTemplate.id, treeTemplate.state)"
-                            >
-                    </tree-grid>
+                    <div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="template_tree_data[0].children.length < 1"/>
+                    <span ng-show="template_tree_data[0].children.length > 0">
+                        <tree-grid
+                                tree-data       = "template_tree_data"
+                                tree-control    = "template_tree_control"
+                                col-defs        = "col_defs"
+                                icon-leaf       = "icon-actionmenu"
+                                icon-expand     = "icon-expand"
+                                icon-collapse   = "icon-expanded"
+                                on-select       = "my_tree_handler(branch, event)"
+                                expand-level    = "5"
+                                edit-template-handler="editTemplate(treeTemplate.id, treeTemplate.state)"
+                                publish-template-handler="publishTemplate(treeTemplate.id, treeTemplate.state)"
+                                remove-template-handler="removeTemplate(treeTemplate.id, treeTemplate.state)"
+                                >
+                        </tree-grid>
+                    </span>
                 </tab>
                 <tab heading="Hakukohteiden kirjeluonnokset" select="draftTab()">
-                    <tree-grid
-                            tree-data       = "draft_tree_data"
-                            tree-control    = "draft_tree_control"
-                            col-defs        = "col_defs"
-                            icon-leaf       = "icon-actionmenu"
-                            icon-expand     = "icon-expand"
-                            icon-collapse   = "icon-expanded"
-                            on-select       = "my_tree_handler(branch, event)"
-                            expand-level    = "5"
-                            edit-template-handler="editDraft(treeDraftId)"
-                            publish-template-handler="publishDraft(treeDraftId)"
-                            remove-template-handler="deleteDraft(treeDraftId)"
-                            >
-                    </tree-grid>
+                    <div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="draft_tree_data[0].children.length < 1"/>
+                    <span ng-show="draft_tree_data[0].children.length > 0">
+                        <tree-grid
+                                tree-data       = "draft_tree_data"
+                                tree-control    = "draft_tree_control"
+                                col-defs        = "col_defs"
+                                icon-leaf       = "icon-actionmenu"
+                                icon-expand     = "icon-expand"
+                                icon-collapse   = "icon-expanded"
+                                on-select       = "my_tree_handler(branch, event)"
+                                expand-level    = "5"
+                                edit-template-handler="editDraft(treeTemplate)"
+                                publish-template-handler="publishDraft(treeTemplate)"
+                                remove-template-handler="deleteDraft(treeTemplate)"
+                                >
+                        </tree-grid>
+                    </span>
                 </tab>
             </tabset>
         </div>

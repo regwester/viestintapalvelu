@@ -1,13 +1,29 @@
+/*
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+
 'use strict';
 
 angular.module('letter-templates')
     .controller('TemplateController', ['$scope', '$state', 'TemplateService', 'TemplateTreeService', function($scope, $state, TemplateService, TemplateTreeService) {
 
-        var templateTabActive = true;
-        var draftTabActive = false;
+        $scope.templateTabActive = true;
+        $scope.hakukohdeTabActive = false;
 
-        var templatesUpdated = false;
-        var draftsUpdated = false;
+        $scope.templatesUpdated = false;
+        $scope.draftsUpdated = false;
         var selectAppPeriod = "Select one";
 
         $scope.template_tree_control = {};
@@ -32,23 +48,24 @@ angular.module('letter-templates')
         $scope.placeholder_valitse_haku = "Valitse haku";
 
         $scope.templateTab = function() {
-            templateTabActive = true;
-            draftTabActive = false;
-            if(!templatesUpdated && $scope.selectedApplicationPeriod !== selectAppPeriod ) {
+            $scope.templateTabActive = true;
+            $scope.hakukohdeTabActive = false;
+            if(!$scope.templatesUpdated && $scope.selectedApplicationPeriod !== selectAppPeriod ) {
                 $scope.updateTreeData($scope.selectedApplicationPeriod);
             }
         };
 
         $scope.draftTab = function() {
-            templateTabActive = false;
-            draftTabActive = true;
-            if(!draftsUpdated && $scope.selectedApplicationPeriod !== selectAppPeriod) {
+            $scope.templateTabActive = false;
+            $scope.hakukohdeTabActive = true;
+            if(!$scope.draftsUpdated && $scope.selectedApplicationPeriod !== selectAppPeriod) {
                 $scope.updateTreeData($scope.selectedApplicationPeriod);
 
             }
         };
 
         $scope.my_tree_handler = function(branch, event){
+            console.log(branch);
         };
 
         $scope.updateTreeData = function(applicationPeriod) {
@@ -59,19 +76,36 @@ angular.module('letter-templates')
                 var treedata = parsedTree.tree;
                 var organizationOIDS = parsedTree.oids;
                 var oidToRowMap = parsedTree.oidToRowMap;
-                if(templateTabActive) {
+                var oids = [];
+                organizationOIDS.forEach(function(element, index, array){
+                    if(element.isLeaf) {
+                        oids.push(element.oid);
+                    }
+                });
+
+                if($scope.templateTabActive) {
                     $scope.template_tree_data = treedata;
-                    TemplateService.getTemplatesByOid(organizationOIDS).then(function(response) {
-                        treedata = TemplateTreeService.addTemplatesToTree(treedata, response.data, oidToRowMap, $scope.template_tree_control);
-                        $scope.template_tree_data = treedata;
-                        templatesUpdated = true;
-                    });
-                } else if (draftTabActive) {
+                    TemplateService.getDraftsByOid(applicationPeriod.oid, oids).then(function(response) {
+                        treedata = TemplateTreeService.addDraftsToTree(treedata, response.data, oidToRowMap, $scope.template_tree_control);
+                        TemplateService.getDefaultTemplates().then(function(response) {
+                            treedata = TemplateTreeService.addTemplatesToTree(treedata, response.data, oidToRowMap, $scope.template_tree_control)
+                            $scope.template_tree_data = treedata;
+                            $scope.templatesUpdated = true;
+
+                        });
+                     });
+                } else if ($scope.hakukohdeTabActive) {
                     $scope.draft_tree_data = treedata;
-                    TemplateService.getDraftsByOid(applicationPeriod.oid, organizationOIDS).then(function(response){
-                        treedata = TemplateTreeService.addTemplatesToTree(treedata, response.data, oidToRowMap, $scope.draft_tree_control);
-                        $scope.draft_tree_data = treedata;
-                        draftsUpdated = true;
+                    TemplateTreeService.getHakukohteetByApplicationPeriod(applicationPeriod.oid).then(function(response){
+                        var treeAndHakukohdeOids = TemplateTreeService.addHakukohteetToTree(treedata, response.data, oidToRowMap, $scope.draft_tree_control);
+                        treedata = treeAndHakukohdeOids.tree;
+                        var oids = treeAndHakukohdeOids.hakukohdeoids;
+                        var oidMap = treeAndHakukohdeOids.hakukohdeOidMap;
+                        TemplateService.getDraftsByTags(oids).then(function(response) {
+                            treedata = TemplateTreeService.addDraftsToTree(treedata, response.data, oidMap, $scope.draft_tree_control);
+                            $scope.draft_tree_data = treedata;
+                            $scope.draftsUpdated = true;
+                        });
                     });
                 }
             });

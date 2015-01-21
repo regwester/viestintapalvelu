@@ -1,3 +1,19 @@
+/*
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+
 /**
  * Created by jonimake on 24.11.2014.
  */
@@ -152,24 +168,27 @@
                     };
 
                     scope.isEditDisabled = function(branch) {
+                        if(branch.isDraft) return false;
                         if(!branch.isLetter) return true;
                         return branch.state !== 'luonnos';
                     };
                     scope.isPublishDisabled = function(branch) {
+                        if(branch.isDraft) return false;
                         if(!branch.isLetter) return true;
                         return branch.state === 'julkaistu';
                     };
                     scope.isRemoveDisabled = function(branch) {
+                        if(branch.isDraft) return false;
                         if(!branch.isLetter) return true;
                         return branch.state === 'suljettu';
                     };
                     scope.editTemplate = function(branch, event) {
-                        $rootScope.$broadcast("treeTemplateChanged", branch)
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
                         scope.editTemplateHandler(branch.templateId, branch.state);
 
                     };
                     scope.publishTemplate = function(branch, event) {
-                        $rootScope.$broadcast("treeTemplateChanged", branch)
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
                         scope.publishTemplateHandler(branch.templateId, branch.state);
                     };
                     scope.removeTemplate = function(branch, event) {
@@ -180,7 +199,6 @@
                     scope.user_clicks_branch = function(branch, event) {
                         if(branch.isLetter && event.originalEvent && branch.children.length == 0) {
                             var e = null;
-                            console.log(branch);
                             //different selectors for handling clicking of either the icon or the row text
                             if(event.target.tagName === 'SPAN') {
                                 e = $(event.target).children().children('.dropdown-toggle');
