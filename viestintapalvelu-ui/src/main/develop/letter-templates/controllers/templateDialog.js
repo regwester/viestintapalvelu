@@ -9,9 +9,15 @@ angular.module('letter-templates')
             $scope.languageSelection = 'FI';
 
             TemplateService.getApplicationTargets().then(function(data) {
-                $scope.applicationTargets = _.map(data, function(elem) {
-                    return {name: elem.nimi.kieli_fi, value: elem.oid};
-                });
+                $scope.applicationTargets = _.chain(data)
+                    .map(function(elem) {
+                    var name = TemplateService.getNameFromHaku(elem);
+                    return {name: name, value: elem.oid};
+                    })
+                    .filter(function(elem) {
+                        return elem.name;
+                    })
+                    .value();
             });
             TemplateService.getBaseTemplates().success(function(data) {
                 $scope.baseTemplates = data;

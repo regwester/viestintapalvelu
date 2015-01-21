@@ -34,20 +34,29 @@ angular.module('letter-templates')
                 template = clearTemplate(template);
                 template.applicationPeriods = [$scope.template.oid];
                 template.state = 'luonnos';
-                TemplateService.saveTemplate(template);
+                TemplateService.saveTemplate(template).success(function() {
+                    //TODO: change state to preview
+                    alert("Kirjepohja tallennettu");
+                });
             };
+
             $scope.previewLetter = function() {
-                console.log('Preview letter');
+                //TODO: add preview
             };
+
             $scope.previewPDF = function() {
-                console.log('Preview PDF');
+                //TODO: add preview
             };
+
             $scope.publish = function() {
                 var template = $scope.templateContent;
                 template = clearTemplate(template);
                 template.applicationPeriods = [$scope.template.oid];
                 template.state = 'julkaistu';
-                TemplateService.saveTemplate(template);
+                TemplateService.saveTemplate(template).success(function() {
+                    //TODO: change state to preview
+                    alert("Kirjepohja julkaistu");
+                });
             };
 
             var clearTemplate = function(template) {

@@ -17,7 +17,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('TemplateService', ['$resource', '$http', '$q', function ($resource, $http, $q) {
+    .factory('TemplateService', ['$resource', '$http', '$q', 'Global', function ($resource, $http, $q, Global) {
 
         var serviceUrl = '/viestintapalvelu/api/v1/',
             templateBaseUrl = serviceUrl + 'template/',
@@ -124,6 +124,26 @@ angular.module('letter-templates')
                         method: "POST"
                     }
                 });
+            },
+            getNameFromHaku: function (haku) {
+                var lang = Global.getUserLanguage();
+                var order;
+                if(lang === 'fi') {
+                    order = ['fi', 'sv', 'en'];
+                } else if(lang === 'sv') {
+                    order = ['sv', 'fi', 'en'];
+                } else {
+                    order = ['en', 'fi', 'sv'];
+                }
+                if(haku.nimi['kieli_' + order[0]]) { //check unknown, null or ""
+                    return haku.nimi['kieli_' + order[0]];
+                }
+                if(haku.nimi['kieli_' + order[1]]) {
+                    return haku.nimi['kieli_' + order[1]];
+                }
+                if(haku.nimi['kieli_' + order[3]]) {
+                    return haku.nimi['kieli_' + order[2]];
+                }
             }
         }
     }]);

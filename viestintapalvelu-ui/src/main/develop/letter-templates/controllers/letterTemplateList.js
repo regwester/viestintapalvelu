@@ -17,8 +17,8 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('LetterTemplateListCtrl', ['$scope', '$modal', '$filter', '$state', 'TemplateService',
-        function ($scope, $modal, $filter, $state, TemplateService) {
+    .controller('LetterTemplateListCtrl', ['$scope', '$modal', '$filter', '$state', 'TemplateService', '_',
+        function ($scope, $modal, $filter, $state, TemplateService, _) {
 
             $scope.radioSelection = 'default';
             $scope.treeTemplateId = {};
@@ -36,10 +36,15 @@ angular.module('letter-templates')
             });
 
             TemplateService.getApplicationTargets().then(function (data) {
-                var list = [];
-                for (var i = 0, max = data.length; i < max; i++) {
-                    list.push({name: data[i].nimi.kieli_fi, value: data[i].oid});
-                }
+                var list = _.chain(data)
+                    .map(function(item) {
+                        var name = TemplateService.getNameFromHaku(item);
+                        return {name: name, value: item.oid};
+                    })
+                    .filter(function(item){
+                        return item.name;
+                    })
+                    .value();
                 $scope.letterTypes[1].list = list;
                 $scope.applicationTargets = list;
             });
