@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
@@ -80,6 +80,8 @@ public interface TemplateService {
     public List<Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod);
 
     public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames();
+
+    List<Draft> getDraftsByTags(List<String> tags);
 
     void updateDraft(DraftUpdateDTO draft);
 }

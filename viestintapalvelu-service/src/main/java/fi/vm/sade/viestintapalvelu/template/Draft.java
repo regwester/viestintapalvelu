@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,9 +12,10 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.util.Date;
 import java.util.Map;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
@@ -49,6 +50,9 @@ public class Draft {
 
     @ApiModelProperty(value = "Luonnoksen personointikentät", required = false, notes = "")
     private Map<String, Object> replacements;
+
+    @ApiModelProperty(value = "Luonnoksen tallennusaika")
+    private Date timestamp;
 
     public Long getDraftId() {
         return draftId;
@@ -126,4 +130,11 @@ public class Draft {
         return serialVersionUID;
     }
 
+    public Date getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 }

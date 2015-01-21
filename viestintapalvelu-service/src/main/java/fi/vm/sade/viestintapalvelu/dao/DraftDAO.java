@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.dao;
 
 import fi.vm.sade.generic.dao.JpaDAO;
@@ -28,4 +28,6 @@ public interface DraftDAO extends JpaDAO<Draft, Long> {
             String tag);
 
     List<Draft> findByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod);
+
+    List<Draft> findDraftsByTags(List<String> tags);
 }

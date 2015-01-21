@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,12 +12,15 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.organization;
 
 import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeTuloksetRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakutuloksetRDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
@@ -26,10 +29,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -47,6 +47,14 @@ public class OrganizationResource extends AsynchronousResource {
 
     @Autowired
     CurrentUserComponent currentUserComponent;
+
+    @GET
+    @Produces("application/json")
+    @Path("hakukohteet/applicationPeriod/{applicationPeriod}")
+    public List<HakukohdeTuloksetRDTO> getHakukohteetByOrgOids(@PathParam("applicationPeriod") String applicationPeriod) {
+        final List<HakukohdeTuloksetRDTO> hakukohteetByApplicationPeriodOid = tarjontaComponent.getHakukohteetByApplicationPeriodOid(applicationPeriod);
+        return hakukohteetByApplicationPeriodOid;
+    }
 
     /**
      *

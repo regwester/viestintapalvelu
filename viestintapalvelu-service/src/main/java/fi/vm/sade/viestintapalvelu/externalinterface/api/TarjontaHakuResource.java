@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.externalinterface.api;
 
 import java.util.List;
@@ -24,11 +24,8 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.*;
 import org.springframework.stereotype.Component;
-
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 
 /**
  * User: ratamaa Date: 7.10.2014 Time: 12:49
@@ -55,4 +52,9 @@ public interface TarjontaHakuResource {
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/haku/{oid}/hakukohteidenOrganisaatiot")
     HakuRDTO<List<String>> getHakuOrganizationOids(@PathParam("oid") String oid);
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/hakukohde/search")
+    HakuRDTO<HakutuloksetRDTO<HakukohdeTuloksetRDTO>> getHakukohteetByHakuOid(@QueryParam("hakuOid") String hakuOid);
 }

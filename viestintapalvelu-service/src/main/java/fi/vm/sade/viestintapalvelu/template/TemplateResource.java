@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,16 +12,12 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
 import java.security.NoSuchAlgorithmException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.Consumes;
@@ -37,7 +33,6 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import fi.vm.sade.viestintapalvelu.model.TemplateApplicationPeriod;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -678,9 +673,17 @@ public class TemplateResource extends AsynchronousResource {
     @Path("/draft/applicationPeriod/{applicationPeriod}")
     public List<Draft> getDraftsByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true) @PathParam("applicationPeriod") String applicationPeriod,
-            @ApiParam(name = "organizationid", value = "organizaatioiden OID", required = false) @QueryParam("organizationid") List<String> organizationId) {
-        final List<Draft> draftsByOrgOidsAndApplicationPeriod = templateService.getDraftsByOrgOidsAndApplicationPeriod(organizationId, applicationPeriod);
+            @ApiParam(name = "organizationid", value = "organizaatioiden OID", required = false) @QueryParam("organizationid") List<String> organizationIds) {
+        final List<Draft> draftsByOrgOidsAndApplicationPeriod = templateService.getDraftsByOrgOidsAndApplicationPeriod(organizationIds, applicationPeriod);
         return draftsByOrgOidsAndApplicationPeriod;
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/draft")
+    public List<Draft> getDraftsByTags(@ApiParam(name = "tags", value = "", required = false) @QueryParam("tags") List<String> tags) {
+        List<Draft> drafts = templateService.getDraftsByTags(tags);
+        return drafts;
     }
 
     @GET

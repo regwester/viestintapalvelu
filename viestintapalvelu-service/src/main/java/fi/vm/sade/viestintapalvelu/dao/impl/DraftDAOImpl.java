@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,12 +12,14 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.stereotype.Repository;
 
@@ -30,10 +32,13 @@ import fi.vm.sade.viestintapalvelu.dao.DraftDAO;
 import fi.vm.sade.viestintapalvelu.model.Draft;
 import fi.vm.sade.viestintapalvelu.model.QDraft;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Repository
 public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements DraftDAO {
+
+    private static final Logger log = LoggerFactory.getLogger(DraftDAOImpl.class);
 
     public Draft findDraftByNameOrgTag(String templateName, String templateLanguage, String organizationOid, String applicationPeriod, String fetchTarget,
             String tag) {
@@ -109,6 +114,21 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
         query.setParameter("oids", oids);
         return query.getResultList();
     }
+
+    @Override
+    public List<Draft> findDraftsByTags(List<String> tags) {
+        try {
+            final String findDrafts = "SELECT a FROM Draft a WHERE a.tag in :tags";
+            TypedQuery<Draft> query = getEntityManager().createQuery(findDrafts, Draft.class);
+            query.setParameter("tags", tags);
+            return query.getResultList();
+
+        } catch (Exception e) {
+            log.error("error finding drafts by tags", e);
+            return new ArrayList<>();
+        }
+    }
+
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);

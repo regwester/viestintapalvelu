@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
 import java.util.ArrayList;
@@ -24,6 +24,7 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.*;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
@@ -81,6 +82,18 @@ public class TarjontaComponent {
             return new HashSet<>(oids);
         } catch (Exception e) {
             log.error("Error finding haku by application period", e);
+            throw new ExternalInterfaceException(e);
+        }
+    }
+
+    public List<HakukohdeTuloksetRDTO> getHakukohteetByApplicationPeriodOid(String applicationPeriodOid) {
+        try {
+            final HakuRDTO<HakutuloksetRDTO<HakukohdeTuloksetRDTO>> hakukohteetByHakuOid = tarjontaHakuResourceClient.getHakukohteetByHakuOid(applicationPeriodOid);
+            final HakutuloksetRDTO<HakukohdeTuloksetRDTO> result = hakukohteetByHakuOid.getResult();
+            final List<HakukohdeTuloksetRDTO> tulokset = result.getTulokset();
+            return tulokset;
+        } catch (Exception e) {
+            log.error("Error getting hakukohteet by organization oids", e);
             throw new ExternalInterfaceException(e);
         }
     }

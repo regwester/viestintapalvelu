@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
 import java.io.InputStream;
@@ -51,7 +51,7 @@ public class EmailComponent {
             InputStream stream = (InputStream) emailResourceClient.getPreview(data).getEntity();
             return IOUtils.toString(stream);
         } catch (Exception e) {
-            LOGGER.error("Could make preview for email " + data + ". Reason: " + e.getMessage(), e);
+            LOGGER.error("Could not make preview for email " + data + ". Reason: " + e.getMessage(), e);
             throw new ExternalInterfaceException("Email preview failed", e);
         }
     }

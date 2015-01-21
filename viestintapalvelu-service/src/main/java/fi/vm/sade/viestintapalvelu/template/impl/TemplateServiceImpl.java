@@ -1,4 +1,4 @@
-/**
+/*
  * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
  * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
@@ -12,7 +12,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- **/
+ */
 package fi.vm.sade.viestintapalvelu.template.impl;
 
 import static com.google.common.base.Optional.fromNullable;
@@ -721,6 +721,7 @@ public class TemplateServiceImpl implements TemplateService {
         if (draft != null) {
             // kirjeet.luonnos
             result.setDraftId(draft.getId());
+            result.setTimestamp(draft.getTimestamp());
             result.setTemplateName(draft.getTemplateName());
             result.setLanguageCode(draft.getTemplateLanguage());
             result.setStoringOid(draft.getStoringOid());
@@ -831,6 +832,17 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames() {
         return templateDAO.getTemplateIdsAndApplicationPeriodNames();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<fi.vm.sade.viestintapalvelu.template.Draft> getDraftsByTags(List<String> tags) {
+        List<fi.vm.sade.viestintapalvelu.template.Draft> drafts = new ArrayList<>();
+        final List<Draft> draftsByTags = draftDAO.findDraftsByTags(tags);
+        for(Draft draft : draftsByTags) {
+            drafts.add(getConvertedDraft(draft));
+        }
+        return drafts;
     }
 
 }
