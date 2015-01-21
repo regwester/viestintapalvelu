@@ -63,7 +63,7 @@
         "replacements":[
             {
                 "key":"subject",
-                "name":"Otsikko",
+                "name":"subject",
                 "description":"Otsikko",
                 "contentType":"plain",
                 "numberOfRows":1
