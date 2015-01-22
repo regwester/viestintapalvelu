@@ -7,7 +7,7 @@
     </div>
     <div class="row">
         <div class="span12">
-            <h2>Muokkaa kirjepohjaa</h2>
+            <h2>{{'template.header.edit.template' | i18n'}}</h2>
         </div>
     </div>
     <div class="row">
@@ -25,7 +25,7 @@
                 <form-item label="Tila:">
                     <p>{{template.state}}, {{'common.saved' | i18n}} {{template.timestamp | date:'d.M.yyyy H:mm'}}, {{saverName}}</p>
                 </form-item>
-                <h4>Varsinainen kirje</h4>
+                <h4>{{'template.text.actual.letter' | i18n}}</h4>
                 <div ng-repeat="repl in contentReplacements | orderBy:orderNumber">
                 	<form-item label="{{repl.name}}" subnote="{{repl.description}}">
                 	
