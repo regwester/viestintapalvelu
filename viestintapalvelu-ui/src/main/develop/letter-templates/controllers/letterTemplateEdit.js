@@ -83,7 +83,7 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         };
 
         $scope.buttons = [
-                          {label: 'Peruuta', click: $scope.cancel, type: 'default'},
+                          {label: $filter('i18n')('common.btn.cancel'), click: $scope.cancel, type: 'default'},
                           {label: $filter('i18n')('template.btn.preview.pdf'), click: $scope.previewPDF, type: 'default'},
                           {label: $filter('i18n')('template.btn.preview.email'), click: $scope.previewLetter, type: 'default'},
                           {label: $filter('i18n')('common.btn.save'), click: $scope.save, primary: true},

@@ -136,7 +136,8 @@ angular.module('letter-templates')
                             'orgoid' : branch.organizationOid,
                             'fetchTarget': branch.fetchTarget});
                 } else {
-                    $state.go('letter-templates_edit', {'templateId': branch.id});
+                	var templateId = branch.id? branch.id : branch;
+                    $state.go('letter-templates_edit', {'templateId': templateId});
                 }
             };
             
