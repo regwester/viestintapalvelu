@@ -28,6 +28,9 @@ public class TemplateListing implements Serializable {
     @ApiModelProperty("Kirjepohjan tunniste")
     public final Long id;
 
+    @ApiModelProperty("Kirjepohjan oid")
+    public final String oid;
+
     @ApiModelProperty("Kirjepohjan tyyppi")
     public final String type;
 
@@ -37,8 +40,9 @@ public class TemplateListing implements Serializable {
     @ApiModelProperty("Haun nimi")
     public final String name;
 
-    public TemplateListing(Long id, String type, String language, String name) {
+    public TemplateListing(Long id, String oid, String type, String language, String name) {
         this.id = id;
+        this.oid = oid;
         this.type = type;
         this.name = name;
         this.language = language;
