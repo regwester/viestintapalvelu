@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates').controller('LetterTemplateEditCtrl',
-    ['$scope', '$http', '$state', '$filter', '$modal', 'Global', 'PersonService', 'TemplateService', 'PreviewService',
-    function($scope, $http, $state, $filter, $modal, Global, PersonService, TemplateService, PreviewService) {
+    ['$scope', '$http', '$state', '$filter', '$modal', '$window', 'Global', 'PersonService', 'TemplateService', 'PreviewService',
+    function($scope, $http, $state, $filter, $modal, $window, Global, PersonService, TemplateService, PreviewService) {
 
         $scope.editorOptions = Global.getEditorOptions();
 
@@ -38,7 +38,7 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         };
         
         $scope.cancel = function() {
-            $state.go('letter-templates.overview');
+            $window.history.back();
         };
         
         $scope.publish = function() {
