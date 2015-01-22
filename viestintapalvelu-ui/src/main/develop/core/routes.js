@@ -90,7 +90,7 @@ angular.module('core')
                     controller: 'LetterTemplateEditCtrl'
                 })
                 .state('letter-templates_view', {
-                    url: '/letter-templates/view/:templateId',
+                    url: '/letter-templates/view/:templateId/:state',
                     templateUrl: templateUrl + 'view.html',
                     controller: 'LetterTemplateViewCtrl'
                 })

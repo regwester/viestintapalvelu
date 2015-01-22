@@ -52,7 +52,7 @@
                             <div auth="crudOph" class="btn-group dropdown">
                                 <input type="button" class="icon-actionmenu dropdown-toggle"/>
                                 <ul class="dropdown-menu" role="menu">
-                                	<li><button type="button" class="link-button" ng-click="viewTemplate(letterTemplate.id)" ng-bind="'common.btn.show' | i18n"></button></li>
+                                	<li><button type="button" class="link-button" ng-click="viewTemplate(letterTemplate.id, letterTemplate.state)" ng-bind="'common.btn.show' | i18n"></button></li>
                                     <li><button type="button" class="link-button" ng-click="editTemplate(letterTemplate.id)" ng-disabled="letterTemplate.state !== 'luonnos'" ng-bind="'common.btn.edit' | i18n"></button></li>
                                     <li><button type="button" class="link-button" ng-click="publishTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state !== 'luonnos'" ng-bind="'common.btn.publish' | i18n"></button>
                                     <li><button type="button" class="link-button" ng-click="removeTemplate(letterTemplate.id, letterTemplate.state)" ng-disabled="letterTemplate.state === 'suljettu'" ng-bind="'common.btn.remove' | i18n"></button></li>

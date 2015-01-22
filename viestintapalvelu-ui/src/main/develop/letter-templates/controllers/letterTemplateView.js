@@ -4,7 +4,7 @@ angular.module('letter-templates').controller('LetterTemplateViewCtrl',
     ['$scope', '$http', '$state', '$filter', 'PersonService', 'TemplateService', 'PreviewService',
      function($scope, $http, $state, $filter, PersonService, TemplateService, PreviewService) {
 
-        TemplateService.getTemplateByIdAndState($state.params.templateId, 'luonnos').success(function(result) {
+        TemplateService.getTemplateByIdAndState($state.params.templateId, $state.params.state).success(function(result) {
             $scope.template = result;
             TemplateService.getStructureById($scope.template.structureId).success(function(structure) {
             $scope.contentReplacements = structure.replacements;

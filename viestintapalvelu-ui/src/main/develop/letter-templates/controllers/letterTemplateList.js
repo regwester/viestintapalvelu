@@ -126,8 +126,8 @@ angular.module('letter-templates')
                 $state.go('letter-templates_edit', {'templateId': templateId});
             };
             
-            $scope.viewTemplate = function(templateId) {
-                $state.go('letter-templates_view', {'templateId': templateId});
+            $scope.viewTemplate = function(templateId, state) {
+                $state.go('letter-templates_view', {'templateId': templateId, 'state': state});
             };
 
             $scope.removeTemplate = function (templateId, state) {
