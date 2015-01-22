@@ -34,28 +34,8 @@ angular.module('letter-templates')
                 template = clearTemplate(template);
                 template.applicationPeriods = [$scope.template.oid];
                 template.state = 'luonnos';
-                TemplateService.saveTemplate(template).success(function() {
-                    //TODO: change state to preview
-                    alert("Kirjepohja tallennettu");
-                });
-            };
-
-            $scope.previewLetter = function() {
-                //TODO: add preview
-            };
-
-            $scope.previewPDF = function() {
-                //TODO: add preview
-            };
-
-            $scope.publish = function() {
-                var template = $scope.templateContent;
-                template = clearTemplate(template);
-                template.applicationPeriods = [$scope.template.oid];
-                template.state = 'julkaistu';
-                TemplateService.saveTemplate(template).success(function() {
-                    //TODO: change state to preview
-                    alert("Kirjepohja julkaistu");
+                TemplateService.saveTemplate(template).success(function(result) {
+                    $state.go('letter-templates_view', {'templateId': result, 'state': 'luonnos'});
                 });
             };
 
@@ -74,9 +54,6 @@ angular.module('letter-templates')
 
             $scope.buttons = [
                 {label: $filter('i18n')('common.btn.cancel'), click: $scope.cancel, type: 'default'},
-                {label: $filter('i18n')('template.btn.preview.pdf'), click: $scope.previewPDF, type: 'default'},
-                {label: $filter('i18n')('template.btn.preview.email'), click: $scope.previewLetter, type: 'default'},
-                {label: $filter('i18n')('common.btn.save'), click: $scope.save, primary: true},
-                {label: $filter('i18n')('common.btn.publish'), click: $scope.publish}];
+                {label: $filter('i18n')('common.btn.save'), click: $scope.save, primary: true}];
         }
     ]);
