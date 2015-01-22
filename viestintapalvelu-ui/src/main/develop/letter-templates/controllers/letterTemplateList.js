@@ -127,8 +127,17 @@ angular.module('letter-templates')
                 'EN': $filter('i18n')('common.language.en')
             };
 
-            $scope.editTemplate = function(templateId) {
-                $state.go('letter-templates_edit', {'templateId': templateId});
+            $scope.editTemplate = function(branch) {
+                if(branch.isDraft) {
+                    $state.go('letter-templates_draft_edit',
+                        {'templatename': branch.templateName,
+                            'language' : branch.language,
+                            'applicationPeriod': branch.applicationPeriod,
+                            'orgoid' : branch.organizationOid,
+                            'fetchTarget': branch.fetchTarget});
+                } else {
+                    $state.go('letter-templates_edit', {'templateId': branch.id});
+                }
             };
             
             $scope.viewTemplate = function(templateId, state) {
@@ -178,21 +187,6 @@ angular.module('letter-templates')
                 });
             };
 
-            $scope.editDraft = function(draft) {
-                console.log(draft);
-                $state.go('letter-templates_draft_edit',
-                    {'templatename': draft.templateName,
-                    'language' : draft.language,
-                    'applicationPeriod': draft.applicationPeriod,
-                    'orgoid' : draft.organizationOid,
-                    'fetchTarget': draft.fetchTarget});
-            };
-            $scope.publishDraft = function(draft) {
-                console.log(draft);
-            };
-            $scope.removeDraft = function(draft) {
-                console.log(draft);
-            };
         }
     ]);
 

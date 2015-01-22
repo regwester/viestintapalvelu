@@ -1,3 +1,19 @@
+<!--
+  ~ Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+  ~
+  ~ This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+  ~ soon as they will be approved by the European Commission - subsequent versions
+  ~ of the EUPL (the "Licence");
+  ~
+  ~ You may not use this work except in compliance with the Licence.
+  ~ You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ European Union Public Licence for more details.
+  -->
+
 <div>
     <table class="table tree-grid">
         <thead class="text-primary">
@@ -17,9 +33,17 @@
                     <div auth="crudOph" class="btn-group dropdown">
                         <input type="button" class="dropdown-toggle tree-grid-dropdown-toggle" aria-haspopup="true" aria-expanded="false"/>
                         <ul class="dropdown-menu tree-grid-dropdown" role="menu">
-                            <li><button type="button" class="link-button" ng-click="editTemplate(row.branch)" ng-disabled="isEditDisabled(row.branch)" ng-bind="'common.btn.edit' | i18n"></button></li>
-                            <li><button type="button" class="link-button" ng-click="publishTemplate(row.branch)" ng-disabled="isPublishDisabled(row.branch)" ng-bind="'common.btn.publish' | i18n"></button>
-                            <li><button type="button" class="link-button" ng-click="removeTemplate(row.branch)" ng-disabled="isRemoveDisabled(row.branch)" ng-bind="'common.btn.remove' | i18n"></button></li>
+                            <li ng-show='isCreateEnabled'>
+                                <button type="button" class="link-button" ng-click="createEntry(row.branch)" ng-disabled="isCreateDisabled(row.branch)" ng-bind="'common.btn.create' | i18n"></button>
+                            </li>
+                            <li>
+                                <button type="button" class="link-button" ng-click="editTemplate(row.branch)" ng-disabled="isEditDisabled(row.branch)" ng-bind="'common.btn.edit' | i18n"></button>
+                            </li>
+                            <li>
+                                <button type="button" class="link-button" ng-click="publishTemplate(row.branch)" ng-disabled="isPublishDisabled(row.branch)" ng-bind="'common.btn.publish' | i18n"></button>
+                            <li ng-show="isRemoveEnabled">
+                                <button type="button" class="link-button" ng-click="removeTemplate(row.branch)" ng-disabled="isRemoveDisabled(row.branch)" ng-bind="'common.btn.remove' | i18n"></button>
+                            </li>
                         </ul>
                     </div>
                     {{row.branch[expandingProperty]}}

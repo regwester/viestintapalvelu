@@ -34,6 +34,7 @@
         </div>
     </div>
     <div class="row">
+        <div class="span12 margin-left-oneandquarter" ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="(radioSelection !== 'organization') && !getTemplates()"></div>
         <div class="span12" ng-show="(radioSelection !== 'organization') && getTemplates()">
             <table class="table table-striped">
                 <thead>
@@ -76,12 +77,11 @@
         <!--<div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="true"/>-->
         <div ng-controller="TemplateController" class="span12" ng-show="radioSelection === 'organization'">
             <div class="control-group">
-                <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.nimi.kieli_fi for Object in applicationPeriodList" class="selectpicker span6 placeholder">
+                <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.name for Object in applicationPeriodList" class="selectpicker span6 placeholder">
                 </select>
             </div>
             <tabset>
                 <tab heading="Organisaation oletuskirjepohjat" select="templateTab()">
-                    <div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="template_tree_data[0].children.length < 1"/>
                     <span ng-show="template_tree_data[0].children.length > 0">
                         <tree-grid
                                 tree-data       = "template_tree_data"
@@ -92,15 +92,14 @@
                                 icon-collapse   = "icon-expanded"
                                 on-select       = "my_tree_handler(branch, event)"
                                 expand-level    = "5"
-                                edit-template-handler="editTemplate(treeTemplate.id, treeTemplate.state)"
-                                publish-template-handler="publishTemplate(treeTemplate.id, treeTemplate.state)"
-                                remove-template-handler="removeTemplate(treeTemplate.id, treeTemplate.state)"
+                                edit-handler="editTemplate(treeTemplate, treeTemplate.state)"
+                                publish-handler="publishTemplate(treeTemplate.id, treeTemplate.state)"
+                                remove-handler="removeTemplate(treeTemplate.id, treeTemplate.state)"
                                 >
                         </tree-grid>
                     </span>
                 </tab>
                 <tab heading="Hakukohteiden kirjeluonnokset" select="draftTab()">
-                    <div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="draft_tree_data[0].children.length < 1"/>
                     <span ng-show="draft_tree_data[0].children.length > 0">
                         <tree-grid
                                 tree-data       = "draft_tree_data"
@@ -111,13 +110,14 @@
                                 icon-collapse   = "icon-expanded"
                                 on-select       = "my_tree_handler(branch, event)"
                                 expand-level    = "5"
-                                edit-template-handler="editDraft(treeTemplate)"
-                                publish-template-handler="publishDraft(treeTemplate)"
-                                remove-template-handler="deleteDraft(treeTemplate)"
+                                edit-handler="editDraft(treeTemplate)"
+                                publish-handler="publishDraft(treeTemplate)"
+                                create-handler="createDraft(treeTemplate)"
                                 >
                         </tree-grid>
                     </span>
                 </tab>
+                <span class="loadingIndicator" ng-show="showTreeLoadingIndicator"/>
             </tabset>
         </div>
     </div>
