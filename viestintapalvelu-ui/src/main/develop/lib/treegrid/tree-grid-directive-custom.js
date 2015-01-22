@@ -34,9 +34,10 @@
                     onSelect: '&',
                     initialSelection: '@',
                     treeControl: '=',
-                    editTemplateHandler: '&',
-                    publishTemplateHandler: '&',
-                    removeTemplateHandler: '&'
+                    editHandler: '&',
+                    publishHandler: '&',
+                    removeHandler: '&',
+                    createHandler: '&'
                 },
                 link: function(scope, element, attrs) {
                     var error, expandingProperty, expand_all_parents, expand_level, for_all_ancestors, for_each_branch, get_parent, n, on_treeData_change, select_branch, selected_branch, tree;
@@ -57,6 +58,8 @@
                     if (attrs.expandLevel == null) {
                         attrs.expandLevel = '3';
                     }
+                    scope.isCreateEnabled = angular.isDefined(attrs.createHandler);
+                    scope.isRemoveEnabled = angular.isDefined(attrs.removeHandler);
 
                     expand_level = parseInt(attrs.expandLevel, 10);
 
@@ -158,6 +161,7 @@
                     };
                     
                     scope.crudOph = false;
+
                     
                     $timeout(function() {
             	    	AuthService.crudOph().then(function() { scope.crudOph = true });
@@ -173,39 +177,50 @@
                         return branch.state !== 'luonnos';
                     };
                     scope.isPublishDisabled = function(branch) {
-                        if(branch.isDraft) return false;
-                        if(!branch.isLetter) return true;
+                        if(branch.isDraft) return true;
+                        if(branch.isLetter) return false;
                         return branch.state === 'julkaistu';
                     };
                     scope.isRemoveDisabled = function(branch) {
-                        if(branch.isDraft) return false;
+                        if(!scope.isRemoveEnabled) return true;
+                        if(branch.isDraft) return true;
                         if(!branch.isLetter) return true;
                         return branch.state === 'suljettu';
                     };
+
+                    scope.isCreateDisabled = function(branch) {
+                        return !branch.isHakukohde;
+                    };
+
                     scope.editTemplate = function(branch, event) {
                         $rootScope.$broadcast("treeTemplateChanged", branch);
-                        scope.editTemplateHandler(branch.templateId, branch.state);
+                        scope.editHandler(branch.templateId, branch.state);
 
                     };
                     scope.publishTemplate = function(branch, event) {
                         $rootScope.$broadcast("treeTemplateChanged", branch);
-                        scope.publishTemplateHandler(branch.templateId, branch.state);
+                        scope.publishHandler(branch.templateId, branch.state);
                     };
                     scope.removeTemplate = function(branch, event) {
                         $rootScope.$broadcast("treeTemplateChanged", branch);
-                        scope.removeTemplateHandler(branch.templateId, branch.state);
+                        scope.removeHandler(branch.templateId, branch.state);
+                    };
+                    scope.createEntry = function(branch, event) {
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
+                        scope.createHandler(branch);
                     };
 
                     scope.user_clicks_branch = function(branch, event) {
-                        if(branch.isLetter && event.originalEvent && branch.children.length == 0) {
+                        console.log(branch);
+                        if((scope.isCreateEnabled && branch.isHakukohde) || branch.isLetter && event.originalEvent && branch.children.length == 0) {
                             var e = null;
                             //different selectors for handling clicking of either the icon or the row text
-                            if(event.target.tagName === 'SPAN') {
+                            if (event.target.tagName === 'SPAN') {
                                 e = $(event.target).children().children('.dropdown-toggle');
                             } else {
                                 e = $(event.target).parent().siblings().children().children('.dropdown-toggle');
                             }
-                            return $timeout(function() {
+                            return $timeout(function () {
                                 e.click();
                             });
                         } else if (branch !== selected_branch) {

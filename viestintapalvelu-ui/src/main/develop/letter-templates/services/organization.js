@@ -106,17 +106,17 @@ angular.module('letter-templates')
                 return tree;
             },
 
-            addHakukohteetToTree : function (tree, drafts, oidMap, control) {
+            addHakukohteetToTree : function (tree, hakukohteet, oidMap, control) {
                 var hakukohdeOids = [];
                 var hakukohdeOidMap = {};
-                drafts.forEach(function(draft) {
+                hakukohteet.forEach(function(hakukohde) {
                     var firstColum18nStr = "Organisaatio ja kirjetyyppi";
 
-                    var orgOid = draft.oid;
+                    var orgOid = hakukohde.oid;
                     var parent = oidMap[orgOid];
 
-                    if(draft.tulokset) {
-                        draft.tulokset.forEach(function(tulos) {
+                    if(hakukohde.tulokset) {
+                        hakukohde.tulokset.forEach(function(tulos) {
                             var hakukohdeRow = tulos;
 
                             if(tulos.nimi && tulos.nimi.fi) {
@@ -126,8 +126,10 @@ angular.module('letter-templates')
                             } else if (tulos.nimi && tulos.nimi.en) {
                                 hakukohdeRow[firstColum18nStr] = tulos.nimi.en;
                             }
+                            hakukohdeRow["orgOid"] = orgOid;
+                            hakukohdeRow["isHakukohde"] = true;
                             hakukohdeOids.push(tulos.oid);
-                            var newRow = control.add_branch(parent, hakukohdeRow, true);
+                            var newRow = control.add_branch(parent, hakukohdeRow, false);
                             hakukohdeOidMap[tulos.oid] = newRow; //used to quickly add drafts under this row
                         });
                     }
@@ -142,7 +144,7 @@ angular.module('letter-templates')
                     var orgOid = item.organizationOid;
                     var letterRow = item;
                     letterRow["language"] = item.languageCode;
-                    letterRow["state"] = item.tila;
+                    letterRow["state"] = "Kirjeluonnos";
                     letterRow[firstColum18nStr] = item.fetchTarget;
                     letterRow["isLetter"] = true;
                     letterRow["isDraft"] = true;

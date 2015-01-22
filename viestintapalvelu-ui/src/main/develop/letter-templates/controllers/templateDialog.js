@@ -11,8 +11,8 @@ angular.module('letter-templates')
             TemplateService.getApplicationTargets().then(function(data) {
                 $scope.applicationTargets = _.chain(data)
                     .map(function(elem) {
-                    var name = TemplateService.getNameFromHaku(elem);
-                    return {name: name, value: elem.oid};
+                        var name = TemplateService.getNameFromHaku(elem);
+                        return {name: name, value: elem.oid};
                     })
                     .filter(function(elem) {
                         return elem.name;
@@ -21,12 +21,21 @@ angular.module('letter-templates')
             });
 
             TemplateService.getBaseTemplates().success(function(base) {
+                base = retrieveNames(base);
                 TemplateService.getDefaultTemplates().success(function(def) {
                     var defaultTemplates = processDefaultTemplates(def);
                     Array.prototype.push.apply(defaultTemplates, base);
                     $scope.baseTemplates = defaultTemplates;
                 });
             });
+
+            var retrieveNames = function(baseTemplates) {
+                return _.map(baseTemplates, function(template) {
+                    var target = _.where($scope.applicationTargets, { 'value': template.oid});
+                    template.name = target[0].name;
+                    return template;
+                });
+            };
 
             var processDefaultTemplates = function(templates) {
                 return _.map(templates, function(t) {

@@ -125,7 +125,10 @@ angular.module('letter-templates')
                     }
                 });
             },
-            getNameFromHaku: function (haku) {
+            getNameFromHaku: function (haku, prefix) {
+                if(!angular.isDefined(prefix)) {
+                    prefix = 'kieli_';
+                }
                 var lang = Global.getUserLanguage();
                 var order;
                 if(lang === 'fi') {
@@ -135,14 +138,14 @@ angular.module('letter-templates')
                 } else {
                     order = ['en', 'fi', 'sv'];
                 }
-                if(haku.nimi['kieli_' + order[0]]) { //check unknown, null or ""
-                    return haku.nimi['kieli_' + order[0]];
+                if(haku.nimi[prefix + order[0]]) { //check unknown, null or ""
+                    return haku.nimi[prefix + order[0]];
                 }
-                if(haku.nimi['kieli_' + order[1]]) {
-                    return haku.nimi['kieli_' + order[1]];
+                if(haku.nimi[prefix + order[1]]) {
+                    return haku.nimi[prefix + order[1]];
                 }
-                if(haku.nimi['kieli_' + order[2]]) {
-                    return haku.nimi['kieli_' + order[2]];
+                if(haku.nimi[prefix + order[2]]) {
+                    return haku.nimi[prefix + order[2]];
                 }
             }
         }
