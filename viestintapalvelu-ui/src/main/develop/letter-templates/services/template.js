@@ -141,7 +141,7 @@ angular.module('letter-templates')
                 if(haku.nimi['kieli_' + order[1]]) {
                     return haku.nimi['kieli_' + order[1]];
                 }
-                if(haku.nimi['kieli_' + order[3]]) {
+                if(haku.nimi['kieli_' + order[2]]) {
                     return haku.nimi['kieli_' + order[2]];
                 }
             }
