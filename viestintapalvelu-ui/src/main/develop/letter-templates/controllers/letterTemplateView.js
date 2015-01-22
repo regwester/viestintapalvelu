@@ -40,7 +40,7 @@ angular.module('letter-templates').controller('LetterTemplateViewCtrl',
         };
         
         $scope.isEditDisabled = function() {
-            return $scope.template.state !== 'luonnos' || !$scope.crudOph;
+            return $state.params.state !== 'luonnos' || !$scope.crudOph;
         }
         
         $scope.cancel = function() {
