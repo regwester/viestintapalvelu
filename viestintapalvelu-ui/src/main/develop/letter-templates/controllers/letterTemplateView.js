@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates').controller('LetterTemplateViewCtrl',
-    ['$scope', '$http', '$state', '$filter', 'PersonService', 'TemplateService', 'PreviewService',
-     function($scope, $http, $state, $filter, PersonService, TemplateService, PreviewService) {
+    ['$scope', '$http', '$state', '$filter', '$timeout', 'PersonService', 'TemplateService', 'PreviewService', 'AuthService',
+     function($scope, $http, $state, $filter, $timeout, PersonService, TemplateService, PreviewService, AuthService) {
 
         TemplateService.getTemplateByIdAndState($state.params.templateId, $state.params.state).success(function(result) {
             $scope.template = result;
@@ -24,6 +24,12 @@ angular.module('letter-templates').controller('LetterTemplateViewCtrl',
             //TODO handle errors
         });
         
+        $scope.crudOph = false;
+        
+        $timeout(function() {
+            AuthService.crudOph().then(function() { $scope.crudOph = true });
+        }, 0);
+        
         $scope.getMatchingTemplateReplacement = function(key) {
             var found = $filter('filter')($scope.template.replacements, {name: key});
             return found.length ? found[0] : {name: key, defaultValue: ''};
@@ -32,6 +38,10 @@ angular.module('letter-templates').controller('LetterTemplateViewCtrl',
         $scope.edit = function() {
             $state.go('letter-templates_edit', {'templateId': $scope.template.id});
         };
+        
+        $scope.isEditDisabled = function() {
+            return $scope.template.state !== 'luonnos' || !$scope.crudOph;
+        }
         
         $scope.cancel = function() {
             $state.go('letter-templates.overview');
@@ -59,5 +69,5 @@ angular.module('letter-templates').controller('LetterTemplateViewCtrl',
                           {label: 'Peruuta', click: $scope.cancel, type: 'default'},
                           {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
                           {label: 'Esikatsele sähköposti', click: $scope.previewLetter, type: 'default'},
-                          {label: 'Muokkaa', click: $scope.edit, primary: true}];
+                          {label: 'Muokkaa', click: $scope.edit, disabled: $scope.isEditDisabled, primary: true}];
 }]);
