@@ -59,11 +59,11 @@
                                 </ul>
                             </div>
                         </td>
-                        <td>{{letterTemplate.name}}</td>
-                        <td>{{translateTypes(letterTemplate.types).join(', ')}}</td>
-                        <td>{{languages[letterTemplate.language]}}</td>
-                        <td>{{letterStates[letterTemplate.state]}}</td>
-                        <td>{{letterTemplate.timestamp | date:'d.M.yyyy H:mm'}}</td>
+                        <td class="touchable" ng-click="viewTemplate(letterTemplate.id, letterTemplate.state)">{{letterTemplate.name}}</td>
+                        <td class="touchable" ng-click="viewTemplate(letterTemplate.id, letterTemplate.state)">{{translateTypes(letterTemplate.types).join(', ')}}</td>
+                        <td class="touchable" ng-click="viewTemplate(letterTemplate.id, letterTemplate.state)">{{languages[letterTemplate.language]}}</td>
+                        <td class="touchable" ng-click="viewTemplate(letterTemplate.id, letterTemplate.state)">{{letterStates[letterTemplate.state]}}</td>
+                        <td class="touchable" ng-click="viewTemplate(letterTemplate.id, letterTemplate.state)">{{letterTemplate.timestamp | date:'d.M.yyyy H:mm'}}</td>
                     </tr>
                 </tbody>
             </table>

@@ -686,3 +686,6 @@ input[type='text'].letterSearchField {
 .select2-dropdown-open .select2-choice {
   background-color: inherit;
 }
+.touchable {
+  cursor: pointer;	
+}
