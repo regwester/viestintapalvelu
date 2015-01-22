@@ -1,0 +1,43 @@
+<div class="container-fluid">
+	<div auth="read">
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2>Katsele kirjepohjaa</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <form novalidate="novalidate" class="form-horizontal">
+                <form-item label="Haku:">
+                    <p>{{applicationTargetForDisplay}}</p>
+                </form-item>
+                <form-item label="Kirjeen tyyppi:">
+                    <p>{{template.name}}</p>
+                </form-item>
+                <form-item label="Kieli">
+                    <p>{{template.language}}</p>
+                </form-item>
+                <form-item label="Tila:">
+                    <p>{{template.state}}, {{'common.saved' | i18n}} {{template.timestamp | date:'d.M.yyyy H:mm'}}, {{saverName}}</p>
+                </form-item>
+                <h4>Varsinainen kirje</h4>
+                <div ng-repeat="repl in contentReplacements | orderBy:orderNumber">
+                	<form-item label="{{repl.name}}" subnote="{{repl.description}}">
+						<div>{{getMatchingTemplateReplacement(repl.key).defaultValue}}</div>
+					</form-item>
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+    </div>
+</div>

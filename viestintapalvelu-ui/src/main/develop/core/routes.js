@@ -89,6 +89,11 @@ angular.module('core')
                     templateUrl: templateUrl + 'edit.html',
                     controller: 'LetterTemplateEditCtrl'
                 })
+                .state('letter-templates_view', {
+                    url: '/letter-templates/view/:templateId',
+                    templateUrl: templateUrl + 'view.html',
+                    controller: 'LetterTemplateViewCtrl'
+                })
                 .state('letter-templates_draft_edit', {
                     url: '/letter-templates/draft_edit/:templatename/:language/:applicationPeriod/?orgoid&fetchTarget',
                     templateUrl: templateUrl + 'editDraft.html',

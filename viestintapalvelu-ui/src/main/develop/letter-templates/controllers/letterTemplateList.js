@@ -122,8 +122,12 @@ angular.module('letter-templates')
                 'EN': $filter('i18n')('common.language.en')
             };
 
-            $scope.editTemplate = function (templateId) {
+            $scope.editTemplate = function(templateId) {
                 $state.go('letter-templates_edit', {'templateId': templateId});
+            };
+            
+            $scope.viewTemplate = function(templateId) {
+                $state.go('letter-templates_view', {'templateId': templateId});
             };
 
             $scope.removeTemplate = function (templateId, state) {
