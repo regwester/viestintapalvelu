@@ -28,7 +28,7 @@
                 <h4>Varsinainen kirje</h4>
                 <div ng-repeat="repl in contentReplacements | orderBy:orderNumber">
                 	<form-item label="{{repl.name}}" subnote="{{repl.description}}">
-						<div>{{getMatchingTemplateReplacement(repl.key).defaultValue}}</div>
+						<div ng-bind-html="getMatchingTemplateReplacement(repl.key).defaultValue | trustAsHtml"></div>
 					</form-item>
                 </div>
             </form>
