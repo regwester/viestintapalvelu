@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates').controller('LetterTemplateEditCtrl',
-    ['$scope', '$http', '$state', '$filter', '$modal', '$window', 'Global', 'PersonService', 'TemplateService',
-    function($scope, $http, $state, $filter, $modal, $window, Global, PersonService, TemplateService) {
+    ['$scope', '$http', '$state', '$filter', '$modal', 'Global', 'PersonService', 'TemplateService', 'PreviewService',
+    function($scope, $http, $state, $filter, $modal, Global, PersonService, TemplateService, PreviewService) {
 
         $scope.editorOptions = Global.getEditorOptions();
 
@@ -64,57 +64,22 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
             });
         };
 
-        $scope.previewPDF = function(args) {
+        $scope.getContent = function() {
             var content = "";
-            //$scope.
             angular.forEach($scope.template.replacements,function(value,index){
                 if (value.name == 'sisalto') {
                     content = value.defaultValue;
                 }
             });
-            $http({
-                url: '/viestintapalvelu/api/v1/preview/letterbatch/pdf',
-                method: "POST",
-                data: {'templateId' : $scope.template.id,
-                       'templateState' : $scope.template.state,
-                       'letterContent' : content},
-                headers: {
-                   'Content-type': 'application/json'
-                },
-                responseType: 'arraybuffer'
-            }).success(function (data, status, headers, config) {
-                var blob = new Blob([data], {type: "application/pdf"});
-                var objectUrl = URL.createObjectURL(blob);
-                window.open(objectUrl);
-            }).error(function (data, status, headers, config) {
-
-            });
+            return content;
+        }
+        
+        $scope.previewPDF = function(args) {
+            PreviewService.previewPDF($scope.template.id, $scope.template.state, $scope.getContent());
         };
 
         $scope.previewLetter = function(args) {
-            var content = "";
-            //$scope.
-            angular.forEach($scope.template.replacements,function(value,index){
-                if (value.name == 'sisalto') {
-                    content = value.defaultValue;
-                }
-            });
-            $http({
-                url: '/viestintapalvelu/api/v1/preview/letterbatch/email',
-                method: "POST",
-                data: {'templateId' : $scope.template.id,
-                       'templateState' : $scope.template.state,
-                       'letterContent' : content},
-                headers: {
-                   'Content-type': 'application/json'
-                },
-                responseType: 'arraybuffer'
-            }).success(function (data, status, headers, config) {
-                var blob = new Blob([data], {type: "text/plain"});
-                var objectUrl = URL.createObjectURL(blob);
-                window.open(objectUrl);
-            }).error(function (data, status, headers, config) {
-            });
+            PreviewService.previewLetter($scope.template.id, $scope.template.state, $scope.getContent());
         };
 
         $scope.buttons = [

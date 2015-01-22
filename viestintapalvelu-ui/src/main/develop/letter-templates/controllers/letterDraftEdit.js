@@ -1,6 +1,7 @@
 'user strict';
 
-angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state','$filter','$http','Global','TemplateService','TemplateTreeService', function($scope, $state, $filter, $http, Global, TemplateService, TemplateTreeService) {
+angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state','$filter','$http','Global','TemplateService','TemplateTreeService', 'PreviewService', 
+                                                                function($scope, $state, $filter, $http, Global, TemplateService, TemplateTreeService, PreviewService) {
     
     $scope.titleText = "Muokkaa kirjeen luonnosta";
     
@@ -53,45 +54,12 @@ angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state
         $state.go('letter-templates.overview');
     };
     
-    $scope.previewPDF = function(args) {
-        var content = $scope.draft.replacements['sisalto'];
-        $http({
-            url: '/viestintapalvelu/api/v1/preview/letterbatch/pdf',
-            method: "POST",
-            data: {'templateId' : $scope.template.id,
-                   'templateState' : $scope.template.state,
-                   'letterContent' : content},
-            headers: {
-               'Content-type': 'application/json'
-            },
-            responseType: 'arraybuffer'
-        }).success(function (data, status, headers, config) {
-            var blob = new Blob([data], {type: "application/pdf"});
-            var objectUrl = URL.createObjectURL(blob);
-            window.open(objectUrl);
-        }).error(function (data, status, headers, config) {
-
-        });
+    $scope.previewPDF = function() {
+        PreviewService.previewPDF($scope.template.id, $scope.template.state, $scope.draft.replacements['sisalto']);
     };
-
-    $scope.previewLetter = function(args) {
-        var content = $scope.draft.replacements['sisalto'];
-        $http({
-            url: '/viestintapalvelu/api/v1/preview/letterbatch/email',
-            method: "POST",
-            data: {'templateId' : $scope.template.id,
-                   'templateState' : $scope.template.state,
-                   'letterContent' : content},
-            headers: {
-               'Content-type': 'application/json'
-            },
-            responseType: 'arraybuffer'
-        }).success(function (data, status, headers, config) {
-            var blob = new Blob([data], {type: "text/plain"});
-            var objectUrl = URL.createObjectURL(blob);
-            window.open(objectUrl);
-        }).error(function (data, status, headers, config) {
-        });
+    
+    $scope.previewLetter = function() {
+        PreviewService.previewLetter($scope.template.id, $scope.template.state, $scope.draft.replacements['sisalto']);
     };
     
     $scope.buttons = [{label: 'Peruuta', click: $scope.cancel, type: 'default'},
