@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state', '_',
-        function($scope, $modalInstance, TemplateService, $state, _) {
+    .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state', '_', '$filter',
+        function($scope, $modalInstance, TemplateService, $state, _, $filter) {
 
             //Default values
             $scope.applicationTarget = TemplateService.getApplicationTarget();
@@ -19,9 +19,20 @@ angular.module('letter-templates')
                     })
                     .value();
             });
-            TemplateService.getBaseTemplates().success(function(data) {
-                $scope.baseTemplates = data;
+
+            TemplateService.getBaseTemplates().success(function(base) {
+                TemplateService.getDefaultTemplates().success(function(def) {
+                    var defaultTemplates = processDefaultTemplates(def);
+                    Array.prototype.push.apply(defaultTemplates, base);
+                    $scope.baseTemplates = defaultTemplates;
+                });
             });
+
+            var processDefaultTemplates = function(templates) {
+                return _.map(templates, function(t) {
+                        return {id: t.id, name: $filter('i18n')('template.common.default.template'), type: t.name, language: t.language};
+                    });
+            };
 
             $scope.languages = [
                 {value: 'FI', text: 'suomi'},

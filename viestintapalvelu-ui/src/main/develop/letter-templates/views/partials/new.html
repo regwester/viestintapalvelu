@@ -17,7 +17,6 @@
         </div>
         <div ng-if="applicationTypeSelection && languageSelection">
             <select class="full-width" ng-model="baseTemplate" ng-options="t as t.name for t in baseTemplates | orderBy: 'name' | filter: {language: languageSelection} | filter: {type: applicationTypeSelection}" ng-change="selectBase(baseTemplate)">
-                <option value="" ng-bind="'template.common.default.template' | i18n"></option>
             </select>
         </div>
         <p class="subnote" ng-bind="'template.info.text.template.base' | i18n"></p>
