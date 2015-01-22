@@ -84,8 +84,8 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
 
         $scope.buttons = [
                           {label: 'Peruuta', click: $scope.cancel, type: 'default'},
-                          {label: 'Esikatsele kirje (PDF)', click: $scope.previewPDF, type: 'default'},
-                          {label: 'Esikatsele sähköposti', click: $scope.previewLetter, type: 'default'},
-                          {label: 'Tallenna', click: $scope.save, primary: true},
-                          {label: 'Julkaise', click: $scope.publish}];
+                          {label: $filter('i18n')('template.btn.preview.pdf'), click: $scope.previewPDF, type: 'default'},
+                          {label: $filter('i18n')('template.btn.preview.email'), click: $scope.previewLetter, type: 'default'},
+                          {label: $filter('i18n')('common.btn.save'), click: $scope.save, primary: true},
+                          {label: $filter('i18n')('common.btn.publish'), click: $scope.publish}];
 }]);
