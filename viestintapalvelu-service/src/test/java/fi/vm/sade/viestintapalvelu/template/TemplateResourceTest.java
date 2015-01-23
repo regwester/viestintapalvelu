@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.IOException;
@@ -7,6 +22,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.BadRequestException;
+import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import org.junit.Before;
@@ -43,10 +59,10 @@ import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
 import fi.vm.sade.viestintapalvelu.template.impl.TemplateServiceImpl;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -81,6 +97,15 @@ public class TemplateResourceTest {
         Field currentUserComponentField = TemplateServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);
         currentUserComponentField.set(((Advised)service).getTargetSource().getTarget(), currentUserComponent);
+        UserRightsValidator validator = new UserRightsValidator(null, null) {
+            @Override
+            public Response checkUserRightsToOrganization(String oid) {
+                return Response.status(Status.OK).build();
+            }
+        };
+        Field validatorField = TemplateResource.class.getDeclaredField("userRightsValidator");
+        validatorField.setAccessible(true);
+        validatorField.set(((Advised)resource).getTargetSource().getTarget(), validator);
     }
     
     @Test

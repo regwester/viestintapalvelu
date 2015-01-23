@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.model;
 
 import java.util.Date;
@@ -16,30 +31,17 @@ import fi.vm.sade.generic.model.BaseEntity;
 /**
  *
  * Model used to store default message replacements retrieved from the template
- * 
  *
-CREATE TABLE raportoitavaviestikorvauskentat (
- id bigint NOT NULL,
- version bigint NOT NULL,
- raportoitavaviesti_id bigint NOT NULL,
- nimi character varying(255),
- oletus_arvo character varying(3000),
- aikaleima timestamp without time zone,
- CONSTRAINT raportoitavaviestikorvauskentat_pk PRIMARY KEY (id),
- CONSTRAINT raportoitavaviestikorvauskentat_raportoitavaviesti_id_fkey FOREIGN KEY (raportoitavaviesti_id)
-     REFERENCES raportoitavaviesti (id) MATCH SIMPLE
-     ON UPDATE NO ACTION ON DELETE NO ACTION
- );
  */
 
-@Table(name="raportoitavaviestikorvauskentat")
+@Table(name = "raportoitavaviestikorvauskentat")
 @Entity
 public class ReportedMessageReplacement extends BaseEntity {
 
     private static final long serialVersionUID = -7834429548964811085L;
 
-    @OneToOne(fetch=FetchType.EAGER)
-    @JoinColumn(name="raportoitavaviesti_id")
+    @OneToOne(fetch = FetchType.EAGER)
+    @JoinColumn(name = "raportoitavaviesti_id")
     private ReportedMessage reportedMessage;
 
     @Column(name = "nimi")
@@ -56,65 +58,70 @@ public class ReportedMessageReplacement extends BaseEntity {
      * @return the reportedMessage
      */
     public ReportedMessage getReportedMessage() {
-	return reportedMessage;
+        return reportedMessage;
     }
 
     /**
-     * @param reportedMessage the reportedMessage to set
+     * @param reportedMessage
+     *            the reportedMessage to set
      */
     public void setReportedMessage(ReportedMessage reportedMessage) {
-	this.reportedMessage = reportedMessage;
+        this.reportedMessage = reportedMessage;
     }
 
     /**
      * @return the name
      */
     public String getName() {
-	return name;
+        return name;
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
-	this.name = name;
+        this.name = name;
     }
 
     /**
      * @return the defaultValue
      */
     public String getDefaultValue() {
-	return defaultValue;
+        return defaultValue;
     }
 
     /**
-     * @param defaultValue the defaultValue to set
+     * @param defaultValue
+     *            the defaultValue to set
      */
     public void setDefaultValue(String defaultValue) {
-	this.defaultValue = defaultValue;
+        this.defaultValue = defaultValue;
     }
 
     /**
      * @return the timestamp
      */
     public Date getTimestamp() {
-	return timestamp;
+        return timestamp;
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param timestamp
+     *            the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
-	this.timestamp = timestamp;
+        this.timestamp = timestamp;
     }
 
-    /* (non-Javadoc)
+    /*
+     * (non-Javadoc)
+     * 
      * @see java.lang.Object#toString()
      */
     @Override
     public String toString() {
-	return "ReportedMessageReplacement [reportedMessage="
-		+ reportedMessage + ", name=" + name + ", defaultValue="
-		+ defaultValue + ", timestamp=" + timestamp + "]";
+        return "ReportedMessageReplacement [reportedMessage=" + reportedMessage + ", name=" + name + ", defaultValue=" + defaultValue + ", timestamp="
+                + timestamp + "]";
     }
 }

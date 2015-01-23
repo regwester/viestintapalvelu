@@ -20,13 +20,13 @@
 </style>
 
 <div class="container-fluid">
-    <h1>Kirjepohjat ja -luonnokset</h1>
+    <h1>{{'template.header.tree' | i18n}}</h1>
     <div class="control-group">
         <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.nimi.kieli_fi for Object in applicationPeriodList" class="selectpicker span6 placeholder">
         </select>
     </div>
     <tabset>
-        <tab heading="Organisaation oletuskirjepohjat" select="templateTab()">
+        <tab heading="{{'template.header.organization.default' | i18n}}" select="templateTab()">
             <tree-grid
                     tree-data       = "template_tree_data"
                     tree-control    = "template_tree_control"
@@ -34,12 +34,12 @@
                     icon-leaf       = "icon-actionmenu"
                     icon-expand     = "icon-expand"
                     icon-collapse   = "icon-expanded"
-                    on-select       = "my_tree_handler(branch)"
+                    on-select       = "my_tree_handler(branch, event)"
                     expand-level    = "5"
                     >
             </tree-grid>
         </tab>
-        <tab heading="Hakukohteiden kirjeluonnokset" select="draftTab()">
+        <tab heading="{{'template.header.fetchtarget' | i18n}}" select="draftTab()">
             <tree-grid
                     tree-data       = "draft_tree_data"
                     tree-control    = "draft_tree_control"
@@ -47,7 +47,7 @@
                     icon-leaf       = "icon-actionmenu"
                     icon-expand     = "icon-expand"
                     icon-collapse   = "icon-expanded"
-                    on-select       = "my_tree_handler(branch)"
+                    on-select       = "my_tree_handler(branch, event)"
                     expand-level    = "5"
                     >
             </tree-grid>

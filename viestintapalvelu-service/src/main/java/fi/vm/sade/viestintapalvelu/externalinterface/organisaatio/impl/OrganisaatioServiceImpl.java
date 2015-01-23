@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,18 +10,24 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.impl;
 
-import java.util.*;
+import static org.joda.time.DateTime.now;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Singleton;
 
-import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
+import org.apache.commons.lang.StringUtils;
 import org.joda.time.DateTime;
 import org.joda.time.Period;
 import org.slf4j.Logger;
@@ -30,13 +36,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioService;
 import fi.vm.sade.viestintapalvelu.recovery.Recoverer;
 import fi.vm.sade.viestintapalvelu.recovery.RecovererPriority;
-
-import static org.joda.time.DateTime.now;
 
 /**
  * User: ratamaa
@@ -102,6 +107,15 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
         visitParents(this.hierarchyByOids.get(organisaatioOid), EXTRACT_OID, results);
         Collections.reverse(results); // the root first
         return results;
+    }
+    
+    @Override
+    public String getOrganizationName(String organisaatioOid, String languageCode) {
+        OrganisaatioRDTO organization = organizationComponent.getOrganization(organisaatioOid);
+        if (StringUtils.isBlank(organization.getNimi().get(languageCode.toLowerCase()))) {
+            return organizationComponent.getNameOfOrganisation(organization);           
+        }
+        return organization.getNimi().get(languageCode.toLowerCase());
     }
 
     public void ensureCacheFresh() {
@@ -191,4 +205,5 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
         }
         return results;
     }
+
 }

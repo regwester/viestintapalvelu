@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import java.util.List;
@@ -19,63 +34,49 @@ import static org.assertj.core.api.Assertions.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
-    DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @Transactional
-@TransactionConfiguration(defaultRollback=true)
+@TransactionConfiguration(defaultRollback = true)
 public class DraftDAOTest {
-    
+
     @Autowired
     private DraftDAO draftDao;
     private DraftModel draftModel;
 
     @Before
     public void setUp() {
-        draftModel = new DraftModel.Builder()
-            .replyTo("jack.bauer@ctu.com")
-            .subject("Saving the world")
-            .userOid("Jack")
-            .organizationOid("CTU")
-            .body("<p>I did it again.</p><br>"
-                + "<p>Jack</p>")
-            .isHtml(true)
-            .build();
-        
+        draftModel = new DraftModel.Builder().replyTo("jack.bauer@ctu.com").subject("Saving the world").userOid("Jack").organizationOid("CTU")
+                .body("<p>I did it again.</p><br>" + "<p>Jack</p>").isHtml(true).build();
+
         draftDao.saveDraft(draftModel);
     }
-    
+
     @Test
     @Transactional
     public void testGetDraftById() {
         DraftModel draft = draftDao.getDraft(draftModel.getId(), "Jack");
-        
+
         assertThat(draft.getReplyTo()).isEqualTo("jack.bauer@ctu.com");
         assertThat(draft.getSubject()).isEqualTo("Saving the world");
         assertThat(draft.getUserOid()).isEqualTo("Jack");
         assertThat(draft.getOrganizationOid()).isEqualTo("CTU");
-        assertThat(draft.getBody()).isEqualTo("<p>I did it again.</p><br>"
-                          + "<p>Jack</p>");
+        assertThat(draft.getBody()).isEqualTo("<p>I did it again.</p><br>" + "<p>Jack</p>");
         assertThat(draft.isHtml()).isTrue();
     }
-    
+
     @Test
     @Transactional
     public void testSaveDraft() {
-        DraftModel oldDraft = new DraftModel.Builder()
-            .replyTo("john.matrix@commando.com")
-            .subject("Bennett")
-            .userOid("John")
-            .organizationOid("Delta Force")
-            .body("Let off some steam.")
-            .isHtml(false)
-            .build();
-        
+        DraftModel oldDraft = new DraftModel.Builder().replyTo("john.matrix@commando.com").subject("Bennett").userOid("John").organizationOid("Delta Force")
+                .body("Let off some steam.").isHtml(false).build();
+
         draftDao.saveDraft(oldDraft);
         Long id = oldDraft.getId();
         assertThat(id).isNotNull();
-        
+
         DraftModel newDraft = draftDao.getDraft(id, "John");
-        
+
         assertThat(newDraft.getReplyTo()).isEqualTo("john.matrix@commando.com");
         assertThat(newDraft.getSubject()).isEqualTo("Bennett");
         assertThat(newDraft.getUserOid()).isEqualTo("John");
@@ -83,35 +84,23 @@ public class DraftDAOTest {
         assertThat(newDraft.getBody()).isEqualTo("Let off some steam.");
         assertThat(newDraft.isHtml()).isFalse();
     }
-    
+
     @Test
     @Transactional
     public void testGetAllDrafts() {
-        DraftModel draft = new DraftModel.Builder()
-            .replyTo("sledge.hammer@nypd.com")
-            .subject("Trust me")
-            .userOid("Sledge")
-            .organizationOid("LAPD")
-            .body("<p>I know what I'm doing.</p>")
-            .isHtml(true)
-            .build();
+        DraftModel draft = new DraftModel.Builder().replyTo("sledge.hammer@nypd.com").subject("Trust me").userOid("Sledge").organizationOid("LAPD")
+                .body("<p>I know what I'm doing.</p>").isHtml(true).build();
 
-        DraftModel draft2 = new DraftModel.Builder()
-            .replyTo("sledge.hammer@nypd.com")
-            .subject("Trust me again")
-            .userOid("Sledge")
-            .organizationOid("LAPD")
-            .body("<p>I still know what I'm doing.</p>")
-            .isHtml(true)
-            .build();
-        
+        DraftModel draft2 = new DraftModel.Builder().replyTo("sledge.hammer@nypd.com").subject("Trust me again").userOid("Sledge").organizationOid("LAPD")
+                .body("<p>I still know what I'm doing.</p>").isHtml(true).build();
+
         draftDao.saveDraft(draft);
         draftDao.saveDraft(draft2);
-    
+
         List<DraftModel> drafts = draftDao.getAllDrafts("Sledge");
         assertThat(drafts).hasSize(2);
     }
-    
+
     @Test
     @Transactional
     public void testDeleteDraft() {
@@ -119,5 +108,5 @@ public class DraftDAOTest {
         DraftModel draft = draftDao.getDraft(draftModel.getId(), "Jack");
         assertThat(draft).isNull();
     }
-    
+
 }

@@ -23,7 +23,7 @@ var input = {
         'develop/**/directives/*.js',
         'develop/**/controllers/*.js',
         'develop/**/*.js'],
-    styles: ['develop/assets/styles/virkailija.scss', 'develop/assets/styles/**/*'],
+    styles: ['develop/assets/styles/virkailija.css', 'develop/assets/styles/**/*'],
     html: ['develop/**/views/**/*.html'],
     assets: ['develop/assets/**', '!develop/assets/styles/']
 };
@@ -92,7 +92,6 @@ gulp.task('assets-watch', assets);
 
 gulp.task('bower', ['scripts', 'styles', 'html', 'assets'], function() {
     return bower();
-        //.pipe(gulp.dest(output.lib)); //Optional: defaults to directory set in ./.bowerrc
 });
 
 gulp.task('watch', function() {

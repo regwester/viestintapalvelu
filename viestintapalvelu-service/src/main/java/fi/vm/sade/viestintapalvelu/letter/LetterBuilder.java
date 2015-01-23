@@ -1,9 +1,30 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -18,9 +39,9 @@ import com.google.common.base.Optional;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.attachment.AttachmentService;
 import fi.vm.sade.viestintapalvelu.attachment.dto.LetterReceiverLEtterAttachmentSaveDto;
 import fi.vm.sade.viestintapalvelu.conversion.AddressLabelConverter;
@@ -39,8 +60,11 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.template.*;
-import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
+import fi.vm.sade.viestintapalvelu.template.Contents;
+import fi.vm.sade.viestintapalvelu.template.Replacement;
+import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateContent;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
 @Singleton
@@ -154,11 +178,11 @@ public class LetterBuilder {
         Map<String, Object> data = new HashMap<String, Object>();
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements != null) {
-                for (String key : replacements.keySet()) {
-                    if (replacements.get(key) instanceof String) {
-                        data.put(key, cleaner.clean((String) replacements.get(key)));
+                for(Map.Entry<String, Object> entry : replacements.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        data.put(entry.getKey(), cleaner.clean((String) entry.getValue()));
                     } else {
-                        data.put(key, replacements.get(key));
+                        data.put(entry.getKey(), entry.getValue());
                     }
                 }
             }
@@ -250,11 +274,15 @@ public class LetterBuilder {
         return data;
     }
 
-    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+        Template template = determineTemplate(receiver, batch);
+        return constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
+    }
+
+    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, Template template,
             Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
-
-        Template template = determineTemplate(receiver, batch);
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
 
@@ -268,15 +296,17 @@ public class LetterBuilder {
 
         for (TemplateContent tc : Contents.letterContents().filter(contents)) {
             byte[] page = createPagePdf(template, tc.getContent().getBytes(), address, templReplacements, batchReplacements, letterReplacements);
-            if (letter.getLetterReceivers().getEmailAddress() != null && !letter.getLetterReceivers().getEmailAddress().isEmpty()
-                    && Contents.ATTACHMENT.equals(tc.getName()) && receiver.getLetterReceiverEmail() == null) {
+            if (letter.getLetterReceivers().getEmailAddress() != null
+                    && !letter.getLetterReceivers().getEmailAddress().isEmpty()
+                    && Contents.ATTACHMENT.equals(tc.getName())
+                    && receiver.getLetterReceiverEmail() == null) {
                 saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
             }
             currentDocument.addContent(page);
         }
         letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
         letter.setContentType("application/pdf");
-       
+        return letter;
     }
 
     private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {

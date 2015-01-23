@@ -56,14 +56,15 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
 
     @Override
     public TemplateInfo convert(Template template) {
-        return new TemplateInfo(template.getId(), template.getName(), template.getLanguage(), template.getState(), template.getTimestamp(), parseStructureTypes(template));
+        return new TemplateInfo(template.getId(), template.getName(), template.getLanguage(), template.getState(), template.getTimestamp(),
+                parseStructureTypes(template));
     }
-    
+
     @Override
     public List<TemplateInfo> convert(List<Template> templates) {
         return ImmutableList.copyOf(convertTemplatesToInfo(templates));
     }
-    
+
     private Set<ContentStructureType> parseStructureTypes(Template template) {
         Set<ContentStructureType> types = new HashSet<>();
         for (ContentStructure cs : template.getStructure().getContentStructures()) {
@@ -85,16 +86,16 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
                     public boolean apply(TemplateInfo input) {
                         return input.language.equals(template.getLanguage()) && input.name.equals(template.getName());
                     }
-                    
+
                 }).isPresent();
             }
-            
+
         }));
     }
-    
+
     private List<TemplateInfo> convertTemplatesToInfo(List<Template> templates) {
         return Lists.transform(templates, new Function<Template, TemplateInfo>() {
-            
+
             @Override
             public TemplateInfo apply(Template input) {
                 return convert(input);
@@ -111,12 +112,13 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
 
                     @Override
                     public boolean apply(Template input) {
-                        return input.getLanguage().equals(template.getLanguage()) && input.getName().equals(template.getName()) && input.getTimestamp().after(template.getTimestamp());
+                        return input.getLanguage().equals(template.getLanguage()) && input.getName().equals(template.getName())
+                                && input.getTimestamp().after(template.getTimestamp());
                     }
-                    
+
                 }).isPresent();
             }
-            
+
         }));
     }
 

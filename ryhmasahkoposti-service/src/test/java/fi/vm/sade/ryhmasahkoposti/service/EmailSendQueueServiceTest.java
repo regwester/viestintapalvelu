@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.ArrayList;
@@ -49,9 +48,7 @@ import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.*;
 
 /**
- * User: ratamaa
- * Date: 15.9.2014
- * Time: 16:11
+ * User: ratamaa Date: 15.9.2014 Time: 16:11
  */
 @RunWith(JUnit4.class)
 @ContextConfiguration("/test-bundle-context.xml")
@@ -65,11 +62,8 @@ public class EmailSendQueueServiceTest {
 
     @Before
     public void setup() {
-        emailSendQueueService = new EmailSendQueueServiceImpl(sendQueueDao,
-                new EmailQueueDtoConverter(), new EmailRecipientDTOConverter(),
-                new EmailMessageDTOConverter(),
-                new ReportedRecipientReplacementConverter(),
-                new ObjectMapperProvider());
+        emailSendQueueService = new EmailSendQueueServiceImpl(sendQueueDao, new EmailQueueDtoConverter(), new EmailRecipientDTOConverter(),
+                new EmailMessageDTOConverter(), new ReportedRecipientReplacementConverter(), new ObjectMapperProvider());
         sendQueueDao = mock(SendQueueDAO.class);
         emailSendQueueService.setSendQueueDao(sendQueueDao);
         emailSendQueueService.setMaxEmailRecipientHandleTimeMillis(TIMEOUT_MILLIS);
@@ -92,9 +86,8 @@ public class EmailSendQueueServiceTest {
         when(sendQueueDao.findNextAvailableSendQueue()).thenReturn(queue);
         doAnswer(new UpdateVersionAnswer()).when(sendQueueDao).update(any(SendQueue.class));
         ReportedMessage message = RaportointipalveluTestData.getReportedMessage();
-        when(sendQueueDao.findUnhandledRecipeientsInQueue(eq(100l))).thenReturn(new ArrayList<ReportedRecipient>(Arrays.asList(
-            RaportointipalveluTestData.getReportedRecipient(message)
-        )));
+        when(sendQueueDao.findUnhandledRecipeientsInQueue(eq(100l))).thenReturn(
+                new ArrayList<ReportedRecipient>(Arrays.asList(RaportointipalveluTestData.getReportedRecipient(message))));
 
         EmailQueueHandleDto result = getEmailSendQueueService().reserveNextQueueToHandle();
         assertNotNull(result);
@@ -112,24 +105,19 @@ public class EmailSendQueueServiceTest {
         doAnswer(new UpdateVersionAnswer()).when(sendQueueDao).update(any(SendQueue.class));
         ReportedMessage message = RaportointipalveluTestData.getReportedMessage();
 
-        ReportedAttachment attachment1 = RaportointipalveluTestData.getReportedAttachment(),
-                attachment2 = RaportointipalveluTestData.getReportedAttachment();
+        ReportedAttachment attachment1 = RaportointipalveluTestData.getReportedAttachment(), attachment2 = RaportointipalveluTestData.getReportedAttachment();
         attachment1.setId(301l);
         attachment2.setId(302l);
-        ReportedRecipient recipient1 = RaportointipalveluTestData.getReportedRecipient(message),
-                recipient2 = RaportointipalveluTestData.getReportedRecipient(message),
-                recipient3 = RaportointipalveluTestData.getReportedRecipient(message);
+        ReportedRecipient recipient1 = RaportointipalveluTestData.getReportedRecipient(message), recipient2 = RaportointipalveluTestData
+                .getReportedRecipient(message), recipient3 = RaportointipalveluTestData.getReportedRecipient(message);
         recipient1.setId(201l);
         recipient2.setId(202l);
         recipient3.setId(203l);
 
-        when(sendQueueDao.findUnhandledRecipeientsInQueue(eq(100l)))
-                .thenReturn(Arrays.asList(recipient1, recipient2, recipient3));
-        when(sendQueueDao.findRecipientAttachments(any(List.class))).thenReturn(Arrays.asList(
-                new RecipientReportedAttachmentQueryResult(201l, attachment1),
-                new RecipientReportedAttachmentQueryResult(201l, attachment2),
-                new RecipientReportedAttachmentQueryResult(202l, attachment1)
-        ));
+        when(sendQueueDao.findUnhandledRecipeientsInQueue(eq(100l))).thenReturn(Arrays.asList(recipient1, recipient2, recipient3));
+        when(sendQueueDao.findRecipientAttachments(any(List.class))).thenReturn(
+                Arrays.asList(new RecipientReportedAttachmentQueryResult(201l, attachment1), new RecipientReportedAttachmentQueryResult(201l, attachment2),
+                        new RecipientReportedAttachmentQueryResult(202l, attachment1)));
 
         EmailQueueHandleDto result = getEmailSendQueueService().reserveNextQueueToHandle();
         assertNotNull(result);
@@ -145,16 +133,13 @@ public class EmailSendQueueServiceTest {
         assertNotNull(result.getRecipients().get(0).getAttachments());
         assertEquals(2, result.getRecipients().get(0).getAttachments().size());
         assertTrue(result.getRecipients().get(0).getAttachments().get(0) instanceof EmailAttachmentDTO);
-        assertEquals(Long.valueOf(301l), ((EmailAttachmentDTO) result.getRecipients().get(0)
-                .getAttachments().get(0)).getAttachmentID());
-        assertEquals(Long.valueOf(302l), ((EmailAttachmentDTO) result.getRecipients().get(0)
-                .getAttachments().get(1)).getAttachmentID());
+        assertEquals(Long.valueOf(301l), ((EmailAttachmentDTO) result.getRecipients().get(0).getAttachments().get(0)).getAttachmentID());
+        assertEquals(Long.valueOf(302l), ((EmailAttachmentDTO) result.getRecipients().get(0).getAttachments().get(1)).getAttachmentID());
 
         // second being 202 with attachment 301:
         assertEquals(Long.valueOf(202l), result.getRecipients().get(1).getRecipientID());
         assertEquals(1, result.getRecipients().get(1).getAttachments().size());
-        assertEquals(Long.valueOf(301l), ((EmailAttachmentDTO) result.getRecipients().get(1)
-                .getAttachments().get(0)).getAttachmentID());
+        assertEquals(Long.valueOf(301l), ((EmailAttachmentDTO) result.getRecipients().get(1).getAttachments().get(0)).getAttachmentID());
 
         // and third 203 with empty attachment list:
         assertEquals(Long.valueOf(203l), result.getRecipients().get(2).getRecipientID());
@@ -191,7 +176,7 @@ public class EmailSendQueueServiceTest {
     public void testNotContinueQueueHandlingDueToTooOld() {
         Date now = new Date();
         SendQueue queue = RaportointipalveluTestData.sendQueue(100l, SendQueueState.PROCESSING);
-        queue.setLastHandledAt(new Date(now.getTime()-getEmailSendQueueService().getMaxEmailRecipientHandleTimeMillis()-1));
+        queue.setLastHandledAt(new Date(now.getTime() - getEmailSendQueueService().getMaxEmailRecipientHandleTimeMillis() - 1));
         when(sendQueueDao.getQueue(eq(100l), eq(1l))).thenReturn(queue);
 
         EmailQueueHandleDto queueDto = new EmailQueueHandleDto();
@@ -246,15 +231,12 @@ public class EmailSendQueueServiceTest {
     @Test
     public void testCheckForStoppedProcesses() {
         Date now = new Date();
-        SendQueue queue1 = RaportointipalveluTestData.sendQueue(100l, SendQueueState.PROCESSING),
-                queue2 = RaportointipalveluTestData.sendQueue(200l, SendQueueState.PROCESSING),
-                queue3 = RaportointipalveluTestData.sendQueue(300l, SendQueueState.PROCESSING);
-        queue1.setLastHandledAt(new Date(now.getTime()-getEmailSendQueueService().getMaxEmailRecipientHandleTimeMillis()+1000l));
-        queue2.setLastHandledAt(new Date(now.getTime()-getEmailSendQueueService().getMaxEmailRecipientHandleTimeMillis()-1));
+        SendQueue queue1 = RaportointipalveluTestData.sendQueue(100l, SendQueueState.PROCESSING), queue2 = RaportointipalveluTestData.sendQueue(200l,
+                SendQueueState.PROCESSING), queue3 = RaportointipalveluTestData.sendQueue(300l, SendQueueState.PROCESSING);
+        queue1.setLastHandledAt(new Date(now.getTime() - getEmailSendQueueService().getMaxEmailRecipientHandleTimeMillis() + 1000l));
+        queue2.setLastHandledAt(new Date(now.getTime() - getEmailSendQueueService().getMaxEmailRecipientHandleTimeMillis() - 1));
         queue3.setLastHandledAt(null);
-        when(sendQueueDao.findActiveQueues()).thenReturn(new ArrayList<SendQueue>(Arrays.asList(
-                queue1, queue2, queue3
-        )));
+        when(sendQueueDao.findActiveQueues()).thenReturn(new ArrayList<SendQueue>(Arrays.asList(queue1, queue2, queue3)));
 
         getEmailSendQueueService().checkForStoppedProcesses();
         assertEquals(SendQueueState.PROCESSING, queue1.getState());

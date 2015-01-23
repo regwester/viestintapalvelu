@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
 import java.io.IOException;
@@ -26,7 +41,7 @@ public class ReportedMessageReplacementConverter {
     CurrentUserComponent currentUserComponent;
 
     @Autowired
-    public ReportedMessageReplacementConverter(CurrentUserComponent currentUserComponent) {        
+    public ReportedMessageReplacementConverter(CurrentUserComponent currentUserComponent) {
     }
 
     /**
@@ -38,10 +53,9 @@ public class ReportedMessageReplacementConverter {
      * @return
      * @throws IOException
      */
-    public List<ReportedMessageReplacement> convert(ReportedMessage reportedMessage,
-                    Set<ReplacementDTO> templateReplacements, List<ReplacementDTO> emailReplacements)
-            throws IOException {
-        List<ReportedMessageReplacement> reportedMessageReplacements = new ArrayList<ReportedMessageReplacement>();	
+    public List<ReportedMessageReplacement> convert(ReportedMessage reportedMessage, Set<ReplacementDTO> templateReplacements,
+            List<ReplacementDTO> emailReplacements) throws IOException {
+        List<ReportedMessageReplacement> reportedMessageReplacements = new ArrayList<ReportedMessageReplacement>();
 
         for (ReplacementDTO replacement : templateReplacements) {
             // Check if not send from the email
@@ -62,21 +76,21 @@ public class ReportedMessageReplacementConverter {
     }
 
     /**
-     * Get field from replacements list. This method is used to get email fields. E.g. subject
+     * Get field from replacements list. This method is used to get email
+     * fields. E.g. subject
      * 
      * @param templateReplacements
      * @param emailReplacements
      * @param replacementName
      * @return {@link ReplacementDTO}
      */
-    public ReplacementDTO getEmailFieldFromReplacements(Set<ReplacementDTO> templateReplacements,
-                            List<ReplacementDTO> emailReplacements, String replacementName) {
+    public ReplacementDTO getEmailFieldFromReplacements(Set<ReplacementDTO> templateReplacements, List<ReplacementDTO> emailReplacements, String replacementName) {
         if (templateReplacements == null && emailReplacements == null) {
             return null;
         }
 
         for (ReplacementDTO replacement : templateReplacements) {
-            if (!StringUtils.equalsIgnoreCase(replacement.getName(), replacementName))  {
+            if (!StringUtils.equalsIgnoreCase(replacement.getName(), replacementName)) {
                 continue;
             }
 
@@ -103,7 +117,7 @@ public class ReportedMessageReplacementConverter {
         if (replacements == null)
             return null;
 
-        for (ReplacementDTO replacement : replacements) 
+        for (ReplacementDTO replacement : replacements)
             if (StringUtils.equalsIgnoreCase(replacement.getName(), replacementName))
                 return replacement;
 

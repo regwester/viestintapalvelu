@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -90,7 +105,7 @@ public class RaportointipalveluTestData {
     public static EmailAttachment getEmailAttachment() {
         EmailAttachment emailAttachment = new EmailAttachment();
 
-        byte[] attachment = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+        byte[] attachment = { 'k', 'o', 'e', 'k', 'u', 't', 's', 'u' };
 
         emailAttachment.setData(attachment);
         emailAttachment.setName("koekutsu.doc");
@@ -142,7 +157,8 @@ public class RaportointipalveluTestData {
     public static Henkilo getSender() {
         Henkilo sender = new Henkilo();
 
-        sender.setOidHenkilo("1.2.246.562.24.42645159413"); // matches sender oid
+        sender.setOidHenkilo("1.2.246.562.24.42645159413"); // matches sender
+                                                            // oid
         sender.setHetu("081181-9984");
         sender.setEtunimet("Etunimi");
         sender.setSukunimi("Sukunimi");
@@ -285,7 +301,7 @@ public class RaportointipalveluTestData {
     public static ReportedAttachment getReportedAttachment() {
         ReportedAttachment raportoitavaLiite = new ReportedAttachment();
 
-        byte[] sisalto = {'k', 'o', 'e', 'k', 'u', 't', 's', 'u'};
+        byte[] sisalto = { 'k', 'o', 'e', 'k', 'u', 't', 's', 'u' };
 
         raportoitavaLiite.setAttachmentName("koekutsu.doc");
         raportoitavaLiite.setContentType("application/pdf");
@@ -334,7 +350,6 @@ public class RaportointipalveluTestData {
         return reportedRecipientReplacement;
     }
 
-
     /**
      * Get test {@link ReportedMessageReplacement}
      *
@@ -353,7 +368,6 @@ public class RaportointipalveluTestData {
         return reportedMessageReplacement;
     }
 
-
     /**
      * Generate replacements data.
      *
@@ -361,7 +375,6 @@ public class RaportointipalveluTestData {
      * @return Test object
      */
     public static List<ReplacementDTO> getEmailReplacements(int... ids) {
-
 
         List<ReplacementDTO> reportedReplacements = new ArrayList<ReplacementDTO>();
 
@@ -382,7 +395,6 @@ public class RaportointipalveluTestData {
      */
     public static Set<ReplacementDTO> getTemplateReplacements(int... ids) {
 
-
         Set<ReplacementDTO> reportedReplacements = new HashSet<ReplacementDTO>();
 
         for (int id : ids) {
@@ -394,7 +406,6 @@ public class RaportointipalveluTestData {
         return reportedReplacements;
     }
 
-
     /**
      * Generate reported recipient replacements data.
      *
@@ -402,7 +413,6 @@ public class RaportointipalveluTestData {
      * @return Test object
      */
     public static List<ReportedRecipientReplacementDTO> getReportedReceientReplacements(int... ids) {
-
 
         List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacementDTO>();
 
@@ -422,7 +432,6 @@ public class RaportointipalveluTestData {
         queue.setState(state);
         return queue;
     }
-
 
     public static TemplateDTO template(String templateName, String languageCode) throws IOException, DocumentException {
         TemplateDTO template = new TemplateDTO();

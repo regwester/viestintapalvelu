@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import java.util.ArrayList;
@@ -8,6 +23,7 @@ import javax.persistence.NoResultException;
 import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.viestintapalvelu.template.TemplateListing;
 import org.springframework.stereotype.Repository;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
@@ -175,7 +191,12 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
         TypedQuery<Template> query = getEntityManager().createQuery("SELECT templ from Template templ WHERE organizationOid in :oids", Template.class);
         query.setParameter("oids", oids);
         return query.getResultList();
-
     }
 
+    @Override
+    public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames() {
+        String queryStr = "SELECT new fi.vm.sade.viestintapalvelu.template.TemplateListing(a.id, b.id.applicationPeriod, a.name, a.language, b.name) FROM Template a, TemplateApplicationPeriod b WHERE a.id = b.id.templateId AND a.state = 'julkaistu'";
+        TypedQuery<TemplateListing> query = getEntityManager().createQuery(queryStr, TemplateListing.class);
+        return query.getResultList();
+    }
 }

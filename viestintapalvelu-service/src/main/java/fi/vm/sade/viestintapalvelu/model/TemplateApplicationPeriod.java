@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,14 +10,14 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.wordnik.swagger.annotations.ApiModel;
+import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import javax.persistence.*;
 import java.io.Serializable;
@@ -26,12 +26,6 @@ import java.io.Serializable;
  * User: ratamaa
  * Date: 9.9.2014
  * Time: 10:32
- *
- * CREATE TABLE kirjeet.kirjepohja_haku (
- *  kirjepohja bigint references kirjeet.kirjepohja(id),
- *  haku_oid varchar(255),
- *  primary key(kirjepohja, haku_oid)
- * );
  */
 @ApiModel(value = "Kirjetemplatehakuliitos")
 @Table(name = "kirjepohja_haku", schema= "kirjeet")
@@ -45,6 +39,10 @@ public class TemplateApplicationPeriod implements Serializable {
         @AttributeOverride(name="templateId", column = @Column(name="kirjepohja", nullable = false, updatable = false)),
     })
     private TemplateApplicationPeriodId id;
+
+    @ApiModelProperty(value = "Haulle asetettu nimi")
+    @Column(name = "nimi", nullable = true)
+    private String name;
 
     @MapsId("templateId")
     @ManyToOne(fetch = FetchType.LAZY)
@@ -74,5 +72,13 @@ public class TemplateApplicationPeriod implements Serializable {
 
     public void setTemplate(Template template) {
         this.template = template;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

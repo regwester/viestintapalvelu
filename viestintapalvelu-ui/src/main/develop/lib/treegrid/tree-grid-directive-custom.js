@@ -1,40 +1,31 @@
+/*
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
+
 /**
  * Created by jonimake on 24.11.2014.
  */
 
 (function() {
     var module;
-
     module = angular.module('treeGrid', []);
     module.directive('treeGrid', [
-        '$timeout', function($timeout) {
+        '$timeout', '$rootScope', 'AuthService', function($timeout, $rootScope, AuthService) {
             return {
                 restrict: 'E',
-                //templateUrl:'tree-grid-template.html',
-                //template:"<div><table class=\"table table-bordered table-striped tree-grid\"><thead class=\"text-primary\"><tr><th>{{expandingProperty}}</th><th ng-repeat=\"col in colDefinitions\">{{col.displayName || col.field}}</th></tr></thead><tbody><tr ng-repeat=\"row in tree_rows | filter:{visible:true} track by row.branch.uid\" ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\"><td class=\"text-primary\"><a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\" ng-click=\"row.branch.expanded = !row.branch.expanded\" class=\"indented tree-icon\"></i></a><span class=\"indented tree-label\">{{row.branch[expandingProperty]}}</span></td><td ng-repeat=\"col in colDefinitions\">{{row.branch[col.field]}}</td></tr></tbody><table></div>",
-                template:
-                    "<div>\
-                        <table class=\"table tree-grid\">\
-                            <thead class=\"text-primary\">\
-                            <tr>\
-                                <th>{{expandingProperty}}</th>\
-                                <th ng-repeat=\"col in colDefinitions\">{{col.displayName || col.field}}</th>\
-                            </tr>\
-                            </thead>\
-                            <tbody>\
-                            <tr ng-repeat=\"row in tree_rows | filter:{visible:true} track by row.branch.uid\"\
-                                ng-class=\"'level-' + {{ row.level }} + (row.branch.selected ? ' active':'')\" class=\"tree-grid-row\">\
-                                <td class=\"text-primary\"><a ng-click=\"user_clicks_branch(row.branch)\"><i ng-class=\"row.tree_icon\"\
-                                           ng-click=\"row.branch.expanded = !row.branch.expanded\"\
-                                           class=\"indented tree-icon\"></i>\
-                                    </a><span class=\"indented tree-label\" ng-click=\"user_clicks_branch(row.branch)\">\
-                                      {{row.branch[expandingProperty]}}</span>\
-                                </td>\
-                                <td ng-repeat=\"col in colDefinitions\">{{row.branch[col.field]}}</td>\
-                            </tr>\
-                            </tbody>\
-                        </table>\
-                    </div>",
+                templateUrl:'views/lib/treegrid/views/treegrid.html',
                 replace: true,
                 scope: {
                     treeData: '=',
@@ -42,7 +33,11 @@
                     expandOn:'=',
                     onSelect: '&',
                     initialSelection: '@',
-                    treeControl: '='
+                    treeControl: '=',
+                    editHandler: '&',
+                    publishHandler: '&',
+                    removeHandler: '&',
+                    createHandler: '&'
                 },
                 link: function(scope, element, attrs) {
                     var error, expandingProperty, expand_all_parents, expand_level, for_all_ancestors, for_each_branch, get_parent, n, on_treeData_change, select_branch, selected_branch, tree;
@@ -51,7 +46,6 @@
                         debugger;
                         return void 0;
                     };
-
                     if (attrs.iconExpand == null) {
                         attrs.iconExpand = 'icon-plus  glyphicon glyphicon-plus  fa fa-plus';
                     }
@@ -64,6 +58,8 @@
                     if (attrs.expandLevel == null) {
                         attrs.expandLevel = '3';
                     }
+                    scope.isCreateEnabled = angular.isDefined(attrs.createHandler);
+                    scope.isRemoveEnabled = angular.isDefined(attrs.removeHandler);
 
                     expand_level = parseInt(attrs.expandLevel, 10);
 
@@ -132,7 +128,7 @@
                         return _results;
                     };
                     selected_branch = null;
-                    select_branch = function(branch) {
+                    select_branch = function(branch, event) {
                         if (!branch) {
                             if (selected_branch != null) {
                                 selected_branch.selected = false;
@@ -149,22 +145,85 @@
                             expand_all_parents(branch);
                             if (branch.onSelect != null) {
                                 return $timeout(function() {
-                                    return branch.onSelect(branch);
+                                    return branch.onSelect(branch, event);
                                 });
                             } else {
                                 if (scope.onSelect != null) {
                                     return $timeout(function() {
                                         return scope.onSelect({
-                                            branch: branch
+                                            branch: branch,
+                                            event: event
                                         });
                                     });
                                 }
                             }
                         }
                     };
-                    scope.user_clicks_branch = function(branch) {
-                        if (branch !== selected_branch) {
-                            return select_branch(branch);
+                    
+                    scope.crudOph = false;
+
+                    
+                    $timeout(function() {
+            	    	AuthService.crudOph().then(function() { scope.crudOph = true });
+            	    }, 0);
+                    
+                    scope.hideMenuOnAuthOph = function(iconClass) {
+                	return "icon-actionmenu" === iconClass && !scope.crudOph;
+                    };
+
+                    scope.isEditDisabled = function(branch) {
+                        if(branch.isDraft) return false;
+                        if(!branch.isLetter) return true;
+                        return branch.state !== 'luonnos';
+                    };
+                    scope.isPublishDisabled = function(branch) {
+                        if(branch.isDraft) return true;
+                        if(branch.isLetter) return false;
+                        return branch.state === 'julkaistu';
+                    };
+                    scope.isRemoveDisabled = function(branch) {
+                        if(!scope.isRemoveEnabled) return true;
+                        if(branch.isDraft) return true;
+                        if(!branch.isLetter) return true;
+                        return branch.state === 'suljettu';
+                    };
+
+                    scope.isCreateDisabled = function(branch) {
+                        return !branch.isHakukohde;
+                    };
+
+                    scope.editTemplate = function(branch, event) {
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
+                        scope.editHandler(branch.templateId, branch.state);
+
+                    };
+                    scope.publishTemplate = function(branch, event) {
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
+                        scope.publishHandler(branch.templateId, branch.state);
+                    };
+                    scope.removeTemplate = function(branch, event) {
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
+                        scope.removeHandler(branch.templateId, branch.state);
+                    };
+                    scope.createEntry = function(branch, event) {
+                        $rootScope.$broadcast("treeTemplateChanged", branch);
+                        scope.createHandler(branch);
+                    };
+
+                    scope.user_clicks_branch = function(branch, event) {
+                        if((scope.isCreateEnabled && branch.isHakukohde) || branch.isLetter && event.originalEvent && branch.children.length == 0) {
+                            var e = null;
+                            //different selectors for handling clicking of either the icon or the row text
+                            if (event.target.tagName === 'SPAN') {
+                                e = $(event.target).children().children('.dropdown-toggle');
+                            } else {
+                                e = $(event.target).parent().siblings().children().children('.dropdown-toggle');
+                            }
+                            return $timeout(function () {
+                                e.click();
+                            });
+                        } else if (branch !== selected_branch) {
+                            return select_branch(branch, event);
                         }
                     };
                     get_parent = function(child) {
@@ -249,12 +308,13 @@
                             if (branch.expanded == null) {
                                 branch.expanded = false;
                             }
-                            if (!branch.children || branch.children.length === 0) {
+                            //if (!branch.children || branch.children.length === 0) {
+                            if (branch.isLetter) {
                                 tree_icon = attrs.iconLeaf;
                             } else {
                                 if (branch.expanded) {
                                     tree_icon = attrs.iconCollapse;
-                                } else {
+                                } else if(branch.children.length > 0) {
                                     tree_icon = attrs.iconExpand;
                                 }
                             }
@@ -352,9 +412,13 @@
                                     }
                                 }
                             };
-                            tree.add_branch = function(parent, new_branch) {
+                            tree.add_branch = function(parent, new_branch, unshift) {
                                 if (parent != null) {
-                                    parent.children.push(new_branch);
+                                    if(unshift) {
+                                        parent.children.unshift(new_branch);
+                                    } else {
+                                        parent.children.push(new_branch);
+                                    }
                                     parent.expanded = true;
                                 } else {
                                     scope.treeData.push(new_branch);
@@ -552,5 +616,5 @@
             };
         }
     ]);
-
 }).call(this);
+

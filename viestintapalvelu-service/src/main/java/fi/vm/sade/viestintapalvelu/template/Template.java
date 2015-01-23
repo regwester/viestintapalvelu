@@ -1,5 +1,21 @@
+/*
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ */
 package fi.vm.sade.viestintapalvelu.template;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +41,8 @@ public class Template {
     @NotNull
     @ApiModelProperty("Kirjepohjan tekninen nimi")
     private String name;
-    @NotNull @Size(min=2,max=3)
+    @NotNull
+    @Size(min = 2, max = 3)
     @ApiModelProperty("Kirjepohjan kielikoodi")
     private String language;
 
@@ -40,13 +57,15 @@ public class Template {
 
     private List<TemplateContent> contents;
 
-    @NotNull @Size(min=1)
-    private List<Replacement> replacements;
+    @NotNull
+    @Size(min = 1)
+    private List<Replacement> replacements = new ArrayList<Replacement>();
 
     @ApiModelProperty("Haku OID:t, joihin tämä kirjepohja linkittyy")
     private List<String> applicationPeriods;
 
-    @Deprecated // Tätä ei käytetä mihinkään
+    @Deprecated
+    // Tätä ei käytetä mihinkään
     private String templateVersio;
 
     @ApiModelProperty("Jos true, tätä kirjepohjaa käytetään oletuksena suhteessa muihin samalla tavalla rajattuihin kirjepohjiin")
@@ -61,13 +80,13 @@ public class Template {
     @Valid
     @ApiModelProperty("Käytetään luomaan uusi rakene jos sekä structureId että structureName ovat null")
     private StructureSaveDto structure;
-    
+
     @ApiModelProperty("Kirjepohjan tila")
     private State state;
 
     public List<TemplateContent> getContents() {
         return contents;
-    }    
+    }
 
     public long getId() {
         return id;
@@ -103,13 +122,13 @@ public class Template {
     }
 
     /**
-	 * Method getTemplateVersio returns the version of the template.
-	 * 
-	 * @return	String
-	 */
-	public String getTemplateVersio() {
-		return templateVersio;
-	}
+     * Method getTemplateVersio returns the version of the template.
+     * 
+     * @return String
+     */
+    public String getTemplateVersio() {
+        return templateVersio;
+    }
 
     public Date getTimestamp() {
         return timestamp;
@@ -146,21 +165,22 @@ public class Template {
     public void setStyles(String styles) {
         this.styles = styles;
     }
-    
-	public void setTemplateVersio(String templateVersio) {
-		this.templateVersio = templateVersio;
-	}
-	public void setTimestamp(Date timestamp) {
+
+    public void setTemplateVersio(String templateVersio) {
+        this.templateVersio = templateVersio;
+    }
+
+    public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
-	public String getType() {
-		return type;
-	}
+    public String getType() {
+        return type;
+    }
 
-	public void setType(String type) {
-		this.type = type;
-	}
+    public void setType(String type) {
+        this.type = type;
+    }
 
     public String getDescription() {
         return description;
@@ -209,27 +229,20 @@ public class Template {
     public void setStructure(StructureSaveDto structure) {
         this.structure = structure;
     }
-    
+
     public State getState() {
         return state;
     }
-    
+
     public void setState(State state) {
         this.state = state;
     }
 
     @Override
-	public String toString() {
-		return "Template [id=" + id + ", timestamp=" + timestamp
-                + ", name=" + name + ", description=" + description
-                +", language=" + language + ", styles=" + styles
-				+ ", storingOid=" + storingOid + ", organizationOid="
-				+ organizationOid + ", contents=" + contents
-				+ ", replacements=" + replacements + ", templateVersio="
-				+ templateVersio + ", type=" + type
-                + ", applicationPeriods=" + applicationPeriods
-                + ", usedAsDefault=" + usedAsDefault
-                + ", state=" + state
-                + "]";
-	}
+    public String toString() {
+        return "Template [id=" + id + ", timestamp=" + timestamp + ", name=" + name + ", description=" + description + ", language=" + language + ", styles="
+                + styles + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid + ", contents=" + contents + ", replacements=" + replacements
+                + ", templateVersio=" + templateVersio + ", type=" + type + ", applicationPeriods=" + applicationPeriods + ", usedAsDefault=" + usedAsDefault
+                + ", state=" + state + "]";
+    }
 }

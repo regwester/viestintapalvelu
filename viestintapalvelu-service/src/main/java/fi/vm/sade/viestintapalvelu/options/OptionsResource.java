@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.options;
 
 import java.util.HashMap;
@@ -22,9 +21,12 @@ import java.util.Map;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+import javax.ws.rs.core.Response.Status;
 
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
@@ -40,10 +42,11 @@ import com.wordnik.swagger.annotations.ApiParam;
 
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
 import fi.vm.sade.viestintapalvelu.recovery.Recoverer;
 import fi.vm.sade.viestintapalvelu.recovery.RecovererPriority;
-
 import static org.joda.time.DateTime.now;
 
 /**
@@ -93,6 +96,14 @@ public class OptionsResource implements Recoverer {
                 return tarjontaComponent.findPublished(null);
             }
         }, Optional.fromNullable(forceRefresh).or(false));
+    }
+    
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path("/hakukohde/{oid}")
+    public Response getHakuKohdeByOid(@PathParam("oid") String oid) {
+        HakuRDTO<HakukohdeDTO> hakuKohde = tarjontaComponent.getHakuKohdeByOid(oid);
+        return Response.status(Status.OK).entity(hakuKohde).build();
     }
 
     protected<T> T cached(CacheType type, Cacheable<T> resolver, boolean forceRefresh) {

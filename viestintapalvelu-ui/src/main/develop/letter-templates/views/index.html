@@ -1,0 +1,8 @@
+<div class="container-fluid" auth="read">
+    <div ui-view="overview" ng-if="isOverviewState()">
+
+    </div>
+    <div ui-view="create" ng-if="!isOverviewState()">
+
+    </div>
+</div>

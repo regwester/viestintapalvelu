@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.io.IOException;
@@ -12,7 +27,8 @@ import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 
 /**
- * Palvelukerroksen rajapinta kirjelähetysten raportoinnin liiketoimintalogiikkaa varten
+ * Palvelukerroksen rajapinta kirjelähetysten raportoinnin
+ * liiketoimintalogiikkaa varten
  * 
  * @author vehei1
  *
@@ -20,39 +36,48 @@ import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 public interface LetterReportService {
     /**
      * Hakee halutun kirjelähetyksen raporttitiedot
-     *  
-     * @param id Kirjelähetyksen avain
-     * @param pagingAndSorting Sivutus- ja lajittelutiedot
+     * 
+     * @param id
+     *            Kirjelähetyksen avain
+     * @param pagingAndSorting
+     *            Sivutus- ja lajittelutiedot
      * @return Kirjelähetyksen tiedot
      */
     LetterBatchReportDTO getLetterBatchReport(Long id, PagingAndSortingDTO pagingAndSorting, String query);
-    
+
     /**
-     * Hakee käyttäjän organisaation raportoitavat kirjelähetykset lajiteltuna ja sivutettuna. Jos organizationOID on yhtä
-     * kuin rekisterinpitäjän OID, haetaan kaikki kirjelähetykset organisaatiosta riippumatta.
-     *  
-     * @param organizationOID Organisaation OID
-     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * Hakee käyttäjän organisaation raportoitavat kirjelähetykset lajiteltuna
+     * ja sivutettuna. Jos organizationOID on yhtä kuin rekisterinpitäjän OID,
+     * haetaan kaikki kirjelähetykset organisaatiosta riippumatta.
+     * 
+     * @param organizationOID
+     *            Organisaation OID
+     * @param pagingAndSorting
+     *            Sivutus ja lajittelutiedot
      * @return Näytettävät kirjelähetyksen raporttitiedot
      */
     LetterBatchesReportDTO getLetterBatchesReport(String organizationOID, PagingAndSortingDTO pagingAndSorting);
-    
+
     /**
-     * Hakee hakuparametrien mukaiset raportoitavat kirjelähetykset lajiteltuna ja sivutettuna
+     * Hakee hakuparametrien mukaiset raportoitavat kirjelähetykset lajiteltuna
+     * ja sivutettuna
      * 
-     * @param query Hakuparametrit
-     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @param query
+     *            Hakuparametrit
+     * @param pagingAndSorting
+     *            Sivutus ja lajittelutiedot
      * @return Näytettävät kirjelähetyksen raporttitiedot
      */
     LetterBatchesReportDTO getLetterBatchesReport(LetterReportQueryDTO query, PagingAndSortingDTO pagingAndSorting);
 
     /**
-     * Hakee vastaanottajan kirjeen sisällön 
+     * Hakee vastaanottajan kirjeen sisällön
      * 
-     * @param id Vastaanottajan kirjeen sisällön ID
+     * @param id
+     *            Vastaanottajan kirjeen sisällön ID
      * @return Vastaanottajan kirjeen tiedot
-     * @throws DataFormatException 
-     * @throws IOException 
+     * @throws DataFormatException
+     * @throws IOException
      */
     LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 

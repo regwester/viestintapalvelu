@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.template.impl;
 
 import java.util.*;
@@ -33,9 +32,7 @@ import fi.vm.sade.viestintapalvelu.template.StructureConverter;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 
 /**
- * User: ratamaa
- * Date: 13.11.2014
- * Time: 14:08
+ * User: ratamaa Date: 13.11.2014 Time: 14:08
  */
 @Component
 public class StructureConverterImpl implements StructureConverter {
@@ -51,36 +48,31 @@ public class StructureConverterImpl implements StructureConverter {
     public List<TemplateContent> toContents(ContentStructure structure, ContentStructurePredicate predicate) {
         List<TemplateContent> results = new ArrayList<TemplateContent>();
         if (!isValid(structure)) {
-            throw new IllegalStateException("Invalid contentStructure="+structure.getId());
+            throw new IllegalStateException("Invalid contentStructure=" + structure.getId());
         }
 
         switch (structure.getType()) {
         case email:
-            add(results, convert(Contents.EMAIL_SUBJECT, predicate, firstContent(structure,
-                    where(predicate, ContentRole.header).type(ContentType.plain))));
-            add(results, convert(Contents.EMAIL_BODY, predicate, firstContent(structure,
-                    where(predicate, ContentRole.body).type(ContentType.html))));
-            add(results, convert(Contents.ATTACHMENT, predicate, contents(structure,
-                    where(predicate, ContentRole.attachment).type(ContentType.html))));
+            add(results, convert(Contents.EMAIL_SUBJECT, predicate, firstContent(structure, where(predicate, ContentRole.header).type(ContentType.plain))));
+            add(results, convert(Contents.EMAIL_BODY, predicate, firstContent(structure, where(predicate, ContentRole.body).type(ContentType.html))));
+            add(results, convert(Contents.ATTACHMENT, predicate, contents(structure, where(predicate, ContentRole.attachment).type(ContentType.html))));
             break;
         case asiointitili:
-            add(results, convert(Contents.ASIOINTITILI_HEADER, predicate, firstContent(structure,
-                    where(predicate, ContentRole.header).type(ContentType.plain))));
-            add(results, convert(Contents.ASIOINTITILI_CONTENT, predicate, firstContent(structure,
-                    where(predicate, ContentRole.body).type(ContentType.plain))));
-            add(results, convert(Contents.ASIOINTITILI_SMS_CONTENT, predicate, firstContent(structure,
-                    where(predicate, ContentRole.sms).type(ContentType.plain))));
-            add(results, convert(Contents.ATTACHMENT, predicate, contents(structure,
-                    where(predicate, ContentRole.attachment).type(ContentType.html))));
+            add(results,
+                    convert(Contents.ASIOINTITILI_HEADER, predicate, firstContent(structure, where(predicate, ContentRole.header).type(ContentType.plain))));
+            add(results, convert(Contents.ASIOINTITILI_CONTENT, predicate, firstContent(structure, where(predicate, ContentRole.body).type(ContentType.plain))));
+            add(results,
+                    convert(Contents.ASIOINTITILI_SMS_CONTENT, predicate, firstContent(structure, where(predicate, ContentRole.sms).type(ContentType.plain))));
+            add(results, convert(Contents.ATTACHMENT, predicate, contents(structure, where(predicate, ContentRole.attachment).type(ContentType.html))));
             break;
         case letter:
-            add(results, convert(LETTER_CONTENT_CONTENT_NAME, predicate, contents(structure,
-                    where(predicate).type(ContentType.html))));
+            add(results, convert(LETTER_CONTENT_CONTENT_NAME, predicate, contents(structure, where(predicate).type(ContentType.html))));
             break;
-        default: throw new IllegalStateException("Unimplemented ContentStructureType="+structure.getType());
+        default:
+            throw new IllegalStateException("Unimplemented ContentStructureType=" + structure.getType());
         }
         if (predicate != null && !predicate.isSatisfied()) {
-            throw new IllegalStateException("Not sataified ContentStructurePredicate: " +predicate);
+            throw new IllegalStateException("Not sataified ContentStructurePredicate: " + predicate);
         }
         return results;
     }
@@ -130,7 +122,7 @@ public class StructureConverterImpl implements StructureConverter {
         return validator.isValid(structure, null);
     }
 
-    protected ContentStructurePredicate where(ContentStructurePredicate predicate, ContentRole ...roles) {
+    protected ContentStructurePredicate where(ContentStructurePredicate predicate, ContentRole... roles) {
         return new ContentStructurePredicate(roles).and(predicate);
     }
 
@@ -143,8 +135,7 @@ public class StructureConverterImpl implements StructureConverter {
     }
 
     protected List<ContentStructureContent> contents(ContentStructure structure, ContentStructurePredicate predicate) {
-        List<ContentStructureContent> contents = new ArrayList<ContentStructureContent>(
-                Collections2.filter(structure.getContents(), predicate));
+        List<ContentStructureContent> contents = new ArrayList<ContentStructureContent>(Collections2.filter(structure.getContents(), predicate));
         Collections.sort(contents, new Comparator<ContentStructureContent>() {
             @Override
             public int compare(ContentStructureContent o1, ContentStructureContent o2) {

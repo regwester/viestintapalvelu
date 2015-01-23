@@ -19,7 +19,7 @@ angular.module('email')
 
     $scope.previewEmail = function() {
       $state.go('email.preview');
-    }
+    };
 
     $scope.cancelEmail = function () {
       $state.go('email_cancel');
@@ -36,7 +36,7 @@ angular.module('email')
 
     $scope.getEmailData = function() {
       return {recipient: $scope.recipients, email: $scope.email};
-    }
+    };
 
     function updateDraft(draft){
       DraftService.drafts.update(draft, function() {
@@ -69,7 +69,7 @@ angular.module('email')
     $scope.$on('useEmail', function(event, email) {
       $scope.email = email;
       $state.go('email');
-    })
+    });
     
     $scope.init = function() {
       $scope.initResponse = EmailService.init.query();

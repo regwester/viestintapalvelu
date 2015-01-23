@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.ryhmasahkoposti.externalinterface.organisaatio.impl;
 
 import java.util.*;
@@ -36,9 +35,7 @@ import fi.vm.sade.ryhmasahkoposti.service.DailyTask;
 import static org.joda.time.DateTime.now;
 
 /**
- * User: ratamaa
- * Date: 29.10.2014
- * Time: 14:52
+ * User: ratamaa Date: 29.10.2014 Time: 14:52
  */
 @Service
 @Singleton
@@ -51,7 +48,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
     private Period cacheValid = Period.days(1);
     private final AtomicInteger sync = new AtomicInteger(1);
     private volatile DateTime cacheCreatedAt;
-    private volatile Map<String,OrganisaatioHierarchyDto> hierarchyByOids;
+    private volatile Map<String, OrganisaatioHierarchyDto> hierarchyByOids;
     private volatile OrganisaatioHierarchyDto root;
     private static final HierarchyVisitor<String> EXTRACT_OID = new HierarchyVisitor<String>() {
         public String visit(OrganisaatioHierarchyDto dto, OrganisaatioHierarchyDto parent) {
@@ -62,15 +59,13 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
     @Override
     public List<String> findHierarchyOids(String organisaatioOid) {
         ensureCacheFresh();
-        return visitDown(this.hierarchyByOids.get(organisaatioOid), null, EXTRACT_OID,
-                new ArrayList<String>());
+        return visitDown(this.hierarchyByOids.get(organisaatioOid), null, EXTRACT_OID, new ArrayList<String>());
     }
 
     @Override
     public List<String> findAllChildrenOids(String organisaatioOid) {
         ensureCacheFresh();
-        return visitChildren(this.hierarchyByOids.get(organisaatioOid), EXTRACT_OID,
-                new ArrayList<String>());
+        return visitChildren(this.hierarchyByOids.get(organisaatioOid), EXTRACT_OID, new ArrayList<String>());
     }
 
     @Override
@@ -88,7 +83,8 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
         if (cacheCreatedAt == null || cacheCreatedAt.plus(cacheValid).isBefore(now)) {
             synchronized (sync) {
                 if (cacheCreatedAt == null || cacheCreatedAt.plus(cacheValid).isBefore(now)) {
-                    // only one process at a time should get here (but without extra synchronization)
+                    // only one process at a time should get here (but without
+                    // extra synchronization)
                     refrechCache();
                 }
             }
@@ -125,9 +121,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
         T visit(OrganisaatioHierarchyDto dto, OrganisaatioHierarchyDto parent);
     }
 
-    protected<T, C extends Collection<T>> C visitDown(OrganisaatioHierarchyDto item,
-                                                      OrganisaatioHierarchyDto parent,
-                                                      HierarchyVisitor<T> visitor, C results) {
+    protected <T, C extends Collection<T>> C visitDown(OrganisaatioHierarchyDto item, OrganisaatioHierarchyDto parent, HierarchyVisitor<T> visitor, C results) {
         T result = visitor.visit(item, parent);
         if (result != null) {
             results.add(result);
@@ -136,8 +130,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
         return results;
     }
 
-    protected <T, C extends Collection<T>> C visitChildren(OrganisaatioHierarchyDto item,
-                                                           HierarchyVisitor<T> visitor, C results) {
+    protected <T, C extends Collection<T>> C visitChildren(OrganisaatioHierarchyDto item, HierarchyVisitor<T> visitor, C results) {
         for (OrganisaatioHierarchyDto child : item.getChildren()) {
             if (child != null) {
                 visitDown(child, item, visitor, results);
@@ -146,8 +139,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
         return results;
     }
 
-    protected <T, C extends Collection<T>> C visitUp(OrganisaatioHierarchyDto item,
-                                                     HierarchyVisitor<T> visitor, C results) {
+    protected <T, C extends Collection<T>> C visitUp(OrganisaatioHierarchyDto item, HierarchyVisitor<T> visitor, C results) {
         T result = visitor.visit(item, item.getParent());
         if (result != null) {
             results.add(result);
@@ -156,8 +148,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService, DailyTask {
         return results;
     }
 
-    protected <T, C extends Collection<T>> C visitParents(OrganisaatioHierarchyDto item,
-                                                          HierarchyVisitor<T> visitor, C results) {
+    protected <T, C extends Collection<T>> C visitParents(OrganisaatioHierarchyDto item, HierarchyVisitor<T> visitor, C results) {
         if (item.getParent() != null) {
             visitUp(item.getParent(), visitor, results);
         }

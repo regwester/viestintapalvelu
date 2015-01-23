@@ -1,7 +1,7 @@
 /*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  */
-
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import java.io.IOException;
@@ -129,20 +128,17 @@ public class LetterEmailServiceImpl implements LetterEmailService {
 
     @Override
     @Transactional(readOnly = true)
-    public String getPreview(Long letterBatchId, Optional<String> languageCode) {
-        LetterBatch letterBatch = foundLetterBatch(letterBatchId);
+    public String getPreview(LetterBatch letterBatch, Template template, Optional<String> languageCode) {
         if (letterBatch.getBatchStatus() == null || letterBatch.getBatchStatus() == LetterBatch.Status.created) {
             throw new IllegalStateException("Can not send email to LetterBatch="+letterBatch.getTemplateId()
                     +" in status="+ letterBatch.getBatchStatus()+". Expecting ready status.");
         }
-        Template template = getTemplate(letterBatch);
         String templateLanguage = Optional.fromNullable(template.getLanguage()).or(DEFAULT_LANGUAGE);
-
-        EmailSendDataDto emailSendData = buildEmails(letterBatch,
-                Arrays.asList( firstWithEmail(letterBatch.getLetterReceivers(), languageCode, templateLanguage)
-                    .or(OptionalHelper.<LetterReceivers>notFound("LetterBatch=" + letterBatchId
-                            + " does not have any handled recipients with email address"))),
-                template);
+        final Optional<LetterReceivers> letterReceiversOptional = firstWithEmail(letterBatch.getLetterReceivers(), languageCode, templateLanguage);
+        final List<LetterReceivers> letterReceiverses = Arrays.asList(letterReceiversOptional
+                .or(OptionalHelper.<LetterReceivers>notFound("LetterBatch=" + letterBatch.getId()
+                        + " does not have any handled recipients with email address")));
+        EmailSendDataDto emailSendData = buildEmails(letterBatch, letterReceiverses, template);
         if (emailSendData.getEmails().isEmpty()) {
             throw new NotFoundException("No emails to preview.");
         }
@@ -150,6 +146,24 @@ public class LetterEmailServiceImpl implements LetterEmailService {
             return emailComponent.getPreview(emailSendData.getEmailByLanguageCode(languageCode.get()));
         }
         return emailComponent.getPreview(emailSendData.getEmails().get(0));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getPreview(LetterBatch letterBatch, Optional<String> languageCode) {
+        if (letterBatch.getBatchStatus() == null || letterBatch.getBatchStatus() == LetterBatch.Status.created) {
+            throw new IllegalStateException("Can not send email to LetterBatch="+letterBatch.getTemplateId()
+                    +" in status="+ letterBatch.getBatchStatus()+". Expecting ready status.");
+        }
+        Template template = getTemplate(letterBatch);
+        return getPreview(letterBatch, template, languageCode);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public String getPreview(Long letterBatchId, Optional<String> languageCode) {
+        LetterBatch letterBatch = foundLetterBatch(letterBatchId);
+        return getPreview(letterBatch, languageCode);
     }
 
     private Optional<LetterReceivers> firstWithEmail(Collection<LetterReceivers> receivers,

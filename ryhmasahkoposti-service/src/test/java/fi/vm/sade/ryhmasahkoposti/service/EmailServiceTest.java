@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.ArrayList;
@@ -64,14 +63,12 @@ import static org.powermock.api.mockito.PowerMockito.doAnswer;
 import static org.powermock.api.mockito.PowerMockito.doThrow;
 
 /**
- * User: ratamaa
- * Date: 16.9.2014
- * Time: 9:49
+ * User: ratamaa Date: 16.9.2014 Time: 9:49
  */
 @RunWith(PowerMockRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
-@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class })
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @PrepareForTest({ MessageUtil.class })
 public class EmailServiceTest {
     @InjectMocks
@@ -93,11 +90,10 @@ public class EmailServiceTest {
     @Mock
     private EmailRecipientDtoConverter emailRecipientDtoConverter;
 
-
     @Before
     public void setup() {
-        when(emailRecipientDtoConverter.convert(any(EmailRecipientDTO.class), any(EmailRecipientMessage.class),
-                any(EmailMessageDTO.class))).thenCallRealMethod();
+        when(emailRecipientDtoConverter.convert(any(EmailRecipientDTO.class), any(EmailRecipientMessage.class), any(EmailMessageDTO.class)))
+                .thenCallRealMethod();
         emailService.setTemplateBuilder(new TemplateBuilder());
     }
 
@@ -142,8 +138,7 @@ public class EmailServiceTest {
         EmailMessageDTO message = RaportointipalveluTestData.getEmailMessageDTO();
         EmailQueueHandleDto queue = createQueue(message, 3);
 
-        doAnswer(atFirstThrow(new OptimisticLockException()).times(40).thenReturn(queue))
-                .when(emailQueueService).reserveNextQueueToHandle();
+        doAnswer(atFirstThrow(new OptimisticLockException()).times(40).thenReturn(queue)).when(emailQueueService).reserveNextQueueToHandle();
 
         AnswerChain<Boolean> answers = atFirstReturn(true).thenReturn(false)
                 .thenThrow(new IllegalStateException("Should not be called after returning false!"));
@@ -152,14 +147,11 @@ public class EmailServiceTest {
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         CallCounterVoidAnswer handleMail = new CallCounterVoidAnswer();
-        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
-                any(Optional.class));
+        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class), any(Optional.class));
 
         AnswerChain<Boolean> successHandler = atFirstReturn(true);
-        when(rrService.recipientHandledSuccess(eq(queue.getRecipients().get(0)),
-                any(String.class))).then(successHandler);
-        doThrow(new IllegalStateException("Queue not handled fully. Should not be called!"))
-                .when(emailQueueService).queueHandled(any(long.class));
+        when(rrService.recipientHandledSuccess(eq(queue.getRecipients().get(0)), any(String.class))).then(successHandler);
+        doThrow(new IllegalStateException("Queue not handled fully. Should not be called!")).when(emailQueueService).queueHandled(any(long.class));
 
         emailService.handleEmailQueue();
         assertEquals(2, answers.getTotalCallCount());
@@ -190,15 +182,13 @@ public class EmailServiceTest {
         when(emailQueueService.reserveNextQueueToHandle()).thenReturn(queue);
         when(emailQueueService.continueQueueHandling(any(EmailQueueHandleDto.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
-        doThrow(new IllegalStateException("Email sending failed!"))
-                .when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
+        doThrow(new IllegalStateException("Email sending failed!")).when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
                 any(Optional.class));
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
-        when(rrService.recipientHandledSuccess(any(EmailRecipientDTO.class), any(String.class)))
-                .thenThrow(new IllegalStateException("Should not be successful!"));
+        when(rrService.recipientHandledSuccess(any(EmailRecipientDTO.class), any(String.class))).thenThrow(
+                new IllegalStateException("Should not be successful!"));
         AnswerChain<Boolean> failureHandler = atFirstReturn(true);
-        when(rrService.recipientHandledFailure(any(EmailRecipientDTO.class), any(String.class)))
-                .then(failureHandler);
+        when(rrService.recipientHandledFailure(any(EmailRecipientDTO.class), any(String.class))).then(failureHandler);
         CallCounterVoidAnswer queueHandled = new CallCounterVoidAnswer();
         doAnswer(queueHandled).when(emailQueueService).queueHandled(any(long.class));
 

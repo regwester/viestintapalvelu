@@ -55,7 +55,7 @@
             "role": "body",
             "name": "sahkopostin_paasisalto",
             "contentType": "html",
-            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hei $etunimi</p> <p><a href=\"$linkki\">Vaihda salasanasi täällä.</a></p> </body></html>"
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hei $etunimi</p> <p><a href=\"$linkki\">Vaihda salasanasi täällä.</a></p><p>Opintopolku.fi</p><p>Hej $etunimi</p> <p><a href=\"$linkki\">Byt ditt lösenord här.</a></p><p>Studieinfo.fi</p></body></html>"
           }
         ]
       }

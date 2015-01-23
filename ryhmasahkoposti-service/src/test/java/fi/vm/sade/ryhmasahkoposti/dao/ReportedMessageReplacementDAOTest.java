@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import static org.junit.Assert.assertEquals;
@@ -26,8 +41,8 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
-        DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
+@TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
+        TransactionalTestExecutionListener.class })
 @Transactional(readOnly = true)
 public class ReportedMessageReplacementDAOTest {
 
@@ -46,8 +61,7 @@ public class ReportedMessageReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 
-        ReportedMessageReplacement reportedMessageReplacement =
-                RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
+        ReportedMessageReplacement reportedMessageReplacement = RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
 
         ReportedMessageReplacement savedReportedMessageReplacement = reportedMessageReplacementDAO.insert(reportedMessageReplacement);
 
@@ -62,8 +76,7 @@ public class ReportedMessageReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 
-        ReportedMessageReplacement reportedMessageReplacement =
-                RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
+        ReportedMessageReplacement reportedMessageReplacement = RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
         ReportedMessageReplacement savedReportedMessageReplacement = reportedMessageReplacementDAO.insert(reportedMessageReplacement);
 
         List<ReportedMessageReplacement> reportedMessageReplacements = reportedMessageReplacementDAO.findAll();
@@ -79,8 +92,7 @@ public class ReportedMessageReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 
-        ReportedMessageReplacement reportedMessageReplacement =
-                RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
+        ReportedMessageReplacement reportedMessageReplacement = RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
         ReportedMessageReplacement savedReportedMessageReplacement = reportedMessageReplacementDAO.insert(reportedMessageReplacement);
 
         Long id = savedReportedMessageReplacement.getId();
@@ -97,12 +109,10 @@ public class ReportedMessageReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 
-        ReportedMessageReplacement reportedMessageReplacement =
-                RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
+        ReportedMessageReplacement reportedMessageReplacement = RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
         ReportedMessageReplacement savedReportedMessageReplacement = reportedMessageReplacementDAO.insert(reportedMessageReplacement);
 
-        List<ReportedMessageReplacement> reportedMessageReplacements =
-                reportedMessageReplacementDAO.findReportedMessageReplacements(savedReportedMessage);
+        List<ReportedMessageReplacement> reportedMessageReplacements = reportedMessageReplacementDAO.findReportedMessageReplacements(savedReportedMessage);
 
         assertNotNull(reportedMessageReplacements);
         assertNotEquals(0, reportedMessageReplacements.size());
@@ -115,8 +125,7 @@ public class ReportedMessageReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 
-        ReportedMessageReplacement reportedMessageReplacement =
-                RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
+        ReportedMessageReplacement reportedMessageReplacement = RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
         ReportedMessageReplacement savedReportedMessageReplacement = reportedMessageReplacementDAO.insert(reportedMessageReplacement);
 
         assertEquals(new Long(0), savedReportedMessageReplacement.getVersion());
@@ -134,8 +143,7 @@ public class ReportedMessageReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
 
-        ReportedMessageReplacement reportedMessageReplacement =
-                RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
+        ReportedMessageReplacement reportedMessageReplacement = RaportointipalveluTestData.getReportedMessageReplacement(savedReportedMessage);
         ReportedMessageReplacement savedReportedMessageReplacement = reportedMessageReplacementDAO.insert(reportedMessageReplacement);
 
         long id = savedReportedMessageReplacement.getId();

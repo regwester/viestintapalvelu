@@ -1,0 +1,36 @@
+<div class="modal info-dialog">
+    <div class="modal-header dialog-header-info">
+        <h3 ng-bind="'template.header.create.new.draft' | i18n"></h3>
+    </div>
+    <div class="modal-body">
+        <p>
+            <strong>
+                {{'template.label.select.template.application' | i18n}}
+            </strong>
+            {{selectedApplicationPeriod.name}}
+        </p>
+        <p>
+            <strong>
+                {{'reportedletterlist.otsikko.hakukohde' | i18n}}
+            </strong>
+            {{hakukohdeNimi}}
+        </p>
+        <input-list label="{{'template.label.select.template.type' | i18n}}" items="applicationTypes" model="applicationTypeSelection" change="selectType(applicationTypeSelection)" input="radio"></input-list>
+        <input-list label="{{'template.label.select.template.language' | i18n}}" items="languages" model="languageSelection" change="selectLanguage(languageSelection)" input="radio"></input-list>
+        <p class="bold" ng-bind="'template.label.select.template.base' | i18n"></p>
+        <div ng-if="!applicationTypeSelection || !languageSelection">
+            <select class="full-width" disabled>
+                <option value="none" ng-bind="'template.text.choose.type.and.language' | i18n"></option>
+            </select>
+        </div>
+        <div ng-if="applicationTypeSelection && languageSelection">
+            <select class="full-width" ng-model="baseTemplate" ng-options="t as t.name for t in baseTemplates | orderBy: 'name' | filter: {language: languageSelection} | filter: {type: applicationTypeSelection}" ng-change="selectBase(baseTemplate)">
+            </select>
+        </div>
+        <p class="subnote" ng-bind="'template.info.text.template.base' | i18n"></p>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn" ng-click="cancel()" ng-bind="'common.btn.cancel' | i18n"></button>
+        <button type="button" class="btn btn-primary" ng-click="confirm()" ng-bind="'common.btn.create' | i18n"></button>
+    </div>
+</div>

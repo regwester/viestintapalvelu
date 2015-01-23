@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.resource;
 
 import java.util.List;
@@ -31,22 +46,19 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
 
     @Autowired
     public MessageReportingResourceImpl(GroupEmailReportingService groupEmailReportingService,
-                                        ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter,
-                                        PagingAndSortingDTOConverter pagingAndSortingDTOConverter) {
+            ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter, PagingAndSortingDTOConverter pagingAndSortingDTOConverter) {
         this.groupEmailReportingService = groupEmailReportingService;
         this.reportedMessageQueryDTOConverter = reportedMessageQueryDTOConverter;
         this.pagingAndSortingDTOConverter = pagingAndSortingDTOConverter;
     }
 
     @Override
-    public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy,
-                                        String order) throws Exception {
+    public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy, String order) throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(
-                organizationOid, pagingAndSorting);
+        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(organizationOid, pagingAndSorting);
 
         reportedMessagesDTO.setOrganizations(organizations);
 
@@ -62,8 +74,8 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows,
-                                        Integer page, String sortedBy, String order) throws Exception {
+    public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows, Integer page, String sortedBy, String order)
+            throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
@@ -86,8 +98,8 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
 
     @Override
     public Response getReportedMessagesSentByCurrentUser(String process) throws Exception {
-        ReportedMessagesDTO reportedMessages =
-                groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process, PagingAndSortingDTO.getDefault());
+        ReportedMessagesDTO reportedMessages = groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process,
+                PagingAndSortingDTO.getDefault());
 
         return Response.ok(reportedMessages).build();
 
@@ -100,20 +112,17 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page,
-                                                    String sortedBy, String order) throws Exception {
+    public Response getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order) throws Exception {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipients(
-                messageID, pagingAndSorting);
+        ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipients(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();
     }
 
     @Override
-    public Response getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, Integer nbrOfRows,
-                                                                       Integer page, String sortedBy, String order) throws Exception {
+    public Response getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order)
+            throws Exception {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        ReportedMessageDTO reportedMessageDTO =
-                groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccessful(messageID, pagingAndSorting);
+        ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccessful(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();
     }
 
@@ -124,8 +133,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
         return Response.ok(binary).header("Content-Disposition", "attachment; filename=\"" + reportedAttachment.getAttachmentName() + "\"").build();
     }
 
-    protected String resolveAllowedOrganizationOid(@Nullable String organizationOid,
-                                                   List<OrganizationDTO> allowedOrganizations) {
+    protected String resolveAllowedOrganizationOid(@Nullable String organizationOid, List<OrganizationDTO> allowedOrganizations) {
         if (organizationOid != null && !organizationOid.isEmpty()) {
             for (OrganizationDTO organization : allowedOrganizations) {
                 if (organizationOid.equals(organization.getOid())) {

@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
@@ -22,9 +37,7 @@ public interface LetterService {
     public static final String DOKUMENTTI_ID_PREFIX_ZIP = "VIES-2-";
 
     public enum LetterBatchProcess {
-        EMAIL,
-        LETTER,
-        IPOSTI
+        EMAIL, LETTER, IPOSTI
     }
 
     /**
@@ -97,7 +110,6 @@ public interface LetterService {
      */
     fi.vm.sade.viestintapalvelu.letter.LetterContent getLetter(long id);
 
-    
     /**
      * Hakee kirjelähetyksen kirjeiden sisällöt ja yhdistää ne yhdeksi
      * PDF-dokumentiksi
@@ -111,14 +123,15 @@ public interface LetterService {
 
     String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception;
 
-    
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
     void processLetterReceiver(long receiverId) throws Exception;
 
     /**
-     * @param id of the batch job to mark finished
-     * @param process to mark finished
+     * @param id
+     *            of the batch job to mark finished
+     * @param process
+     *            to mark finished
      * @return the next process
      */
     Optional<LetterBatchProcess> updateBatchProcessingFinished(long id, LetterBatchProcess process) throws Exception;
@@ -144,9 +157,11 @@ public interface LetterService {
     void handleIpostError(IPostiProcessable letterBatchId, Exception e);
 
     /**
-     * @param letterBatchId id of the LetterBatch to set to error-status
-     * @param e the exception
+     * @param letterBatchId
+     *            id of the LetterBatch to set to error-status
+     * @param e
+     *            the exception
      */
     void errorProcessingBatch(long letterBatchId, Exception e);
-    
+
 }

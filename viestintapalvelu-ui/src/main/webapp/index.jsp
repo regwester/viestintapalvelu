@@ -27,7 +27,7 @@
     <script type="text/javascript" src="lib/jquery/jquery.min.js"></script>
     <script type="text/javascript" src="lib/jquery-i18n-properties/jquery.i18n.properties-min.js"></script>
     <script type="text/javascript" src="lib/jquery-file-upload/js/vendor/jquery.ui.widget.js"></script>
-
+    <script type="text/javascript" src="lib/lodash/dist/lodash.min.js"></script>
     <script type="text/javascript" src="lib/angular/angular.js"></script>
     <script type="text/javascript" src="lib/angular-resource/angular-resource.js"></script>
     <script type="text/javascript" src="lib/angular-bootstrap/ui-bootstrap-tpls.min.js"></script>

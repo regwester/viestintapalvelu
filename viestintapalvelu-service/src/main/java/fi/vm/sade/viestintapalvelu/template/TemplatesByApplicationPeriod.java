@@ -16,18 +16,12 @@
 package fi.vm.sade.viestintapalvelu.template;
 
 import java.io.Serializable;
-import java.util.Date;
 import java.util.List;
-import java.util.Set;
 
 import javax.validation.constraints.NotNull;
 
 import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
-
-import fi.vm.sade.viestintapalvelu.model.Template.State;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-
 
 /**
  * @author risal1
@@ -41,21 +35,22 @@ public class TemplatesByApplicationPeriod implements Serializable {
     @NotNull
     @ApiModelProperty("Hakutunniste millä kirjepohjat on haettu")
     public final String hakuOid;
-    
+
     @ApiModelProperty("Viimeisimmät versiot julkaistuista kirjepohjista")
     public final List<TemplateInfo> publishedTemplates;
-    
+
     @ApiModelProperty("Viimeisimmät versiot luonnostilaisista kirjepohjista")
     public final List<TemplateInfo> draftTemplates;
-    
+
     @ApiModelProperty("Viimeisimmät suljetut versiot kirjepohjista, sisältää vain suljetut versiot kirjepohjista mistä ei löydy julkaistua- tai luonnostilaista versiota")
     public final List<TemplateInfo> closedTemplates;
 
-    public TemplatesByApplicationPeriod(String hakuOid, List<TemplateInfo> publishedTemplates, List<TemplateInfo> draftTemplates, List<TemplateInfo> closedTemplates) {
+    public TemplatesByApplicationPeriod(String hakuOid, List<TemplateInfo> publishedTemplates, List<TemplateInfo> draftTemplates,
+            List<TemplateInfo> closedTemplates) {
         this.hakuOid = hakuOid;
         this.publishedTemplates = publishedTemplates;
         this.draftTemplates = draftTemplates;
         this.closedTemplates = closedTemplates;
     }
-    
+
 }

@@ -1,36 +1,43 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.io.IOException;
 import java.util.Date;
 
-import javax.persistence.*;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import com.fasterxml.jackson.core.JsonParseException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
 /**
  * @author migar1
- *
- *CREATE TABLE kirjeet.vastaanottajakorvauskentat(
-  id bigint NOT NULL,
-  version bigint,
-  vastaanottaja_id bigint,
-  nimi character varying(255),
-  oletus_arvo character varying(3000),
-  pakollinen boolean,
-  aikaleimia time with time zone,
-  CONSTRAINT vastaanottajakorvauskentat_pk PRIMARY KEY (id),
-  CONSTRAINT vastaanottajakorvauskentat_vastaanottaja_id_fkey FOREIGN KEY (vastaanottaja_id)
-      REFERENCES kirjeet.vastaanottaja (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
-
  */
 
-@Table(name = "vastaanottajakorvauskentat", schema= "kirjeet")
+@Table(name = "vastaanottajakorvauskentat", schema = "kirjeet")
 @Entity()
 public class LetterReceiverReplacement extends BaseEntity {
     private static final long serialVersionUID = 1L;
@@ -56,16 +63,15 @@ public class LetterReceiverReplacement extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
 
-
     public LetterReceivers getLetterReceivers() {
-		return letterReceivers;
-	}
+        return letterReceivers;
+    }
 
-	public void setLetterReceivers(LetterReceivers letterReceivers) {
-		this.letterReceivers = letterReceivers;
-	}
+    public void setLetterReceivers(LetterReceivers letterReceivers) {
+        this.letterReceivers = letterReceivers;
+    }
 
-	public String getName() {
+    public String getName() {
         return name;
     }
 
@@ -106,10 +112,9 @@ public class LetterReceiverReplacement extends BaseEntity {
     }
 
     @Override
-	public String toString() {
-		return "LetterReceiverReplacement [name=" + name + ", defaultValue=" + defaultValue
-				+ ", mandatory=" + mandatory + ", timestamp=" + timestamp + "]";
-	}
+    public String toString() {
+        return "LetterReceiverReplacement [name=" + name + ", defaultValue=" + defaultValue + ", mandatory=" + mandatory + ", timestamp=" + timestamp + "]";
+    }
 
     @Transient
     public Object getEffectiveValue(ObjectMapper mapper) throws IOException {
