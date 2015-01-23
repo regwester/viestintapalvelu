@@ -17,7 +17,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('TemplateTreeService', ['$resource', '$http','$q', function ($resource, $http, $q) {
+    .factory('TemplateTreeService', ['$resource', '$http','$q', '$filter', function ($resource, $http, $q, $filter) {
 
         var serviceUrl = '/viestintapalvelu/api/v1/',
             organizationResUrl = serviceUrl + 'organizationhierarchy/',
@@ -45,14 +45,17 @@ angular.module('letter-templates')
             getOrganizationHierarchy: function (applicationPeriod) {
                 return $http.get(organizationResUrl + 'applicationPeriod/' + applicationPeriod);
             },
-            getParsedTreeGrid : function(response, onlyLeafOids) {
+            getParsedTreeGrid : function(response, firstColumnDisplayName) {
 
 
                 var oidList = [];
                 var oidMap = {};
 
+
+                var firstColum18nStr = firstColumnDisplayName;
+                console.log(firstColum18nStr);
                 var parseData = function(item) {
-                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
+
                     var newRow = {};
 
                     //TODO handle localization
@@ -67,6 +70,7 @@ angular.module('letter-templates')
                     newRow["language"] = item.language;
                     newRow["state"] = item.state;
                     newRow["oid"] = item.oid;
+                    newRow["type"] = $filter('i18n')('reportedmessagelist.otsikko.organisaatio');
                     var isLeaf = false;
                     if(item.children && item.children.length > 0) {
                         isLeaf = true;
@@ -82,16 +86,18 @@ angular.module('letter-templates')
                 var dataArr = [];
                 dataArr.push(response.data[0]);
                 newData = map(parseData, dataArr);
+                newData["firstColumnName"] = firstColumnDisplayName; //hack to get correct display name for the header
                 return {"tree": newData, "oids":oidList, "oidToRowMap": oidMap};
             },
 
             addTemplatesToTree : function (tree, templates, oidMap, control) {
 
+                var firstColum18nStr = tree.firstColumnName;
                 templates.forEach(function(item) {
-                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
                     var orgOid = item.organizationOid;
                     var letterRow = item;
                     letterRow[firstColum18nStr] = item.name;
+                    letterRow["type"] = $filter('i18n')('common.header.lettertemplate');
                     letterRow["isLetter"] = true;
                     var parent;
                     if(orgOid) {
@@ -109,8 +115,8 @@ angular.module('letter-templates')
             addHakukohteetToTree : function (tree, hakukohteet, oidMap, control) {
                 var hakukohdeOids = [];
                 var hakukohdeOidMap = {};
+                var firstColum18nStr = tree.firstColumnName;
                 hakukohteet.forEach(function(hakukohde) {
-                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
 
                     var orgOid = hakukohde.oid;
                     var parent = oidMap[orgOid];
@@ -128,6 +134,7 @@ angular.module('letter-templates')
                             }
                             hakukohdeRow["orgOid"] = orgOid;
                             hakukohdeRow["isHakukohde"] = true;
+                            hakukohdeRow["type"] = $filter('i18n')('reportedletterlist.otsikko.hakukohde');
                             hakukohdeOids.push(tulos.oid);
                             var newRow = control.add_branch(parent, hakukohdeRow, false);
                             hakukohdeOidMap[tulos.oid] = newRow; //used to quickly add drafts under this row
@@ -138,9 +145,8 @@ angular.module('letter-templates')
             },
 
             addDraftsToTree : function (tree, templates, oidMap, control) {
-
+                var firstColum18nStr = tree.firstColumnName;
                 templates.forEach(function(item) {
-                    var firstColum18nStr = "Organisaatio ja kirjetyyppi";
                     var orgOid = item.organizationOid;
                     var letterRow = item;
                     letterRow["language"] = item.languageCode;
@@ -148,6 +154,7 @@ angular.module('letter-templates')
                     letterRow[firstColum18nStr] = item.fetchTarget;
                     letterRow["isLetter"] = true;
                     letterRow["isDraft"] = true;
+                    letterRow["type"] = $filter('i18n')('letter.draft');
                     var parent = oidMap[orgOid];
                     var newRow = control.add_branch(parent, letterRow, true);
                     control.expand_all_parents(parent);

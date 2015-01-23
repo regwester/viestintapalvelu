@@ -17,7 +17,7 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateController', ['$scope', '$state', 'TemplateService', 'TemplateTreeService', '$modal', function($scope, $state, TemplateService, TemplateTreeService, $modal) {
+    .controller('TemplateController', ['$scope', '$state', 'TemplateService', 'TemplateTreeService', '$modal', '$filter', function($scope, $state, TemplateService, TemplateTreeService, $modal, $filter) {
 
         $scope.templateTabActive = true;
         $scope.hakukohdeTabActive = false;
@@ -30,9 +30,13 @@ angular.module('letter-templates')
         $scope.draft_tree_control = {};
         $scope.applicationPeriodList = [];
         $scope.selectedApplicationPeriod = selectAppPeriod;
+
+        $scope.firstColumnI18n = $filter('i18n')('treelist.first.column.header');
+
         $scope.col_defs = [
-            { field: "language", displayName: "Kieli"},
-            { field: "state", displayName: "Tila"}
+            { field: "type", displayName: $filter('i18n')('common.header.type')},
+            { field: "language", displayName:  $filter('i18n')('common.header.language')},
+            { field: "state", displayName: $filter('i18n')('common.header.status')}
         ];
 
         $scope.template_tree_data = [
@@ -76,7 +80,8 @@ angular.module('letter-templates')
 
             var query = TemplateTreeService.getOrganizationHierarchy(applicationPeriod.oid);
             query.then(function(response){
-                var parsedTree = TemplateTreeService.getParsedTreeGrid(response);
+
+                var parsedTree = TemplateTreeService.getParsedTreeGrid(response, $scope.firstColumnI18n);
                 var treedata = parsedTree.tree;
                 var organizationOIDS = parsedTree.oids;
                 var oidToRowMap = parsedTree.oidToRowMap;
