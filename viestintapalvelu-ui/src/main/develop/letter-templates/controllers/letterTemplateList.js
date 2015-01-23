@@ -51,7 +51,7 @@ angular.module('letter-templates')
 
             function updateTarget(applicationTarget) {
                 $scope.currentApplicationTarget = applicationTarget;
-                TemplateService.getTemplatesByApplicationPeriod(applicationTarget.value)
+                TemplateService.getTemplatesByApplicationPeriod(applicationTarget.oid)
                     .success(function (data) {
                         $scope.$parent.applicationTemplates = data.publishedTemplates.concat(data.draftTemplates).concat(data.closedTemplates);
                     }).error(function (e) {
