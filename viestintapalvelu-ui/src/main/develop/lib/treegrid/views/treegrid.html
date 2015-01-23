@@ -13,7 +13,8 @@
                 <a ng-click="user_clicks_branch(row.branch, $event)" ng-hide="hideMenuOnAuthOph(row.tree_icon)">
                     <i ng-class="row.tree_icon" ng-click="row.branch.expanded = !row.branch.expanded" class="indented tree-icon"></i>
                 </a>
-                <span class="indented tree-label" ng-click="user_clicks_branch(row.branch, $event)">
+                <span class="indented" ng-class="{'tree-label': (row.branch.isLetter || row.branch.isDraft || row.branch.isHakukohde)}" ng-click="user_clicks_branch(row.branch, $event)">
+                <!--<span class="{{(row.branch.isLetter || row.branch.isDraft || row.branch.isHakukohde) ? 'indented tree-label' : 'intented'}}" ng-click="user_clicks_branch(row.branch, $event)">-->
                     <div auth="crudOph" class="btn-group dropdown">
                         <input type="button" class="dropdown-toggle tree-grid-dropdown-toggle" aria-haspopup="true" aria-expanded="false"/>
                         <ul class="dropdown-menu tree-grid-dropdown" role="menu">
