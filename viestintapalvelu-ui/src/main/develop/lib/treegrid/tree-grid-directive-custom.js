@@ -211,7 +211,6 @@
                     };
 
                     scope.user_clicks_branch = function(branch, event) {
-                        console.log(branch);
                         if((scope.isCreateEnabled && branch.isHakukohde) || branch.isLetter && event.originalEvent && branch.children.length == 0) {
                             var e = null;
                             //different selectors for handling clicking of either the icon or the row text
