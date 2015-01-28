@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.koekutsukirje;
 
 import java.io.FileNotFoundException;
@@ -22,9 +37,9 @@ import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Utils;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.address.AddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 
@@ -40,54 +55,42 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 @Singleton
 public class KoekutsukirjeBuilder {
 
-	private DocumentBuilder documentBuilder;
+    private DocumentBuilder documentBuilder;
 
-	@Inject
-	public KoekutsukirjeBuilder(DocumentBuilder documentBuilder) {
-		this.documentBuilder = documentBuilder;
-	}
+    @Inject
+    public KoekutsukirjeBuilder(DocumentBuilder documentBuilder) {
+        this.documentBuilder = documentBuilder;
+    }
 
-	public byte[] printPDF(KoekutsukirjeBatch batch) throws IOException,
-			DocumentException {
-		List<PdfDocument> source = new ArrayList<PdfDocument>();
-		for (Koekutsukirje kirje : batch.getLetters()) {
-			String kirjeTemplateName = Utils.resolveTemplateName(
-					Constants.KOEKUTSUKIRJE_TEMPLATE, kirje.getLanguageCode());
-			String tarjoaja = Strings.nullToEmpty(kirje.getTarjoaja());
-			byte[] frontPage = createFirstPagePDF(kirjeTemplateName,
-					kirje.getAddressLabel(), kirje.getHakukohde(), tarjoaja,
-					kirje.getLetterBodyText());
-			source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, null));
-		}
-		return documentBuilder.merge(source).toByteArray();
-	}
+    public byte[] printPDF(KoekutsukirjeBatch batch) throws IOException, DocumentException {
+        List<PdfDocument> source = new ArrayList<PdfDocument>();
+        for (Koekutsukirje kirje : batch.getLetters()) {
+            String kirjeTemplateName = Utils.resolveTemplateName(Constants.KOEKUTSUKIRJE_TEMPLATE, kirje.getLanguageCode());
+            String tarjoaja = Strings.nullToEmpty(kirje.getTarjoaja());
+            byte[] frontPage = createFirstPagePDF(kirjeTemplateName, kirje.getAddressLabel(), kirje.getHakukohde(), tarjoaja, kirje.getLetterBodyText());
+            source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, null));
+        }
+        return documentBuilder.merge(source).toByteArray();
+    }
 
-	private byte[] createFirstPagePDF(String templateName,
-			AddressLabel addressLabel, String hakukohde, String tarjoaja,
-			String letterBodyText) throws FileNotFoundException, IOException,
-			DocumentException {
-		Map<String, Object> dataContext = createDataContext(
-				new HtmlAddressLabelDecorator(addressLabel), hakukohde,
-				tarjoaja, letterBodyText);
-		byte[] xhtml = documentBuilder.applyTextTemplate(templateName,
-				dataContext);
-		return documentBuilder.xhtmlToPDF(xhtml);
-	}
+    private byte[] createFirstPagePDF(String templateName, AddressLabel addressLabel, String hakukohde, String tarjoaja, String letterBodyText)
+            throws FileNotFoundException, IOException, DocumentException {
+        Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(addressLabel), hakukohde, tarjoaja, letterBodyText);
+        byte[] xhtml = documentBuilder.applyTextTemplate(templateName, dataContext);
+        return documentBuilder.xhtmlToPDF(xhtml);
+    }
 
-	private Map<String, Object> createDataContext(
-			AddressLabelDecorator decorator, String hakukohde, String tarjoaja,
-			String letterBodyText) {
-		Map<String, Object> data = new HashMap<String, Object>();
-		data.put("osoite", decorator);
-		data.put("hakukohde", StringEscapeUtils.escapeHtml(hakukohde));
-		data.put("tarjoaja", StringEscapeUtils.escapeHtml(tarjoaja));
-		data.put("letterDate",
-				new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
-		data.put("letterBodyText", cleanHtmlFromApi(letterBodyText));
-		return data;
-	}
+    private Map<String, Object> createDataContext(AddressLabelDecorator decorator, String hakukohde, String tarjoaja, String letterBodyText) {
+        Map<String, Object> data = new HashMap<String, Object>();
+        data.put("osoite", decorator);
+        data.put("hakukohde", StringEscapeUtils.escapeHtml(hakukohde));
+        data.put("tarjoaja", StringEscapeUtils.escapeHtml(tarjoaja));
+        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterBodyText", cleanHtmlFromApi(letterBodyText));
+        return data;
+    }
 
-	private String cleanHtmlFromApi(String letterBody) {
-		return Jsoup.clean(letterBody, Whitelist.relaxed());
-	}
+    private String cleanHtmlFromApi(String letterBody) {
+        return Jsoup.clean(letterBody, Whitelist.relaxed());
+    }
 }

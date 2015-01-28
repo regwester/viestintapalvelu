@@ -1,0 +1,48 @@
+<div class="container-fluid">
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <h2>{{titleText}}</h2>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <form novalidate="novalidate" class="form-horizontal">
+                <form-item label="Haku:">
+                    <p>{{applicationPeriodForDisplay}}</p>
+                </form-item>
+                <div ng-if="targetIsOrg">
+                	<form-item label="Organisaatio:">
+	                	<p>{{organizationForDisplay}}</p>
+	                </form-item>
+                </div>
+                <div ng-if="!targetIsOrg">
+	                <form-item label="Hakukohde:">
+	                	<p>{{fetchTargetForDisplay}}</p>
+	                </form-item>
+                </div>
+                <form-item label="Kirjeen tyyppi:">
+                    <p>{{draft.templateName}}</p>
+                </form-item>
+                <form-item label="Kieli:">
+                    <p>{{draft.languageCode}}</p>
+                </form-item>
+                <form-item label="Otsikko:">
+                	<p>{{titleTemplate}}</p>
+                </form-item>
+                <form-item label="Viesti:">
+	            	<textarea ui-tinymce="editorOptions" ng-model="draft.replacements['sisalto']"></textarea>
+                </form-item>
+            </form>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span12">
+            <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
+        </div>
+    </div>
+</div>

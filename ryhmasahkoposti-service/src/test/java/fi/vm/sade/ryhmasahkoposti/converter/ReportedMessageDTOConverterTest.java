@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
 import static org.junit.Assert.assertEquals;
@@ -30,89 +45,86 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 @PrepareForTest(MessageUtil.class)
 public class ReportedMessageDTOConverterTest {
     private ReportedMessageDTOConverter reportedMessageDTOConverter;
-    
+
     @Before
     public void setup() {
         this.reportedMessageDTOConverter = new ReportedMessageDTOConverter();
     }
 
-	@Test
-	public void testConvertListOfReportedMessage() {
-		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		reportedMessage.setId(new Long(1));
-		reportedMessage.setVersion(new Long(0));
-		
-		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
-		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
-		reportedRecipient.setReportedMessage(reportedMessage);
-		reportedRecipients.add(reportedRecipient);
+    @Test
+    public void testConvertListOfReportedMessage() {
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        reportedMessage.setId(new Long(1));
+        reportedMessage.setVersion(new Long(0));
 
-		reportedMessage.setReportedRecipients(reportedRecipients);
-		mockedReportedMessages.add(reportedMessage);
-		
-		List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(mockedReportedMessages);
-		
-		assertNotNull(reportedMessageDTOs);
-		assertTrue(reportedMessageDTOs.size() == 1);
-	}
+        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
+        reportedRecipient.setReportedMessage(reportedMessage);
+        reportedRecipients.add(reportedRecipient);
 
-	@Test
-	public void testConvertListOfReportedMessageAndNumberOfFailed() {
-		PowerMockito.mockStatic(MessageUtil.class);
-		PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_kesken")).thenReturn("Lähetys kesken");
+        reportedMessage.setReportedRecipients(reportedRecipients);
+        mockedReportedMessages.add(reportedMessage);
 
-		List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		reportedMessage.setId(new Long(1));
-		reportedMessage.setVersion(new Long(0));
-		
-		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
-		ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
-		reportedRecipient.setReportedMessage(reportedMessage);
-		reportedRecipients.add(reportedRecipient);
+        List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(mockedReportedMessages);
 
-		reportedMessage.setReportedRecipients(reportedRecipients);
-		mockedReportedMessages.add(reportedMessage);
-		
-		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
-		Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
-		sendingStatuses.put(new Long(1), sendingStatusDTO);
-		
-		List<ReportedMessageDTO> reportedMessageDTOs = 
-			reportedMessageDTOConverter.convert(mockedReportedMessages, sendingStatuses);
-		
-		assertNotNull(reportedMessageDTOs);
-		assertTrue(reportedMessageDTOs.size() == 1);
-		assertNotNull(reportedMessageDTOs.get(0).getStatusReport());
-		assertTrue(!reportedMessageDTOs.get(0).getStatusReport().isEmpty());
-	}
+        assertNotNull(reportedMessageDTOs);
+        assertTrue(reportedMessageDTOs.size() == 1);
+    }
 
-	@Test
-	public void testConvertReportedMessageListOfReportedAttachment() {
-		PowerMockito.mockStatic(MessageUtil.class);
-		PowerMockito.when(MessageUtil.getMessage(
-			"ryhmasahkoposti.lahetys_epaonnistui", new Object[]{new Long(2)})).thenReturn("2 lahetystä epäonnistui");
+    @Test
+    public void testConvertListOfReportedMessageAndNumberOfFailed() {
+        PowerMockito.mockStatic(MessageUtil.class);
+        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_kesken")).thenReturn("Lähetys kesken");
 
-		ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
-		
-		Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
-		reportedRecipients.add(RaportointipalveluTestData.getReportedRecipient());
-		reportedMessage.setReportedRecipients(reportedRecipients);
-		
-		List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
-		reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
-		
-		SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
-				
-		ReportedMessageDTO reportedMessageDTO = 
-			reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatusDTO);
-		
-		assertNotNull(reportedMessageDTO);
-		assertEquals(reportedMessage.getId(), reportedMessageDTO.getMessageID());
-		assertEquals(reportedMessage.getMessage(), reportedMessageDTO.getBody());
-		assertTrue(reportedMessageDTO.getAttachments().size() > 0);
-		assertNotNull(reportedMessageDTO.getAttachments().get(0).getName());
-	}
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+        reportedMessage.setId(new Long(1));
+        reportedMessage.setVersion(new Long(0));
+
+        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
+        reportedRecipient.setReportedMessage(reportedMessage);
+        reportedRecipients.add(reportedRecipient);
+
+        reportedMessage.setReportedRecipients(reportedRecipients);
+        mockedReportedMessages.add(reportedMessage);
+
+        SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
+        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
+        sendingStatuses.put(new Long(1), sendingStatusDTO);
+
+        List<ReportedMessageDTO> reportedMessageDTOs = reportedMessageDTOConverter.convert(mockedReportedMessages, sendingStatuses);
+
+        assertNotNull(reportedMessageDTOs);
+        assertTrue(reportedMessageDTOs.size() == 1);
+        assertNotNull(reportedMessageDTOs.get(0).getStatusReport());
+        assertTrue(!reportedMessageDTOs.get(0).getStatusReport().isEmpty());
+    }
+
+    @Test
+    public void testConvertReportedMessageListOfReportedAttachment() {
+        PowerMockito.mockStatic(MessageUtil.class);
+        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", new Object[] { new Long(2) })).thenReturn("2 lahetystä epäonnistui");
+
+        ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
+
+        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        reportedRecipients.add(RaportointipalveluTestData.getReportedRecipient());
+        reportedMessage.setReportedRecipients(reportedRecipients);
+
+        List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+        reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
+
+        SendingStatusDTO sendingStatusDTO = RaportointipalveluTestData.getSendingStatusDTO();
+
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatusDTO);
+
+        assertNotNull(reportedMessageDTO);
+        assertEquals(reportedMessage.getId(), reportedMessageDTO.getMessageID());
+        assertEquals(reportedMessage.getMessage(), reportedMessageDTO.getBody());
+        assertTrue(reportedMessageDTO.getAttachments().size() > 0);
+        assertNotNull(reportedMessageDTO.getAttachments().get(0).getName());
+    }
 
 }

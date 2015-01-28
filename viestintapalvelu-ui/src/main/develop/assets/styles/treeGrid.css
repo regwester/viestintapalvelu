@@ -17,8 +17,8 @@
     background-size: 36px 18px;
 }
 
-.icon-actionmenu {
-    background-image: url("../img/actionmenu-icon-sprite.png");
+i.icon-actionmenu {
+    background-image: url("../img/icon-treetable-button.png");
     background-size: 36px 18px;
     background-position: 0px 0px;
 }
@@ -55,7 +55,7 @@
     opacity: 0;
 }
 
-/* 
+/*
 ------------------------------------------
 Angular 1.2.0 Animation 
 */
@@ -92,7 +92,12 @@ Angular 1.2.0 Animation
     padding: 2px;
 }
 
-.tree-grid {
+.tree-grid-dropdown {
+    margin-top: 10px;
+}
+
+.tree-grid-dropdown-toggle {
+    display: none;
 }
 
 .tree-grid .level-1 .indented {

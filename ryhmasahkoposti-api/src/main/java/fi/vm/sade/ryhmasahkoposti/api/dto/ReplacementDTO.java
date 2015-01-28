@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import java.util.Date;
@@ -69,7 +84,8 @@ public class ReplacementDTO extends BaseDTO {
     }
 
     /**
-     * @param name the name to set
+     * @param name
+     *            the name to set
      */
     public void setName(String name) {
         this.name = name;
@@ -83,7 +99,8 @@ public class ReplacementDTO extends BaseDTO {
     }
 
     /**
-     * @param defaultValue the defaultValue to set
+     * @param defaultValue
+     *            the defaultValue to set
      */
     public void setDefaultValue(String defaultValue) {
         this.defaultValue = defaultValue;
@@ -97,7 +114,8 @@ public class ReplacementDTO extends BaseDTO {
     }
 
     /**
-     * @param mandatory the mandatory to set
+     * @param mandatory
+     *            the mandatory to set
      */
     public void setMandatory(boolean mandatory) {
         this.mandatory = mandatory;
@@ -111,19 +129,16 @@ public class ReplacementDTO extends BaseDTO {
     }
 
     /**
-     * @param timestamp the timestamp to set
+     * @param timestamp
+     *            the timestamp to set
      */
     public void setTimestamp(Date timestamp) {
         this.timestamp = timestamp;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#toString()
-     */
     @Override
     public String toString() {
-        return "ReplacementDTO [name=" + name + ", defaultValue="
-                + defaultValue + ", mandatory=" + mandatory + ", timestamp="
-                + timestamp + ", getId()=" + getId() + "]";
+        return "ReplacementDTO [name=" + name + ", defaultValue=" + defaultValue + ", mandatory=" + mandatory + ", timestamp=" + timestamp + ", getId()="
+                + getId() + "]";
     }
 }

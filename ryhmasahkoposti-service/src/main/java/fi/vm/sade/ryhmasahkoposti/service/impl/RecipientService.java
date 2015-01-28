@@ -1,13 +1,22 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
-import fi.vm.sade.viestintapalvelu.common.exception.PersistenceException;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
+import java.util.List;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,7 +25,13 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
+import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Service
 public class RecipientService {
@@ -31,15 +46,17 @@ public class RecipientService {
     @Autowired
     private ApplicationContext applicationContext;
 
-    //TODO: request the recipient entities as batch from Henkilöpalvelu and Organisaatiopalvelu
-    //e.g. give a list of oids and receive a list of Henkilö or organization objects
-    @Scheduled(cron = "0 0/1 * * * ?") // Run every 5 minutes
+    // TODO: request the recipient entities as batch from Henkilöpalvelu and
+    // Organisaatiopalvelu
+    // e.g. give a list of oids and receive a list of Henkilö or organization
+    // objects
+    @Scheduled(cron = "0 0/1 * * * ?")
     public void retrieveMissingInformation() {
         log.debug("Started retrieving missing recipient information");
         RecipientService self = applicationContext.getBean(RecipientService.class);
         try {
             List<Long> recipientIds = recipientDAO.findRecipientIdsWithIncompleteInformation();
-            for(Long recipientId : recipientIds) {
+            for (Long recipientId : recipientIds) {
                 self.updateRecipientInformation(recipientId);
             }
         } catch (Exception e) {
@@ -52,11 +69,10 @@ public class RecipientService {
         ReportedRecipient recipient = recipientDAO.findByRecipientID(recipientId);
         if (OidValidator.isHenkiloOID(recipient.getRecipientOid())) {
             updatePerson(recipient);
-        } else if(OidValidator.isOrganisaatioOID(recipient.getRecipientOid())) {
+        } else if (OidValidator.isOrganisaatioOID(recipient.getRecipientOid())) {
             updateOrganization(recipient);
         } else {
-            log.warn("Unrecognizable OID: {}, in recipient: {}",
-                    recipient.getRecipientOid(), recipient.getRecipientEmail());
+            log.warn("Unrecognizable OID: {}, in recipient: {}", recipient.getRecipientOid(), recipient.getRecipientEmail());
         }
     }
 
@@ -82,7 +98,7 @@ public class RecipientService {
         try {
             log.debug("Updating recipient to db: {}", recipient);
             recipientDAO.update(recipient);
-        } catch(Exception e) {
+        } catch (Exception e) {
             log.error("Reciepient update failed", e);
         }
     }

@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import javax.ws.rs.NotFoundException;
@@ -28,13 +27,12 @@ import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
 /**
- * User: ratamaa
- * Date: 9.10.2014
- * Time: 13:33
+ * User: ratamaa Date: 9.10.2014 Time: 13:33
  */
 @Component
 public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
-    // SHA-1, internally calls MessageDigest.getInstance(algorithm) for each encodePassword call (thus thread-safe):
+    // SHA-1, internally calls MessageDigest.getInstance(algorithm) for each
+    // encodePassword call (thus thread-safe):
     private ShaPasswordEncoder encoder = new ShaPasswordEncoder();
     @Autowired
     private LetterBatchDAO letterBatchDAO;
@@ -44,7 +42,7 @@ public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
 
     @Override
     public String generateDocumentIdForLetterBatchId(long id, String prefix) {
-        return prefix+id+"-"+generateHash(prefix, id);
+        return prefix + id + "-" + generateHash(prefix, id);
     }
 
     @Override
@@ -78,7 +76,7 @@ public class DokumenttiIdProviderImpl implements DokumenttiIdProvider {
     public void setLetterBatchDAO(LetterBatchDAO letterBatchDAO) {
         this.letterBatchDAO = letterBatchDAO;
     }
-    
+
     public void setEncoder(ShaPasswordEncoder encoder) {
         this.encoder = encoder;
     }

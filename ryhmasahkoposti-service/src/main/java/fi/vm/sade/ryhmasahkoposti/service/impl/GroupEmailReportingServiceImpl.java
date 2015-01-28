@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.IOException;
@@ -54,19 +69,15 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private Integer queueSize = 100;
 
     @Autowired
-    public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService,
-            ReportedRecipientService reportedRecipientService, ReportedAttachmentService reportedAttachmentService,
-            ReportedMessageAttachmentService reportedMessageAttachmentService,
+    public GroupEmailReportingServiceImpl(ReportedMessageService reportedMessageService, ReportedRecipientService reportedRecipientService,
+            ReportedAttachmentService reportedAttachmentService, ReportedMessageAttachmentService reportedMessageAttachmentService,
             ReportedMessageConverter reportedMessageConverter, ReportedRecipientConverter reportedRecipientConverter,
             ReportedAttachmentConverter reportedAttachmentConverter, AttachmentResponseConverter attachmentResponseConverter,
             EmailMessageDTOConverter emailMessageDTOConverter, EmailRecipientDTOConverter emailRecipientDTOConverter,
-            ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent,
-            OrganizationComponent organizationComponent, TemplateService templateService,
-            ReportedMessageReplacementConverter reportedMessageReplacementConverter,
-            ReportedMessageReplacementService reportedMessageReplacementService,
-            ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
-            ReportedRecipientReplacementService reportedRecipientReplacementService,
-            SendQueueDAO sendQueueDao) {
+            ReportedMessageDTOConverter reportedMessageDTOConverter, CurrentUserComponent currentUserComponent, OrganizationComponent organizationComponent,
+            TemplateService templateService, ReportedMessageReplacementConverter reportedMessageReplacementConverter,
+            ReportedMessageReplacementService reportedMessageReplacementService, ReportedRecipientReplacementConverter reportedRecipientReplacementConverter,
+            ReportedRecipientReplacementService reportedRecipientReplacementService, SendQueueDAO sendQueueDao) {
         this.reportedMessageService = reportedMessageService;
         this.reportedRecipientService = reportedRecipientService;
         this.reportedAttachmentService = reportedAttachmentService;
@@ -102,7 +113,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateId());
                 log.debug("Loaded template: {} by id {}", templateDTO, emailData.getEmail().getTemplateId());
             } catch (Exception e) {
-                log.error("Failed to load template for id: "+ emailData.getEmail().getTemplateId(), e);
+                log.error("Failed to load template for id: " + emailData.getEmail().getTemplateId(), e);
             }
         } else if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
@@ -110,13 +121,13 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 languageCode = emailData.getEmail().getLanguageCode();
             }
             // Template is used
-            try {               
-                templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(),
-                    languageCode, TemplateDTO.TYPE_EMAIL, emailData.getEmail().getHakuOid());
+            try {
+                templateDTO = templateService.getTemplate(emailData.getEmail().getTemplateName(), languageCode, TemplateDTO.TYPE_EMAIL, emailData.getEmail()
+                        .getHakuOid());
                 log.debug("Loaded template: {} for name {}", templateDTO, emailData.getEmail().getTemplateName());
             } catch (Exception e) {
-                log.error("Failed to load template for templateName: "+emailData.getEmail().getTemplateName()
-                        +", languageCode="+emailData.getEmail().getLanguageCode(), e);
+                log.error("Failed to load template for templateName: " + emailData.getEmail().getTemplateName() + ", languageCode="
+                        + emailData.getEmail().getLanguageCode(), e);
             }
         }
 
@@ -132,8 +143,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             // Get template replacements from email data
             List<ReplacementDTO> emailReplacements = emailData.getReplacements();
             // Convert message replacements
-            List<ReportedMessageReplacement> messageReplacements = reportedMessageReplacementConverter.convert(
-                    savedReportedMessage, templateDTO.getReplacements(), emailReplacements);
+            List<ReportedMessageReplacement> messageReplacements = reportedMessageReplacementConverter.convert(savedReportedMessage,
+                    templateDTO.getReplacements(), emailReplacements);
 
             log.debug("Saving message replacements");
             for (ReportedMessageReplacement replacement : messageReplacements) {
@@ -141,8 +152,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
         }
 
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(
-                emailData.getEmail().getAttachInfo());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailData.getEmail().getAttachInfo());
         log.debug("Saving reportedMessageAttachments");
         reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
 
@@ -156,18 +166,16 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedRecipient> recipients = new ArrayList<ReportedRecipient>();
         for (EmailRecipient emailRecipient : emailRecipients) {
             log.debug("Converting emailRecipient to reportedRecipient");
-            ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage,
-                    emailRecipient);
+            ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage, emailRecipient);
             log.debug("Saving reportedRecipient");
             reportedRecipientService.saveReportedRecipient(reportedRecipient);
             recipients.add(reportedRecipient);
 
             log.debug("Processing recipient specific replacements");
             if (emailRecipient.getRecipientReplacements() != null) {
-                List<ReportedRecipientReplacementDTO> emailRecipientReplacements =
-                        emailRecipient.getRecipientReplacements();
-                List<ReportedRecipientReplacement> reportedRecipientReplacements =
-                        reportedRecipientReplacementConverter.convert(reportedRecipient, emailRecipientReplacements);
+                List<ReportedRecipientReplacementDTO> emailRecipientReplacements = emailRecipient.getRecipientReplacements();
+                List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementConverter.convert(reportedRecipient,
+                        emailRecipientReplacements);
                 log.debug("Saving reportedRecipientReplacements");
                 reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
             }
@@ -212,8 +220,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         ReportedRecipient recipient = reportedRecipientService.getReportedRecipient(recipientId);
 
-        List<ReportedRecipientReplacement> recipientReplacements = reportedRecipientReplacementService
-                .getReportedRecipientReplacements(recipient);
+        List<ReportedRecipientReplacement> recipientReplacements = reportedRecipientReplacementService.getReportedRecipientReplacements(recipient);
 
         if (recipientReplacements == null)
             return null;
@@ -227,13 +234,11 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("getMessage(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
-                .getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 
         List<ReportedMessageReplacement> reportedMessageReplacements = null;
         if (StringUtils.equals(ReportedMessage.TYPE_TEMPLATE, reportedMessage.getType())) {
-            reportedMessageReplacements = reportedMessageReplacementService
-                    .getReportedMessageReplacements(reportedMessage);
+            reportedMessageReplacements = reportedMessageReplacementService.getReportedMessageReplacements(reportedMessage);
         }
 
         return emailMessageDTOConverter.convert(reportedMessage, reportedAttachments, reportedMessageReplacements);
@@ -247,11 +252,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
 
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
-                .getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 
-        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage,
-                reportedAttachments, sendingStatus);
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 
         return reportedMessageDTO;
@@ -263,65 +266,54 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
-        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(messageID,
-                pagingAndSorting);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(messageID, pagingAndSorting);
 
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
         sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
-                .getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 
-        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage,
-                reportedRecipients, reportedAttachments, sendingStatus);
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 
         return reportedMessageDTO;
     }
 
     @Override
-    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID,
-                                                                                 PagingAndSortingDTO pagingAndSorting) {
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, PagingAndSortingDTO pagingAndSorting) {
         log.info("getReportedMessageAndRecipientsSendingUnsuccessful(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
 
-        List<ReportedRecipient> reportedRecipients = reportedRecipientService
-                .getReportedRecipientsByStatusSendingUnsuccessful(messageID, pagingAndSorting);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipientsByStatusSendingUnsuccessful(messageID, pagingAndSorting);
 
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
         sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage
-                .getReportedMessageAttachments());
+        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
 
-        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage,
-                reportedRecipients, reportedAttachments, sendingStatus);
+        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
 
         return reportedMessageDTO;
     }
 
     @Override
-    public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid,
-                                                                    PagingAndSortingDTO pagingAndSorting) {
+    public ReportedMessagesDTO getReportedMessagesByOrganizationOid(String organizationOid, PagingAndSortingDTO pagingAndSorting) {
         log.info("getReportedMessagesByOrganizationOid(String, PagingAndSortingDTO) called");
 
         ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
 
-        List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid,
-                pagingAndSorting);
+        List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid, pagingAndSorting);
         Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(organizationOid);
 
         Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
         for (ReportedMessage reportedMessage : reportedMessages) {
-            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage
-                    .getId());
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
             sendingStatuses.put(reportedMessage.getId(), sendingStatus);
         }
 
-        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages,
-                sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
 
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
         reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
@@ -334,7 +326,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("getReportedMessagesBySenderOid(String, String, PagingAndSortingDTO) called");
 
         List<ReportedMessage> reportedMessages;
-        if(process == null) {
+        if (process == null) {
             reportedMessages = reportedMessageService.getUserMessages(senderOid, pagingAndSorting);
         } else {
             reportedMessages = reportedMessageService.getUserMessages(senderOid, process, pagingAndSorting);
@@ -359,8 +351,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             sendingStatuses.put(reportedMessage.getId(), sendingStatus);
         }
 
-        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages,
-                sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
 
         ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
@@ -406,8 +397,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
             OrganizationDTO organization = new OrganizationDTO();
 
-            OrganisaatioRDTO organisaatioRDTO = organizationComponent.getOrganization(organisaatioHenkilo
-                    .getOrganisaatioOid());
+            OrganisaatioRDTO organisaatioRDTO = organizationComponent.getOrganization(organisaatioHenkilo.getOrganisaatioOid());
             String organizationName = organizationComponent.getNameOfOrganisation(organisaatioRDTO);
 
             organization.setOid(organisaatioRDTO.getOid());

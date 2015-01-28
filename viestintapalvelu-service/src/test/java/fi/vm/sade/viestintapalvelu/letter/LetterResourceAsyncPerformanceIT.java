@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.lang.reflect.Field;
@@ -44,7 +43,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.address.AddressLabel;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
 import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
@@ -60,7 +59,6 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentRole;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.content;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.contentStructure;
 import static fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData.structure;

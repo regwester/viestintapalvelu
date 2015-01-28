@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -14,130 +29,113 @@ import javax.persistence.TemporalType;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
-/*
- * CREATE TABLE kirjeet.luonnos (
-  id bigint NOT NULL,
-  version bigint NOT NULL,
-  kirjepohjan_nimi character varying(255) NOT NULL,
-  kirjepohjan_kielikoodi character varying(5) NOT NULL,
-  aikaleima timestamp without time zone,
-  oid_tallentaja character varying(255),
-  oid_organisaatio character varying(255),
-  haku character varying(255),
-  hakukohde character varying(255),
-  tunniste character varying(255),
-  CONSTRAINT luonnos_pk PRIMARY KEY (id)
-)
- */
-
-@Table(name = "luonnos", schema= "kirjeet")
+@Table(name = "luonnos", schema = "kirjeet")
 @Entity(name = "Draft")
 public class Draft extends BaseEntity {
     private static final long serialVersionUID = 1L;
 
     @Column(name = "kirjepohjan_nimi", nullable = false)
     private String templateName;
-	
+
     @Column(name = "kirjepohjan_kielikoodi", nullable = false)
     private String templateLanguage;
-	
+
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-	
+
     @Column(name = "oid_tallentaja", nullable = true)
     private String storingOid;
 
     @Column(name = "oid_organisaatio", nullable = true)
-    private String organizationOid;	
+    private String organizationOid;
 
-	@Column(name = "haku")
-	private String applicationPeriod;
-	
-	@Column(name = "hakukohde")
+    @Column(name = "haku")
+    private String applicationPeriod;
+
+    @Column(name = "hakukohde")
     private String fetchTarget;
-	
-	@Column(name = "tunniste")
+
+    @Column(name = "tunniste")
     private String tag;
 
     @OneToMany(mappedBy = "draft", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<DraftReplacement> replacements;
-	
-	public String getTemplateName() {
-		return templateName;
-	}
 
-	public void setTemplateName(String templateName) {
-		this.templateName = templateName;
-	}
+    public String getTemplateName() {
+        return templateName;
+    }
 
-	public String getTemplateLanguage() {
-		return templateLanguage;
-	}
+    public void setTemplateName(String templateName) {
+        this.templateName = templateName;
+    }
 
-	public void setTemplateLanguage(String templateLanguage) {
-		this.templateLanguage = templateLanguage;
-	}
+    public String getTemplateLanguage() {
+        return templateLanguage;
+    }
 
-	public Date getTimestamp() {
-		return timestamp;
-	}
+    public void setTemplateLanguage(String templateLanguage) {
+        this.templateLanguage = templateLanguage;
+    }
 
-	public void setTimestamp(Date timestamp) {
-		this.timestamp = timestamp;
-	}
+    public Date getTimestamp() {
+        return timestamp;
+    }
 
-	public String getStoringOid() {
-		return storingOid;
-	}
+    public void setTimestamp(Date timestamp) {
+        this.timestamp = timestamp;
+    }
 
-	public void setStoringOid(String storingOid) {
-		this.storingOid = storingOid;
-	}
+    public String getStoringOid() {
+        return storingOid;
+    }
 
-	public String getOrganizationOid() {
-		return organizationOid;
-	}
+    public void setStoringOid(String storingOid) {
+        this.storingOid = storingOid;
+    }
 
-	public void setOrganizationOid(String organizationOid) {
-		this.organizationOid = organizationOid;
-	}
+    public String getOrganizationOid() {
+        return organizationOid;
+    }
 
-	public String getApplicationPeriod() {
-		return applicationPeriod;
-	}
+    public void setOrganizationOid(String organizationOid) {
+        this.organizationOid = organizationOid;
+    }
 
-	public void setApplicationPeriod(String applicationPeriod) {
-		this.applicationPeriod = applicationPeriod;
-	}
+    public String getApplicationPeriod() {
+        return applicationPeriod;
+    }
 
-	public String getFetchTarget() {
-		return fetchTarget;
-	}
+    public void setApplicationPeriod(String applicationPeriod) {
+        this.applicationPeriod = applicationPeriod;
+    }
 
-	public void setFetchTarget(String fetchTarget) {
-		this.fetchTarget = fetchTarget;
-	}
+    public String getFetchTarget() {
+        return fetchTarget;
+    }
 
-	public String getTag() {
-		return tag;
-	}
+    public void setFetchTarget(String fetchTarget) {
+        this.fetchTarget = fetchTarget;
+    }
 
-	public void setTag(String tag) {
-		this.tag = tag;
-	}
-	
-	public Set<DraftReplacement> getReplacements() {
-		return replacements;
-	}
+    public String getTag() {
+        return tag;
+    }
 
-	public void setReplacements(Set<DraftReplacement> replacements) {
-		this.replacements = replacements;
-	}
+    public void setTag(String tag) {
+        this.tag = tag;
+    }
 
-	public static long getSerialversionuid() {
-		return serialVersionUID;
-	}
+    public Set<DraftReplacement> getReplacements() {
+        return replacements;
+    }
 
-	
+    public void setReplacements(Set<DraftReplacement> replacements) {
+        this.replacements = replacements;
+    }
+
+    public static long getSerialversionuid() {
+        return serialVersionUID;
+    }
+
 }

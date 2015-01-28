@@ -1,7 +1,7 @@
-/*
- * Copyright (c) 2014 The Finnish National Board of Education - Opetushallitus
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
  *
- * This program is free software: Licensed under the EUPL, Version 1.1 or - as
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
  * soon as they will be approved by the European Commission - subsequent versions
  * of the EUPL (the "Licence");
  *
@@ -10,10 +10,9 @@
  *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
- */
-
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -32,16 +31,6 @@ import fi.vm.sade.generic.model.BaseEntity;
  * Instances of these will be deleted from the database after
  * email sending is complete for the queue in which this receiver
  * is being processed.
- *
-create table vastaanottajakirje_liite(
-    id int8 primary key,
-    version int8 not null default 0,
-    vastaanottajakirje int8 references vastaanottajakirje(id) not null,
-    nimi varchar(256) not null,
-    sisalto bytea not null,
-    tyyppi varchar(128) not null,
-    luontiaika timestamp not null default now()
-);
  */
 @Entity
 @Table(name="vastaanottajakirje_liite", schema = "kirjeet")

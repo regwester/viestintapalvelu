@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
@@ -26,8 +41,7 @@ public class ReportedMessageDTOConverter {
         return reportedMessageDTOs;
     }
 
-    public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages,
-        Map<Long, SendingStatusDTO> sendingStatuses) {
+    public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages, Map<Long, SendingStatusDTO> sendingStatuses) {
         List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
 
         for (ReportedMessage reportedMessage : reportedMessages) {
@@ -44,14 +58,12 @@ public class ReportedMessageDTOConverter {
         return reportedMessageDTOs;
     }
 
-    public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments,
-        SendingStatusDTO sendingStatusDTO) {
+    public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
         ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
 
         convert(reportedMessageDTO, reportedMessage);
 
-        List<ReportedRecipient> reportedRecipients = new ArrayList<ReportedRecipient>(
-            reportedMessage.getReportedRecipients());
+        List<ReportedRecipient> reportedRecipients = new ArrayList<ReportedRecipient>(reportedMessage.getReportedRecipients());
         reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedRecipients));
 
         reportedMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
@@ -64,7 +76,7 @@ public class ReportedMessageDTOConverter {
     }
 
     public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients,
-        List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
+            List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
         ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
 
         convert(reportedMessageDTO, reportedMessage);
@@ -154,8 +166,7 @@ public class ReportedMessageDTOConverter {
             }
         }
 
-        if (sendingStatus.getNumberOfFailedSendings() != null && 
-            sendingStatus.getNumberOfFailedSendings().compareTo(new Long(0)) > 0) {
+        if (sendingStatus.getNumberOfFailedSendings() != null && sendingStatus.getNumberOfFailedSendings().compareTo(new Long(0)) > 0) {
             Object[] parameters = { sendingStatus.getNumberOfFailedSendings() };
             reportedMessageDTO.setStatusReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", parameters));
             return;

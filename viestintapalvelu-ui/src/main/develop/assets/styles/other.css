@@ -567,10 +567,10 @@ ul.attachments-list {
 }
 
 .link-button {
-  background-color: transparent !important;
-  background-image: none !important;
-  border: 0px !important;
-  box-shadow: none !important;
+  background-color: transparent;
+  background-image: none;
+  border: 0px;
+  box-shadow: none;
 }
 
 input.icon-actionmenu {
@@ -584,6 +584,14 @@ input.icon-actionmenu {
     width: 20px;
     height: 18px;
     box-shadow: none;
+    vertical-align: middle;
+    background-size: 36px 18px;
+    background-position: 0px 0px;
+}
+
+input.icon-actionmenu:active, .btn-group.open .icon-actionmenu {
+	background-image: url("../img/icon-treetable-button-pressed.png");
+	box-shadow: none;
 }
 
 th.searchLabelColumn, th.searchLabelColumn label {
@@ -677,4 +685,7 @@ input[type='text'].letterSearchField {
 }
 .select2-dropdown-open .select2-choice {
   background-color: inherit;
+}
+.touchable {
+  cursor: pointer;	
 }

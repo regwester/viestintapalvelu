@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.io.IOException;
@@ -21,23 +36,9 @@ import fi.vm.sade.viestintapalvelu.template.ReadableReplacement;
 
 /**
  * @author migar1
- *
-CREATE TABLE kirjeet.lahetyskorvauskentat(
-  id bigint NOT NULL,
-  version bigint,
-  kirjelahetys_id bigint,
-  nimi character varying(255),
-  oletus_arvo character varying(3000),
-  aikaleima time with time zone,
-  pakollinen boolean,
-  CONSTRAINT lahetyskorvauskentat_pk PRIMARY KEY (id),
-  CONSTRAINT lahetyskorvauskentat_kirjelahetys_id_fkey FOREIGN KEY (kirjelahetys_id)
-      REFERENCES kirjeet.kirjelahetys (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-)
  */
 
-@Table(name = "lahetyskorvauskentat", schema= "kirjeet")
+@Table(name = "lahetyskorvauskentat", schema = "kirjeet")
 @Entity()
 public class LetterReplacement extends BaseEntity implements ReadableReplacement {
     private static final long serialVersionUID = 1L;
@@ -59,21 +60,20 @@ public class LetterReplacement extends BaseEntity implements ReadableReplacement
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-    
+
     @Column(name = "json_arvo")
     private String jsonValue = null;
 
-    
     public LetterBatch getLetterBatch() {
-		return letterBatch;
-	}
+        return letterBatch;
+    }
 
-	public void setLetterBatch(LetterBatch letterBatch) {
-		this.letterBatch = letterBatch;
-	}
+    public void setLetterBatch(LetterBatch letterBatch) {
+        this.letterBatch = letterBatch;
+    }
 
     @Override
-	public String getName() {
+    public String getName() {
         return name;
     }
 
@@ -116,11 +116,10 @@ public class LetterReplacement extends BaseEntity implements ReadableReplacement
         this.jsonValue = jsonValue;
     }
 
-	@Override
-	public String toString() {
-		return "LetterReplacement [name="+ name + ", defaultValue=" + defaultValue + ", mandatory="
-				+ mandatory + ", timestamp=" + timestamp + "]";
-	}
+    @Override
+    public String toString() {
+        return "LetterReplacement [name=" + name + ", defaultValue=" + defaultValue + ", mandatory=" + mandatory + ", timestamp=" + timestamp + "]";
+    }
 
     @Transient
     public Object getEffectiveValue(ObjectMapper mapper) throws IOException {

@@ -1,4 +1,5 @@
 <div class="container-fluid">
+	<div auth="crudOph">
     <div class="row">
         <div class="span12">
             <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
@@ -6,14 +7,14 @@
     </div>
     <div class="row">
         <div class="span12">
-            <h2>Muokkaa kirjepohjaa</h2>
+            <h2>{{'template.header.edit.template' | i18n}}</h2>
         </div>
     </div>
     <div class="row">
         <div class="span12">
             <form novalidate="novalidate" class="form-horizontal">
                 <form-item label="Haku:">
-                    <p>Korkeakoulujen yhteishaku, syksy 2014</p>
+                    <p>{{applicationTargetForDisplay}}</p>
                 </form-item>
                 <form-item label="Kirjeen tyyppi:">
                     <p>{{template.name}}</p>
@@ -22,9 +23,9 @@
                     <p>{{template.language}}</p>
                 </form-item>
                 <form-item label="Tila:">
-                    <p>{{template.state}}, tallennettu {{template.timestamp | date:'d.M.yyyy H:mm'}}, {{saverName}}</p>
+                    <p>{{template.state}}, {{'common.saved' | i18n}} {{template.timestamp | date:'d.M.yyyy H:mm'}}, {{saverName}}</p>
                 </form-item>
-                <h4>Varsinainen kirje</h4>
+                <h4>{{'template.text.actual.letter' | i18n}}</h4>
                 <div ng-repeat="repl in contentReplacements | orderBy:orderNumber">
                 	<form-item label="{{repl.name}}" subnote="{{repl.description}}">
                 	
@@ -45,5 +46,6 @@
         <div class="span12">
             <button-group buttons="buttons" button-class="inline-operation btn btn-small margin-right-half"></button-group>
         </div>
+    </div>
     </div>
 </div>

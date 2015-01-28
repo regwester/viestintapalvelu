@@ -49,7 +49,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
 
         function doDownload(id) {
             return function () {
-                $window.location.href = _dokumenttiServiceLocation + "/lataa/" + id;
+                $window.location.href = _dokumenttiServiceLocation + "/lataa/" + id.batchId;
             }
         }
 
@@ -70,7 +70,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncStatus(id) {
-            return $http.get(letter + "async/letter/status/" + id).
+            return $http.get(letter + "async/letter/status/" + id.batchId).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async status -kutsu epäonnistui: " + data);
@@ -78,7 +78,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function languageOptions(id) {
-            return $http.get(letter + "languageOptions/" + id).
+            return $http.get(letter + "languageOptions/" + id.batchId).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Kielivaihtoehtojen haku epäonnistui: " + data);
@@ -86,7 +86,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function sendEmail(id) {
-            return $http.post(letter + "emailLetterBatch/" + id).
+            return $http.post(letter + "emailLetterBatch/" + id.batchId).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Sähköpostiviestin lähetys kirjelähetykselle " + id + " epäonnistui: " + data);
@@ -96,7 +96,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         function previewEmail(id, langCode) {
             if (langCode) {
                 var lc = langCode;
-                $http.get(letter + 'previewLetterBatchEmail/' + id + "?language=" + lc).success(function () {
+                $http.get(letter + 'previewLetterBatchEmail/' + id.batchId + "?language=" + lc).success(function () {
                     $window.location = letter + 'previewLetterBatchEmail/' + id + "?language=" + lc;
                 }).error(function () {
                     $window.alert("Ei löytynyt kielellä " + lc);

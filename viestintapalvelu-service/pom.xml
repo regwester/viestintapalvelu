@@ -28,7 +28,13 @@
             <artifactId>common</artifactId>
             <version>${project.version}</version>
         </dependency>
-
+        
+        <dependency>
+          <groupId>fi.vm.sade.viestintapalvelu</groupId>
+          <artifactId>viestintapalvelu-api</artifactId>
+          <version>${project.version}</version>
+        </dependency>
+        
         <!-- Henkilöpalvelu -->
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>

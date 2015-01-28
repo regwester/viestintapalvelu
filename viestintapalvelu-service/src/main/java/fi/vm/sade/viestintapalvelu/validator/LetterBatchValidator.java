@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.validator;
 
 import java.util.HashMap;
@@ -7,7 +22,7 @@ import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import fi.vm.sade.viestintapalvelu.letter.dto.AddressLabelDetails;
+import fi.vm.sade.viestintapalvelu.api.address.AddressLabelDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 
@@ -43,10 +58,10 @@ public class LetterBatchValidator {
             } catch (Throwable t) {
                 String key = null;
                 if (letter.getTemplateReplacements() != null) {
-                    key = (String)letter.getTemplateReplacements().get("hakemusOid");
+                    key = (String) letter.getTemplateReplacements().get("hakemusOid");
                 }
                 if (key == null) {
-                    key = " " + letter.getAddressLabel().getFirstName() + " " +letter.getAddressLabel().getLastName();
+                    key = " " + letter.getAddressLabel().getFirstName() + " " + letter.getAddressLabel().getLastName();
                 }
                 result.put(key, t.getMessage());
             }

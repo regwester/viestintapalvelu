@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.util.Date;
@@ -13,23 +28,7 @@ import javax.persistence.TemporalType;
 
 import fi.vm.sade.generic.model.BaseEntity;
 
-/*
-CREATE TABLE kirjeet.luonnoskorvauskentat (
-  id bigint NOT NULL,
-  version bigint NOT NULL,
-  nimi character varying(255),
-  oletus_arvo character varying(3000),
-  aikaleima timestamp without time zone,
-  pakollinen boolean,
-  luonnos_id bigint,
-  CONSTRAINT luonnoskorvauskentat_pk PRIMARY KEY (id),
-  CONSTRAINT korvauskentat_luonnos_id_fkey FOREIGN KEY (luonnos_id)
-      REFERENCES kirjeet.luonnos (id) MATCH SIMPLE
-      ON UPDATE NO ACTION ON DELETE NO ACTION
-) 
- */
-
-@Table(name = "luonnoskorvauskentat", schema= "kirjeet")
+@Table(name = "luonnoskorvauskentat", schema = "kirjeet")
 @Entity()
 public class DraftReplacement extends BaseEntity {
 
@@ -51,7 +50,7 @@ public class DraftReplacement extends BaseEntity {
     @Column(name = "aikaleima", nullable = false)
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamp;
-    
+
     public String getName() {
         return name;
     }
@@ -77,14 +76,14 @@ public class DraftReplacement extends BaseEntity {
     }
 
     public Draft getDraft() {
-		return draft;
-	}
+        return draft;
+    }
 
-	public void setDraft(Draft draft) {
-		this.draft = draft;
-	}
+    public void setDraft(Draft draft) {
+        this.draft = draft;
+    }
 
-	public Date getTimestamp() {
+    public Date getTimestamp() {
         return timestamp;
     }
 
@@ -92,11 +91,10 @@ public class DraftReplacement extends BaseEntity {
         this.timestamp = timestamp;
     }
 
-	@Override
-	public String toString() {
-		return "Replacement [draft=" + draft + ", name=" + name
-				+ ", defaultValue=" + defaultValue + ", mandatory=" + mandatory
-				+ ", timestamp=" + timestamp + "]";
-	}
+    @Override
+    public String toString() {
+        return "Replacement [draft=" + draft + ", name=" + name + ", defaultValue=" + defaultValue + ", mandatory=" + mandatory + ", timestamp=" + timestamp
+                + "]";
+    }
 
 }

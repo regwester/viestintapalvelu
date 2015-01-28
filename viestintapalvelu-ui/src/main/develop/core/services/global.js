@@ -10,7 +10,7 @@ angular.module('core.services').factory('Global', function () {
                 if (window.myroles[i].indexOf('LANG_') == 0) {
                     lang = window.myroles[i].substring(5);
                     if (['fi', 'sv', 'en'].indexOf(lang) != -1) { // returns index or -1 if lang is not in array
-                        return lang;
+                        return 'fi'; //default to finnish in anycase
                     }
                 }
             }

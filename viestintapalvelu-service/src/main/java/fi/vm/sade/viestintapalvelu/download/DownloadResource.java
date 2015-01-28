@@ -1,3 +1,18 @@
+/**
+ * Copyright (c) 2014 The Finnish Board of Education - Opetushallitus
+ *
+ * This program is free software:  Licensed under the EUPL, Version 1.1 or - as
+ * soon as they will be approved by the European Commission - subsequent versions
+ * of the EUPL (the "Licence");
+ *
+ * You may not use this work except in compliance with the Licence.
+ * You may obtain a copy of the Licence at: http://www.osor.eu/eupl/
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * European Union Public Licence for more details.
+ **/
 package fi.vm.sade.viestintapalvelu.download;
 
 import static javax.ws.rs.core.MediaType.APPLICATION_JSON;
@@ -30,7 +45,7 @@ import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 @Service
 @Singleton
 @Path(Urls.DOWNLOAD_RESOURCE_PATH)
-@Api (value="/" + Urls.API_PATH + "/" + Urls.DOWNLOAD_RESOURCE_PATH, description = "Valmiin PDF/ZIP-tiedoston haku")
+@Api(value = "/" + Urls.API_PATH + "/" + Urls.DOWNLOAD_RESOURCE_PATH, description = "Valmiin PDF/ZIP-tiedoston haku")
 public class DownloadResource {
     private DownloadCache downloadCache;
 
@@ -56,8 +71,9 @@ public class DownloadResource {
     @GET
     @Path("/{documentId}")
     @ApiOperation(value = "Lataa valmis PDF/ZIP-tiedosto", notes = "Lataa valmis PDF/ZIP-tiedosto kirje- tai osoitetarra-palveluiden palauttamalla dokumentin tunnisteella")
-    @ApiResponses(@ApiResponse(code = 400, message = "BAD_REQUEST; annetulla ID:llä ei löydy ladattavaa dokumenttia"))    
-    public Response download(@ApiParam(value = "Ladattavan dokumentin ID", required = true) @PathParam("documentId") String input, @Context HttpServletResponse response) {
+    @ApiResponses(@ApiResponse(code = 400, message = "BAD_REQUEST; annetulla ID:llä ei löydy ladattavaa dokumenttia"))
+    public Response download(@ApiParam(value = "Ladattavan dokumentin ID", required = true) @PathParam("documentId") String input,
+            @Context HttpServletResponse response) {
         Download download = downloadCache.get(FilenameHelper.withoutExtension(input));
         if (download == null) {
             return Response.status(Status.BAD_REQUEST).build();

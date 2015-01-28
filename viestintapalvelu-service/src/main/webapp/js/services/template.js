@@ -15,22 +15,6 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         function getExample(name) {
             return $http.get(templateUrl + 'exampleFiles/' + name);
         }
-        
-        function getTemplateFiles() {
-            return $http.get(templateUrl + 'partialFiles');
-        }
-
-        function getReplacementFiles() {
-            return $http.get(templateUrl + 'replacementFiles');
-        }
-
-        function getStyleFiles() {
-            return $http.get(templateUrl + 'styleFiles');
-        }
-
-        function createTemplate(params) {
-            return $http.get(templateUrl + 'get', {params: params});
-        }
 
         function saveTemplate(template) {
             return $http.post(templateUrl + 'insert', template);
@@ -75,10 +59,6 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
             getNames: getNames,
             getExampleFiles: getExampleFiles,
             getExample: getExample,
-            getTemplateFiles: getTemplateFiles,
-            getReplacementFiles: getReplacementFiles,
-            getStyleFiles: getStyleFiles,
-            createTemplate: createTemplate,
             saveTemplate: saveTemplate,
             getByName: getByName,
             getHistory: getHistory,

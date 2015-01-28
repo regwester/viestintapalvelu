@@ -25,11 +25,10 @@ import fi.vm.sade.viestintapalvelu.template.TemplateInfo;
  *
  */
 public interface TemplatesByApplicationPeriodConverter {
-    
-    
+
     TemplatesByApplicationPeriod convert(String applicationPeriod, List<Template> publisheds, List<Template> drafts, List<Template> closeds);
-    
+
     TemplateInfo convert(Template template);
-    
+
     List<TemplateInfo> convert(List<Template> templates);
 }
