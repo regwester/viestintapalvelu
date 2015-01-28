@@ -42,3 +42,51 @@ Alla olevassa taulukossa on kerrottu tärkeimmät palvelussa käytetyt teknologi
 
 ### Lisätietoja
 Täydellinen tekninen dokumentaatio löytyy [tämän](https://confluence.oph.ware.fi/confluence/pages/viewpage.action?pageId=18186424) linkin takaa.
+
+### Ulkoiset integraatiot
+
+Iposti
+Cybercom mailcannon - smtp-palvelu
+Kansalaisen asiointitili (ei vielä käytössä, 28.1.2015)
+
+### OPH integraatiot
+
+Viestipalvelu käyttää:
+* organisaatiopalvelu
+* henkilöpalvelu
+
+Viestipalvelua käytetään:
+* Osoitepalvelu
+
+# Kehitysympäristön kasaus
+* jdk 1.7
+* mvn test
+* oph-configuration hakemistossa:
+
+    ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestintapalvelu.properties.template ryhmasahkopostipalvelu.properties
+    ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestintapalvelu.properties.template viestintapalvelu.properties
+
+* mvn generate-sources
+
+* lisää viestipalvelu-service:n alta source-hakemisto target/generated-sources/java target/generated-sources/wsimport
+
+* konfiguroi tomcat vm-parameterit
+-Duser.home="/home/jkorkala/oph-configuration-dev/"
+-Dlog4j.debug=true -XX:MaxPermSize=512m
+-Dlog4j.configuration="file:///home/jkorkala/oph-configuration-dev/oph-configuration/log4j.properties"
+
+* lisää 4 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
+
+* lisää tomcat conf/context.xml
+
+    <Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
+        driverClassName="org.postgresql.Driver"
+        url="jdbc:postgresql://localhost:5432/viestinta?searchpath=kirjeet"
+        schema="kirjeet" username="oph" password="oph" maxActive="20" maxIdle="10"
+        maxWait="-1" />
+
+* Testiosoitteita:
+
+http://localhost:8080/viestintapalvelu/
+
+http://localhost:8080/viestintapalvelu-ui/initpage.jsp
