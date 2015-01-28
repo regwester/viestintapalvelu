@@ -108,7 +108,7 @@ ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.
 ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
 ryhmasahkopostipalvelu.templateService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
 ryhmasahkopostipalvelu.attachmentService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
-ryhmasahkoposti.from=opintopolku@oph.fi
+ryhmasahkoposti.from=noreply@opintopolku.fi
 # Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
 ryhmasahkoposti.default.template.name=osoitepalvelu_email
 ryhmasahkoposti.default.template.language=FI
