@@ -92,7 +92,7 @@ taulu:
 ```
 <Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
     driverClassName="org.postgresql.Driver"
-    url="jdbc:postgresql://localhost:5432/viestinta?searchpath=kirjeet"
+    url="jdbc:postgresql://taulu.hard.ware.fi:5432/viestinta?searchpath=kirjeet"
     schema="kirjeet" username="oph" password="oph" maxActive="20" maxIdle="10"
     maxWait="-1" />
 ```
