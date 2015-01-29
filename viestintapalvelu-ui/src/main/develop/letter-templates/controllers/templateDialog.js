@@ -5,7 +5,6 @@ angular.module('letter-templates')
         function($scope, $modalInstance, TemplateService, $state, _, $filter, Global) {
 
             //Default values
-            $scope.applicationTarget = TemplateService.getApplicationTarget();
             $scope.languageSelection = 'FI';
 
             TemplateService.getApplicationTargets().then(function(data) {
@@ -19,6 +18,11 @@ angular.module('letter-templates')
                     })
                     .value();
             });
+
+            (function initApplicationTarget() {
+                var target = TemplateService.getApplicationTarget();
+                $scope.applicationTarget = {name: TemplateService.getNameFromHaku(target), value: target.oid};
+            })();
 
             TemplateService.getBaseTemplates().success(function(base) {
                 base = retrieveNames(base);
