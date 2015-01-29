@@ -17,21 +17,12 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('TemplateTreeService', ['$resource', '$http','$q', '$filter', function ($resource, $http, $q, $filter) {
+    .factory('TemplateTreeService', ['$resource', '$http','$q', '$filter', 'TemplateService', function ($resource, $http, $q, $filter, TemplateService) {
 
         var serviceUrl = '/viestintapalvelu/api/v1/',
             organizationResUrl = serviceUrl + 'organizationhierarchy/',
             selectedApplicationTarget,
             deferred = $q.defer();
-
-        var map = function(fn, arr) {
-            var result = [];
-
-            arr.forEach(function(element) {
-                result.push(fn(element)) ;
-            });
-            return result;
-        };
 
         return {
 
@@ -58,15 +49,7 @@ angular.module('letter-templates')
 
                     var newRow = {};
 
-                    //TODO handle localization
-                    if(item.nimi && item.nimi.fi) {
-                        newRow[firstColum18nStr] = item.nimi.fi;
-                    } else if (item.nimi && item.nimi.sv) {
-                        newRow[firstColum18nStr] = item.nimi.sv;
-                    } else if (item.nimi && item.nimi.en) {
-                        newRow[firstColum18nStr] = item.nimi.en;
-                    }
-
+                    newRow[firstColum18nStr] = TemplateService.getNameFromHaku(item, "");
                     newRow["language"] = item.language;
                     newRow["state"] = item.state;
                     newRow["oid"] = item.oid;
@@ -74,7 +57,7 @@ angular.module('letter-templates')
                     var isLeaf = false;
                     if(item.children && item.children.length > 0) {
                         isLeaf = true;
-                        var childrenRows = map(parseData, item.children);
+                        var childrenRows = item.children.map(parseData);
                         newRow["children"] = childrenRows;
                     }
                     oidList.push({"oid": item.oid, "isLeaf": isLeaf});
@@ -85,7 +68,7 @@ angular.module('letter-templates')
                 var newData = [];
                 var dataArr = [];
                 dataArr.push(response.data[0]);
-                newData = map(parseData, dataArr);
+                newData = dataArr.map(parseData);
                 newData["firstColumnName"] = firstColumnDisplayName; //hack to get correct display name for the header
                 return {"tree": newData, "oids":oidList, "oidToRowMap": oidMap};
             },
@@ -124,14 +107,8 @@ angular.module('letter-templates')
                     if(hakukohde.tulokset) {
                         hakukohde.tulokset.forEach(function(tulos) {
                             var hakukohdeRow = tulos;
-
-                            if(tulos.nimi && tulos.nimi.fi) {
-                                hakukohdeRow[firstColum18nStr] = tulos.nimi.fi;
-                            } else if (tulos.nimi && tulos.nimi.sv) {
-                                hakukohdeRow[firstColum18nStr] = tulos.nimi.sv;
-                            } else if (tulos.nimi && tulos.nimi.en) {
-                                hakukohdeRow[firstColum18nStr] = tulos.nimi.en;
-                            }
+                            
+                            hakukohdeRow[firstColum18nStr] = TemplateService.getNameFromHaku(tulos, "");
                             hakukohdeRow["orgOid"] = orgOid;
                             hakukohdeRow["isHakukohde"] = true;
                             hakukohdeRow["type"] = $filter('i18n')('reportedletterlist.otsikko.hakukohde');
