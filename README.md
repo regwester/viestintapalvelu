@@ -68,21 +68,27 @@ ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestinta
 ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestintapalvelu.properties.template viestintapalvelu.properties
 ```
 
-* mvn generate-sources
-
-* lisää viestipalvelu-service:n alta source-hakemisto target/generated-sources/java target/generated-sources/wsimport
-
-* konfiguroi tomcat vm-parameterit
+* IDEA/ECLIPSE: konfiguroi tomcat vm-parametrit
 
 ```
 -Duser.home="/home/jkorkala/oph-configuration-dev/"
 -Dlog4j.debug=true -XX:MaxPermSize=512m
 -Dlog4j.configuration="file:///home/jkorkala/oph-configuration-dev/oph-configuration/log4j.properties"
 ```
-* lisää 4 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
+* lisää 3 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
 
 * lisää tomcat conf/context.xml
 
+localhost:
+```
+<Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
+    driverClassName="org.postgresql.Driver"
+    url="jdbc:postgresql://localhost:5432/viestinta?searchpath=kirjeet"
+    schema="kirjeet" username="oph" password="oph" maxActive="20" maxIdle="10"
+    maxWait="-1" />
+```
+
+taulu:
 ```
 <Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
     driverClassName="org.postgresql.Driver"
