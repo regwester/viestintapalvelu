@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state', '_', '$filter',
-        function($scope, $modalInstance, TemplateService, $state, _, $filter) {
+    .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state', '_', '$filter', 'Global',
+        function($scope, $modalInstance, TemplateService, $state, _, $filter, Global) {
 
             //Default values
             $scope.applicationTarget = TemplateService.getApplicationTarget();
@@ -44,7 +44,8 @@ angular.module('letter-templates')
 
             var processDefaultTemplates = function(templates) {
                 return _.map(templates, function(t) {
-                        return {id: t.id, name: $filter('i18n')('template.common.default.template'), type: t.name, language: t.language};
+                        var d = new Date(t.timestamp);
+                        return {id: t.id, name: $filter('i18n')('template.common.default.template'), type: t.name, language: t.language, time: d.toLocaleString(Global.getUserLanguage())};
                     });
             };
 
