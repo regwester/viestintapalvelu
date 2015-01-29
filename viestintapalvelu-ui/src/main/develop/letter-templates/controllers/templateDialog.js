@@ -32,7 +32,12 @@ angular.module('letter-templates')
             var retrieveNames = function(baseTemplates) {
                 return _.map(baseTemplates, function(template) {
                     var target = _.where($scope.applicationTargets, { 'value': template.oid});
-                    template.name = target[0].name;
+                    if(target[0]) {
+                        template.name = target[0].name;
+                    } else {
+                        template.name = "Tuntematon";
+                        template.type = "unknown";
+                    }
                     return template;
                 });
             };
