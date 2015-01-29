@@ -21,7 +21,10 @@ angular.module('letter-templates')
 
             (function initApplicationTarget() {
                 var target = TemplateService.getApplicationTarget();
-                $scope.applicationTarget = {name: TemplateService.getNameFromHaku(target), value: target.oid};
+                if(target) {
+                    $scope.applicationTarget = {name: TemplateService.getNameFromHaku(target), value: target.oid};
+                }
+
             })();
 
             TemplateService.getBaseTemplates().success(function(base) {
