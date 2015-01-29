@@ -60,7 +60,7 @@ Viestipalvelua käytetään:
 
 # Kehitysympäristön kasaus
 * jdk 1.7
-* mvn test
+* mvn clean test - huom: käyttää globaalisti asennettua boweria viestintapalvelu-ui buildaamiseen
 * oph-configuration hakemistossa:
 
     ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestintapalvelu.properties.template ryhmasahkopostipalvelu.properties
