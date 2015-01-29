@@ -60,7 +60,7 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
             });
 
             modalInstance.result.then(function() {
-            $state.go('letter-templates_overview');
+                $state.go('letter-templates.overview');
             });
         };
 
