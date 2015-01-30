@@ -46,7 +46,7 @@ var scripts = function() {
         .pipe(plumber())
         .pipe(sourcemaps.init())
             .pipe(concat('all.min.js'))
-            .pipe(uglify({outSourceMap: true}))
+         //   .pipe(uglify({outSourceMap: true}))
         .pipe(sourcemaps.write('./'))
         .pipe(gulp.dest(output.scripts));
 };

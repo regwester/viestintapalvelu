@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao;
 
+import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertEquals;
 
 import java.util.ArrayList;
@@ -88,6 +89,13 @@ public class DraftDAOTest {
 
         drafts = draftDAO.findByOrgOidsAndApplicationPeriod(oids, "appPeriod1");
         assertEquals(2, drafts.size());
+
+    }
+    
+    @Test
+    public void getfindDraftsByEmptyTagList() {
+        final List<Draft> byOrgOidsAndApplicationPeriod = draftDAO.findByOrgOidsAndApplicationPeriod(new ArrayList<String>(), "");
+        assertTrue(byOrgOidsAndApplicationPeriod.isEmpty());
 
     }
 }

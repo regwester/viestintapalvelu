@@ -188,6 +188,9 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
 
     @Override
     public List<Template> findByOrganizationOIDs(List<String> oids) {
+        if(oids == null || oids.isEmpty()) {
+            return new ArrayList<>();
+        }
         TypedQuery<Template> query = getEntityManager().createQuery("SELECT templ from Template templ WHERE organizationOid in :oids", Template.class);
         query.setParameter("oids", oids);
         return query.getResultList();

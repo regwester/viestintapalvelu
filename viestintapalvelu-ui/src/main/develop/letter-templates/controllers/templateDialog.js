@@ -1,11 +1,10 @@
 'use strict';
 
 angular.module('letter-templates')
-    .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state', '_', '$filter',
-        function($scope, $modalInstance, TemplateService, $state, _, $filter) {
+    .controller('TemplateDialogCtrl', ['$scope', '$modalInstance', 'TemplateService', '$state', '_', '$filter', 'Global',
+        function($scope, $modalInstance, TemplateService, $state, _, $filter, Global) {
 
             //Default values
-            $scope.applicationTarget = TemplateService.getApplicationTarget();
             $scope.languageSelection = 'FI';
 
             TemplateService.getApplicationTargets().then(function(data) {
@@ -20,6 +19,14 @@ angular.module('letter-templates')
                     .value();
             });
 
+            (function initApplicationTarget() {
+                var target = TemplateService.getApplicationTarget();
+                if(target) {
+                    $scope.applicationTarget = {name: TemplateService.getNameFromHaku(target), value: target.oid};
+                }
+
+            })();
+
             TemplateService.getBaseTemplates().success(function(base) {
                 base = retrieveNames(base);
                 TemplateService.getDefaultTemplates().success(function(def) {
@@ -32,14 +39,20 @@ angular.module('letter-templates')
             var retrieveNames = function(baseTemplates) {
                 return _.map(baseTemplates, function(template) {
                     var target = _.where($scope.applicationTargets, { 'value': template.oid});
-                    template.name = target[0].name;
+                    if(target[0]) {
+                        template.name = target[0].name;
+                    } else {
+                        template.name = "Tuntematon";
+                        template.type = "unknown";
+                    }
                     return template;
                 });
             };
 
             var processDefaultTemplates = function(templates) {
                 return _.map(templates, function(t) {
-                        return {id: t.id, name: $filter('i18n')('template.common.default.template'), type: t.name, language: t.language};
+                        var d = new Date(t.timestamp);
+                        return {id: t.id, name: $filter('i18n')('template.common.default.template'), type: t.name, language: t.language, time: d.toLocaleString(Global.getUserLanguage())};
                     });
             };
 
