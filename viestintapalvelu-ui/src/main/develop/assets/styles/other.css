@@ -689,3 +689,8 @@ input[type='text'].letterSearchField {
 .touchable {
   cursor: pointer;	
 }
+
+/* Push down virkailija-raamit */
+#application-wrapper {
+  margin-bottom: 150px;
+}
