@@ -3,7 +3,7 @@
   <parent>
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>13.2</version>
+    <version>13.3</version>
   </parent>
   <artifactId>viestintapalvelu-api</artifactId>
   <name>viestintapalvelu-api</name>
