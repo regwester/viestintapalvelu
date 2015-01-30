@@ -245,6 +245,9 @@ public class TemplateDAOTest {
 
         byOrganizationOIDs = templateDAO.findByOrganizationOIDs(oids);
         assertEquals(2, byOrganizationOIDs.size());
+        
+        oids = new ArrayList<>();
+        templateDAO.findByOrganizationOIDs(oids);
 
     }
 

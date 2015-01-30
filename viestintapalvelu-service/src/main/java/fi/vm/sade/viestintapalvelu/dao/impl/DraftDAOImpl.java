@@ -120,6 +120,9 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
 
     @Override
     public List<Draft> findDraftsByTags(List<String> tags) {
+        if(tags == null || tags.isEmpty()) {
+            return new ArrayList<>();
+        }
         try {
             final String findDrafts = "SELECT a FROM Draft a WHERE a.tag in :tags";
             TypedQuery<Draft> query = getEntityManager().createQuery(findDrafts, Draft.class);
