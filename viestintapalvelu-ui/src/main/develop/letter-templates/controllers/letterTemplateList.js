@@ -30,6 +30,11 @@ angular.module('letter-templates')
             };
 
             $scope.fetchDefaultTemplates();
+            $scope.changeRadioSelection = function() {
+                if($scope.radioSelection != 'applicationTarget') {
+                    TemplateService.setApplicationTarget("");
+                }
+            };
 
             $scope.$on("treeTemplateChanged", function(event, args) {
                 $scope.treeTemplate = args;
