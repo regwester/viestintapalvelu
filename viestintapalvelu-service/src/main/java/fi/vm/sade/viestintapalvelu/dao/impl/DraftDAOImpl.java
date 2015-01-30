@@ -108,6 +108,9 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
 
     @Override
     public List<Draft> findByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod) {
+        if(oids == null || oids.isEmpty()) {
+            return new ArrayList<>();
+        }
         final String querySql = "select a FROM Draft a where a.applicationPeriod = :applicationPeriod and a.organizationOid in :oids";
         TypedQuery<Draft> query = getEntityManager().createQuery(querySql, Draft.class);
         query.setParameter("applicationPeriod", applicationPeriod);
