@@ -1,10 +1,10 @@
 {
   "name": "jalkiohjauskirje",
-  "language": "FI",
+  "language": "SV",
   "description": null,
   "structure": {
     "name": "jalkiohjauskirje_rakenne",
-    "language": "FI",
+    "language": "SV",
     "description": null,
     "contentStructures": [
       {
@@ -45,16 +45,6 @@
           {
             "role": "attachment",
             "name": "sivu_2",
-            "contentType": "html"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_3",
-            "contentType": "html"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_4",
             "contentType": "html"
           }
         ]
