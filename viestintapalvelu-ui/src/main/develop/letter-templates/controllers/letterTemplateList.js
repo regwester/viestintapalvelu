@@ -66,12 +66,13 @@ angular.module('letter-templates')
                 TemplateService.setTarget(applicationTarget);
             }
 
-            $scope.getTemplates = function () {
+            $scope.getTemplates = function() {
                 if ($scope.radioSelection === 'default') {
                     return $scope.defaultTemplates;
                 } else if ($scope.radioSelection === 'applicationTarget') {
                     return $scope.applicationTemplates;
                 }
+                return '';
             };
 
             $scope.updateTemplatesList = function () {
@@ -148,6 +149,11 @@ angular.module('letter-templates')
             
             $scope.viewTemplate = function(templateId, state) {
                 $state.go('letter-templates_view', {'templateId': templateId, 'state': state});
+            };
+
+            $scope.noTemplates = function() {
+                console.log(($scope.radioSelection === 'applicationTarget') && $scope.applicationTarget !== "" && ($scope.getTemplates().length === 0))
+                return ($scope.radioSelection === 'applicationTarget') && $scope.applicationTarget !== "" && ($scope.getTemplates().length === 0);
             };
 
             $scope.removeTemplate = function (templateId, state) {

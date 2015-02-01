@@ -34,7 +34,6 @@
         </div>
     </div>
     <div class="row">
-        <div class="span12 margin-left-oneandquarter" ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="(radioSelection !== 'organization') && !getTemplates()"></div>
         <div class="span12" ng-show="(radioSelection !== 'organization') && getTemplates()">
             <table class="table table-striped">
                 <thead>
@@ -69,12 +68,14 @@
                 </tbody>
             </table>
         </div>
-        <div class="span12" ng-show="(radioSelection === 'applicationTarget') && !getTemplates() && applicationTarget">
+        <div class="span12" ng-show="noTemplates()">
             <h5 class="center help-text-bold" ng-bind="'template.text.zero.templates' | i18n"></h5>
             <p class="center help-text margin-bottom-one" ng-bind="'template.text.add.new.template' | i18n"></p>
-            <button class="center btn btn-primary" ng-click="openCreateDialog()" ng-bind="'common.btn.create.new' | i18n"><i class="icon-plus-sign margin-right-half"></i></button>
+            <button auth="crudOph" class="center btn btn-primary" ng-click="openCreateDialog()">
+                <i class="icon-plus-sign margin-right-half"></i>
+                <span>{{'common.btn.create.new' | i18n}}</span>
+            </button>
         </div>
-        <!--<div ng-include="'views/letter-templates/views/partials/emptyListMessage.html'" ng-show="true"/>-->
         <div ng-controller="TemplateController" class="span12" ng-show="radioSelection === 'organization'">
             <div class="control-group">
                 <select ng-model="selectedApplicationPeriod" ng-change="updateTreeData(selectedApplicationPeriod)" ng-options="Object.name for Object in applicationPeriodList" class="selectpicker span6 placeholder">
