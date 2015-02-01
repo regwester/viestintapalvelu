@@ -21,7 +21,7 @@
     <parent>
         <artifactId>viestintapalvelu</artifactId>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
-        <version>14</version>
+        <version>14.1</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <packaging>jar</packaging>
