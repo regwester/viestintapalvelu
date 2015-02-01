@@ -19,6 +19,7 @@ import com.wordnik.swagger.annotations.ApiModel;
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
 import java.io.Serializable;
+import java.util.Date;
 
 @ApiModel("Kirjepohjan tiedot kirjepohjan valintaa varten")
 public class TemplateListing implements Serializable {
@@ -40,12 +41,17 @@ public class TemplateListing implements Serializable {
     @ApiModelProperty("Haun nimi")
     public final String name;
 
-    public TemplateListing(Long id, String oid, String type, String language, String name) {
+    @ApiModelProperty(value = "Kirjepohjan tallennusaika")
+    private Date timestamp;
+
+    
+    public TemplateListing(Long id, String oid, String type, String language, String name, Date timestamp) {
         this.id = id;
         this.oid = oid;
         this.type = type;
         this.name = name;
         this.language = language;
+        this.timestamp = timestamp;
     }
 
 }
