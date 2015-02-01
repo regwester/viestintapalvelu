@@ -42,7 +42,7 @@ public class TemplateListing implements Serializable {
     public final String name;
 
     @ApiModelProperty(value = "Kirjepohjan tallennusaika")
-    private Date timestamp;
+    public final Date timestamp;
 
     
     public TemplateListing(Long id, String oid, String type, String language, String name, Date timestamp) {
