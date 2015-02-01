@@ -75,7 +75,7 @@ ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestinta
 -Dlog4j.debug=true -XX:MaxPermSize=512m
 -Dlog4j.configuration="file:///home/jkorkala/oph-configuration-dev/oph-configuration/log4j.properties"
 ```
-* lisää 3 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
+* IDEA/ECLIPSE: lisää 3 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
 
 * lisää tomcat conf/context.xml
 
@@ -97,8 +97,32 @@ taulu:
     maxWait="-1" />
 ```
 
+* IDEA/ECLIPSE: lisää themes projektin alta virkailija-raamit war projekti /virkailija-raamit tomcat:iin
+
+* Käyttöliittymä näkyvissä @ http://localhost:8080/viestintapalvelu-ui/
+
 # Testiosoitteita:
 
 * http://localhost:8080/viestintapalvelu/
+** viestintapalveluservice paketin testi ja ylläpitokäyttöliittymä
+** viestipohja-jsonien tuonti (Mallien tuonti) ja hakulinkitys
+** Letter
+**
 
 * http://localhost:8080/viestintapalvelu-ui/initpage.jsp
+** sähköpostin lähetyksen testaus ilman osoitepalvelua
+** muuten käytetään raamit > Osoitepalvelun kautta
+
+* https://itest-virkailija.oph.ware.fi/viestintapalvelu-ui/#/reportMessages/list
+* https://itest-virkailija.oph.ware.fi/viestintapalvelu-ui/#/reportLetters
+* https://itest-virkailija.oph.ware.fi/viestintapalvelu-ui/#/letter-templates (ei vielä käytössä 30.1.2015)
+
+http://localhost:8080/ryhmasahkoposti-service/swagger/index.html
+http://localhost:8080/viestintapalvelu/swagger/index.html
+
+# Ajastettuja prosesseja
+
+Tsekkaa spring/application-context.xml:t
+
+* ryhmasahkoposti: EmailServiceImpl, DailyTaskRunnerImpl
+* viestintapalvelu: ServiceRecoveryHandler
