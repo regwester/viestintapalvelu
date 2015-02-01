@@ -198,7 +198,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
 
     @Override
     public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames() {
-        String queryStr = "SELECT new fi.vm.sade.viestintapalvelu.template.TemplateListing(a.id, b.id.applicationPeriod, a.name, a.language, b.name) FROM Template a, TemplateApplicationPeriod b WHERE a.id = b.id.templateId AND a.state = 'julkaistu'";
+        String queryStr = "SELECT new fi.vm.sade.viestintapalvelu.template.TemplateListing(a.id, b.id.applicationPeriod, a.name, a.language, b.name, a.timestamp) FROM Template a, TemplateApplicationPeriod b WHERE a.id = b.id.templateId AND a.state = 'julkaistu'";
         TypedQuery<TemplateListing> query = getEntityManager().createQuery(queryStr, TemplateListing.class);
         return query.getResultList();
     }
