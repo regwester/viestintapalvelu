@@ -24,7 +24,7 @@
             </select>
         </div>
         <div ng-if="applicationTypeSelection && languageSelection">
-            <select class="full-width" ng-model="baseTemplate" ng-options="t as t.name for t in baseTemplates | orderBy: 'name' | filter: {language: languageSelection} | filter: {type: applicationTypeSelection}" ng-change="selectBase(baseTemplate)">
+            <select class="full-width" ng-model="baseTemplate" ng-options="t as (t.name + ' - ' + t.timestamp ) for t in baseTemplates | orderBy: 'name' | filter: {language: languageSelection} | filter: {type: applicationTypeSelection}" ng-change="selectBase(baseTemplate)">
             </select>
         </div>
         <p class="subnote" ng-bind="'template.info.text.template.base' | i18n"></p>

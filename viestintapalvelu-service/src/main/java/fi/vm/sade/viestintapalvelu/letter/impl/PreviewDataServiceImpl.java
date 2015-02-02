@@ -77,7 +77,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             String region = "Dummy region";
             String country = addressline3;
             String countrycode = cou.get(1);
-            AddressLabel addresslabel = new AddressLabel(firstname, lastname, addressline, addressline2, addressline3, postalcode, city, region, country,
+            AddressLabel addresslabel = new AddressLabel(firstname, lastname, addressline, null, null, postalcode, city, region, country,
                     countrycode);
 
             Letter letter = new Letter(addresslabel, null, null, getTemplateReplacements(template), "email@foo.bar");
@@ -169,8 +169,8 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             address.setFirstName(firstname);
             address.setLastName(lastname);
             address.setAddressline(addressline);
-            address.setAddressline2(addressline2);
-            address.setAddressline3(addressline3);
+            //address.setAddressline2(addressline2);
+            //address.setAddressline3(addressline3);
             address.setPostalCode(postalcode);
             address.setCity(city);
             address.setRegion(region);
@@ -185,12 +185,12 @@ public class PreviewDataServiceImpl implements PreviewDataService {
     }
 
     private Set<LetterReceiverReplacement> getLetterReceiverReplacements(LetterReceivers receivers) {
-        Set<LetterReceiverReplacement> receiverrelpacements = new HashSet<>();
+        Set<LetterReceiverReplacement> receiverreplacements = new HashSet<>();
         LetterReceiverReplacement receiverReplacement = new LetterReceiverReplacement();
         receiverReplacement.setTimestamp(new Date());
         receiverReplacement.setLetterReceivers(receivers);
-        receiverrelpacements.add(receiverReplacement);
-        return receiverrelpacements;
+        receiverreplacements.add(receiverReplacement);
+        return receiverreplacements;
     }
 
     private LetterReceiverLetter getLetterReceiverLetter() {

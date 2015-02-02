@@ -20,6 +20,7 @@ import java.util.*;
 
 import javax.ws.rs.NotFoundException;
 
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -297,8 +298,9 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         for (ReadableReplacement replacement : replacements) {
             if (TemplateEmailField.BODY.getFieldName().equals(replacement.getName())) {
                 message.setBody(replacement.getDefaultValue());
-            } else if (TemplateEmailField.SUBJECT.getFieldName().equals(replacement.getName())) {
-                message.setSubject(replacement.getDefaultValue());
+            } else if (TemplateEmailField.SUBJECT.getFieldName().equals(replacement.getName()) 
+                    && replacement.getDefaultValue() != null) {
+                message.setSubject(StringEscapeUtils.unescapeHtml(replacement.getDefaultValue()));
             }
             ReplacementDTO replacementDto = new ReplacementDTO();
             replacementDto.setDefaultValue(replacement.getDefaultValue());
