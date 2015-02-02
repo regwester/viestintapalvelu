@@ -17,8 +17,7 @@ angular.module('letter-templates')
                     responseType: 'arraybuffer'
                 }).success(function (data, status, headers, config) {
                     var blob = new Blob([data], {type: "application/pdf"});
-                    var objectUrl = URL.createObjectURL(blob);
-                    $window.open(objectUrl);
+                    saveAs(blob, "preview.pdf");
                 }).error(function (data, status, headers, config) {
 
                 });
@@ -35,10 +34,10 @@ angular.module('letter-templates')
                     },
                     responseType: 'arraybuffer'
                 }).success(function (data, status, headers, config) {
-                    var blob = new Blob([data], {type: "text/plain"});
-                    var objectUrl = URL.createObjectURL(blob);
-                    $window.open(objectUrl);
+                    var blob = new Blob([data], {type: "text/plain;charset=utf-8"});
+                    saveAs(blob, "preview.eml");
                 }).error(function (data, status, headers, config) {
+                
                 });
             }
         }
