@@ -20,7 +20,7 @@
     <parent>
         <artifactId>viestintapalvelu</artifactId>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
-        <version>14.4</version>
+        <version>14.5</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
     <modelVersion>4.0.0</modelVersion>
