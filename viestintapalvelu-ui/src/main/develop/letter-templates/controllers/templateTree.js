@@ -164,57 +164,9 @@ angular.module('letter-templates')
 
     }]);
 
-angular.module('letter-templates').controller('DraftEditDialog',
-    ['$scope', '$modalInstance', 'applicationPeriod', 'hakukohde', 'TemplateService', '$state',
-        function ($scope, $modalInstance, applicationPeriod, hakukohde, TemplateService, $state) {
-
-            $scope.languages = [
-                {value: 'FI', text: 'suomi'},
-                {value: 'SV', text: 'ruotsi'},
-                {value: 'EN', text: 'englanti'}
-            ];
-            $scope.applicationTypes = [
-                {value: 'koekutsukirje', text: 'Koekutsukirje'},
-                {value: 'hyvaksymiskirje', text: 'Hyväksymiskirje'},
-                {value: 'jalkiohjauskirje', text: 'Jälkiohjauskirje'}];
-
-            $scope.languageSelection = "FI";
-
-            $scope.baseTemplates = [];
-            TemplateService.getBaseTemplates().success(function(data) {
-                $scope.baseTemplates = data;
-            });
-
-            $scope.template = TemplateService.getTemplate();
-            $scope.baseTemplate = TemplateService.getBase();
-            $scope.selectedApplicationPeriod = applicationPeriod;
-            $scope.hakukohde = hakukohde;
-            $scope.hakukohdeNimi = TemplateService.getNameFromHaku(hakukohde, '');
-            $scope.templateSelection = {};
-
-            $scope.cancel = function () {
-                $modalInstance.dismiss('cancel');
-            };
-
-            $scope.selectBase = function(template) {
-                $scope.templateSelection = template;
-            };
-
-            $scope.confirm = function() {
-                $modalInstance.close();
-                $state.go('letter-templates_draft_create',{
-                    'templatename': $scope.templateSelection.type,
-                    'language': $scope.languageSelection,
-                    'orgoid': $scope.hakukohde.orgOid,
-                    'applicationPeriod': $scope.selectedApplicationPeriod.oid,
-                    'fetchTarget': $scope.hakukohde.fetchTarget
-                });
-            };
-        }]);
-
 angular.module('letter-templates').controller('DraftCreationDialog',
-['$scope', '$modalInstance', 'applicationPeriod', 'hakukohde', 'TemplateService', '$state',
-function ($scope, $modalInstance, applicationPeriod, hakukohde, TemplateService, $state) {
+['$scope', '$modalInstance', 'applicationPeriod', 'hakukohde', 'TemplateService', '$state', '$filter', 'Global',
+function ($scope, $modalInstance, applicationPeriod, hakukohde, TemplateService, $state, $filter, Global) {
 
     $scope.languages = [
         {value: 'FI', text: 'suomi'},
@@ -228,10 +180,46 @@ function ($scope, $modalInstance, applicationPeriod, hakukohde, TemplateService,
 
     $scope.languageSelection = "FI";
 
-    $scope.baseTemplates = [];
-    TemplateService.getBaseTemplates().success(function(data) {
-        $scope.baseTemplates = data;
+    TemplateService.getApplicationTargets().then(function(data) {
+        $scope.applicationTargets = _.chain(data)
+            .map(function(elem) {
+                var name = TemplateService.getNameFromHaku(elem);
+                return {name: name, value: elem.oid};
+            })
+            .filter(function(elem) {
+                return elem.name;
+            })
+            .value();
     });
+
+    TemplateService.getBaseTemplates().success(function(base) {
+        base = retrieveNames(base);
+        TemplateService.getDefaultTemplates().success(function(def) {
+            var defaultTemplates = processDefaultTemplates(def);
+            Array.prototype.push.apply(defaultTemplates, base);
+            $scope.baseTemplates = defaultTemplates;
+        });
+    });
+
+    var retrieveNames = function(baseTemplates) {
+        return _.map(baseTemplates, function(template) {
+            var target = _.where($scope.applicationTargets, {'value': template.oid});
+            if(target[0]) {
+                template.name = target[0].name;
+            } else {
+                template.name = "Tuntematon";
+                template.type = "unknown";
+            }
+            return template;
+        });
+    };
+
+    var processDefaultTemplates = function(templates) {
+        return _.map(templates, function(t) {
+                var d = new Date(t.timestamp);
+                return {id: t.id, name: $filter('i18n')('template.common.default.template'), type: t.name, language: t.language, time: d.toLocaleString(Global.getUserLanguage())};
+            });
+    };
 
     $scope.template = TemplateService.getTemplate();
     $scope.baseTemplate = TemplateService.getBase();
@@ -239,6 +227,7 @@ function ($scope, $modalInstance, applicationPeriod, hakukohde, TemplateService,
     $scope.hakukohde = hakukohde;
     $scope.hakukohdeNimi = TemplateService.getNameFromHaku(hakukohde, '');
     $scope.templateSelection = {};
+    $scope.applicationTarget = {name: $scope.hakukohdeNimi, value: $scope.hakukohde.oid};
 
     $scope.cancel = function () {
         $modalInstance.dismiss('cancel');

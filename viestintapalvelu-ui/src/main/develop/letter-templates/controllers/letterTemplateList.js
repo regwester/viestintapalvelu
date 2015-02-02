@@ -152,7 +152,6 @@ angular.module('letter-templates')
             };
 
             $scope.noTemplates = function() {
-                console.log(($scope.radioSelection === 'applicationTarget') && $scope.applicationTarget !== "" && ($scope.getTemplates().length === 0))
                 return ($scope.radioSelection === 'applicationTarget') && $scope.applicationTarget !== "" && ($scope.getTemplates().length === 0);
             };
 
