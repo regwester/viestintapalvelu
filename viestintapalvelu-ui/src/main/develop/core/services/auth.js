@@ -7,7 +7,7 @@ angular.module('core.services').factory('RightsModel', ['$q', 'PersonService', f
         PersonService.getRights().success(function(result) {
             instance = result;
             deferred.resolve(instance);
-        });
+        }).then(function(result) {});
 
         return instance;
     })();
