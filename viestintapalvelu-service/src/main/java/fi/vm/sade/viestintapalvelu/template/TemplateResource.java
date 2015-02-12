@@ -117,6 +117,14 @@ public class TemplateResource extends AsynchronousResource {
     private static final String DEFAULT_TEMPLATES = "Palauttaa oletus kirjepohjat annetun tilan mukaan";
     private static final String TEMPLATES_BY_HAKU = "Hakee kirjepohjat hakutunnisteen ja tilan perusteella";
 
+    @GET
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
+    @Path("/ok")
+    @Produces("application/json")
+    public Response ok() {
+        return Response.status(Status.OK).build();
+    }
+    
     /**
      * @param organizationIds
      *            list of organization ids of templates
