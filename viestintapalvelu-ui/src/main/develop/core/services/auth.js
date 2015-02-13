@@ -4,10 +4,10 @@ angular.module('core.services').factory('RightsModel', ['$q', 'PersonService', f
     var factory = (function() {
         var instance = {};
 
-        PersonService.getRights().then(function(result) {
+        PersonService.getRights().success(function(result) {
             instance = result;
             deferred.resolve(instance);
-        }).then(function(result) {});
+        });
 
         return instance;
     })();
