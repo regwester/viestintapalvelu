@@ -5,12 +5,12 @@ angular.module('core.services').directive('auth', ['$timeout', 'AuthService', fu
             element.addClass('ng-hide');
 
             var success = function() {
-        	element.removeClass('ng-hide');
+               element.removeClass('ng-hide');
             };
             
             $timeout(function() {
                 switch (attrs.auth) {
-
+                
                 case "crudOph":
                     AuthService.crudOph().then(success);
                     break;
@@ -19,7 +19,7 @@ angular.module('core.services').directive('auth', ['$timeout', 'AuthService', fu
                     break;
             	case "crudOrg":
             	    AuthService.crudDraftOrg(attrs.authOrg).then(success);
-                break;
+                    break;
                 }
             }, 0);
             

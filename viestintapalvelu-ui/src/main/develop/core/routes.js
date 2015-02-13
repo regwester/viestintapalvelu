@@ -3,7 +3,8 @@
 angular.module('core')
     .config(['$stateProvider', '$urlRouterProvider',
         function ($stateProvider, $urlRouterProvider) {
-            $urlRouterProvider.otherwise('/email');
+            
+            //$urlRouterProvider.otherwise('/email');
 
             var emailUrl = 'views/email/views/';
             var reportUrl = 'views/report/views/';
@@ -62,11 +63,16 @@ angular.module('core')
                 })
                 .state('letter-templates', {
                     abstract: true,
-                    url: '/letter-templates',
+                    url: '/letter-templates-ui',
                     templateUrl: templateUrl + 'index.html',
                     controller: 'LetterTemplateIndexCtrl as IndexCtrl'
                 })
-                    .state('letter-templates.overview', {
+                .state('letter-templatesinit', {
+                    url: '/letter-templates',
+                    templateUrl: templateUrl + 'blank.html',
+                    controller: 'ValiController'
+                })
+                .state('letter-templates.overview', {
                         url: '',
                         views: {
                             overview: {
