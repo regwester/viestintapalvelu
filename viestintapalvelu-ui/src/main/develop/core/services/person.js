@@ -10,9 +10,6 @@ angular.module('core.services').factory('PersonService', ['$http', function ($ht
 	},
 	getRights : function() {
 	    return $http({method:"GET", withCredentials:true, url:serviceUrl + 'person/userRights'});
-	},
-	ok : function() {
-	    return $http({method:"GET", withCredentials:true, url:serviceUrl + 'template/ok'});
 	}
     } 
 }]);
