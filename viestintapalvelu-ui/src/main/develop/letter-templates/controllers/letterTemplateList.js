@@ -152,7 +152,7 @@ angular.module('letter-templates')
             };
 
             $scope.noTemplates = function() {
-                return ($scope.radioSelection === 'applicationTarget') && $scope.applicationTarget !== "" && ($scope.getTemplates().length === 0);
+                return ($scope.radioSelection === 'applicationTarget') && $scope.applicationTarget !== "" && ($scope.getTemplates() && $scope.getTemplates().length === 0);
             };
 
             $scope.removeTemplate = function (templateId, state) {
