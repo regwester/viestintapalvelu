@@ -73,7 +73,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
             if (errors != null) {
                 response.setStatus(LetterResponse.STATUS_ERROR);
                 response.setErrors(errors);
-                return Response.ok(errors).build();
+                return Response.ok(response).build();
             }
         } catch (Exception e) {
             LOG.error("Validation error", e);
