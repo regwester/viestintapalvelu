@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -23,6 +24,7 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.google.gson.GsonBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -71,12 +73,13 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
             if (errors != null) {
+                LOG.error("Validaatiovirheitä! \r\n{}", new GsonBuilder().setPrettyPrinting().create().toJson(errors.keySet()));
                 response.setStatus(LetterResponse.STATUS_ERROR);
                 response.setErrors(errors);
                 return Response.ok(errors).build();
             }
         } catch (Exception e) {
-            LOG.error("Validation error", e);
+            LOG.error("Validation error: {} {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
             return Response.status(Status.BAD_REQUEST).build();
         }
 
@@ -89,7 +92,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
             response.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
             return Response.ok(response).build();
         } catch (Exception e) {
-            LOG.error("Letter async failed", e);
+            LOG.error("Letter async failed {}", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
