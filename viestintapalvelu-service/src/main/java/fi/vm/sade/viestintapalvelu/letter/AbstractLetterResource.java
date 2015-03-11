@@ -76,7 +76,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
                 LOG.error("Validaatiovirheitä! \r\n{}", new GsonBuilder().setPrettyPrinting().create().toJson(errors.keySet()));
                 response.setStatus(LetterResponse.STATUS_ERROR);
                 response.setErrors(errors);
-                return Response.ok(errors).build();
+                return Response.ok(response).build();
             }
         } catch (Exception e) {
             LOG.error("Validation error: {} {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
