@@ -1,0 +1,1 @@
+ALTER TABLE kirjeet.vastaanottajaosoite ALTER COLUMN postinumero TYPE varchar(40);
