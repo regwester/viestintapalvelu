@@ -102,7 +102,7 @@ public class LetterBatchValidator {
         if (address == null) {
             throw new IllegalArgumentException("AddressLabel of the letter to be validated was null");
         }
-        if (StringUtils.isBlank(address.getPostalCode()) || address.getPostalCode().length() > 10) {
+        if (address.getPostalCode() == null) {
             throw new IllegalArgumentException("Viallinen postinumero " + address);
         }
         validateAddressLabelField("City", address.getCity());
