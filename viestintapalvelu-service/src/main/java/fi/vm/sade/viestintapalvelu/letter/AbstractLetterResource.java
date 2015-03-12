@@ -79,6 +79,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
                 return Response.ok(response).build();
             }
         } catch (Exception e) {
+            e.printStackTrace();
             LOG.error("Validation error: {} {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
             return Response.status(Status.BAD_REQUEST).build();
         }
@@ -92,6 +93,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
             response.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
             return Response.ok(response).build();
         } catch (Exception e) {
+            e.printStackTrace();
             LOG.error("Letter async failed {}", e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
