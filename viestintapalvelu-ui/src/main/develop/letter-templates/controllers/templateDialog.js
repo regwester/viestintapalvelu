@@ -67,6 +67,7 @@ angular.module('letter-templates')
                 {value: 'jalkiohjauskirje', text: 'Jälkiohjauskirje'}];
 
             $scope.selectBase = function(base) {
+                $scope.baseSelected = base ? true : false;
                 TemplateService.setBase(base);
             };
 

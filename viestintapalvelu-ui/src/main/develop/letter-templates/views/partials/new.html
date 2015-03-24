@@ -23,6 +23,6 @@
     </div>
     <div class="modal-footer">
         <button type="button" class="btn" ng-click="cancel()" ng-bind="'common.btn.cancel' | i18n"></button>
-        <button type="button" class="btn btn-primary" ng-click="confirm()" ng-bind="'common.btn.create' | i18n"></button>
+        <button type="button" class="btn btn-primary" ng-click="confirm()" ng-bind="'common.btn.create' | i18n" ng-disabled="!baseSelected"></button>
     </div>
 </div>
