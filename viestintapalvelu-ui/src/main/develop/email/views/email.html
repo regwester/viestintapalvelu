@@ -48,7 +48,7 @@
                 <button ng-click="saveDraft()" class="inline-operation btn btn-small">
                     {{'email.button.tallenna' | i18n}}
                 </button>
-                <button ng-click="previewEmail()" class="inline-operation btn-primary btn-small">
+                <button ng-click="previewEmail()" ng-disabled="!email.subject || email.subject.trim().length < 1 || !email.body || email.body.trim().length < 1" class="inline-operation btn-primary btn-small">
                     {{'email.button.preview' | i18n}}
                 </button>
             </form-item>
