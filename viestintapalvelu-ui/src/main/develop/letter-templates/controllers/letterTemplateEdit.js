@@ -28,7 +28,13 @@ angular.module('letter-templates').controller('LetterTemplateEditCtrl',
         
         $scope.getMatchingTemplateReplacement = function(key) {
             var found = $filter('filter')($scope.template.replacements, {name: key});
-            return found.length ? found[0] : {name: key, defaultValue: ''};
+            if (!found || 1 > found.length) {
+                $scope.template.replacements.push({name: key, defaultValue: ''});
+                found = $scope.getMatchingTemplateReplacement(key);
+            } else {
+                found = found[0];
+            }
+            return found;
         };
         
         $scope.save = function() {
