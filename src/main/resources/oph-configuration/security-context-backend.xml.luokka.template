@@ -74,7 +74,6 @@
     <!--
         Workaround viestintapalvelun suojaamiseksi kunnes Guice-konteksti vaihdetaan Springiin ja tietoturva voidaan hoitaa samoin kuin muissa palveluissa!
     -->
-    <!--
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex" pattern="/api/v1/download">
         <intercept-url pattern="/**" access="hasAnyRole('ROLE_APP_VALINTAPERUSTEET_CRUD_1.2.246.562.10.00000000001')"/>
         <custom-filter ref="casFilter" position="CAS_FILTER"/>
@@ -83,7 +82,6 @@
         <intercept-url pattern="/**" access="hasAnyRole('ROLE_APP_VALINTAPERUSTEET_CRUD_1.2.246.562.10.00000000001')"/>
         <custom-filter ref="casFilter" position="CAS_FILTER"/>
     </http>
-    -->
     <!--
         Workaround loppuu!
     -->
@@ -114,11 +112,10 @@
     <beans:bean id="urlRewriteFilter" class="fi.vm.sade.security.UrlRewriteFilter"/>
 
     <beans:bean id="casFilter" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
-    	<beans:property name="useBasicAuthentication" value="false"/>
-        <beans:property name="useSessionPerUser" value="true"/>
-        <beans:property name="sessionRequired" value="true"/>
-        <beans:property name="appClientUsername" value=""/>
-        <beans:property name="appClientPassword" value=""/>
+        <beans:property name="authenticationManager" ref="authenticationManager"/>
+        <beans:property name="serviceProperties" ref="casServiceProperties"/>
+        <beans:property name="proxyGrantingTicketStorage" ref="pgtStorage"/>
+        <beans:property name="proxyReceptorUrl" value="/j_spring_cas_security_proxyreceptor"/>
     </beans:bean>
 
     <!-- This filter handles a Single Logout Request from the CAS Server -->
