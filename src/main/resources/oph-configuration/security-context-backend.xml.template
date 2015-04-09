@@ -104,7 +104,7 @@
 
     <!--  ===== end of mappings ===== -->
 
-    <beans:bean id="casFilter" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
+    <beans:bean id="casFilter" class="fi.vm.sade.security.CustomCasAuthenticationFilter">
         <beans:property name="authenticationManager" ref="authenticationManager"/>
         <beans:property name="serviceProperties" ref="casServiceProperties"/>
         <beans:property name="proxyGrantingTicketStorage" ref="pgtStorage"/>
