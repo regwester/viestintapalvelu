@@ -27,6 +27,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
@@ -49,6 +51,7 @@ import fi.vm.sade.viestintapalvelu.model.IPosti;
 // properly
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.IPOSTI_RESOURCE_PATH, description = "IPostien lähetys- ja hakurajapinnat.")
 public class IPostiResource {
+    private static final Logger LOGGER = LoggerFactory.getLogger(IPostiResource.class);
 
     @Autowired
     private DownloadCache downloadCache;
@@ -172,12 +175,16 @@ public class IPostiResource {
     @ApiResponses({ @ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200) })
     public Map<String, String> uploadExistingBatch(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id,
             @Context HttpServletRequest request) throws Exception {
-        IPosti iposti = iPostiService.findBatchById(id);
-        String forceS = request.getParameter("forceUpload");
-        boolean force = (forceS != null || "true".equalsIgnoreCase(forceS));
-        upload(iposti, force);
-        return new HashMap<String, String>(); // what is this supposed to
-                                              // return?
+        try {
+            IPosti iposti = iPostiService.findBatchById(id);
+            String forceS = request.getParameter("forceUpload");
+            boolean force = (forceS != null || "true".equalsIgnoreCase(forceS));
+            upload(iposti, force);
+            return new HashMap<String, String>();
+        } catch (Exception e) {
+            LOGGER.error("error sending batch", e);
+            throw e;
+        }
     }
 
     /**
@@ -210,6 +217,7 @@ public class IPostiResource {
             }
             return Response.status(Status.NOT_FOUND).build();
         } catch (Exception e) {
+            LOGGER.error("error sending mail", e);
             return Response.status(Status.BAD_REQUEST).build();
         }
     }
