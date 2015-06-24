@@ -29,5 +29,5 @@ public interface IPostiService {
 
     void update(IPosti iposti);
 
-    boolean markAsSent(IPosti iposti);
+    boolean markAsSent(Long id, Long version);
 }

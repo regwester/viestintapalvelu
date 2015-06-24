@@ -50,5 +50,5 @@ public interface IPostiDAO extends JpaDAO<IPosti, Long>{
      */
     public List<IPosti> findByLetterBatchId(Long id);
     
-    public int markAsSent(IPosti iposti);
+    public int markAsSent(Long id, Long version);
 }

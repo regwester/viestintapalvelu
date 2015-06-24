@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
+import java.util.Date;
 import java.util.List;
 
 import javax.persistence.EntityManager;
@@ -54,12 +55,13 @@ public class IPostiDAOImpl extends AbstractJpaDAOImpl<IPosti, Long> implements I
         return q.getResultList();
     }
     
-    public int markAsSent(IPosti iPosti) {
+    public int markAsSent(Long id, Long version) {
         EntityManager em = getEntityManager();
-        Query query = em.createNativeQuery("UPDATE kirjeet.iposti set lahetetty = :lahetetty where id =:id and version = :version");
-        query.setParameter("lahetetty", iPosti.getSentDate());
-        query.setParameter("id", iPosti.getId());
-        query.setParameter("version", iPosti.getVersion());
+        Query query = em.createNativeQuery("UPDATE kirjeet.iposti set lahetetty = :lahetetty, version = :incVersion where id =:id and version = :version");
+        query.setParameter("lahetetty", new Date());
+        query.setParameter("incVersion", version + 1);
+        query.setParameter("id", id);
+        query.setParameter("version", version);
         return query.executeUpdate();
     }
 }

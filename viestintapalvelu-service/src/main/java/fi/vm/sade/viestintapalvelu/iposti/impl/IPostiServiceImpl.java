@@ -61,8 +61,7 @@ public class IPostiServiceImpl implements IPostiService {
     }
 
     @Override
-    public boolean markAsSent(IPosti iposti) {
-        int result = iPostiDAO.markAsSent(iposti);
-        return (result == 1);
+    public boolean markAsSent(Long id, Long version) {
+        return iPostiDAO.markAsSent(id, version) == 1;
     }
 }

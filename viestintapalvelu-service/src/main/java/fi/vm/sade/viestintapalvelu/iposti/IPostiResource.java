@@ -43,6 +43,9 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 
+import static javax.ws.rs.core.Response.*;
+import static javax.ws.rs.core.Response.Status.*;
+
 @Component
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.IPOSTI_RESOURCE_PATH)
@@ -121,7 +124,8 @@ public class IPostiResource {
             byte[] zip = iposti.getContent();
             return downloadZipResponse(id, response, zip);
         } catch (Exception e) {
-            return Response.status(400).build();
+            LOGGER.error("get batch failed", e);
+            return response(BAD_REQUEST);
         }
     }
 
@@ -145,8 +149,8 @@ public class IPostiResource {
             byte[] zip = documentBuilder.zip(batches);
             return downloadZipResponse(id, response, zip);
         } catch (Exception e) {
-
-            return Response.status(400).build();
+            LOGGER.error("get ipost failed", e);
+            return response(BAD_REQUEST);
         }
     }
 
@@ -155,7 +159,7 @@ public class IPostiResource {
         response.setHeader("Content-Disposition", "attachment; filename=\"" + id + ".zip\"");
         response.setHeader("Content-Length", String.valueOf(zip.length));
         response.setHeader("Cache-Control", "private");
-        return Response.ok(zip).type("application/zip").build();
+        return ok(zip).type("application/zip").build();
     }
 
     /**
@@ -173,17 +177,19 @@ public class IPostiResource {
     @Transactional
     @ApiOperation(value = ApiSendExisting, notes = ApiSendExisting)
     @ApiResponses({ @ApiResponse(code = 400, message = SendResponse400), @ApiResponse(code = 200, message = SendResponse200) })
-    public Map<String, String> uploadExistingBatch(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id,
+    public Response uploadExistingBatch(@ApiParam(value = ApiParamValue, required = true) @PathParam("ipostiId") Long id,
             @Context HttpServletRequest request) throws Exception {
         try {
             IPosti iposti = iPostiService.findBatchById(id);
-            String forceS = request.getParameter("forceUpload");
-            boolean force = (forceS != null || "true".equalsIgnoreCase(forceS));
-            upload(iposti, force);
-            return new HashMap<String, String>();
+            if (iposti != null) {
+                upload(iposti, isForce(request));
+                return response(OK);
+            } else {
+                return response(NOT_FOUND);
+            }
         } catch (Exception e) {
             LOGGER.error("error sending batch", e);
-            throw e;
+            return response(INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -206,28 +212,38 @@ public class IPostiResource {
     public Response uploadExistingMail(@ApiParam(value = ApiParamValue, required = true) @PathParam("mailId") Long id, @Context HttpServletRequest request)
             throws Exception {
         try {
-            String forceS = request.getParameter("forceUpload");
-            boolean force = (forceS != null || "true".equalsIgnoreCase(forceS));
+            boolean force = isForce(request);
             List<IPosti> iposts = iPostiService.findMailById(id);
             if (iposts != null) {
                 for (IPosti iposti : iposts) {
                     upload(iposti, force);
                 }
-                return Response.status(Status.OK).build();
+                return response(OK);
             }
-            return Response.status(Status.NOT_FOUND).build();
+            return response(NOT_FOUND);
         } catch (Exception e) {
             LOGGER.error("error sending mail", e);
-            return Response.status(Status.BAD_REQUEST).build();
+            return response(INTERNAL_SERVER_ERROR);
         }
     }
 
-    private void upload(IPosti iposti, Boolean force) throws Exception {
-        if (iposti.getSentDate() == null || (force != null && true == force)) {
+    private Response response(Status s) {
+        return status(s).build();
+    }
+
+    private boolean isForce(@Context HttpServletRequest request) {
+        String forceS = request.getParameter("forceUpload");
+        return forceS != null && "true".equalsIgnoreCase(forceS);
+    }
+
+    private void upload(IPosti iposti, boolean force) throws Exception {
+        if (iposti.getSentDate() == null || force) {
             IPosti iPostiWithContent = iPostiService.findBatchById(iposti.getId());
             ipostiUpload.upload(iPostiWithContent.getContent(), "iposti-" + iPostiWithContent.getId() + ".zip");
-            iposti.setSentDate(new Date());
-            iPostiService.markAsSent(iPostiWithContent);
+            iPostiWithContent.setSentDate(new Date());
+            iPostiService.markAsSent(iposti.getId(), iposti.getVersion());
+        } else {
+            LOGGER.info("iposti ({}) is already sent at {}", iposti.getId(), iposti.getSentDate());
         }
     }
 
