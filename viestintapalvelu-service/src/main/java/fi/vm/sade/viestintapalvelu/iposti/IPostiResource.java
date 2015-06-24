@@ -240,8 +240,7 @@ public class IPostiResource {
         if (iposti.getSentDate() == null || force) {
             IPosti iPostiWithContent = iPostiService.findBatchById(iposti.getId());
             ipostiUpload.upload(iPostiWithContent.getContent(), "iposti-" + iPostiWithContent.getId() + ".zip");
-            iPostiWithContent.setSentDate(new Date());
-            iPostiService.markAsSent(iposti.getId(), iposti.getVersion());
+            iPostiService.markAsSent(iPostiWithContent.getId(), iPostiWithContent.getVersion());
         } else {
             LOGGER.info("iposti ({}) is already sent at {}", iposti.getId(), iposti.getSentDate());
         }
