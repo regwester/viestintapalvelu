@@ -238,10 +238,7 @@ public class LetterBatchProcessor {
                 return false;
             }
             IPostJob iPostJob = (IPostJob) o;
-            if (letterBatchId != iPostJob.letterBatchId) {
-                return false;
-            }
-            return true;
+            return letterBatchId == iPostJob.letterBatchId;
         }
 
         @Override
