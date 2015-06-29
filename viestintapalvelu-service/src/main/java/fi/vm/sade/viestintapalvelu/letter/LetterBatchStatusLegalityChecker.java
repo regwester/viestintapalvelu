@@ -36,7 +36,7 @@ public class LetterBatchStatusLegalityChecker {
             return; // no state change, ok
         }
         List<Status> allowed = allowedNextStates(status);
-        if (allowed != null && !allowed.contains(newStatus)) {
+        if (!allowed.contains(newStatus)) {
             throw new IllegalStateException("Can not transfer LetterBatch="+letterBatchId + " status from " + status
                     + " to " + newStatus);
         }
