@@ -164,10 +164,7 @@ public class LetterBatchProcessor {
                 return false;
             }
             LetterReceiverJob that = (LetterReceiverJob) o;
-            if (letterBatchId != that.letterBatchId) {
-                return false;
-            }
-            return true;
+            return letterBatchId == that.letterBatchId;
         }
 
         @Override
