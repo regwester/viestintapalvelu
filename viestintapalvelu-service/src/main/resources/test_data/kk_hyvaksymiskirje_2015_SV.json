@@ -178,13 +178,13 @@
     {
       "id": 5,
       "name": "lopputoivotus",
-      "defaultValue": "<p>V&auml;lkommen att inleda studier!</p> <p><strong>&nbsp;</strong></p>",
+      "defaultValue": "<p>V&auml;lkommen att inleda studier!</p>",
       "mandatory": false
     },
     {
       "id": 5,
       "name": "liiteotsikko",
-      "defaultValue": "<p><strong>DIN SITUATION I GEMENSAM ANS&Ouml;KAN TILL H&Ouml;GSKOLOR V&Aring;REN 2015 </strong></p> <p><strong>&nbsp;</strong></p>",
+      "defaultValue": "<p><strong>DIN SITUATION I GEMENSAM ANS&Ouml;KAN TILL H&Ouml;GSKOLOR V&Aring;REN 2015 </strong></p>",
       "mandatory": false
     },
     {
