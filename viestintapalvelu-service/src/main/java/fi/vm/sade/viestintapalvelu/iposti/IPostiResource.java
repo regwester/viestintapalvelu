@@ -103,7 +103,8 @@ public class IPostiResource {
             item.put("ipostiId", String.valueOf(ip.getLetterBatch().getId()));
             item.put("template", "" + ip.getLetterBatch().getTemplateName());
             item.put("language", "" + ip.getLetterBatch().getLanguage());
-            item.put("name", ip.getContentName());
+            item.put("name", "" + ip.getContentName());
+            item.put("haku", ""+ ip.getLetterBatch().getApplicationPeriod());
             result.add(item);
         }
         return result;
