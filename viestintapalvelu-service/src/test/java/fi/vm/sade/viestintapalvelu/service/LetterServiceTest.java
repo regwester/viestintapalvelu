@@ -15,9 +15,11 @@
  **/
 package fi.vm.sade.viestintapalvelu.service;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
 
+import com.google.common.base.Supplier;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -243,9 +245,19 @@ public class LetterServiceTest {
         anotherReceiver.getLetterReceiverLetter().setLetter(IOUtils.readBytesFromStream(pdf2Is));
         batch.getLetterReceivers().add(anotherReceiver);
 
-        Map<String,byte[]> zipMap = new HashMap<String, byte[]>();
+        Map<String, Supplier<byte[]>> zipMap = new HashMap<>();
         DocumentBuilder builder = new DocumentBuilder();
-        zipMap.put("testpdf.pdf", IOUtils.readBytesFromStream(this.getClass().getResourceAsStream("/testfiles/test.pdf")));
+        zipMap.put("testpdf.pdf", new Supplier<byte[]>() {
+            @Override
+            public byte[] get() {
+                try {
+                    return IOUtils.readBytesFromStream(this.getClass().getResourceAsStream("/testfiles/test.pdf"));
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    return null;
+                }
+            }
+        });
         byte[] zipContent = new DocumentBuilder().zip(zipMap);
         assertNotNull(zipContent);
         IPosti ipost = new IPosti();

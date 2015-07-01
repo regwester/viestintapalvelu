@@ -29,6 +29,7 @@ import java.util.Set;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -104,14 +105,24 @@ public class LetterBuilder {
         return null;
     }
 
-    private byte[] getIpostiZip(MergedPdfDocument pdf, String templateName, String zipName) throws IOException {
+    private byte[] getIpostiZip(final MergedPdfDocument pdf, String templateName, String zipName) throws IOException {
         Map<String, Object> context = createIPostDataContext(pdf.getDocumentMetadata());
         context.put("filename", templateName + ".pdf");
-        byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
-        Map<String, byte[]> documents = new HashMap<String, byte[]>();
+        final byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
+        Map<String, Supplier<byte[]>> documents = new HashMap<>();
         pdf.flush();
-        documents.put(templateName + ".pdf", pdf.toByteArray());
-        documents.put(templateName + ".xml", ipostXml);
+        documents.put(templateName + ".pdf", new Supplier<byte[]>() {
+            @Override
+            public byte[] get() {
+                return pdf.toByteArray();
+            }
+        });
+        documents.put(templateName + ".xml", new Supplier<byte[]>() {
+            @Override
+            public byte[] get() {
+                return ipostXml;
+            }
+        });
         byte[] zip = documentBuilder.zip(documents);
         return zip;
     }
