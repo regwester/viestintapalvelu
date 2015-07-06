@@ -189,7 +189,9 @@ public class IPostiResource {
         try {
             IPosti iposti = iPostiService.findBatchById(id);
             if (iposti != null) {
+                LOGGER.info("Starting to upload single item #{}", id);
                 upload(iposti, isForce(request));
+                LOGGER.info("Finished uploading single item #{}", id);
                 return response(OK);
             } else {
                 return response(NOT_FOUND);
@@ -222,9 +224,11 @@ public class IPostiResource {
             boolean force = isForce(request);
             List<IPosti> iposts = iPostiService.findMailById(id);
             if (iposts != null) {
+                LOGGER.info("Starting to upload batch #{} containing {} items", id, iposts.size());
                 for (IPosti iposti : iposts) {
                     upload(iposti, force);
                 }
+                LOGGER.info("Finished uploading batch #{}", id);
                 return response(OK);
             }
             return response(NOT_FOUND);
@@ -246,7 +250,13 @@ public class IPostiResource {
     private void upload(IPosti iposti, boolean force) throws Exception {
         if (iposti.getSentDate() == null || force) {
             IPosti iPostiWithContent = iPostiService.findBatchById(iposti.getId());
-            ipostiUpload.upload(iPostiWithContent.getContent(), "iposti-" + iPostiWithContent.getId() + ".zip");
+            String filename = "iposti-" + iPostiWithContent.getId() + ".zip";
+            byte[] content = iPostiWithContent.getContent();
+
+            LOGGER.info("Starting to upload file {} ({} bytes)", filename, content.length);
+            ipostiUpload.upload(content, filename);
+            LOGGER.info("Finished uploading file {}", filename);
+
             iPostiService.markAsSent(iPostiWithContent.getId(), iPostiWithContent.getVersion());
         } else {
             LOGGER.info("iposti ({}) is already sent at {}", iposti.getId(), iposti.getSentDate());
