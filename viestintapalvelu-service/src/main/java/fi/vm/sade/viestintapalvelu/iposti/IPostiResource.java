@@ -27,6 +27,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -141,11 +142,16 @@ public class IPostiResource {
             @Context HttpServletResponse response) throws Exception {
         Long id = Long.parseLong(FilenameHelper.withoutExtension(idStr));
         try {
-            Map<String, byte[]> batches = new LinkedHashMap<String, byte[]>();
+            Map<String, Supplier<byte[]>> batches = new LinkedHashMap<>();
             List<IPosti> iposts = iPostiService.findMailById(id);
             for (IPosti iposti : iposts) {
-                IPosti batch = iPostiService.findBatchById(iposti.getId());
-                batches.put(batch.getContentName(), batch.getContent());
+                final IPosti batch = iPostiService.findBatchById(iposti.getId());
+                batches.put(batch.getContentName(), new Supplier<byte[]>() {
+                    @Override
+                    public byte[] get() {
+                        return batch.getContent();
+                    }
+                });
             }
             byte[] zip = documentBuilder.zip(batches);
             return downloadZipResponse(id, response, zip);

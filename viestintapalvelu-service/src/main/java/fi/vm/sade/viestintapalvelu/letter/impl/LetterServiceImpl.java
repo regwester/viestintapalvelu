@@ -35,6 +35,7 @@ import java.util.zip.Inflater;
 import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
 
+import com.google.common.base.Supplier;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -710,9 +711,14 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private byte[] mergeIpostiZips(LetterBatch batch) throws IOException {
-        Map<String, byte[]> subZips = new TreeMap<String, byte[]>();
-        for (IPosti iposti : batch.getIposti()) {
-            subZips.put(iposti.getContentName(), iposti.getContent());
+        Map<String, Supplier<byte[]>> subZips = new TreeMap<>();
+        for (final IPosti iposti : batch.getIposti()) {
+            subZips.put(iposti.getContentName(), new Supplier<byte[]>() {
+                @Override
+                public byte[] get() {
+                    return iposti.getContent();
+                }
+            });
         }
         return documentBuilder.zip(subZips);
     }

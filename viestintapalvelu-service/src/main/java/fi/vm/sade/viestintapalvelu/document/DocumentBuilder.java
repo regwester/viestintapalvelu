@@ -23,6 +23,7 @@ import java.util.zip.ZipOutputStream;
 
 import javax.inject.Singleton;
 
+import com.google.common.base.Supplier;
 import org.apache.commons.io.IOUtils;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -97,12 +98,12 @@ public class DocumentBuilder {
         return outputStream.toByteArray();
     }
 
-    public byte[] zip(Map<String, byte[]> documents) throws IOException {
+    public byte[] zip(Map<String, Supplier<byte[]>> documents) throws IOException {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         ZipOutputStream zipStream = new ZipOutputStream(out);
         for (String documentName : documents.keySet()) {
             zipStream.putNextEntry(new ZipEntry(documentName));
-            zipStream.write(documents.get(documentName));
+            zipStream.write(documents.get(documentName).get());
             zipStream.closeEntry();
         }
         zipStream.close();
