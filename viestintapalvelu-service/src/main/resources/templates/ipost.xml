@@ -7,7 +7,7 @@
 
     <lb:Bundle>
         <lb:BundleCommon isTest="$ipostTest">
-            <lb:Sender contact="jaana.saha@oph.fi, +358 29 533 1323"/>
+            <lb:Sender contact="pirjo.karhu@oph.fi +358 29 533 1317, katariina.mannikko@oph.fi +358 29 533 1320, merja.vaisto@oph.fi +358 29 533 1386"/>
             <lb:StdBundleProcessing
                     customerId="113512"
                     password="7989"
