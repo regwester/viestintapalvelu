@@ -178,8 +178,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     private void sanitizeInput(EmailData emailData) {
         if (emailData.getEmail().getBody() != null) {
-            log.debug("Sanitizing email body");
+            log.debug("Sanitizing email body (before): " + emailData.getEmail().getBody());
             emailData.getEmail().setBody(InputCleaner.cleanHtmlDocument(emailData.getEmail().getBody()));
+            log.debug("Sanitizing email body (after): " + emailData.getEmail().getBody());
         } else if (emailData.getEmail().getTemplateId() == null
                         && emailData.getEmail().getTemplateName() == null) {
             throw new BadRequestException("Email without a body or template.");
