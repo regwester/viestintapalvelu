@@ -65,6 +65,9 @@ public class ReportedMessageDTO extends EmailMessageDTO {
         this.sendingReport = sendingReport;
     }
 
+    /*
+    Retract access tokens from private/personal URLs in the message body so that these can be presented in the officer UI
+     */
     @Override
     public String getBody() {
         List<String> regexps = new ArrayList<>();
