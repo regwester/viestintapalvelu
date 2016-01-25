@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
+import java.util.Arrays;
 import java.util.List;
 
 public class ReportedMessageDTO extends EmailMessageDTO {
@@ -62,5 +63,29 @@ public class ReportedMessageDTO extends EmailMessageDTO {
 
     public void setSendingReport(String sendingReport) {
         this.sendingReport = sendingReport;
+    }
+
+
+    @Override
+    public String getBody() {
+        return getFilteredBody();
+    }
+
+
+    /**
+     * Retract access tokens from private/personal URLs in the message body so that these can be presented in
+     * the officer UI
+     */
+    private String getFilteredBody() {
+        final List<String> regexps = Arrays.asList(
+                "(https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/(token|emailregister)/)[A-Za-z0-9]+"
+        );
+        final String substitute = "$1[RETRACTED]";
+
+        String body  = super.getBody();
+        for (String regexp : regexps) {
+            body = body.replaceAll(regexp, substitute);
+        }
+        return body;
     }
 }
