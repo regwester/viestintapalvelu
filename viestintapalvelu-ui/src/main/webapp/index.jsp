@@ -61,11 +61,11 @@
             emailData = StringEscapeUtils.unescapeHtml(emailData);
         } else {
             // no emaildata found.
-            emailData = "";
+            emailData = "{}";
         }
     %>
     <!-- Bind the email data to window. -->
-    <script type="text/javascript"> window.emailData = "<%= emailData %>";</script>
+    <script type="text/javascript"> window.emailData = <%= emailData %>;</script>
     <script type="text/javascript" src="js/all.min.js"></script>
 
 </body>
