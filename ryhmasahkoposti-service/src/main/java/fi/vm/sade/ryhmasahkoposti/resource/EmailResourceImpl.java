@@ -144,10 +144,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return Response.ok(new EmailSendId(sendId)).build();
     }
 
-    @POST
-    @Consumes("application/json")
-    @Produces("application/json")
-    @Path("firewall")
+    @Override
     public Response sendEmailBehindFirewall(EmailData emailData) throws Exception {
         return sendEmail(emailData);
     }

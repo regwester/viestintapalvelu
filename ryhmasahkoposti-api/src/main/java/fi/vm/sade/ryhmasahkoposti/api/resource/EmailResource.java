@@ -105,6 +105,13 @@ public interface EmailResource {
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
     public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("firewall")
+    public Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
+
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot
      * 
