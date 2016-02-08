@@ -18,7 +18,12 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 import java.io.IOException;
 import java.util.Date;
 
+import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
@@ -31,17 +36,15 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 @Component
 public class ReportedMessageConverter {
     private CurrentUserComponent currentUserComponent;
-
+    private static final Logger LOG = LoggerFactory.getLogger(ReportedMessageConverter.class);
     @Autowired
     public ReportedMessageConverter(CurrentUserComponent currentUserComponent) {
         this.currentUserComponent = currentUserComponent;
     }
-    private boolean isAuthenticated() {
-        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-    }
+
     public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
         ReportedMessage reportedMessage = new ReportedMessage();
-        if(isAuthenticated()) {
+        if(SecurityUtil.isAuthenticated()) {
             Henkilo henkilo = currentUserComponent.getCurrentUser();
             String senderName = getPersonName(henkilo);
             reportedMessage.setSenderOid(henkilo.getOidHenkilo());

@@ -18,6 +18,7 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -78,12 +79,10 @@ public class ReportedMessageQueryDTOConverter {
 
         return reportedMessageQueryDTO;
     }
-    private boolean isAuthenticated() {
-        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-    }
+
     private List<String> getSenderOidList() {
         List<String> senderOidList = new ArrayList<String>();
-        if(isAuthenticated()) {
+        if(SecurityUtil.isAuthenticated()) {
             Henkilo henkilo = currentUserComponent.getCurrentUser();
             senderOidList.add(henkilo.getOidHenkilo());
         }
