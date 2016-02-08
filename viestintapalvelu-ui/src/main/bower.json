@@ -8,6 +8,7 @@
         "jquery-i18n-properties": "1.0.9",
         "jquery-file-upload": "9.5.2",
         "angular": "1.2.7",
+        "angular-cookies": "1.2.7",
         "angular-resource": "1.2.7",
         "ui-router": "0.2.10",
         "bootstrap-css": "2.3.2",

@@ -1,0 +1,14 @@
+{
+  "name": "viestintapalvelu",
+
+  "Makefile": "no",
+
+  "velka": "",
+
+  "csrf": "viestintapalvelu-ui-front: ok, backend: ?",
+
+  "projects": [
+    {"name": "koulutusinformaatio-web", "uses": "viestintapalvelu-rest oppija-raamit"},
+    {"name": "koulutusinformaatio-rest", "uses": ""}
+  ]
+}
