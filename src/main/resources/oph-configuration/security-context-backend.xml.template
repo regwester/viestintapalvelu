@@ -42,9 +42,6 @@
         <custom-filter position="CAS_FILTER" ref="casFilter" />
     </http>
 
-    <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="/email/firewall">
-        <intercept-url pattern="/**" access="permitAll"/>
-    </http>
     <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="/buildversion.txt|/healthcheck">
         <intercept-url pattern="/**" access="permitAll"/>
     </http>

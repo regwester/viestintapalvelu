@@ -24,7 +24,7 @@ package fi.vm.sade.ryhmasahkoposti.api.constants;
 public interface SecurityConstants {
 	// Autentikointi  
 	public static final String USER_IS_AUTHENTICATED = "isAuthenticated()";
-	
+	public static final String ALLOW_ALL = "permitAll";
 	// Käyttäjäroolit
 	public static final String SEND = "hasRole('ROLE_APP_RYHMASAHKOPOSTI_SEND')";
 	public static final String READ = "hasRole('ROLE_APP_RYHMASAHKOPOSTI_VIEW')";
