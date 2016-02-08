@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Date;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -35,15 +36,21 @@ public class ReportedMessageConverter {
     public ReportedMessageConverter(CurrentUserComponent currentUserComponent) {
         this.currentUserComponent = currentUserComponent;
     }
-
+    private boolean isAuthenticated() {
+        return SecurityContextHolder.getContext().getAuthentication() != null && SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+    }
     public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
         ReportedMessage reportedMessage = new ReportedMessage();
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        String senderName = getPersonName(henkilo);
-
+        if(isAuthenticated()) {
+            Henkilo henkilo = currentUserComponent.getCurrentUser();
+            String senderName = getPersonName(henkilo);
+            reportedMessage.setSenderOid(henkilo.getOidHenkilo());
+            reportedMessage.setSenderName(senderName);
+        } else {
+            reportedMessage.setSenderOid("");
+            reportedMessage.setSenderName("");
+        }
         reportedMessage.setProcess(emailMessage.getCallingProcess());
-        reportedMessage.setSenderOid(henkilo.getOidHenkilo());
-        reportedMessage.setSenderName(senderName);
         reportedMessage.setSenderOrganizationOid(emailMessage.getOrganizationOid());
         reportedMessage.setSubject(emailMessage.getSubject());
         reportedMessage.setSenderEmail(emailMessage.getFrom());
