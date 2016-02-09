@@ -23,10 +23,14 @@ import java.util.List;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import javax.ws.rs.BadRequestException;
+import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiResponse;
+import com.wordnik.swagger.annotations.ApiResponses;
+import fi.vm.sade.ryhmasahkoposti.api.constants.SecurityConstants;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.FileUploadException;
@@ -37,6 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
@@ -139,6 +144,12 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return Response.ok(new EmailSendId(sendId)).build();
     }
 
+    @Override
+    public Response sendEmailBehindFirewall(EmailData emailData) throws Exception {
+        log.error("Sending email behind firewall!");
+        return sendEmail(emailData);
+    }
+    
     @Override
     public Response getStatus(String sendId) {
         log.debug("getStatus called with ID: {}", sendId);

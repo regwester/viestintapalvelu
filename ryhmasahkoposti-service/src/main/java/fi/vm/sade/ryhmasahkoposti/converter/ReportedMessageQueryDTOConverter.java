@@ -18,7 +18,9 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -80,10 +82,10 @@ public class ReportedMessageQueryDTOConverter {
 
     private List<String> getSenderOidList() {
         List<String> senderOidList = new ArrayList<String>();
-
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        senderOidList.add(henkilo.getOidHenkilo());
-
+        if(SecurityUtil.isAuthenticated()) {
+            Henkilo henkilo = currentUserComponent.getCurrentUser();
+            senderOidList.add(henkilo.getOidHenkilo());
+        }
         return senderOidList;
     }
 }

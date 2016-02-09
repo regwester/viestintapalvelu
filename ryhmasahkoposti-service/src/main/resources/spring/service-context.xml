@@ -30,7 +30,7 @@
                 <prop key="cas_key">ryhmasahkoposti</prop>
                 <prop key="cas_service">${cas.service.ryhmasahkoposti}</prop>
                 <prop key="cas_callback_url">${cas.callback.ryhmasahkoposti}</prop>
-                <prop key="spring_security_default_access">isAuthenticated()</prop>
+                <prop key="spring_security_default_access">permitAll</prop>
             </util:properties>
         </property>
     </bean>

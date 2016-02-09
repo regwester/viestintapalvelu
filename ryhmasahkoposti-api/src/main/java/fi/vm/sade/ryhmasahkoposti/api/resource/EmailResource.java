@@ -52,7 +52,6 @@ import org.springframework.stereotype.Component;
  */
 @Component
 @Path("email")
-@PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 @Api(value = "/email", description = "Ryhm&auml;s&auml;hk&oumlpostin l&auml;hett&auml;minen")
 public interface EmailResource {
     /**
@@ -105,6 +104,14 @@ public interface EmailResource {
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
     public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @PreAuthorize(SecurityConstants.ALLOW_ALL)
+    @Path("firewall")
+    public Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
+
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot
      * 
@@ -147,6 +154,7 @@ public interface EmailResource {
     @POST
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON)
+    @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
     @Path("preview")
     public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 

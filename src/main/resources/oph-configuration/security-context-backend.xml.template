@@ -45,7 +45,6 @@
     <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="/buildversion.txt|/healthcheck">
         <intercept-url pattern="/**" access="permitAll"/>
     </http>
-
     <!-- wsdl/xsd resources must be public -->
     <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="[\w/]*[.?]wsdl">
         <intercept-url pattern="/**" access="permitAll"/>

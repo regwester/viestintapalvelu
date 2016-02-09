@@ -21,8 +21,13 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -40,13 +45,21 @@ import static org.mockito.Mockito.when;
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageConverterTest {
     private ReportedMessageConverter reportedMessageConverter;
-
     @Mock
     CurrentUserComponent mockedCurrentUserComponent;
 
     @Before
     public void setup() {
+        signIn();
         this.reportedMessageConverter = new ReportedMessageConverter(mockedCurrentUserComponent);
+    }
+
+    private void signIn() {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext context = Mockito.mock(SecurityContext.class);
+        Mockito.when(context.getAuthentication()).thenReturn(authentication);
+        Mockito.when(authentication.isAuthenticated()).thenReturn(true);
+        SecurityContextHolder.setContext(context);
     }
 
     @Test

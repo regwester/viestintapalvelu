@@ -18,7 +18,13 @@ package fi.vm.sade.ryhmasahkoposti.converter;
 import java.io.IOException;
 import java.util.Date;
 
+import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -30,7 +36,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 @Component
 public class ReportedMessageConverter {
     private CurrentUserComponent currentUserComponent;
-
+    private static final Logger LOG = LoggerFactory.getLogger(ReportedMessageConverter.class);
     @Autowired
     public ReportedMessageConverter(CurrentUserComponent currentUserComponent) {
         this.currentUserComponent = currentUserComponent;
@@ -38,12 +44,16 @@ public class ReportedMessageConverter {
 
     public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
         ReportedMessage reportedMessage = new ReportedMessage();
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        String senderName = getPersonName(henkilo);
-
+        if(SecurityUtil.isAuthenticated()) {
+            Henkilo henkilo = currentUserComponent.getCurrentUser();
+            String senderName = getPersonName(henkilo);
+            reportedMessage.setSenderOid(henkilo.getOidHenkilo());
+            reportedMessage.setSenderName(senderName);
+        } else {
+            reportedMessage.setSenderOid("");
+            reportedMessage.setSenderName("");
+        }
         reportedMessage.setProcess(emailMessage.getCallingProcess());
-        reportedMessage.setSenderOid(henkilo.getOidHenkilo());
-        reportedMessage.setSenderName(senderName);
         reportedMessage.setSenderOrganizationOid(emailMessage.getOrganizationOid());
         reportedMessage.setSubject(emailMessage.getSubject());
         reportedMessage.setSenderEmail(emailMessage.getFrom());
