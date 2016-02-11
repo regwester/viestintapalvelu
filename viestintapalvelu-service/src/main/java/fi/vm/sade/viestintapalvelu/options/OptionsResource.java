@@ -54,7 +54,7 @@ import static org.joda.time.DateTime.now;
  * Date: 7.10.2014
  * Time: 14:25
  */
-@Component
+@Component("OptionsResource")
 @Path(Urls.OPTIONS_PATH)
 @Api(value=Urls.OPTIONS_PATH, description = "Käyttöliittymässä käytettävät valinnat")
 @RecovererPriority(10)

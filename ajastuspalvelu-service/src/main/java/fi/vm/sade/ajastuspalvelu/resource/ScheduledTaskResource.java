@@ -19,7 +19,9 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import fi.vm.sade.ajastuspalvelu.service.ScheduledTaskService;
 import fi.vm.sade.ajastuspalvelu.service.dto.*;
 import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
+import org.springframework.stereotype.Component;
 
+@Component("ScheduledTaskResource")
 @PreAuthorize("isAuthenticated()")
 @Path("scheduledtask")
 @Api(value = "scheduledtask", description = "Ajastetut tehtävät")

@@ -47,7 +47,7 @@ import fi.vm.sade.viestintapalvelu.model.IPosti;
 import static javax.ws.rs.core.Response.*;
 import static javax.ws.rs.core.Response.Status.*;
 
-@Component
+@Component("IPostiResource")
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.IPOSTI_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since

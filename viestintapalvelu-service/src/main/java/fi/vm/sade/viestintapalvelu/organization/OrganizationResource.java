@@ -34,7 +34,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
-@Component
+@Component("OrganizationResource")
 @PreAuthorize("isAuthenticated()")
 @Path("organizationhierarchy")
 public class OrganizationResource extends AsynchronousResource {

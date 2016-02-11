@@ -60,7 +60,7 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 
 
-@Component
+@Component("EmailResourceImpl")
 public class EmailResourceImpl extends GenericResourceImpl implements EmailResource {
     private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
 

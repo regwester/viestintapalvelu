@@ -41,7 +41,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 /**
  * Created by jonimake on 9.1.2015.
  */
-@Component
+@Component("PreviewDataResource")
 @Path("preview")
 @PreAuthorize("isAuthenticated()")
 @Api(value = "/" + Urls.API_PATH + "/preview/")

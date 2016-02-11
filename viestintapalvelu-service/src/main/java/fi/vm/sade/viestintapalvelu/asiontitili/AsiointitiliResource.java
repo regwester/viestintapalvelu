@@ -45,7 +45,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
  * Date: 10.10.2014
  * Time: 16:15
  */
-@Component
+@Component("AsiointitiliResource")
 @Path(Urls.ASIOINTITILI)
 @Api(value= Urls.ASIOINTITILI, description = "Kansalaisen asiointitilin tominnot")
 @PreAuthorize("isAuthenticated()")

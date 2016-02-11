@@ -39,7 +39,7 @@ import fi.vm.sade.viestintapalvelu.structure.dto.StructureViewDto;
  * Date: 10.11.2014
  * Time: 14:19
  */
-@Component
+@Component("StructureResource")
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.STRUCTURE_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.STRUCTURE_RESOURCE_PATH, description = "Pohjan rakenne")

@@ -38,7 +38,7 @@ import fi.vm.sade.ajastuspalvelu.service.external.api.dto.HakuDetailsDto;
  * Date: 31.10.2014
  * Time: 11:04
  */
-@Component
+@Component("OptionsResource")
 @Path("options")
 @Api(value = "options", description = "Käyttöliittymässä näytettävät valinnat")
 public class OptionsResource {
