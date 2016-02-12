@@ -62,7 +62,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
  * @author vehei1
  *
  */
-@Component
+@Component("LetterReportResource")
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.REPORTING_PATH)
 @Api(value = "/reporting", description = "Kirjel&auml;hetysten raportointi")

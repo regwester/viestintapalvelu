@@ -25,16 +25,13 @@
     </filter-mapping>
 
     <servlet>
-        <servlet-name>jersey-servlet</servlet-name>
-        <servlet-class>org.glassfish.jersey.servlet.ServletContainer</servlet-class>
-        <init-param>
-            <param-name>javax.ws.rs.Application</param-name>
-            <param-value>fi.vm.sade.viestintapalvelu.ApplicationResourceConfig</param-value>
-        </init-param>
+        <servlet-name>cxf</servlet-name>
+        <servlet-class>org.apache.cxf.transport.servlet.CXFServlet</servlet-class>
         <load-on-startup>1</load-on-startup>
+        <async-supported>true</async-supported>
     </servlet>
     <servlet-mapping>
-        <servlet-name>jersey-servlet</servlet-name>
+        <servlet-name>cxf</servlet-name>
         <url-pattern>/api/v1/*</url-pattern>
     </servlet-mapping>
 

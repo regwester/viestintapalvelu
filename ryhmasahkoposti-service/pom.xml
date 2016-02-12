@@ -203,22 +203,6 @@
             <version>2.2.0</version>
         </dependency>
 
-        <!-- Jersey -->
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-        </dependency>
-
-        <!-- Jersey Spring 3 DI support -->
-        <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-spring3</artifactId>
-        </dependency>
-
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -243,6 +227,20 @@
                 <exclusion>
                     <groupId>org.springframework</groupId>
                     <artifactId>*</artifactId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
                 </exclusion>
             </exclusions>
         </dependency>
@@ -477,6 +475,24 @@
         <dependency>
             <groupId>com.wordnik</groupId>
             <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
+            <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-jsonSchema</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.containers</groupId>
+                    <artifactId>jersey-container-servlet-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.media</groupId>
+                    <artifactId>jersey-media-multipart</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <dependency>

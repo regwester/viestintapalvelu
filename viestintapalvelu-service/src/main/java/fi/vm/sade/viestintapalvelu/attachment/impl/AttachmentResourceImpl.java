@@ -45,7 +45,7 @@ import fi.vm.sade.viestintapalvelu.attachment.dto.UrisContainerDto;
 @Path(Urls.ATTACHMENT_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.ATTACHMENT_RESOURCE_PATH,
         description = "Liiterajapinta ryhmäsähköpostipalvelua varten")
-@Component
+@Component("AttachmentResourceImpl")
 @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
 public class AttachmentResourceImpl implements AttachmentResource {
     public static final String AttachmentByUri = "Palauttaa liitteen URI-tunnisteella";

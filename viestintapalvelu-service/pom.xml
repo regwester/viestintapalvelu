@@ -205,22 +205,6 @@
             </exclusions>
         </dependency>
 
-        <!-- Jersey -->
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-        </dependency>
-
-        <!-- Jersey Spring 3 DI support -->
-        <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-spring3</artifactId>
-        </dependency>
-
         <!-- Jackson -->
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
@@ -419,6 +403,20 @@
         </dependency>
         <dependency>
             <groupId>org.apache.cxf</groupId>
+            <artifactId>cxf-rt-transports-http</artifactId>
+            <exclusions>
+                <exclusion>
+                    <artifactId>spring-web</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+                <exclusion>
+                    <artifactId>spring-beans</artifactId>
+                    <groupId>org.springframework</groupId>
+                </exclusion>
+            </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.cxf</groupId>
             <artifactId>cxf-rt-features-clustering</artifactId>
         </dependency>
         <dependency>
@@ -444,11 +442,26 @@
             <groupId>org.jsoup</groupId>
             <artifactId>jsoup</artifactId>
         </dependency>
-
         <dependency>
             <groupId>com.wordnik</groupId>
             <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
             <exclusions>
+                <exclusion>
+                    <groupId>com.fasterxml.jackson.module</groupId>
+                    <artifactId>jackson-module-jsonSchema</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.containers</groupId>
+                    <artifactId>jersey-container-servlet-core</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.glassfish.jersey.media</groupId>
+                    <artifactId>jersey-media-multipart</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
                 <exclusion>
                     <artifactId>javassist</artifactId>
                     <groupId>javassist</groupId>
@@ -569,24 +582,6 @@
 
         <!-- Jersey Test Framework -->
         <!-- This version of Jetty needs >= Java 1.7 -->
-        <!--
-        <dependency>
-            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-            <artifactId>jersey-test-framework-provider-jetty</artifactId>
-        </dependency>
-        -->
-        <dependency>
-            <groupId>org.glassfish.jersey.test-framework.providers</groupId>
-            <artifactId>jersey-test-framework-provider-grizzly2</artifactId>
-            <scope>test</scope>
-            <exclusions>
-                <exclusion>
-                    <artifactId>asm-all-repackaged</artifactId>
-                    <groupId>org.glassfish.hk2.external</groupId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <dependency>
             <groupId>org.assertj</groupId>
             <artifactId>assertj-core</artifactId>
@@ -618,7 +613,12 @@
             <artifactId>powermock-api-easymock</artifactId>
             <scope>test</scope>
         </dependency>
-
+        <dependency>
+            <groupId>org.glassfish.hk2</groupId>
+            <artifactId>hk2</artifactId>
+            <version>2.4.0</version>
+            <scope>test</scope>
+        </dependency>
         <!-- HyperSQL DataBase for testing -->
         <dependency>
             <groupId>org.hsqldb</groupId>

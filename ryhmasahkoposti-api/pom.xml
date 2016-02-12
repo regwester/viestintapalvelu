@@ -14,7 +14,12 @@
     <packaging>jar</packaging>
 
     <dependencies>
-
+        <dependency>
+            <groupId>javax.ws.rs</groupId>
+            <artifactId>javax.ws.rs-api</artifactId>
+            <version>2.0</version>
+            <scope>provided</scope>
+        </dependency>
         <!-- Java Servlet API -->
         <dependency>
             <groupId>javax.servlet</groupId>
@@ -36,25 +41,6 @@
         <dependency>
             <groupId>commons-codec</groupId>
             <artifactId>commons-codec</artifactId>
-        </dependency>
-
-        <!-- Jersey -->
-        <dependency>
-            <groupId>org.glassfish.jersey.containers</groupId>
-            <artifactId>jersey-container-servlet</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.core</groupId>
-            <artifactId>jersey-client</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.ext</groupId>
-            <artifactId>jersey-spring3</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.glassfish.jersey.media</groupId>
-            <artifactId>jersey-media-multipart</artifactId>
-            <version>${jersey.version}</version>
         </dependency>
 
         <!-- Jackson -->
@@ -79,6 +65,7 @@
         <dependency>
             <groupId>com.wordnik</groupId>
             <artifactId>swagger-jersey2-jaxrs_2.10</artifactId>
+            <version>${swagger.version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>com.fasterxml.jackson.module</groupId>
@@ -92,9 +79,12 @@
                     <groupId>org.glassfish.jersey.media</groupId>
                     <artifactId>jersey-media-multipart</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javax.ws.rs</groupId>
+                    <artifactId>jsr311-api</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
-
         <dependency>
             <groupId>fi.vm.sade.generic</groupId>
             <artifactId>generic-common</artifactId>
@@ -106,6 +96,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>junit</groupId>
+            <artifactId>junit</artifactId>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 
     <build>

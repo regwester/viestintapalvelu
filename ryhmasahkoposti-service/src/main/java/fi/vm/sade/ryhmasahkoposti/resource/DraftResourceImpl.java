@@ -33,7 +33,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
 import fi.vm.sade.ryhmasahkoposti.api.resource.DraftResource;
 import fi.vm.sade.ryhmasahkoposti.service.DraftService;
 
-@Component
+@Component("DraftResourceImpl")
 public class DraftResourceImpl extends GenericResourceImpl implements DraftResource {
     
     private final Logger logger = LoggerFactory.getLogger(DraftResourceImpl.class.getName());

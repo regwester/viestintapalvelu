@@ -35,7 +35,7 @@ import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
 import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
 import static org.joda.time.DateTime.now;
 
-@Component
+@Component("LetterResource")
 @Path(Urls.LETTER_PATH)
 @PreAuthorize("isAuthenticated()")
 // Use HTML-entities instead of scandinavian letters in @Api-description, since

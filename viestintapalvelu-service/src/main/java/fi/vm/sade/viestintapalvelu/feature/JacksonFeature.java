@@ -26,9 +26,11 @@ import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 import javax.ws.rs.core.Feature;
 import javax.ws.rs.core.FeatureContext;
 
-public class JacksonFeature implements Feature {
+public class JacksonFeature extends JacksonJaxbJsonProvider {
 
-    private static final ObjectMapper mapper = new ObjectMapper() {
+    public JacksonFeature() {
+        super();
+        setMapper(new ObjectMapper() {
         private static final long serialVersionUID = 1L;
 
         {
@@ -40,20 +42,7 @@ public class JacksonFeature implements Feature {
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             disable(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES);
         }
-    };
-
-    private static final JacksonJaxbJsonProvider provider = new JacksonJaxbJsonProvider() {
-        {
-            setMapper(mapper);
-        }
-    };
-
-    @Override
-    public boolean configure(FeatureContext context) {
-        // Might need to register additional custom ObjectMapperProvider
-        context.register(provider);
-        context.register(JsonMappingExceptionMapper.class);
-        context.register(JsonParseExceptionMapper.class);
-        return true;
+    });
     }
+
 }

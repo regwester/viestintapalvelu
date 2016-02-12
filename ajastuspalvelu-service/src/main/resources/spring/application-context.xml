@@ -4,15 +4,20 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xmlns:tx="http://www.springframework.org/schema/tx"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
            http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd
+           http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
            http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
            http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util.xsd http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd
            http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd">
 
     <context:component-scan base-package="fi.vm.sade.ajastuspalvelu"/>
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
     <context:property-placeholder
             location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
@@ -124,5 +129,32 @@
         <property name="contact" value="Yllapito 2"/>
         <property name="scan" value="true"/>
     </bean>
-    
+
+    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+
+    <!-- Swagger writers -->
+    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
+    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
+
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+
+    <bean id="cors-filter" class="fi.vm.sade.viestintapalvelu.common.resource.filter.CORSFilter"/>
+
+    <bean id="jackson-feature" class="fi.vm.sade.viestintapalvelu.common.feature.JacksonFeature"/>
+
+    <jaxrs:server id="ajastuspalveluResources">
+        <jaxrs:serviceBeans>
+            <ref bean="OptionsResource"/>
+            <ref bean="ScheduledTaskResource"/>
+            <ref bean="TaskResource"/>
+            <ref bean="swaggerResourceJSON"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jackson-feature"/>
+            <ref bean="cors-filter" />
+            <ref bean="resourceWriter" />
+            <ref bean="apiWriter" />
+        </jaxrs:providers>
+    </jaxrs:server>
+
 </beans>

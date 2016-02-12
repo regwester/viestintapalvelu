@@ -4,18 +4,23 @@
        xmlns:util="http://www.springframework.org/schema/util"
        xmlns:task="http://www.springframework.org/schema/task"
        xmlns:jaxrs-client="http://cxf.apache.org/jaxrs-client"
+       xmlns:jaxrs="http://cxf.apache.org/jaxrs"
        xmlns:http="http://cxf.apache.org/transports/http/configuration"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-3.2.xsd
        http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-3.2.xsd
        http://www.springframework.org/schema/util http://www.springframework.org/schema/util/spring-util-3.2.xsd
        http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-3.2.xsd
        http://cxf.apache.org/jaxrs-client http://cxf.apache.org/schemas/jaxrs-client.xsd
-       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd 
+       http://cxf.apache.org/jaxrs http://cxf.apache.org/schemas/jaxrs.xsd
+       http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        http://camel.apache.org/schema/spring-security http://camel.apache.org/schema/spring-security/camel-spring-security.xsd">
 
     <context:annotation-config/>
     <context:component-scan base-package="fi.vm.sade.ryhmasahkoposti"/>
+
+    <import resource="classpath:META-INF/cxf/cxf.xml" />
+    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
     <!-- Application and common properties -->
     <context:property-placeholder
@@ -175,4 +180,31 @@
         <property name="contact" value="Yllapito 2"/>
         <property name="scan" value="true"/>
     </bean>
+
+    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+
+    <!-- Swagger writers -->
+    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
+    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
+
+    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+
+    <bean id="cors-filter" class="fi.vm.sade.viestintapalvelu.common.resource.filter.CORSFilter"/>
+
+    <bean id="jackson-feature" class="fi.vm.sade.ryhmasahkoposti.feature.JacksonFeature"/>
+
+    <jaxrs:server id="ryhmasahkopostiResources">
+        <jaxrs:serviceBeans>
+            <ref bean="DraftResourceImpl"/>
+            <ref bean="EmailResourceImpl"/>
+            <ref bean="MessageReportingResourceImpl"/>
+            <ref bean="swaggerResourceJSON"/>
+        </jaxrs:serviceBeans>
+        <jaxrs:providers>
+            <ref bean="jackson-feature"/>
+            <ref bean="cors-filter" />
+            <ref bean="resourceWriter" />
+            <ref bean="apiWriter" />
+        </jaxrs:providers>
+    </jaxrs:server>
 </beans>

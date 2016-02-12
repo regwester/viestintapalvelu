@@ -17,7 +17,9 @@ import com.wordnik.swagger.annotations.ApiOperation;
 
 import fi.vm.sade.ajastuspalvelu.service.TaskService;
 import fi.vm.sade.ajastuspalvelu.service.dto.TaskListDto;
+import org.springframework.stereotype.Component;
 
+@Component("TaskResource")
 @PreAuthorize("isAuthenticated()")
 @Path("task")
 @Api(value = "task", description = "Tehtävät")

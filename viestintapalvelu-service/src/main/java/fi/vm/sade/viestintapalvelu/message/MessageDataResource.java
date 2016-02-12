@@ -52,7 +52,7 @@ import fi.vm.sade.viestintapalvelu.message.conversion.MessageToEmailConverter;
  * @author risal1
  *
  */
-@Component
+@Component("MessageDataResource")
 public class MessageDataResource implements MessageResource {
     
     private static final Logger LOGGER = Logger.getLogger(MessageDataResource.class);

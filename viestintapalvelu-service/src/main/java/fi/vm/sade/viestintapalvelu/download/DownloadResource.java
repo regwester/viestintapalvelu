@@ -42,7 +42,7 @@ import com.wordnik.swagger.annotations.ApiResponses;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
 
-@Service
+@Service("DownloadResource")
 @Singleton
 @Path(Urls.DOWNLOAD_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.DOWNLOAD_RESOURCE_PATH, description = "Valmiin PDF/ZIP-tiedoston haku")

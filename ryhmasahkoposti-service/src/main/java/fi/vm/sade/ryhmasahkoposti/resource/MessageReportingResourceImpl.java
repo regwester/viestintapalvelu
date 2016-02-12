@@ -37,7 +37,7 @@ import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 
-@Component
+@Component("MessageReportingResourceImpl")
 public class MessageReportingResourceImpl extends GenericResourceImpl implements MessageReportingResource {
     private static Logger logger = LoggerFactory.getLogger(MessageReportingResourceImpl.class);
     private GroupEmailReportingService groupEmailReportingService;

@@ -53,7 +53,7 @@ import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTim
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
 
-@Service
+@Service("AddressLabelResource")
 @Singleton
 @Path(Urls.ADDRESS_LABEL_RESOURCE_PATH)
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.ADDRESS_LABEL_RESOURCE_PATH, description = "Osoitetarrojen k&auml;sittelyn rajapinnat")

@@ -52,7 +52,7 @@ import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTim
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
 
-@Component
+@Component("KoekutsukirjeResource")
 @Path(Urls.KOEKUTSUKIRJE_RESOURCE_PATH)
 // Use HTML-entities instead of scandinavian letters in @Api-description, since
 // swagger-ui.js treats model's description as HTML and does not escape it

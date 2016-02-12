@@ -47,7 +47,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
  * @author risal1
  *
  */
-@Component
+@Component("PersonResource")
 @Path("person")
 @PreAuthorize("isAuthenticated()")
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.PERSON_PATH, description = "Rajapinta henkilö- ja oikeustietojen hakuun")
