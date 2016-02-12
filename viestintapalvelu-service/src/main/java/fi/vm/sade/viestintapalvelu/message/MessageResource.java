@@ -36,7 +36,7 @@ import fi.vm.sade.viestintapalvelu.download.DownloadCache;
  * 
  *         Temporary resource for messaging
  */
-@Service
+@Service("MessageResource")
 @Singleton
 @Path(Urls.MESSAGE_RESOURCE_PATH)
 public class MessageResource {

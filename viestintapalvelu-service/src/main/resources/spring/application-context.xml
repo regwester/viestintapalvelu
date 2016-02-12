@@ -292,6 +292,7 @@
 
     <jaxrs:server id="viestintapalveluResources">
         <jaxrs:serviceBeans>
+            <ref bean="AddressLabelResource"/>
             <ref bean="AsiointitiliResource"/>
             <ref bean="AttachmentResourceImpl"/>
             <ref bean="DownloadResource"/>
@@ -301,6 +302,7 @@
             <ref bean="LetterResource"/>
             <ref bean="PreviewDataResource"/>
             <ref bean="MessageDataResource"/>
+            <ref bean="MessageResource"/>
             <ref bean="OptionsResource"/>
             <ref bean="OrganizationResource"/>
             <ref bean="PersonResource"/>
