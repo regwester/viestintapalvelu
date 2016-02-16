@@ -35,6 +35,7 @@ import org.jsoup.nodes.Entities.EscapeMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -52,11 +53,13 @@ import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.letter.LetterResource;
+import org.springframework.stereotype.Component;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
 import static org.joda.time.DateTime.now;
 
+@Component("PDFPrinterResource")
 @Path(Urls.PRINTER_PATH)
 @PreAuthorize("isAuthenticated()")
 @Api(value = "/" + Urls.API_PATH + "/" + Urls.PRINTER_PATH, description = "Pdf tulosteiden muodostus rajapinta")
@@ -68,6 +71,7 @@ public class PDFPrinterResource extends AsynchronousResource {
     @Autowired
     private DownloadCache downloadCache;
     @Autowired
+    @Qualifier("batchJobExecutorService")
     private ExecutorService executor;
     @Autowired
     private DocumentBuilder documentBuilder;
