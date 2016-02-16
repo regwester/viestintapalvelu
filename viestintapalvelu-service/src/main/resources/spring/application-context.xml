@@ -309,6 +309,7 @@
             <ref bean="StructureResource"/>
             <ref bean="TemplateResource"/>
             <ref bean="swaggerResourceJSON"/>
+            <ref bean="PDFPrinterResource"/>
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="jackson-feature"/>
