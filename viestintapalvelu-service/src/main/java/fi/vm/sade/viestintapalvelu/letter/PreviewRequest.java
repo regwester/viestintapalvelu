@@ -19,7 +19,7 @@ import fi.vm.sade.viestintapalvelu.model.Template.State;
 
 public class PreviewRequest {
     private int templateId;
-    private State state;
+    private State tamplateState;
     private String letterContent;
     
     public int getTemplateId() {
@@ -28,11 +28,11 @@ public class PreviewRequest {
     public void setTemplateId(int templateId) {
         this.templateId = templateId;
     }
-    public State getState() {
-        return state;
+    public State getTemplateState() {
+        return tamplateState;
     }
-    public void setState(State state) {
-        this.state = state;
+    public void setTemplateState(State state) {
+        this.tamplateState = state;
     }
     public String getLetterContent() {
         return letterContent;
@@ -42,7 +42,7 @@ public class PreviewRequest {
     }
     @Override
     public String toString() {
-        return "PreviewRequest [templateId=" + templateId + ", state=" + state + ", letterContents=" + letterContent + "]";
+        return "PreviewRequest [templateId=" + templateId + ", tamplateState=" + tamplateState + ", letterContents=" + letterContent + "]";
     }
     
 }
