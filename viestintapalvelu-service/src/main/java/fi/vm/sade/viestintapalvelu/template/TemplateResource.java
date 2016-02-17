@@ -317,7 +317,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @POST
     @Path("/insert")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
@@ -333,7 +333,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @PUT
     @Path("/update")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = "", notes = "")
@@ -349,7 +349,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @PUT
     @Path("/saveAttachedApplicationPeriods")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8;")
+    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = AttachApplicationPeriod, notes = AttachApplicationPeriod)
