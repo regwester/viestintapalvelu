@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
+import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -66,7 +67,7 @@ import static org.joda.time.DateTime.now;
 public class PDFPrinterResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
 
-    @Autowired
+    @Resource
     private DokumenttiResource dokumenttiResource;
     @Autowired
     private DownloadCache downloadCache;
