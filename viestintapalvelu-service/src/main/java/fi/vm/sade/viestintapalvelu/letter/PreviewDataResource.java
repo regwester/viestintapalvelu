@@ -61,9 +61,14 @@ public class PreviewDataResource {
     @Produces("application/pdf")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     public byte[] dummyBatchPdf(PreviewRequest request) throws IOException, DocumentException {
-        final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getState());
-        final byte[] previewPdf = previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
-        return previewPdf;
+        try {
+            final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getTemplateState());
+            final byte[] previewPdf = previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
+            return previewPdf;
+        } catch (Exception e) {
+            log.error("Esikatselu-PDF:n muodostus epäonnistui: {}", request.toString(), e);
+            throw e;
+        }
     }
 
     @POST
@@ -72,9 +77,14 @@ public class PreviewDataResource {
     @Produces("application/json")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_SEND_LETTER_EMAIL)
     public Response dummyBatchEmail(PreviewRequest request) throws IOException, DocumentException {
-        final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getState());
-        String email = previewDataService.getEmailPreview(template, "", request.getLetterContent());
-        return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
+        try {
+            final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getTemplateState());
+            String email = previewDataService.getEmailPreview(template, "", request.getLetterContent());
+            return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
+        } catch (Exception e) {
+            log.error("Esikatselu-emailin muodostus epäonnistui: {}", request.toString(), e);
+            throw e;
+        }
     }
 
 }

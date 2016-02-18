@@ -69,7 +69,7 @@ public interface EmailResource {
     @POST
     @Consumes(MediaType.MULTIPART_FORM_DATA)
     @Produces("text/plain")
-    @Path("attachment")
+    @Path("/attachment")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lisää käyttäjän valitsemat liitetiedostot tietokantaan", notes = "Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä", response = String.class)
     @ApiResponses({ @ApiResponse(code = 400, message = "Not a multipart request") })
@@ -84,7 +84,7 @@ public interface EmailResource {
      */
     @GET
     @Produces("application/json")
-    @Path("ok")
+    @Path("/ok")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa OK-vastauksen käyttöliittymälle")
     public Response ok();
@@ -109,7 +109,7 @@ public interface EmailResource {
     @Consumes("application/json")
     @Produces("application/json")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
-    @Path("firewall")
+    @Path("/firewall")
     public Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
 
     /**
@@ -122,7 +122,7 @@ public interface EmailResource {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    @Path("status")
+    @Path("/status")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response = SendingStatusDTO.class)
     public Response getStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId) throws Exception;
@@ -137,7 +137,7 @@ public interface EmailResource {
     @POST
     @Consumes("application/json")
     @Produces("application/json")
-    @Path("result")
+    @Path("/result")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa lähetetyn ryhmäsähköpostin raportin", response = ReportedMessageDTO.class)
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirhe") })
@@ -145,7 +145,7 @@ public interface EmailResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("count")
+    @Path("/count")
     @PreAuthorize(SecurityConstants.READ)
     @ApiOperation(value = "Palauttaa sähköpostien lukumäärän")
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error") })
@@ -155,7 +155,7 @@ public interface EmailResource {
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON)
     @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
-    @Path("preview")
+    @Path("/preview")
     public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
 }

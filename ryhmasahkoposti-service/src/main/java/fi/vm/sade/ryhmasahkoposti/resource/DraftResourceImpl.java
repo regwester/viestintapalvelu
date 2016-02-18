@@ -41,7 +41,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
     @Autowired
     private DraftService draftService;
     
-    public Draft getDraft(@PathParam("draftId") Long draftId) {
+    public Draft getDraft(Long draftId) {
         if(draftId == null) {
             throw new BadRequestException("DraftId is not defined");
         }

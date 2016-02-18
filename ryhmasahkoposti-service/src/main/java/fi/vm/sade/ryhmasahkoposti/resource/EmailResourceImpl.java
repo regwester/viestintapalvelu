@@ -79,7 +79,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     @SuppressWarnings("unchecked")
     @Override
-    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response)
+    public String addAttachment(HttpServletRequest request, HttpServletResponse response)
         throws IOException, URISyntaxException, ServletException {
 
         log.debug("Adding attachment: {}", request.getMethod());
