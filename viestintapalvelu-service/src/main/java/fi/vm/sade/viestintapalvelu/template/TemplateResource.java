@@ -317,8 +317,8 @@ public class TemplateResource extends AsynchronousResource {
 
     @POST
     @Path("/insert")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
     public Response insert(Template template) throws IOException, DocumentException {
@@ -333,8 +333,8 @@ public class TemplateResource extends AsynchronousResource {
 
     @PUT
     @Path("/update")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = "", notes = "")
     public Response update(Template template) {
@@ -349,8 +349,8 @@ public class TemplateResource extends AsynchronousResource {
 
     @PUT
     @Path("/saveAttachedApplicationPeriods")
-    @Consumes(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = AttachApplicationPeriod, notes = AttachApplicationPeriod)
     public Template saveAttachedApplicationPeriods(ApplicationPeriodsAttachDto dto) throws IOException, DocumentException {
@@ -359,8 +359,8 @@ public class TemplateResource extends AsynchronousResource {
 
     @POST
     @Path("/storeDraft")
-    @Consumes("application/json")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = StoreDraft, notes = StoreDraft)
     public Response storeDraft(Draft draft) throws IOException, DocumentException {
@@ -374,8 +374,8 @@ public class TemplateResource extends AsynchronousResource {
     
     @PUT
     @Path("/updateDraft")
-    @Consumes("application/json")
-    @Produces("application/json")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Päivittää annetun kirjeluonnoksen kantaan", notes = "Vain korvauskentät voi päivittää")
     public Response updateDraft(DraftUpdateDTO draft) {
@@ -389,7 +389,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Path("/getDraft")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = GetDraft, notes = GetDraft2, response = Draft.class)
@@ -442,7 +442,7 @@ public class TemplateResource extends AsynchronousResource {
      */
     @GET
     @Path("/getTempHistory")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     public Response getTempHistory(@Context HttpServletRequest request) throws IOException, DocumentException {
@@ -493,7 +493,7 @@ public class TemplateResource extends AsynchronousResource {
      */
     @GET
     @Path("/getHistory")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = GetHistory, notes = GetHistory2, response = fi.vm.sade.viestintapalvelu.template.Replacement.class)
@@ -579,7 +579,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Path("/{templateId}/{type}/getTemplateContent")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
@@ -591,7 +591,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Path("/{templateId}/getTemplateContent")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
@@ -604,7 +604,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Deprecated
     @Path("{name}/{languageCode}/edit")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = "Palauttaa kirjepohjan kirjepohjan sekä rakenteen muokkausta varten", response = Template.class)
@@ -617,7 +617,7 @@ public class TemplateResource extends AsynchronousResource {
     @GET
     @Deprecated
     @Path("/{templateId}/edit")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @Transactional
     @ApiOperation(value = "Palauttaa kirjepohjan kirjepohjan sekä rakenteen muokkausta varten", response = Template.class)
@@ -627,7 +627,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Path("/{templateId}/getTemplateContent/{state}")
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template getTemplateByIDAndState(@PathParam("templateId") long templateId,
@@ -638,7 +638,7 @@ public class TemplateResource extends AsynchronousResource {
 
     @GET
     @Deprecated
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
     @ApiOperation(value = GetTemplateContent, notes = GetTemplateContent, response = String.class)
     @ApiResponses({ @ApiResponse(code = 400, message = GetTemplateContent400) })
@@ -656,7 +656,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/{templateName}/{languageCode}/{type}/{applicationPeriod}/getTemplateContent")
     @ApiOperation(value = GetTemplateContent, notes = GetTemplateContent, response = String.class)
     @ApiResponses({ @ApiResponse(code = 400, message = GetTemplateContent400) })
@@ -677,7 +677,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/draft/applicationPeriod/{applicationPeriod}")
     public List<Draft> getDraftsByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true) @PathParam("applicationPeriod") String applicationPeriod,
@@ -687,7 +687,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/draft")
     public List<Draft> getDraftsByTags(@ApiParam(name = "tags", value = "", required = false) @QueryParam("tags") List<String> tags) {
         List<Draft> drafts = templateService.getDraftsByTags(tags);
@@ -695,7 +695,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces(MediaType.APPLICATION_JSON)
     @Path("/list")
     public List<TemplateListing> getLatestTemplatesByLanguageAndType(
             @ApiParam(name = "type", value = "Kirjepohjan tyyppi (koekutsu-, jälkiohjaus tai hyväksymiskirje)", required = true) @QueryParam("type") String type,
