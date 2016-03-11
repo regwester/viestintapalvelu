@@ -138,8 +138,6 @@
 
     <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
 
-    <bean id="cors-filter" class="fi.vm.sade.viestintapalvelu.common.resource.filter.CORSFilter"/>
-
     <bean id="jackson-feature" class="fi.vm.sade.viestintapalvelu.common.feature.JacksonFeature"/>
 
     <jaxrs:server id="ajastuspalveluResources">
@@ -151,7 +149,6 @@
         </jaxrs:serviceBeans>
         <jaxrs:providers>
             <ref bean="jackson-feature"/>
-            <ref bean="cors-filter" />
             <ref bean="resourceWriter" />
             <ref bean="apiWriter" />
         </jaxrs:providers>
