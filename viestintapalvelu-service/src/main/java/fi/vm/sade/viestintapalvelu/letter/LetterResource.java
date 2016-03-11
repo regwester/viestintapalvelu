@@ -220,7 +220,13 @@ public class LetterResource extends AbstractLetterResource {
         notes = "")
     public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
-        return createAsyncLetter(input, false);
+        try {
+            return createAsyncLetter(input, false);
+        } catch (Exception e) {
+            LOG.error("Kirjeiden muodostus epäonnistui: " + e.getMessage(), e);
+            throw e;
+        }
+
     }
 
     // /aync/pdf -> /async/letter
