@@ -36,6 +36,7 @@ public class JacksonFeature extends JacksonJaxbJsonProvider {
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
             disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
+            configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
         }});
     }
 
