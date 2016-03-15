@@ -67,31 +67,52 @@ public class RecipientService {
     @Transactional
     public void updateRecipientInformation(Long recipientId) {
         ReportedRecipient recipient = recipientDAO.findByRecipientID(recipientId);
-        if (OidValidator.isHenkiloOID(recipient.getRecipientOid())) {
-            updatePerson(recipient);
-        } else if (OidValidator.isOrganisaatioOID(recipient.getRecipientOid())) {
-            updateOrganization(recipient);
-        } else {
-            log.warn("Unrecognizable OID: {}, in recipient: {}", recipient.getRecipientOid(), recipient.getRecipientEmail());
+        if(recipient != null) {
+            if (OidValidator.isHenkiloOID(recipient.getRecipientOid())) {
+                updatePerson(recipient);
+            } else if (OidValidator.isOrganisaatioOID(recipient.getRecipientOid())) {
+                updateOrganization(recipient);
+            } else {
+                updateRecipientWithoutOid(recipient);
+            }
         }
     }
 
     private void updateOrganization(ReportedRecipient recipient) {
         log.debug("Updating organization recipient with oid {} ", recipient.getRecipientOid());
-        OrganisaatioRDTO organisaatio = organizationComponent.getOrganization(recipient.getRecipientOid());
-        String nameOfOrganisation = organizationComponent.getNameOfOrganisation(organisaatio);
-        recipient.setSearchName(nameOfOrganisation);
-        recipient.setDetailsRetrieved(true);
-        updateRecipient(recipient);
+        try {
+            OrganisaatioRDTO organisaatio = organizationComponent.getOrganization(recipient.getRecipientOid());
+            String nameOfOrganisation = organizationComponent.getNameOfOrganisation(organisaatio);
+            recipient.setSearchName(nameOfOrganisation);
+            recipient.setDetailsRetrieved(true);
+            updateRecipient(recipient);
+        } catch (Exception e) {
+            log.error("Updating organization recipient with oid {} failed", recipient.getRecipientOid(), e);
+        }
     }
 
     private void updatePerson(ReportedRecipient recipient) {
         log.debug("Updating person recipient with oid {} ", recipient.getRecipientOid());
-        Henkilo henkilo = personComponent.getPerson(recipient.getRecipientOid());
-        recipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
-        recipient.setSocialSecurityID(henkilo.getHetu());
-        recipient.setDetailsRetrieved(true);
-        updateRecipient(recipient);
+        try {
+            Henkilo henkilo = personComponent.getPerson(recipient.getRecipientOid());
+            recipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
+            recipient.setSocialSecurityID(henkilo.getHetu());
+            recipient.setDetailsRetrieved(true);
+            updateRecipient(recipient);
+        } catch (Exception e) {
+            log.error("Updating person recipient with oid {} failed", recipient.getRecipientOid(), e);
+        }
+    }
+
+    private void updateRecipientWithoutOid(ReportedRecipient recipient) {
+        try {
+            log.info("Unrecognizable OID: {}, in recipient: {}", recipient.getRecipientOid(), recipient.getRecipientEmail());
+            recipient.setDetailsRetrieved(true);
+            updateRecipient(recipient);
+        } catch (Exception e) {
+            log.error("Updating recipient without oid failed. Recipient id is {}", recipient.getId(), e);
+        }
+
     }
 
     private void updateRecipient(ReportedRecipient recipient) {
