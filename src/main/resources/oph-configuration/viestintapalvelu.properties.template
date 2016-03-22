@@ -66,9 +66,9 @@ activeMq.targetDestination.learningopportunityprovider.public=fi.vm.sade.learnin
 activeMq.targetDestination.organisaatio=fi.vm.sade.organisaatio.service
 activeMq.targetDestinationAdmin.tarjonta=fi.vm.sade.tarjonta.admin.service
 activeMq.targetDestinationPublic.tarjonta=fi.vm.sade.tarjonta.public.service
-cas.callback.ryhmasahkoposti=http://${server.name}:8309/ryhmasahkoposti-service
-cas.callback.viestintapalvelu=http://${server.name}:8309/viestintapalvelu
-cas.callback.ajastuspalvelu=http://${server.name}:8309/ajastuspalvelu
+cas.callback.ryhmasahkoposti=http://{{ cluster_viestintapalvelu_host | default("${server.name}") }}:{{ cluster_viestintapalvelu_port | default("8309") }}/ryhmasahkoposti-service
+cas.callback.viestintapalvelu=http://{{ cluster_viestintapalvelu_host | default("${server.name}") }}:{{ cluster_viestintapalvelu_port | default("8309") }}/viestintapalvelu
+cas.callback.ajastuspalvelu=http://{{ cluster_viestintapalvelu_host | default("${server.name}") }}:{{ cluster_viestintapalvelu_port | default("8309") }}/ajastuspalvelu
 cas.group-role-attribute=cn
 cas.group-search-base=ou\=groups
 cas.group-search-filter=(uniqueMember\={0})
