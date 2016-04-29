@@ -37,10 +37,7 @@ angular.module('report')
     })
   .controller('ReportedLetterListCtrl', ['$scope', '$state', '$http', '$window', 'ReportedLetterListCtrlState', 'Options',
 function ($scope, $state, $http, $window, ReportedLetterListCtrlState, Options) {
-    var  serviceAPIUrl = '/viestintapalvelu/api/v1',
-        reportingAPIUrl = serviceAPIUrl + '/reporting',
-        reportedLettersListUrl = serviceAPIUrl+'/reporting/list',
-        reportedLettersSearchUrl = serviceAPIUrl+'/reporting/search';
+    var  serviceAPIUrl = '/viestintapalvelu/api/v1';
     $scope.doneSearchTarget = 'batch';
     $scope.loading = false;
     $scope.applicationPeriods = [];
@@ -52,18 +49,18 @@ function ($scope, $state, $http, $window, ReportedLetterListCtrlState, Options) 
       if ($scope.loading) {
         return;
       }
-      var params = {}, url = reportedLettersListUrl;
+      var params = {}, url = window.url("viestintapalvelu.reporting.list");
       if ($scope.form.organization) {
         params.orgOid = $scope.form.organization.oid;
       }
       params.searchTarget = $scope.searchTarget || 'batch';
       if ($scope.searchTarget == 'batch' && $scope.searchArgument) {
           params.searchArgument = $scope.searchArgument;
-          url = reportedLettersSearchUrl;
+          url = window.url("viestintapalvelu.reporting.search");
       }
       if ($scope.searchTarget == 'receiver' && $scope.searchArgument) {
           params.receiverSearchArgument = $scope.searchArgument;
-          url = reportedLettersSearchUrl;
+          url = window.url("viestintapalvelu.reporting.search");
       }
       params.applicationPeriod = $scope.applicationPeriod;
 
@@ -128,14 +125,11 @@ function ($scope, $state, $http, $window, ReportedLetterListCtrlState, Options) 
     };
 
     $scope.downloadLetter = function (letterReceiverLetterID) {
-        var getLetterDownloadLink, letterDownloadLinkUrl = reportingAPIUrl + '/letter';
-
-        getLetterDownloadLink = $http.get(letterDownloadLinkUrl, { params: { id: letterReceiverLetterID } });
-        getLetterDownloadLink.success(function (downloadLink) {
+        $http.get(window.url("viestintapalvelu.reporting.letter"), { params: { id: letterReceiverLetterID } }).success(function (downloadLink) {
             // changing window location will initiate download prompt
             // TODO: the backend should return only the documentID, not the whole url
             //       this way naturally exposes the user to security risks
-            var acceptableDownloadLink = $window.location.origin + serviceAPIUrl + '/download/';
+            var acceptableDownloadLink = $window.location.origin + window.url("viestintapalvelu.download");
             if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
                 $window.location = downloadLink+".pdf";
             }

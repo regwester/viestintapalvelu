@@ -52,7 +52,8 @@
 
     <script type="text/javascript" src="lib/tinymce/tinymce.min.js"></script>
     <script type="text/javascript" src="lib/angular-ui-tinymce/src/tinymce.js"></script>
-    
+    <script type="text/javascript" src="lib/oph_urls.js/index.js"></script>
+
     <%
         request.setCharacterEncoding("UTF-8");
         String emailData = request.getParameter("emailData");

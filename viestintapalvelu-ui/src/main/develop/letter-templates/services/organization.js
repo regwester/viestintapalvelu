@@ -17,24 +17,22 @@
 'use strict';
 
 angular.module('letter-templates')
-    .factory('TemplateTreeService', ['$resource', '$http','$q', '$filter', 'TemplateService', function ($resource, $http, $q, $filter, TemplateService) {
+    .factory('TemplateTreeService', ['$http','$q', '$filter', 'TemplateService', function ($http, $q, $filter, TemplateService) {
 
-        var serviceUrl = '/viestintapalvelu/api/v1/',
-            organizationResUrl = serviceUrl + 'organizationhierarchy/',
-            selectedApplicationTarget,
+        var selectedApplicationTarget,
             deferred = $q.defer();
 
         return {
 
             getHakukohteetByApplicationPeriod: function (applicationperiod) {
-                return $http.get(organizationResUrl+"/hakukohteet/applicationPeriod/" + applicationperiod);
+                return $http.get(window.url("viestintapalvelu.org.hakukohteetByApplicationPeriod", applicationperiod));
             },
 
             getOrganizationName: function(orgoid, languageCode) {
-                return $http.get(organizationResUrl + 'name/' + orgoid + '/' + languageCode);   
+                return $http.get(window.url("viestintapalvelu.org.name", orgoid, languageCode));
             },
             getOrganizationHierarchy: function (applicationPeriod) {
-                return $http.get(organizationResUrl + 'applicationPeriod/' + applicationPeriod);
+                return $http.get(window.url("viestintapalvelu.org.hierarchy", applicationPeriod));
             },
             getParsedTreeGrid : function(response, firstColumnDisplayName) {
 

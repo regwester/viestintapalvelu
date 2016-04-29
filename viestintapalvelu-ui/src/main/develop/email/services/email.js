@@ -2,18 +2,17 @@
 
 angular.module('email')
 .factory('EmailService', ['$resource', '$http', function($resource, $http) {
-  var baseUrl = '/ryhmasahkoposti-service/email/';
   return {
-    init: $resource(baseUrl + 'ok', {}, { 
+    init: $resource(window.url("ryhmasahkoposti-service.resource", "ok"), {}, { 
       query: {method: 'GET', isArray: false}
     }),
-    status: $resource(baseUrl + 'status'),
-    email: $resource(baseUrl),
+    status: $resource(window.url("ryhmasahkoposti-service.resource", "status")),
+    email: $resource(window.url("ryhmasahkoposti-service.resource","")),
     preview: function(emailData){
-      return $http.post('/ryhmasahkoposti-service/email/preview/', emailData);
+      return $http.post(window.url("ryhmasahkoposti-service.preview"), emailData);
     },
-    result: $resource(baseUrl + 'result'),
-    messages: $resource('/ryhmasahkoposti-service/reportMessages/currentUserHistory'),
-    messageCount: $resource(baseUrl + 'count')
+    result: $resource(window.url("ryhmasahkoposti-service.resource","result")),
+    messages: $resource(window.url("ryhmasahkoposti-service.report.currentUserHistory")),
+    messageCount: $resource(window.url("ryhmasahkoposti-service.resource","count"))
   };
 }]);

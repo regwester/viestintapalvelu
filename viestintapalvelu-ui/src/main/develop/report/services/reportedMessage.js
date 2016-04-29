@@ -3,24 +3,24 @@
 // Hakee REST-rajapinnan avulla raportoitavan viestin ja vastaanottajat sivutettuna ja lajiteltuna
 angular.module('report')
 .factory('ReportedMessageAndRecipients', ['$resource', function($resource) {
-    return $resource("/ryhmasahkoposti-service/reportMessages/vwp/:messageID", {messageID: '@messageID'});
+    return $resource(window.url("ryhmasahkoposti-service.report.vwp"), {messageID: '@messageID'});
 }])
 
 // Hakee REST-rajapinnan avulla raportoitavan viestin tiedot vastaanottajineen, joille viestin lähetys epäonnistui
 .factory('ReportedMessageAndRecipientsSendingUnsuccessful', ['$resource', function($resource) {
-    return $resource("/ryhmasahkoposti-service/reportMessages/failed/:messageID", {messageID: '@messageID'});
+    return $resource(window.url("ryhmasahkoposti-service.report.failed"), {messageID: '@messageID'});
 }])
 
 // Hakee REST-rajapinnan avulla hakuparametrin mukaiset raportoitavat viestit 
 .factory('GetReportedMessagesBySearchArgument', ['$resource', function($resource) {
-    return $resource("/ryhmasahkoposti-service/reportMessages/search", {}, {
+    return $resource(window.url("ryhmasahkoposti-service.report.search"), {}, {
         get: {method: "GET", isArray: false}
     });
 }])
 
 //Hakee REST-rajapinnan avulla organisaation raportoitavat viestit 
 .factory('GetReportedMessagesByOrganization', ['$resource', function($resource) {
-    return $resource("/ryhmasahkoposti-service/reportMessages/list", {}, {
+    return $resource(window.url("ryhmasahkoposti-service.report.list"), {}, {
         get: {method: "GET", isArray: false}
     });
 }])

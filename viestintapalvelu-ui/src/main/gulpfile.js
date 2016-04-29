@@ -18,6 +18,7 @@ var input = {
         'develop/report/init.js',
         'develop/letter-templates/init.js',
         'develop/init.js',
+        'develop/viestintapalvelu-ui-oph.js',
         'develop/**/filters/*.js',
         'develop/**/services/*.js',
         'develop/**/directives/*.js',

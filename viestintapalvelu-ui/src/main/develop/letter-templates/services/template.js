@@ -19,32 +19,30 @@
 angular.module('letter-templates')
     .factory('TemplateService', ['$resource', '$http', '$q', 'Global', function ($resource, $http, $q, Global) {
 
-        var serviceUrl = '/viestintapalvelu/api/v1/',
-            templateBaseUrl = serviceUrl + 'template/',
-            selectedApplicationTarget,
+        var selectedApplicationTarget,
             deferred = $q.defer(),
             template = {},
             baseTemplate;
 
-        $http.get(serviceUrl + 'options/hakus').success(function (data) {
+        $http.get(window.url("viestintapalvelu.options.hakus")).success(function (data) {
             deferred.resolve(data);
         });
 
         return {
             getTemplatesByOid: function(oidList) {
-                return $http.get(templateBaseUrl, {params: {organizationid: oidList}})
+                return $http.get(window.url("viestintapalvelu.template"), {params: {organizationid: oidList}})
             },
             getDraftsByTags: function(tags) {
-                return $http.get(templateBaseUrl + "draft", {params: {tags: tags}})
+                return $http.get(window.url("viestintapalvelu.template.draft"), {params: {tags: tags}})
             },
             getDraftsByOid: function(applicationPeriod, oidList) {
-                return $http.get(templateBaseUrl + "draft/applicationPeriod/" + applicationPeriod, {params: {organizationid: oidList}})
+                return $http.get(window.url("viestintapalvelu.template.draftPeriod", applicationPeriod), {params: {organizationid: oidList}})
             },
             getApplicationTargets: function() {
                 return deferred.promise;
             },
             getBaseTemplates: function() {
-                return $http.get(templateBaseUrl + 'list')
+                return $http.get(window.url("viestintapalvelu.template.list"))
             },
             getApplicationTarget: function() {
                 return selectedApplicationTarget;
@@ -72,54 +70,54 @@ angular.module('letter-templates')
                 return template;
             },
             saveTemplate: function(template) {
-                return $http.post(templateBaseUrl + 'insert/', template);
+                return $http.post(window.url("viestintapalvelu.template.insert"), template);
             },
             getTemplateByIdAndState: function(id, state) {
-                return $http.get(templateBaseUrl + id + '/getTemplateContent/' + state);
+                return $http.get(window.url("viestintapalvelu.template.byIdState", id, state));
             },
             getTemplateById: function(id) {
-                return $http.get(templateBaseUrl + id + '/letter/getTemplateContent/')
+                return $http.get(window.url("viestintapalvelu.template.content", id))
             },
             getTemplatesByApplicationPeriod: function(applicationOid) {
-                return $http.get(templateBaseUrl + 'listByApplicationPeriod/' + applicationOid);
+                return $http.get(window.url("viestintapalvelu.template.byPeriod", applicationOid));
             },
             getTemplateByNameStateApplicationPeriodAndLanguage: function(templateName, language, applicationPeriod, state) {
-                return $http.get(templateBaseUrl + 'getByName/' + state, {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod}})
+                return $http.get(window.url("viestintapalvelu.template.byName", state), {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod}})
             },
             updateTemplate: function() {
-                return $resource(templateBaseUrl + 'update', {}, {
+                return $resource(window.url("viestintapalvelu.template.update"), {}, {
                     put: {
                         method: "PUT"
                     }
                 });
             },
             getTemplateContent: function() {
-              return $http.get(templateBaseUrl + template.type + '/' + template.language + '/letter/' + template.oid + '/getTemplateContent');
+              return $http.get(window.url("viestintapalvelu.template.templateContent", template.type, template.language, template.oid));
             },
             getDefaultTemplates: function() {
-                return $http.get(templateBaseUrl + 'defaults');
+                return $http.get(window.url("viestintapalvelu.template.defaults"));
             },
             publishTemplate: function() {
                 return true;
             },
             getStructureById: function(structureId) {
-                return $http.get(serviceUrl + 'structure/' + structureId);
+                return $http.get(window.url("viestintapalvelu.structure", structureId));
             },
             getDraft: function(templateName, language, applicationPeriod, fetchTarget, organizationOid) {
-                return $http.get(templateBaseUrl + 'getDraft', {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod,'fetchTarget':fetchTarget,'oid':organizationOid}})
+                return $http.get(window.url("viestintapalvelu.template.getDraft"), {params: {'templateName':templateName,'languageCode':language,'applicationPeriod':applicationPeriod,'fetchTarget':fetchTarget,'oid':organizationOid}})
             },
             getFetchTargetsByOid: function(oid) {
-                return $http.get(serviceUrl + '/options/hakukohde/' + oid);
+                return $http.get(window.url("viestintapalvelu.options.hakukohde", oid));
             },
             updateDraft: function() {
-                return $resource(templateBaseUrl + 'updateDraft', {}, {
+                return $resource(window.url("viestintapalvelu.template.updateDraft"), {}, {
                     put: {
                         method: "PUT"
                     }
                 });
             },
             insertDraft: function() {
-                return $resource(templateBaseUrl + 'storeDraft', {}, {
+                return $resource(window.url("viestintapalvelu.template.storeDraft"), {}, {
                     post: {
                         method: "POST"
                     }

@@ -6,13 +6,13 @@ angular.module('email')
     var selectedDraft;
 
     return {
-      drafts: $resource('/ryhmasahkoposti-service/drafts/:draftId/:id', {draftId: '@id'},
+      drafts: $resource(window.url("ryhmasahkoposti-service.draft.resource"), {draftId: '@id'},
         {
           //Custom resource methods
           count: {
             method: 'GET',
             isArray: false,
-            url: '/ryhmasahkoposti-service/drafts/count'
+            url: window.url("ryhmasahkoposti-service.draft.count")
           },
           update: {
             method: "PUT"

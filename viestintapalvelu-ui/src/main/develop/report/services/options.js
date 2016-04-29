@@ -18,8 +18,7 @@
 
 angular.module('report')
     .factory('Options',['$http', '$window', '$log', function($http, $window, $log) {
-        var _uri = "/viestintapalvelu/api/v1/options",
-            _hakuCallbacks = null,
+        var _hakuCallbacks = null,
             _hakus = null;
 
         function hakus(success) {
@@ -32,7 +31,7 @@ angular.module('report')
                 return;
             }
             _hakuCallbacks = [success];
-            $http.get(_uri+"/hakus").success(function(results) {
+            $http.get(window.url("viestintapalvelu.options.hakus")).success(function(results) {
                 _hakus = results;
                 angular.forEach(_hakuCallbacks, function(cb) {
                     cb(results);

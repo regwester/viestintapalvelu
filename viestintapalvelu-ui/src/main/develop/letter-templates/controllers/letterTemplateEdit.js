@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates').controller('LetterTemplateEditCtrl',
-    ['$scope', '$http', '$state', '$filter', '$modal', '$window', 'Global', 'PersonService', 'TemplateService', 'PreviewService',
-    function($scope, $http, $state, $filter, $modal, $window, Global, PersonService, TemplateService, PreviewService) {
+    ['$scope', '$state', '$filter', '$modal', '$window', 'Global', 'PersonService', 'TemplateService', 'PreviewService',
+    function($scope, $state, $filter, $modal, $window, Global, PersonService, TemplateService, PreviewService) {
 
         $scope.editorOptions = Global.getEditorOptions();
 

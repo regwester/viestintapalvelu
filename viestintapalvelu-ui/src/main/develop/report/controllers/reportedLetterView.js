@@ -4,7 +4,7 @@ angular.module('report')
   .controller('ReportedLetterViewCtrl', ['$scope', '$state', '$stateParams', '$http', '$window', function ($scope, $state, $stateParams, $http, $window) {
     var serviceAPIUrl = '/viestintapalvelu/api/v1'
       , reportingAPIUrl = serviceAPIUrl + '/reporting'
-      , reportedLetterUrl = reportingAPIUrl + '/view';
+      , reportedLetterUrl = window.url("viestintapalvelu.reporting.view");
 
     $scope.pagination = {
       page: 1,
@@ -70,14 +70,11 @@ angular.module('report')
     };
 
     $scope.downloadLetter = function (recipient) {
-      var getLetterDownloadLink, letterDownloadLinkUrl = reportingAPIUrl + '/letter';
-
-      getLetterDownloadLink = $http.get(letterDownloadLinkUrl, { params: { id: recipient.letterReceiverLetterID } });
-      getLetterDownloadLink.success(function (downloadLink) {
+        $http.get(window.url("viestintapalvelu.reporting.letter"), { params: { id: recipient.letterReceiverLetterID } }).success(function (downloadLink) {
         // changing window location will initiate download prompt
         // TODO: the backend should return only the documentID, not the whole url
         //       this way naturally exposes the user to security risks
-        var acceptableDownloadLink = $window.location.origin + serviceAPIUrl + '/download/';
+        var acceptableDownloadLink = $window.location.origin + window.url("viestintapalvelu.download");
         if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
           $window.location = downloadLink;
         }
@@ -85,12 +82,8 @@ angular.module('report')
     };
 
     $scope.downloadContents = function (letterBatchID) {
-      var getContentsDownloadLink;
-      var contentsDownloadLinkUrl = reportingAPIUrl + '/contents';
-
-      getContentsDownloadLink = $http.get(contentsDownloadLinkUrl, {params: {id: letterBatchID}});
-      getContentsDownloadLink.success(function (downloadLink) {
-        var acceptableDownloadLink = $window.location.origin + serviceAPIUrl + '/download/';
+        $http.get(window.url("viestintapalvelu.reporting.contents"), {params: {id: letterBatchID}}).success(function (downloadLink) {
+        var acceptableDownloadLink = $window.location.origin + window.url("viestintapalvelu.download");
         if (downloadLink.indexOf(acceptableDownloadLink) === 0) {
           $window.location = downloadLink;
         }
@@ -98,8 +91,7 @@ angular.module('report')
     };
 
     $scope.sendIPosti = function (mailID) {
-      var sendIPostiUrl = serviceAPIUrl + '/iposti/sendMail/' + mailID;
-      $http.get(sendIPostiUrl);
+      $http.get(window.url("viestintapalvelu.iposti.sendMail", mailID));
     };
 
     $scope.fetch();

@@ -32,7 +32,7 @@
     </jaxrs-client:client>
 
     <context:property-placeholder
-            location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+            location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
             ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
@@ -83,7 +83,7 @@
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean -->
 
-    <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+    <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${organisaatio-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
@@ -96,13 +96,13 @@
     </jaxrs-client:client>
 
     <jaxrs-client:client id="organisaatioResourceWithoutAuthenticationClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication"
-                         address="${viestintapalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+                         address="${organisaatio-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
-    <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+    <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
@@ -114,7 +114,7 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
-    <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${viestintapalvelu.authenticationService.omattiedot.rest.url}" inheritHeaders="true">
+    <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
@@ -126,7 +126,7 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
-    <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${viestintapalvelu.ryhmasahkoposti.email.rest.url}" inheritHeaders="true">
+    <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${ryhmasahkoposti-service.email.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>
@@ -140,7 +140,7 @@
 
     <jaxrs-client:client id="tarjontaHakuResourceClient"
                     serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
-                    address="${viestintapalvelu.tarjontapalvelu.rest.url}" inheritHeaders="true">
+                    address="${tarjonta-service.rest.url}" inheritHeaders="true">
       <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
         </jaxrs-client:outInterceptors>

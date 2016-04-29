@@ -1,7 +1,7 @@
 'user strict';
 
-angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state','$filter','$http','Global','TemplateService','TemplateTreeService', 'PreviewService', 
-                                                                function($scope, $state, $filter, $http, Global, TemplateService, TemplateTreeService, PreviewService) {
+angular.module('letter-templates').controller('EditDraftCtrl', ['$scope','$state','$filter','Global','TemplateService','TemplateTreeService', 'PreviewService', 
+                                                                function($scope, $state, $filter, Global, TemplateService, TemplateTreeService, PreviewService) {
     
     $scope.titleText = "Muokkaa kirjeen luonnosta";
     

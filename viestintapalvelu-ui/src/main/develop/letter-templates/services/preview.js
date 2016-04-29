@@ -6,7 +6,7 @@ angular.module('letter-templates')
         return {
             previewPDF: function(templateId, state, content) {
                 $http({
-                    url: '/viestintapalvelu/api/v1/preview/letterbatch/pdf',
+                    url: window.url("viestintapalvelu.preview.letterbatch", "pdf"),
                     method: "POST",
                     data: {'templateId' : templateId,
                            'templateState' : state,
@@ -24,7 +24,7 @@ angular.module('letter-templates')
             },
             previewLetter: function(templateId, state, content) {
                 $http({
-                    url: '/viestintapalvelu/api/v1/preview/letterbatch/email',
+                    url: window.url("viestintapalvelu.preview.letterbatch", "email"),
                     method: "POST",
                     data: {'templateId' : templateId,
                            'templateState' : state,

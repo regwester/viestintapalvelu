@@ -79,7 +79,6 @@ cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti-service
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
 cas.service.ajastuspalvelu=https\://${host.virkailija}/ajastuspalvelu
 customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
-dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
 flyway.initOnMigrate=true
 koodi.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodiService
 koodisto.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodistoService
@@ -102,12 +101,7 @@ ryhmasahkoposti.queue.handle.size=250
 ryhmasahkoposti.max.sendqueue.tasks.to.add=42
 ryhmasahkoposti.sender.cron=0 * * * * *
 ryhmasahkoposti.max.email.recipient.handle.time.millis = 180000
-ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url=https://${host.virkailija}/authentication-service/resources
 ryhmasahkopostipalvelu.authenticationService.henkilo.cas.url=https://${host.virkailija}/authentication-service/j_spring_cas_security_check
-ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
-ryhmasahkopostipalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
-ryhmasahkopostipalvelu.templateService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
-ryhmasahkopostipalvelu.attachmentService.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
 ryhmasahkoposti.from=noreply@opintopolku.fi
 # Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
 ryhmasahkoposti.default.template.name=osoitepalvelu_email
@@ -115,11 +109,6 @@ ryhmasahkoposti.default.template.language=FI
 
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
-viestintapalvelu.authenticationService.omattiedot.rest.url=https://${host.virkailija}/authentication-service/resources
-viestintapalvelu.organisaatioService.rest.url=https://${host.virkailija}/organisaatio-service/rest
-viestintapalvelu.ryhmasahkoposti.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
-viestintapalvelu.tarjontapalvelu.rest.url = https://${host.virkailija}/tarjonta-service/rest/v1
-viestintapalvelu.rest.api.url = https://${host.virkailija}/viestintapalvelu/api/v1
 viestintapalvelu.options.cache.valid.millis=86400000
 # kuinka monta LetterBatch-käsittelyä sallitaan rinnakkain:
 viestintapalvelu.letter.batch.jobs.pool.size=3
@@ -153,3 +142,4 @@ viestintapalvelu.dev.session-required=true
 ##############################################################################
 ajastuspalvelu.task.dummyEmail.endpoint = https\://${host.virkailija}/ajastuspalvelu-service/testdata/response.json
 ajastuspalvelu.ryhmasahkoposti.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/
+viestintapalvelu.rest.api.url = https://${host.virkailija}/viestintapalvelu/api/v1

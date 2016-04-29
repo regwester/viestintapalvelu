@@ -1,8 +1,8 @@
 'use strict';
 
 angular.module('letter-templates').controller('LetterTemplateViewCtrl',
-    ['$scope', '$http', '$state', '$filter', '$timeout', 'PersonService', 'TemplateService', 'PreviewService', 'AuthService',
-     function($scope, $http, $state, $filter, $timeout, PersonService, TemplateService, PreviewService, AuthService) {
+    ['$scope', '$state', '$filter', '$timeout', 'PersonService', 'TemplateService', 'PreviewService', 'AuthService',
+     function($scope, $state, $filter, $timeout, PersonService, TemplateService, PreviewService, AuthService) {
 
         TemplateService.getTemplateByIdAndState($state.params.templateId, $state.params.state).success(function(result) {
             $scope.template = result;

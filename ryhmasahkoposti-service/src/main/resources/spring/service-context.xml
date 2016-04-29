@@ -24,7 +24,7 @@
 
     <!-- Application and common properties -->
     <context:property-placeholder
-            location="classpath:/properties/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+            location="classpath:/properties/ryhmasahkopostipalvelu.properties, classpath:/ryhmasahkoposti-service-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
             ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <!-- Authentication and security -->
@@ -73,7 +73,7 @@
     <!-- External interface OmattiedotResource of HenkiloPalvelu-->
     <jaxrs-client:client id="omattiedotResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource"
-                         address="${ryhmasahkopostipalvelu.authenticationService.omattiedot.rest.url}"
+                         address="${authentication-service.omattiedot.rest.url}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptor"/>
@@ -90,7 +90,7 @@
     <!-- External interface AttachmentResource  -->
     <jaxrs-client:client id="attachmentResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource"
-                         address="${ryhmasahkopostipalvelu.attachmentService.rest.url}" inheritHeaders="true">
+                         address="${viestintapalvelu.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
         </jaxrs-client:outInterceptors>
@@ -106,7 +106,7 @@
     <!-- External interface HenkiloResource of HenkiloPalvelu -->
     <jaxrs-client:client id="henkiloResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource"
-                         address="${ryhmasahkopostipalvelu.authenticationService.henkilo.rest.url}"
+                         address="${authentication-service.henkilo.rest.url}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
@@ -123,7 +123,7 @@
     <!-- External interface OrganisaatioResource of OrganisaatioPalvelu -->
     <jaxrs-client:client id="organisaatioResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource"
-                         address="${ryhmasahkopostipalvelu.organisaatioService.rest.url}" inheritHeaders="true">
+                         address="${organisaatio-service.rest.url}" inheritHeaders="true">
         <!-- Ei vaadi kirjautumista, eikä siksi interceptoria -->
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
@@ -134,7 +134,7 @@
     <!-- External interface LetterResource  -->
     <jaxrs-client:client id="templateResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource"
-                         address="${ryhmasahkopostipalvelu.templateService.rest.url}" inheritHeaders="true">
+                         address="${viestintapalvelu.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
         </jaxrs-client:outInterceptors>
