@@ -5,54 +5,59 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
 
     return function () {
         function getNames() {
-            return $http.get(templateUrl + 'getNames');
+            return $http.get(window.url("viestintapalvelu.template.getNames"));
         }
 
         function getExampleFiles() {
-            return $http.get(templateUrl + 'exampleFiles');
+            return $http.get(window.url("viestintapalvelu.template.exampleFiles"));
         }
 
         function getExample(name) {
-            return $http.get(templateUrl + 'exampleFiles/' + name);
+            return $http.get(window.url("viestintapalvelu.template.exampleFile", name));
         }
 
         function saveTemplate(template) {
-            return $http.post(templateUrl + 'insert', template);
+            return $http.post(window.url("viestintapalvelu.template.insert"), template);
         }
 
         function getByName(t) {
-            var url = templateUrl + 'getByName?templateName=' + t.name + '&languageCode=' + t.lang;
-            if (t.applicationPeriod) {
-                url += "&applicationPeriod=" + t.applicationPeriod;
-            }
-            return $http.get(url);
+            return $http.get(window.urls.omitEmptyValuesFromQuerystring().url("viestintapalvelu.template.getByName", {
+                templateName: t.name,
+                languageCode: t.lang,
+                applicationPeriod: t.applicationPeriod
+            }));
         }
 
         function listVersionsByName(t, getContents, getPeriods) {
-            var url = templateUrl + 'listVersionsByName?templateName=' + t.name + '&languageCode=' + t.lang;
+            var params = {
+                templateName: t.name,
+                languageCode: t.lang
+            };
             if (getContents) {
-                url += "&content=YES";
+                params.content="YES";
             }
             if (getPeriods) {
-                url += "&periods=YES";
+                params.periods="YES";
             }
-            return $http.get(url);
+            return $http.get(window.urls.omitEmptyValuesFromQuerystring().url("viestintapalvelu.template.listVersionsByName", params));
         }
 
         function getHistory(t, oid, applicationPeriod, tag) {
-            if (tag != null && tag != "") {
-                return $http.get(templateUrl + 'getHistory?templateName=' + t.name + '&languageCode=' + t.lang + '&oid=' + oid + "&applicationPeriod=" + applicationPeriod + "&tag=" + tag);
-            } else {
-                return $http.get(templateUrl + 'getHistory?templateName=' + t.name + '&languageCode=' + t.lang + '&oid=' + oid);
-            }
+            return $http.get(window.urls("viestintapalvelu.template.getHistory", {
+                templateName: t.name,
+                languageCode: t.lang,
+                oid: oid,
+                applicationPeriod: applicationPeriod,
+                tag: tag
+            }));
         }
 
         function saveAttachedApplicationPeriods(templateId, applicationPeriods, useAsDefault) {
-            return $http.put(templateUrl + "saveAttachedApplicationPeriods", {
+            return $http.put(window.url("viestintapalvelu.template.saveAttachedApplicationPeriods", {
                 templateId: templateId,
                 applicationPeriods: applicationPeriods,
                 useAsDefault: useAsDefault
-            });
+            }));
         }
 
         return {

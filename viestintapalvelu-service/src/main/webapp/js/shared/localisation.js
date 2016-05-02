@@ -30,28 +30,6 @@
  */
 var app = angular.module('localisation', ['ngResource', 'config']);
 
-/**
- * "Localisations" factory, returns resource for operating on localisations.
- */
-app.factory('Localisations', function($log, $resource, Config) {
-
-    var uri = Config.env.tarjontaLocalisationRestUrl;
-    $log.info("Localisations() - uri = ", uri);
-
-    return $resource(uri + "/:id", {
-        id: '@id'
-    }, {
-        update: {
-            method: 'PUT',
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        },
-        save: {
-            method: 'POST',
-            headers: {'Content-Type': 'application/json; charset=UTF-8'}
-        }
-    });
-
-});
 
 /**
  * UI-directive for using translations.

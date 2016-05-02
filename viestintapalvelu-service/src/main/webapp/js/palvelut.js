@@ -1,25 +1,21 @@
 'use strict';
 
 angular.module('app').factory('Printer', ['$http', '$window', function ($http, $window) {
-    var addressLabel = 'api/v1/addresslabel/';
     var letter = 'api/v1/letter/';
     var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
-    // TODO: get this URL from properties:
-    var _dokumenttiServiceLocation = getCurrentHost()+"/dokumenttipalvelu-service/resources/dokumentit";
-    //var _dokumenttiServiceLocation = 'https://itest-virkailija.oph.ware.fi/dokumenttipalvelu-service/resources/dokumentit';
 
     return function () {
         function osoitetarratPDF(labels) {
-            print(addressLabel + 'pdf', {"addressLabels": labels})
+            print(window.url("viestintapalvelu.addresslabel", 'pdf'), {"addressLabels": labels})
         }
 
         function osoitetarratXLS(labels) {
-            print(addressLabel + 'xls', {"addressLabels": labels})
+            print(window.url("viestintapalvelu.addresslabel", 'xls'), {"addressLabels": labels})
         }
 
         function letterPDF(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            print(letter + 'pdf', {
+            print(window.url("viestintapalvelu.letter", 'pdf'), {
                 "letters": letters, "templateReplacements": replacements, "templateName": tName, "languageCode": tLang, "organizationOid": oid, "applicationPeriod": applicationPeriod, "tag": tag});
         }
 
@@ -40,7 +36,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncPdf(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(letter + "async/pdf", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
+            return $http.post(window.url("viestintapalvelu.letterAsync", "pdf"), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
                 .error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async PDF -kutsu epäonnistui: " + data);
@@ -49,12 +45,12 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
 
         function doDownload(id) {
             return function () {
-                $window.location.href = _dokumenttiServiceLocation + "/lataa/" + id.batchId;
+                $window.location.href = window.url("dokumenttipalvelu-service.lataa", id.batchId);
             }
         }
 
         function asyncZip(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(letter + "async/zip", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
+            return $http.post(window.url("viestintapalvelu.letterAsync", "zip"), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
                 .error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async zip -kutsu epäonnistui: " + data);
@@ -62,7 +58,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
-            return $http.post(letter + "async/letter", buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti)).
+            return $http.post(window.url("viestintapalvelu.letterAsync", "letter"), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async letter -kutsu epäonnistui: " + data);
@@ -70,7 +66,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function asyncStatus(id) {
-            return $http.get(letter + "async/letter/status/" + id.batchId).
+            return $http.get(window.url("viestintapalvelu.letterAsyncStatus", id.batchId)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Async status -kutsu epäonnistui: " + data);
@@ -78,7 +74,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function languageOptions(id) {
-            return $http.get(letter + "languageOptions/" + id.batchId).
+            return $http.get(window.url("viestintapalvelu.letterLanguageOptions", id.batchId)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Kielivaihtoehtojen haku epäonnistui: " + data);
@@ -86,7 +82,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         }
 
         function sendEmail(id) {
-            return $http.post(letter + "emailLetterBatch/" + id.batchId).
+            return $http.post(window.url("viestintapalvelu.letterEmailLetterBatch", id.batchId)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
                     $window.alert("Sähköpostiviestin lähetys kirjelähetykselle " + id + " epäonnistui: " + data);
@@ -96,13 +92,14 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
         function previewEmail(id, langCode) {
             if (langCode) {
                 var lc = langCode;
-                $http.get(letter + 'previewLetterBatchEmail/' + id.batchId + "?language=" + lc).success(function () {
-                    $window.location = letter + 'previewLetterBatchEmail/' + id + "?language=" + lc;
+                var url = window.url("viestintapalvelu.letterPreviewLetterBatchEmail", id.batchId, {language:lc});
+                $http.get(url).success(function () {
+                    $window.location = url;
                 }).error(function () {
                     $window.alert("Ei löytynyt kielellä " + lc);
                 });
             } else {
-                $window.location = letter + 'previewLetterBatchEmail/' + id;
+                $window.location = window.url("viestintapalvelu.letterPreviewLetterBatchEmail", id);
             }
         }
 
