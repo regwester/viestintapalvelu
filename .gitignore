@@ -10,7 +10,7 @@
 ## Build
 *.class
 target
-webapp
+viestintapalvelu-ui/src/main/webapp
 !webapp/index.jsp
 !webapp/initpage.jsp
 !webapp/WEB-INF/
