@@ -4,12 +4,6 @@ window.CONFIG = {};
 window.CONFIG.env = {};
 window.CONFIG.app = {};
 
-function getCurrentHost() {
-    var url = window.location.href;
-    var arr = url.split("/");
-    return arr[0] + "//" + arr[2]; // should return e.g. http(s)://host:port
-}
-
 app.value("globalConfig", window.CONFIG || {});
 
 app.config(function ($locationProvider) {
@@ -35,3 +29,10 @@ app.config(function($sceProvider) {
 }).config(['$httpProvider', function($httpProvider) {
     $httpProvider.interceptors.push('NoCacheInterceptor');
 }]);
+
+app.run(function($http, $cookies) {
+    $http.defaults.headers.common['clientSubSystemCode'] = "viestintapalvelu.viestintapalvelu-service.frontend";
+    if($cookies['CSRF']) {
+        $http.defaults.headers.common['CSRF'] = $cookies['CSRF'];
+    }
+})
