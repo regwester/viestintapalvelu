@@ -1,4 +1,4 @@
-var app = angular.module('app', ['ngResource', 'ui.tinymce', 'ui.bootstrap']);
+var app = angular.module('app', ['ngResource', 'ui.tinymce', 'ui.bootstrap', 'ngCookies']);
 
 window.CONFIG = {};
 window.CONFIG.env = {};

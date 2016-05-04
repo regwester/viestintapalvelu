@@ -132,7 +132,6 @@
                             <jsSrcDir>${develop.dir}</jsSrcDir>
                             <sourceExcludes>
                                 <exclude>${webapp.dir}/**/*.js</exclude>
-                                <exclude>ajastus/**/*.js</exclude>
                                 <exclude>**/init.js</exclude>
                             </sourceExcludes>
                             <jsTestSrcDir>${project.basedir}/src/test/spec/viestinta</jsTestSrcDir>
@@ -142,7 +141,7 @@
                             <browserVersion>INTERNET_EXPLORER_9</browserVersion>
                         </configuration>
                     </execution>
-                    <execution>
+<!--                    <execution>
                         <id>testa-ajastus</id>
                         <goals>
                             <goal>test</goal>
@@ -169,7 +168,7 @@
                             <jsTestSrcDir>${project.basedir}/src/test/spec/ajastus</jsTestSrcDir>
                         </configuration>
                     </execution>
-                </executions>
+-->                </executions>
                 <configuration>
                     <preloadSources>
                         <source>${webapp.dir}/lib/jquery/jquery.js</source>
