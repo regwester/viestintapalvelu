@@ -24,8 +24,15 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
+    <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
+        <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
+    </bean>
+
     <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
                          address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ophRequestHeaders"/>
+        </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
@@ -86,6 +93,7 @@
     <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${organisaatio-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:inInterceptors>
             <ref bean="ticketInterceptorRest"/>
@@ -97,6 +105,9 @@
 
     <jaxrs-client:client id="organisaatioResourceWithoutAuthenticationClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication"
                          address="${organisaatio-service.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ophRequestHeaders"/>
+        </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <ref bean="customJsonProvider"/>
         </jaxrs-client:providers>
@@ -105,6 +116,7 @@
     <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
       <jaxrs-client:inInterceptors>
             <ref bean="ticketInterceptorRest"/>
@@ -117,6 +129,7 @@
     <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
       <jaxrs-client:inInterceptors>
             <ref bean="ticketInterceptorRest"/>
@@ -129,6 +142,7 @@
     <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${ryhmasahkoposti-service.email.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
       <jaxrs-client:inInterceptors>
             <ref bean="ticketInterceptorRest"/>
@@ -143,6 +157,7 @@
                     address="${tarjonta-service.rest.url}" inheritHeaders="true">
       <jaxrs-client:outInterceptors>
             <ref bean="ticketInterceptorRest"/>
+          <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
       <jaxrs-client:inInterceptors>
             <ref bean="ticketInterceptorRest"/>

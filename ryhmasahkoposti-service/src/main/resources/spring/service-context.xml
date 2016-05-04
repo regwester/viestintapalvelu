@@ -70,6 +70,10 @@
                          accessDecisionManager="accessDecisionManager"
                          xmlns="http://camel.apache.org/schema/spring-security"/>
 
+    <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
+      <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
+    </bean>
+
     <!-- External interface OmattiedotResource of HenkiloPalvelu-->
     <jaxrs-client:client id="omattiedotResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource"
@@ -77,6 +81,7 @@
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptor"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:inInterceptors>
             <ref bean="casTicketInterceptor"/>
@@ -93,6 +98,7 @@
                          address="${viestintapalvelu.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:inInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
@@ -110,6 +116,7 @@
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:inInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
@@ -124,7 +131,10 @@
     <jaxrs-client:client id="organisaatioResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OrganisaatioResource"
                          address="${organisaatio-service.rest.url}" inheritHeaders="true">
-        <!-- Ei vaadi kirjautumista, eikä siksi interceptoria -->
+        <!-- Ei vaadi kirjautumista, eikä siksi cas interceptoria -->
+        <jaxrs-client:outInterceptors>
+            <ref bean="ophRequestHeaders"/>
+        </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
@@ -137,6 +147,7 @@
                          address="${viestintapalvelu.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
+            <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:inInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
