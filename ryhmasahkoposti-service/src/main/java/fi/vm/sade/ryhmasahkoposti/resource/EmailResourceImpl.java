@@ -59,7 +59,6 @@ import fi.vm.sade.ryhmasahkoposti.service.EmailService;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 
-
 @Component("EmailResourceImpl")
 public class EmailResourceImpl extends GenericResourceImpl implements EmailResource {
     private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
@@ -93,13 +92,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
             try {
                 List<FileItem> items = upload.parseRequest(request);
-                Iterator<FileItem> iterator = items.iterator();
-                while (iterator.hasNext()) {
-                    FileItem item = (FileItem) iterator.next();
+                for (FileItem item : items) {
                     result = storeAttachment(item);
                 }
-            } catch (FileUploadException e) {
-                e.printStackTrace();
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -114,8 +109,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     @Override
     public Response ok() {
-        Response response = Response.ok("ok").build();
-        return response;
+        return Response.ok("ok").build();
     }
 
     // TODO: Validate the values we get from the client (are empty subject/body/recipients ok?)
