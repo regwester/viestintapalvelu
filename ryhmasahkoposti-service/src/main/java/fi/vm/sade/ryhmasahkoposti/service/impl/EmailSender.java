@@ -164,27 +164,25 @@ public class EmailSender {
         sb.append(emailMessage.getSubject());
         if (emailMessage.getAttachments() != null && emailMessage.getAttachments().size() > 0) {
             sb.append("\nATTACHMENTS:");
-            for (EmailAttachment attachment : emailMessage.getAttachments()) {
-                sb.append(" ");
-                sb.append(attachment.getName());
-                sb.append("(");
-                sb.append(attachment.getContentType());
-                sb.append(")");
-            }
+            createAttachmentNameAndContentType(emailMessage, sb);
         }
         if (additionalAttachments.isPresent()) {
             sb.append("\nADDITIONAL ATTACHMENTS:");
-            for (EmailAttachment attachment : additionalAttachments.get().getAttachments()) {
-                sb.append(" ");
-                sb.append(attachment.getName());
-                sb.append("(");
-                sb.append(attachment.getContentType());
-                sb.append(")");
-            }
+            createAttachmentNameAndContentType(emailMessage, sb);
         }
         sb.append("\n");
         sb.append(emailMessage.getBody());
         LOGGER.debug("MockSendMail:\n" + sb.toString());
+    }
+
+    private void createAttachmentNameAndContentType(EmailMessage emailMessage, StringBuffer sb) {
+        for (EmailAttachment attachment : emailMessage.getAttachments()) {
+            sb.append(" ");
+            sb.append(attachment.getName());
+            sb.append("(");
+            sb.append(attachment.getContentType());
+            sb.append(")");
+        }
     }
 
     public String getSmtpHost() {
