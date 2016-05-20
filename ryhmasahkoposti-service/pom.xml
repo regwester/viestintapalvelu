@@ -432,8 +432,11 @@
             <version>1.0</version>
             <scope>test</scope>
         </dependency>
-
-
+        <dependency>
+            <groupId>fi.vm.sade</groupId>
+            <artifactId>embedded-tomcat</artifactId>
+            <scope>test</scope>
+        </dependency>
 
         <!-- Javax Mail -->
         <dependency>
