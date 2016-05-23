@@ -106,6 +106,7 @@ ryhmasahkoposti.from=noreply@opintopolku.fi
 # Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
 ryhmasahkoposti.default.template.name=osoitepalvelu_email
 ryhmasahkoposti.default.template.language=FI
+ryhmasahkoposti.bounces.url=http://localhost:8000/
 
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
