@@ -50,7 +50,7 @@
     <!-- Virkailija layout script -->
     <script type="text/javascript" src="/virkailija-raamit/apply-raamit.js"></script>
 
-    <script type="text/javascript" src="lib/tinymce/tinymce.min.js"></script>
+    <script type="text/javascript" src="lib/tinymce-dist/tinymce.min.js"></script>
     <script type="text/javascript" src="lib/angular-ui-tinymce/src/tinymce.js"></script>
     <script type="text/javascript" src="lib/oph_urls.js/index.js"></script>
 
