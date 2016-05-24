@@ -24,20 +24,6 @@
     <import resource="classpath:META-INF/cxf/cxf.xml" />
     <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-    <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
-        <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
-    </bean>
-
-    <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
-                         address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
-
     <context:property-placeholder
             location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
             ignore-resource-not-found="true" properties-ref="defaultProps"/>
@@ -72,8 +58,7 @@
         <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
     </util:map>
 
-  <bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache">
-    </bean>
+    <bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache"/>
     <bean id="ticketInterceptorRest" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
         <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
         <property name="sessionRequired" value="${viestintapalvelu.dev.session-required:false}"/>
@@ -89,6 +74,20 @@
         <property name="target" ref="ticketInterceptorTarget"/>
         <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
     </bean -->
+
+    <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
+        <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
+    </bean>
+
+    <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
+                         address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ophRequestHeaders"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <ref bean="customJsonProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
 
     <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${organisaatio-service.rest.url}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
@@ -334,4 +333,4 @@
             <ref bean="apiWriter" />
         </jaxrs:providers>
     </jaxrs:server>
-  </beans>
+</beans>
