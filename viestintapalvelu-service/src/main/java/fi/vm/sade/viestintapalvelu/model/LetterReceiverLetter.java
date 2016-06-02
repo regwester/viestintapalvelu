@@ -51,6 +51,9 @@ public class LetterReceiverLetter extends BaseEntity {
     @Column(name = "alkuperainensisaltotyyppi")
     private String originalContentType = "";
 
+    @Column(name = "julkaistavissa")
+    private boolean readyForPublish;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "letterReceiverLetter", cascade = CascadeType.PERSIST)
     private Set<LetterReceiverLetterAttachment> attachments = new HashSet<LetterReceiverLetterAttachment>();
 
@@ -100,6 +103,14 @@ public class LetterReceiverLetter extends BaseEntity {
 
     protected void setAttachments(Set<LetterReceiverLetterAttachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public boolean isReadyForPublish() {
+        return readyForPublish;
+    }
+
+    public void setReadyForPublish(boolean readyForPublish) {
+        this.readyForPublish = readyForPublish;
     }
 
     @Override

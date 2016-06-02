@@ -24,6 +24,7 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
 ;
@@ -161,4 +162,6 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      */
 
     String findTemplateNameForLetterBatch(long batchId);
+
+    List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid);
 }

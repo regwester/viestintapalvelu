@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.hibernate.internal.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
@@ -264,6 +265,16 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return getEntityManager().createQuery(
                 "SELECT lb.id FROM LetterBatch lb" + " WHERE lb.batchStatus != 'ready' AND lb.batchStatus != 'error'" + " ORDER BY lb.timestamp ASC",
                 Long.class).getResultList();
+    }
+
+    @Override
+    public List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid) {
+        return getEntityManager().createQuery(
+            "SELECT new fi.vm.sade.viestintapalvelu.letter.LetterListItem(lrl.id, lb.applicationPeriod, lb.templateName, lrl.contentType, lrl.timestamp)"
+                + " FROM LetterBatch lb"
+                + " INNER JOIN lb.letterReceivers lr WITH lr.oid_person = :oidPerson"
+                + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish"
+                + " WHERE lb.tag = lb.applicationPeriod", LetterListItem.class).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

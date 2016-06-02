@@ -49,6 +49,9 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "email_osoite")
     private String emailAddress;
 
+    @Column(name = "oid_henkilo")
+    private String oidPerson;
+
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
@@ -138,11 +141,19 @@ public class LetterReceivers extends BaseEntity {
         this.containedInIposti = containedInIposti;
     }
 
+    public String getOidPerson() {
+        return oidPerson;
+    }
+
+    public void setOidPerson(String oidPerson) {
+        this.oidPerson = oidPerson;
+    }
+
     @Override
     public String toString() {
         return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
                 + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
-                + letterReceiverLetter + "]";
+                + letterReceiverLetter + ", oidPerson=" + oidPerson + "]";
     }
 
 }

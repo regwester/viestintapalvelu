@@ -36,6 +36,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
 
 import com.google.common.base.Supplier;
+import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -900,5 +902,15 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception {
         return letterBatchDAO.findTemplateNameForLetterBatch(letterBatchID);
+    }
+
+    @Override
+    public LetterListResponse listLettersByUser(String persoinOid) {
+        LetterListResponse response = new LetterListResponse();
+        if(StringUtils.isNotBlank(persoinOid)) {
+            response.setLetters(letterBatchDAO.findLettersReadyForPublishByPersonOid(persoinOid));
+        }
+        logger.debug("Found " + response.toString() + " for person " + persoinOid + " for publish.");
+        return response;
     }
 }

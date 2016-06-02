@@ -23,6 +23,7 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
+import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 
@@ -163,5 +164,7 @@ public interface LetterService {
      *            the exception
      */
     void errorProcessingBatch(long letterBatchId, Exception e);
+
+    LetterListResponse listLettersByUser(String persoinOid);
 
 }
