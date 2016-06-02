@@ -359,11 +359,7 @@ public class LetterServiceImpl implements LetterService {
             if (DOCUMENT_TYPE_APPLICATION_ZIP.equals(lb.getContentType())) {
                 try {
                     content.setContent(unZip(lb.getLetter()));
-
-                } catch (IOException e) {
-                    content.setContent(lb.getLetter());
-                    content.setContentType(lb.getContentType());
-                } catch (DataFormatException e) {
+                } catch (IOException | DataFormatException e) {
                     content.setContent(lb.getLetter());
                     content.setContentType(lb.getContentType());
                 }
