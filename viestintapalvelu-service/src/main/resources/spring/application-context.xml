@@ -260,23 +260,6 @@
 
         <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
-        <task:executor id="batchJobExecutor" pool-size="#{poolSizes['batchJobs']}" />
-        <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-            <constructor-arg ref="batchJobExecutor"/>
-        </bean>
-        <task:executor id="receiverExecutor" pool-size="#{poolSizes['reveiverJobs']}" />
-        <bean id="letterReceiverExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-            <constructor-arg ref="receiverExecutor"/>
-        </bean>
-        <task:executor id="otherAsyncResourceJobsExecutor" pool-size="#{poolSizes['otherAsync']}" />
-        <bean id="otherAsyncResourceJobsExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-            <constructor-arg ref="otherAsyncResourceJobsExecutor"/>
-        </bean>
-        <task:executor id="recoveryHandlerExecutor" pool-size="#{poolSizes['recoveryJobs']}" />
-        <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-            <constructor-arg ref="recoveryHandlerExecutor"/>
-        </bean>
-
         <!-- Recovery scheduling -->
         <bean id="recoveryHandler" class="fi.vm.sade.viestintapalvelu.recovery.ServiceRecoveryHandler" />
         <task:scheduled-tasks>
