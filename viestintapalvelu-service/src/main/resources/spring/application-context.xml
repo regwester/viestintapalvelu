@@ -21,316 +21,337 @@
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-3.0.xsd">
 
-    <import resource="classpath:META-INF/cxf/cxf.xml" />
-    <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-    <context:property-placeholder
-            location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
-            ignore-resource-not-found="true" properties-ref="defaultProps"/>
+    <beans profile="default">
+        <context:property-placeholder
+                location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+                ignore-resource-not-found="true" properties-ref="defaultProps"/>
+        <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
+            <property name="properties">
+                <util:properties local-override="true">
+                    <prop key="cas_mode">front</prop>
+                    <prop key="cas_key">viestintapalvelu</prop>
+                    <prop key="cas_service">${cas.service.viestintapalvelu}</prop>
+                    <prop key="cas_callback_url">${cas.callback.viestintapalvelu}</prop>
+                    <prop key="spring_security_default_access">isAuthenticated()</prop>
+                </util:properties>
+            </property>
+        </bean>
+        <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
+        <!-- Flyway definitions for creating the database -->
+        <bean id="dbDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
+            <property name="jndiName" value="java:comp/env/jdbc/viestinta"/>
+        </bean>
+        <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
+            <property name="initOnMigrate" value="${flyway.initOnMigrate}"/>
+            <property name="schemas" value="kirjeet" />
+            <property name="dataSource" ref="dbDataSource" />
+        </bean>
+    </beans>
 
-    <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
-        <property name="properties">
-            <util:properties local-override="true">
-                <prop key="cas_mode">front</prop>
-                <prop key="cas_key">viestintapalvelu</prop>
-                <prop key="cas_service">${cas.service.viestintapalvelu}</prop>
-                <prop key="cas_callback_url">${cas.callback.viestintapalvelu}</prop>
-                <prop key="spring_security_default_access">isAuthenticated()</prop>
-            </util:properties>
-        </property>
-    </bean>
+    <beans profile="dev">
+        <context:property-placeholder
+                location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+                ignore-resource-not-found="true" properties-ref="devProps"/>
+        <bean id="devProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean"/>
 
-    <util:map id="poolSizes" key-type="java.lang.String" value-type="java.lang.String">
-        <entry key="batchJobs" value="${viestintapalvelu.letter.batch.jobs.pool.size}"/>
-        <entry key="threadsPerBatchJob" value="${viestintapalvelu.letter.batch.job.thread.count}"/>
-        <entry key="reveiverJobs" value="${viestintapalvelu.letter.batch.receiver.job.pool.size}"/>
-        <entry key="otherAsync" value="${viestintapalvelu.other.async.resource.jobs.pool.size}"/>
-        <entry key="recoveryJobs" value="${viestintapalvelu.recovery.handler.jobs.pool.size}"/>
-    </util:map>
-    <import resource="classpath:spring/executors-config.xml"/>
+        <bean id="dbDataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+            <property name="driverClassName" value="org.postgresql.Driver"/>
+            <property name="url" value="jdbc:postgresql://postgresdev:5432/viestinta"/>
+            <property name="username" value="postgres"/>
+            <property name="password" value="postgres"/>
+        </bean>
+        <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
+            <property name="initOnMigrate" value="false"/>
+            <property name="schemas" value="kirjeet" />
+            <property name="dataSource" ref="dbDataSource" />
+        </bean>
+    </beans>
 
-    <context:annotation-config />
-    <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
+    <beans>
+        <import resource="classpath:META-INF/cxf/cxf.xml" />
+        <import resource="classpath:META-INF/cxf/cxf-servlet.xml" />
 
-    <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
+        <util:map id="poolSizes" key-type="java.lang.String" value-type="java.lang.String">
+            <entry key="batchJobs" value="${viestintapalvelu.letter.batch.jobs.pool.size}"/>
+            <entry key="threadsPerBatchJob" value="${viestintapalvelu.letter.batch.job.thread.count}"/>
+            <entry key="reveiverJobs" value="${viestintapalvelu.letter.batch.receiver.job.pool.size}"/>
+            <entry key="otherAsync" value="${viestintapalvelu.other.async.resource.jobs.pool.size}"/>
+            <entry key="recoveryJobs" value="${viestintapalvelu.recovery.handler.jobs.pool.size}"/>
+        </util:map>
+        <import resource="classpath:spring/executors-config.xml"/>
 
-    <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
-        <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
-    </util:map>
+        <context:annotation-config />
+        <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
 
-    <bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache"/>
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
-        <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
-        <property name="sessionRequired" value="${viestintapalvelu.dev.session-required:false}"/>
-        <!--property name="appClientUsername" value="${viestintapalvelu.dev.username:}"/>
-        <property name="appClientPassword" value="${viestintapalvelu.dev.password:}"/  -->
-    </bean>
 
-    <!--bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
-    <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target" ref="ticketInterceptorTarget"/>
-    </bean>
-    <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
-        <property name="target" ref="ticketInterceptorTarget"/>
-        <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
-    </bean -->
+        <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
+            <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
+        </util:map>
 
-    <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
-        <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
-    </bean>
+        <bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache"/>
+        <bean id="ticketInterceptorRest" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
+            <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
+            <property name="sessionRequired" value="${viestintapalvelu.dev.session-required:false}"/>
+            <!--property name="appClientUsername" value="${viestintapalvelu.dev.username:}"/>
+            <property name="appClientPassword" value="${viestintapalvelu.dev.password:}"/  -->
+        </bean>
 
-    <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
-                         address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <!--bean id="ticketInterceptorTarget" class="fi.vm.sade.generic.ui.portlet.security.SecurityTicketOutInterceptorRest" />
+        <bean id="ticketInterceptorRest" class="fi.vm.sade.viestintapalvelu.util.LocalDevModeSecurityTicketInterceptorAdapter">
+            <property name="target" ref="ticketInterceptorTarget"/>
+        </bean>
+        <bean id="ticketInterceptorRestInternal" class="fi.vm.sade.viestintapalvelu.common.util.LocalDevModeSecurityTicketInterceptorAdapter">
+            <property name="target" ref="ticketInterceptorTarget"/>
+            <property name="basicAuthentication" value="${viestintapalvelu.use.dev.basic.authentication:false}"/>
+        </bean -->
 
-    <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${organisaatio-service.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
+            <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
+        </bean>
 
-    <jaxrs-client:client id="organisaatioResourceWithoutAuthenticationClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication"
-                         address="${organisaatio-service.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
+                             address="${dokumenttipalvelu-service.rest.url}" inheritHeaders="true">
+            <jaxrs-client:outInterceptors>
+                <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-      <jaxrs-client:inInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${organisaatio-service.rest.url}" inheritHeaders="true">
+            <jaxrs-client:outInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+                <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+            <jaxrs-client:inInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+            </jaxrs-client:inInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-      <jaxrs-client:inInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <jaxrs-client:client id="organisaatioResourceWithoutAuthenticationClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication"
+                             address="${organisaatio-service.rest.url}" inheritHeaders="true">
+            <jaxrs-client:outInterceptors>
+                <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${ryhmasahkoposti-service.email.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-      <jaxrs-client:inInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
+            <jaxrs-client:outInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+                <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+          <jaxrs-client:inInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+            </jaxrs-client:inInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <jaxrs-client:client id="tarjontaHakuResourceClient"
-                    serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
-                    address="${tarjonta-service.rest.url}" inheritHeaders="true">
-      <jaxrs-client:outInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-          <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-      <jaxrs-client:inInterceptors>
-            <ref bean="ticketInterceptorRest"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <ref bean="customJsonProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
+            <jaxrs-client:outInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+                <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+          <jaxrs-client:inInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+            </jaxrs-client:inInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <jaxws:client id="asiointitiliViranomaispalvelutClient" serviceClass="fi.suomi.asiointitili.Viranomaispalvelut"
-            address="${viestintapalvelu.asiointitili.service.location}"
-            wsdlLocation="/via/wsdl/viranomaispalvelut.wsdl">
-        <jaxws:inInterceptors>
-            <bean id="asiointitiliViranomaispalvelutLoggingInInterceptor"
-                        class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingInInterceptor" >
-                <property name="prettyLogging" value="true" />
-                <property name="enabled" value="${viestintapalvelu.asiointitili.ws.log.responses}"/>
-            </bean>
-        </jaxws:inInterceptors>
-        <jaxws:outInterceptors>
-            <bean id="soapSigningInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
-                <constructor-arg>
-                    <map>
-                        <entry key="action" value="Timestamp Signature"/>
-                        <entry key="signaturePropRefId" value="xmlSignatureProperties"/>
-                        <entry key="user" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
-                        <entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
-                        <entry key="signatureUser" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
-                        <entry key="xmlSignatureProperties" value-ref="asiointitiliViranomaispalvelutCrytoProperties"/>
-                        <entry key="passwordCallbackRef" value-ref="privateKeyPasswordHandler"/>
-                        <entry key="signatureKeyIdentifier" value="DirectReference"/>
-                    </map>
-                </constructor-arg>
-            </bean>
-            <bean id="asiointitiliViranomaispalvelutLoggingOutInterceptor"
-                  class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingOutInterceptor" >
-                <property name="prettyLogging" value="true" />
-                <property name="enabled" value="${viestintapalvelu.asiointitili.ws.log.requests}"/>
-            </bean>
-        </jaxws:outInterceptors>
-    </jaxws:client>
-    <util:properties id="asiointitiliViranomaispalvelutCrytoProperties">
-        <prop key="org.apache.ws.security.crypto.provider">org.apache.ws.security.components.crypto.Merlin</prop>
-        <prop key="org.apache.ws.security.crypto.merlin.keystore.type">${viestintapalvelu.asiointitili.wss.keystore.instance}</prop>
-        <prop key="org.apache.ws.security.crypto.merlin.keystore.file">${viestintapalvelu.asiointitili.wss.keystore.file}</prop>
-        <prop key="org.apache.ws.security.crypto.merlin.keystore.password">${viestintapalvelu.asiointitili.wss.keystore.password}</prop>
-        <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${viestintapalvelu.asiointitili.wss.keystore.alias}</prop>
-    </util:properties>
-    <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.util.ws.PrivateKeyPasswordCallbackHandler">
-        <property name="privateKeyPassword" value="${viestintapalvelu.asiointitili.wss.certificate.password}"/>
-    </bean>
-    <util:map id="securityParams" key-type="java.lang.String" value-type="java.lang.String">
-        <entry key="authMode" value="${auth.mode}"/>
-    </util:map>
-    <http:conduit id="asiointitiliViranomaispalvelutConduit" name="*.http-conduit">
-        <http:tlsClientParameters>
-            <sec:keyManagers keyPassword="${viestintapalvelu.asiointitili.wss.keystore.password}">
-                <sec:keyStore file="${viestintapalvelu.asiointitili.wss.keystore.file}"
-                              type="jks" password="${viestintapalvelu.asiointitili.wss.keystore.password}" />
-            </sec:keyManagers>
-            <sec:certAlias>${viestintapalvelu.asiointitili.wss.keystore.alias}</sec:certAlias>
-        </http:tlsClientParameters>
-    </http:conduit>
+        <jaxrs-client:client id="emailResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource" address="${ryhmasahkoposti-service.email.rest.url}" inheritHeaders="true">
+            <jaxrs-client:outInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+                <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+          <jaxrs-client:inInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+            </jaxrs-client:inInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
+        <jaxrs-client:client id="tarjontaHakuResourceClient"
+                        serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource"
+                        address="${tarjonta-service.rest.url}" inheritHeaders="true">
+          <jaxrs-client:outInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+              <ref bean="ophRequestHeaders"/>
+            </jaxrs-client:outInterceptors>
+          <jaxrs-client:inInterceptors>
+                <ref bean="ticketInterceptorRest"/>
+            </jaxrs-client:inInterceptors>
+            <jaxrs-client:providers>
+                <ref bean="customJsonProvider"/>
+            </jaxrs-client:providers>
+        </jaxrs-client:client>
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <contextScan/>
-    </camelContext>
+        <jaxws:client id="asiointitiliViranomaispalvelutClient" serviceClass="fi.suomi.asiointitili.Viranomaispalvelut"
+                address="${viestintapalvelu.asiointitili.service.location}"
+                wsdlLocation="/via/wsdl/viranomaispalvelut.wsdl">
+            <jaxws:inInterceptors>
+                <bean id="asiointitiliViranomaispalvelutLoggingInInterceptor"
+                            class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingInInterceptor" >
+                    <property name="prettyLogging" value="true" />
+                    <property name="enabled" value="${viestintapalvelu.asiointitili.ws.log.responses}"/>
+                </bean>
+            </jaxws:inInterceptors>
+            <jaxws:outInterceptors>
+                <bean id="soapSigningInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JOutInterceptor">
+                    <constructor-arg>
+                        <map>
+                            <entry key="action" value="Timestamp Signature"/>
+                            <entry key="signaturePropRefId" value="xmlSignatureProperties"/>
+                            <entry key="user" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
+                            <entry key="signatureParts" value="{Element}{http://docs.oasis-open.org/wss/2004/01/oasis-200401-wss-wssecurity-utility-1.0.xsd}Timestamp;{Element}{http://schemas.xmlsoap.org/soap/envelope/}Body"/>
+                            <entry key="signatureUser" value="${viestintapalvelu.asiointitili.wss.keystore.alias}"/>
+                            <entry key="xmlSignatureProperties" value-ref="asiointitiliViranomaispalvelutCrytoProperties"/>
+                            <entry key="passwordCallbackRef" value-ref="privateKeyPasswordHandler"/>
+                            <entry key="signatureKeyIdentifier" value="DirectReference"/>
+                        </map>
+                    </constructor-arg>
+                </bean>
+                <bean id="asiointitiliViranomaispalvelutLoggingOutInterceptor"
+                      class="fi.vm.sade.viestintapalvelu.util.ws.CustomLoggingOutInterceptor" >
+                    <property name="prettyLogging" value="true" />
+                    <property name="enabled" value="${viestintapalvelu.asiointitili.ws.log.requests}"/>
+                </bean>
+            </jaxws:outInterceptors>
+        </jaxws:client>
+        <util:properties id="asiointitiliViranomaispalvelutCrytoProperties">
+            <prop key="org.apache.ws.security.crypto.provider">org.apache.ws.security.components.crypto.Merlin</prop>
+            <prop key="org.apache.ws.security.crypto.merlin.keystore.type">${viestintapalvelu.asiointitili.wss.keystore.instance}</prop>
+            <prop key="org.apache.ws.security.crypto.merlin.keystore.file">${viestintapalvelu.asiointitili.wss.keystore.file}</prop>
+            <prop key="org.apache.ws.security.crypto.merlin.keystore.password">${viestintapalvelu.asiointitili.wss.keystore.password}</prop>
+            <prop key="org.apache.ws.security.crypto.merlin.keystore.alias">${viestintapalvelu.asiointitili.wss.keystore.alias}</prop>
+        </util:properties>
+        <bean id="privateKeyPasswordHandler" class="fi.vm.sade.viestintapalvelu.util.ws.PrivateKeyPasswordCallbackHandler">
+            <property name="privateKeyPassword" value="${viestintapalvelu.asiointitili.wss.certificate.password}"/>
+        </bean>
+        <util:map id="securityParams" key-type="java.lang.String" value-type="java.lang.String">
+            <entry key="authMode" value="${auth.mode}"/>
+        </util:map>
+        <http:conduit id="asiointitiliViranomaispalvelutConduit" name="*.http-conduit">
+            <http:tlsClientParameters>
+                <sec:keyManagers keyPassword="${viestintapalvelu.asiointitili.wss.keystore.password}">
+                    <sec:keyStore file="${viestintapalvelu.asiointitili.wss.keystore.file}"
+                                  type="jks" password="${viestintapalvelu.asiointitili.wss.keystore.password}" />
+                </sec:keyManagers>
+                <sec:certAlias>${viestintapalvelu.asiointitili.wss.keystore.alias}</sec:certAlias>
+            </http:tlsClientParameters>
+        </http:conduit>
 
-    <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
+        <bean class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider" id="customJsonProvider"/>
 
-    <task:executor id="batchJobExecutor" pool-size="#{poolSizes['batchJobs']}" />
-    <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-        <constructor-arg ref="batchJobExecutor"/>
-    </bean>
-    <task:executor id="receiverExecutor" pool-size="#{poolSizes['reveiverJobs']}" />
-    <bean id="letterReceiverExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-        <constructor-arg ref="receiverExecutor"/>
-    </bean>
-    <task:executor id="otherAsyncResourceJobsExecutor" pool-size="#{poolSizes['otherAsync']}" />
-    <bean id="otherAsyncResourceJobsExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-        <constructor-arg ref="otherAsyncResourceJobsExecutor"/>
-    </bean>
-    <task:executor id="recoveryHandlerExecutor" pool-size="#{poolSizes['recoveryJobs']}" />
-    <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
-        <constructor-arg ref="recoveryHandlerExecutor"/>
-    </bean>
-    
-    <!-- Recovery scheduling -->
-    <bean id="recoveryHandler" class="fi.vm.sade.viestintapalvelu.recovery.ServiceRecoveryHandler" />
-    <task:scheduled-tasks>
-      <task:scheduled ref="recoveryHandler" method="recover" fixed-rate="${viestintapalvelu.recovery.fixed.rate:3600000}" initial-delay="${viestintapalvelu.recovery.initial.delay:5000}"/>
-    </task:scheduled-tasks>
+        <camelContext xmlns="http://camel.apache.org/schema/spring">
+            <contextScan/>
+        </camelContext>
 
-    <!-- enable spring annotation driven transactions -->
-    <tx:annotation-driven transaction-manager="transactionManager" />
+        <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
 
-    <!-- Swagger configuration -->
-    <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
-        <property name="resourcePackage" value="fi.vm.sade.viestintapalvelu"/>
-        <property name="version" value="1.0"/>
-        <property name="basePath" value="${viestintapalvelu.swagger.base.bath:/viestintapalvelu}/api/v1"/>
+        <task:executor id="batchJobExecutor" pool-size="#{poolSizes['batchJobs']}" />
+        <bean id="batchJobExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+            <constructor-arg ref="batchJobExecutor"/>
+        </bean>
+        <task:executor id="receiverExecutor" pool-size="#{poolSizes['reveiverJobs']}" />
+        <bean id="letterReceiverExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+            <constructor-arg ref="receiverExecutor"/>
+        </bean>
+        <task:executor id="otherAsyncResourceJobsExecutor" pool-size="#{poolSizes['otherAsync']}" />
+        <bean id="otherAsyncResourceJobsExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+            <constructor-arg ref="otherAsyncResourceJobsExecutor"/>
+        </bean>
+        <task:executor id="recoveryHandlerExecutor" pool-size="#{poolSizes['recoveryJobs']}" />
+        <bean id="recoveryHandlerExecutorService" class="org.springframework.core.task.support.ExecutorServiceAdapter">
+            <constructor-arg ref="recoveryHandlerExecutor"/>
+        </bean>
 
-        <property name="title" value="Swagger API documentation"/>
-        <property name="scan" value="true"/>
-    </bean>
+        <!-- Recovery scheduling -->
+        <bean id="recoveryHandler" class="fi.vm.sade.viestintapalvelu.recovery.ServiceRecoveryHandler" />
+        <task:scheduled-tasks>
+          <task:scheduled ref="recoveryHandler" method="recover" fixed-rate="${viestintapalvelu.recovery.fixed.rate:3600000}" initial-delay="${viestintapalvelu.recovery.initial.delay:5000}"/>
+        </task:scheduled-tasks>
 
-    <!-- Add EntityManagerFactory (required by JTA) support -->
-    <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
-        <property name="loadTimeWeaver">
-            <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
-        </property>
-        <property name="jpaPropertyMap">
-            <map>
-                <entry key="hibernate.hbm2ddl.auto" value="${jpa.schemaUpdate}" />
-                <entry key="hibernate.show_sql" value="${jpa.showSql}" />
-            </map>
-        </property>
-    </bean>
-    
-    <!-- transaction manager -->
-    <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
-        <property name="entityManagerFactory" ref="emf" />
-    </bean>
- 
-    <!-- Flyway definitions for creating the database -->
-    <bean id="dbDataSource" class="org.springframework.jndi.JndiObjectFactoryBean">
-        <property name="jndiName" value="java:comp/env/jdbc/viestinta"/>
-     </bean>
+        <!-- enable spring annotation driven transactions -->
+        <tx:annotation-driven transaction-manager="transactionManager" />
 
-    <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
-        <property name="initOnMigrate" value="${flyway.initOnMigrate}"/>
-        <property name="schemas" value="kirjeet" />
-        <property name="dataSource" ref="dbDataSource" />
-    </bean>
+        <!-- Swagger configuration -->
+        <bean id="swaggerConfig" class="com.wordnik.swagger.jaxrs.config.BeanConfig">
+            <property name="resourcePackage" value="fi.vm.sade.viestintapalvelu"/>
+            <property name="version" value="1.0"/>
+            <property name="basePath" value="${viestintapalvelu.swagger.base.bath:/viestintapalvelu}/api/v1"/>
 
-    <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
+            <property name="title" value="Swagger API documentation"/>
+            <property name="scan" value="true"/>
+        </bean>
 
-    <!-- Swagger writers -->
-    <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
-    <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
+        <!-- Add EntityManagerFactory (required by JTA) support -->
+        <bean id="emf" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean" depends-on="flyway">
+            <property name="loadTimeWeaver">
+                <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
+            </property>
+            <property name="jpaPropertyMap">
+                <map>
+                    <entry key="hibernate.hbm2ddl.auto" value="${jpa.schemaUpdate}" />
+                    <entry key="hibernate.show_sql" value="${jpa.showSql}" />
+                </map>
+            </property>
+        </bean>
 
-    <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+        <!-- transaction manager -->
+        <bean id="transactionManager" class="org.springframework.orm.jpa.JpaTransactionManager">
+            <property name="entityManagerFactory" ref="emf" />
+        </bean>
 
-    <bean id="jackson-feature" class="fi.vm.sade.viestintapalvelu.common.feature.JacksonFeature"/>
+        <bean id="swaggerResourceJSON" class="com.wordnik.swagger.jaxrs.listing.ApiListingResourceJSON"/>
 
-    <bean id="pdfPrinterResource" class="fi.vm.sade.viestintapalvelu.pdfprint.PDFPrinterResource"/>
+        <!-- Swagger writers -->
+        <bean id="resourceWriter" class="com.wordnik.swagger.jaxrs.listing.ResourceListingProvider" scope="singleton"/>
+        <bean id="apiWriter" class="com.wordnik.swagger.jaxrs.listing.ApiDeclarationProvider" scope="singleton"/>
 
-    <jaxrs:server id="viestintapalveluResources">
-        <jaxrs:serviceBeans>
-            <ref bean="AddressLabelResource"/>
-            <ref bean="AsiointitiliResource"/>
-            <ref bean="AttachmentResourceImpl"/>
-            <ref bean="DownloadResource"/>
-            <ref bean="IPostiResource"/>
-            <ref bean="KoekutsukirjeResource"/>
-            <ref bean="LetterReportResource"/>
-            <ref bean="LetterResource"/>
-            <ref bean="PreviewDataResource"/>
-            <ref bean="MessageDataResource"/>
-            <ref bean="MessageResource"/>
-            <ref bean="OptionsResource"/>
-            <ref bean="OrganizationResource"/>
-            <ref bean="PersonResource"/>
-            <ref bean="StructureResource"/>
-            <ref bean="TemplateResource"/>
-            <ref bean="swaggerResourceJSON"/>
-            <ref bean="PDFPrinterResource"/>
-        </jaxrs:serviceBeans>
-        <jaxrs:providers>
-            <ref bean="jackson-feature"/>
-            <ref bean="resourceWriter" />
-            <ref bean="apiWriter" />
-        </jaxrs:providers>
-    </jaxrs:server>
+        <bean id="jsonProvider" class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider" />
+
+        <bean id="jackson-feature" class="fi.vm.sade.viestintapalvelu.common.feature.JacksonFeature"/>
+
+        <bean id="pdfPrinterResource" class="fi.vm.sade.viestintapalvelu.pdfprint.PDFPrinterResource"/>
+
+        <jaxrs:server id="viestintapalveluResources">
+            <jaxrs:serviceBeans>
+                <ref bean="AddressLabelResource"/>
+                <ref bean="AsiointitiliResource"/>
+                <ref bean="AttachmentResourceImpl"/>
+                <ref bean="DownloadResource"/>
+                <ref bean="IPostiResource"/>
+                <ref bean="KoekutsukirjeResource"/>
+                <ref bean="LetterReportResource"/>
+                <ref bean="LetterResource"/>
+                <ref bean="PreviewDataResource"/>
+                <ref bean="MessageDataResource"/>
+                <ref bean="MessageResource"/>
+                <ref bean="OptionsResource"/>
+                <ref bean="OrganizationResource"/>
+                <ref bean="PersonResource"/>
+                <ref bean="StructureResource"/>
+                <ref bean="TemplateResource"/>
+                <ref bean="swaggerResourceJSON"/>
+                <ref bean="PDFPrinterResource"/>
+            </jaxrs:serviceBeans>
+            <jaxrs:providers>
+                <ref bean="jackson-feature"/>
+                <ref bean="resourceWriter" />
+                <ref bean="apiWriter" />
+            </jaxrs:providers>
+        </jaxrs:server>
+    </beans>
 </beans>

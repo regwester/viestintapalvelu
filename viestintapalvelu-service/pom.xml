@@ -619,6 +619,11 @@
             <version>2.4.0</version>
             <scope>test</scope>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade</groupId>
+            <artifactId>embedded-tomcat</artifactId>
+            <scope>test</scope>
+        </dependency>
         <!-- HyperSQL DataBase for testing -->
         <dependency>
             <groupId>org.hsqldb</groupId>
