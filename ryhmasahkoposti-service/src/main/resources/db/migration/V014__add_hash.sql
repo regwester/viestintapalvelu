@@ -1,0 +1,1 @@
+ALTER TABLE raportoitavaviesti ADD COLUMN letter_hash CHARACTER VARYING(32);

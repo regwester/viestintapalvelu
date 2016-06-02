@@ -61,6 +61,7 @@ public class ReportedMessageConverter {
         reportedMessage.setReplyToEmail(emailMessage.getReplyTo());
         reportedMessage.setMessage(emailMessage.getBody());
         reportedMessage.setType(ReportedMessage.TYPE_EMAIL);
+        reportedMessage.setLetterHash(emailMessage.getLetterHash());
         if (emailMessage.isHtml()) {
             reportedMessage.setHtmlMessage(GroupEmailConstants.HTML_MESSAGE);
         } else {

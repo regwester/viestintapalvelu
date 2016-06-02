@@ -81,6 +81,8 @@ public class EmailSender {
             InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyTo(), false);
             msg.setReplyTo(replyToAddrs);
         }
+        msg.addHeader("X-Batch-ID", "Opetushallitus");
+        msg.addHeader("X-Message-ID", emailMessage.getLetterHash() + ".posti@hard.ware.fi");
 
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();

@@ -38,6 +38,7 @@ import javax.ws.rs.NotFoundException;
 import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -450,7 +451,7 @@ public class LetterServiceImpl implements LetterService {
                 }
 
                 lrl.setLetterReceivers(rec);
-
+                lrl.setLetterHash(createLetterHash(lrl));
                 rec.setLetterReceiverLetter(lrl);
             }
 
@@ -471,6 +472,7 @@ public class LetterServiceImpl implements LetterService {
             LetterReceiverLetter lrl = new LetterReceiverLetter();
             lrl.setTimestamp(new Date());
             lrl.setLetterReceivers(rec);
+            lrl.setLetterHash(createLetterHash(lrl));
             lrl.setContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             lrl.setOriginalContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             rec.setLetterReceiverLetter(lrl);
@@ -478,6 +480,10 @@ public class LetterServiceImpl implements LetterService {
             receivers.add(rec);
         }
         return receivers;
+    }
+
+    private String createLetterHash(LetterReceiverLetter lrl) {
+        return DigestUtils.md5Hex(lrl.getTimestamp().toString() + ":" +  lrl.getLetterReceivers().getEmailAddress());
     }
 
     /*

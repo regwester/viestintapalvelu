@@ -36,6 +36,7 @@ public class EmailMessage implements AttachmentContainer {
     private String organizationOid;
     private String subject;
     private String body;
+    private String letterHash;
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
     private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
@@ -251,4 +252,11 @@ public class EmailMessage implements AttachmentContainer {
                 + templateId + ", languageCode=" + languageCode + ", sourceRegister=" + sourceRegister + ", hakuOid=" + hakuOid + "]";
     }
 
+    public String getLetterHash() {
+        return letterHash;
+    }
+
+    public void setLetterHash(String letterHash) {
+        this.letterHash = letterHash;
+    }
 }

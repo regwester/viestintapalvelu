@@ -54,6 +54,9 @@ public class LetterReceiverLetter extends BaseEntity {
     @Column(name = "julkaistavissa")
     private boolean readyForPublish;
 
+    @Column(name = "letter_hash")
+    private String letterHash;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "letterReceiverLetter", cascade = CascadeType.PERSIST)
     private Set<LetterReceiverLetterAttachment> attachments = new HashSet<LetterReceiverLetterAttachment>();
 
@@ -113,9 +116,16 @@ public class LetterReceiverLetter extends BaseEntity {
         this.readyForPublish = readyForPublish;
     }
 
+    public String getLetterHash() {
+        return letterHash;
+    }
+
+    public void setLetterHash(String letterHash) {
+        this.letterHash = letterHash;
+    }
+
     @Override
     public String toString() {
         return "LetterReceiverLetter [letter=" + letter + ", timestamp=" + timestamp + "]";
     }
-
 }
