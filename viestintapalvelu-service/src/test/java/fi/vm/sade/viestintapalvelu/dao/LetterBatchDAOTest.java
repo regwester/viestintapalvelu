@@ -15,18 +15,16 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Date;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -50,6 +48,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
@@ -286,6 +286,58 @@ public class LetterBatchDAOTest {
         Long first = givenLetterBatchWithDateModified(Status.processing, null, new Date(0));
         assertEquals(first, letterBatchDAO.findUnfinishedLetterBatches().get(0));
     }
+
+    @Test
+    public void findLettersReadyForPublishByPersonOid() throws Exception {
+        insertLetterBatchForPersonOid("test-haku-oid-1", "test-person-oid-1", "hyvaksymiskirje", true);
+        insertLetterBatchForPersonOid("test-haku-oid-1", "test-person-oid-1", "hyvaksymiskirje", false);
+        insertLetterBatchForPersonOid("test-haku-oid-2", "test-person-oid-1", "jalkiohjauskirje", true);
+        insertLetterBatchForPersonOid("test-haku-oid-2", "test-person-oid-2", "hyvaksymiskirje", true);
+
+        List<LetterListItem> listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
+
+        assertEquals(2, listItems.size());
+        for(LetterListItem item : listItems) {
+            logger.info(item.toString());
+        }
+        assertTrue(expectedListItemInList(listItems, "test-haku-oid-1", "hyvaksymiskirje"));
+        assertTrue(expectedListItemInList(listItems, "test-haku-oid-2", "jalkiohjauskirje"));
+
+        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-2");
+
+        assertEquals(1, listItems.size());
+        logger.info(listItems.get(0).toString());
+        assertTrue(listItemEquals(listItems.get(0), "test-haku-oid-2", "hyvaksymiskirje"));
+    }
+
+    private boolean expectedListItemInList(List<LetterListItem> listItems, String hakuOid, String templateName) {
+        for(LetterListItem actual : listItems) {
+            if(listItemEquals(actual, hakuOid, templateName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean listItemEquals(LetterListItem actual, String hakuOid, String templateName) {
+        return hakuOid.equals(actual.getHakuOid()) && templateName.equals(actual.getTyyppi()) && "application/pdf".equals(actual.getTiedostotyyppi());
+    }
+
+    private void insertLetterBatchForPersonOid(String hakuOid, String personOid, String templateName, boolean readyForPublish) {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
+        letterBatch.setApplicationPeriod(hakuOid);
+        letterBatch.setTag(hakuOid);
+        letterBatch.setTemplateName(templateName);
+        Iterator<LetterReceivers> receiversIterator = letterBatch.getLetterReceivers().iterator();
+        while(receiversIterator.hasNext()) {
+            LetterReceivers letterReceivers = receiversIterator.next();
+            letterReceivers.setOidPerson(personOid);
+            letterReceivers.getLetterReceiverLetter().setReadyForPublish(readyForPublish);
+            letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
+        }
+        letterBatchDAO.insert(letterBatch);
+    }
+
 
     private long givenLetterBatchWithLetter(Status status, byte[] letter) {
         return givenLetterBatchWithDateModified(status, letter, new Date());

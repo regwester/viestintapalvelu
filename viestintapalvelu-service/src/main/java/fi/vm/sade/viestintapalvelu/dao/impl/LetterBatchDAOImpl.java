@@ -272,9 +272,10 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return getEntityManager().createQuery(
             "SELECT new fi.vm.sade.viestintapalvelu.letter.LetterListItem(lrl.id, lb.applicationPeriod, lb.templateName, lrl.contentType, lrl.timestamp)"
                 + " FROM LetterBatch lb"
-                + " INNER JOIN lb.letterReceivers lr WITH lr.oid_person = :oidPerson"
+                + " INNER JOIN lb.letterReceivers lr WITH lr.oidPerson = :oidPerson"
                 + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish"
-                + " WHERE lb.tag = lb.applicationPeriod", LetterListItem.class).getResultList();
+                + " WHERE lb.tag = lb.applicationPeriod", LetterListItem.class)
+                .setParameter("oidPerson", personOid).setParameter("readyForPublish", true).getResultList();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {
