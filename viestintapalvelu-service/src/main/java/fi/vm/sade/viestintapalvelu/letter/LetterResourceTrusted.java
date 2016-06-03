@@ -15,14 +15,15 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import javax.ws.rs.Consumes;
-import javax.ws.rs.GET;
-import javax.ws.rs.POST;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.ws.rs.*;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.wordnik.swagger.annotations.ApiOperation;
@@ -50,6 +51,31 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @ApiOperation(value = "Palauttaa kirjelähetykseen kuuluvien käsiteltyjen kirjeiden määrän ja kokonaismäärän")
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         return getLetterBatchStatus(prefixedLetterBatchId);
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/list/person/{personOid}")
+    @ApiOperation(value="Tuottaa listan hakijan kirjeistä")
+    public Response listByPerson( @PathParam("personOid") @ApiParam(name="Henkilön OID", required = true) String personOid) {
+        return listByPerson(personOid);
+    }
+
+    @GET
+    @Path("/receiverLetter/{id}")
+    @Produces({ "application/pdf", "application/zip" })
+    @ApiOperation(value = "Hakee vastaanottajan kirjeen")
+    public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @QueryParam(Constants.PARAM_ID) Long id,
+                                       @Context HttpServletRequest request, @Context HttpServletResponse response) {
+        try {
+            LetterReceiverLetterDTO letterReceiverLetter = letterService.getLetterReceiverLetter(id);
+            byte[] letterContents = letterReceiverLetter.getLetter();
+            return LetterDownloadHelper.downloadPdfResponse(letterReceiverLetter.getTemplateName() +
+                            LetterDownloadHelper.determineExtension(letterReceiverLetter.getContentType()), response,
+                    letterContents);
+        } catch (Exception e) {
+            return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
+        }
     }
 
 }

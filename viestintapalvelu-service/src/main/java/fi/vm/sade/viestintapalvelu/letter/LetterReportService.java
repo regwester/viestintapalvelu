@@ -71,17 +71,6 @@ public interface LetterReportService {
     LetterBatchesReportDTO getLetterBatchesReport(LetterReportQueryDTO query, PagingAndSortingDTO pagingAndSorting);
 
     /**
-     * Hakee vastaanottajan kirjeen sisällön
-     * 
-     * @param id
-     *            Vastaanottajan kirjeen sisällön ID
-     * @return Vastaanottajan kirjeen tiedot
-     * @throws DataFormatException
-     * @throws IOException
-     */
-    LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
-
-    /**
      * Hakee käyttäjän organisaatiotiedot
      * 
      * @return Lista organisaation tietoja

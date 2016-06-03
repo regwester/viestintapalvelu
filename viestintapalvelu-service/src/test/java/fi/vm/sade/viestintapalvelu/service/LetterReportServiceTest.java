@@ -200,19 +200,4 @@ public class LetterReportServiceTest {
         assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
         assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTarget().equalsIgnoreCase("fetchTarget"));
     }
-
-    @Test
-    public void testGetLetterReceiverLetter() throws IOException, DataFormatException {
-        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
-        Set<LetterReceivers> letterReceiversSet = DocumentProviderTestData.getLetterReceivers(new Long(2), letterBatch);
-        LetterReceivers letterReceivers = letterReceiversSet.iterator().next();
-        LetterReceiverLetter mockedLetterReceiverLetter = 
-            DocumentProviderTestData.getLetterReceiverLetter(new Long(3), letterReceivers);
-        when(mockedLetterReceiverLetterDAO.read(any(Long.class))).thenReturn(mockedLetterReceiverLetter);
-        
-        LetterReceiverLetterDTO letterReceiverLetterDTO = letterReportService.getLetterReceiverLetter(new Long(3));
-        
-        assertNotNull(letterReceiverLetterDTO);
-        assertTrue(new String(letterReceiverLetterDTO.getLetter()).equals("letter"));       
-    }
 }

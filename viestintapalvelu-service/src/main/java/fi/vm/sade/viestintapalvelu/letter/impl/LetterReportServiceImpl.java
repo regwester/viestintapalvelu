@@ -153,27 +153,6 @@ public class LetterReportServiceImpl implements LetterReportService {
     }
 
     @Override
-    public LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException {
-        LetterReceiverLetterDTO letterReceiverLetterDTO = new LetterReceiverLetterDTO();
-
-        LetterReceiverLetter letterReceiverLetter = letterReceiverLetterDAO.read(id);
-        LetterBatch letterBatch = letterReceiverLetter.getLetterReceivers().getLetterBatch();
-
-        letterReceiverLetterDTO.setContentType(letterReceiverLetter.getOriginalContentType());
-        letterReceiverLetterDTO.setId(letterReceiverLetter.getId());
-
-        if (letterReceiverLetter.getContentType().equalsIgnoreCase("application/zip")) {
-            letterReceiverLetterDTO.setLetter(LetterZipUtil.unZip(letterReceiverLetter.getLetter()));
-        } else {
-            letterReceiverLetterDTO.setLetter(letterReceiverLetter.getLetter());
-        }
-
-        letterReceiverLetterDTO.setTemplateName(letterBatch.getTemplateName());
-
-        return letterReceiverLetterDTO;
-    }
-
-    @Override
     public List<OrganizationDTO> getUserOrganizations() {
         List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
         List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();

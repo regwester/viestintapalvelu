@@ -15,11 +15,14 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
@@ -167,4 +170,14 @@ public interface LetterService {
 
     LetterListResponse listLettersByUser(String persoinOid);
 
+    /**
+     * Hakee vastaanottajan kirjeen sisällön
+     *
+     * @param id
+     *            Vastaanottajan kirjeen sisällön ID
+     * @return Vastaanottajan kirjeen tiedot
+     * @throws DataFormatException
+     * @throws IOException
+     */
+    LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 }

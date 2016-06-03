@@ -36,6 +36,8 @@ import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
 
 import com.google.common.base.Supplier;
+import fi.vm.sade.viestintapalvelu.LetterZipUtil;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -918,5 +920,26 @@ public class LetterServiceImpl implements LetterService {
         }
         logger.debug("Found " + response.toString() + " for person " + persoinOid + " for publish.");
         return response;
+    }
+
+    @Override
+    public LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException {
+        LetterReceiverLetterDTO letterReceiverLetterDTO = new LetterReceiverLetterDTO();
+
+        LetterReceiverLetter letterReceiverLetter = letterReceiverLetterDAO.read(id);
+        LetterBatch letterBatch = letterReceiverLetter.getLetterReceivers().getLetterBatch();
+
+        letterReceiverLetterDTO.setContentType(letterReceiverLetter.getOriginalContentType());
+        letterReceiverLetterDTO.setId(letterReceiverLetter.getId());
+
+        if (letterReceiverLetter.getContentType().equalsIgnoreCase("application/zip")) {
+            letterReceiverLetterDTO.setLetter(LetterZipUtil.unZip(letterReceiverLetter.getLetter()));
+        } else {
+            letterReceiverLetterDTO.setLetter(letterReceiverLetter.getLetter());
+        }
+
+        letterReceiverLetterDTO.setTemplateName(letterBatch.getTemplateName());
+
+        return letterReceiverLetterDTO;
     }
 }

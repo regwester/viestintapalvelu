@@ -18,8 +18,10 @@ package fi.vm.sade.viestintapalvelu.service;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.*;
+import java.util.zip.DataFormatException;
 
 import com.google.common.base.Supplier;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.*;
 import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -472,5 +474,20 @@ public class LetterServiceTest {
     public void testListLettersByUserMissingOid() {
         LetterListResponse response = letterService.listLettersByUser(null);
         assertEquals(null, response.getLetters());
+    }
+
+    @Test
+    public void testGetLetterReceiverLetter() throws IOException, DataFormatException {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
+        Set<LetterReceivers> letterReceiversSet = DocumentProviderTestData.getLetterReceivers(new Long(2), letterBatch);
+        LetterReceivers letterReceivers = letterReceiversSet.iterator().next();
+        LetterReceiverLetter mockedLetterReceiverLetter =
+                DocumentProviderTestData.getLetterReceiverLetter(new Long(3), letterReceivers);
+        when(mockedLetterReceiverLetterDAO.read(any(Long.class))).thenReturn(mockedLetterReceiverLetter);
+
+        LetterReceiverLetterDTO letterReceiverLetterDTO = letterService.getLetterReceiverLetter(new Long(3));
+
+        assertNotNull(letterReceiverLetterDTO);
+        assertTrue(new String(letterReceiverLetterDTO.getLetter()).equals("letter"));
     }
 }

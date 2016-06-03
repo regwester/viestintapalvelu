@@ -66,6 +66,10 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     @Autowired
     protected DokumenttiIdProvider dokumenttiIdProvider;
 
+    protected Response listByPerson( @PathParam("personOid") @ApiParam(name="Henkilön OID", required = true) String personOid) {
+        return Response.ok(letterService.listLettersByUser(personOid)).build();
+    }
+
     protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input,
             boolean anonymousRequest) {
 
