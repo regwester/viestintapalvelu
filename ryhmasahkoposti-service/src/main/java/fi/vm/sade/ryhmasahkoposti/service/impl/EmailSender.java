@@ -83,6 +83,7 @@ public class EmailSender {
         }
         msg.addHeader("X-Batch-ID", "Opetushallitus");
         msg.addHeader("X-Message-ID", emailMessage.getLetterHash() + ".posti@hard.ware.fi");
+        msg.addHeader("Message-ID", "shredder@shredder.ware.fi");
 
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();
