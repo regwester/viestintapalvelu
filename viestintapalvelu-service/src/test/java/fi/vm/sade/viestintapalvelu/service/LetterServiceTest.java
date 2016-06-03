@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.util.*;
 
 import com.google.common.base.Supplier;
+import fi.vm.sade.viestintapalvelu.letter.*;
+import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.util.PDFTextStripper;
@@ -47,10 +50,6 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
-import fi.vm.sade.viestintapalvelu.letter.LetterContent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
@@ -456,5 +455,22 @@ public class LetterServiceTest {
         LetterBatchLetterProcessingError error = ((LetterBatchLetterProcessingError)batch.getProcessingErrors().iterator().next());
         assertNotNull(error.getLetterReceivers());
         assertEquals(Long.valueOf(receiverId), error.getLetterReceivers().getId());
+    }
+
+    @Test
+    public void testListLettersByUser() {
+        List<LetterListItem> list = Arrays.asList(new LetterListItem(123l, "test-haku-oid", "jalkiohjauskirje", "application/pdf", new Date()));
+
+        when(mockedLetterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid")).thenReturn(list);
+
+        LetterListResponse response = letterService.listLettersByUser("test-person-oid");
+        assertEquals(1, response.getLetters().size());
+        assertEquals(123l, response.getLetters().get(0).getId());
+    }
+
+    @Test
+    public void testListLettersByUserMissingOid() {
+        LetterListResponse response = letterService.listLettersByUser(null);
+        assertEquals(null, response.getLetters());
     }
 }
