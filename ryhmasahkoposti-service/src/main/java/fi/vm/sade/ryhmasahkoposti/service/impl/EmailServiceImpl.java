@@ -123,7 +123,7 @@ public class EmailServiceImpl implements EmailService {
         templateBuilder.applyTemplate(emailMessage);
 
         MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
-                optionalEmailRecipientAttachments(emailMessage.getRecipient()));
+                "hashNotUsedInPreview", optionalEmailRecipientAttachments(emailMessage.getRecipient()));
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
@@ -281,7 +281,7 @@ public class EmailServiceImpl implements EmailService {
      * if message contains recipient specific attachments. If virus check fails will lead to failure
      * and the message not being send.
      *
-     * For email sending, calls {@link fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender#handleMail(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage, String, com.google.common.base.Optional)}
+     * For email sending, calls {@link EmailSender#handleMail(EmailMessage, String, String, Optional)}
      *
      * @param emailRecipient the recipient to send email to (NOTE: same queue may contain recipients for different emails)
      * @param emailSendQueState state of the send queue
@@ -303,7 +303,7 @@ public class EmailServiceImpl implements EmailService {
                 
                 if (virusCheckPassed(message)) {
                     templateBuilder.applyTemplate(message);
-                    emailSender.handleMail(message, emailRecipient.getEmail(), optionalEmailRecipientAttachments(emailRecipient));
+                    emailSender.handleMail(message, emailRecipient.getEmail(), emailRecipient.getLetterHash(), optionalEmailRecipientAttachments(emailRecipient));
                 } else {
                     throw new Exception("Virus check problem. File infected: " + message.isInfected());
                 }

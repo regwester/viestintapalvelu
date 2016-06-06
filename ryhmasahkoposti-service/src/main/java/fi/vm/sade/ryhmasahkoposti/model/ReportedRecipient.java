@@ -74,6 +74,9 @@ public class ReportedRecipient extends BaseEntity {
     @JoinColumn(name = "jono", nullable = true)
     private SendQueue queue;
 
+    @Column(name = "letter_hash")
+    private String letterHash;
+
     @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     private Set<ReportedMessageRecipientAttachment> attachments = new HashSet<ReportedMessageRecipientAttachment>(0);
 
@@ -195,5 +198,13 @@ public class ReportedRecipient extends BaseEntity {
 
     protected void setAttachments(Set<ReportedMessageRecipientAttachment> attachments) {
         this.attachments = attachments;
+    }
+
+    public String getLetterHash() {
+        return letterHash;
+    }
+
+    public void setLetterHash(String letterHash) {
+        this.letterHash = letterHash;
     }
 }

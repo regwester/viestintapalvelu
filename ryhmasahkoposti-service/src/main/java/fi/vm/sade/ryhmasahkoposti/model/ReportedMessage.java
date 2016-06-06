@@ -82,9 +82,6 @@ public class ReportedMessage extends BaseEntity {
     @Column(name = "tyyppi", nullable = true)
     private String type;
 
-    @Column(name = "letter_hash")
-    private String letterHash;
-
     public String getProcess() {
         return process;
     }
@@ -259,13 +256,5 @@ public class ReportedMessage extends BaseEntity {
                 + ", htmlMessage='" + htmlMessage + '\'' + ", characterSet='" + characterSet + '\'' + ", reportedRecipients=" + reportedRecipients
                 + ", reportedMessageAttachments=" + reportedMessageAttachments + ", sendingStarted=" + sendingStarted + ", sendingEnded=" + sendingEnded
                 + ", timestamp=" + timestamp + ", type='" + type + '\'' + '}';
-    }
-
-    public String getLetterHash() {
-        return letterHash;
-    }
-
-    public void setLetterHash(String letterHash) {
-        this.letterHash = letterHash;
     }
 }

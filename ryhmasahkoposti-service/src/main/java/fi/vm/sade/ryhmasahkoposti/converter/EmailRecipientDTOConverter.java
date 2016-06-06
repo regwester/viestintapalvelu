@@ -37,6 +37,7 @@ public class EmailRecipientDTOConverter {
         emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
         emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
         emailRecipientDTO.setEmailMessageID(reportedRecipient.getReportedMessage().getId());
+        emailRecipientDTO.setLetterHash(reportedRecipient.getLetterHash());
 
         return emailRecipientDTO;
     }

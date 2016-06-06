@@ -1,0 +1,1 @@
+ALTER TABLE kirjeet.vastaanottajakirje DROP COLUMN letter_hash;

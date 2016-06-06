@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
@@ -56,10 +57,14 @@ public class ReportedRecipientConverter {
         for (EmailRecipient emailRecipient : emailRecipients) {
             ReportedRecipient reportedRecipient = convert(emailRecipient);
             reportedRecipient.setReportedMessage(reportedMessage);
+            reportedRecipient.setLetterHash(createLetterHash(reportedMessage.getTimestamp(), emailRecipient.getEmail()));
             reportedRecipients.add(reportedRecipient);
         }
-
         return reportedRecipients;
+    }
+
+    private String createLetterHash(Date timestamp, String email) {
+        return DigestUtils.md5Hex(timestamp.toString() + ":" +  email);
     }
 
     public ReportedRecipient convert(ReportedMessage reportedMessage, EmailRecipient emailRecipient) {

@@ -453,7 +453,6 @@ public class LetterServiceImpl implements LetterService {
                 }
 
                 lrl.setLetterReceivers(rec);
-                lrl.setLetterHash(createLetterHash(lrl));
                 rec.setLetterReceiverLetter(lrl);
             }
 
@@ -474,7 +473,6 @@ public class LetterServiceImpl implements LetterService {
             LetterReceiverLetter lrl = new LetterReceiverLetter();
             lrl.setTimestamp(new Date());
             lrl.setLetterReceivers(rec);
-            lrl.setLetterHash(createLetterHash(lrl));
             lrl.setContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             lrl.setOriginalContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             lrl.setReadyForPublish(false);
@@ -483,10 +481,6 @@ public class LetterServiceImpl implements LetterService {
             receivers.add(rec);
         }
         return receivers;
-    }
-
-    private String createLetterHash(LetterReceiverLetter lrl) {
-        return DigestUtils.md5Hex(lrl.getTimestamp().toString() + ":" +  lrl.getLetterReceivers().getEmailAddress());
     }
 
     /*

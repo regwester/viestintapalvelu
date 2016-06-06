@@ -147,7 +147,7 @@ public class EmailServiceTest {
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         CallCounterVoidAnswer handleMail = new CallCounterVoidAnswer();
-        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class), any(Optional.class));
+        doAnswer(handleMail).when(emailSender).handleMail(any(EmailMessage.class), any(String.class), any(String.class), any(Optional.class));
 
         AnswerChain<Boolean> successHandler = atFirstReturn(true);
         when(rrService.recipientHandledSuccess(eq(queue.getRecipients().get(0)), any(String.class))).then(successHandler);
@@ -183,7 +183,7 @@ public class EmailServiceTest {
         when(emailQueueService.continueQueueHandling(any(EmailQueueHandleDto.class))).thenReturn(true);
         when(rrService.getMessage(eq(1l))).thenReturn(message);
         doThrow(new IllegalStateException("Email sending failed!")).when(emailSender).handleMail(any(EmailMessage.class), any(String.class),
-                any(Optional.class));
+                any(String.class), any(Optional.class));
         when(rrService.startSending(any(EmailRecipientDTO.class))).thenReturn(true);
         when(rrService.recipientHandledSuccess(any(EmailRecipientDTO.class), any(String.class))).thenThrow(
                 new IllegalStateException("Should not be successful!"));

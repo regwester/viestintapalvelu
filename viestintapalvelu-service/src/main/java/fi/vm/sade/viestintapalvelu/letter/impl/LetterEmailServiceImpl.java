@@ -251,7 +251,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
                     batchReplacementsToUse = new HashSet<LetterReplacement>();
                 }
                 emailData = buildEmailData(template, batchReplacementsToUse, new EmailData(),
-                        languageCode, letterBatch.getApplicationPeriod(), letter.getLetterHash());
+                        languageCode, letterBatch.getApplicationPeriod());
                 emailSendData.setEmailByLanguageCode(languageCode, emailData);
             }
 
@@ -284,14 +284,13 @@ public class LetterEmailServiceImpl implements LetterEmailService {
     }
 
     private EmailData buildEmailData(Template letterTemplate, Set<LetterReplacement> batchReplacements,
-                                     EmailData emailData, String languageCode, String applicationPeriod, String letterHash) {
+                                     EmailData emailData, String languageCode, String applicationPeriod) {
         EmailMessage message = emailData.getEmail();
         message.setLanguageCode(languageCode);
         message.setTemplateName(letterTemplate.getName());
         message.setHakuOid(applicationPeriod);
         message.setTemplateId("" + letterTemplate.getId());
         message.setHtml(true);
-        message.setLetterHash(letterHash);
 
         List<ReadableReplacement> replacements = new ArrayList<ReadableReplacement>();
         replacements.addAll(letterTemplate.getReplacements());

@@ -115,7 +115,7 @@ public class EmailAVChecker {
     private boolean isInfected(EmailSender sender, EmailMessage message, Optional<? extends AttachmentContainer> additionalAttachments) throws IOException,
             MessagingException {
 
-        MimeMessage msg = sender.createMail(message, "noone@localhost.local", additionalAttachments);
+        MimeMessage msg = sender.createMail(message, "noone@localhost.local", "letterHash", additionalAttachments);
 
         // check attachments separately..
         for (EmailAttachment attachment : message.getAttachments()) {
