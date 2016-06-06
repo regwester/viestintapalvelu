@@ -315,6 +315,7 @@
                 <ref bean="AsiointitiliResource"/>
                 <ref bean="AttachmentResourceImpl"/>
                 <ref bean="DownloadResource"/>
+                <ref bean="LetterResourceTrusted"/>
                 <ref bean="IPostiResource"/>
                 <ref bean="KoekutsukirjeResource"/>
                 <ref bean="LetterReportResource"/>

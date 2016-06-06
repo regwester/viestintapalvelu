@@ -32,7 +32,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 
-@Component
+@Component("LetterResourceTrusted")
 @Path(Urls.TRUSTED_PATH + "/" + Urls.LETTER_PATH)
 public class LetterResourceTrusted extends AbstractLetterResource {
 
