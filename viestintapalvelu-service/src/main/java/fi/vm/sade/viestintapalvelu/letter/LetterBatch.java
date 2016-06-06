@@ -64,6 +64,9 @@ public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
     private boolean iposti = false;
 
+    @ApiModelProperty(value = "Ohitetaanko dokumentin tallennus dokumenttipalveluun", required = false)
+    private boolean skipDokumenttipalvelu = false;
+
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
 
     public Map<String, Object> getTemplateReplacements() {
@@ -166,6 +169,15 @@ public class LetterBatch implements LetterBatchDetails {
         this.tag = tag;
     }
 
+    @Override
+    public boolean isSkipDokumenttipalvelu() {
+        return skipDokumenttipalvelu;
+    }
+
+    public void setSkipDokumenttipalvelu(boolean skipDokumenttipalvelu) {
+        this.skipDokumenttipalvelu = skipDokumenttipalvelu;
+    }
+
     public List<LetterBatch> split(int limit) {
         List<LetterBatch> batches = new ArrayList<LetterBatch>();
         split(letters, batches, limit);
@@ -200,7 +212,7 @@ public class LetterBatch implements LetterBatchDetails {
     public String toString() {
         return "LetterBatch [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements=" + templateReplacements
                 + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid
-                + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag + "]";
+                + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + "]";
     }
 
     public Map<String, byte[]> getIPostiData() {

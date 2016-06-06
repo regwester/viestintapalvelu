@@ -69,6 +69,9 @@ public class LetterReceivers extends BaseEntity {
     @JoinColumn(name = "iposti")
     private IPosti containedInIposti;
 
+    @Column(name = "ohita_iposti")
+    private boolean skipIPost;
+
     public LetterBatch getLetterBatch() {
         return letterBatch;
     }
@@ -149,11 +152,19 @@ public class LetterReceivers extends BaseEntity {
         this.oidPerson = oidPerson;
     }
 
+    public boolean getSkipIPost() {
+        return skipIPost;
+    }
+
+    public void setSkipIPost(boolean skipIPost) {
+        this.skipIPost = skipIPost;
+    }
+
     @Override
     public String toString() {
         return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
                 + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
-                + letterReceiverLetter + ", oidPerson=" + oidPerson + "]";
+                + letterReceiverLetter + ", oidPerson=" + oidPerson + ", skipIPost=" + skipIPost + "]";
     }
 
 }

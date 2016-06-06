@@ -32,4 +32,8 @@ public interface LetterDetails {
     String getLanguageCode();
 
     Map<String, Object> getTemplateReplacements();
+
+    String getPersonOid();
+
+    boolean isSkipIPosti();
 }

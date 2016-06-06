@@ -109,6 +109,9 @@ public class LetterBatch extends BaseEntity {
     @Temporal(TemporalType.TIMESTAMP)
     private Date emailHandlingFinished;
 
+    @Column(name = "ohita_dokumenttipalvelu")
+    private boolean skipDokumenttipalvelu;
+
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReplacement> letterReplacements;
@@ -312,10 +315,18 @@ public class LetterBatch extends BaseEntity {
         this.ipostHandlingFinished = ipostHandlingFinished;
     }
 
+    public boolean getSkipDokumenttipalvelu() {
+        return skipDokumenttipalvelu;
+    }
+
+    public void setSkipDokumenttipalvelu(boolean skipDokumenttipalvelu) {
+        this.skipDokumenttipalvelu = skipDokumenttipalvelu;
+    }
+
     @Override
     public String toString() {
         return "LetterBatch [templateId=" + templateId + ", templateName=" + templateName + ", applicationPeriod=" + applicationPeriod + ", fetchTarget="
                 + fetchTarget + ", timestamp=" + timestamp + ", language=" + language + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid
-                + "]";
+                + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + "]";
     }
 }

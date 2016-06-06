@@ -30,6 +30,12 @@ import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "Henkilön oid", required =  false)
+    private String personOid;
+
+    @ApiModelProperty(value = "Ohita iPosti. Koskee vain iPosti-lähetystä. Oletuksena ei ohiteta.", required = false)
+    private boolean skipIPosti = false;
+
     @ApiModelProperty(value = "Osoitetiedot", required = true)
     private AddressLabel addressLabel;
 
@@ -77,5 +83,23 @@ public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
 
     public void setTemplateReplacements(Map<String, Object> templateReplacements) {
         this.templateReplacements = templateReplacements;
+    }
+
+    @Override
+    public String getPersonOid() {
+        return personOid;
+    }
+
+    public void setPersonOid(String personOid) {
+        this.personOid = personOid;
+    }
+
+    @Override
+    public boolean isSkipIPosti() {
+        return skipIPosti;
+    }
+
+    public void setSkipIPosti(boolean skipIPosti) {
+        this.skipIPosti = skipIPosti;
     }
 }

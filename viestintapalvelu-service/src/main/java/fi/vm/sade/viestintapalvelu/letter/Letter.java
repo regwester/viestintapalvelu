@@ -43,6 +43,12 @@ public class Letter implements LetterDetails {
     @ApiModelProperty(value = "Kirjeen sisältö")
     private LetterContent letterContent;
 
+    @ApiModelProperty(value = "Ohitetaanko iPostin generointi tälle vastaanottajalle", required = false)
+    private boolean skipIPosti = false;
+
+    @ApiModelProperty(value = "Henkilön OID", required = false)
+    private String personOid;
+
     public Letter() {
     }
 
@@ -108,8 +114,27 @@ public class Letter implements LetterDetails {
     }
 
     @Override
+    public boolean isSkipIPosti() {
+        return skipIPosti;
+    }
+
+    public void setSkipIPosti(boolean skipIPosti) {
+        this.skipIPosti = skipIPosti;
+    }
+
+    @Override
+    public String getPersonOid() {
+        return personOid;
+    }
+
+    public void setPersonOid(String personOid) {
+        this.personOid = personOid;
+    }
+
+    @Override
     public String toString() {
-        return "Letter [addressLabel=" + addressLabel + ", templateReplacements=" + templateReplacements + "]";
+        return "Letter [addressLabel=" + addressLabel + ", templateReplacements=" + templateReplacements +
+                ", personOid=" + personOid + ", skipIPosti=" + skipIPosti + "]";
     }
 
 }

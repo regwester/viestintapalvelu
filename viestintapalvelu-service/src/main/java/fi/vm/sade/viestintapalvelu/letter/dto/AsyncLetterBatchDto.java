@@ -68,6 +68,9 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
 
     @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
     private boolean iposti = false;
+
+    @ApiModelProperty(value = "Ohitetaanko tuotetun dokumentin tallennus dokumenttipalveluun. Oleksena ei.", required = false)
+    private boolean skipDokumenttipalvelu = false;
     
     private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
 
@@ -191,11 +194,20 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     }
 
     @Override
+    public boolean isSkipDokumenttipalvelu() {
+        return skipDokumenttipalvelu;
+    }
+
+    public void setSkipDokumenttipalvelu(boolean skipDokumenttipalvelu) {
+        this.skipDokumenttipalvelu = skipDokumenttipalvelu;
+    }
+
+    @Override
     public String toString() {
         return "AsyncLetterBatchDto [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements="
                 + templateReplacements + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid
                 + ", organizationOid=" + organizationOid + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag
-                + ", iposti=" + iposti + ", iPostiData=" + iPostiData + "]";
+                + ", iposti=" + iposti + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + ", iPostiData=" + iPostiData + "]";
     }
     
 }

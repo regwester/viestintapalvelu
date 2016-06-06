@@ -477,6 +477,7 @@ public class LetterServiceImpl implements LetterService {
             lrl.setLetterHash(createLetterHash(lrl));
             lrl.setContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             lrl.setOriginalContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
+            lrl.setReadyForPublish(false);
             rec.setLetterReceiverLetter(lrl);
 
             receivers.add(rec);
@@ -684,14 +685,22 @@ public class LetterServiceImpl implements LetterService {
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 logger.info("LETTER processing finished for  letter batch {}", id);
-                savePdfDocument(batch);
+                if(!batch.getSkipDokumenttipalvelu() ) {
+                    savePdfDocument(batch);
+                } else {
+                    logger.info("NOT saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+                }
                 newStatus = LetterBatch.Status.ready;
             }
             break;
         case IPOSTI:
             logger.info("IPOSTI processing finished for  letter batch {}", id);
             batch.setIpostHandlingFinished(new Date());
-            saveZipDocument(batch);
+            if(!batch.getSkipDokumenttipalvelu() ) {
+                saveZipDocument(batch);
+            } else {
+                logger.info("NOT saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+            }
             newStatus = LetterBatch.Status.ready;
             break;
         }

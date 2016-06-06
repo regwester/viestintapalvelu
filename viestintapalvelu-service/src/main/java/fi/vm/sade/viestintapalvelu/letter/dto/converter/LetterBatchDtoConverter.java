@@ -48,6 +48,7 @@ public class LetterBatchDtoConverter {
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTag(from.getTag());
         to.setIposti(from.isIposti());
+        to.setSkipDokumenttipalvelu(from.isSkipDokumenttipalvelu());
 
         // kirjeet.lahetyskorvauskentat
         to.setLetterReplacements(parseLetterReplacementsModels(from, to, mapper));
@@ -87,6 +88,8 @@ public class LetterBatchDtoConverter {
         to.setTimestamp(new Date());
         to.setEmailAddress(from.getEmailAddress());
         to.setWantedLanguage(from.getLanguageCode());
+        to.setSkipIPost(from.isSkipIPosti());
+        to.setOidPerson(from.getPersonOid());
 
         if (mapper == null) {
             mapper = objectMapperProvider.getContext(getClass());
