@@ -113,6 +113,7 @@ public class ReportedMessageDTOConverter {
             emailRecipientDTO.setSendSuccessful(reportedRecipient.getSendingSuccessful());
             emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
             emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
+            emailRecipientDTO.setLetterHash(reportedRecipient.getLetterHash());
             setRecipientName(emailRecipientDTO, reportedRecipient);
 
             recipients.add(emailRecipientDTO);
