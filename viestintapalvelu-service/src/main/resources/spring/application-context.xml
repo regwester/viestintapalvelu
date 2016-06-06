@@ -33,7 +33,7 @@
                     <prop key="cas_key">viestintapalvelu</prop>
                     <prop key="cas_service">${cas.service.viestintapalvelu}</prop>
                     <prop key="cas_callback_url">${cas.callback.viestintapalvelu}</prop>
-                    <prop key="spring_security_default_access">isAuthenticated()</prop>
+                    <prop key="spring_security_default_access">permitAll</prop> <!-- permitAll because trusted resources wont work otherwise -->
                 </util:properties>
             </property>
         </bean>
