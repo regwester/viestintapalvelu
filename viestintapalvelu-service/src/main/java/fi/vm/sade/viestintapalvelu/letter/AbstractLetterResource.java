@@ -66,7 +66,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     @Autowired
     protected DokumenttiIdProvider dokumenttiIdProvider;
 
-    protected Response listByPerson( @PathParam("personOid") @ApiParam(name="Henkilön OID", required = true) String personOid) {
+    protected Response listByPerson(String personOid) {
         return Response.ok(letterService.listLettersByUser(personOid)).build();
     }
 

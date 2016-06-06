@@ -58,7 +58,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @Path("/list/person/{personOid}")
     @ApiOperation(value="Tuottaa listan hakijan kirjeistä")
     public Response listByPerson( @PathParam("personOid") @ApiParam(name="Henkilön OID", required = true) String personOid) {
-        return listByPerson(personOid);
+        return super.listByPerson(personOid);
     }
 
     @GET
