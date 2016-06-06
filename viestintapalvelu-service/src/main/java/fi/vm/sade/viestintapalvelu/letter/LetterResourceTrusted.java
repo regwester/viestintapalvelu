@@ -65,7 +65,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @Path("/receiverLetter/{id}")
     @Produces({ "application/pdf", "application/zip" })
     @ApiOperation(value = "Hakee vastaanottajan kirjeen")
-    public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @QueryParam(Constants.PARAM_ID) Long id,
+    public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @PathParam(Constants.PARAM_ID) Long id,
                                        @Context HttpServletRequest request, @Context HttpServletResponse response) {
         try {
             LetterReceiverLetterDTO letterReceiverLetter = letterService.getLetterReceiverLetter(id);
