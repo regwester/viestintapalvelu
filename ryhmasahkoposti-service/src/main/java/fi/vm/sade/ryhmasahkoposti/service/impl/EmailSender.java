@@ -60,6 +60,7 @@ public class EmailSender {
                 long took = System.currentTimeMillis() -start;
                 LOGGER.debug("Message sent took: " + took);
             } else {
+                LOGGER.info("Sending mock message to {}, hash {}", emailAddress, letterHash);
                 mockSendMail(emailMessage, emailAddress, additionalAttachments); //just log the message
             }
         } catch (Exception e) {

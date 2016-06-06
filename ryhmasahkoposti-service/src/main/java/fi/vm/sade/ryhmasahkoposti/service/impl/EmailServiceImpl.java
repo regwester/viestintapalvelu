@@ -16,10 +16,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Named;
 import javax.mail.internet.MimeMessage;
@@ -181,12 +178,14 @@ public class EmailServiceImpl implements EmailService {
         EmailQueueHandleDto queue = reserveQueue();
         if (queue != null) {
             log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
+            final List<EmailRecipientDTO> recipients = queue.getRecipients();
             int sent = 0,
                 errors = 0,
-                queueSize = queue.getRecipients().size();
+                queueSize = recipients.size();
             EmailSendQueState state = new EmailSendQueState();
 
-            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
+            log.info("EmailQueue={} started at {}, has {} recipients waiting for handling.", queue.getId(), new Date(), queueSize);
+            for (EmailRecipientDTO emailRecipient : recipients) {
                 long recipientStart = System.currentTimeMillis();
 
                 if (!emailQueueService.continueQueueHandling(queue)) {
@@ -289,11 +288,11 @@ public class EmailServiceImpl implements EmailService {
      */
     private boolean handleRecipient(EmailRecipientDTO emailRecipient, EmailSendQueState emailSendQueState) {
         long vStart = System.currentTimeMillis();
-        log.info("Handling " + emailRecipient + " " + emailRecipient.getRecipientID());
+        final String s = emailRecipient + ",id=" + emailRecipient.getRecipientID() + ",hash=" + emailRecipient.getLetterHash();
+        log.info("Handling recipient " + s);
         boolean success = false;
         if (rrService.startSending(emailRecipient)) {
-            log.info("Handling really " + emailRecipient + " " + emailRecipient.getRecipientID());
-
+            log.info("Started sending for recipient " + s);
             try {
                 // loads remote attachments if available 
                 loadReferencedAttachments(emailRecipient, emailSendQueState);
@@ -317,7 +316,7 @@ public class EmailServiceImpl implements EmailService {
             }
         }
         long took = System.currentTimeMillis() - vStart;
-        log.info("Message handling took " + took);
+        log.info("Message handling took {} for recipient {}", took, s);
         return success;
     }
 
