@@ -8,7 +8,7 @@
         <import resource="classpath:/spring/dao-context.xml"/>
     </beans>
 
-    <beans profile="it">
+    <beans profile="dev">
         <import resource="classpath:/spring/service-context.xml"/>
         <import resource="classpath:/test-dao-context.xml"/>
     </beans>
