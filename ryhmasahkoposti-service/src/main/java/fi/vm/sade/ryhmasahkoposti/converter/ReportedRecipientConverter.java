@@ -55,12 +55,16 @@ public class ReportedRecipientConverter {
         Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
 
         for (EmailRecipient emailRecipient : emailRecipients) {
-            ReportedRecipient reportedRecipient = convert(emailRecipient);
-            reportedRecipient.setReportedMessage(reportedMessage);
-            reportedRecipient.setLetterHash(createLetterHash(reportedMessage.getTimestamp(), emailRecipient.getEmail()));
-            reportedRecipients.add(reportedRecipient);
+            reportedRecipients.add(getReportedRecipient(reportedMessage, emailRecipient));
         }
         return reportedRecipients;
+    }
+
+    private ReportedRecipient getReportedRecipient(ReportedMessage reportedMessage, EmailRecipient emailRecipient) {
+        ReportedRecipient reportedRecipient = convert(emailRecipient);
+        reportedRecipient.setReportedMessage(reportedMessage);
+        reportedRecipient.setLetterHash(createLetterHash(reportedMessage.getTimestamp(), emailRecipient.getEmail()));
+        return reportedRecipient;
     }
 
     private String createLetterHash(Date timestamp, String email) {
@@ -68,8 +72,6 @@ public class ReportedRecipientConverter {
     }
 
     public ReportedRecipient convert(ReportedMessage reportedMessage, EmailRecipient emailRecipient) {
-        ReportedRecipient reportedRecipient = convert(emailRecipient);
-        reportedRecipient.setReportedMessage(reportedMessage);
-        return reportedRecipient;
+        return getReportedRecipient(reportedMessage, emailRecipient);
     }
 }
