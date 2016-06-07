@@ -70,6 +70,13 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
     }
 
     @Override
+    public List<ReportedRecipient> findByLetterHash(String letterHash) {
+        BooleanExpression whereExpression = reportedRecipient.letterHash.eq(letterHash);
+        JPAQuery findByLetterHashQuery = from(reportedRecipient).where(whereExpression);
+        return findByLetterHashQuery.list(reportedRecipient);
+    }
+
+    @Override
     public Date findMaxValueOfSendingEndedByMessageID(Long messageID) {
         EntityManager em = getEntityManager();
 

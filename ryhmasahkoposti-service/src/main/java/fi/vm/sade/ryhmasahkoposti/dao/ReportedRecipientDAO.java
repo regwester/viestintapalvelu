@@ -65,6 +65,15 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
     public ReportedRecipient findByRecipientID(Long recipientID);
 
     /**
+     * Hakee vastaanottajan tiedot viestin tiivisteen perusteella
+     *
+     * @param letterHash
+     *            Viestin tiiviste
+     * @return Raportoitavan vastaanottajan tiedot
+     */
+    public List<ReportedRecipient> findByLetterHash(String letterHash);
+
+    /**
      * Hakee lähettävästä ryhmäsähköpostista viimeiseksi lähetetyn
      * 
      * @param messageID

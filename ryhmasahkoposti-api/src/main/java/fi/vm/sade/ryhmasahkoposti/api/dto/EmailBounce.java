@@ -2,6 +2,7 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;
 
 public class EmailBounce {
@@ -9,6 +10,12 @@ public class EmailBounce {
 
     @JsonProperty("bounce_cnt")
     private int count;
+
+    @JsonProperty("X-Batch-ID")
+    private String batchId;
+
+    @JsonProperty("X-Message-ID")
+    private String messageId;
 
     //@JsonProperty("last_bounce")
     //@JsonFormat(shape=JsonFormat.Shape.STRING, pattern="yyyy-MM-dd'T'HH:mm:ss'Z'")
@@ -38,12 +45,24 @@ public class EmailBounce {
         this.email = email;
     }
 
+    public String getBatchId() {
+        return batchId;
+    }
+
+    public void setBatchId(String batchId) {
+        this.batchId = batchId;
+    }
+
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
     @Override
     public String toString() {
-        return "EmailBounce{" +
-                "email='" + email + '\'' +
-                ", count=" + count +
-                ", timestamp=" + timestamp +
-                '}';
+        return ToStringBuilder.reflectionToString(this);
     }
 }
