@@ -3,14 +3,13 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailBounce;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailBounces;
-import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.BounceComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.service.EmailBounceService;
+import fi.vm.sade.ryhmasahkoposti.service.ReportedRecipientService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.List;
 
@@ -21,7 +20,7 @@ public class EmailBounceServiceImpl implements EmailBounceService {
     private BounceComponent bounceComponent;
 
     @Autowired
-    private ReportedRecipientDAO reportedRecipientDAO;
+    private ReportedRecipientService reportedRecipientService;
 
     @Override
     public void checkEmailBounces() {
@@ -29,7 +28,7 @@ public class EmailBounceServiceImpl implements EmailBounceService {
         log.info("Checking email bounces, count=" + bounces.getBouncedEmails().size());
         for (EmailBounce b: bounces.getBouncedEmails()) {
             log.info("Found bounce for email={}, messageId={}", b.getEmail(), b.getMessageId());
-            final List<ReportedRecipient> byLetterHash = reportedRecipientDAO.findByLetterHash(convertToLetterHash(b.getMessageId()));
+            final List<ReportedRecipient> byLetterHash = reportedRecipientService.findByLetterHash(convertToLetterHash(b.getMessageId()));
             if (byLetterHash.size() == 0 ) {
                 log.warn("Bounce not found from db email={}, messageId={}", b.getEmail(), b.getMessageId());
             } else {
@@ -44,7 +43,7 @@ public class EmailBounceServiceImpl implements EmailBounceService {
             if (!recipient.getSendingSuccessful().equals(GroupEmailConstants.SENDING_BOUNCED)) {
                 log.info("Marking email={}, messageId={} as bounced", recipient.getRecipientEmail(), recipient.getLetterHash());
                 recipient.setSendingSuccessful(GroupEmailConstants.SENDING_BOUNCED);
-                reportedRecipientDAO.update(recipient);
+                reportedRecipientService.updateReportedRecipient(recipient);
             }
         }
     }

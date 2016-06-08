@@ -129,4 +129,9 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
     public void updateReportedRecipient(ReportedRecipient reportedRecipient) {
         reportedRecipientDAO.update(reportedRecipient);
     }
+
+    @Override
+    public List<ReportedRecipient> findByLetterHash(String letterHash) {
+        return reportedRecipientDAO.findByLetterHash(letterHash);
+    }
 }

@@ -114,4 +114,12 @@ public interface ReportedRecipientService {
      * @param raportoitavaVastaanottaja Raportoitavan viestin vastaanottajan tiedot
      */
     public void updateReportedRecipient(ReportedRecipient reportedRecipient);
+
+    /**
+     * Hakee viestin tiivisteen perusteella
+     *
+     * @param letterHash Palautuneen viestin tiiviste
+     * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
+    */
+    public List<ReportedRecipient> findByLetterHash(String letterHash);
 }
