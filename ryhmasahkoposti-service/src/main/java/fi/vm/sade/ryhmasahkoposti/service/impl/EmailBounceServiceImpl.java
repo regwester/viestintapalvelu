@@ -1,9 +1,9 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailBounce;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailBounces;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.api.BounceResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.BounceComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.service.EmailBounceService;
@@ -26,15 +26,25 @@ public class EmailBounceServiceImpl implements EmailBounceService {
     @Override
     public void checkEmailBounces() {
         final EmailBounces bounces = bounceComponent.getBounces();
-        log.info("Checking email bounces...");
+        log.info("Checking email bounces, count=" + bounces.getBouncedEmails().size());
         for (EmailBounce b: bounces.getBouncedEmails()) {
-            log.info("Found email bounce for address={}, messageId={}", b.getEmail(), b.getMessageId());
+            log.info("Found bounce for email={}, messageId={}", b.getEmail(), b.getMessageId());
             final List<ReportedRecipient> byLetterHash = reportedRecipientDAO.findByLetterHash(convertToLetterHash(b.getMessageId()));
             if (byLetterHash.size() == 0 ) {
-                log.warn("Email bounce not found from db email={}, messageId={}", b.getEmail(), b.getMessageId());
+                log.warn("Bounce not found from db email={}, messageId={}", b.getEmail(), b.getMessageId());
+            } else {
+                handleBounce(byLetterHash);
             }
-            for (ReportedRecipient recipient: byLetterHash) {
-                log.info("Bounce for address {} found from db", recipient.getRecipientEmail());
+        }
+    }
+
+    private void handleBounce(List<ReportedRecipient> bounced) {
+        for (ReportedRecipient recipient: bounced) {
+            log.info("Bounce email={}, messageId={} found from db", recipient.getRecipientEmail(), recipient.getLetterHash());
+            if (!recipient.getSendingSuccessful().equals(GroupEmailConstants.SENDING_BOUNCED)) {
+                log.info("Marking email={}, messageId={} as bounced", recipient.getRecipientEmail(), recipient.getLetterHash());
+                recipient.setSendingSuccessful(GroupEmailConstants.SENDING_BOUNCED);
+                reportedRecipientDAO.update(recipient);
             }
         }
     }

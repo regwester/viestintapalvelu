@@ -20,6 +20,7 @@ public interface GroupEmailConstants {
     String NOT_HTML_MESSAGE = "";
     String SENDING_SUCCESSFUL = "1";
     String SENDING_FAILED = "0";
+    String SENDING_BOUNCED = "2";
 
     // OID-vakiot
     String OID_OPH_TREE = "1.2.246.562";
