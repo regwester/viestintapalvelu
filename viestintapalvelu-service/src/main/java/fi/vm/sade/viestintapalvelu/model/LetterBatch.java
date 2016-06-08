@@ -329,4 +329,9 @@ public class LetterBatch extends BaseEntity {
                 + fetchTarget + ", timestamp=" + timestamp + ", language=" + language + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid
                 + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + "]";
     }
+
+    public String toStringForLogging() {
+        return "haku=" + applicationPeriod + ", hakukohde=" + fetchTarget + ", kieli=" + language
+                + ", pohjan nimi=" + templateName + ", kirjeitä=" + ( null == letterReceivers ? 0 : letterReceivers.size() ) + " kpl";
+    }
 }

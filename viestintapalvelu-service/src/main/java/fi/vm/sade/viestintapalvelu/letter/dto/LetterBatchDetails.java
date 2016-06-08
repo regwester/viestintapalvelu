@@ -54,4 +54,7 @@ public interface LetterBatchDetails {
     void setTemplateId(Long id);
 
     boolean isSkipDokumenttipalvelu();
+
+    String toStringForLogging();
+
 }

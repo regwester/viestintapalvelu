@@ -105,6 +105,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void start(JobDescription<LetterReceiverProcessable> description) {
+            logger.info("BatchID={}. Starting to process letter batch. Generating {} letters", letterBatchId, description.getProcessables().size());
             letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.LETTER);
         }
 
@@ -115,16 +116,19 @@ public class LetterBatchProcessor {
 
         @Override
         public void process(LetterReceiverProcessable letterReceiverProcessable) throws Exception {
+            logger.debug("BatchID={}. Processing next letter generation with ID={}", letterBatchId, letterReceiverProcessable.getId());
             letterService.processLetterReceiver(letterReceiverProcessable.getId());
         }
 
         @Override
         public void handleFailure(Exception e, LetterReceiverProcessable processable) {
+            logger.error("BatchID={}. Unable to start job for letter generation.", letterBatchId, e);
             letterService.saveBatchErrorForReceiver(processable.getId(), e.getMessage());
         }
 
         @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<LetterReceiverProcessable> description) throws Exception {
+            logger.info("BatchID={}. Finishing processing of letter batch. Letters are ready.", letterBatchId);
             Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.LETTER);
             if (nextToDo.isPresent()) {
                 switch (nextToDo.get()) {
@@ -133,8 +137,10 @@ public class LetterBatchProcessor {
                     reserveJob(job);
                     LetterBatchSplitedIpostDto splitted = letterService.splitBatchForIpostProcessing(letterBatchId);
                     if (splitted.getProcessables().isEmpty()) {
+                        logger.info("BatchID={}. No IPosti found for processing. Skipping IPosti.", letterBatchId);
                         return Optional.absent();
                     }
+                    logger.info("BatchID={}. Initializing {} IPosti zip generation for processing.", letterBatchId, splitted.getProcessables().size());
                     JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job, splitted.getProcessables(),
                             iPostZipProcessingJobThreadCount);
                     return Optional.of(jobDescription);
@@ -147,6 +153,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void handleJobFinnishedFailure(Exception e, JobDescription<LetterReceiverProcessable> description) {
+            logger.error("BatchID={}. Letter generation job failed", e);
             letterService.errorProcessingBatch(letterBatchId, e);
         }
 
@@ -189,26 +196,32 @@ public class LetterBatchProcessor {
 
         @Override
         public void start(JobDescription<IPostiProcessable> description) {
+            logger.info("BatchID={}. Starting to process IPosti for letter batch. Generating {} IPosti zips.", letterBatchId, description.getProcessables().size());
             letterService.updateBatchProcessingStarted(letterBatchId, LetterBatchProcess.IPOSTI);
         }
 
         @Override
         public void handleJobStartedFailure(Exception e, JobDescription<IPostiProcessable> description) {
+            logger.error("BatchID={}. Unable to start job for IPosti zip generation.", letterBatchId, e);
             letterService.errorProcessingBatch(letterBatchId, e);
         }
 
         @Override
         public void process(IPostiProcessable processable) throws Exception {
+            logger.info("BatchID={}. Processing {}th IPosti zip generation with {} receivers.",
+                    letterBatchId, processable.getOrderNumber(), processable.getLetterReceiverIds().size());
             letterService.processIposti(processable);
         }
 
         @Override
         public void handleFailure(Exception e, IPostiProcessable processable) {
+            logger.error("BatchID={}. IPosti zip generation job failed", letterBatchId, e);
             letterService.handleIpostError(processable, e);
         }
 
         @Override
         public Optional<? extends JobDescription<?>> jobFinished(JobDescription<IPostiProcessable> description) throws Exception {
+            logger.info("BatchID={}. Finishing processing of IPosti for letter batch. IPosti zips are ready.", letterBatchId);
             Optional<LetterBatchProcess> nextToDo = letterService.updateBatchProcessingFinished(letterBatchId, LetterBatchProcess.IPOSTI);
             if (nextToDo.isPresent()) {
                 throw new IllegalStateException(this + " don't know how to start next job " + nextToDo.get());
