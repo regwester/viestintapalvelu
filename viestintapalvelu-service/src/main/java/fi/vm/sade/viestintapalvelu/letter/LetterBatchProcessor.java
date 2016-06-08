@@ -122,7 +122,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void handleFailure(Exception e, LetterReceiverProcessable processable) {
-            logger.error("BatchID={}. Unable to start job for letter generation.", letterBatchId, e);
+            logger.error("BatchID=" + letterBatchId + ". Unable to start job for letter generation.", e);
             letterService.saveBatchErrorForReceiver(processable.getId(), e.getMessage());
         }
 
@@ -153,7 +153,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void handleJobFinnishedFailure(Exception e, JobDescription<LetterReceiverProcessable> description) {
-            logger.error("BatchID={}. Letter generation job failed", e);
+            logger.error("BatchID=" + letterBatchId + ". Letter generation job failed", e);
             letterService.errorProcessingBatch(letterBatchId, e);
         }
 
@@ -202,7 +202,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void handleJobStartedFailure(Exception e, JobDescription<IPostiProcessable> description) {
-            logger.error("BatchID={}. Unable to start job for IPosti zip generation.", letterBatchId, e);
+            logger.error("BatchID=" + letterBatchId + ". Unable to start job for IPosti zip generation.", e);
             letterService.errorProcessingBatch(letterBatchId, e);
         }
 
@@ -215,7 +215,7 @@ public class LetterBatchProcessor {
 
         @Override
         public void handleFailure(Exception e, IPostiProcessable processable) {
-            logger.error("BatchID={}. IPosti zip generation job failed", letterBatchId, e);
+            logger.error("BatchID=" + letterBatchId + ". IPosti zip generation job failed", e);
             letterService.handleIpostError(processable, e);
         }
 
