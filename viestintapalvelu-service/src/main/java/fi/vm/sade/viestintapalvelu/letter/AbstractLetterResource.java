@@ -73,7 +73,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input,
             boolean anonymousRequest) {
 
-        LOG.info("New letter batch received. Starting validation. {}", input.toStringForLogging());
+        LOG.info("New letter batch received. Starting validation.");
         LetterResponse response = new LetterResponse();
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
@@ -84,7 +84,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
                 return Response.ok(response).build();
             }
         } catch (Exception e) {
-            LOG.error("Validation error. " + input.toStringForLogging(), e);
+            LOG.error("Validation error.", e);
             return Response.status(Status.BAD_REQUEST).build();
         }
 
@@ -135,5 +135,9 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
         } else {
             return dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
         }
+    }
+
+    protected boolean isLetterBatchStatusReady(LetterBatchStatusDto status) {
+        return fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(status.getStatus());
     }
 }

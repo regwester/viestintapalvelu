@@ -13,6 +13,8 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
+import com.sun.org.apache.regexp.internal.RE;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -291,6 +293,24 @@ public class LetterResource extends AbstractLetterResource {
         } catch (Exception e) {
             LOG.error("Error getting merged pdf for batch " + letterBatchId, e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GET
+    @Consumes("application/json")
+    @Produces("application/json")
+    @Path("/publishLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    public Response publishLetterBatch(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
+        LOG.info("Publishing letter batch with batch id {}", letterBatchId);
+        LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
+        if(null == status || isLetterBatchStatusReady(status)) {
+            return Response.status(Status.BAD_REQUEST).build();
+        } else {
+            int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
+            LOG.info("Published {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
+            return Response.ok(numberOfPublishedLetters).build();
         }
     }
 

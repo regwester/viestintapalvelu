@@ -210,7 +210,6 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
                 + ", iposti=" + iposti + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + ", iPostiData=" + iPostiData + "]";
     }
 
-    @Override
     public String toStringForLogging() {
         return "haku=" + applicationPeriod + ", hakukohde=" + fetchTarget + ", kieli=" + languageCode
                 + ", pohjan nimi=" + templateName + ", kirjeitä=" + ( null == letters ? 0 : letters.size() ) + " kpl";

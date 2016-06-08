@@ -945,4 +945,9 @@ public class LetterServiceImpl implements LetterService {
 
         return letterReceiverLetterDTO;
     }
+
+    @Override
+    public int publishLetterBatch(long letterBatchId) {
+        return letterBatchDAO.publishLetterBatch(letterBatchId);
+    }
 }

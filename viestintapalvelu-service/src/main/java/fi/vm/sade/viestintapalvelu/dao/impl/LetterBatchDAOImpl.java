@@ -389,4 +389,15 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
 
+    @Override
+    public int publishLetterBatch(long letterBatchId) {
+        return getEntityManager().createQuery( "UPDATE LetterReceiverLetter l"
+                + " SET l.readyForPublish = :readyForPublish"
+                + " WHERE l.id IN ("
+                + " SELECT lrl.id FROM LetterBatch lb"
+                + " INNER JOIN lb.letterReceivers lr"
+                + " INNER JOIN lr.letterReceiverLetter lrl"
+                + " WHERE lb.id = :letterBatchId)"
+        ).setParameter("readyForPublish", true).setParameter("letterBatchId", letterBatchId).executeUpdate();
+    }
 }

@@ -180,4 +180,6 @@ public interface LetterService {
      * @throws IOException
      */
     LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
+
+    int publishLetterBatch(long letterBatchId);
 }

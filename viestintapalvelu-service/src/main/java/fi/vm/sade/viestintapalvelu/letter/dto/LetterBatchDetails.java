@@ -55,6 +55,4 @@ public interface LetterBatchDetails {
 
     boolean isSkipDokumenttipalvelu();
 
-    String toStringForLogging();
-
 }

@@ -164,4 +164,6 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
     String findTemplateNameForLetterBatch(long batchId);
 
     List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid);
+
+    int publishLetterBatch(long batchId);
 }

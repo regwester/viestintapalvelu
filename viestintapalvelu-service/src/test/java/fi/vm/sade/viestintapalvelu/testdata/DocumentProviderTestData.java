@@ -165,7 +165,7 @@ public class DocumentProviderTestData {
         letterBatch.setTimestamp(new Date());
         letterBatch.setVersion(new Long(0));
         
-        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
+        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch, count));
         letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
         
         return letterBatch;
