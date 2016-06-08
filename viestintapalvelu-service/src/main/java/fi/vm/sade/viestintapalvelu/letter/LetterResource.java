@@ -297,10 +297,10 @@ public class LetterResource extends AbstractLetterResource {
     }
 
     @GET
-    @Consumes("application/json")
     @Produces("application/json")
     @Path("/publishLetterBatch/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Julkaisee kirjelähetyksen")
     public Response publishLetterBatch(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         LOG.info("Publishing letter batch with batch id {}", letterBatchId);
