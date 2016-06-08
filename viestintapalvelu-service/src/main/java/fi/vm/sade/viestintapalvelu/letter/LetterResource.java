@@ -297,7 +297,7 @@ public class LetterResource extends AbstractLetterResource {
     }
 
     @GET
-    @Produces("application/json")
+    @Produces("text/plain")
     @Path("/publishLetterBatch/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Julkaisee kirjelähetyksen")
@@ -305,8 +305,11 @@ public class LetterResource extends AbstractLetterResource {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
         LOG.info("Publishing letter batch with batch id {}", letterBatchId);
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
-        if(null == status || isLetterBatchStatusReady(status)) {
+        if(null == status) {
             return Response.status(Status.BAD_REQUEST).build();
+        } else if ( !isLetterBatchStatusReady(status)) {
+            LOG.info("Batch with id {} is not ready for publish. ", letterBatchId);
+            return Response.status(Status.FORBIDDEN).entity("Batch is not ready for publish.").build();
         } else {
             int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
             LOG.info("Published {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);

@@ -397,7 +397,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 + " SELECT lrl.id FROM LetterBatch lb"
                 + " INNER JOIN lb.letterReceivers lr"
                 + " INNER JOIN lr.letterReceiverLetter lrl"
-                + " WHERE lb.id = :letterBatchId)"
-        ).setParameter("readyForPublish", true).setParameter("letterBatchId", letterBatchId).executeUpdate();
+                + " WHERE lb.id = :letterBatchId AND lb.batchStatus = :status)"
+        ).setParameter("readyForPublish", true)
+         .setParameter("letterBatchId", letterBatchId)
+         .setParameter("status", LetterBatch.Status.ready).executeUpdate();
     }
 }
