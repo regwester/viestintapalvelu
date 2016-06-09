@@ -191,13 +191,15 @@
     <!-- Sending emails -->
     <bean id="dailyTaskRunner" class="fi.vm.sade.ryhmasahkoposti.service.DailyTaskRunnerImpl"/>
     <bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"/>
-    <bean id="emailBounceServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailBounceServiceImpl"/>
+    <bean id="emailBounceServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailBounceServiceImpl">
+        <property name="run" value="${ryhmasahkoposti.bounces.run}"/>
+    </bean>
     <task:executor id="emailExecutor" rejection-policy="ABORT" pool-size="10"/>
     <task:scheduler id="emailScheduler" pool-size="10"/>
     <task:scheduled-tasks scheduler="emailScheduler">
         <task:scheduled ref="emailServiceImpl" method="checkEmailQueues" cron="${ryhmasahkoposti.sender.cron}"/>
         <task:scheduled ref="dailyTaskRunner" method="runDailyTasks" fixed-delay="86400000" initial-delay="5000"/>
-        <task:scheduled ref="emailBounceServiceImpl" method="checkEmailBounces" fixed-delay="86400000" initial-delay="1000"/>
+        <task:scheduled ref="emailBounceServiceImpl" method="checkEmailBounces" cron="${ryhmasahkoposti.bounces.cron}" />
     </task:scheduled-tasks>
 
     <!-- Swagger configuration -->

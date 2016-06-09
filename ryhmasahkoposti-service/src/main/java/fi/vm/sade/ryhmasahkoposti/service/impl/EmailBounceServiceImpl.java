@@ -21,6 +21,8 @@ import java.util.List;
 public class EmailBounceServiceImpl implements EmailBounceService {
     private static final Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailBounceServiceImpl.class);
 
+    private boolean run;
+
     @Autowired
     private BounceComponent bounceComponent;
 
@@ -29,6 +31,12 @@ public class EmailBounceServiceImpl implements EmailBounceService {
 
     @Override
     public void checkEmailBounces() {
+        if (run) {
+            runEmailBouncesCheck();
+        }
+    }
+
+    private void runEmailBouncesCheck() {
         final EmailBounces bounces = bounceComponent.getBounces();
         log.info("Checking email bounces, count=" + bounces.getBouncedEmails().size());
         for (EmailBounce b: bounces.getBouncedEmails()) {
@@ -56,5 +64,13 @@ public class EmailBounceServiceImpl implements EmailBounceService {
 
     private String convertToLetterHash(String messageId) {
         return messageId.replace(".posti@hard.ware.fi", "");
+    }
+
+    public boolean isRun() {
+        return run;
+    }
+
+    public void setRun(boolean run) {
+        this.run = run;
     }
 }
