@@ -111,6 +111,9 @@
                 <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
                 <td>{{emailRecipient.oid}}</td>
                 <td>{{emailRecipient.email}}</td>
+                <td ng-if="emailRecipient.sendSuccessful === '2'">
+                    {{'reportedmessageview.text.lahetys_vastaanottajalle_palautui' | i18n}}
+                </td>
                 <td ng-if="emailRecipient.sendSuccessful === '1'">
                     {{'reportedmessageview.text.lahetys_vastaanottajalle_onnistui' | i18n}}
                 </td>
