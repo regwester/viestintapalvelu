@@ -11,6 +11,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -41,6 +42,7 @@ public class EmailBounceServiceImpl implements EmailBounceService {
         }
     }
 
+    @Transactional(propagation = Propagation.REQUIRED)
     private void handleBounce(List<ReportedRecipient> bounced) {
         for (ReportedRecipient recipient: bounced) {
             log.info("Bounce email={}, messageId={} found from db", recipient.getRecipientEmail(), recipient.getLetterHash());
