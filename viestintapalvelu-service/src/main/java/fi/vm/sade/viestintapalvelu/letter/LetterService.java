@@ -182,4 +182,6 @@ public interface LetterService {
     LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 
     int publishLetterBatch(long letterBatchId);
+
+    Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published);
 }

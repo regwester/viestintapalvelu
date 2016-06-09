@@ -317,4 +317,19 @@ public class LetterResource extends AbstractLetterResource {
         }
     }
 
+    @GET
+    @Produces("text/plain")
+    @Path("/getBatchId")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa viimeisimmän julkaistun/julkaisemattoman kirjelähetyksen ID:n")
+    public Response getLetterBatchIdForHaku(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
+                                            @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
+                                            @QueryParam("language") @ApiParam(value = "Kirjelähetyksen kieli", required = true) String language,
+                                            @QueryParam("published") @ApiParam(value = "Onko kirjelähetys julkaistu", required = true) boolean published) {
+        Optional<Long> batchId = letterService.getLatestLetterBatchId(hakuOid, type, language, published);
+        return batchId.isPresent() ? Response.ok(batchId.get()).build() : Response.status(Status.NOT_FOUND).entity("Unable to find batch id.").build();
+    }
+
+
+
 }

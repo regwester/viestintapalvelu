@@ -402,4 +402,22 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
          .setParameter("letterBatchId", letterBatchId)
          .setParameter("status", LetterBatch.Status.ready).executeUpdate();
     }
+
+    @Override
+    public Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
+        List<Long> batchIds = getEntityManager().createQuery("SELECT l.id "
+                + " FROM LetterBatch l"
+                + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
+                + " AND l.templateName = :templateName AND l.language = :language AND l.id NOT IN ("
+                + " SELECT lb.id "
+                + " FROM LetterBatch lb"
+                + " INNER JOIN lb.letterReceivers lr "
+                + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish)"
+                + " ORDER BY l.timestamp DESC")
+                .setParameter("applicationPeriod", hakuOid)
+                .setParameter("templateName", type)
+                .setParameter("language", language.toUpperCase())
+                .setParameter("readyForPublish", !published).getResultList();
+        return 0 == batchIds.size() ? Optional.<Long>absent() : Optional.of(batchIds.get(0));
+    }
 }

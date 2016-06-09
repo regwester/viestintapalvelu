@@ -950,4 +950,9 @@ public class LetterServiceImpl implements LetterService {
     public int publishLetterBatch(long letterBatchId) {
         return letterBatchDAO.publishLetterBatch(letterBatchId);
     }
+
+    @Override
+    public Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
+        return letterBatchDAO.getLatestLetterBatchId(hakuOid, type, language, published);
+    }
 }
