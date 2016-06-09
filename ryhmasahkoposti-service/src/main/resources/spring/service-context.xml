@@ -148,7 +148,7 @@
     <!-- External interface BounceResource -->
     <jaxrs-client:client id="bounceResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.BounceResource"
-                         address="${ryhmasahkoposti.bounces.url}" inheritHeaders="true">
+                         address="${ryhmasahkoposti.bounces.host}" inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>

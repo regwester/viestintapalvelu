@@ -109,7 +109,8 @@ ryhmasahkoposti.default.template.language=FI
 # Ryhmäsähköpostin palautusten käsittely
 ryhmasahkoposti.bounces.run={{ryhmasahkoposti_bounces_run}}
 ryhmasahkoposti.bounces.cron={{ryhmasahkoposti_bounces_cron}}
-ryhmasahkoposti.bounces.url={{ryhmasahkoposti_bounces_url}}
+ryhmasahkoposti.bounces.host={{ryhmasahkoposti_bounces_host}}
+ryhmasahkoposti.bounces.path={{ryhmasahkoposti_bounces_path}}
 
 user.home.conf=${user.home}/oph-configuration
 user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
