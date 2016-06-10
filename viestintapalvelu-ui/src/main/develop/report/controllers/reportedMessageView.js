@@ -112,7 +112,7 @@ angular.module('report').controller('ReportedMessageViewCtrl',
       $scope.showSendingBounced = function () {
         $scope.showSendingBouncedClicked = true;
         $scope.showSendingUnsuccessfulClicked = false;
-        $scope.fetchBouncedfSendings();
+        $scope.fetchBouncedSendings();
       };
 
       // Otsikkosaraketta klikattu. Palautetaan tyyliksi sort-true tai sort-false.
