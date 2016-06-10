@@ -207,6 +207,37 @@ public interface MessageReportingResource {
         @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
 
     /**
+     * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys palautuis
+     *
+     * @param messageID Ryhmäsähköpostin tunnus
+     * @param nbrOfRows Palautettavien vastaanottajien lukumäärä
+     * @param page Sivu, jolle halutaan siirtyä katselemaan vastaanottajia
+     * @param sortedBy Kenttä, minkä mukaan lajitellaan
+     * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
+     * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot, joille lähetys epäonnistui
+     */
+    @PreAuthorize(SecurityConstants.READ)
+    @Produces(MediaType.APPLICATION_JSON)
+    @Path(RestConstants.PATH_REPORT_MESSAGE_BOUNCED_VIEW_WITH_PAGING)
+    @GET
+    @ApiOperation(value = "Hakee ryhmäsähköpostiviestin ja viestin vastaanottajien tiedot, joille lähetys palautui",
+            notes = "Hakee avainta vastaavaa ryhmäsähköpostiviestin ja vastaanottajien tiedot, joille lähetys palautui. "
+                    + "Palauttaa halutun määrän vastaanottajia lajiteltuna halutun sarakkeen mukaisesti",
+            response = ReportedMessageDTO.class)
+    @ApiResponses(value={@ApiResponse(code = 500, message = "Internal service error tai liittymävirhe")})
+    public Response getReportedMessageAndRecipientsSendingBounced(
+            @ApiParam(value="Ryhmäsähköpostiviestin avain", required=true)
+            @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID,
+            @ApiParam(value="Haettavien rivien lukumäärä", required=true)
+            @QueryParam(RestConstants.PARAM_NUMBER_OF_ROWS) Integer nbrOfRows,
+            @ApiParam(value="Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required=true)
+            @QueryParam(RestConstants.PARAM_PAGE) Integer page,
+            @ApiParam(value="Taulun sarake, minkä mukaan tiedot lajitellaan", required=false)
+            @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy,
+            @ApiParam(value="Lajittelujärjestys", allowableValues="asc, desc" , required=false)
+            @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
+
+    /**
      * Palauttaa yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui
      *
      * @param attachmentID Liitetiedoston tunnus

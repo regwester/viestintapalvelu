@@ -20,6 +20,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -45,7 +46,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
     @Override
     public Long getNumberOfSendingFailed(Long messageID) {
-        return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
+        return reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, GroupEmailConstants.SENDING_FAILED);
     }
 
     @Override
@@ -64,6 +65,11 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
     }
 
     @Override
+    public List<ReportedRecipient> getReportedRecipientsByStatusSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        return reportedRecipientDAO.findByMessageIdAndSendingBounced(messageID, pagingAndSorting);
+    }
+
+    @Override
     public List<ReportedRecipient> getReportedRecipients() {
         // TODO Auto-generated method stub
         return null;
@@ -73,24 +79,30 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
     public SendingStatusDTO getSendingStatusOfRecipients(Long messageID) {
         SendingStatusDTO sendingStatus = new SendingStatusDTO();
 
-        long nbrOfSuccessfulAndFailed = 0;
+        long nbrOfSuccessfulAndFailedAndBounced = 0;
 
         Long nbrOfRecipients = reportedRecipientDAO.findNumberOfRecipientsByMessageID(messageID);
         sendingStatus.setNumberOfRecipients(nbrOfRecipients);
 
-        Long nbrOfSuccessful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, true);
+        Long nbrOfSuccessful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, "1");
         if (nbrOfSuccessful != null) {
-            nbrOfSuccessfulAndFailed += nbrOfSuccessful.longValue();
+            nbrOfSuccessfulAndFailedAndBounced += nbrOfSuccessful.longValue();
         }
         sendingStatus.setNumberOfSuccessfulSendings(nbrOfSuccessful);
 
-        Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingSuccessful(messageID, false);
+        Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, "0");
         if (nbrOfFailed != null) {
-            nbrOfSuccessfulAndFailed += nbrOfFailed.longValue();
+            nbrOfSuccessfulAndFailedAndBounced += nbrOfFailed.longValue();
         }
         sendingStatus.setNumberOfFailedSendings(nbrOfFailed);
 
-        if (nbrOfSuccessfulAndFailed == nbrOfRecipients.longValue()) {
+        Long nbrOfBounced = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, "2");
+        if (nbrOfBounced != null) {
+            nbrOfSuccessfulAndFailedAndBounced += nbrOfBounced.longValue();
+        }
+        sendingStatus.setNumberOfBouncedSendings(nbrOfBounced);
+
+        if (nbrOfSuccessfulAndFailedAndBounced == nbrOfRecipients.longValue()) {
             Date latestSendingEnded = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
             sendingStatus.setSendingEnded(latestSendingEnded);
         }

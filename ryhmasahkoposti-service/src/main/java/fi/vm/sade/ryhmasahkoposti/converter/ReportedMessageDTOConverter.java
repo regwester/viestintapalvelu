@@ -148,7 +148,12 @@ public class ReportedMessageDTOConverter {
             numberOfFailedSendings = sendingStatusDTO.getNumberOfFailedSendings();
         }
 
-        Object[] parameters = { numberOfSuccessfulSendings, numberOfFailedSendings };
+        Long numberOfBouncedSendings = new Long(0);
+        if (sendingStatusDTO.getNumberOfFailedSendings() != null) {
+            numberOfBouncedSendings = sendingStatusDTO.getNumberOfBouncedSendings();
+        }
+
+        Object[] parameters = { numberOfSuccessfulSendings, numberOfFailedSendings, numberOfBouncedSendings };
         reportedMessageDTO.setSendingReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", parameters));
     }
 

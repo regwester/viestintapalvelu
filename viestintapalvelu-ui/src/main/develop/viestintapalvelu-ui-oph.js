@@ -6,6 +6,7 @@ window.urls.properties = {
     "ryhmasahkoposti-service.report.currentUserHistory": "/ryhmasahkoposti-service/reportMessages/currentUserHistory",
     "ryhmasahkoposti-service.report.vwp": "/ryhmasahkoposti-service/reportMessages/vwp/:messageID",
     "ryhmasahkoposti-service.report.failed": "/ryhmasahkoposti-service/reportMessages/failed/:messageID",
+    "ryhmasahkoposti-service.report.bounced": "/ryhmasahkoposti-service/reportMessages/bounced/:messageID",
     "ryhmasahkoposti-service.report.search": "/ryhmasahkoposti-service/reportMessages/search",
     "ryhmasahkoposti-service.report.list": "/ryhmasahkoposti-service/reportMessages/list",
     "viestintapalvelu.person": "/viestintapalvelu/api/v1/person/$1",

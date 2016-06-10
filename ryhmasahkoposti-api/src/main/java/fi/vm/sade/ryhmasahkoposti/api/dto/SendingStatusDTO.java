@@ -27,6 +27,7 @@ public class SendingStatusDTO implements Serializable {
     private Long numberOfRecipients;
     private Long numberOfSuccessfulSendings;
     private Long numberOfFailedSendings;
+    private Long numberOfBouncedSendings;
 
     public Long getMessageID() {
         return messageID;
@@ -74,5 +75,13 @@ public class SendingStatusDTO implements Serializable {
 
     public void setNumberOfFailedSendings(Long numberOfFailedSendings) {
         this.numberOfFailedSendings = numberOfFailedSendings;
+    }
+
+    public Long getNumberOfBouncedSendings() {
+        return numberOfBouncedSendings;
+    }
+
+    public void setNumberOfBouncedSendings(Long numberOfBouncedSendings) {
+        this.numberOfBouncedSendings = numberOfBouncedSendings;
     }
 }

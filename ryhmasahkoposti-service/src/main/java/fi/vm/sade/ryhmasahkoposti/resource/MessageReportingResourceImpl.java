@@ -127,6 +127,14 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
+    public Response getReportedMessageAndRecipientsSendingBounced(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order)
+            throws Exception {
+        PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
+        ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipientsSendingBounced(messageID, pagingAndSorting);
+        return Response.ok(reportedMessageDTO).build();
+    }
+
+    @Override
     public Response downloadReportedMessageAttachment(Long attachmentID) throws Exception {
         ReportedAttachment reportedAttachment = groupEmailReportingService.getAttachment(attachmentID);
         byte[] binary = reportedAttachment.getAttachment();

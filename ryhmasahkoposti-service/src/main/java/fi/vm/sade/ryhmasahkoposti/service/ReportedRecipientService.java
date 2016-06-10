@@ -72,6 +72,15 @@ public interface ReportedRecipientService {
 	    PagingAndSortingDTO pagingAndSorting);
 
     /**
+     * Hakee raportoitavan viestin vastaanottajien tiedot viestin tunnuksella, joille lähetys on palautunut
+     *
+     * @param messageID Raportoitavan viestin tunnus
+     * @param pagingAndSorting Sivitus ja lajittelutiedot
+     * @return Lista raportoitavan viestin vastaanottajien tietoja, joille lähetys on epäonnistunut {@link ReportedRecipient}
+     */
+    public List<ReportedRecipient> getReportedRecipientsByStatusSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
+
+    /**
      * Hakee kaikkien raportoittavien viestin vastaanottajien tiedot
      * 
      * @return Lista raportoittavien viestin vastaanottajien tietoja {@link ReportedRecipient}

@@ -24,6 +24,7 @@ public interface RestConstants {
     public static final String PATH_REPORT_MESSAGE_VIEW = "view/{messageID}";
     public static final String PATH_REPORT_MESSAGE_VIEW_WITH_PAGING = "vwp/{messageID}";
     public static final String PATH_REPORT_MESSAGE_FAILED_VIEW_WITH_PAGING = "failed/{messageID}";
+    public static final String PATH_REPORT_MESSAGE_BOUNCED_VIEW_WITH_PAGING = "bounced/{messageID}";
     public static final String PATH_REPORT_MESSAGE_DOWNLOAD_ATTACHMENT = "attachment/{attachmentID}";
 
     public static final String PARAM_ORGANIZATION_OID = "orgOid";

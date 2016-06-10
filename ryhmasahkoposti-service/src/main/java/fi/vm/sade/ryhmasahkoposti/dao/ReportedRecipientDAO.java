@@ -56,6 +56,19 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
     public List<ReportedRecipient> findByMessageIdAndSendingUnsuccessful(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
+     * Hakee vastaanottajien tiedot viestintunnuksella ja tila lähetys
+     * palautui. Palauttaa halutun määrän lajiteltuna.
+     *
+     * @param messageID
+     *            Viestintunnus
+     * @param pagingAndSorting
+     *            Sivutus- ja lajittelutiedot
+     * @return Lista raportoitavien vastaanottajien tietoja, joille lähetys on
+     *         epäonnistunut
+     */
+    public List<ReportedRecipient> findByMessageIdAndSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
+
+    /**
      * Hakee vastaanottajan tiedot vastaanottajantunnisteella
      * 
      * @param recipientID
@@ -92,16 +105,15 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
     public Long findNumberOfRecipientsByMessageID(Long messageID);
 
     /**
-     * Hakee vastaanottajien lukumäärän viestintunnuksella, joille viestin
-     * lähetys on onnistunut tai epäonnistunut
-     * 
+     * Hakee vastaanottajien lukumäärän viestintunnuksella ja viestin tilalla
+     *
      * @param messageID
      *            Viestintunnus
-     * @param sendingSuccessful
-     *            true, jos halutaan hakea onnistuneet lähetykset, muuten false
+     * @param sendingStatus
+     *            0,1,2 halutun statuksen mukaan
      * @return Viestin vastaanottajien lukumäärän
      */
-    public Long findNumberOfRecipientsByMessageIDAndSendingSuccessful(Long messageID, boolean sendingSuccessful);
+    public Long findNumberOfRecipientsByMessageIDAndSendingStatus(Long messageID, String sendingStatus);
 
     /**
      * Hakee raportoitavat vastaanottajat, joille viestiä ei ole lähetetty

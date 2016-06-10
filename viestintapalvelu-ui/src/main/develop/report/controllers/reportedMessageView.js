@@ -2,8 +2,8 @@
 
 angular.module('report').controller('ReportedMessageViewCtrl',
   ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients',
-    'ReportedMessageAndRecipientsSendingUnsuccessful', 'ErrorDialog',
-    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccessful, ErrorDialog) {
+    'ReportedMessageAndRecipientsSendingUnsuccessful', 'ReportedMessageAndRecipientsSendingBounced', 'ErrorDialog',
+    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccessful, ReportedMessageAndRecipientsSendingBounced, ErrorDialog) {
       var polling, // promise returned by $interval
         POLLING_INTERVAL = 5 * 1000; // 5 seconds
 
@@ -15,6 +15,7 @@ angular.module('report').controller('ReportedMessageViewCtrl',
       $scope.order = 'asc';
       $scope.descending = false;
       $scope.showSendingUnsuccessfulClicked = false;
+      $scope.showSendingBouncedClicked = false;
 
       // Takaisinpainike painettu
       $scope.back = function () {
@@ -81,9 +82,21 @@ angular.module('report').controller('ReportedMessageViewCtrl',
         }
       };
 
+      $scope.fetchBouncedSendings = function () {
+        var parameters = $scope.buildSearchParameters();
+
+        ReportedMessageAndRecipientsSendingBounced.get(parameters,
+          function (result) {
+            $scope.reportedMessageDTO = result;
+          }, function (error) {
+            ErrorDialog.showError(error);
+          });
+      };
+
       // Painettiin näytä kaikki linkkiä
       $scope.showAll = function () {
         $scope.showSendingUnsuccessfulClicked = false;
+        $scope.showSendingBouncedClicked = false;
         $scope.sortedBy = '';
         $scope.order = 'asc';
         $scope.fetch();
@@ -92,7 +105,14 @@ angular.module('report').controller('ReportedMessageViewCtrl',
       // Painettiin näytä epäonnistuneet linkkiä
       $scope.showSendingUnsuccessful = function () {
         $scope.showSendingUnsuccessfulClicked = true;
+        $scope.showSendingBouncedClicked = false;
         $scope.fetchUnsuccessfulSendings();
+      };
+
+      $scope.showSendingBounced = function () {
+        $scope.showSendingBouncedClicked = true;
+        $scope.showSendingUnsuccessfulClicked = false;
+        $scope.fetchBouncedfSendings();
       };
 
       // Otsikkosaraketta klikattu. Palautetaan tyyliksi sort-true tai sort-false.
@@ -102,10 +122,12 @@ angular.module('report').controller('ReportedMessageViewCtrl',
 
       // Painettu seuraava sivu painiketta
       $scope.pageChanged = function () {
-        if ($scope.showSendingUnsuccessfulClicked == false) {
+        if ($scope.showSendingUnsuccessfulClicked == false && $scope.showSendingBouncedClicked == false) {
           $scope.fetch();
-        } else {
+        } else if ($scope.showSendingUnsuccessfulClicked == true) {
           $scope.showSendingUnsuccessful();
+        } else if ($scope.showSendingBouncedClicked == true) {
+          $scope.showSendingBounced();
         }
       };
 

@@ -24,7 +24,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -266,18 +265,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("getReportedMessageAndRecipients(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-
         List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(messageID, pagingAndSorting);
-
-        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
-        sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
-
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
-
-        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, reportedAttachments, sendingStatus);
-        reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
-
-        return reportedMessageDTO;
+        return createReportedMessageDTO(messageID, reportedMessage, reportedRecipients);
     }
 
     @Override
@@ -285,9 +274,20 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("getReportedMessageAndRecipientsSendingUnsuccessful(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-
         List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipientsByStatusSendingUnsuccessful(messageID, pagingAndSorting);
+        return createReportedMessageDTO(messageID, reportedMessage, reportedRecipients);
+    }
 
+    @Override
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        log.info("getReportedMessageAndRecipientsSendingBounced(" + messageID + ") called");
+
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipientsByStatusSendingBounced(messageID, pagingAndSorting);
+        return createReportedMessageDTO(messageID, reportedMessage, reportedRecipients);
+    }
+
+    private ReportedMessageDTO createReportedMessageDTO(Long messageID, ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients) {
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
         sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
@@ -295,7 +295,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
-
         return reportedMessageDTO;
     }
 

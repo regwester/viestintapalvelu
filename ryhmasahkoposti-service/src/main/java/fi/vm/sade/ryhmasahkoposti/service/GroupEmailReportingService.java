@@ -95,6 +95,15 @@ public interface GroupEmailReportingService {
 	    PagingAndSortingDTO pagingAndSorting);
 
     /**
+     * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja vastaanottajat, joille lähetys palautui
+     *
+     * @param messageID Viestintunnus
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
+     */
+    ReportedMessageDTO getReportedMessageAndRecipientsSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
+
+    /**
      * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
      * 
      * @param organizationOid Organisaation oid-tunnus
