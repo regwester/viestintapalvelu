@@ -84,7 +84,7 @@
             <div class="span8">
                 {{reportedMessageDTO.sendingStatus.numberOfRecipients}}
             </div>
-            <div class="span2" ng-if="reportedMessageDTO.sendingStatus.numberOfFailedSendings > 0 || reportedMessageDTO.sendingStatus.numberOfBouncedSendings > 0">
+            <div class="span2">
                 <a href ng-click="showSendingUnsuccessful()">{{'reportedmessageview.text.naytaepaonnistuneet'| i18n}}</a>
                 <a href ng-click="showSendingBounced()">{{'reportedmessageview.text.naytapalautui'| i18n}}</a>
                 <a href ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki'| i18n}}</a>
