@@ -149,7 +149,7 @@ public class ReportedMessageDTOConverter {
         }
 
         Long numberOfBouncedSendings = new Long(0);
-        if (sendingStatusDTO.getNumberOfFailedSendings() != null) {
+        if (sendingStatusDTO.getNumberOfBouncedSendings() != null) {
             numberOfBouncedSendings = sendingStatusDTO.getNumberOfBouncedSendings();
         }
 
