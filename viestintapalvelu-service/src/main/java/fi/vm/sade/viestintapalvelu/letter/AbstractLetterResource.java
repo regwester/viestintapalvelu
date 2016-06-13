@@ -70,6 +70,10 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
         return Response.ok(letterService.listLettersByUser(personOid)).build();
     }
 
+    protected Response countLetterStatuses(String hakuOid, String type, String language) {
+        return Response.ok(letterService.countLetterStatuses(hakuOid,type,language)).build();
+    }
+
     protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input,
             boolean anonymousRequest) {
 

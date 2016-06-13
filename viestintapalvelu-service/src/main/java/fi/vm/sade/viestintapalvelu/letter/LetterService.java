@@ -21,6 +21,7 @@ import java.util.zip.DataFormatException;
 
 import com.google.common.base.Optional;
 
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
@@ -184,4 +185,6 @@ public interface LetterService {
     int publishLetterBatch(long letterBatchId);
 
     Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published);
+
+    LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language);
 }

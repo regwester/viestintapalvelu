@@ -37,6 +37,7 @@ import javax.ws.rs.NotFoundException;
 
 import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.LetterZipUtil;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
 import org.apache.commons.lang.StringUtils;
@@ -954,5 +955,8 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
         return letterBatchDAO.getLatestLetterBatchId(hakuOid, type, language, published);
+    }
+    public LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language) {
+        return letterBatchDAO.countReady(hakuOid, type, language);
     }
 }

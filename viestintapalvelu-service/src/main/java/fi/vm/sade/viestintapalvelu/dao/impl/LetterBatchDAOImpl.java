@@ -22,8 +22,12 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.hibernate.internal.util.StringHelper;
+import org.jgroups.util.Tuple;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
 import com.google.common.base.Function;
@@ -54,6 +58,7 @@ import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
+    private static final Logger LOG = LoggerFactory.getLogger(LetterBatchDAOImpl.class);
 
     public static final int MAX_CHUNK_SIZE_FOR_IN_EXPRESSION = 1000;
 
@@ -419,5 +424,21 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 .setParameter("language", language.toUpperCase())
                 .setParameter("readyForPublish", !published).getResultList();
         return 0 == batchIds.size() ? Optional.<Long>absent() : Optional.of(batchIds.get(0));
+    }
+
+    public LetterBatchCountDto countReady(String hakuOid, String type, String language) {
+        String sql = "SELECT COUNT(l.id), SUM(CASE WHEN l.kasittelyn_tila = 'ready' THEN 1 ELSE 0 END)"
+                + " FROM LetterBatch l "
+                + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
+                + " AND l.templateName = :templateName AND l.language = :language";
+        Iterator<?> totalCountAndReadyCount = getEntityManager().createQuery(sql).getResultList().iterator();
+        try {
+            long totalCount = (Long)totalCountAndReadyCount.next();
+            long readyCount = (Long)totalCountAndReadyCount.next();
+            return new LetterBatchCountDto(totalCount,readyCount);
+        } catch(Throwable t) {
+            LOG.error("Getting total count failed!",t);
+            throw t;
+        }
     }
 }

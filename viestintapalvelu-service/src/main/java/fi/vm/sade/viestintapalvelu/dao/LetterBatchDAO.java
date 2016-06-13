@@ -20,6 +20,7 @@ import java.util.List;
 import com.google.common.base.Optional;
 
 import fi.vm.sade.generic.dao.JpaDAO;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
@@ -168,4 +169,6 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
     int publishLetterBatch(long batchId);
 
     Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published);
+
+    LetterBatchCountDto countReady(String hakuOid, String type, String language);
 }

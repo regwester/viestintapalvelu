@@ -62,6 +62,16 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     }
 
     @GET
+    @Produces("application/json")
+    @Path("/async/letter/count/{hakuOid}/type/{type}/language/{language}")
+    @ApiOperation(value="Laskee haun kirjeiden valmistusstatuksen")
+    public Response countReadyLetters(@PathParam("hakuOid") @ApiParam(name="Haku OID", required = true) String hakuOid,
+                                      @PathParam("type") @ApiParam(name="Haku OID", required = true) String type,
+                                      @PathParam("language") @ApiParam(name="Haku OID", required = true) String language) {
+        return super.countLetterStatuses(hakuOid, type, language);
+    }
+
+    @GET
     @Path("/receiverLetter/{id}")
     @Produces({ "application/pdf", "application/zip" })
     @ApiOperation(value = "Hakee vastaanottajan kirjeen")
