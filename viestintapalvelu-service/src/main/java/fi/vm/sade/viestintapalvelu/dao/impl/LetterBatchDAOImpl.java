@@ -427,7 +427,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     public LetterBatchCountDto countReady(String hakuOid, String type, String language) {
-        String sql = "SELECT COUNT(l.id), SUM(CASE WHEN l.batchStatus = 'ready' THEN 1 ELSE 0 END)"
+        String sql = "SELECT COUNT(l.id),"
+                + " SUM(CASE WHEN l.batchStatus = 'ready' THEN 1 ELSE 0 END),"
+                + " SUM(CASE WHEN l.batchStatus = 'error' THEN 1 ELSE 0 END)"
                 + " FROM LetterBatch l "
                 + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
                 + " AND l.templateName = :templateName AND l.language = :language";
@@ -440,7 +442,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             Object[] results = (Object[])totalCountAndReadyCount.next();
             long totalCount = (Long)results[0];
             long readyCount = (Long)results[1];
-            return new LetterBatchCountDto(totalCount,readyCount);
+            long errorCount = (Long)results[2];
+            return new LetterBatchCountDto(totalCount,readyCount, errorCount);
         } catch(Throwable t) {
             LOG.error("Getting total count failed!",t);
             throw t;
