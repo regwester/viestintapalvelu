@@ -431,7 +431,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 + " FROM LetterBatch l "
                 + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
                 + " AND l.templateName = :templateName AND l.language = :language";
-        Iterator<?> totalCountAndReadyCount = getEntityManager().createQuery(sql).getResultList().iterator();
+        Iterator<?> totalCountAndReadyCount = getEntityManager().createQuery(sql)
+                .setParameter("applicationPeriod", hakuOid)
+                .setParameter("templateName", type)
+                .setParameter("language", language.toUpperCase())
+                .getResultList().iterator();
         try {
             long totalCount = (Long)totalCountAndReadyCount.next();
             long readyCount = (Long)totalCountAndReadyCount.next();
