@@ -5,28 +5,28 @@ angular.module('app').factory('Generator', ['$http', '_',
         var generatedData = {};
         generatedData.housenumber = _.range(1, 200)
 
-        $http.get(window.url("viestintapalvelu.generator", 'firstnames')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'firstnames.json')).success(function (data) {
             generatedData.firstname = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'lastnames')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'lastnames.json')).success(function (data) {
             generatedData.lastname = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'streets')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'streets.json')).success(function (data) {
             generatedData.street = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'postoffices')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'postoffices.json')).success(function (data) {
             generatedData.postoffice = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'countries')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'countries.json')).success(function (data) {
             generatedData.country = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'language')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'language.json')).success(function (data) {
             generatedData.language = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'koulut')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'koulut.json')).success(function (data) {
             generatedData.organisaationNimi = data;
         });
-        $http.get(window.url("viestintapalvelu.generator", 'hakutoive')).success(function (data) {
+        $http.get(window.url("viestintapalvelu.generator", 'hakutoive.json')).success(function (data) {
             generatedData.hakukohteenNimi = data;
         });
 
