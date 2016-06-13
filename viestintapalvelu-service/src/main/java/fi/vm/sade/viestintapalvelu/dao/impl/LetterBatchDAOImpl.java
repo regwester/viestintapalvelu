@@ -427,7 +427,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     public LetterBatchCountDto countReady(String hakuOid, String type, String language) {
-        String sql = "SELECT COUNT(l.id), SUM(CASE WHEN l.kasittelyn_tila = 'ready' THEN 1 ELSE 0 END)"
+        String sql = "SELECT COUNT(l.id), SUM(CASE WHEN l.batchStatus = 'ready' THEN 1 ELSE 0 END)"
                 + " FROM LetterBatch l "
                 + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
                 + " AND l.templateName = :templateName AND l.language = :language";
