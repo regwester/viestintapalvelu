@@ -437,8 +437,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 .setParameter("language", language.toUpperCase())
                 .getResultList().iterator();
         try {
-            long totalCount = (Long)totalCountAndReadyCount.next();
-            long readyCount = (Long)totalCountAndReadyCount.next();
+            Object[] results = (Object[])totalCountAndReadyCount.next();
+            long totalCount = (Long)results[0];
+            long readyCount = (Long)results[1];
             return new LetterBatchCountDto(totalCount,readyCount);
         } catch(Throwable t) {
             LOG.error("Getting total count failed!",t);
