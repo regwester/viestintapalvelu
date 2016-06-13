@@ -317,6 +317,7 @@ public class RaportointipalveluTestData {
         sendingStatusDTO.setNumberOfRecipients(new Long(10));
         sendingStatusDTO.setNumberOfFailedSendings(new Long(2));
         sendingStatusDTO.setNumberOfSuccessfulSendings(new Long(5));
+        sendingStatusDTO.setNumberOfBouncedSendings(new Long(6));
         sendingStatusDTO.setSendingStarted(new Date());
 
         return sendingStatusDTO;

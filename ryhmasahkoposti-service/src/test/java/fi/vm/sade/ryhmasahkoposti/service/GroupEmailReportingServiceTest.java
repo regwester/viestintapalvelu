@@ -298,6 +298,7 @@ public class GroupEmailReportingServiceTest {
         assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
         assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
         assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(5)));
+        assertTrue(sendingStatus.getNumberOfBouncedSendings().equals(new Long(6)));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
         assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
         assertNull(sendingStatus.getSendingEnded());
