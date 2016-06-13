@@ -77,24 +77,14 @@
     </div>
 
     <div class="row-fluid">
-        <div class="span10">
-        </div>
-        <div class="span2">
-            <a href ng-click="showSendingUnsuccessful()">{{'reportedmessageview.text.naytaepaonnistuneet'| i18n}}</a>
-            <a href ng-click="showSendingBounced()">{{'reportedmessageview.text.naytapalautui'| i18n}}</a>
-            <a href ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki'| i18n}}</a>
+        <div class="span12">
+            <a href ng-click="showSendingUnsuccessful()">{{'reportedmessageview.text.naytaepaonnistuneet'| i18n}} ({{reportedMessageDTO.sendingStatus.numberOfFailedSendings}})</a>
+            <a href ng-click="showSendingBounced()">{{'reportedmessageview.text.naytapalautui'| i18n}} ({{reportedMessageDTO.sendingStatus.numberOfBouncedSendings}})</a>
+            <a href ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki'| i18n}} ({{reportedMessageDTO.sendingStatus.numberOfRecipients}})</a>
         </div>
     </div>
 
     <div class="row-fluid" ng-if="reportedMessageDTO.emailRecipients.length > 0">
-        <div class="row-fluid">
-            <div class="span2">
-                {{'reportedmessageview.text.vastaanottajaa' | i18n}}
-            </div>
-            <div class="span10">
-                {{reportedMessageDTO.sendingStatus.numberOfRecipients}}
-            </div>
-        </div>
         <table class="table table-striped">
             <thead>
             <tr>
