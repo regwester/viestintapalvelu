@@ -335,6 +335,27 @@ public class LetterBatchDAOTest {
        assertTrue(expectedListItemInList(listItems, "test-haku-oid-2", "jalkiohjauskirje"));
     }
 
+    @Test
+    public void getLetterBatchId() throws Exception {
+        Long batchId1 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+        Long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "jalkiohjauskirje", true);
+        Long batchId3 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+        Long batchId4 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+        Long batchId5 = insertLetterBatchForPersonOids("test-haku-oid-2",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+
+        assertEquals(batchId4, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-1", "hyvaksymiskirje", "FI", true).get());
+        assertEquals(batchId3, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-1", "hyvaksymiskirje", "FI", false).get());
+        assertEquals(batchId2, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-1", "jalkiohjauskirje", "FI", true).get());
+        assertEquals(batchId5, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-2", "hyvaksymiskirje", "FI", false).get());
+        assertFalse(letterBatchDAO.getLatestLetterBatchId("test-haku-oid-2", "hyvaksymiskirje", "FI", true).isPresent());
+
+    }
+
 
     private boolean expectedListItemInList(List<LetterListItem> listItems, String hakuOid, String templateName) {
         for(LetterListItem actual : listItems) {
