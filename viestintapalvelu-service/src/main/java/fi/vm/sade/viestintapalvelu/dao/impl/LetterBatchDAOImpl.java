@@ -440,13 +440,25 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 .getResultList().iterator();
         try {
             Object[] results = (Object[])totalCountAndReadyCount.next();
-            long totalCount = (Long)results[0];
-            long readyCount = (Long)results[1];
-            long errorCount = (Long)results[2];
+            long totalCount = longOrZero(results,0);
+            long readyCount = longOrZero(results,1);
+            long errorCount = longOrZero(results,2);
             return new LetterBatchCountDto(totalCount,readyCount, errorCount);
         } catch(Throwable t) {
             LOG.error("Getting total count failed!",t);
             throw t;
+        }
+    }
+
+    public long longOrZero(Object[] probablyLongOrNullArray, int index) {
+        if((probablyLongOrNullArray.length - 1) < index) {
+            return 0L;
+        }
+        Object probablyLongOrNull = probablyLongOrNullArray[index];
+        if(probablyLongOrNull == null) {
+            return 0L;
+        } else {
+            return (Long) probablyLongOrNull;
         }
     }
 }
