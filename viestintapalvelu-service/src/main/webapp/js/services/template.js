@@ -43,7 +43,7 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         }
 
         function getHistory(t, oid, applicationPeriod, tag) {
-            return $http.get(window.urls("viestintapalvelu.template.getHistory", {
+            return $http.get(window.url("viestintapalvelu.template.getHistory", {
                 templateName: t.name,
                 languageCode: t.lang,
                 oid: oid,
