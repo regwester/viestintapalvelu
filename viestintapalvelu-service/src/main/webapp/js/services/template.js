@@ -21,7 +21,7 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         }
 
         function getByName(t) {
-            return $http.get($window.urls.omitEmptyValuesFromQuerystring().url("viestintapalvelu.template.getByName", {
+            return $http.get(window.urls.omitEmptyValuesFromQuerystring().url("viestintapalvelu.template.getByName", {
                 templateName: t.name,
                 languageCode: t.lang,
                 applicationPeriod: t.applicationPeriod
@@ -39,7 +39,7 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
             if (getPeriods) {
                 params.periods="YES";
             }
-            return $http.get($window.urls.omitEmptyValuesFromQuerystring().url("viestintapalvelu.template.listVersionsByName", params));
+            return $http.get(window.urls.omitEmptyValuesFromQuerystring().url("viestintapalvelu.template.listVersionsByName", params));
         }
 
         function getHistory(t, oid, applicationPeriod, tag) {
