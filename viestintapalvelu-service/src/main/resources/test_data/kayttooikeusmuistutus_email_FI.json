@@ -48,7 +48,7 @@
             "role": "body",
             "name": "sahkopostin_paasisalto",
             "contentType": "html",
-            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hei,</p> <p>käyttöoikeutesi ovat vanhenemassa: $expirations.</p><p>Käyttöoikeudet anotaan täällä <a href=\"$url\">$url.</a></p><p>Lisätiedot ja neuvonta palvelukohtaisesti:</p>Oman organisaation vastuu- tai pääkäyttäjä<br><address>AIPAL: aipal@oph.fi, puh. 029 533 1025<br>AITU: aitu-tuki@oph.fi, puh. 029 533 1025<br>ePerusteet: eperusteet@opintopolku.fi<br>ARVO: arvo@postit.csc.fi</address></body></html>"
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hei,</p> <p>käyttöoikeutesi ovat vanhenemassa: $expirations.</p><p>Käyttöoikeudet anotaan täällä <a href=\"$url\">$url.</a></p><p>Lisätiedot ja neuvonta palvelukohtaisesti:</p>Opintopolku: Oman organisaation vastuu- tai pääkäyttäjä<br><address>AIPAL: aipal@oph.fi, puh. 029 533 1025<br>AITU: aitu-tuki@oph.fi, puh. 029 533 1025<br>ePerusteet: eperusteet@opintopolku.fi<br>ARVO: arvo@postit.csc.fi</address></body></html>"
           }
         ]
       }
