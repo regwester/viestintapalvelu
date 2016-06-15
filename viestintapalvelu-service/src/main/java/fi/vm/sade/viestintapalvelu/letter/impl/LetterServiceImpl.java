@@ -957,7 +957,7 @@ public class LetterServiceImpl implements LetterService {
         return letterBatchDAO.getLatestLetterBatchId(hakuOid, type, language, published);
     }
     public LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language) {
-        return letterBatchDAO.countReady(hakuOid, type, language);
+        return letterBatchDAO.countBatchStatus(hakuOid, type, language);
     }
 
     @Override

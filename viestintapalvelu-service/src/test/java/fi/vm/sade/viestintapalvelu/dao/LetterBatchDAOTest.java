@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -333,7 +334,18 @@ public class LetterBatchDAOTest {
        }
        assertTrue(expectedListItemInList(listItems, "test-haku-oid-1", "hyvaksymiskirje"));
        assertTrue(expectedListItemInList(listItems, "test-haku-oid-2", "jalkiohjauskirje"));
-    }
+
+       LetterBatchCountDto letterBatchCountDto = letterBatchDAO.countBatchStatus("test-haku-oid-1", "hyvaksymiskirje", "fi");
+       assertEquals(1, letterBatchCountDto.letterTotalCount);
+       assertEquals(1, letterBatchCountDto.letterReadyCount);
+       assertEquals(0, letterBatchCountDto.letterErrorCount);
+
+       LetterBatchCountDto letterBatchCountDto2 = letterBatchDAO.countBatchStatus("test-haku-oid-1", "hyvaksymiskirje", "sv");
+       assertEquals(0, letterBatchCountDto2.letterTotalCount);
+       assertEquals(0, letterBatchCountDto2.letterReadyCount);
+       assertEquals(0, letterBatchCountDto2.letterErrorCount);
+
+   }
 
     @Test
     public void getLetterBatchId() throws Exception {

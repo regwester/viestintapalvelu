@@ -426,10 +426,10 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return 0 == batchIds.size() ? Optional.<Long>absent() : Optional.of(batchIds.get(0));
     }
 
-    public LetterBatchCountDto countReady(String hakuOid, String type, String language) {
+    public LetterBatchCountDto countBatchStatus(String hakuOid, String type, String language) {
         String sql = "SELECT COUNT(l.id),"
-                + " SUM(CASE WHEN l.batchStatus = 'ready' THEN 1 ELSE 0 END),"
-                + " SUM(CASE WHEN l.batchStatus = 'error' THEN 1 ELSE 0 END)"
+                + " COALESCE(SUM(CASE WHEN l.batchStatus = 'ready' THEN 1 ELSE 0 END), 0),"
+                + " COALESCE(SUM(CASE WHEN l.batchStatus = 'error' THEN 1 ELSE 0 END), 0)"
                 + " FROM LetterBatch l "
                 + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
                 + " AND l.templateName = :templateName AND l.language = :language";
@@ -440,9 +440,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 .getResultList().iterator();
         try {
             Object[] results = (Object[])totalCountAndReadyCount.next();
-            long totalCount = longOrZero(results,0);
-            long readyCount = longOrZero(results,1);
-            long errorCount = longOrZero(results,2);
+            long totalCount = (Long)results[0];
+            long readyCount = (Long)results[1];
+            long errorCount = (Long)results[2];
             return new LetterBatchCountDto(totalCount,readyCount, errorCount);
         } catch(Throwable t) {
             LOG.error("Getting total count failed!",t);
