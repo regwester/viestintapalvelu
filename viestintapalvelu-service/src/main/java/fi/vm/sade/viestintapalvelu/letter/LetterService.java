@@ -187,4 +187,6 @@ public interface LetterService {
     Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published);
 
     LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language);
+
+    List<String> getEPostiEmailAddresses(long letterBatchId);
 }

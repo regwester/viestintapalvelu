@@ -356,6 +356,17 @@ public class LetterBatchDAOTest {
 
     }
 
+    @Test
+    public void getEPostiEmailAddressesByBatchId() throws Exception {
+        Long batchId1 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+        Long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+
+        assertEquals(Arrays.asList("test-person-oid-1@testi.fi", "test-person-oid-2@testi.fi", "test-person-oid-3@testi.fi"),
+                letterBatchDAO.getEPostiEmailAddressesByBatchId(batchId1));
+        assertEquals(0, letterBatchDAO.getEPostiEmailAddressesByBatchId(batchId2).size());
+    }
 
     private boolean expectedListItemInList(List<LetterListItem> listItems, String hakuOid, String templateName) {
         for(LetterListItem actual : listItems) {
@@ -384,6 +395,7 @@ public class LetterBatchDAOTest {
         while(receiversIterator.hasNext()) {
             LetterReceivers letterReceivers = receiversIterator.next();
             letterReceivers.setOidPerson(personOids.get(i));
+            letterReceivers.setEmailAddressEPosti(personOids.get(i) + "@testi.fi");
             letterReceivers.getLetterReceiverLetter().setReadyForPublish(readyForPublish);
             letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
             i++;

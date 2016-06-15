@@ -42,6 +42,9 @@ public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
     @ApiModelProperty(value = "Kirjeen vastaanottajan sähköpostiosoite. Kirjeestä lähetetään sähköposti, mikäli sähköpostiosoite on annettu.", required = false)
     private String emailAddress;
 
+    @ApiModelProperty(value = "ePostin (securelink) vastaanottajan sähköpostiosoite.", required = false)
+    private String emailAddressEPosti;
+
     @ApiModelProperty(value = "Kirjepohjan vastaanottaja kielikoodi. Mikäli annettua kielikoodia vastaava kirjepohja löytyy, käytetään sitä."
             + " kielikoodi ISO 639-1")
     private String languageCode;
@@ -101,5 +104,14 @@ public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
 
     public void setSkipIPosti(boolean skipIPosti) {
         this.skipIPosti = skipIPosti;
+    }
+
+    @Override
+    public String getEmailAddressEPosti() {
+        return emailAddressEPosti;
+    }
+
+    public void setEmailAddressEPosti(String emailAddressEPosti) {
+        this.emailAddressEPosti = emailAddressEPosti;
     }
 }

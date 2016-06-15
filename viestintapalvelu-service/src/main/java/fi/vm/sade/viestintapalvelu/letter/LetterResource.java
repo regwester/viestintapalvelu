@@ -330,6 +330,16 @@ public class LetterResource extends AbstractLetterResource {
         return batchId.isPresent() ? Response.ok(batchId.get()).build() : Response.status(Status.NOT_FOUND).entity("Unable to find batch id.").build();
     }
 
+    @GET
+    @Produces("application/json")
+    @Path("/getEPostiAddressesForLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa kirjelähetyksen vastaanottajien ePosti-osoitteet (vain julkaistuille kirjeille)")
+    public Response getEPostiEmailAddresses(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
+        List<String> letterReceiverEPostiAddresses = letterService.getEPostiEmailAddresses(letterBatchId);
+        return Response.ok(letterReceiverEPostiAddresses).build();
+    }
 
 
 }

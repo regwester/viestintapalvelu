@@ -49,6 +49,9 @@ public class Letter implements LetterDetails {
     @ApiModelProperty(value = "Henkilön OID", required = false)
     private String personOid;
 
+    @ApiModelProperty(value = "ePostin (securelink) vastaanottajan sähköpostiosoite.", required = false)
+    private String emailAddressEPosti;
+
     public Letter() {
     }
 
@@ -129,6 +132,15 @@ public class Letter implements LetterDetails {
 
     public void setPersonOid(String personOid) {
         this.personOid = personOid;
+    }
+
+    @Override
+    public String getEmailAddressEPosti() {
+        return emailAddressEPosti;
+    }
+
+    public void setEmailAddressEPosti(String emailAddressEPosti) {
+        this.emailAddressEPosti = emailAddressEPosti;
     }
 
     @Override

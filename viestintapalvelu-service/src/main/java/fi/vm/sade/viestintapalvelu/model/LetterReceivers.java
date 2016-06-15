@@ -72,6 +72,9 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "ohita_iposti")
     private boolean skipIPost;
 
+    @Column(name = "email_osoite_eposti")
+    private String emailAddressEPosti;
+
     public LetterBatch getLetterBatch() {
         return letterBatch;
     }
@@ -160,11 +163,19 @@ public class LetterReceivers extends BaseEntity {
         this.skipIPost = skipIPost;
     }
 
+    public String getEmailAddressEPosti() {
+        return emailAddressEPosti;
+    }
+
+    public void setEmailAddressEPosti(String emailAddressEPosti) {
+        this.emailAddressEPosti = emailAddressEPosti;
+    }
+
     @Override
     public String toString() {
         return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
                 + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
-                + letterReceiverLetter + ", oidPerson=" + oidPerson + ", skipIPost=" + skipIPost + "]";
+                + letterReceiverLetter + ", oidPerson=" + oidPerson + ", skipIPost=" + skipIPost + ", emailAddressEPosti=" + emailAddressEPosti + "]";
     }
 
 }

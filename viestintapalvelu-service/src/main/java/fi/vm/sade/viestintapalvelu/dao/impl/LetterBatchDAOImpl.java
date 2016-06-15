@@ -449,7 +449,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             throw t;
         }
     }
-
     public long longOrZero(Object[] probablyLongOrNullArray, int index) {
         if((probablyLongOrNullArray.length - 1) < index) {
             return 0L;
@@ -460,5 +459,16 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         } else {
             return (Long) probablyLongOrNull;
         }
+    }
+
+    public List<String> getEPostiEmailAddressesByBatchId(long letterBatchId) {
+        return getEntityManager().createQuery("SELECT lr.emailAddressEPosti"
+                + " FROM LetterBatch l"
+                + " INNER JOIN l.letterReceivers lr "
+                + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish"
+                + " WHERE l.id = :letterBatchId")
+                .setParameter("readyForPublish", true)
+                .setParameter("letterBatchId", letterBatchId)
+                .getResultList();
     }
 }

@@ -959,4 +959,9 @@ public class LetterServiceImpl implements LetterService {
     public LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language) {
         return letterBatchDAO.countReady(hakuOid, type, language);
     }
+
+    @Override
+    public List<String> getEPostiEmailAddresses(long letterBatchId) {
+        return letterBatchDAO.getEPostiEmailAddressesByBatchId(letterBatchId);
+    }
 }
