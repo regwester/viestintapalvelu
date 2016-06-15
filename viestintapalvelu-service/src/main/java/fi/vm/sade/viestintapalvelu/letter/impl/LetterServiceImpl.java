@@ -39,7 +39,7 @@ import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.LetterZipUtil;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
-import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;

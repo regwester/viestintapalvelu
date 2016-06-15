@@ -1,7 +1,6 @@
-package fi.vm.sade.viestintapalvelu.letter.processing;
+package fi.vm.sade.viestintapalvelu.letter;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
-import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 
 import java.util.List;
 
@@ -25,3 +24,4 @@ public class LetterListResponse {
                 '}';
     }
 }
+

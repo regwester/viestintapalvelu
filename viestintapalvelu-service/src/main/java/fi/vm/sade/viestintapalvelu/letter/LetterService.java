@@ -27,7 +27,7 @@ import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
-import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 

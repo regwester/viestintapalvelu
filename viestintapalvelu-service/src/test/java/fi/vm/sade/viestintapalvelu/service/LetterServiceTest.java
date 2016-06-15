@@ -23,7 +23,7 @@ import java.util.zip.DataFormatException;
 import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.*;
-import fi.vm.sade.viestintapalvelu.letter.processing.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.pdfbox.pdmodel.PDDocument;
