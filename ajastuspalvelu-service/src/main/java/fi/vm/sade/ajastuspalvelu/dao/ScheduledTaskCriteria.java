@@ -25,14 +25,14 @@ public interface ScheduledTaskCriteria {
 
     ScheduledTaskCriteria withPagination(Integer index, Integer maxResultCount);
 
-    public enum OrderBy {
+    enum OrderBy {
         CREATED_AT,
         TASK_NAME,
         APPLICATION_PERIOD,
         SINGLE_RUNTIME
     }
 
-    public enum OrderDirection {
+    enum OrderDirection {
         ASC,
         DESC
     }

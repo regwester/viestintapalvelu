@@ -42,7 +42,7 @@ public interface ViestintapalveluOptionsResource {
     @Path("/hakus")
     @ApiOperation(value="Palauttaa julkaistut haut",
             responseContainer = "List", response = HakuDetailsDto.class)
-    public List<HakuDetailsDto> listHakus(
+    List<HakuDetailsDto> listHakus(
             @ApiParam("Pakota päivitys (vapaaehtoinen, ilman tätä vastaus voidaan ladata kätköstä)")
             @QueryParam("forceRefresh") Boolean forceRefresh);
 

@@ -145,9 +145,8 @@ public class EmailServiceImpl implements EmailService {
 
         Response response = emailResourceClient.sendEmail(emailData);
         if (response.getStatus() == HttpStatus.OK.value()) {
-            EmailSendId id = objectMapperProvider.getContext(EmailServiceImpl.class).reader(EmailSendId.class)
+            return objectMapperProvider.getContext(EmailServiceImpl.class).reader(EmailSendId.class)
                     .readValue((InputStream) response.getEntity());
-            return id;
         }
         throw new ExternalInterfaceException("Ryhhmasahkoposti-service sendMail returned code " + response.getStatus());
     }

@@ -13,7 +13,7 @@ public class ScheduledRun implements Serializable {
     private static final long serialVersionUID = -7836109411827939921L;
 
     public enum State {
-        STARTED, FINISHED, ERROR;
+        STARTED, FINISHED, ERROR
     }
     
     @Id

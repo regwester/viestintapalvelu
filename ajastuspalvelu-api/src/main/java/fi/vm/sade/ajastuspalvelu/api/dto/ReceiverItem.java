@@ -41,7 +41,7 @@ public class ReceiverItem implements Serializable {
     @ApiModelProperty(value = "Vastaanottajan kirjeen lähetysosoite", required = false)
     private AddressLabel addressLabel;
     @ApiModelProperty(value = "Vastaanottajakohtaiset korvauskentät")
-    private Map<String,Object> context = new HashMap<String, Object>();
+    private Map<String,Object> context = new HashMap<>();
 
     public String getOidType() {
         return oidType;

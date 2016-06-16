@@ -38,7 +38,7 @@ public class CronSchedule implements Schedule {
         this.cron = new CronExpression(cron).getCronExpression();
     }
 
-    public static final CronSchedule cron(String cron) {
+    public static CronSchedule cron(String cron) {
         try {
             return new CronSchedule(cron);
         } catch (ParseException e) {
