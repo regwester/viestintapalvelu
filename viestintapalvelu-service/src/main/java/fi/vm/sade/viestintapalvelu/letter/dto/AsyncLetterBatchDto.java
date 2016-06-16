@@ -34,7 +34,7 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     private static final long serialVersionUID = 4947130071223481115L;
 
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
-    private List<AsyncLetterBatchLetterDto> letters = new ArrayList<AsyncLetterBatchLetterDto>();
+    private List<AsyncLetterBatchLetterDto> letters = new ArrayList<>();
 
     @ApiModelProperty(value = "Kirjepohja")
     private Template template;
@@ -72,7 +72,7 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     @ApiModelProperty(value = "Ohitetaanko tuotetun dokumentin tallennus dokumenttipalveluun. Oletuksena ei.", required = false)
     private boolean skipDokumenttipalvelu = false;
     
-    private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
+    private Map<String, byte[]> iPostiData = new LinkedHashMap<>();
 
 
     @Override

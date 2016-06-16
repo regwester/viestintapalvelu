@@ -46,7 +46,7 @@ public class LetterBatch extends BaseEntity {
                                                                                     // in
                                                                                     // dokumenttipalvelu
         error
-    };
+    }
 
     private static final long serialVersionUID = 1L;
 
@@ -118,7 +118,7 @@ public class LetterBatch extends BaseEntity {
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<LetterBatchProcessingError> processingErrors = new HashSet<LetterBatchProcessingError>();
+    private Set<LetterBatchProcessingError> processingErrors = new HashSet<>();
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
@@ -126,10 +126,10 @@ public class LetterBatch extends BaseEntity {
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private List<IPosti> iposts = new ArrayList<IPosti>();
+    private List<IPosti> iposts = new ArrayList<>();
 
     @OneToMany(mappedBy = "letterBatch", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<UsedTemplate> usedTemplates = new HashSet<UsedTemplate>();
+    private Set<UsedTemplate> usedTemplates = new HashSet<>();
 
     public void setIposti(boolean iposti) {
         this.iposti = iposti;

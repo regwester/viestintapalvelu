@@ -56,8 +56,8 @@ public class EmailSourceData {
 
     public void addAttachment(String name, byte[] data, String contentType) {
         if (attachmentData == null) {
-            attachmentData = new HashMap<String, byte[]>();
-            attachmentContentType = new HashMap<String, String>();
+            attachmentData = new HashMap<>();
+            attachmentContentType = new HashMap<>();
         }
         this.attachmentData.put(name, data);
         this.attachmentContentType.put(name, contentType);
@@ -107,13 +107,13 @@ public class EmailSourceData {
         EmailRecipient recipient = new EmailRecipient();
         recipient.setEmail(letter.getEmailAddress());
         recipient.setLanguageCode(letter.getLanguageCode());
-        recipients = new ArrayList<EmailRecipient>();
+        recipients = new ArrayList<>();
         recipients.add(recipient);
     }
 
     private void initEmailContext() throws Exception {
         // handle email context
-        emailContext = new HashMap<TemplateEmailField, Object>();
+        emailContext = new HashMap<>();
 
         LOGGER.debug("CONTEXT START");
         for (String k : this.templateDataContext.keySet()) {

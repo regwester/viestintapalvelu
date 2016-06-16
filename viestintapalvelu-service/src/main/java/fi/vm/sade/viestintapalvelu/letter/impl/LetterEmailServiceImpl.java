@@ -103,7 +103,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         LetterBatch letterBatch = foundLetterBatch(letterBatchId);
         Template template = getTemplate(letterBatch);
 
-        Set<String> options = new TreeSet<String>();
+        Set<String> options = new TreeSet<>();
         String templateLanguage = Optional.fromNullable(template.getLanguage()).or(DEFAULT_LANGUAGE);
         // Add all recipient's wanted languages to has set:
         for (LetterReceivers receiver : letterBatch.getLetterReceivers()) {
@@ -114,7 +114,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
             }
         }
         // Ensure template exists for each language:
-        for (String language : new HashSet<String>(options)) {
+        for (String language : new HashSet<>(options)) {
             if (templateService.getTemplateByName(
                         new TemplateCriteriaImpl(template.getName(), language.toUpperCase())
                             .withApplicationPeriod(letterBatch.getApplicationPeriod()), false) == null) {
@@ -123,7 +123,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         }
 
         LanguageCodeOptionsDto dto = new LanguageCodeOptionsDto();
-        dto.setOptions(new ArrayList<String>(options));
+        dto.setOptions(new ArrayList<>(options));
         return dto;
     }
 
@@ -136,7 +136,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         }
         String templateLanguage = Optional.fromNullable(template.getLanguage()).or(DEFAULT_LANGUAGE);
         final Optional<LetterReceivers> letterReceiversOptional = firstWithEmail(letterBatch.getLetterReceivers(), languageCode, templateLanguage);
-        final List<LetterReceivers> letterReceiverses = Arrays.asList(letterReceiversOptional
+        final List<LetterReceivers> letterReceiverses = Collections.singletonList(letterReceiversOptional
                 .or(OptionalHelper.<LetterReceivers>notFound("LetterBatch=" + letterBatch.getId()
                         + " does not have any handled recipients with email address")));
         EmailSendDataDto emailSendData = buildEmails(letterBatch, letterReceiverses, template);
@@ -170,7 +170,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
     private Optional<LetterReceivers> firstWithEmail(Collection<LetterReceivers> receivers,
                                          Optional<String> languageCode, String templateLanguage) {
         // Ensure selecting the same to preview for each time:
-        List<LetterReceivers> receiversList = new ArrayList<LetterReceivers>(receivers);
+        List<LetterReceivers> receiversList = new ArrayList<>(receivers);
         Collections.sort(receiversList, new Comparator<LetterReceivers>() {
             public int compare(LetterReceivers o1, LetterReceivers o2) {
                 return o1.getId().compareTo(o2.getId());
@@ -248,7 +248,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
                 if (template == baseTemplate) {
                     batchReplacementsToUse = letterBatch.getLetterReplacements();
                 } else {
-                    batchReplacementsToUse = new HashSet<LetterReplacement>();
+                    batchReplacementsToUse = new HashSet<>();
                 }
                 emailData = buildEmailData(template, batchReplacementsToUse, new EmailData(),
                         languageCode, letterBatch.getApplicationPeriod());
@@ -270,7 +270,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
                 continue;
             }
 
-            List<AttachmentUri> attachmentUris = new ArrayList<AttachmentUri>();
+            List<AttachmentUri> attachmentUris = new ArrayList<>();
             for (LetterReceiverLetterAttachment attachment : letter.getAttachments()) {
                 attachmentUris.add(AttachmentUri.getLetterReceiverLetterAttachment(attachment.getId()));
             }
@@ -292,7 +292,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         message.setTemplateId("" + letterTemplate.getId());
         message.setHtml(true);
 
-        List<ReadableReplacement> replacements = new ArrayList<ReadableReplacement>();
+        List<ReadableReplacement> replacements = new ArrayList<>();
         replacements.addAll(letterTemplate.getReplacements());
         replacements.addAll(batchReplacements);
         for (ReadableReplacement replacement : replacements) {

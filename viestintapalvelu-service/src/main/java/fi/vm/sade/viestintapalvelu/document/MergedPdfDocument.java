@@ -37,7 +37,7 @@ public class MergedPdfDocument {
     private int currentPageNumber;
 
     public MergedPdfDocument() throws DocumentException {
-        this.documentMetadata = new ArrayList<DocumentMetadata>();
+        this.documentMetadata = new ArrayList<>();
         this.document = new Document();
         this.output = new ByteArrayOutputStream();
         this.writer = PdfWriter.getInstance(document, output);

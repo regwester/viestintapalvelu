@@ -23,7 +23,6 @@ import javax.ws.rs.core.Response;
 
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.wordnik.swagger.annotations.ApiOperation;

@@ -38,8 +38,8 @@ public class Contents implements Predicate<String> {
     protected static final String[] NON_ATTACHMENTS = new String[] { ASIOINTITILI_HEADER, ASIOINTITILI_CONTENT, ASIOINTITILI_SMS_CONTENT, EMAIL_SUBJECT,
             EMAIL_BODY };
 
-    private Set<String> include = new HashSet<String>();
-    private Set<String> exclude = new HashSet<String>();
+    private Set<String> include = new HashSet<>();
+    private Set<String> exclude = new HashSet<>();
 
     protected Contents() {
     }
@@ -83,9 +83,6 @@ public class Contents implements Predicate<String> {
         if (exclude.contains(name)) {
             return include.contains(name);
         }
-        if (!include.isEmpty()) {
-            return include.contains(name);
-        }
-        return true;
+        return include.isEmpty() || include.contains(name);
     }
 }

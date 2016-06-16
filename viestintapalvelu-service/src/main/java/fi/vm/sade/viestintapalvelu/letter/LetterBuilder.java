@@ -123,8 +123,7 @@ public class LetterBuilder {
                 return ipostXml;
             }
         });
-        byte[] zip = documentBuilder.zip(documents);
-        return zip;
+        return documentBuilder.zip(documents);
     }
 
     private MergedPdfDocument getMergedPDFDocument(List<LetterReceiverLetter> receivers) {
@@ -168,7 +167,7 @@ public class LetterBuilder {
     }
 
     public Map<String, Object> getTemplateReplacements(Template template) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (Replacement r : template.getReplacements()) {
             replacements.put(r.getName(), r.getDefaultValue());
         }
@@ -176,7 +175,7 @@ public class LetterBuilder {
     }
 
     public byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
-            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws FileNotFoundException, IOException, DocumentException {
+            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(XhtmlCleaner.INSTANCE,
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
@@ -186,7 +185,7 @@ public class LetterBuilder {
 
     public Map<String, Object> createDataContext(Cleaner cleaner,
                      Template template, AddressLabel addressLabel, Map<String, Object>... replacementsList) {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements != null) {
                 for(Map.Entry<String, Object> entry : replacements.entrySet()) {
@@ -255,7 +254,7 @@ public class LetterBuilder {
     }
 
     private Map<String, Boolean> distinctColumns(List<Map<String, Object>> tulokset) {
-        Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
+        Map<String, Boolean> printedColumns = new HashMap<>();
         if (tulokset == null) {
             return printedColumns;
         }
@@ -271,10 +270,10 @@ public class LetterBuilder {
     }
 
     private Map<String, Object> createIPostDataContext(final List<DocumentMetadata> documentMetadataList) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        List<Map<String, Object>> metadataList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> data = new HashMap<>();
+        List<Map<String, Object>> metadataList = new ArrayList<>();
         for (DocumentMetadata documentMetadata : documentMetadataList) {
-            Map<String, Object> metadata = new HashMap<String, Object>();
+            Map<String, Object> metadata = new HashMap<>();
             metadata.put("startPage", documentMetadata.getStartPage());
             metadata.put("pages", documentMetadata.getPages());
             metadata.put("addressLabel", new XmlAddressLabelDecorator(documentMetadata.getAddressLabel()));
@@ -341,7 +340,7 @@ public class LetterBuilder {
     }
 
     public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
-        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        Map<String, Object> templReplacements = new HashMap<>();
         for (LetterReceiverReplacement replacement : replacements) {
             templReplacements.put(replacement.getName(), replacement.getEffectiveValue(mapper));
         }
@@ -349,7 +348,7 @@ public class LetterBuilder {
     }
 
     public static Map<String, Object> formReplacementMap(List<Replacement> replacements) {
-        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        Map<String, Object> templReplacements = new HashMap<>();
         for (Replacement templRepl : replacements) {
             templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
         }

@@ -51,7 +51,6 @@ public class LetterPDFRecoverer implements Recoverer {
                 for (Long letterBatchId : unfinishedLetterBatchIds) {
                     processLetterBatch(letterBatchId);
                 }
-                ;
 
             }
 

@@ -170,7 +170,7 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     private List<String> getResourceList(String pattern) throws IOException {
-        List<String> resources = new ArrayList<String>();
+        List<String> resources = new ArrayList<>();
         for (Resource template : Utils.getResourceList(pattern)) {
             resources.add(template.getFilename());
         }
@@ -517,7 +517,7 @@ public class TemplateResource extends AsynchronousResource {
             return response;
         }
 
-        List<Map<String, Object>> history = new LinkedList<Map<String, Object>>();
+        List<Map<String, Object>> history = new LinkedList<>();
 
         String templateName = request.getParameter("templateName");
         String languageCode = request.getParameter("languageCode");
@@ -531,7 +531,7 @@ public class TemplateResource extends AsynchronousResource {
         Template template = templateService.getTemplateByName(
                 new TemplateCriteriaImpl(templateName, languageCode, type).withApplicationPeriod(applicationPeriod), true);
 
-        Map<String, Object> templateRepl = new HashMap<String, Object>();
+        Map<String, Object> templateRepl = new HashMap<>();
         templateRepl.put("name", "default");
         templateRepl.put("templateReplacements", template.getReplacements());
         history.add(templateRepl);
@@ -543,7 +543,7 @@ public class TemplateResource extends AsynchronousResource {
                     applicationPeriodForTagAndNonTagSeach);
 
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
-                Map<String, Object> organisationRepl = new HashMap<String, Object>();
+                Map<String, Object> organisationRepl = new HashMap<>();
                 organisationRepl.put("name", "organizationLatest");
                 organisationRepl.put("templateReplacements", templateReplacements);
                 history.add(organisationRepl);
@@ -556,7 +556,7 @@ public class TemplateResource extends AsynchronousResource {
                 templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, Optional.fromNullable(tag),
                         applicationPeriodForTagAndNonTagSeach);
                 if (templateReplacements != null && !templateReplacements.isEmpty()) {
-                    Map<String, Object> tagRepl = new HashMap<String, Object>();
+                    Map<String, Object> tagRepl = new HashMap<>();
                     tagRepl.put("name", "organizationLatestByTag");
                     tagRepl.put("templateReplacements", templateReplacements);
                     history.add(tagRepl);
@@ -567,7 +567,7 @@ public class TemplateResource extends AsynchronousResource {
                                                                       // Hakukohde
             templateReplacements = templateService.findDraftReplacement(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
             if (templateReplacements != null && !templateReplacements.isEmpty()) {
-                Map<String, Object> draftRepl = new HashMap<String, Object>();
+                Map<String, Object> draftRepl = new HashMap<>();
                 draftRepl.put("name", "draft");
                 draftRepl.put("templateReplacements", templateReplacements);
                 history.add(draftRepl);
@@ -682,16 +682,14 @@ public class TemplateResource extends AsynchronousResource {
     public List<Draft> getDraftsByApplicationPeriod(
             @ApiParam(name = "applicationPeriod", value = "haku (OID)", required = true) @PathParam("applicationPeriod") String applicationPeriod,
             @ApiParam(name = "organizationid", value = "organizaatioiden OID", required = false) @QueryParam("organizationid") List<String> organizationIds) {
-        final List<Draft> draftsByOrgOidsAndApplicationPeriod = templateService.getDraftsByOrgOidsAndApplicationPeriod(organizationIds, applicationPeriod);
-        return draftsByOrgOidsAndApplicationPeriod;
+        return templateService.getDraftsByOrgOidsAndApplicationPeriod(organizationIds, applicationPeriod);
     }
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/draft")
     public List<Draft> getDraftsByTags(@ApiParam(name = "tags", value = "", required = false) @QueryParam("tags") List<String> tags) {
-        List<Draft> drafts = templateService.getDraftsByTags(tags);
-        return drafts;
+        return templateService.getDraftsByTags(tags);
     }
 
     @GET
@@ -704,11 +702,11 @@ public class TemplateResource extends AsynchronousResource {
     }
 
     private List<Map<String, String>> formTemplateNameLanguageMap(List<String> serviceResult) {
-        List<Map<String, String>> res = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> res = new ArrayList<>();
         for (String s : serviceResult) {
             if (s != null && s.trim().length() > 0) {
                 if (s.indexOf("::") > 0) {
-                    Map<String, String> m = new HashMap<String, String>();
+                    Map<String, String> m = new HashMap<>();
                     String[] sa = s.split("::");
                     m.put("name", sa[0]);
                     m.put("lang", sa[1]);

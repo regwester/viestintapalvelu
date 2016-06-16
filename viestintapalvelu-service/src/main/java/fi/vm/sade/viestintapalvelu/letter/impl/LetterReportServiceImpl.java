@@ -15,10 +15,8 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.viestintapalvelu.LetterZipUtil;
 import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
@@ -39,7 +36,6 @@ import fi.vm.sade.viestintapalvelu.dto.iposti.IPostiDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverDTO;
-import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
@@ -48,7 +44,6 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
 import fi.vm.sade.viestintapalvelu.letter.LetterReportService;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
@@ -57,7 +52,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 @Transactional(readOnly = true)
 @Service
 public class LetterReportServiceImpl implements LetterReportService {
-    public static final long MAX_COUNT_FOR_LETTER_BATCH_SEARCH = 1000l;
+    public static final long MAX_COUNT_FOR_LETTER_BATCH_SEARCH = 1000L;
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiversDAO letterReceiversDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
@@ -154,7 +149,7 @@ public class LetterReportServiceImpl implements LetterReportService {
 
     @Override
     public List<OrganizationDTO> getUserOrganizations() {
-        List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
+        List<OrganizationDTO> organizations = new ArrayList<>();
         List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
         for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
@@ -176,7 +171,7 @@ public class LetterReportServiceImpl implements LetterReportService {
     }
 
     private List<IPostiDTO> getListOfIPostiDTO(List<IPosti> iPostis) {
-        List<IPostiDTO> iPostiDTOList = new ArrayList<IPostiDTO>();
+        List<IPostiDTO> iPostiDTOList = new ArrayList<>();
 
         for (IPosti iPosti : iPostis) {
             IPostiDTO iPostiDTO = new IPostiDTO();
@@ -195,7 +190,7 @@ public class LetterReportServiceImpl implements LetterReportService {
     private LetterBatchesReportDTO convertLetterBatchesReport(List<LetterBatch> letterBatches) {
         LetterBatchesReportDTO letterBatchesReport = new LetterBatchesReportDTO();
 
-        List<LetterBatchReportDTO> letterBatchReports = new ArrayList<LetterBatchReportDTO>();
+        List<LetterBatchReportDTO> letterBatchReports = new ArrayList<>();
 
         for (LetterBatch letterBatch : letterBatches) {
             LetterBatchReportDTO letterBatchReport = convertLetterBatchReport(letterBatch);
@@ -231,7 +226,7 @@ public class LetterReportServiceImpl implements LetterReportService {
     }
 
     private List<LetterReceiverDTO> convertLetterReceiver(LetterBatch letterBatch, List<LetterReceivers> letterReceiverList) {
-        List<LetterReceiverDTO> letterReceiverDTOs = new ArrayList<LetterReceiverDTO>();
+        List<LetterReceiverDTO> letterReceiverDTOs = new ArrayList<>();
 
         for (LetterReceivers letterReceivers : letterReceiverList) {
             LetterReceiverDTO letterReceiverDTO = new LetterReceiverDTO();

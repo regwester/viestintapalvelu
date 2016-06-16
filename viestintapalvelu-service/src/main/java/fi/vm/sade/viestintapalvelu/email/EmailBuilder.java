@@ -66,7 +66,7 @@ public class EmailBuilder {
         Map<String, byte[]> attachments = source.getAttachmentData();
         if (attachments != null) {
             Map<String, String> attachmentContentTypes = source.getAttachmentContentType();
-            List<EmailAttachment> attachmentList = new ArrayList<EmailAttachment>();
+            List<EmailAttachment> attachmentList = new ArrayList<>();
             for (String key : attachments.keySet()) {
                 EmailAttachment attachment = new EmailAttachment();
                 attachment.setContentType(attachmentContentTypes.get(key));

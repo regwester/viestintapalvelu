@@ -31,11 +31,11 @@ public interface OrganisaatioResource {
     @GET
     @Path("{oid}")
     @Produces(MediaType.APPLICATION_JSON + ";charset=UTF-8")
-    public OrganisaatioRDTO getOrganisaatioByOID(@PathParam("oid") String oid);
+    OrganisaatioRDTO getOrganisaatioByOID(@PathParam("oid") String oid);
 
     @GET
     @Produces(MediaType.TEXT_PLAIN)
     @Path("/{oid}/parentoids")
-    public String parentoids(@PathParam("oid") String oid) throws Exception;
+    String parentoids(@PathParam("oid") String oid) throws Exception;
 
 }

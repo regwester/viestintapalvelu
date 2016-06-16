@@ -21,7 +21,7 @@ package fi.vm.sade.viestintapalvelu.letter.html;
  * Time: 12:51
  */
 public interface Cleaner {
-    public static final Cleaner NONE = new Cleaner() {
+    Cleaner NONE = new Cleaner() {
         public String clean(String str) {
             return str;
         }

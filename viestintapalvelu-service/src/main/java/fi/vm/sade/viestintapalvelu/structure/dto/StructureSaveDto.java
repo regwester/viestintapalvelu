@@ -50,11 +50,11 @@ public class StructureSaveDto implements Serializable {
     @ApiModelProperty("Sisältörakenteet eri esitystavoille")
     @Valid @NotNull @Size(min=1)
     @DtoConversion
-    private List<ContentStructureSaveDto> contentStructures = new ArrayList<ContentStructureSaveDto>();
+    private List<ContentStructureSaveDto> contentStructures = new ArrayList<>();
     @ApiModelProperty("Rakenteessa käytettävät korvaukentät niiden esitysjärjestyksessä")
     @Valid @NotNull
     @DtoConversion(exported = false)
-    private List<ContentReplacementSaveDto> replacements = new ArrayList<ContentReplacementSaveDto>();
+    private List<ContentReplacementSaveDto> replacements = new ArrayList<>();
 
     public String getName() {
         return name;

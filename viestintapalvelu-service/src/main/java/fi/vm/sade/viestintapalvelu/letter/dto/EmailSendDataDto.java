@@ -28,7 +28,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
  * Time: 13:23
  */
 public class EmailSendDataDto {
-    private Map<String,EmailData> emailByLanguageCode = new TreeMap<String, EmailData>();
+    private Map<String,EmailData> emailByLanguageCode = new TreeMap<>();
 
     public EmailData getEmailByLanguageCode(String languageCode) {
         return emailByLanguageCode.get(languageCode.toUpperCase());
@@ -39,6 +39,6 @@ public class EmailSendDataDto {
     }
 
     public List<EmailData> getEmails() {
-        return new ArrayList<EmailData>(this.emailByLanguageCode.values());
+        return new ArrayList<>(this.emailByLanguageCode.values());
     }
 }

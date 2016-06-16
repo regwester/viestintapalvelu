@@ -37,5 +37,5 @@ public interface LetterReceiverAddressDAO extends JpaDAO<LetterReceiverAddress, 
      *            Sivutus- ja lajittelutiedot
      * @return Lista vastaanottajien osoitetietoja
      */
-    public List<LetterReceiverAddress> getLetterReceiverAddressesByLetterReceiverID(List<Long> letterReceiverIDs, PagingAndSortingDTO pagingAndSorting);
+    List<LetterReceiverAddress> getLetterReceiverAddressesByLetterReceiverID(List<Long> letterReceiverIDs, PagingAndSortingDTO pagingAndSorting);
 }

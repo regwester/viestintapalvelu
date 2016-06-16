@@ -26,7 +26,7 @@ import java.util.List;
  */
 public class LanguageCodeOptionsDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    private List<String> options = new ArrayList<String>();
+    private List<String> options = new ArrayList<>();
 
     public List<String> getOptions() {
         return options;

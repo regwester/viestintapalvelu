@@ -25,7 +25,7 @@ public enum TemplateEmailField {
     @SuppressWarnings("rawtypes")
     Class type;
 
-    private TemplateEmailField(String fieldName, boolean mandatory, @SuppressWarnings("rawtypes") Class type) {
+    TemplateEmailField(String fieldName, boolean mandatory, @SuppressWarnings("rawtypes") Class type) {
         this.fieldName = fieldName;
         this.mandatory = mandatory;
         this.type = type;

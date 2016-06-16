@@ -31,16 +31,6 @@ import com.google.common.base.Function;
  */
 public class TextWithoutHtmlCleaner implements Cleaner {
     public static final TextWithoutHtmlCleaner INSTANCE = new TextWithoutHtmlCleaner();
-    public static final Function<? super String,? extends Object> FUNCTION = new Function<String, Object>() {
-        @Nullable
-        @Override
-        public Object apply(@Nullable String input) {
-            if (input == null) {
-                return null;
-            }
-            return INSTANCE.clean(input);
-        }
-    };
 
     protected TextWithoutHtmlCleaner() {
     }

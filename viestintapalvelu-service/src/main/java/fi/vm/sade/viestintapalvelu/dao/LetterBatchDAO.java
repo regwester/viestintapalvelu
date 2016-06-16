@@ -28,8 +28,6 @@ import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
-;
-
 /**
  * Rajapinta kirjelähetysten tietokantakäsittelyä varten
  * 

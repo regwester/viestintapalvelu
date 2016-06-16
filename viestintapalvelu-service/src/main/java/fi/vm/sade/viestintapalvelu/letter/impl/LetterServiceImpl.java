@@ -41,7 +41,6 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -228,8 +227,8 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB) {
-        Set<UsedTemplate> templates = new HashSet<UsedTemplate>();
-        Set<String> languageCodes = new HashSet<String>();
+        Set<UsedTemplate> templates = new HashSet<>();
+        Set<String> languageCodes = new HashSet<>();
         String templateName = getTemplateNameFromBatch(letterBatch);
         for (LetterDetails letter : letterBatch.getLetters()) {
             languageCodes.add(letter.getLanguageCode());
@@ -322,7 +321,7 @@ public class LetterServiceImpl implements LetterService {
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String languageCode, String organizationOid,
             Optional<String> tag, Optional<String> applicationPeriod) {
 
-        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<>();
         LetterBatch letterBatch = null;
         if (!tag.isPresent() && !applicationPeriod.isPresent()) {
             letterBatch = letterBatchDAO.findLetterBatchByNameOrg(templateName, languageCode, organizationOid);
@@ -422,7 +421,7 @@ public class LetterServiceImpl implements LetterService {
      */
     private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB, ObjectMapper mapper)
             throws JsonProcessingException {
-        Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
+        Set<LetterReceivers> receivers = new HashSet<>();
         for (fi.vm.sade.viestintapalvelu.letter.Letter letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
@@ -464,7 +463,7 @@ public class LetterServiceImpl implements LetterService {
 
     private Set<LetterReceivers> parseLetterReceiversModels(AsyncLetterBatchDto letterBatch, LetterBatch letterB, ObjectMapper mapper)
             throws JsonProcessingException {
-        Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
+        Set<LetterReceivers> receivers = new HashSet<>();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
@@ -488,7 +487,7 @@ public class LetterServiceImpl implements LetterService {
      * kirjeet.lahetyskorvauskentat
      */
     private Set<LetterReplacement> parseLetterReplacementsModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
-        Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
+        Set<LetterReplacement> replacements = new HashSet<>();
 
         Object replKeys[] = letterBatch.getTemplateReplacements().keySet().toArray();
         Object replVals[] = letterBatch.getTemplateReplacements().values().toArray();
@@ -509,7 +508,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Map<String, Object> parseReplDTOs(Set<LetterReplacement> letterReplacements) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
 
         for (LetterReplacement letterRepl : letterReplacements) {
             replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());
@@ -643,7 +642,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch, ObjectMapper mapper) throws IOException {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (LetterReplacement repl : batch.getLetterReplacements()) {
             replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
@@ -651,7 +650,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Map<String, Object> formReplacementMap(LetterReceivers receiver, ObjectMapper mapper) throws IOException {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (LetterReceiverReplacement repl : receiver.getLetterReceiverReplacement()) {
             replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
@@ -759,7 +758,7 @@ public class LetterServiceImpl implements LetterService {
 
         if (batch == null) {
             batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error, 0);
-            List<LetterBatchStatusErrorDto> errors = new ArrayList<LetterBatchStatusErrorDto>();
+            List<LetterBatchStatusErrorDto> errors = new ArrayList<>();
             LetterBatchStatusErrorDto error = new LetterBatchStatusErrorDto();
             error.setErrorCause("Batch not found for id " + batchId);
             error.setErrorTime(new Date());
@@ -776,7 +775,7 @@ public class LetterServiceImpl implements LetterService {
         // to get hold of the error messages and pass them to the DTO.
         if (LetterBatch.Status.error.equals(batch.getStatus())) {
             LetterBatch actualBatch = fetchById(batchId);
-            List<LetterBatchStatusErrorDto> processingErrors = new ArrayList<LetterBatchStatusErrorDto>();
+            List<LetterBatchStatusErrorDto> processingErrors = new ArrayList<>();
             for (LetterBatchProcessingError error : actualBatch.getProcessingErrors()) {
                 LetterBatchStatusErrorDto errorDto = new LetterBatchStatusErrorDto();
                 errorDto.setErrorCause(error.getErrorCause());

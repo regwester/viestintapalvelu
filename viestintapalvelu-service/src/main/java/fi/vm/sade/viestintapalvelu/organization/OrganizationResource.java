@@ -18,9 +18,7 @@ package fi.vm.sade.viestintapalvelu.organization;
 import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeTuloksetRDTO;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakutuloksetRDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.TarjontaComponent;
@@ -52,8 +50,7 @@ public class OrganizationResource extends AsynchronousResource {
     @Produces("application/json")
     @Path("hakukohteet/applicationPeriod/{applicationPeriod}")
     public List<HakukohdeTuloksetRDTO> getHakukohteetByOrgOids(@PathParam("applicationPeriod") String applicationPeriod) {
-        final List<HakukohdeTuloksetRDTO> hakukohteetByApplicationPeriodOid = tarjontaComponent.getHakukohteetByApplicationPeriodOid(applicationPeriod);
-        return hakukohteetByApplicationPeriodOid;
+        return tarjontaComponent.getHakukohteetByApplicationPeriodOid(applicationPeriod);
     }
 
     /**
@@ -80,7 +77,7 @@ public class OrganizationResource extends AsynchronousResource {
         // search for all schools and organizations that provide teaching for
         // the given application period
         Set<String> providerOrgIds = tarjontaComponent.getProviderOrgOids(applicationPeriod);
-        List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<OrganisaatioHierarchyDto>();
+        List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<>();
         List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
 
         for (OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
@@ -119,7 +116,7 @@ public class OrganizationResource extends AsynchronousResource {
             return OIDs.contains(node.getOid());
 
         boolean anyChildInOids = false;
-        List<OrganisaatioHierarchyDto> childrenWithoutMatches = new ArrayList<OrganisaatioHierarchyDto>();
+        List<OrganisaatioHierarchyDto> childrenWithoutMatches = new ArrayList<>();
         for (OrganisaatioHierarchyDto child : node.getChildren()) {
             boolean someChildInOids = filterHierarchy(child, OIDs);
             if (!anyChildInOids) {

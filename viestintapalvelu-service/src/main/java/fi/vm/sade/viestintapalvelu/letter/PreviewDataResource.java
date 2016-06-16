@@ -63,8 +63,7 @@ public class PreviewDataResource {
     public byte[] dummyBatchPdf(PreviewRequest request) throws IOException, DocumentException {
         try {
             final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getTemplateState());
-            final byte[] previewPdf = previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
-            return previewPdf;
+            return previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
         } catch (Exception e) {
             log.error("Esikatselu-PDF:n muodostus epäonnistui: {}", request.toString(), e);
             throw e;

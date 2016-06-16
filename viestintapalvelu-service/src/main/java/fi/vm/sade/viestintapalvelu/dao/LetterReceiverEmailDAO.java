@@ -31,6 +31,6 @@ public interface LetterReceiverEmailDAO extends JpaDAO<LetterReceiverEmail, Long
      *            Sivutus- ja lajittelutiedot
      * @return Lista vastaanottajien osoitetietoja
      */
-    public List<LetterReceiverEmail> getLetterReceiverEmailByLetterReceiverID(List<Long> letterReceiverIDs, PagingAndSortingDTO pagingAndSorting);
+    List<LetterReceiverEmail> getLetterReceiverEmailByLetterReceiverID(List<Long> letterReceiverIDs, PagingAndSortingDTO pagingAndSorting);
 
 }

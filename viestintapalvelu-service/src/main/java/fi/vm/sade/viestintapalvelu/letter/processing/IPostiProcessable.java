@@ -29,7 +29,7 @@ public class IPostiProcessable implements Processable {
     
     private final long letterBatchId;
     private final int orderNumber;
-    private final List<Long> letterReceiverIds = new ArrayList<Long>();
+    private final List<Long> letterReceiverIds = new ArrayList<>();
 
     public IPostiProcessable(long letterBatchId, int orderNumber) {
         this.letterBatchId = letterBatchId;

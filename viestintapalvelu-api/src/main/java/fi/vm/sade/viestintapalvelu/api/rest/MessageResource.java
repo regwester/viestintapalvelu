@@ -46,5 +46,5 @@ public interface MessageResource {
     @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIOINTITILI_CRUD)
     @ApiOperation(value = "Lähettää viestin ensisijaisesti käyttäen asiointitiliä", notes = "Jos asiointitiliä ei ole saatavana vastaanottajalle, lähetetään viesti sähköpostitse mikäli mahdollista",  response = MessageStatusResponse.class)
-    public MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData);
+    MessageStatusResponse sendMessageViaAsiointiTiliOrEmail(MessageData messageData);
 }

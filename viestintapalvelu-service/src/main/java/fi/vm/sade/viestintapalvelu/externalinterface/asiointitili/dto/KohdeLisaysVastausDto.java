@@ -41,7 +41,7 @@ public class KohdeLisaysVastausDto implements Serializable  {
     private int kohdeMaara;
     @XmlElement(name = "Kohteet")
     @DtoConversion
-    private List<KohdeJaAsiakasTilaDto> kohteet = new ArrayList<KohdeJaAsiakasTilaDto>();
+    private List<KohdeJaAsiakasTilaDto> kohteet = new ArrayList<>();
 
     public int getTilaKoodi() {
         return tilaKoodi;

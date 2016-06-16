@@ -67,7 +67,7 @@ public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Ohitetaanko dokumentin tallennus dokumenttipalveluun", required = false)
     private boolean skipDokumenttipalvelu = false;
 
-    private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
+    private Map<String, byte[]> iPostiData = new LinkedHashMap<>();
 
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -179,7 +179,7 @@ public class LetterBatch implements LetterBatchDetails {
     }
 
     public List<LetterBatch> split(int limit) {
-        List<LetterBatch> batches = new ArrayList<LetterBatch>();
+        List<LetterBatch> batches = new ArrayList<>();
         split(letters, batches, limit);
         return batches;
     }
@@ -201,9 +201,9 @@ public class LetterBatch implements LetterBatchDetails {
 
     private void split(List<Letter> remaining, List<LetterBatch> batches, int limit) {
         if (limit >= remaining.size()) {
-            batches.add(createSubBatch(new ArrayList<Letter>(remaining)));
+            batches.add(createSubBatch(new ArrayList<>(remaining)));
         } else {
-            batches.add(createSubBatch(new ArrayList<Letter>(remaining.subList(0, limit))));
+            batches.add(createSubBatch(new ArrayList<>(remaining.subList(0, limit))));
             split(remaining.subList(limit, remaining.size()), batches, limit);
         }
     }

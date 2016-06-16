@@ -103,7 +103,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
     @Override
     public List<String> findParentOids(String organisaatioOid) {
         ensureCacheFresh();
-        List<String> results = new ArrayList<String>();
+        List<String> results = new ArrayList<>();
         visitParents(this.hierarchyByOids.get(organisaatioOid), EXTRACT_OID, results);
         Collections.reverse(results); // the root first
         return results;
@@ -150,7 +150,7 @@ public class OrganisaatioServiceImpl implements OrganisaatioService ,Recoverer {
     private void refrechCache() {
         logger.info("Refreshing organisaatiohierachy cache.");
         this.root = organizationComponent.getOrganizationHierarchy();
-        this.hierarchyByOids = new HashMap<String, OrganisaatioHierarchyDto>();
+        this.hierarchyByOids = new HashMap<>();
         visitDown(this.root, null, new HierarchyVisitor<Void>() {
             public Void visit(OrganisaatioHierarchyDto dto, OrganisaatioHierarchyDto parent) {
                 dto.setParent(parent);

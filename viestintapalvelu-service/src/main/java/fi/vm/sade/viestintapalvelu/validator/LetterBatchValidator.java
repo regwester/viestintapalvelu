@@ -49,7 +49,7 @@ public class LetterBatchValidator {
      * @param letters
      */
     public static Map<String, String> validate(LetterBatchDetails letters) throws Exception {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         validateLetterBatch(letters);
 
         for (LetterDetails letter : letters.getLetters()) {

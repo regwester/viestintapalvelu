@@ -50,7 +50,7 @@ public class LetterReceiverAddressDAOImpl extends AbstractJpaDAOImpl<LetterRecei
     }
 
     protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting) {
-        PathBuilder<LetterReceiverAddress> pb = new PathBuilder<LetterReceiverAddress>(LetterReceiverAddress.class, "letterReceiverAddress");
+        PathBuilder<LetterReceiverAddress> pb = new PathBuilder<>(LetterReceiverAddress.class, "letterReceiverAddress");
 
         if (pagingAndSorting.getSortedBy() != null && !pagingAndSorting.getSortedBy().isEmpty()) {
             if (pagingAndSorting.getSortOrder() == null || pagingAndSorting.getSortOrder().isEmpty()) {

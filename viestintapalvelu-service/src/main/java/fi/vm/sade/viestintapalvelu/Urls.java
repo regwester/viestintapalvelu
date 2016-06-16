@@ -51,7 +51,7 @@ public class Urls {
         return new Localhost(port);
     }
 
-    public static interface RestServer {
+    public interface RestServer {
 
         String index();
 
@@ -106,7 +106,7 @@ public class Urls {
     }
 
     private static class UrlBuilder {
-        private final List<String> parts = new ArrayList<String>();
+        private final List<String> parts = new ArrayList<>();
 
         public void add(String part) {
             this.parts.add(part);

@@ -212,7 +212,7 @@ public class PDFPrinterResource extends AsynchronousResource {
     public Response getDocumentSource() {
         DocumentSource ds = new DocumentSource();
         
-        List<String> sources = new ArrayList<String>();
+        List<String> sources = new ArrayList<>();
         sources.add("documentsource text");
         ds.setDocumentName("documentName");
         ds.setSources(sources);
@@ -222,7 +222,7 @@ public class PDFPrinterResource extends AsynchronousResource {
 
     private byte[] buildDocument(DocumentSource input)
             throws DocumentException, IOException {
-        List<PdfDocument> pdfs = new ArrayList<PdfDocument>();
+        List<PdfDocument> pdfs = new ArrayList<>();
 
         for (String source : input.getSources()) {
             Document jsoupDoc = Jsoup.parse(source);

@@ -56,7 +56,7 @@ public class LetterBatchDtoConverter {
     }
 
     public Set<LetterReplacement> parseLetterReplacementsModels(LetterBatchDetails from, LetterBatch to, ObjectMapper mapper) throws JsonProcessingException {
-        Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
+        Set<LetterReplacement> replacements = new HashSet<>();
 
         Object replKeys[] = from.getTemplateReplacements().keySet().toArray();
         Object replVals[] = from.getTemplateReplacements().values().toArray();
@@ -98,7 +98,7 @@ public class LetterBatchDtoConverter {
 
         // kirjeet.vastaanottajakorvauskentat
         if ((from.getTemplateReplacements() != null) || (from.getTemplateReplacements().isEmpty())) {
-            Set<LetterReceiverReplacement> letterRepl = new HashSet<LetterReceiverReplacement>();
+            Set<LetterReceiverReplacement> letterRepl = new HashSet<>();
 
             Object letReplKeys[] = from.getTemplateReplacements().keySet().toArray();
             Object letReplVals[] = from.getTemplateReplacements().values().toArray();

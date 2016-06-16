@@ -53,7 +53,7 @@ public class AttachmentBuilder {
     private Map<String, Object> createDataContext(final AddressLabel addressLabel,
             final List<Map<String, String>> tulokset) {
         Map<String, Boolean> columns = distinctColumns(tulokset);
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
         data.put("tulokset", normalizeColumns(columns, tulokset));
         data.put("columns", columns);
@@ -73,7 +73,7 @@ public class AttachmentBuilder {
     }
 
     private Map<String, Boolean> distinctColumns(List<Map<String, String>> tulokset) {
-        Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
+        Map<String, Boolean> printedColumns = new HashMap<>();
         for (Map<String, String> haku : tulokset) {
             for (String column : haku.keySet()) {
                 printedColumns.put(column, true);

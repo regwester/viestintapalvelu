@@ -31,7 +31,7 @@ public class KohdeJaAsiakasTilaDto implements Serializable  {
 
     private String viranomaisTunniste;
     @DtoConversion
-    private List<AsiakasJaKohteenTilaDto> asiakas = new ArrayList<AsiakasJaKohteenTilaDto>();
+    private List<AsiakasJaKohteenTilaDto> asiakas = new ArrayList<>();
 
     public String getViranomaisTunniste() {
         return viranomaisTunniste;

@@ -39,7 +39,7 @@ public class MessageToLetterBatchConverter implements MessageDataConverter<Messa
         batch.setTemplateReplacements(data.commonReplacements);
         batch.setLetters(convertMessages(data.receivers));
         // TODO other optional fields?
-        return new ConvertedMessageWrapper<AsyncLetterBatchDto>(batch);
+        return new ConvertedMessageWrapper<>(batch);
     }
     
     private List<AsyncLetterBatchLetterDto> convertMessages(List<Receiver> receivers) {

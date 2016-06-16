@@ -55,10 +55,8 @@ public class ContentStructureContentId implements Serializable {
         ContentStructureContentId that = (ContentStructureContentId) o;
 
         if (contentId != null ? !contentId.equals(that.contentId) : that.contentId != null) return false;
-        if (contentStructureId != null ? !contentStructureId.equals(that.contentStructureId) : that.contentStructureId != null)
-            return false;
+        return contentStructureId != null ? contentStructureId.equals(that.contentStructureId) : that.contentStructureId == null;
 
-        return true;
     }
 
     @Override

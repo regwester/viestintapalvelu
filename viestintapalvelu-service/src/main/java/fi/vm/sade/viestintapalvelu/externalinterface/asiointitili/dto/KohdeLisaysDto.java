@@ -41,7 +41,7 @@ public class KohdeLisaysDto implements Serializable {
     @Size(min=1) @Valid
     @ApiModelProperty("Kyselyn kohteet")
     @DtoConversion
-    private List<KohdeDto> kohteet = new ArrayList<KohdeDto>();
+    private List<KohdeDto> kohteet = new ArrayList<>();
 
     public List<KohdeDto> getKohteet() {
         return kohteet;

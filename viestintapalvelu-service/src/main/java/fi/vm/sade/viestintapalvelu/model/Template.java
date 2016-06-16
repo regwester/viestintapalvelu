@@ -35,7 +35,7 @@ public class Template extends BaseEntity {
     private static final long serialVersionUID = 4178735997933155683L;
     
     public enum State {
-        luonnos, suljettu, julkaistu;
+        luonnos, suljettu, julkaistu
     }
 
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
@@ -84,7 +84,7 @@ public class Template extends BaseEntity {
 
     @Deprecated
     @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private Set<TemplateContent> contents = new HashSet<TemplateContent>();
+    private Set<TemplateContent> contents = new HashSet<>();
 
     @OneToMany(mappedBy = "template", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<Replacement> replacements;
@@ -92,7 +92,7 @@ public class Template extends BaseEntity {
     @ApiModelProperty(value = "Liittyvät haut")
     @OneToMany(mappedBy = "template", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
-    private Set<TemplateApplicationPeriod> applicationPeriods = new HashSet<TemplateApplicationPeriod>(0);
+    private Set<TemplateApplicationPeriod> applicationPeriods = new HashSet<>(0);
 
     public Date getTimestamp() {
         return timestamp;

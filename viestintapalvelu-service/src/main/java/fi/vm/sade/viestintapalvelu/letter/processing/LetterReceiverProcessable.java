@@ -32,7 +32,7 @@ public class LetterReceiverProcessable implements Processable {
     }
 
     public static List<LetterReceiverProcessable> forIds(List<Long> ids) {
-        List<LetterReceiverProcessable> processables = new ArrayList<LetterReceiverProcessable>();
+        List<LetterReceiverProcessable> processables = new ArrayList<>();
         for (Long id : ids) {
             processables.add(new LetterReceiverProcessable(id));
         }

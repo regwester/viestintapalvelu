@@ -40,7 +40,7 @@ public class AsiointitiliSendBatchDto implements Serializable, LinkOrAttachmentC
 
     @NotNull @Size(min=1)
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
-    private List<AsiointitiliMessageDto> messages = new ArrayList<AsiointitiliMessageDto>();
+    private List<AsiointitiliMessageDto> messages = new ArrayList<>();
 
     @NotNull
     @ApiModelProperty(value = "Kirjepohjan tunniste/nimi. Kirjepohjasta tulee olla asiointitili-tyyppinen toteutus",
@@ -61,7 +61,7 @@ public class AsiointitiliSendBatchDto implements Serializable, LinkOrAttachmentC
 
     @NotNull
     @ApiModelProperty(value = "Viestin yleiset personointikentät.", required = false, notes = "")
-    private Map<String, Object> templateReplacements = new HashMap<String, Object>();
+    private Map<String, Object> templateReplacements = new HashMap<>();
 
     @ApiModelProperty(value = "Viestin ylikirjoitettu otsikko. Oletuksena käytetään kirjepohjan sisältökenttää asiointitili_header.")
     private String overriddenHeader;
@@ -77,10 +77,10 @@ public class AsiointitiliSendBatchDto implements Serializable, LinkOrAttachmentC
     private boolean sendSms = false;
 
     @ApiModelProperty(value = "Kaikille vastaanottajille yhteiset linkit", required = false)
-    private List<AsiointitiliLinkDto> links = new ArrayList<AsiointitiliLinkDto>();
+    private List<AsiointitiliLinkDto> links = new ArrayList<>();
 
     @ApiModelProperty(value = "Kaikille vastaanottajille yhteiset liitteet", required = false)
-    private List<AsiointitiliAttachmentDto> attachments = new ArrayList<AsiointitiliAttachmentDto>();
+    private List<AsiointitiliAttachmentDto> attachments = new ArrayList<>();
 
     @NotNull
     @ApiModelProperty(value = "Tallentajan henkilö-oid", required = true)

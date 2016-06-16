@@ -69,7 +69,7 @@ public class OptionsResource implements Recoverer {
     private TarjontaComponent tarjontaComponent;
 
     @Value("#{optionsCacheConfig['timeoutMillis'] != null ? optionsCacheConfig['timeoutMillis'] : 86400000}")
-    private long optionsCacheValidMillis = 24*3600*1000l;
+    private long optionsCacheValidMillis = 24*3600* 1000L;
 
     @Override
     public Runnable getTask() {
@@ -81,7 +81,7 @@ public class OptionsResource implements Recoverer {
         };
     }
 
-    protected Map<CacheType, CacheEntry<?>> cache = new HashMap<CacheType, CacheEntry<?>>();
+    protected Map<CacheType, CacheEntry<?>> cache = new HashMap<>();
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -113,7 +113,7 @@ public class OptionsResource implements Recoverer {
             return entry.getData();
         } else {
             logger.info("Refreshing OptionsCache={}", type);
-            entry = new CacheEntry<T>(resolver.resolve());
+            entry = new CacheEntry<>(resolver.resolve());
             cache.put(type,entry);
             logger.info("Refreshed OptionsCache={}", type);
             return entry.getData();

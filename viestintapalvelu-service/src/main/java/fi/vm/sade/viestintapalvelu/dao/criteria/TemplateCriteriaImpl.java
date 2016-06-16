@@ -171,10 +171,7 @@ public class TemplateCriteriaImpl implements TemplateCriteria {
         if (type != null ? type != that.getType() : that.getType() != null) {
             return false;
         }
-        if (state != null ? state != that.getState() : that.getState() != null) {
-            return false;
-        }
-        return true;
+        return state != null ? state == that.getState() : that.getState() == null;
     }
 
     @Override

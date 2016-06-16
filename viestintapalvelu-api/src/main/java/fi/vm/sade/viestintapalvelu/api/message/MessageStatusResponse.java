@@ -34,7 +34,7 @@ public class MessageStatusResponse implements Serializable {
     private static final long serialVersionUID = 9067950805818927163L;
 
     public enum State {
-        PROCESSED, PROCESSING, ERROR;
+        PROCESSED, PROCESSING, ERROR
     }
     
     @ApiModelProperty(value = "tila")

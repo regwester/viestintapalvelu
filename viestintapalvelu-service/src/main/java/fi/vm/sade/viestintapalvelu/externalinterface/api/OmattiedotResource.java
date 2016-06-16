@@ -46,7 +46,7 @@ public interface OmattiedotResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @JsonView(JsonViews.Basic.class)
     @GET
-    public Henkilo currentHenkiloTiedot();
+    Henkilo currentHenkiloTiedot();
 
     /**
      * Hakee käyttäjän organisaatiotiedot
@@ -57,5 +57,5 @@ public interface OmattiedotResource {
     @JsonView(JsonViews.Basic.class)
     @Path("/organisaatiohenkilo")
     @GET
-    public List<OrganisaatioHenkilo> currentHenkiloOrganisaatioHenkiloTiedot();
+    List<OrganisaatioHenkilo> currentHenkiloOrganisaatioHenkiloTiedot();
 }

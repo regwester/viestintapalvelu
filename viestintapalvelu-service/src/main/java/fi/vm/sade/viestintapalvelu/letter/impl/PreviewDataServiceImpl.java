@@ -75,13 +75,11 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             String postalcode = addressline2.split(" ")[0];
             String city = addressline2.split(" ")[1];
             String region = "Dummy region";
-            String country = addressline3;
             String countrycode = cou.get(1);
-            AddressLabel addresslabel = new AddressLabel(firstname, lastname, addressline, null, null, postalcode, city, region, country,
+            AddressLabel addresslabel = new AddressLabel(firstname, lastname, addressline, null, null, postalcode, city, region, addressline3,
                     countrycode);
 
-            Letter letter = new Letter(addresslabel, null, null, getTemplateReplacements(template), "email@foo.bar");
-            return letter;
+            return new Letter(addresslabel, null, null, getTemplateReplacements(template), "email@foo.bar");
             // letter.setAddressLabel(addresslabel);
         } catch (Exception e) {
             log.error("Error reading preview data json", e);
@@ -107,7 +105,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         batch.setApplicationPeriod(applicationPeriod);
         batch.setTemplateName(template.getName());
         batch.setTemplateId(template.getId());
-        batch.setId(-1l);
+        batch.setId(-1L);
         LetterReplacement letterReplacement = getLetterReplacement(template);
         Set<LetterReplacement> letterReplacements = new HashSet<>();
         letterReplacements.add(letterReplacement);
@@ -163,7 +161,6 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             String postalcode = addressline2.split(" ")[0];
             String city = addressline2.split(" ")[1];
             String region = "Dummy region";
-            String country = addressline3;
             String countrycode = cou.get(1);
 
             address.setFirstName(firstname);
@@ -174,7 +171,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             address.setPostalCode(postalcode);
             address.setCity(city);
             address.setRegion(region);
-            address.setCountry(country);
+            address.setCountry(addressline3);
             address.setCountryCode(countrycode);
 
         } catch (IOException e) {
@@ -195,7 +192,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
 
     private LetterReceiverLetter getLetterReceiverLetter() {
         LetterReceiverLetter letter = new LetterReceiverLetter();
-        letter.setId(0l);
+        letter.setId(0L);
         letter.setLetter(getLetterContent());
         letter.setTimestamp(DateTime.now().toDate());
         return letter;
@@ -293,8 +290,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         sisaltoReplacement.setName("sisalto");
         batch.getLetterReplacements().add(sisaltoReplacement);
         batch.setBatchStatus(LetterBatch.Status.waiting_for_ipost_processing);
-        final String preview = letterEmailService.getPreview(batch, template, Optional.<String> absent());
-        return preview;
+        return letterEmailService.getPreview(batch, template, Optional.<String> absent());
     }
 
     private Map<String, Object> getTemplateReplacements(Template template) {

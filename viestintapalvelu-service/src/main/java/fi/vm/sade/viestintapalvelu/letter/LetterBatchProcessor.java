@@ -55,7 +55,7 @@ public class LetterBatchProcessor {
     @Value("#{poolSizes['threadsPerBatchJob'] != null ? poolSizes['threadsPerBatchJob'] : 4}")
     private int iPostZipProcessingJobThreadCount = 4;
 
-    private volatile Set<Job<?>> jobsBeingProcessed = new HashSet<Job<?>>();
+    private volatile Set<Job<?>> jobsBeingProcessed = new HashSet<>();
 
     @Autowired
     private LetterService letterService;
@@ -72,7 +72,7 @@ public class LetterBatchProcessor {
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
-        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<LetterReceiverProcessable>(new JobDescription<LetterReceiverProcessable>(job,
+        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<>(new JobDescription<>(job,
                 LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)), letterBatchJobThreadCount));
         return batchJobExecutorService.submit(batchJob);
     }
@@ -141,7 +141,7 @@ public class LetterBatchProcessor {
                         return Optional.absent();
                     }
                     logger.info("BatchID={}. Initializing {} IPosti zip generation for processing.", letterBatchId, splitted.getProcessables().size());
-                    JobDescription<IPostiProcessable> jobDescription = new JobDescription<IPostiProcessable>(job, splitted.getProcessables(),
+                    JobDescription<IPostiProcessable> jobDescription = new JobDescription<>(job, splitted.getProcessables(),
                             iPostZipProcessingJobThreadCount);
                     return Optional.of(jobDescription);
                 default:
@@ -269,7 +269,7 @@ public class LetterBatchProcessor {
         public BatchJob(JobDescription<T> jobDescription) {
             this.jobDescription = jobDescription;
             this.threads = Math.max(1, Math.min(jobDescription.getThreads(), jobDescription.getProcessables().size()));
-            this.unprocessed = new ConcurrentLinkedBlockingQueue<T>(jobDescription.getProcessables().size());
+            this.unprocessed = new ConcurrentLinkedBlockingQueue<>(jobDescription.getProcessables().size());
             this.unprocessed.addAll(jobDescription.getProcessables());
         }
 

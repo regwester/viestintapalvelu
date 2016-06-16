@@ -17,7 +17,6 @@
 package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Created by jonimake on 16.1.2015.

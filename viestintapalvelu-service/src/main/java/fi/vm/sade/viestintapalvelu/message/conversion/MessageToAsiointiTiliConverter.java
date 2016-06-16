@@ -47,7 +47,7 @@ public class MessageToAsiointiTiliConverter implements MessageDataConverter<Mess
         batch.setStoringOid(data.senderOid);
         List<Receiver> incompatibleReceivers = filterIncompatibleReceivers(data);
         batch.setMessages(convertMessages(filterCompatibleReceivers(data, incompatibleReceivers)));
-        return new ConvertedMessageWrapper<AsiointitiliSendBatchDto>(batch, incompatibleReceivers);
+        return new ConvertedMessageWrapper<>(batch, incompatibleReceivers);
     }
 
     private List<Receiver> filterCompatibleReceivers(MessageData data, List<Receiver> incompatibleReceivers) {

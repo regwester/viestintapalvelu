@@ -22,5 +22,5 @@ package fi.vm.sade.viestintapalvelu.model.types;
  */
 public enum ContentType {
     plain,
-    html;
+    html
 }

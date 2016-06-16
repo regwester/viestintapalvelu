@@ -25,7 +25,6 @@ import javax.persistence.TypedQuery;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.hibernate.internal.util.StringHelper;
-import org.jgroups.util.Tuple;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
@@ -147,7 +146,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public List<LetterBatch> findLetterBatchesByOrganizationOid(List<String> organizationOIDs, PagingAndSortingDTO pagingAndSorting) {
         if (organizationOIDs.isEmpty()) {
-            return new ArrayList<LetterBatch>();
+            return new ArrayList<>();
         }
 
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
@@ -193,11 +192,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public Long findNumberOfLetterBatches(List<String> oids) {
         if (oids.isEmpty()) {
-            return 0l;
+            return 0L;
         }
         EntityManager em = getEntityManager();
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         String findNumberOfLetterBatches = "SELECT COUNT(*) FROM LetterBatch a WHERE " + splittedInExpression(oids, "a.organizationOid", params, "_oids");
         TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
         for (Map.Entry<String, Object> kv : params.entrySet()) {
@@ -218,7 +217,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             // can not get count effectively (runtime of receiver join
             // explodes), just tell if we got more than maxCount
             return (long) q
-                    .limit(maxCount + 1l)
+                    .limit(maxCount + 1L)
                     .orderBy(letterBatch.timestamp.desc())
                     .list(letterReportQuery.getTarget() == LetterReportQueryDTO.SearchTarget.receiver ? new Expression<?>[] { receiver.letterReceiverLetter.id,
                             letterBatch.timestamp } : new Expression<?>[] { letterBatch.timestamp }).size();
@@ -288,7 +287,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting, QLetterReceiverAddress receiverAddress) {
-        PathBuilder<LetterBatch> pb = new PathBuilder<LetterBatch>(LetterBatch.class, "letterBatch");
+        PathBuilder<LetterBatch> pb = new PathBuilder<>(LetterBatch.class, "letterBatch");
 
         if (pagingAndSorting.getSortedBy() != null && !pagingAndSorting.getSortedBy().isEmpty()) {
             if (receiverAddress != null && "receiverName".equals(pagingAndSorting.getSortedBy())) {

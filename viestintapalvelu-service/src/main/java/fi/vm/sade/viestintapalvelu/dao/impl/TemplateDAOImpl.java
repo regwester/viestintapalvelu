@@ -157,7 +157,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
     }
     
     private List<String> resultsToNameLanguage(List<Object[]> qResult) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (Object[] o : qResult) {
             StringBuilder current = new StringBuilder();
             for (Object ob : o) {

@@ -54,7 +54,7 @@ public class ContentStructureSaveDto implements Serializable, TypedContentStruct
     @NotNull @Size(min=1) @Valid
     @ApiModelProperty("Sisältää tämän rakenteen sisällöt ja liitteet halutussa järjestyksessä")
     @DtoSkipped
-    private List<ContentStructureContentSaveDto> contents = new ArrayList<ContentStructureContentSaveDto>();
+    private List<ContentStructureContentSaveDto> contents = new ArrayList<>();
 
     @Override
     public ContentStructureType getType() {

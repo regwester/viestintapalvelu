@@ -25,7 +25,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.Response.Status;
 
 import com.google.common.base.Supplier;
 import org.slf4j.Logger;
@@ -93,12 +92,12 @@ public class IPostiResource {
     @ApiResponses(@ApiResponse(code = 400, message = UnSentItemsResponse400))
     public List<Map<String, String>> unsentIPostiItems(@Context HttpServletRequest request) {
 
-        List<Map<String, String>> result = new ArrayList<Map<String, String>>();
+        List<Map<String, String>> result = new ArrayList<>();
         List<IPosti> unsent = iPostiService.findUnsent();
 
         // Prosessoidaan lista IPosteja
         for (IPosti ip : unsent) {
-            Map<String, String> item = new HashMap<String, String>();
+            Map<String, String> item = new HashMap<>();
             item.put("id", "" + ip.getId());
             item.put("date", "" + ip.getCreateDate());
             item.put("ipostiId", String.valueOf(ip.getLetterBatch().getId()));

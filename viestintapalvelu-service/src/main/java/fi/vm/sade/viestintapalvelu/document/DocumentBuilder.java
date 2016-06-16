@@ -122,7 +122,7 @@ public class DocumentBuilder {
         return renderer;
     }
 
-    private byte[] readTemplate(String templateName) throws FileNotFoundException, IOException {
+    private byte[] readTemplate(String templateName) throws IOException {
         InputStream in = getClass().getResourceAsStream(templateName);
         if (in == null) {
             throw new FileNotFoundException("Template " + templateName + " not found");

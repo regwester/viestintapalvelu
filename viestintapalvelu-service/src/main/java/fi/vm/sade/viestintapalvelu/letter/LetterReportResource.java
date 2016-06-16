@@ -81,7 +81,7 @@ public class LetterReportResource extends AsynchronousResource {
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
     private LoadingCache<String, List<OrganizationDTO>> currentUserOrganisaatiosCache = CacheBuilder.newBuilder().maximumSize(100)
-            .expireAfterAccess(3l, TimeUnit.MINUTES).build(new CacheLoader<String, List<OrganizationDTO>>() {
+            .expireAfterAccess(3L, TimeUnit.MINUTES).build(new CacheLoader<String, List<OrganizationDTO>>() {
                 public List<OrganizationDTO> load(String oid) throws Exception {
                     return letterReportService.getUserOrganizations();
                 }

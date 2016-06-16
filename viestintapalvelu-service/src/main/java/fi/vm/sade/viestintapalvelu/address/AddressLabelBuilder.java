@@ -69,7 +69,7 @@ public class AddressLabelBuilder {
 
     private Map<String, Object> createDataContext(List<AddressLabel> addressLabels,
             final AddressLabelDecoratorBuilder builder) {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("labelList", Lists.transform(addressLabels, new Function<AddressLabel, AddressLabelDecorator>() {
             public AddressLabelDecorator apply(AddressLabel label) {
                 return builder.newAddressLabelDecorator(label);

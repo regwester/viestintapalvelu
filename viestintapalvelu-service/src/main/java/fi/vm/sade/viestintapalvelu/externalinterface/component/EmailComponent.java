@@ -70,7 +70,6 @@ public class EmailComponent {
     }
 
     private boolean checkResponse(Response response) {
-        // if response is ok..
         LOGGER.debug("Got email response: " + response.toString() + " " + response.getStatus());
         return true;
     }

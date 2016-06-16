@@ -32,9 +32,6 @@ import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuRDTO;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeDTO;
 
 /**
  * User: ratamaa
@@ -60,7 +57,7 @@ public class TarjontaComponent {
         try {
             final HakuRDTO<List<HakuDetailsDto>> hakus1 = tarjontaHakuResourceClient.hakus(Optional.fromNullable(countLimit).or(MAX_COUNT));
             List<HakuDetailsDto> hakus = hakus1.getResult();
-            List<HakuDetailsDto> hakuDetails = new ArrayList<HakuDetailsDto>();
+            List<HakuDetailsDto> hakuDetails = new ArrayList<>();
             for (HakuDetailsDto haku : hakus) {
                 if (!DELETED_STATE.equals(haku.getTila())) {
                     hakuDetails.add(haku);
@@ -90,8 +87,7 @@ public class TarjontaComponent {
         try {
             final HakuRDTO<HakutuloksetRDTO<HakukohdeTuloksetRDTO>> hakukohteetByHakuOid = tarjontaHakuResourceClient.getHakukohteetByHakuOid(applicationPeriodOid);
             final HakutuloksetRDTO<HakukohdeTuloksetRDTO> result = hakukohteetByHakuOid.getResult();
-            final List<HakukohdeTuloksetRDTO> tulokset = result.getTulokset();
-            return tulokset;
+            return result.getTulokset();
         } catch (Exception e) {
             log.error("Error getting hakukohteet by organization oids", e);
             throw new ExternalInterfaceException(e);

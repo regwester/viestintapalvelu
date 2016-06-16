@@ -40,26 +40,21 @@ public class IPostiUpload {
     private String directory;
 
     public boolean upload(byte[] zipBytes, String filename) throws Exception {
-        try {
-            JSch jsch = new JSch();
-            Session session = jsch.getSession(username, hostname, Integer.parseInt(port));
-            session.setPassword(password);
-            java.util.Properties config = new java.util.Properties();
-            config.put("StrictHostKeyChecking", "no");
-            session.setConfig(config);
-            session.connect();
-            Channel channel = session.openChannel("sftp");
-            channel.connect();
-            ChannelSftp channelSftp = (ChannelSftp) channel;
-            channelSftp.cd(directory);
-
-            channelSftp.put(new ByteArrayInputStream(zipBytes), filename + ".temppi");
-            channelSftp.rename(filename + ".temppi", filename + ".ok");
-            channelSftp.exit();
-            session.disconnect();
-        } catch (Exception ex) {
-            throw (ex);
-        }
+        JSch jsch = new JSch();
+        Session session = jsch.getSession(username, hostname, Integer.parseInt(port));
+        session.setPassword(password);
+        java.util.Properties config = new java.util.Properties();
+        config.put("StrictHostKeyChecking", "no");
+        session.setConfig(config);
+        session.connect();
+        Channel channel = session.openChannel("sftp");
+        channel.connect();
+        ChannelSftp channelSftp = (ChannelSftp) channel;
+        channelSftp.cd(directory);
+        channelSftp.put(new ByteArrayInputStream(zipBytes), filename + ".temppi");
+        channelSftp.rename(filename + ".temppi", filename + ".ok");
+        channelSftp.exit();
+        session.disconnect();
         return true;
     }
 

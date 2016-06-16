@@ -76,7 +76,7 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
     private List<Template> filterCloseds(List<Template> closeds, final List<TemplateInfo> publisheds, final List<TemplateInfo> drafts) {
         @SuppressWarnings("unchecked")
         final List<TemplateInfo> pubDrafts = ListUtils.union(publisheds, drafts);
-        return new ArrayList<Template>(Collections2.filter(closeds, new Predicate<Template>() {
+        return new ArrayList<>(Collections2.filter(closeds, new Predicate<Template>() {
 
             @Override
             public boolean apply(final Template template) {
@@ -104,7 +104,7 @@ public class TemplatesByApplicationPeriodConverterImpl implements TemplatesByApp
     }
 
     private List<Template> filterLatests(final List<Template> templates) {
-        return new ArrayList<Template>(Collections2.filter(templates, new Predicate<Template>() {
+        return new ArrayList<>(Collections2.filter(templates, new Predicate<Template>() {
 
             @Override
             public boolean apply(final Template template) {
