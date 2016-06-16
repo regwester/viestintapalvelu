@@ -18,10 +18,7 @@ package fi.vm.sade.ajastuspalvelu.service.external.email;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
@@ -82,7 +79,7 @@ public class EmailServiceImpl implements EmailService {
         emailData.getEmail().setSender(toString(details.getReplacements().get("sender")));
         emailData.getEmail().setSenderOid(toString(details.getReplacements().get("senderOid")));
         emailData.getEmail().setOrganizationOid(toString(details.getReplacements().get("organizationOid")));
-        List<SourceRegister> registers = new ArrayList<SourceRegister>();
+        List<SourceRegister> registers = new ArrayList<>();
         if (details.getReplacements().get("sourceRegister") != null
                  && details.getReplacements().get("sourceRegister") instanceof List) {
             for (Object val : (List) details.getReplacements().get("sourceRegister")) {
@@ -99,7 +96,7 @@ public class EmailServiceImpl implements EmailService {
         if (!registers.isEmpty()) {
             emailData.getEmail().setSourceRegister(registers);
         } else {
-            emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));
+            emailData.getEmail().setSourceRegister(Collections.singletonList(new SourceRegister("opintopolku")));
         }
         TemplateDTO templateDTO = getTemplate(emailData);
 

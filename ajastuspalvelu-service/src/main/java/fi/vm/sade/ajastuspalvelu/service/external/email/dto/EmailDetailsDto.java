@@ -29,8 +29,8 @@ import java.util.Map;
 public class EmailDetailsDto {
     private String templateName;
     private String hakuOid;
-    private Map<String,Object> replacements = new HashMap<String, Object>();
-    private List<EmailReceiver> receivers = new ArrayList<EmailReceiver>();
+    private Map<String,Object> replacements = new HashMap<>();
+    private List<EmailReceiver> receivers = new ArrayList<>();
 
     public String getTemplateName() {
         return templateName;

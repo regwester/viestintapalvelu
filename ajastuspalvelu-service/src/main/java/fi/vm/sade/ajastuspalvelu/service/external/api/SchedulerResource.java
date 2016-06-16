@@ -18,7 +18,6 @@ package fi.vm.sade.ajastuspalvelu.service.external.api;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import fi.vm.sade.ajastuspalvelu.api.dto.SchedulerResponse;
 

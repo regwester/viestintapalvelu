@@ -83,7 +83,7 @@ public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseI
     }
 
     private Map<String, String> provideTicketHeaders(String serviceUrl, String username, String password) {
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         String casHeader = CasClient.getTicket(casService + "/v1/tickets", username, password, serviceUrl);
         headers.put(CAS_HEADER, casHeader);
         return headers;

@@ -32,5 +32,5 @@ public interface ScheduledTaskExecutorService {
      * @param context
      */
     void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context)
-            throws RetryException, Exception;
+            throws Exception;
 }
