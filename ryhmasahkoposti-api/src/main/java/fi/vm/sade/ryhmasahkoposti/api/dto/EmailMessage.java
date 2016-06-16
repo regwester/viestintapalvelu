@@ -39,8 +39,8 @@ public class EmailMessage implements AttachmentContainer {
 
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
-    private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
-    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
+    private List<EmailAttachment> attachments = new LinkedList<>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<>();
     private boolean isValid = true;
     private String templateName;
     private String templateId;
@@ -148,7 +148,7 @@ public class EmailMessage implements AttachmentContainer {
 
     public void addEmailAttachement(EmailAttachment attachment) {
         if (this.attachments == null) {
-            this.attachments = new ArrayList<EmailAttachment>();
+            this.attachments = new ArrayList<>();
         }
         this.attachments.add(attachment);
     }
@@ -165,7 +165,7 @@ public class EmailMessage implements AttachmentContainer {
     @Override
     public void addAttachInfo(AttachmentResponse attachInfo) {
         if (this.attachInfo == null) {
-            this.attachInfo = new LinkedList<AttachmentResponse>();
+            this.attachInfo = new LinkedList<>();
         }
         this.attachInfo.add(attachInfo);
     }

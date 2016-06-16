@@ -1,6 +1,5 @@
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import org.apache.commons.lang.builder.ToStringBuilder;
 import org.joda.time.DateTime;

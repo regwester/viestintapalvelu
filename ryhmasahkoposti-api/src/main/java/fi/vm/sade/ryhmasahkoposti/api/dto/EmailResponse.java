@@ -17,8 +17,8 @@ package fi.vm.sade.ryhmasahkoposti.api.dto;
 
 public class EmailResponse {
     private EmailRecipient header;
-    private String status;
-    private String subject;
+    private final String status;
+    private final String subject;
     private String nbrOfAttachements;
 
     public EmailResponse() {

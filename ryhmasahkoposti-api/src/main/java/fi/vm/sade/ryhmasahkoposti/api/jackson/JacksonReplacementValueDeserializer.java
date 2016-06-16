@@ -29,7 +29,7 @@ import java.util.List;
 public class JacksonReplacementValueDeserializer extends JsonDeserializer<Object> {
 
     @Override
-    public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         try {
             return ctxt.readValue(jp, List.class);
         } catch (Exception e) {

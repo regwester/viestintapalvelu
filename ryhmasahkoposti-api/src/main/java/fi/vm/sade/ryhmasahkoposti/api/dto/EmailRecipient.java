@@ -36,8 +36,8 @@ public class EmailRecipient implements AttachmentContainer {
      * List of recipient replacements
      */
     private List<ReportedRecipientReplacementDTO> recipientReplacements;
-    private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
-    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
+    private List<EmailAttachment> attachments = new LinkedList<>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<>();
 
     public void setOid(String oid) {
         this.oid = oid;
@@ -126,7 +126,7 @@ public class EmailRecipient implements AttachmentContainer {
     @Override
     public void addAttachInfo(AttachmentResponse attachInfo) {
         if (this.attachInfo == null) {
-            this.attachInfo = new ArrayList<AttachmentResponse>();
+            this.attachInfo = new ArrayList<>();
         }
         this.attachInfo.add(attachInfo);
     }
