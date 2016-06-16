@@ -22,16 +22,9 @@ public class ExternalInterfaceException extends AbstractRuntimeException {
     public ExternalInterfaceException(String message) {
         super(message);
     }
-    
-    public ExternalInterfaceException(Throwable throwable) {
-        super(throwable);
-    }
-    
+
     public ExternalInterfaceException(String message, Throwable throwable) {
         super(message, throwable);
     }
-    
-    public ExternalInterfaceException(String message, Throwable throwable, String errorId) {
-        super(message, throwable, errorId);
-    }
+
 }

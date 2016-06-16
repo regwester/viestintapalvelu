@@ -68,35 +68,4 @@ public abstract class AbstractRuntimeException extends RuntimeException {
         }
     }
 
-    public String getErrorID() {
-        return errorID;
-    }
-
-    public void setErrorID(String errorID) {
-        this.errorID = errorID;
-    }
-
-    public String getOrginalException() {
-        return orginalException;
-    }
-    
-    public void setOrginalException(String orginalException) {
-        this.orginalException = orginalException;
-    }
-    
-    public String getOrginalExceptionMessage() {
-        return orginalExceptionMessage;
-    }
-    
-    public void setOrginalExceptionMessage(String orginalExceptionMessage) {
-        this.orginalExceptionMessage = orginalExceptionMessage;
-    }
-
-    public String getNestedStackTrace() {
-        return nestedStackTrace;
-    }
-
-    public void setNestedStackTrace(String nestedStackTrace) {
-        this.nestedStackTrace = nestedStackTrace;
-    }
 }
