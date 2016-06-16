@@ -23,13 +23,13 @@ package fi.vm.sade.ryhmasahkoposti.api.constants;
  */
 public interface SecurityConstants {
 	// Autentikointi  
-	public static final String USER_IS_AUTHENTICATED = "isAuthenticated()";
-	public static final String ALLOW_ALL = "permitAll";
+	String USER_IS_AUTHENTICATED = "isAuthenticated()";
+	String ALLOW_ALL = "permitAll";
 	// Käyttäjäroolit
-	public static final String SEND = "hasRole('ROLE_APP_RYHMASAHKOPOSTI_SEND')";
-	public static final String READ = "hasRole('ROLE_APP_RYHMASAHKOPOSTI_VIEW')";
+	String SEND = "hasRole('ROLE_APP_RYHMASAHKOPOSTI_SEND')";
+	String READ = "hasRole('ROLE_APP_RYHMASAHKOPOSTI_VIEW')";
     // Järjestelmäkäyttäjälle takaisinkutsurajapintaan ryhmäsähköpostista viestintäpalveluun liitteiden lataamiseksi:
-    public static final String SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_SYSTEM_ATTACHMENT_DOWNLOAD')";
+	String SYSTEM_ACCOUNT_ATTACHMENT_DOWNLOAD = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_SYSTEM_ATTACHMENT_DOWNLOAD')";
 
-    public static final String ASIOINTITILI = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_ASIOINTITILICRUD')";
+    String ASIOINTITILI = "hasRole('ROLE_APP_ASIAKIRJAPALVELU_ASIOINTITILICRUD')";
 }

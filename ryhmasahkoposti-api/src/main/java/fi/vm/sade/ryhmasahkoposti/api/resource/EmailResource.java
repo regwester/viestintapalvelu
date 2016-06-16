@@ -73,7 +73,7 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lisää käyttäjän valitsemat liitetiedostot tietokantaan", notes = "Käytäjän valitsemat liitetiedosto pitää olla multipart-tyyppisiä", response = String.class)
     @ApiResponses({ @ApiResponse(code = 400, message = "Not a multipart request") })
-    public String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException, URISyntaxException,
+    String addAttachment(@Context HttpServletRequest request, @Context HttpServletResponse response) throws IOException, URISyntaxException,
             ServletException;
 
     /**
@@ -87,7 +87,7 @@ public interface EmailResource {
     @Path("/ok")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa OK-vastauksen käyttöliittymälle")
-    public Response ok();
+    Response ok();
 
     /**
      * Lähettää ryhmäsähköpostin vastaanottajille ilman alaviitettä
@@ -102,7 +102,7 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
-    public Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
+    Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
 
     @POST
@@ -110,7 +110,7 @@ public interface EmailResource {
     @Produces("application/json")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
     @Path("/firewall")
-    public Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
+    Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
 
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot
@@ -125,7 +125,7 @@ public interface EmailResource {
     @Path("/status")
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa halutun ryhmäsähköpostin lähetyksen tilannetiedot", response = SendingStatusDTO.class)
-    public Response getStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId) throws Exception;
+    Response getStatus(@ApiParam(value = "Ryhmäsähköpostin avain", required = true) String sendId) throws Exception;
 
     /**
      * Pyytää tiedot raportoittavista ryhmäsähköposteista
@@ -141,7 +141,7 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Palauttaa lähetetyn ryhmäsähköpostin raportin", response = ReportedMessageDTO.class)
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirhe") })
-    public Response getResult(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) String sendId);
+    Response getResult(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true) String sendId);
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
@@ -149,13 +149,13 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.READ)
     @ApiOperation(value = "Palauttaa sähköpostien lukumäärän")
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error") })
-    public Response getCount() throws Exception;
+    Response getCount() throws Exception;
 
     @POST
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON)
     @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
     @Path("/preview")
-    public Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
+    Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
 }
