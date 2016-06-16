@@ -54,7 +54,7 @@ public class ReportedRecipientReplacementConverter {
                                                       List<ReportedRecipientReplacementDTO> replacements)
             throws IOException {
 
-        List<ReportedRecipientReplacement> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacement>();
+        List<ReportedRecipientReplacement> reportedRecipientReplacements = new ArrayList<>();
 
         ObjectMapper mapper = objectMapperProvider.getContext(ReportedRecipientReplacementConverter.class);
 
@@ -89,7 +89,7 @@ public class ReportedRecipientReplacementConverter {
      */
     public List<ReportedRecipientReplacementDTO> convertDTO(List<ReportedRecipientReplacement> replacements)
             throws IOException {
-        List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacementDTO>();
+        List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<>();
 
         ObjectMapper mapper = objectMapperProvider.getContext(ReportedRecipientReplacementConverter.class);
 

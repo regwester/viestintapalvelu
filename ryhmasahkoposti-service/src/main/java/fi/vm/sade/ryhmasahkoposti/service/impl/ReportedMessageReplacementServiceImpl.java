@@ -54,7 +54,7 @@ public class ReportedMessageReplacementServiceImpl implements ReportedMessageRep
     @Override
     public List<ReportedMessageReplacement> saveReportedMessageReplacements(List<ReportedMessageReplacement> reportedMessageReplacements) {
 
-        List<ReportedMessageReplacement> result = new ArrayList<ReportedMessageReplacement>();
+        List<ReportedMessageReplacement> result = new ArrayList<>();
         if (reportedMessageReplacements != null) {
             for (ReportedMessageReplacement messageReplacement : reportedMessageReplacements) {
                 reportedMessageReplacementDAO.insert(messageReplacement);

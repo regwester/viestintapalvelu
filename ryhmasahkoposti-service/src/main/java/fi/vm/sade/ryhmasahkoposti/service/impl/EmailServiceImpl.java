@@ -98,7 +98,7 @@ public class EmailServiceImpl implements EmailService {
         @Override
         protected boolean removeEldestEntry(Map.Entry<Long, EmailMessageDTO> eldest) {
             return size() > MAX_CACHE_ENTRIES;
-        };
+        }
     };
 
     @Override
@@ -253,9 +253,9 @@ public class EmailServiceImpl implements EmailService {
     private void cleanupEmailSendQueueAfterHandled(EmailSendQueState state) {
         // We don't want to store beans nor expect them to implement hashCode/equals, but each have an unique class:
         Map<Class<? extends EmailAttachmentDownloader>, EmailAttachmentDownloader> downloaders
-                = new HashMap<Class<? extends EmailAttachmentDownloader>, EmailAttachmentDownloader>();
+                = new HashMap<>();
         Map<Class<? extends EmailAttachmentDownloader>, List<String>> urisByDownloaders
-                = new HashMap<Class<? extends EmailAttachmentDownloader>, List<String>>();
+                = new HashMap<>();
         for (String uri : state.getDownloadedAttachmentUris()) {
             EmailAttachmentDownloader downloader = downloaderForUri(uri);
             if (addToMappedList(urisByDownloaders, downloader.getClass(), uri)) {

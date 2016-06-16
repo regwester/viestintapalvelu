@@ -40,17 +40,17 @@ public interface TemplateResource {
     @GET
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/{applicationPeriod}/getTemplateContent")
-    public TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
-            @PathParam("type") String type, @PathParam("applicationPeriod") String applicationPeriod) throws IOException, DocumentException;
+    TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
+                                   @PathParam("type") String type, @PathParam("applicationPeriod") String applicationPeriod) throws IOException, DocumentException;
 
     @GET
     @Produces("application/json")
     @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
-    public TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
-            @PathParam("type") String type) throws IOException, DocumentException;
+    TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
+                                   @PathParam("type") String type) throws IOException, DocumentException;
 
     @GET
     @Path("/{templateId}/{type}/getTemplateContent")
     @Produces("application/json")
-    public TemplateDTO getTemplateByID(@PathParam("templateId") String templateId, @PathParam("type") String type);
+    TemplateDTO getTemplateByID(@PathParam("templateId") String templateId, @PathParam("type") String type);
 }

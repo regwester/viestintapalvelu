@@ -49,7 +49,7 @@ public class SendQueue extends BaseEntity {
     private Date finishedAt;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "queue")
-    private Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>(0);
+    private Set<ReportedRecipient> recipients = new HashSet<>(0);
 
     public Date getCreatedAt() {
         return createdAt;

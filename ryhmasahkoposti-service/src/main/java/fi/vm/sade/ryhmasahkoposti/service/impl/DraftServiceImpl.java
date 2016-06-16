@@ -52,7 +52,7 @@ public class DraftServiceImpl implements DraftService {
     @Override
     public List<Draft> getAllDrafts(String oid) {
         List<DraftModel> draftModels = draftDao.getAllDrafts(oid);
-        List<Draft> drafts = new ArrayList<Draft>();
+        List<Draft> drafts = new ArrayList<>();
         for(DraftModel draftModel : draftModels) {
             drafts.add(draftConverter.convert(draftModel));
         }
@@ -66,7 +66,7 @@ public class DraftServiceImpl implements DraftService {
 
     @Override
     @Transactional
-    public void deleteDraft(Long id, String oid) throws Exception {
+    public void deleteDraft(Long id, String oid) {
         draftDao.deleteDraft(id, oid);
     }
 

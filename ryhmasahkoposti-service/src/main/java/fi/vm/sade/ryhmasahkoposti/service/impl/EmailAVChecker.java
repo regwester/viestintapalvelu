@@ -172,7 +172,7 @@ public class EmailAVChecker {
      * 
      * @throws MessagingException
      */
-    private boolean isInfected(InputStream data) throws IOException, MessagingException {
+    private boolean isInfected(InputStream data) throws IOException {
 
         String response = getAVResponse(CMD_INSTREAM, data);
         boolean isInfected = !(response != null && response.trim().equals(RESULT_CLEAN));
@@ -221,7 +221,7 @@ public class EmailAVChecker {
                 dos.flush();
             }
 
-            int read = -1;
+            int read;
             responseStream = socket.getInputStream();
             byte[] buffer = new byte[BUFFER_SIZE];
             while (true) {

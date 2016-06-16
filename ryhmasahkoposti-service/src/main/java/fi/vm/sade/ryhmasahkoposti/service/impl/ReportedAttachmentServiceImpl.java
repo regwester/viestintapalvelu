@@ -39,13 +39,12 @@ public class ReportedAttachmentServiceImpl implements ReportedAttachmentService 
 
     @Override
     public ReportedAttachment getReportedAttachment(Long attachmentID) {
-        ReportedAttachment reportedAttachment = reportedAttachmentDAO.read(attachmentID);
-        return reportedAttachment;
+        return reportedAttachmentDAO.read(attachmentID);
     }
 
     @Override
     public List<ReportedAttachment> getReportedAttachments(Set<ReportedMessageAttachment> reportedMessageAttachments) {
-        List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+        List<ReportedAttachment> reportedAttachments = new ArrayList<>();
 
         for (ReportedMessageAttachment reportedMessageAttachment : reportedMessageAttachments) {
             ReportedAttachment liite = reportedAttachmentDAO.read(reportedMessageAttachment.getReportedAttachmentID());
@@ -57,7 +56,7 @@ public class ReportedAttachmentServiceImpl implements ReportedAttachmentService 
 
     @Override
     public List<ReportedAttachment> getReportedAttachments(List<AttachmentResponse> attachmentResponses) {
-        List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+        List<ReportedAttachment> reportedAttachments = new ArrayList<>();
 
         for (AttachmentResponse attachmentResponse : attachmentResponses) {
             Long liitteenID = new Long(attachmentResponse.getUuid());

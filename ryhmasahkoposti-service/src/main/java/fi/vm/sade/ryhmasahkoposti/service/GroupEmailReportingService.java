@@ -186,7 +186,7 @@ public interface GroupEmailReportingService {
      * @param attachmentID Liitetiedoston tunniste
      * @return Liitteen tiedot
      */
-    ReportedAttachment getAttachment(Long attachmentID) throws IOException;
+    ReportedAttachment getAttachment(Long attachmentID);
 
     /**
      * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten

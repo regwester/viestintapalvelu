@@ -40,7 +40,7 @@ public class DraftConverter {
     
     public DraftModel convert(Draft draft) {
         List<ReportedAttachment> raList = reportedAttachmentService.getReportedAttachments(draft.getAttachInfo());
-        Set<ReportedAttachment> raSet = new HashSet<ReportedAttachment>(raList);
+        Set<ReportedAttachment> raSet = new HashSet<>(raList);
         return new DraftModel.Builder()
         .replyTo(draft.getReplyTo())
         .sender(draft.getSender())
@@ -57,7 +57,7 @@ public class DraftConverter {
     
     public Draft convert(DraftModel draftModel) {
         Set<ReportedAttachment> raSet = draftModel.getAttachments();
-        List<AttachmentResponse> eaList = new ArrayList<AttachmentResponse>();
+        List<AttachmentResponse> eaList = new ArrayList<>();
         for(ReportedAttachment a : raSet) {
             AttachmentResponse result = new AttachmentResponse();
             result.setUuid(a.getId().toString());

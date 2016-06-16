@@ -43,7 +43,7 @@ public class EmailRecipientDTOConverter {
     }
 
     public List<EmailRecipientDTO> convert(List<ReportedRecipient> reportedRecipients) {
-        List<EmailRecipientDTO> emailRecipientDTOs = new ArrayList<EmailRecipientDTO>();
+        List<EmailRecipientDTO> emailRecipientDTOs = new ArrayList<>();
 
         for (ReportedRecipient reportedRecipient : reportedRecipients) {
             emailRecipientDTOs.add(convert(reportedRecipient));

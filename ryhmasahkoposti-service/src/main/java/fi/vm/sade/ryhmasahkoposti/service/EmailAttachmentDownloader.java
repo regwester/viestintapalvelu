@@ -59,7 +59,7 @@ public interface EmailAttachmentDownloader {
      * @throws Exception if problem encountered when trying to download the attachment, e.g. an IOException
      * or a malformed URI
      */
-    EmailAttachment download(String uri) throws Exception;
+    EmailAttachment download(String uri);
 
     /**
      * No-throw..

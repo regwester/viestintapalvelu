@@ -21,11 +21,11 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.Draft;
 
 public interface DraftService {
     
-    public Draft getDraft(Long id, String userOid);
-    public List<Draft> getAllDrafts(String userOid);
-    public Long getCount(String userOid);
-    public void deleteDraft(Long id, String userOid) throws Exception;
-    public Long saveDraft(Draft draft);
-    public void updateDraft(Long id, String userOid, Draft draft);
+    Draft getDraft(Long id, String userOid);
+    List<Draft> getAllDrafts(String userOid);
+    Long getCount(String userOid);
+    void deleteDraft(Long id, String userOid);
+    Long saveDraft(Draft draft);
+    void updateDraft(Long id, String userOid, Draft draft);
 
 }

@@ -30,7 +30,7 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class OrganisaatioHierarchyResultsDto implements Serializable {
     private static final long serialVersionUID = 1188550443593004724L;
 
-    private List<OrganisaatioHierarchyDto> organisaatiot = new ArrayList<OrganisaatioHierarchyDto>();
+    private List<OrganisaatioHierarchyDto> organisaatiot = new ArrayList<>();
 
     public List<OrganisaatioHierarchyDto> getOrganisaatiot() {
         return organisaatiot;

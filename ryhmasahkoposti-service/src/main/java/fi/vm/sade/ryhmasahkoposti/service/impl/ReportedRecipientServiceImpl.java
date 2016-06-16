@@ -86,23 +86,23 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
         Long nbrOfSuccessful = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, "1");
         if (nbrOfSuccessful != null) {
-            nbrOfSuccessfulAndFailedAndBounced += nbrOfSuccessful.longValue();
+            nbrOfSuccessfulAndFailedAndBounced += nbrOfSuccessful;
         }
         sendingStatus.setNumberOfSuccessfulSendings(nbrOfSuccessful);
 
         Long nbrOfFailed = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, "0");
         if (nbrOfFailed != null) {
-            nbrOfSuccessfulAndFailedAndBounced += nbrOfFailed.longValue();
+            nbrOfSuccessfulAndFailedAndBounced += nbrOfFailed;
         }
         sendingStatus.setNumberOfFailedSendings(nbrOfFailed);
 
         Long nbrOfBounced = reportedRecipientDAO.findNumberOfRecipientsByMessageIDAndSendingStatus(messageID, "2");
         if (nbrOfBounced != null) {
-            nbrOfSuccessfulAndFailedAndBounced += nbrOfBounced.longValue();
+            nbrOfSuccessfulAndFailedAndBounced += nbrOfBounced;
         }
         sendingStatus.setNumberOfBouncedSendings(nbrOfBounced);
 
-        if (nbrOfSuccessfulAndFailedAndBounced == nbrOfRecipients.longValue()) {
+        if (nbrOfSuccessfulAndFailedAndBounced == nbrOfRecipients) {
             Date latestSendingEnded = reportedRecipientDAO.findMaxValueOfSendingEndedByMessageID(messageID);
             sendingStatus.setSendingEnded(latestSendingEnded);
         }
@@ -115,7 +115,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
         List<ReportedRecipient> reportedRecipients = reportedRecipientDAO.findUnhandled();
 
         if (reportedRecipients == null || reportedRecipients.isEmpty()) {
-            return new ArrayList<ReportedRecipient>();
+            return new ArrayList<>();
         }
 
         if (listSize > reportedRecipients.size()) {

@@ -135,7 +135,7 @@ public class TemplateBuilder {
         }
 
         // Create a list to sort
-        List<TemplateContentDTO> contentList = new ArrayList<TemplateContentDTO>();
+        List<TemplateContentDTO> contentList = new ArrayList<>();
         for (TemplateContentDTO templateContent : template.getContents()) {
             contentList.add(templateContent);
         }
@@ -144,7 +144,7 @@ public class TemplateBuilder {
         Collections.sort(contentList);
 
         // Create page
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (TemplateContentDTO tc : contentList) {
 //            String page = createPage(template, emailData, tc.getContent().getBytes());
             result.append(tc.getContent());
@@ -199,7 +199,7 @@ public class TemplateBuilder {
             }
 
             if (message.getSourceRegister() != null) {
-                Map<String, Boolean> sourceRegisters = new HashMap<String, Boolean>();
+                Map<String, Boolean> sourceRegisters = new HashMap<>();
 
                 for (SourceRegister sourceRegister : message.getSourceRegister()) {
                     sourceRegisters.put(sourceRegister.getName(), true);
@@ -225,7 +225,7 @@ public class TemplateBuilder {
      * @return
      */
     public String buildTempleMessage(String message, List<ReplacementDTO> messageReplacements, List<ReportedRecipientReplacementDTO> recipientReplacements) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
 
         // Message replacements exist
         if (messageReplacements != null) {
@@ -265,7 +265,7 @@ public class TemplateBuilder {
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> createDataContext(TemplateDTO template, EmailRecipientMessage message) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (ReplacementDTO r : template.getReplacements()) {
             replacements.put(r.getName(), r.getDefaultValue());
         }
@@ -287,7 +287,7 @@ public class TemplateBuilder {
      * @return
      */
     private Map<String, Object> createDataContext(Map<String, Object>... replacementsList) {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements == null) {
                 continue;

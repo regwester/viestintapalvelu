@@ -178,7 +178,7 @@ public class DraftModel extends BaseEntity {
         private String body;
         private String userOid;
         private String organizationOid;
-        private Set<ReportedAttachment> attachments = new HashSet<ReportedAttachment>();
+        private Set<ReportedAttachment> attachments = new HashSet<>();
         private boolean isHtml;
         private Date createDate;
         private String sender;

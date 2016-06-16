@@ -40,7 +40,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *            Sivutus- ja lajittelutiedot
      * @return Lista raportoitavien vastaanottajien tietoja
      */
-    public List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee vastaanottajien tiedot viestintunnuksella ja tila lähetys
@@ -53,7 +53,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      * @return Lista raportoitavien vastaanottajien tietoja, joille lähetys on
      *         epäonnistunut
      */
-    public List<ReportedRecipient> findByMessageIdAndSendingUnsuccessful(Long messageID, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedRecipient> findByMessageIdAndSendingUnsuccessful(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee vastaanottajien tiedot viestintunnuksella ja tila lähetys
@@ -66,7 +66,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      * @return Lista raportoitavien vastaanottajien tietoja, joille lähetys on
      *         epäonnistunut
      */
-    public List<ReportedRecipient> findByMessageIdAndSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedRecipient> findByMessageIdAndSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee vastaanottajan tiedot vastaanottajantunnisteella
@@ -75,7 +75,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *            Vastaanottajantunnus
      * @return Raportoitavan vastaanottajan tiedot
      */
-    public ReportedRecipient findByRecipientID(Long recipientID);
+    ReportedRecipient findByRecipientID(Long recipientID);
 
     /**
      * Hakee vastaanottajan tiedot viestin tiivisteen perusteella
@@ -84,7 +84,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *            Viestin tiiviste
      * @return Raportoitavan vastaanottajan tiedot
      */
-    public List<ReportedRecipient> findByLetterHash(String letterHash);
+    List<ReportedRecipient> findByLetterHash(String letterHash);
 
     /**
      * Hakee lähettävästä ryhmäsähköpostista viimeiseksi lähetetyn
@@ -93,7 +93,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *            Sanoman tunnus
      * @return Viimeiseksi lähetetyn ajanhetki
      */
-    public Date findMaxValueOfSendingEndedByMessageID(Long messageID);
+    Date findMaxValueOfSendingEndedByMessageID(Long messageID);
 
     /**
      * Hakee vastaanottajien lukumäärän viestintunnuksella
@@ -102,7 +102,7 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *            Viestintunnus
      * @return Viestin vastaanottajien lukumäärän
      */
-    public Long findNumberOfRecipientsByMessageID(Long messageID);
+    Long findNumberOfRecipientsByMessageID(Long messageID);
 
     /**
      * Hakee vastaanottajien lukumäärän viestintunnuksella ja viestin tilalla
@@ -113,14 +113,14 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *            0,1,2 halutun statuksen mukaan
      * @return Viestin vastaanottajien lukumäärän
      */
-    public Long findNumberOfRecipientsByMessageIDAndSendingStatus(Long messageID, String sendingStatus);
+    Long findNumberOfRecipientsByMessageIDAndSendingStatus(Long messageID, String sendingStatus);
 
     /**
      * Hakee raportoitavat vastaanottajat, joille viestiä ei ole lähetetty
      * 
      * @return Lista raportoitavan vastaanottajien tietoja
      */
-    public List<ReportedRecipient> findUnhandled();
+    List<ReportedRecipient> findUnhandled();
 
     /**
      * Hakee raportoitavien vastaanottajien id:t, joilta ei ole vielä haettu
@@ -128,6 +128,6 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      *
      * @return Listan vastaanottajien id:istä
      */
-    public List<Long> findRecipientIdsWithIncompleteInformation();
+    List<Long> findRecipientIdsWithIncompleteInformation();
 
 }

@@ -35,6 +35,6 @@ public interface ReportedMessageReplacementDAO extends JpaDAO<ReportedMessageRep
      * @param reportedMessage
      * @return List of reported replacements replacements
      */
-    public List<ReportedMessageReplacement> findReportedMessageReplacements(ReportedMessage reportedMessage);
+    List<ReportedMessageReplacement> findReportedMessageReplacements(ReportedMessage reportedMessage);
 
 }

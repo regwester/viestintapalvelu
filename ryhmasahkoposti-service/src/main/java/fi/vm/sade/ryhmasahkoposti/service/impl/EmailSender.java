@@ -152,8 +152,7 @@ public class EmailSender {
         Properties mailProps = new Properties();
         mailProps.put("mail.smtp.host", smtpHost);
         mailProps.put("mail.smtp.port", smtpPort);
-        Session session = Session.getInstance(mailProps);
-        return session;
+        return Session.getInstance(mailProps);
     }
 
     private void mockSendMail(EmailMessage emailMessage, String emailAddress,

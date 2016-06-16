@@ -52,7 +52,7 @@ public class ReportedRecipientConverter {
     }
 
     public Set<ReportedRecipient> convert(ReportedMessage reportedMessage, List<EmailRecipient> emailRecipients) {
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
 
         for (EmailRecipient emailRecipient : emailRecipients) {
             reportedRecipients.add(getReportedRecipient(reportedMessage, emailRecipient));

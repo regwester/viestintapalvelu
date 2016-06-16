@@ -57,7 +57,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     @Override
     public List<ReportedMessage> findByOrganizationOids(List<String> organizationOids, PagingAndSortingDTO pagingAndSorting) {
         if (organizationOids != null && organizationOids.isEmpty()) {
-            return new ArrayList<ReportedMessage>();
+            return new ArrayList<>();
         }
 
         JPAQuery findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy(pagingAndSorting));
@@ -102,12 +102,12 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     @Override
     public Long findNumberOfReportedMessages(List<String> organizationOids) {
         if (organizationOids != null && organizationOids.isEmpty()) {
-            return 0l;
+            return 0L;
         }
 
         EntityManager em = getEntityManager();
 
-        Map<String, Object> params = new HashMap<String, Object>();
+        Map<String, Object> params = new HashMap<>();
         String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a ";
         if (organizationOids != null) {
             findNumberOfReportedMessages += " WHERE " + splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");

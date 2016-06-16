@@ -25,7 +25,7 @@ public class InputCleaner {
 
     public static String cleanHtmlFragment(String html) {
         Document doc = cleanHtml(html);
-        return doc.body().html().toString().replaceAll("\\r\\n|\\n|\\r", "");
+        return doc.body().html().replaceAll("\\r\\n|\\n|\\r", "");
     }
 
     public static String cleanHtmlDocument(String html) {

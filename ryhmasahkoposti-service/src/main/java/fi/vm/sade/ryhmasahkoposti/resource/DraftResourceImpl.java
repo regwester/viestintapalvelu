@@ -20,7 +20,6 @@ import java.util.List;
 import javax.ws.rs.BadRequestException;
 import javax.ws.rs.InternalServerErrorException;
 import javax.ws.rs.NotFoundException;
-import javax.ws.rs.PathParam;
 
 import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import org.joda.time.DateTime;

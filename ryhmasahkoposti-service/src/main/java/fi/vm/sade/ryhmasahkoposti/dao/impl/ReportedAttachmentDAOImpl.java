@@ -30,7 +30,7 @@ public class ReportedAttachmentDAOImpl extends AbstractJpaDAOImpl<ReportedAttach
 
     @Override
     public List<Long> saveReportedAttachments(List<ReportedAttachment> attachments) {
-        List<Long> ids = new ArrayList<Long>();
+        List<Long> ids = new ArrayList<>();
         for (ReportedAttachment attachment : attachments) {
             getEntityManager().persist(attachment);
             ids.add(attachment.getId());

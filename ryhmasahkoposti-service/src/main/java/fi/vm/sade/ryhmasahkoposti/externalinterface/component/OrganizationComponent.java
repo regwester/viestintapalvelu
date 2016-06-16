@@ -76,8 +76,8 @@ public class OrganizationComponent {
             return "";
         }
 
-        for (int i = 0; language.length > i; i++) {
-            String nameOfOrganisation = organisaatio.getNimi().get(language[i]);
+        for (String aLanguage : language) {
+            String nameOfOrganisation = organisaatio.getNimi().get(aLanguage);
             if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
                 return nameOfOrganisation;
             }
@@ -96,7 +96,7 @@ public class OrganizationComponent {
             OrganisaatioHierarchyDto root = new OrganisaatioHierarchyDto();
             root.setChildren(rootResults.getOrganisaatiot());
             root.setOid(rootOrganizationOID);
-            Map<String, String> nimi = new HashMap<String, String>();
+            Map<String, String> nimi = new HashMap<>();
             nimi.put("fi", "Opetushallitus");
             nimi.put("sv", "Utbildningsstyrelsen");
             nimi.put("en", "The Finnish National Board of Education");

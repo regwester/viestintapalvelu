@@ -78,7 +78,7 @@ public class ReportedRecipient extends BaseEntity {
     private String letterHash;
 
     @OneToMany(mappedBy = "recipient", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    private Set<ReportedMessageRecipientAttachment> attachments = new HashSet<ReportedMessageRecipientAttachment>(0);
+    private Set<ReportedMessageRecipientAttachment> attachments = new HashSet<>(0);
 
     public ReportedMessage getReportedMessage() {
         return reportedMessage;

@@ -54,8 +54,8 @@ public class ReportedMessageReplacementConverter {
      * @throws IOException
      */
     public List<ReportedMessageReplacement> convert(ReportedMessage reportedMessage, Set<ReplacementDTO> templateReplacements,
-            List<ReplacementDTO> emailReplacements) throws IOException {
-        List<ReportedMessageReplacement> reportedMessageReplacements = new ArrayList<ReportedMessageReplacement>();
+            List<ReplacementDTO> emailReplacements) {
+        List<ReportedMessageReplacement> reportedMessageReplacements = new ArrayList<>();
 
         for (ReplacementDTO replacement : templateReplacements) {
             // Check if not send from the email

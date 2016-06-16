@@ -35,13 +35,13 @@ public interface ReportedRecipientReplacementService {
      * @param reportedRecipientReplacements
      * @return
      */
-    public  List<ReportedRecipientReplacement> saveReportedRecipientReplacements(List<ReportedRecipientReplacement> reportedRecipientReplacements);
+    List<ReportedRecipientReplacement> saveReportedRecipientReplacements(List<ReportedRecipientReplacement> reportedRecipientReplacements);
     
     /**
      * Get reported recipient replacements
      * @param recipient
      * @return
      */
-    public List<ReportedRecipientReplacement> getReportedRecipientReplacements(ReportedRecipient recipient);
+    List<ReportedRecipientReplacement> getReportedRecipientReplacements(ReportedRecipient recipient);
 
 }
