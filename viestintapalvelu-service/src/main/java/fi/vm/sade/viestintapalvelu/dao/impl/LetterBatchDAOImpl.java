@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.hibernate.internal.util.StringHelper;
@@ -188,7 +189,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         EntityManager em = getEntityManager();
 
         Map<String, Object> params = new HashMap<>();
-        String findNumberOfLetterBatches = "SELECT COUNT(*) FROM LetterBatch a WHERE " + splittedInExpression(oids, "a.organizationOid", params, "_oids");
+        String findNumberOfLetterBatches = "SELECT COUNT(*) FROM LetterBatch a WHERE " + DAOUtil.splittedInExpression(oids, "a.organizationOid", params, "_oids");
         TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
         for (Map.Entry<String, Object> kv : params.entrySet()) {
             query.setParameter(kv.getKey(), kv.getValue());
@@ -368,20 +369,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             }
         });
         return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
-    }
-
-    private String splittedInExpression(List<String> values, final String hqlColumn, final Map<String, Object> params, final String valPrefix) {
-        final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        final AtomicInteger n = new AtomicInteger(0);
-        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, String>() {
-            public String apply(@Nullable List<String> oidsChunk) {
-                int pNum = n.incrementAndGet();
-                String paramName = valPrefix + "_" + pNum;
-                params.put(paramName, oidsChunk);
-                return hqlColumn + " in (:" + paramName + ")";
-            }
-        });
-        return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
 
     @Override

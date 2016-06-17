@@ -22,6 +22,7 @@ import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
 import org.hibernate.internal.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
@@ -110,7 +111,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         Map<String, Object> params = new HashMap<>();
         String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a ";
         if (organizationOids != null) {
-            findNumberOfReportedMessages += " WHERE " + splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
+            findNumberOfReportedMessages += " WHERE " + DAOUtil.splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
         }
         TypedQuery<Long> query = em.createQuery(findNumberOfReportedMessages, Long.class);
         for (Map.Entry<String, Object> kv : params.entrySet()) {
@@ -218,17 +219,4 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
     }
 
-    private String splittedInExpression(List<String> values, final String hqlColumn, final Map<String, Object> params, final String valPrefix) {
-        final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        final AtomicInteger n = new AtomicInteger(0);
-        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, String>() {
-            public String apply(@Nullable List<String> oidsChunk) {
-                int pNum = n.incrementAndGet();
-                String paramName = valPrefix + "_" + pNum;
-                params.put(paramName, oidsChunk);
-                return hqlColumn + " in (:" + paramName + ")";
-            }
-        });
-        return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
-    }
 }
