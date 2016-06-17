@@ -29,7 +29,6 @@ import fi.vm.sade.ryhmasahkoposti.converter.DraftConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.DraftDAO;
 import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
 import fi.vm.sade.ryhmasahkoposti.service.DraftService;
-import fi.vm.sade.viestintapalvelu.common.exception.PersistenceException;
 
 @Service
 public class DraftServiceImpl implements DraftService {
@@ -79,7 +78,7 @@ public class DraftServiceImpl implements DraftService {
             return draftModel.getId();
         } catch(Exception e) {
             log.error("JPA Exception: {}", e);
-            throw new PersistenceException("error.msg.savingDraft", e);
+            throw new RuntimeException("error.msg.savingDraft", e);
         }
 
     }
@@ -92,7 +91,7 @@ public class DraftServiceImpl implements DraftService {
             draftDao.updateDraft(id, oid, draftModel);
         } catch(Exception e) {
             log.error("JPA Exception: {}", e);
-            throw new PersistenceException("error.msg.updatingDraft", e);
+            throw new RuntimeException("error.msg.updatingDraft", e);
         }
 
     }
