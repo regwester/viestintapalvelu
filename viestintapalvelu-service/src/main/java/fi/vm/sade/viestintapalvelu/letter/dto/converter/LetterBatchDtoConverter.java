@@ -61,9 +61,7 @@ public class LetterBatchDtoConverter {
         Object replKeys[] = from.getTemplateReplacements().keySet().toArray();
         Object replVals[] = from.getTemplateReplacements().values().toArray();
 
-        if (mapper == null) {
-            mapper = objectMapperProvider.getContext(getClass());
-        }
+        mapper = initMapperIfNull(mapper);
 
         for (int i = 0; i < replVals.length; i++) {
             LetterReplacement repl = new LetterReplacement();
@@ -84,6 +82,13 @@ public class LetterBatchDtoConverter {
         return replacements;
     }
 
+    private ObjectMapper initMapperIfNull(ObjectMapper mapper) {
+        if (mapper == null) {
+            mapper = objectMapperProvider.getContext(getClass());
+        }
+        return mapper;
+    }
+
     public LetterReceivers convert(LetterDetails from, LetterReceivers to, ObjectMapper mapper) throws JsonProcessingException {
         to.setTimestamp(new Date());
         to.setEmailAddress(from.getEmailAddress());
@@ -92,9 +97,7 @@ public class LetterBatchDtoConverter {
         to.setOidPerson(from.getPersonOid());
         to.setEmailAddressEPosti(from.getEmailAddressEPosti());
 
-        if (mapper == null) {
-            mapper = objectMapperProvider.getContext(getClass());
-        }
+        mapper = initMapperIfNull(mapper);
 
         // kirjeet.vastaanottajakorvauskentat
         if ((from.getTemplateReplacements() != null) || (from.getTemplateReplacements().isEmpty())) {
