@@ -108,9 +108,7 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
 
     @Override
     public List<Draft> findByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod) {
-        if(oids == null || oids.isEmpty()) {
-            return new ArrayList<>();
-        }
+        if (isEmptyTags(oids)) return new ArrayList<>();
         final String querySql = "select a FROM Draft a where a.applicationPeriod = :applicationPeriod and a.organizationOid in :oids";
         TypedQuery<Draft> query = getEntityManager().createQuery(querySql, Draft.class);
         query.setParameter("applicationPeriod", applicationPeriod);
@@ -120,9 +118,7 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
 
     @Override
     public List<Draft> findDraftsByTags(List<String> tags) {
-        if(tags == null || tags.isEmpty()) {
-            return new ArrayList<>();
-        }
+        if (isEmptyTags(tags)) return new ArrayList<>();
         try {
             final String findDrafts = "SELECT a FROM Draft a WHERE a.tag in :tags";
             TypedQuery<Draft> query = getEntityManager().createQuery(findDrafts, Draft.class);
@@ -135,6 +131,9 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
         }
     }
 
+    private boolean isEmptyTags(List<String> tags) {
+        return tags == null || tags.isEmpty();
+    }
 
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
