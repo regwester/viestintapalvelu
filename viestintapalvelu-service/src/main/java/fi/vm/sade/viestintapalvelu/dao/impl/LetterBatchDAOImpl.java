@@ -109,7 +109,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         String findTemplate = "SELECT a FROM LetterBatch a WHERE " + "a.templateName=:templateName AND " + "a.language=:language AND "
                 + "a.organizationOid=:organizationOid " + "ORDER BY a.timestamp DESC";
 
-        TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, (EntityManager) em.createQuery(findTemplate, LetterBatch.class), findTemplate);
+        TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, em, findTemplate);
 
         LetterBatch letterBatch = new LetterBatch();
         try {
