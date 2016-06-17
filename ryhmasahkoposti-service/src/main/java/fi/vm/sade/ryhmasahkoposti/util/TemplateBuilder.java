@@ -192,11 +192,6 @@ public class TemplateBuilder {
             if (dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_FROM) != null) {
                 message.setFrom(dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_FROM).toString());
             }
-            if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL) != null) {
-                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL).toString());
-            } else if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO) != null) {
-                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO).toString());
-            }
 
             if (message.getSourceRegister() != null) {
                 Map<String, Boolean> sourceRegisters = new HashMap<>();
