@@ -29,8 +29,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
@@ -265,12 +263,17 @@ public class LetterServiceImpl implements LetterService {
         } else {
             return null;
         }
-
-        // kirjeet.kirjelahetys
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
+        result.setApplicationPeriod(searchResult.getApplicationPeriod());
+        setCommonLetterBatchFields(searchResult, result);
+        // kirjeet.vastaanottaja
+        // result.setLetters(parseLetterDTOs(searchResult.getLetterReceivers()));
+        return result;
+    }
+
+    private void setCommonLetterBatchFields(LetterBatch searchResult, fi.vm.sade.viestintapalvelu.letter.LetterBatch result) {
         result.setTemplateId(searchResult.getTemplateId());
         result.setTemplateName(searchResult.getTemplateName());
-        result.setApplicationPeriod(searchResult.getApplicationPeriod());
         result.setFetchTarget(searchResult.getFetchTarget());
         result.setLanguageCode(searchResult.getLanguage());
         result.setStoringOid(searchResult.getStoringOid());
@@ -278,12 +281,6 @@ public class LetterServiceImpl implements LetterService {
         result.setTag(searchResult.getTag());
         // kirjeet.lahetyskorvauskentat
         result.setTemplateReplacements(parseReplDTOs(searchResult.getLetterReplacements()));
-
-        // kirjeet.vastaanottaja
-        // result.setLetters(parseLetterDTOs(searchResult.getLetterReceivers()));
-        // Not implemented
-
-        return result;
     }
 
     /* ------------------------------- */
@@ -296,21 +293,10 @@ public class LetterServiceImpl implements LetterService {
 
         LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag, applicationPeriod);
         if (letterBatch != null) {
-
-            // kirjeet.kirjelahetys
-            result.setTemplateId(letterBatch.getTemplateId());
-            result.setTemplateName(letterBatch.getTemplateName());
-            result.setFetchTarget(letterBatch.getFetchTarget());
             result.setApplicationPeriod(letterBatch.getApplicationPeriod());
             result.setTag(letterBatch.getTag());
-            result.setLanguageCode(letterBatch.getLanguage());
-            result.setStoringOid(letterBatch.getStoringOid());
-            result.setOrganizationOid(letterBatch.getOrganizationOid());
-            result.setTag(letterBatch.getTag());
-            // kirjeet.lahetyskorvauskentat
-            result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));
+            setCommonLetterBatchFields(letterBatch, result);
         }
-
         return result;
     }
 
