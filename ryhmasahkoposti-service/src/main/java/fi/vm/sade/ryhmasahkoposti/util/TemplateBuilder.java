@@ -202,15 +202,19 @@ public class TemplateBuilder {
 
                 dataContext.put("sourceregisters", sourceRegisters);
             }
-            
-            StringWriter writer = new StringWriter();
-            templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG",
-                    new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+
+            StringWriter writer = createStringWriter(content, dataContext);
             message.setBody(writer.toString());
         } else {
             LOGGER.warn("No template used for message with templateId={}", message.getTemplateId());
         }
         return message;
+    }
+
+    private StringWriter createStringWriter(String content, Map<String, Object> dataContext) {
+        StringWriter writer = new StringWriter();
+        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+        return writer;
     }
 
     /**
@@ -253,9 +257,7 @@ public class TemplateBuilder {
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(replacements);
 
-        StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(message.getBytes())));
-        return writer.toString();
+        return createStringWriter(message, dataContext).toString();
     }
 
     @SuppressWarnings("unchecked")
