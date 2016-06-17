@@ -72,19 +72,10 @@ public class OrganizationComponent {
      * @return Organisaation nimi
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-        String[] language = { "fi", "sv", "en" };
         if (organisaatio == null || organisaatio.getNimi() == null) {
             return "";
         }
-
-        for (String aLanguage : language) {
-            String nameOfOrganisation = organisaatio.getNimi().get(aLanguage);
-            if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
-                return nameOfOrganisation;
-            }
-        }
-
-        return "";
+        return ComponentUtil.getOrganizationNameFromRDTO(organisaatio);
     }
 
     /**

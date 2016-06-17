@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.component.ComponentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,20 +71,10 @@ public class OrganizationComponent {
      * @return Organisaation nimi
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-        String[] language = { "fi", "sv", "en" };
-
         if (organisaatio.getNimi() == null) {
             return "";
         }
-
-        for (String aLanguage : language) {
-            String nameOfOrganisation = organisaatio.getNimi().get(aLanguage);
-            if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
-                return nameOfOrganisation;
-            }
-        }
-
-        return "";
+        return ComponentUtil.getOrganizationNameFromRDTO(organisaatio);
     }
 
     /**
