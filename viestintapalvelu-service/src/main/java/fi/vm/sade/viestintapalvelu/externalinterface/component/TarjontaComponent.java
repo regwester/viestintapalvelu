@@ -24,13 +24,13 @@ import java.util.Set;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.*;
 import org.slf4j.Logger;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
 
-import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
 
 /**
