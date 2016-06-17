@@ -51,7 +51,6 @@ import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 @Repository
 public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, Long> implements ReportedMessageDAO {
 
-    public static final int MAX_CHUNK_SIZE_FOR_IN_EXPRESSION = 1000;
     private QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
     private QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 
@@ -63,7 +62,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         JPAQuery findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy(pagingAndSorting));
         if (organizationOids != null) {
-            findAllReportedMessagesQuery = findAllReportedMessagesQuery.where(anyOf(splittedInExpression(organizationOids,
+            findAllReportedMessagesQuery = findAllReportedMessagesQuery.where(anyOf(DAOUtil.splittedInExpression(organizationOids,
                     reportedMessage.senderOrganizationOid)));
         }
 
@@ -181,7 +180,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
             if (query.getOrganizationOids().isEmpty()) {
                 booleanBuilder.and(BooleanTemplate.TRUE.eq(BooleanTemplate.FALSE));
             } else {
-                booleanBuilder.andAnyOf(splittedInExpression(query.getOrganizationOids(), reportedMessage.senderOrganizationOid));
+                booleanBuilder.andAnyOf(DAOUtil.splittedInExpression(query.getOrganizationOids(), reportedMessage.senderOrganizationOid));
             }
         } else if (query.getOrganizationOid() != null) {
             booleanBuilder.and(reportedMessage.senderOrganizationOid.in(query.getOrganizationOid()));
@@ -208,15 +207,4 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         return booleanBuilder;
     }
-
-    private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
-        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, BooleanExpression>() {
-            public BooleanExpression apply(@Nullable List<String> oidsChunk) {
-                return column.in(oidsChunk);
-            }
-        });
-        return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
-    }
-
 }

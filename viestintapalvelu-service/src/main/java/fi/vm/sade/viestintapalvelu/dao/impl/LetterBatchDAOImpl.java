@@ -147,7 +147,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
 
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting, null);
-        BooleanExpression whereExpression = anyOf(splittedInExpression(organizationOIDs, letterBatch.organizationOid));
+        BooleanExpression whereExpression = anyOf(DAOUtil.splittedInExpression(organizationOIDs, letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
 
         return getLetterBatches(pagingAndSorting, (QLetterBatch) findLetterBatches.list(letterBatch), findLetterBatches);
@@ -320,7 +320,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 // no organisaatios should yield no results, thus:
                 booleanBuilder.and(BooleanTemplate.TRUE.eq(BooleanTemplate.FALSE));
             } else {
-                booleanBuilder.andAnyOf(splittedInExpression(query.getOrganizationOids(), letterBatch.organizationOid));
+                booleanBuilder.andAnyOf(DAOUtil.splittedInExpression(query.getOrganizationOids(), letterBatch.organizationOid));
             }
         }
 
@@ -359,16 +359,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     private BooleanExpression anyOfLetterBatchRelatedConditions(QLetterBatch letterBatch, String word) {
         return letterBatch.templateName.containsIgnoreCase(word).or(
                 letterBatch.fetchTarget.containsIgnoreCase(word).or(letterBatch.applicationPeriod.containsIgnoreCase(word)));
-    }
-
-    private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
-        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, BooleanExpression>() {
-            public BooleanExpression apply(@Nullable List<String> oidsChunk) {
-                return column.in(oidsChunk);
-            }
-        });
-        return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
     }
 
     @Override

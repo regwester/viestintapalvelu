@@ -2,6 +2,8 @@ package fi.vm.sade.viestintapalvelu.dao;
 
 import com.google.common.base.Function;
 import com.google.common.collect.Collections2;
+import com.mysema.query.types.expr.BooleanExpression;
+import com.mysema.query.types.path.StringPath;
 import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import org.hibernate.internal.util.StringHelper;
 
@@ -28,4 +30,13 @@ public class DAOUtil {
         return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
     }
 
+    public static BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
+        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
+        Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, BooleanExpression>() {
+            public BooleanExpression apply(@Nullable List<String> oidsChunk) {
+                return column.in(oidsChunk);
+            }
+        });
+        return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
+    }
 }
