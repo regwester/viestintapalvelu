@@ -61,10 +61,7 @@ public class EmailMessage implements AttachmentContainer {
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, 
         String languageCode, List<SourceRegister> sourceRegister) {
-        this.callingProcess = callingProcess;
-        this.from = from;
-        this.replyTo = replyTo;
-        this.subject = subject;
+        this(callingProcess, from, replyTo, subject, "");
         this.templateName = templateName;
         this.languageCode = languageCode;
         this.sourceRegister = sourceRegister;
