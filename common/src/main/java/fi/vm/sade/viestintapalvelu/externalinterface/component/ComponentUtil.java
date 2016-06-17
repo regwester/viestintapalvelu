@@ -5,6 +5,9 @@ import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 public class ComponentUtil {
 
     public static String getOrganizationNameFromRDTO(OrganisaatioRDTO organisaatio) {
+        if (organisaatio == null || organisaatio.getNimi() == null) {
+            return "";
+        }
         String[] language = { "fi", "sv", "en" };
         for (String aLanguage : language) {
             String nameOfOrganisation = organisaatio.getNimi().get(aLanguage);
@@ -12,7 +15,6 @@ public class ComponentUtil {
                 return nameOfOrganisation;
             }
         }
-
         return "";
     }
 

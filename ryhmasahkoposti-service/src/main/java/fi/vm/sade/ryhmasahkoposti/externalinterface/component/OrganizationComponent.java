@@ -71,9 +71,6 @@ public class OrganizationComponent {
      * @return Organisaation nimi
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-        if (organisaatio.getNimi() == null) {
-            return "";
-        }
         return ComponentUtil.getOrganizationNameFromRDTO(organisaatio);
     }
 
