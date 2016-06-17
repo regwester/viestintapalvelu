@@ -60,27 +60,23 @@ public class ReportedMessageDTOConverter {
 
     public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
         List<ReportedRecipient> reportedRecipients = new ArrayList<>(reportedMessage.getReportedRecipients());
-
-        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
-        convert(reportedMessageDTO, reportedMessage);
-        return convertSomeStuff(reportedAttachments, sendingStatusDTO, reportedMessageDTO, reportedRecipients);
+        return createReportedMessageDTO(reportedMessage, reportedRecipients, reportedAttachments, sendingStatusDTO);
     }
 
-    private ReportedMessageDTO convertSomeStuff(List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO, ReportedMessageDTO reportedMessageDTO, List<ReportedRecipient> reportedRecipients) {
+    public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients,
+            List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
+        return createReportedMessageDTO(reportedMessage, reportedRecipients, reportedAttachments, sendingStatusDTO);
+    }
+
+    private ReportedMessageDTO createReportedMessageDTO(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients, List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
+        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
+        convert(reportedMessageDTO, reportedMessage);
         reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedRecipients));
         reportedMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
         reportedMessageDTO.setSendingStatus(sendingStatusDTO);
         setSendingReport(reportedMessageDTO, sendingStatusDTO);
         setStatusReport(reportedMessageDTO, sendingStatusDTO);
         return reportedMessageDTO;
-    }
-
-    public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients,
-            List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
-
-        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
-        convert(reportedMessageDTO, reportedMessage);
-        return convertSomeStuff(reportedAttachments, sendingStatusDTO, reportedMessageDTO, reportedRecipients);
     }
 
     private void convert(ReportedMessageDTO reportedMessageDTO, ReportedMessage reportedMessage) {
