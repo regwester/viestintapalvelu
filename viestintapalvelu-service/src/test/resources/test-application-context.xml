@@ -38,7 +38,9 @@
     </util:list>
     <bean id="customJsonProvider" class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider"/>
     -->
-
+    <bean id="mapper" class="fi.vm.sade.viestintapalvelu.feature.mapper.Mapper"/>
+    <bean id="mapperProvider" class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
+    <bean id="pagingAndSortingDTOConverter" class="fi.vm.sade.converter.PagingAndSortingDTOConverter"/>
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
     
     <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">

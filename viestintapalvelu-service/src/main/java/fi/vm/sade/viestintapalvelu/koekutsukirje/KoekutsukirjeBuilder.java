@@ -84,7 +84,7 @@ public class KoekutsukirjeBuilder {
         data.put("osoite", decorator);
         data.put("hakukohde", StringEscapeUtils.escapeHtml(hakukohde));
         data.put("tarjoaja", StringEscapeUtils.escapeHtml(tarjoaja));
-        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         data.put("letterBodyText", cleanHtmlFromApi(letterBodyText));
         return data;
     }

@@ -32,6 +32,8 @@ import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Required;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
@@ -74,27 +76,18 @@ public class LetterBuilder {
     private final Logger LOG = LoggerFactory.getLogger(LetterBuilder.class);
 
     private DocumentBuilder documentBuilder;
-
-    @Autowired
     private TemplateService templateService;
-
-    @Autowired
-    private LetterService letterService;
-
-    @Autowired
-    private EmailComponent emailComponent;
-
-    @Autowired
     private AttachmentService attachmentService;
-
-    @Autowired
     private ObjectMapperProvider objectMapperProvider;
 
-    @Inject
-    public LetterBuilder(DocumentBuilder documentBuilder) {
+    @Autowired(required = false)
+    public LetterBuilder(DocumentBuilder documentBuilder, TemplateService templateService, AttachmentService attachmentService, ObjectMapperProvider objectMapperProvider) {
         this.documentBuilder = documentBuilder;
+        this.templateService = templateService;
+        this.attachmentService = attachmentService;
+        this.objectMapperProvider = objectMapperProvider;
     }
-
+    
     public byte[] printZIP(List<LetterReceiverLetter> receivers, String templateName, String zipName) {
         MergedPdfDocument pdf = getMergedPDFDocument(receivers);
         try {
@@ -203,17 +196,10 @@ public class LetterBuilder {
         if (styles == null) {
             styles = "";
         }
-        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
-        // liite specific handling
-        if (data.containsKey("tulokset")) {
-            List<Map<String, Object>> tulokset = (List<Map<String, Object>>) data.get("tulokset");
-            Map<String, Boolean> columns = distinctColumns(tulokset);
-            data.put("tulokset", normalizeColumns(cleaner, columns, tulokset));
-            data.put("columns", columns);
-        }
         if (data.containsKey("muut_hakukohteet")) {
             List<String> muidenHakukohteidenNimet = (List<String>) data.get("muut_hakukohteet");
             data.put("muut_hakukohteet", muidenHakukohteidenNimet);

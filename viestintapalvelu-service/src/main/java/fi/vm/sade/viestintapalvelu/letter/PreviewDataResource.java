@@ -47,10 +47,15 @@ public class PreviewDataResource {
     public static final String testApplicationId = "-1";
     public static final Logger log = LoggerFactory.getLogger(PreviewDataResource.class);
 
+    final private TemplateService templateService;
+    final private PreviewDataService previewDataService;
+
     @Autowired
-    private TemplateService templateService;
-    @Autowired
-    private PreviewDataService previewDataService;
+    public PreviewDataResource(TemplateService templateService, PreviewDataService previewDataService) {
+        this.templateService = templateService;
+        this.previewDataService = previewDataService;
+    }
+
 
     @POST
     @Path("letterbatch/pdf")

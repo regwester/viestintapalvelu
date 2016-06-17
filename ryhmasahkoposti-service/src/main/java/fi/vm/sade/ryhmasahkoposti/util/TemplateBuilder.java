@@ -292,7 +292,7 @@ public class TemplateBuilder {
                 data.put(key, replacements.get(key));
             }
         }
-        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         return data;
     }
 }

@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
+import com.google.common.collect.ImmutableMap;
 import com.lowagie.text.DocumentException;
 
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
@@ -40,17 +41,23 @@ import org.springframework.transaction.annotation.Transactional;
 import java.io.IOException;
 import java.util.*;
 
+import static java.util.Arrays.*;
+
 @Service
 public class PreviewDataServiceImpl implements PreviewDataService {
 
     public static final Logger log = LoggerFactory.getLogger(PreviewDataServiceImpl.class);
 
-    @Autowired
     private ResourceLoader resourceLoader;
-    @Autowired
     private LetterBuilder letterBuilder;
-    @Autowired
     private LetterEmailService letterEmailService;
+
+    @Autowired
+    public PreviewDataServiceImpl(ResourceLoader resourceLoader, LetterBuilder letterBuilder, LetterEmailService letterEmailService) {
+        this.resourceLoader = resourceLoader;
+        this.letterBuilder = letterBuilder;
+        this.letterEmailService = letterEmailService;
+    }
 
     @Override
     public Letter getLetter(Template template) {
@@ -213,12 +220,16 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         Map<String, Object> batchreplacements = new HashMap<>();
 
         Map<String, Object> letterreplacements = getLetterReplacements();
-        final List<Object> tulokset = (List<Object>) letterreplacements.get("tulokset");
-        Map<String, Object> eka = (Map<String, Object>) tulokset.get(0);
-        batchreplacements.putAll(eka);
         batchreplacements.put("koulu", letterreplacements.get("koulu"));
         batchreplacements.put("koulutus", letterreplacements.get("koulutus"));
         batchreplacements.put("henkilotunnus", "123456-7890");
+        batchreplacements.put("hakemusOid", "1.2.246.562.11.00005902048");
+        batchreplacements.put("ohjeetUudelleOpiskelijalle","https://opintopolku.fi/wp/valintojen-tuki/yhteishaku/korkeakoulujen-yhteishaku/ensikertalaiskiintio/");
+        batchreplacements.put("hakijapalveluidenOsoite", ImmutableMap.of(
+                "organisaationimi","Helsingin yliopisto, hakijapalvelut, hakijapalvelut(at)helsinki.fi, 02941 24140",
+                "addressline","Fabianinkatu 3",
+                "postalCode","00014",
+                "city","Helsinki"));
         batchreplacements.put("sisalto", letterContents);
         return letterBuilder.constructPDFForLetterReceiverLetter(letterReceivers, template, batchreplacements, letterreplacements).getLetter();
     }
@@ -231,7 +242,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         final List<String> koulut = mapper.readValue(resourceLoader.getResource("/generator/koulut.json").getFile(), List.class);
         String koulu = koulut.get(rand.nextInt(koulut.size()));
         String koulutus = hakutoive.get(rand.nextInt(hakutoive.size()));
-        for (int i = 0; i < 3; i++) {
+        for (int i = 0; i < 6; i++) {
             final String oppilaitos;
             final String hakukohde;
             if (i == 0) {
@@ -251,29 +262,40 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             haku.put("omatPisteet", omatpisteet + "/" + (omatpisteet / 2));
             haku.put("paasyJaSoveltuvuuskoe", rand.nextInt(60) + "");
             haku.put("hyvaksytyt", rand.nextInt(50) + "/" + 100);
-            haku.put("valinnanTulos", "Sinut on hylätty");
+            final String valinnanTulos = asList("Hyväksytty", "Hyväksytty (ehdollinen)", "Hylätty", "Peruuntunut","Varalla").get(Math.abs(rand.nextInt(5)));
+            haku.put("valinnanTulos", valinnanTulos);
+            if(asList("Hyväksytty", "Hyväksytty (ehdollinen)").contains(valinnanTulos)){
+                haku.put("hyvaksytty", "true");
+            } else {
+                haku.put("hyvaksytty", "false");
+            }
+            Map<String, Object> stringObjectHashMap = ImmutableMap.<String,Object>builder()
+            .put("nimi", "Yhteispistejono")
+            .put("oma", "123")
+            .put("minimi", "456").build();
+            List<ImmutableMap<String, String>> sijoitukset = Collections.unmodifiableList(Arrays.asList(ImmutableMap.of(
+                    "nimi", "Yhteispistejono",
+                    "oma", "123",
+                    "minimi", "456"),
+                    ImmutableMap.of(
+                            "nimi", "DIA-DI Valintaryhmä 1",
+                            "oma", "464",
+                            "minimi", "111"),
+                    ImmutableMap.of(
+                            "nimi", "DIA-DI Valintaryhmä 2",
+                            "oma", "222",
+                            "minimi", "333")));
+            haku.put("sijoitukset", sijoitukset);
+            if(rand.nextInt() % 3 == 0) {
+                haku.put("varasija", 54);
+            } else {
+                haku.put("varasija", null);
+            }
             haku.put("hylkaysperuste", "Lorem ipsum");
-            haku.put("oma", 123);
-            haku.put("minimi", 456);
-
             tulokset.add(haku);
         }
-
-        Map<String, Object> tulos = new HashMap<>();
-        List<Map<String, Object>> pisteet = new ArrayList<>();
-        tulos.put("pisteet", pisteet);
-        tulos.put("sijoitukset", pisteet);
-        for (int i = 0; i < 3; i++) {
-            Map<String, Object> pisteRow = new HashMap<>();
-            pisteRow.put("nimi", "pisteet nimi");
-            pisteRow.put("oma", 123);
-            pisteRow.put("minimi", 456);
-            pisteet.add(pisteRow);
-        }
-
         Map<String, Object> letterreplacements = new HashMap<>();
         letterreplacements.put("tulokset", tulokset);
-        letterreplacements.put("tulos", tulos);
         letterreplacements.put("koulu", koulu);
         letterreplacements.put("koulutus", koulutus);
         return letterreplacements;
