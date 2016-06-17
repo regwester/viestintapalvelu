@@ -307,18 +307,21 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid, pagingAndSorting);
         Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(organizationOid);
 
-        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<>();
-        for (ReportedMessage reportedMessage : reportedMessages) {
-            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
-            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
-        }
-
-        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = convertReportedMessagesToReportedMessageDTO(reportedMessages);
 
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
         reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
 
         return reportedMessagesDTO;
+    }
+
+    private List<ReportedMessageDTO> convertReportedMessagesToReportedMessageDTO(List<ReportedMessage> reportedMessages) {
+        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<>();
+        for (ReportedMessage reportedMessage : reportedMessages) {
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
+            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
+        }
+        return reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
     }
 
     @Override
@@ -345,13 +348,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
         Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(query);
 
-        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<>();
-        for (ReportedMessage reportedMessage : reportedMessages) {
-            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
-            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
-        }
-
-        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = convertReportedMessagesToReportedMessageDTO(reportedMessages);
 
         ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
