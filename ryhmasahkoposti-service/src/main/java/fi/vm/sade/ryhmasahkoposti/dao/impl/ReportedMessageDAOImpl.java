@@ -105,20 +105,14 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
             return 0L;
         }
 
-        EntityManager em = getEntityManager();
-
         Map<String, Object> params = new HashMap<>();
         String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a ";
         if (organizationOids != null) {
             findNumberOfReportedMessages += " WHERE " + DAOUtil.splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
         }
-        TypedQuery<Long> query = em.createQuery(findNumberOfReportedMessages, Long.class);
-        for (Map.Entry<String, Object> kv : params.entrySet()) {
-            query.setParameter(kv.getKey(), kv.getValue());
-        }
-
-        return query.getSingleResult();
+        return DAOUtil.querySingleLong(getEntityManager(), params, findNumberOfReportedMessages);
     }
+
 
     @Override
     public Long findNumberOfUserMessages(String userOid) {

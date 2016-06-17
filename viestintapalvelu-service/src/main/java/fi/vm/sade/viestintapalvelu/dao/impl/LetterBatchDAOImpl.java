@@ -186,16 +186,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         if (oids.isEmpty()) {
             return 0L;
         }
-        EntityManager em = getEntityManager();
 
         Map<String, Object> params = new HashMap<>();
         String findNumberOfLetterBatches = "SELECT COUNT(*) FROM LetterBatch a WHERE " + DAOUtil.splittedInExpression(oids, "a.organizationOid", params, "_oids");
-        TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
-        for (Map.Entry<String, Object> kv : params.entrySet()) {
-            query.setParameter(kv.getKey(), kv.getValue());
-        }
 
-        return query.getSingleResult();
+        return DAOUtil.querySingleLong(getEntityManager(), params, findNumberOfLetterBatches);
     }
 
     @Override

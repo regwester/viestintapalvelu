@@ -8,6 +8,8 @@ import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import org.hibernate.internal.util.StringHelper;
 
 import javax.annotation.Nullable;
+import javax.persistence.EntityManager;
+import javax.persistence.TypedQuery;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -38,5 +40,13 @@ public class DAOUtil {
             }
         });
         return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
+    }
+
+    public static Long querySingleLong(EntityManager em, Map<String, Object> params, String queryString) {
+        TypedQuery<Long> query = em.createQuery(queryString, Long.class);
+        for (Map.Entry<String, Object> kv : params.entrySet()) {
+            query.setParameter(kv.getKey(), kv.getValue());
+        }
+        return query.getSingleResult();
     }
 }
