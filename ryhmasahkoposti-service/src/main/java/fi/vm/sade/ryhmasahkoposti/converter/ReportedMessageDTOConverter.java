@@ -95,16 +95,9 @@ public class ReportedMessageDTOConverter {
         List<EmailRecipientDTO> recipients = new ArrayList<>();
 
         for (ReportedRecipient reportedRecipient : reportedRecipients) {
-            EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-
-            emailRecipientDTO.setRecipientID(reportedRecipient.getId());
-            emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
+            EmailRecipientDTO emailRecipientDTO = EmailRecipientDTOConverter.initEmailRecipientDTO(reportedRecipient);
             emailRecipientDTO.setSendSuccessful(reportedRecipient.getSendingSuccessful());
-            emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
-            emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
-            emailRecipientDTO.setLetterHash(reportedRecipient.getLetterHash());
             setRecipientName(emailRecipientDTO, reportedRecipient);
-
             recipients.add(emailRecipientDTO);
         }
 

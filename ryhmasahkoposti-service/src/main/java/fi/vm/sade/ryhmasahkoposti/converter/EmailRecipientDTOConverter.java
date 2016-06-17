@@ -27,16 +27,21 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 public class EmailRecipientDTOConverter {
 
     public EmailRecipientDTO convert(ReportedRecipient reportedRecipient) {
-        EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-
-        emailRecipientDTO.setRecipientID(reportedRecipient.getId());
-        emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
+        EmailRecipientDTO emailRecipientDTO = initEmailRecipientDTO(reportedRecipient);
         emailRecipientDTO.setFirstName("");
         emailRecipientDTO.setLastName("");
         emailRecipientDTO.setOrganizationName("");
+        emailRecipientDTO.setEmailMessageID(reportedRecipient.getReportedMessage().getId());
+
+        return emailRecipientDTO;
+    }
+
+    public static EmailRecipientDTO initEmailRecipientDTO(ReportedRecipient reportedRecipient) {
+        EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
+        emailRecipientDTO.setRecipientID(reportedRecipient.getId());
+        emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
         emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
         emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
-        emailRecipientDTO.setEmailMessageID(reportedRecipient.getReportedMessage().getId());
         emailRecipientDTO.setLetterHash(reportedRecipient.getLetterHash());
 
         return emailRecipientDTO;
