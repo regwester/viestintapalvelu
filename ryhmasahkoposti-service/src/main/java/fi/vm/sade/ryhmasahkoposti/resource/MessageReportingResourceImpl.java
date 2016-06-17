@@ -60,15 +60,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(organizationOid, pagingAndSorting);
 
-        reportedMessagesDTO.setOrganizations(organizations);
-
-        for (int i = 0; i < organizations.size(); i++) {
-            OrganizationDTO organization = organizations.get(i);
-            if (organization.getOid().equals(organizationOid)) {
-                reportedMessagesDTO.setSelectedOrganization(i);
-                break;
-            }
-        }
+        setOrganizations(organizationOid, organizations, reportedMessagesDTO);
 
         return Response.ok(reportedMessagesDTO).build();
     }
@@ -83,8 +75,13 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessages(query, pagingAndSorting);
 
-        reportedMessagesDTO.setOrganizations(organizations);
+        setOrganizations(organizationOid, organizations, reportedMessagesDTO);
 
+        return Response.ok(reportedMessagesDTO).build();
+    }
+
+    private void setOrganizations(String organizationOid, List<OrganizationDTO> organizations, ReportedMessagesDTO reportedMessagesDTO) {
+        reportedMessagesDTO.setOrganizations(organizations);
         for (int i = 0; i < organizations.size(); i++) {
             OrganizationDTO organization = organizations.get(i);
             if (organization.getOid().equals(organizationOid)) {
@@ -92,17 +89,12 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
                 break;
             }
         }
-
-        return Response.ok(reportedMessagesDTO).build();
     }
 
     @Override
     public Response getReportedMessagesSentByCurrentUser(String process) throws Exception {
-        ReportedMessagesDTO reportedMessages = groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process,
-                PagingAndSortingDTO.getDefault());
-
+        ReportedMessagesDTO reportedMessages = groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process, PagingAndSortingDTO.getDefault());
         return Response.ok(reportedMessages).build();
-
     }
 
     @Override
