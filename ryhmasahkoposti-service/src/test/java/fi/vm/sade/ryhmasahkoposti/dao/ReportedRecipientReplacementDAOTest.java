@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -35,7 +36,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;

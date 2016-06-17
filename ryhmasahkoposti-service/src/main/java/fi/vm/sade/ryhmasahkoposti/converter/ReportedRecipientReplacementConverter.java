@@ -20,13 +20,13 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 

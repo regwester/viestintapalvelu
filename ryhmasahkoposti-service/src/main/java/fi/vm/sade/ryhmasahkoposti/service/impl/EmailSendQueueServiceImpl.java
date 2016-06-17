@@ -21,6 +21,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -40,7 +41,6 @@ import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult;
 import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 import fi.vm.sade.ryhmasahkoposti.model.SendQueue;
