@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -394,18 +393,22 @@ public class TemplateServiceImpl implements TemplateService {
 
     private fi.vm.sade.viestintapalvelu.template.Template convert(Template searchResult) {
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
+        convertTemplateToTemplate(searchResult, result);
+        result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
+        convertApplicationPeriods(searchResult, result);
+        return result;
+    }
+
+    private void convertTemplateToTemplate(Template searchResult, fi.vm.sade.viestintapalvelu.template.Template result) {
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
         result.setStructureId(searchResult.getStructure().getId());
         result.setStructureName(searchResult.getStructure().getName());
         result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
-        result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setState(searchResult.getState());
         result.setUsedAsDefault(searchResult.isUsedAsDefault());
         result.setStoringOid(searchResult.getStoringOid());
-        convertApplicationPeriods(searchResult, result);
-        return result;
     }
 
     @Deprecated
@@ -626,19 +629,11 @@ public class TemplateServiceImpl implements TemplateService {
 
     // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template convertBasicData(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
-        to.setId(from.getId());
-        to.setName(from.getName());
-        to.setStructureId(from.getStructure().getId());
-        to.setStructureName(from.getStructure().getName());
-        to.setUsedAsDefault(from.isUsedAsDefault());
+        convertTemplateToTemplate(from, to);
         // searchTempl.setStyles(template.getStyles());
-        to.setLanguage(from.getLanguage());
-        to.setTimestamp(from.getTimestamp());
-        to.setStoringOid(from.getStoringOid());
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTemplateVersio(from.getVersionro());
         to.setDescription(from.getDescription());
-        to.setState(from.getState());
         return to;
     }
 
