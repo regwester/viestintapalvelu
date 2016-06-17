@@ -121,14 +121,7 @@ public class LetterReportResource extends AsynchronousResource {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
 
-        letterBatchesReport.setOrganizations(organizations);
-        for (int i = 0; i < organizations.size(); i++) {
-            OrganizationDTO organization = organizations.get(i);
-            if (organization.getOid().equals(organizationOid)) {
-                letterBatchesReport.setSelectedOrganization(i);
-                break;
-            }
-        }
+        setOrganizations(organizationOid, organizations, letterBatchesReport);
 
         return Response.ok(letterBatchesReport).build();
     }
@@ -269,6 +262,12 @@ public class LetterReportResource extends AsynchronousResource {
 
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(query, pagingAndSorting);
 
+        setOrganizations(organizationOid, organizations, letterBatchesReport);
+
+        return Response.ok(letterBatchesReport).build();
+    }
+
+    private void setOrganizations(@ApiParam(value = "Organisaation oid-tunnus", required = false) @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, List<OrganizationDTO> organizations, LetterBatchesReportDTO letterBatchesReport) {
         letterBatchesReport.setOrganizations(organizations);
         for (int i = 0; i < organizations.size(); i++) {
             OrganizationDTO organization = organizations.get(i);
@@ -277,8 +276,6 @@ public class LetterReportResource extends AsynchronousResource {
                 break;
             }
         }
-
-        return Response.ok(letterBatchesReport).build();
     }
 
     private String getLoggedInUserOid() {
@@ -295,5 +292,4 @@ public class LetterReportResource extends AsynchronousResource {
         }
         return allowedOrganizations.get(0).getOid();
     }
-
 }
