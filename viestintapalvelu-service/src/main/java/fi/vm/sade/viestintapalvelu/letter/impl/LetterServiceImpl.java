@@ -363,7 +363,7 @@ public class LetterServiceImpl implements LetterService {
 
             if (DOCUMENT_TYPE_APPLICATION_ZIP.equals(lb.getContentType())) {
                 try {
-                    content.setContent(unZip(lb.getLetter()));
+                    content.setContent(LetterZipUtil.unZip(lb.getLetter()));
                 } catch (IOException | DataFormatException e) {
                     content.setContent(lb.getLetter());
                     content.setContentType(lb.getContentType());
@@ -391,7 +391,7 @@ public class LetterServiceImpl implements LetterService {
 
             byte[] content = letter.getLetter();
             if (letter.getContentType().equals(DOCUMENT_TYPE_APPLICATION_ZIP)) {
-                content = unZip(content);
+                content = LetterZipUtil.unZip(content);
             }
             merger.addSource(new ByteArrayInputStream(content));
         }
@@ -436,7 +436,7 @@ public class LetterServiceImpl implements LetterService {
 
                 if (zippaa) { // ZIP
                     try {
-                        lrl.setLetter(zip(letter.getLetterContent().getContent()));
+                        lrl.setLetter(LetterZipUtil.zip(letter.getLetterContent().getContent()));
                         lrl.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP); // application/zip
                         lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
 
@@ -518,40 +518,6 @@ public class LetterServiceImpl implements LetterService {
 
     private LetterBatch storeLetterBatch(LetterBatch letterB) {
         return letterBatchDAO.insert(letterB);
-    }
-
-    private static byte[] unZip(byte[] content) throws IOException, DataFormatException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
-
-        Inflater inflater = new Inflater();
-        inflater.setInput(content);
-
-        byte[] buffer = new byte[1024];
-
-        while (!inflater.finished()) {
-            int count = inflater.inflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-
-        outputStream.close();
-        return outputStream.toByteArray();
-    }
-
-    private static byte[] zip(byte[] content) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
-
-        Deflater deflater = new Deflater();
-        deflater.setInput(content);
-        deflater.finish();
-
-        byte[] buffer = new byte[1024];
-
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-        outputStream.close();
-        return outputStream.toByteArray();
     }
 
     @Override
