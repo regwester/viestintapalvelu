@@ -75,18 +75,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
         findTemplate += "ORDER BY a.timestamp DESC";
 
-        TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
-        query.setParameter("templateName", templateName);
-        query.setParameter("language", language);
-        query.setParameter("organizationOid", organizationOid);
+        TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, em, findTemplate);
         if (tag.isPresent()) {
             query.setParameter("tag", tag.get());
         }
         if (applicationPeriod.isPresent()) {
             query.setParameter("applicationPeriod", applicationPeriod.get());
         }
-        query.setFirstResult(0); // LIMIT 1
-        query.setMaxResults(1); //
 
         LetterBatch letterBatch = new LetterBatch();
         try {
@@ -98,18 +93,23 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         return letterBatch;
     }
 
-    public LetterBatch findLetterBatchByNameOrg(String templateName, String language, String organizationOid) {
-        EntityManager em = getEntityManager();
-
-        String findTemplate = "SELECT a FROM LetterBatch a WHERE " + "a.templateName=:templateName AND " + "a.language=:language AND "
-                + "a.organizationOid=:organizationOid " + "ORDER BY a.timestamp DESC";
-
+    private TypedQuery<LetterBatch> getLetterBatchTypedQuery(String templateName, String language, String organizationOid, EntityManager em, String findTemplate) {
         TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
         query.setParameter("templateName", templateName);
         query.setParameter("language", language);
         query.setParameter("organizationOid", organizationOid);
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
+        return query;
+    }
+
+    public LetterBatch findLetterBatchByNameOrg(String templateName, String language, String organizationOid) {
+        EntityManager em = getEntityManager();
+
+        String findTemplate = "SELECT a FROM LetterBatch a WHERE " + "a.templateName=:templateName AND " + "a.language=:language AND "
+                + "a.organizationOid=:organizationOid " + "ORDER BY a.timestamp DESC";
+
+        TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, (EntityManager) em.createQuery(findTemplate, LetterBatch.class), findTemplate);
 
         LetterBatch letterBatch = new LetterBatch();
         try {
