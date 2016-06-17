@@ -135,15 +135,13 @@ public class EmailSourceData {
 
             if (t.isMandatory()) {
                 if (value == null) {
-                    LOGGER.debug("EmailData building fails missing mandatory field " + t);
-                    throw new IllegalArgumentException("Pakollinen kenttä puuttuu " + t);
+                    logAndThrowMissing(t);
                 }
                 if (t.getType() != null && String.class == t.getType()) {
                     if (value instanceof String) {
                         String stringValue = (String) value;
                         if (stringValue.isEmpty()) {
-                            LOGGER.debug("EmailData building fails missing mandatory field " + t);
-                            throw new IllegalArgumentException("Pakollinen kenttä puuttuu " + t);
+                            logAndThrowMissing(t);
                         }
                     } else {
                         LOGGER.debug("Expected String but got something else ");
@@ -152,5 +150,10 @@ public class EmailSourceData {
                 }
             }
         }
+    }
+
+    private void logAndThrowMissing(TemplateEmailField t) {
+        LOGGER.debug("EmailData building fails missing mandatory field " + t);
+        throw new IllegalArgumentException("Pakollinen kenttä puuttuu " + t);
     }
 }
