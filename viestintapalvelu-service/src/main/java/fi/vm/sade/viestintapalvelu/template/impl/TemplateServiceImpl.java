@@ -772,6 +772,10 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public List<fi.vm.sade.viestintapalvelu.template.Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod) {
         List<Draft> drafts = draftDAO.findByOrgOidsAndApplicationPeriod(oids, applicationPeriod);
+        return getDrafts(drafts);
+    }
+
+    private List<fi.vm.sade.viestintapalvelu.template.Draft> getDrafts(List<Draft> drafts) {
         List<fi.vm.sade.viestintapalvelu.template.Draft> convertedDrafts = new ArrayList<>();
         for (Draft draft : drafts) {
             convertedDrafts.add(getConvertedDraft(draft));
@@ -830,12 +834,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     @Transactional(readOnly = true)
     public List<fi.vm.sade.viestintapalvelu.template.Draft> getDraftsByTags(List<String> tags) {
-        List<fi.vm.sade.viestintapalvelu.template.Draft> drafts = new ArrayList<>();
         final List<Draft> draftsByTags = draftDAO.findDraftsByTags(tags);
-        for(Draft draft : draftsByTags) {
-            drafts.add(getConvertedDraft(draft));
-        }
-        return drafts;
+        return getDrafts(draftsByTags);
     }
-
 }
