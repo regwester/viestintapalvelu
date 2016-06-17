@@ -130,10 +130,7 @@ public class LetterEmailServiceImpl implements LetterEmailService {
     @Override
     @Transactional(readOnly = true)
     public String getPreview(LetterBatch letterBatch, Template template, Optional<String> languageCode) {
-        if (letterBatch.getBatchStatus() == null || letterBatch.getBatchStatus() == LetterBatch.Status.created) {
-            throw new IllegalStateException("Can not send email to LetterBatch="+letterBatch.getTemplateId()
-                    +" in status="+ letterBatch.getBatchStatus()+". Expecting ready status.");
-        }
+        assertBatchStatusIsReady(letterBatch);
         String templateLanguage = Optional.fromNullable(template.getLanguage()).or(DEFAULT_LANGUAGE);
         final Optional<LetterReceivers> letterReceiversOptional = firstWithEmail(letterBatch.getLetterReceivers(), languageCode, templateLanguage);
         final List<LetterReceivers> letterReceiverses = Collections.singletonList(letterReceiversOptional
@@ -149,13 +146,16 @@ public class LetterEmailServiceImpl implements LetterEmailService {
         return emailComponent.getPreview(emailSendData.getEmails().get(0));
     }
 
+    private void assertBatchStatusIsReady(LetterBatch letterBatch) {
+        if (letterBatch.getBatchStatus() == null || letterBatch.getBatchStatus() == LetterBatch.Status.created) {
+            throw new IllegalStateException("Can not send email to LetterBatch="+letterBatch.getTemplateId() + " in status="+ letterBatch.getBatchStatus()+". Expecting ready status.");
+        }
+    }
+
     @Override
     @Transactional(readOnly = true)
     public String getPreview(LetterBatch letterBatch, Optional<String> languageCode) {
-        if (letterBatch.getBatchStatus() == null || letterBatch.getBatchStatus() == LetterBatch.Status.created) {
-            throw new IllegalStateException("Can not send email to LetterBatch="+letterBatch.getTemplateId()
-                    +" in status="+ letterBatch.getBatchStatus()+". Expecting ready status.");
-        }
+        assertBatchStatusIsReady(letterBatch);
         Template template = getTemplate(letterBatch);
         return getPreview(letterBatch, template, languageCode);
     }
