@@ -203,14 +203,18 @@ public class TemplateServiceImpl implements TemplateService {
                 to.addReplacement(toAdd);
             } else {
                 Replacement model = new Replacement();
-                model.setDefaultValue(model.getDefaultValue());
-                model.setMandatory(replacement.isMandatory());
-                model.setName(replacement.getName());
-                model.setTimestamp(new Date());
-                model.setTemplate(to);
+                setModelValues(to, replacement, model);
                 to.addReplacement(model);
             }
         }
+    }
+
+    private void setModelValues(Template to, fi.vm.sade.viestintapalvelu.template.Replacement replacement, Replacement model) {
+        model.setMandatory(replacement.isMandatory());
+        model.setName(replacement.getName());
+        model.setTimestamp(new Date());
+        model.setTemplate(to);
+        model.setDefaultValue(model.getDefaultValue());
     }
 
     private void validateTemplateAgainstStructure(fi.vm.sade.viestintapalvelu.template.Template template, Structure structure) {
@@ -464,14 +468,10 @@ public class TemplateServiceImpl implements TemplateService {
         Set<Replacement> result = new HashSet<>();
         for (fi.vm.sade.viestintapalvelu.template.Replacement r : replacements) {
             Replacement model = new Replacement();
-            model.setDefaultValue(r.getDefaultValue());
             if (isUpdate) {
                 model.setId(r.getId());
             }
-            model.setMandatory(r.isMandatory());
-            model.setName(r.getName());
-            model.setTimestamp(new Date()); // r.getTimestamp());
-            model.setTemplate(template);
+            setModelValues(template, r, model);
             result.add(model);
         }
         return result;
