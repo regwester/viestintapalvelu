@@ -88,17 +88,6 @@ public class EmailAVChecker {
         message.setVirusChecked(true);
     }
 
-    public void checkRecipientMessage(EmailSender sender, EmailMessageDTO message, Optional<? extends AttachmentContainer> additionalAttachments)
-            throws Exception {
-        if (!checkAlive()) {
-            log.warning("Antivirus service not alive at: " + hostname + " port " + port);
-            throw new Exception("Cannot check viruses ClamAV service not available");
-        }
-        boolean isInfected = isInfected(sender, message, additionalAttachments);
-        message.setInfected(isInfected);
-        message.setVirusChecked(true);
-    }
-
     /*
      * Checks emailMessageDTO for Viruses
      * 
