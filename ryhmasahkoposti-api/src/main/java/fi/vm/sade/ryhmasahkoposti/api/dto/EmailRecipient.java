@@ -75,11 +75,7 @@ public class EmailRecipient implements AttachmentContainer {
     }
 
     public EmailRecipient(String oid, String oidType, String email, String languageCode, List<ReportedRecipientReplacementDTO> recipientReplacements) {
-        super();
-        this.oid = oid;
-        this.oidType = oidType;
-        this.email = email;
-        this.languageCode = languageCode;
+        this(oid, oidType, email, languageCode);
         this.recipientReplacements = recipientReplacements;
     }
 
