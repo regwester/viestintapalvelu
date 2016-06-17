@@ -42,14 +42,8 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
 
     @Override
     public List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting) {
-
         BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-
-        JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(pagingAndSorting.getNumberOfRows())
-                .offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
-
-        return findByMessageIdQuery.list(reportedRecipient);
+        return findWithPagingAndWhere(pagingAndSorting, whereExpression);
     }
 
     @Override
@@ -65,6 +59,10 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
     private List<ReportedRecipient> getByRecipientsStatus(Long messageID, PagingAndSortingDTO pagingAndSorting, String status) {
         BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
         whereExpression = whereExpression.and(reportedRecipient.sendingSuccessful.eq(status));
+        return findWithPagingAndWhere(pagingAndSorting, whereExpression);
+    }
+
+    private List<ReportedRecipient> findWithPagingAndWhere(PagingAndSortingDTO pagingAndSorting, BooleanExpression whereExpression) {
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
         JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(pagingAndSorting.getNumberOfRows())
                 .offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
