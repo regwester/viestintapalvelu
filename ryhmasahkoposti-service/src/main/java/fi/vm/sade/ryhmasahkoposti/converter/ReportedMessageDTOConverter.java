@@ -109,13 +109,9 @@ public class ReportedMessageDTOConverter {
 
         for (ReportedAttachment reportedAttachment : reportedAttachments) {
             EmailAttachmentDTO attachmentDTO = new EmailAttachmentDTO();
-            attachmentDTO.setAttachmentID(reportedAttachment.getId());
-            attachmentDTO.setName(reportedAttachment.getAttachmentName());
-            attachmentDTO.setData(reportedAttachment.getAttachment());
-            attachmentDTO.setContentType(reportedAttachment.getContentType());
+            EmailMessageDTOConverter.initEmailAttachmentDTO(reportedAttachment, attachmentDTO);
             attachments.add(attachmentDTO);
         }
-
         return attachments;
     }
 

@@ -80,6 +80,10 @@ public class EmailMessageDTOConverter {
     }
 
     public EmailAttachment convert(ReportedAttachment from, EmailAttachmentDTO to) {
+        return initEmailAttachmentDTO(from, to);
+    }
+
+    public static EmailAttachmentDTO initEmailAttachmentDTO(ReportedAttachment from, EmailAttachmentDTO to) {
         to.setAttachmentID(from.getId());
         to.setName(from.getAttachmentName());
         to.setData(from.getAttachment());
