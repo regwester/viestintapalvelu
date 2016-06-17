@@ -128,10 +128,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting, null);
         JPAQuery findLetterBatches = from(letterBatch).orderBy(orderBy);
 
+        return getLetterBatches(pagingAndSorting, letterBatch, findLetterBatches);
+    }
+
+    private List<LetterBatch> getLetterBatches(PagingAndSortingDTO pagingAndSorting, QLetterBatch letterBatch, JPAQuery findLetterBatches) {
         if (pagingAndSorting.getNumberOfRows() != 0) {
             findLetterBatches.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
         }
-
         return findLetterBatches.list(letterBatch);
     }
 
@@ -154,11 +157,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         BooleanExpression whereExpression = anyOf(splittedInExpression(organizationOIDs, letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
 
-        if (pagingAndSorting.getNumberOfRows() != 0) {
-            findLetterBatches.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
-        }
-
-        return findLetterBatches.list(letterBatch);
+        return getLetterBatches(pagingAndSorting, (QLetterBatch) findLetterBatches.list(letterBatch), findLetterBatches);
     }
 
     @Override
