@@ -82,15 +82,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         if (applicationPeriod.isPresent()) {
             query.setParameter("applicationPeriod", applicationPeriod.get());
         }
-
-        LetterBatch letterBatch = new LetterBatch();
         try {
-            letterBatch = query.getSingleResult();
+            return query.getSingleResult();
         } catch (Exception e) {
-            letterBatch = null;
+            return null;
         }
-
-        return letterBatch;
     }
 
     private TypedQuery<LetterBatch> getLetterBatchTypedQuery(String templateName, String language, String organizationOid, EntityManager em, String findTemplate) {
@@ -110,15 +106,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 + "a.organizationOid=:organizationOid " + "ORDER BY a.timestamp DESC";
 
         TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, em, findTemplate);
-
-        LetterBatch letterBatch = new LetterBatch();
         try {
-            letterBatch = query.getSingleResult();
+            return query.getSingleResult();
         } catch (Exception e) {
-            letterBatch = null;
+            return null;
         }
-
-        return letterBatch;
     }
 
     @Override
