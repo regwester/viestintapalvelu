@@ -162,15 +162,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
             return reportedMessage.sendingStarted.desc();
         }
 
-        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("process")) {
-            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
-                return reportedMessage.process.asc();
-            }
-
-            return reportedMessage.process.desc();
-        }
-
-        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("subject")) {
+        if (pagingAndSorting.getSortedBy().equalsIgnoreCase("process") || pagingAndSorting.getSortedBy().equalsIgnoreCase("subject")) {
             if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
                 return reportedMessage.process.asc();
             }
