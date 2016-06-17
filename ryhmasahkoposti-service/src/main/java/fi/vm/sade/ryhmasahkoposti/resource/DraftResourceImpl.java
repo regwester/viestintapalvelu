@@ -41,9 +41,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
     private DraftService draftService;
     
     public Draft getDraft(Long draftId) {
-        if(draftId == null) {
-            throw new BadRequestException("DraftId is not defined");
-        }
+        assertDraftIdIsDefined(draftId);
         String oid = getCurrentUserOid();
         Draft draft = draftService.getDraft(draftId, oid);
         if(draft == null) {
@@ -71,9 +69,7 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
     }
 
     public String deleteDraft(Long draftId) throws Exception {
-        if(draftId == null) {
-            throw new BadRequestException("DraftId is not defined");
-        }
+        assertDraftIdIsDefined(draftId);
         String oid = getCurrentUserOid();
         draftService.deleteDraft(draftId, oid);
         return "{\"status\": \"success\"}";
@@ -96,15 +92,19 @@ public class DraftResourceImpl extends GenericResourceImpl implements DraftResou
 
     @Override
     public String updateDraft(Long id, Draft draft) throws Exception {
-        if(id == null) {
-            throw new BadRequestException("DraftId is not defined");
-        }
+        assertDraftIdIsDefined(id);
 
         String oid = getCurrentUserOid();
         //clean the html
         draft.setBody(InputCleaner.cleanHtmlDocument(draft.getBody()));
         draftService.updateDraft(id, oid, draft);
         return "{\"status\": \"success\"}";
+    }
+
+    private void assertDraftIdIsDefined(Long id) {
+        if(id == null) {
+            throw new BadRequestException("DraftId is not defined");
+        }
     }
 
 
