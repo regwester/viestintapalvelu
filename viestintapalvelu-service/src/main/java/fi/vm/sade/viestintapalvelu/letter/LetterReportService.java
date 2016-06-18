@@ -17,8 +17,8 @@ package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.List;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;

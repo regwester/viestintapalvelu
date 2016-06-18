@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -31,7 +32,6 @@ import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
 import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.iposti.IPostiDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;

@@ -2,7 +2,7 @@ package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.path.PathBuilder;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
 
 public class LetterReceiverUtil {

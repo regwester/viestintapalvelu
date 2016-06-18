@@ -20,18 +20,16 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
-import com.mysema.query.types.path.PathBuilder;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverLetter;

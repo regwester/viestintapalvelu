@@ -17,8 +17,8 @@ package fi.vm.sade.viestintapalvelu.dao;
 
 import java.util.List;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 
 /**
