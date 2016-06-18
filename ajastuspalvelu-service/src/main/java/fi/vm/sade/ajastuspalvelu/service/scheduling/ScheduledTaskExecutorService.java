@@ -18,17 +18,6 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling;
 
 import org.quartz.JobExecutionContext;
 
-/**
- * User: ratamaa
- * Date: 23.10.2014
- * Time: 13:29
- */
 public interface ScheduledTaskExecutorService {
-
-    /**
-     * @param scheduledTaskId
-     * @param context
-     */
-    void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context)
-            throws Exception;
+    void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context) throws Exception;
 }

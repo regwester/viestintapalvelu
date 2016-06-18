@@ -27,11 +27,6 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.ScheduledTaskExecutorService;
 import fi.vm.sade.ajastuspalvelu.service.scheduling.exception.RetryException;
 
-/**
- * User: ratamaa
- * Date: 23.10.2014
- * Time: 12:49
- */
 @Component
 public class QuartzTriggeredJobDelegator implements Job {
     private static final Logger logger = LoggerFactory.getLogger(QuartzTriggeredJobDelegator.class);
@@ -39,10 +34,6 @@ public class QuartzTriggeredJobDelegator implements Job {
     @Autowired
     private ScheduledTaskExecutorService scheduledTaskExecutorService;
 
-    /**
-     * @param context
-     * @throws JobExecutionException
-     */
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {
         logger.info("Job {} scheduled run start (fired at: {}, last run at {})", context.getJobDetail(),
