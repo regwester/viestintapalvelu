@@ -18,9 +18,6 @@ package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
 import java.util.List;
 
-/**
- * Created by jonimake on 16.1.2015.
- */
 public class HakutuloksetRDTO<T> {
     private int tuloksia;
     private List<T> tulokset;

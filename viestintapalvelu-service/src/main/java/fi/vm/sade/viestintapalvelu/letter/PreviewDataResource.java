@@ -38,9 +38,6 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
-/**
- * Created by jonimake on 9.1.2015.
- */
 @Component("PreviewDataResource")
 @Path("preview")
 @PreAuthorize("isAuthenticated()")

@@ -20,9 +20,6 @@ import java.util.Set;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
-/**
- * Created by jonimake on 12.12.2014.
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HakukohdeDTO {
     public String hakukohteenNimi;
