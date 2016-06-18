@@ -417,27 +417,15 @@ public class LetterServiceImpl implements LetterService {
             if (letter.getLetterContent() != null) {
                 LetterReceiverLetter lrl = new LetterReceiverLetter();
                 lrl.setTimestamp(new Date());
-
-                boolean zippaa = true;
-
-                if (zippaa) { // ZIP
-                    try {
-                        lrl.setLetter(LetterZipUtil.zip(letter.getLetterContent().getContent()));
-                        lrl.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP); // application/zip
-                        lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
-
-                    } catch (IOException e) {
-                        lrl.setLetter(letter.getLetterContent().getContent());
-                        lrl.setContentType(letter.getLetterContent().getContentType()); // application/pdf
-                        lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
-                    }
-
-                } else { // Not zipped
+                try {
+                    lrl.setLetter(LetterZipUtil.zip(letter.getLetterContent().getContent()));
+                    lrl.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP); // application/zip
+                    lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
+                } catch (IOException e) {
                     lrl.setLetter(letter.getLetterContent().getContent());
                     lrl.setContentType(letter.getLetterContent().getContentType()); // application/pdf
                     lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
                 }
-
                 lrl.setLetterReceivers(rec);
                 rec.setLetterReceiverLetter(lrl);
             }
