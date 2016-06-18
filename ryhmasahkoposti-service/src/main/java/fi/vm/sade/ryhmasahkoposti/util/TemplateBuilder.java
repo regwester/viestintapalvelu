@@ -283,22 +283,15 @@ public class TemplateBuilder {
      * @param replacementsList
      * @return
      */
-    private Map<String, Object> createDataContext(Map<String, Object>... replacementsList) {
+    private Map<String, Object> createDataContext(Map<String, Object> replacements) {
         Map<String, Object> data = new HashMap<>();
-        for (Map<String, Object> replacements : replacementsList) {
-            if (replacements == null) {
-                continue;
-            }
-
-            for (String key : replacements.keySet()) {
-                if (replacements.get(key) instanceof String) {
-                    data.put(key, InputCleaner.cleanHtmlFragment((String) replacements.get(key)));
-                } else {
-                    data.put(key, replacements.get(key));
-                }
+        for (String key : replacements.keySet()) {
+            if (replacements.get(key) instanceof String) {
+                data.put(key, InputCleaner.cleanHtmlFragment((String) replacements.get(key)));
+            } else {
+                data.put(key, replacements.get(key));
             }
         }
-        
         data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
         return data;
     }
