@@ -15,7 +15,6 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import java.io.IOException;
 import java.util.Date;
 
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
