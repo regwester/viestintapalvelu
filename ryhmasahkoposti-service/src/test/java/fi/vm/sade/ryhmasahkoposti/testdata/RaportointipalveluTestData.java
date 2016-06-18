@@ -17,6 +17,7 @@ package fi.vm.sade.ryhmasahkoposti.testdata;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;

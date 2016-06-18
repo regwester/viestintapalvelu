@@ -16,35 +16,24 @@
 package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.annotation.Nullable;
-import javax.persistence.EntityManager;
-import javax.persistence.TypedQuery;
 
 import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
-import org.hibernate.internal.util.StringHelper;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Function;
-import com.google.common.collect.Collections2;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
-import com.mysema.query.types.expr.BooleanExpression;
-import com.mysema.query.types.path.StringPath;
 import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 

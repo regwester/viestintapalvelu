@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 

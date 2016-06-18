@@ -18,7 +18,7 @@ package fi.vm.sade.ryhmasahkoposti.dao;
 import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 

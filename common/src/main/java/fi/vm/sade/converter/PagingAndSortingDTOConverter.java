@@ -13,11 +13,11 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  **/
-package fi.vm.sade.ryhmasahkoposti.converter;
+package fi.vm.sade.converter;
 
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 
 @Component
 public class PagingAndSortingDTOConverter {

@@ -18,6 +18,7 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import java.io.IOException;
 import java.util.*;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;

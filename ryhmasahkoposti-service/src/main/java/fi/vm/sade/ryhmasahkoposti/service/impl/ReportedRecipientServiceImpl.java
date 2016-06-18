@@ -24,7 +24,7 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;

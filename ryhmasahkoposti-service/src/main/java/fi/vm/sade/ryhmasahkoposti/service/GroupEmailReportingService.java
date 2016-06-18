@@ -26,7 +26,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;

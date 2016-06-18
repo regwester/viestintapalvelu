@@ -27,12 +27,12 @@ import org.springframework.stereotype.Component;
 import com.sun.istack.Nullable;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.resource.MessageReportingResource;
-import fi.vm.sade.ryhmasahkoposti.converter.PagingAndSortingDTOConverter;
+import fi.vm.sade.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageQueryDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;

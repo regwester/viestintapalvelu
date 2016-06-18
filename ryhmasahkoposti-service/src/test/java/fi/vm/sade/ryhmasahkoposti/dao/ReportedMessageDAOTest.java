@@ -36,7 +36,7 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;

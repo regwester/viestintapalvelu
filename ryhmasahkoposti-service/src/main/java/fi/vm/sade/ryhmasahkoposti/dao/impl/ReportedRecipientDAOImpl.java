@@ -30,7 +30,7 @@ import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
