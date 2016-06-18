@@ -58,7 +58,7 @@ public class AddressLabelBuilder {
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
-    public byte[] printCSV(AddressLabelBatch input) throws DocumentException, IOException {
+    public byte[] printCSV(AddressLabelBatch input) throws IOException {
         Map<String, Object> context = createDataContext(input.getAddressLabels(), new AddressLabelDecoratorBuilder() {
             protected AddressLabelDecorator newAddressLabelDecorator(AddressLabel addressLabel) {
                 return new XmlAddressLabelDecorator(addressLabel);

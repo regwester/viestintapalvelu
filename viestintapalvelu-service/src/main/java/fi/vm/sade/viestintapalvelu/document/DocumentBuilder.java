@@ -49,13 +49,13 @@ public class DocumentBuilder {
         templateEngine.init();
     }
 
-    public byte[] xhtmlToPDF(byte[] xhtml) throws DocumentException, IOException {
+    public byte[] xhtmlToPDF(byte[] xhtml) throws DocumentException {
         ByteArrayOutputStream output = new ByteArrayOutputStream();
         newITextRenderer(xhtml).createPDF(output);
         return output.toByteArray();
     }
 
-    public byte[] applyTextTemplate(byte[] template, Map<String, Object> data) throws IOException {
+    public byte[] applyTextTemplate(byte[] template, Map<String, Object> data) {
         StringWriter writer = new StringWriter();
         templateEngine.evaluate(new VelocityContext(data), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(template)));
         return writer.toString().getBytes();
@@ -90,7 +90,7 @@ public class DocumentBuilder {
      * @throws DocumentException
      * @throws IOException
      */
-    public byte[] mergeByte(List<byte[]> inputs) throws DocumentException, IOException {
+    public byte[] mergeByte(List<byte[]> inputs) throws IOException {
 
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
         for (byte[] input : inputs)

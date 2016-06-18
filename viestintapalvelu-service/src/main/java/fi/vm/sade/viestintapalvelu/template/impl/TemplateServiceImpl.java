@@ -497,7 +497,7 @@ public class TemplateServiceImpl implements TemplateService {
      * .String, java.lang.String, java.lang.String)
      */
     @Override
-    public Template template(String name, String languageCode, String type) throws IOException, DocumentException {
+    public Template template(String name, String languageCode, String type) throws IOException {
 
         Template result = new Template();
         String templateName = Utils.resolveTemplateName(name, languageCode, type);

@@ -575,7 +575,7 @@ public class LetterServiceImpl implements LetterService {
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
-    protected void processIpostiBatchForLetterReceivers(long letterBatchId, List<Long> batchReceiversIds, int index) throws Exception {
+    protected void processIpostiBatchForLetterReceivers(long letterBatchId, List<Long> batchReceiversIds, int index) {
         logger.info("Processing IPosti {} for LetterBatch={} with {} receivers", index, letterBatchId, batchReceiversIds.size());
         LetterBatch batch = letterBatchDAO.read(letterBatchId);
         List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverIds(batchReceiversIds);
@@ -863,7 +863,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception {
+    public String getLetterTypeByLetterBatchID(Long letterBatchID) {
         return letterBatchDAO.findTemplateNameForLetterBatch(letterBatchID);
     }
 

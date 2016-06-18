@@ -83,7 +83,7 @@ public class EmailSourceData {
         return recipients;
     }
 
-    public Map<TemplateEmailField, Object> getEmailContext() throws Exception {
+    public Map<TemplateEmailField, Object> getEmailContext() {
 
         return emailContext;
     }
@@ -128,7 +128,7 @@ public class EmailSourceData {
         validateContext();
     }
 
-    private void validateContext() throws Exception {
+    private void validateContext() {
 
         for (TemplateEmailField t : TemplateEmailField.values()) {
             Object value = emailContext.get(t);

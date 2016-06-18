@@ -169,7 +169,7 @@ public class TemplateResource extends AsynchronousResource {
         return getResource("/test_data/" + name);
     }
 
-    private List<String> getResourceList(String pattern) throws IOException {
+    private List<String> getResourceList(String pattern) {
         List<String> resources = new ArrayList<>();
         for (Resource template : Utils.getResourceList(pattern)) {
             resources.add(template.getFilename());
@@ -177,7 +177,7 @@ public class TemplateResource extends AsynchronousResource {
         return resources;
     }
 
-    private String getResource(String file) throws IOException {
+    private String getResource(String file) {
         return Utils.getResource(file).replaceAll("\\r|\\n|\" \"", "");
     }
 

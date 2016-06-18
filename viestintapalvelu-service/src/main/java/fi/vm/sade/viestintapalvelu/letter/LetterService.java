@@ -126,7 +126,7 @@ public interface LetterService {
      */
     byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
 
-    String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception;
+    String getLetterTypeByLetterBatchID(Long letterBatchID);
 
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 

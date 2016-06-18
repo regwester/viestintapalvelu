@@ -266,14 +266,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     private String evaluateTemplateContent(TemplateContent content, Map<String, Object> dataContext,
                                            Template template) {
         String contentStr = content.getContent();
-        try {
-            return new String(documentBuilder
-                    .applyTextTemplate(contentStr.getBytes(), dataContext));
-        } catch (IOException e) {
-            throw new IllegalStateException("Error processing template's ("
-                    +template.getName()+":"+template.getLanguage()+") velocity content "
-                    +content.getName() + ": " +e.getMessage(), e);
-        }
+        return new String(documentBuilder.applyTextTemplate(contentStr.getBytes(), dataContext));
     }
 
     private void processAttachmentsByTemplateContent(Template template, AsiointitiliMessageDto messageDto, Map<String, Object> dataContext) {

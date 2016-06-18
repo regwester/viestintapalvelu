@@ -48,7 +48,7 @@ public class LetterBatchValidator {
      * 
      * @param letters
      */
-    public static Map<String, String> validate(LetterBatchDetails letters) throws Exception {
+    public static Map<String, String> validate(LetterBatchDetails letters) {
         Map<String, String> result = new HashMap<>();
         validateLetterBatch(letters);
 
@@ -98,7 +98,7 @@ public class LetterBatchValidator {
         validateAddress(letter.getAddressLabel());
     }
 
-    private static void validateAddress(AddressLabelDetails address) throws Exception {
+    private static void validateAddress(AddressLabelDetails address) {
         if (address == null) {
             throw new IllegalArgumentException("AddressLabel of the letter to be validated was null");
         }

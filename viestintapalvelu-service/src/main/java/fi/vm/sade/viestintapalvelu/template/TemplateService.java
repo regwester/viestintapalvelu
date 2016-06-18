@@ -63,7 +63,7 @@ public interface TemplateService {
 
     fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode) throws IOException, DocumentException;
 
-    fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode, String type) throws IOException, DocumentException;
+    fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode, String type) throws IOException;
 
     Template getTemplateByName(TemplateCriteria criteria, boolean content);
 
