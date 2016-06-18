@@ -167,7 +167,7 @@ public class LetterResource extends AbstractLetterResource {
         }
 
         return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid,
-                Optional.fromNullable(tag),
+                Optional.of(tag),
                 Optional.fromNullable(applicationPeriod))).build();
     }
 
