@@ -15,14 +15,10 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter.html;
 
-import javax.annotation.Nullable;
-
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Entities;
 import org.jsoup.safety.Whitelist;
-
-import com.google.common.base.Function;
 
 /**
  * User: ratamaa

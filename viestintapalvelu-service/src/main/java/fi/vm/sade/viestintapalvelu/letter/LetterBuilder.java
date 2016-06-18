@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
