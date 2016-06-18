@@ -475,7 +475,7 @@ public class TemplateResource extends AsynchronousResource {
             String tag = request.getParameter("tag");
             if ((tag != null) && !("".equals(tag))) {
                 bundle.setLatestOrganisationReplacementsWithTag(letterService.findReplacementByNameOrgTag(templateName, languageCode, oid,
-                        Optional.fromNullable(tag), Optional.fromNullable(applicationPeriod)));
+                        Optional.of(tag), Optional.fromNullable(applicationPeriod)));
             }
         }
 
@@ -553,7 +553,7 @@ public class TemplateResource extends AsynchronousResource {
             // tag
             String tag = request.getParameter("tag");
             if ((tag != null) && !("".equals(tag))) {
-                templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, Optional.fromNullable(tag),
+                templateReplacements = letterService.findReplacementByNameOrgTag(templateName, languageCode, oid, Optional.of(tag),
                         applicationPeriodForTagAndNonTagSeach);
                 if (templateReplacements != null && !templateReplacements.isEmpty()) {
                     Map<String, Object> tagRepl = new HashMap<>();
