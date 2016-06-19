@@ -106,9 +106,7 @@ public class PDFPrinterResource extends AsynchronousResource {
         String documentId = null;
         try {
             byte[] pdf = buildDocument(input);
-            String documentName = input.getDocumentName();
-            documentName = input.getDocumentName() == null ? "document.pdf"
-                    : input.getDocumentName() + ".pdf";
+            String documentName = input.getDocumentName() == null ? "document.pdf" : input.getDocumentName() + ".pdf";
             documentId = downloadCache.addDocument(new Download(
                     "application/pdf;charset=utf-8", documentName, pdf));
         } catch (Exception e) {
