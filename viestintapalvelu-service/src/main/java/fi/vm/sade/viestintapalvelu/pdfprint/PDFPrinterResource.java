@@ -110,8 +110,7 @@ public class PDFPrinterResource extends AsynchronousResource {
             documentId = downloadCache.addDocument(new Download(
                     "application/pdf;charset=utf-8", documentName, pdf));
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Sync PDF failed: {}", e.getMessage());
+            LOG.error("Sync PDF failed: " + e.getMessage(), e);
             return createFailureResponse(request);
         }
         return createResponse(request, documentId+".pdf");
@@ -139,8 +138,7 @@ public class PDFPrinterResource extends AsynchronousResource {
             byte[] pdf = buildDocument(input);
             return Response.ok(pdf).build();
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Getting PDF content failed: {}", e.getMessage());
+            LOG.error("Getting PDF content failed: " + e.getMessage(), e);
             return createFailureResponse(request);
         }
     }
@@ -165,7 +163,7 @@ public class PDFPrinterResource extends AsynchronousResource {
             @Context final HttpServletRequest request) throws IOException,
             DocumentException {
         if (input == null || input.getSources().isEmpty()) {
-            LOG.error("Nothing to do ", input);
+            LOG.error("Nothing to do {}", input);
             return Response.serverError().entity("Batch was empty!").build();
         }
         final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
@@ -193,8 +191,7 @@ public class PDFPrinterResource extends AsynchronousResource {
                                     "application/pdf;charset=utf-8",
                                     new ByteArrayInputStream(pdf));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    LOG.error("PDF async failed: {}", e.getMessage());
+                    LOG.error("PDF async failed: " + e.getMessage(), e);
                 }
             }
         });
