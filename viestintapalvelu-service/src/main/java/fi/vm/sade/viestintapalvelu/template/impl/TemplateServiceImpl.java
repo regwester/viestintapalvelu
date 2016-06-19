@@ -704,7 +704,6 @@ public class TemplateServiceImpl implements TemplateService {
     public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName, String languageCode, String oid, String applicationPeriod,
             String fetchTarget, String tag) {
 
-        fi.vm.sade.viestintapalvelu.template.Draft result = new fi.vm.sade.viestintapalvelu.template.Draft();
         Draft draft = draftDAO.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
         return getConvertedDraft(draft);
     }

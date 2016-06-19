@@ -425,8 +425,7 @@ public class TemplateResource extends AsynchronousResource {
             tag = "";
         }
 
-        Draft draft = new Draft();
-        draft = templateService.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
+        Draft draft = templateService.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
         return Response.ok(draft).build();
     }
 

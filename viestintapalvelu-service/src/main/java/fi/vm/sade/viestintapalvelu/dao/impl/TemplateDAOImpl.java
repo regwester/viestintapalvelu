@@ -42,13 +42,11 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
 
-        Template templ = new Template();
         try {
-            templ = query.getSingleResult();
+            return query.getSingleResult();
         } catch (NoResultException e) {
-            templ = null;
+            return null;
         }
-        return templ;
     }
 
     @Override
