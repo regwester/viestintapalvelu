@@ -747,7 +747,6 @@ public class LetterServiceImpl implements LetterService {
     @Transactional
     public LetterBatchSplitedIpostDto splitBatchForIpostProcessing(long letterBatchId) {
         logger.info("splitBatchForIpostProcessing {}", letterBatchId);
-        LetterBatch batch = letterBatchDAO.read(letterBatchId);
 
         LetterBatchSplitedIpostDto job = new LetterBatchSplitedIpostDto();
         List<Long> allReceiverIds = letterReceiversDAO.findLetterRecieverIdsByLetterBatchId(letterBatchId);
