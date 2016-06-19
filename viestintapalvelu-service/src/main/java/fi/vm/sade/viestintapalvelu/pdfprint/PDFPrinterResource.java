@@ -168,14 +168,11 @@ public class PDFPrinterResource extends AsynchronousResource {
             LOG.error("Nothing to do ", input);
             return Response.serverError().entity("Batch was empty!").build();
         }
-        final Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         try {
-            LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}",
-                    new Object[] { auth.getName(), auth.getPrincipal() });
-
+            LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}", new Object[] { auth.getName(), auth.getPrincipal() });
         } catch (Exception e) {
-            LOG.error("No authentication!!!");
+            LOG.error("No authentication!!!", e);
         }
 
         final String documentId = globalRandomId();
