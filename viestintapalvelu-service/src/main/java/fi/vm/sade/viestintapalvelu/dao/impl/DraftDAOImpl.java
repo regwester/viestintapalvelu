@@ -74,14 +74,11 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<Draft, Long> implements Dra
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
 
-        Draft draft = new Draft();
         try {
-            draft = query.getSingleResult();
+            return query.getSingleResult();
         } catch (Exception e) {
-            draft = null;
+            return null;
         }
-
-        return draft;
     }
 
     public Draft findDraftByNameOrgTag2(String templateName, String templateLanguage, String organizationOid, String applicationPeriod, String fetchTarget,
