@@ -92,7 +92,7 @@
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -109,7 +109,7 @@
         </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -127,7 +127,7 @@
         </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -141,7 +141,7 @@
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -154,7 +154,7 @@
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -171,7 +171,7 @@
         </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
