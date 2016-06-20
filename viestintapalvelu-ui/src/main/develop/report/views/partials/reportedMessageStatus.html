@@ -12,7 +12,7 @@
             {{ 'reportedmessagestatus.text.viestia' | i18n}} ({{percentage(status.numberOfSuccessfulSendings, status.numberOfRecipients)}} %) {{'reportedmessagestatus.text.lahetettiin_onnistuneesti' | i18n }}
         </span>
         <span ng-if="status.numberOfFailedSendings > 0">
-            <img style="margin-right: 0.2em;" src="./assets/img/error-icon28x29.png"/>
+            <img style="margin-right: 0.2em;" src="./img/error-icon28x29.png"/>
             {{'reportedmessagestatus.text.epaonnistuneita_lahetyksia' | i18n }}: {{status.numberOfFailedSendings}} 
         </span>
     </div>
