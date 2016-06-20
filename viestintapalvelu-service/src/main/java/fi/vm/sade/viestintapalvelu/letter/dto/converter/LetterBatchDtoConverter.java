@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -35,6 +36,7 @@ import fi.vm.sade.viestintapalvelu.model.*;
  * User: ratamaa Date: 18.9.2014 Time: 14:53
  */
 @Component
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterBatchDtoConverter {
     @Autowired
     private ObjectMapperProvider objectMapperProvider;

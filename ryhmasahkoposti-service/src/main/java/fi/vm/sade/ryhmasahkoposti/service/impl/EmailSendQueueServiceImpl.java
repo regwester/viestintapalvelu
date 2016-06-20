@@ -26,6 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -56,6 +57,7 @@ import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
  * Time: 10:49
  */
 @Service
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class EmailSendQueueServiceImpl implements EmailSendQueueService {
     public static final int SAFE_MARGIN_MILLIS = 5000;
     private static Logger log = LoggerFactory.getLogger(GroupEmailReportingServiceImpl.class);

@@ -44,6 +44,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -98,6 +99,7 @@ import static org.joda.time.DateTime.now;
  */
 @Service
 @Transactional
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterServiceImpl implements LetterService {
     public static final int STORE_DOKUMENTTIS_DAYS = 1;
     private static final int MAX_IPOST_CHUNK_SIZE = 500;

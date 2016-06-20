@@ -32,6 +32,7 @@ import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -68,6 +69,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
 @Singleton
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterBuilder {
     private final Logger LOG = LoggerFactory.getLogger(LetterBuilder.class);
 

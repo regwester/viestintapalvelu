@@ -24,6 +24,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -54,6 +55,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
  * Time: 12:24
  */
 @Service
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterEmailServiceImpl implements LetterEmailService {
     public static final String ADDITIONAL_ATTACHMENT_URIS_EMAIL_RECEIVER_PARAMETER = "additionalAttachmentUris";
     public static final String DEFAULT_LANGUAGE = "FI";

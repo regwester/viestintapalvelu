@@ -26,6 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -47,6 +48,7 @@ import static com.google.common.base.Optional.fromNullable;
  * Time: 15:39
  */
 @Service
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class EmailServiceImpl implements EmailService {
     public static final String AJASTUSPROSESSI = "ajastusprosessi";
     public static final String GET_CONTENT_TRUE_VALUE = "YES";

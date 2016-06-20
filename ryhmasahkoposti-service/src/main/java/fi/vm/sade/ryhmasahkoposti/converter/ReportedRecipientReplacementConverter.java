@@ -22,6 +22,7 @@ import java.util.List;
 
 import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -37,6 +38,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
  *
  */
 @Component
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class ReportedRecipientReplacementConverter {
 
     @Autowired
