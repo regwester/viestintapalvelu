@@ -9,7 +9,7 @@ angular.module('report').controller('ReportedMessageListCtrl',
     };
     $scope.sortedBy = 'sendingStarted';
     $scope.order = 'desc';
-    $scope.descending = false;
+    $scope.descending = true;
     $scope.form = {
       organization: '',
       searchArgument: ''
