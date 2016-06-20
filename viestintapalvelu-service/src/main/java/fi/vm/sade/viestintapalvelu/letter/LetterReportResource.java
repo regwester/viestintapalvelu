@@ -64,7 +64,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
  *
  */
 @Component("LetterReportResource")
-@ComponentScan(value = { "fi.vm.sade.dto" })
+@ComponentScan(value = { "fi.vm.sade.converter" })
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.REPORTING_PATH)
 @Api(value = "/reporting", description = "Kirjel&auml;hetysten raportointi")
