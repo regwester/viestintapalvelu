@@ -8,7 +8,7 @@ angular.module('report').controller('ReportedMessageListCtrl',
       pageSize: 10
     };
     $scope.sortedBy = 'sendingStarted';
-    $scope.order = 'asc';
+    $scope.order = 'desc';
     $scope.descending = false;
     $scope.form = {
       organization: '',
