@@ -311,14 +311,25 @@ public class LetterResource extends AbstractLetterResource {
 
     @GET
     @Produces("text/plain")
-    @Path("/getBatchId")
+    @Path("/getBatchIdReadyForPublish")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = "Palauttaa viimeisimmän julkaistun/julkaisemattoman kirjelähetyksen ID:n")
-    public Response getLetterBatchIdForHaku(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
-                                            @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
-                                            @QueryParam("language") @ApiParam(value = "Kirjelähetyksen kieli", required = true) String language,
-                                            @QueryParam("published") @ApiParam(value = "Onko kirjelähetys julkaistu", required = true) boolean published) {
-        Optional<Long> batchId = letterService.getLatestLetterBatchId(hakuOid, type, language, published);
+    @ApiOperation(value = "Palauttaa viimeisimmän kirjelähetyksen ID:n, jos sitä ei ole vielä julkaistu")
+    public Response getLetterBatchIdReadyForPublish(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
+                                                    @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
+                                                    @QueryParam("language") @ApiParam(value = "Kirjelähetyksen kieli", required = true) String language) {
+        Optional<Long> batchId = letterService.getLetterBatchIdReadyForPublish(hakuOid, type, language);
+        return batchId.isPresent() ? Response.ok(batchId.get()).build() : Response.status(Status.NOT_FOUND).entity("Unable to find batch id.").build();
+    }
+
+    @GET
+    @Produces("text/plain")
+    @Path("/getBatchIdReadyForEPosti")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa viimeisimmän kirjelähetyksen ID:n, jos se on jo julkaistu")
+    public Response getLetterBatchIdReadyForEPosti(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
+                                                   @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
+                                                   @QueryParam("language") @ApiParam(value = "Kirjelähetyksen kieli", required = true) String language) {
+        Optional<Long> batchId = letterService.getLetterBatchIdReadyForEPosti(hakuOid, type, language);
         return batchId.isPresent() ? Response.ok(batchId.get()).build() : Response.status(Status.NOT_FOUND).entity("Unable to find batch id.").build();
     }
 

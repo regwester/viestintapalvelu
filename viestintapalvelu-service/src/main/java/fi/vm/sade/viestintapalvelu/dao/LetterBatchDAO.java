@@ -166,7 +166,9 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 
     int publishLetterBatch(long batchId);
 
-    Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published);
+    Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
+
+    Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language);
 
     LetterBatchCountDto countBatchStatus(String hakuOid, String type, String language);
 

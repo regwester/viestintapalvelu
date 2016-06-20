@@ -364,16 +364,30 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
+    public Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language) {
+        return getLatestLetterBatchId(hakuOid, type, language, false);
+    }
+
+    @Override
+    public Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language) {
+        return getLatestLetterBatchId(hakuOid, type, language, true);
+    }
+
+    private Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
         List<Long> batchIds = getEntityManager().createQuery("SELECT l.id "
                 + " FROM LetterBatch l"
                 + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
                 + " AND l.templateName = :templateName AND l.language = :language AND l.id NOT IN ("
-                + " SELECT lb.id "
-                + " FROM LetterBatch lb"
-                + " INNER JOIN lb.letterReceivers lr "
-                + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish)"
-                + " ORDER BY l.timestamp DESC")
+                    + " SELECT lb.id "
+                    + " FROM LetterBatch lb"
+                    + " INNER JOIN lb.letterReceivers lr "
+                    + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish)"
+                + " AND l.timestamp = ("
+                    + " SELECT MAX(lb.timestamp)"
+                    + " FROM LetterBatch lb"
+                    + " WHERE lb.tag = lb.applicationPeriod AND lb.applicationPeriod = :applicationPeriod"
+                    + " AND lb.templateName = :templateName AND lb.language = :language"
+                + ")")
                 .setParameter("applicationPeriod", hakuOid)
                 .setParameter("templateName", type)
                 .setParameter("language", language.toUpperCase())

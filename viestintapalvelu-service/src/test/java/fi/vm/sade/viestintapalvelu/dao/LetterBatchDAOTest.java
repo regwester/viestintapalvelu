@@ -348,24 +348,30 @@ public class LetterBatchDAOTest {
    }
 
     @Test
-    public void getLetterBatchId() throws Exception {
+    public void getLetterBatchIdReadyForPublishOrEPosti() throws Exception {
         Long batchId1 = insertLetterBatchForPersonOids("test-haku-oid-1",
-                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
-        Long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-1",
-                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "jalkiohjauskirje", true);
-        Long batchId3 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+        Long batchId3 = insertLetterBatchForPersonOids("test-haku-oid-2",
                 Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
         Long batchId4 = insertLetterBatchForPersonOids("test-haku-oid-1",
-                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
-        Long batchId5 = insertLetterBatchForPersonOids("test-haku-oid-2",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "jalkiohjauskirje", false);
+        Long batchId5 = insertLetterBatchForPersonOids("test-haku-oid-1",
                 Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
 
-        assertEquals(batchId4, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-1", "hyvaksymiskirje", "FI", true).get());
-        assertEquals(batchId3, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-1", "hyvaksymiskirje", "FI", false).get());
-        assertEquals(batchId2, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-1", "jalkiohjauskirje", "FI", true).get());
-        assertEquals(batchId5, letterBatchDAO.getLatestLetterBatchId("test-haku-oid-2", "hyvaksymiskirje", "FI", false).get());
-        assertFalse(letterBatchDAO.getLatestLetterBatchId("test-haku-oid-2", "hyvaksymiskirje", "FI", true).isPresent());
+        assertEquals(batchId5, letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-1", "hyvaksymiskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-1", "hyvaksymiskirje", "FI").isPresent());
 
+        assertEquals(batchId3, letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-2", "hyvaksymiskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-2", "hyvaksymiskirje", "FI").isPresent());
+
+        Long batchId6 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+
+        assertEquals(batchId6, letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-1", "hyvaksymiskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-1", "hyvaksymiskirje", "FI").isPresent());
+
+        assertEquals(batchId4, letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-1", "jalkiohjauskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-1", "jalkiohjauskirje", "FI").isPresent());
     }
 
     @Test

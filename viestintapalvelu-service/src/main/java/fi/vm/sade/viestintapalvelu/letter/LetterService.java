@@ -184,7 +184,9 @@ public interface LetterService {
 
     int publishLetterBatch(long letterBatchId);
 
-    Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published);
+    Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
+
+    Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language);
 
     LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language);
 

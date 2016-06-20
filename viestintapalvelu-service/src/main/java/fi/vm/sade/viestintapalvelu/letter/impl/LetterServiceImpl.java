@@ -893,9 +893,15 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
-        return letterBatchDAO.getLatestLetterBatchId(hakuOid, type, language, published);
+    public Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language) {
+        return letterBatchDAO.getLetterBatchIdReadyForPublish(hakuOid, type, language);
     }
+
+    @Override
+    public Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language) {
+        return letterBatchDAO.getLetterBatchIdReadyForEPosti(hakuOid, type, language);
+    }
+
     public LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language) {
         return letterBatchDAO.countBatchStatus(hakuOid, type, language);
     }
