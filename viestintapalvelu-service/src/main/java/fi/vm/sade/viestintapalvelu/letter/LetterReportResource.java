@@ -33,6 +33,7 @@ import fi.vm.sade.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -63,6 +64,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
  *
  */
 @Component("LetterReportResource")
+@ComponentScan(value = { "fi.vm.sade.dto" })
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.REPORTING_PATH)
 @Api(value = "/reporting", description = "Kirjel&auml;hetysten raportointi")
