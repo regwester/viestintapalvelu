@@ -20,7 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

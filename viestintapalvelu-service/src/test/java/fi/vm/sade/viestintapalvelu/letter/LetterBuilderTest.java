@@ -27,7 +27,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;

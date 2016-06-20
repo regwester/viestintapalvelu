@@ -50,7 +50,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.html.Cleaner;

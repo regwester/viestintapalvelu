@@ -50,7 +50,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;

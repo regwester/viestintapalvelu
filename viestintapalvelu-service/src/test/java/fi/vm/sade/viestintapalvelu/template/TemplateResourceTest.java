@@ -310,7 +310,7 @@ public class TemplateResourceTest {
     
     @Configuration
     @ImportResource(value = "classpath:test-application-context.xml")
-    @ComponentScan("fi.vm.sade.converter")
+    @ComponentScan(value = { "fi.vm.sade.converter", "fi.vm.sade.externalinterface" })
     public static class Config {
         @Bean
         TransactionalActions transactionlActions() {

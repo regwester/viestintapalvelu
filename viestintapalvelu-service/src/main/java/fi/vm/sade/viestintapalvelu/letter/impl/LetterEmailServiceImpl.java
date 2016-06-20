@@ -36,7 +36,7 @@ import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.email.TemplateEmailField;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.LetterEmailService;
 import fi.vm.sade.viestintapalvelu.letter.LetterService;

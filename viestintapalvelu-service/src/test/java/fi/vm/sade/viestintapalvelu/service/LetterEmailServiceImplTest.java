@@ -43,7 +43,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;

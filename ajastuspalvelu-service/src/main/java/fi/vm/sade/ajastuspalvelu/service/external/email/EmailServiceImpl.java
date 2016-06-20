@@ -37,7 +37,7 @@ import fi.vm.sade.ajastuspalvelu.service.external.email.dto.EmailReceiver;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 
 import static com.google.common.base.Optional.fromNullable;
 

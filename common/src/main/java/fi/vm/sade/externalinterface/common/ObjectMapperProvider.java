@@ -14,7 +14,7 @@
  * European Union Public Licence for more details.
  */
 
-package fi.vm.sade.viestintapalvelu.externalinterface.common;
+package fi.vm.sade.externalinterface.common;
 
 
 import javax.ws.rs.ext.ContextResolver;

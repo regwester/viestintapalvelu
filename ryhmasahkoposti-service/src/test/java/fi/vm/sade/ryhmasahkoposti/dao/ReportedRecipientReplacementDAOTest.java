@@ -19,7 +19,7 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
