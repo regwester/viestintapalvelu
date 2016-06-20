@@ -28,7 +28,8 @@ angular.module('report').controller('ReportedMessageListCtrl',
 
         $scope.loading = true;
         GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid,
-            nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page, order: $scope.order},
+            nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page,
+            sortedby: $scope.sortedBy, order: $scope.order},
           function (result) {
             $scope.loading = false;
             $scope.reportedMessagesDTO = result;
@@ -44,7 +45,7 @@ angular.module('report').controller('ReportedMessageListCtrl',
         $scope.loading = true;
         GetReportedMessagesBySearchArgument.get({orgOid: $scope.form.organization.oid,
             searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pagination.pageSize,
-            page: $scope.pagination.page, order: $scope.order},
+            page: $scope.pagination.page, sortedby: $scope.sortedBy, order: $scope.order},
           function (result) {
             $scope.loading = false;
             $scope.reportedMessagesDTO = result;
@@ -95,7 +96,7 @@ angular.module('report').controller('ReportedMessageListCtrl',
       // Suoritetaan haku
       GetReportedMessagesBySearchArgument.get({orgOid: $scope.form.organization.oid,
           searchArgument: $scope.form.searchArgument, nbrofrows: $scope.pagination.pageSize,
-          page: $scope.pagination.page},
+          page: $scope.pagination.page, sortedby: $scope.sortedBy, order: $scope.order},
         function (result) {
           $scope.reportedMessagesDTO = result;
         }, function (error) {
@@ -173,7 +174,8 @@ angular.module('report').controller('ReportedMessageListCtrl',
       SharedVariables.setSelectedOrganizationValue($scope.form.organization);
       // Suoritetaan haku
       GetReportedMessagesByOrganization.get({orgOid: $scope.form.organization.oid,
-          nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page},
+          nbrofrows: $scope.pagination.pageSize, page: $scope.pagination.page,
+          sortedby: $scope.sortedBy, order: $scope.order},
         function (result) {
           $scope.reportedMessagesDTO = result;
         }, function (error) {
