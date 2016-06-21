@@ -436,17 +436,6 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             return new LetterBatchCountDto(totalCount, (totalCount - notReadyCount), 0l, false, false);
         }
     }
-    public long longOrZero(Object[] probablyLongOrNullArray, int index) {
-        if((probablyLongOrNullArray.length - 1) < index) {
-            return 0L;
-        }
-        Object probablyLongOrNull = probablyLongOrNullArray[index];
-        if(probablyLongOrNull == null) {
-            return 0L;
-        } else {
-            return (Long) probablyLongOrNull;
-        }
-    }
 
     public List<String> getEPostiEmailAddressesByBatchId(long letterBatchId) {
         return getEntityManager().createQuery("SELECT lr.emailAddressEPosti"
