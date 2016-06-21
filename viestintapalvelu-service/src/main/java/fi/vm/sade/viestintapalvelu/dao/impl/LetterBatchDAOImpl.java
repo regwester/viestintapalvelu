@@ -396,26 +396,44 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     public LetterBatchCountDto countBatchStatus(String hakuOid, String type, String language) {
-        String sql = "SELECT COUNT(l.id),"
-                + " COALESCE(SUM(CASE WHEN l.batchStatus = 'ready' THEN 1 ELSE 0 END), 0),"
-                + " COALESCE(SUM(CASE WHEN l.batchStatus = 'error' THEN 1 ELSE 0 END), 0)"
-                + " FROM LetterBatch l "
-                + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
-                + " AND l.templateName = :templateName AND l.language = :language";
-        Iterator<?> totalCountAndReadyCount = getEntityManager().createQuery(sql)
-                .setParameter("applicationPeriod", hakuOid)
-                .setParameter("templateName", type)
-                .setParameter("language", language.toUpperCase())
-                .getResultList().iterator();
-        try {
-            Object[] results = (Object[])totalCountAndReadyCount.next();
-            long totalCount = (Long)results[0];
-            long readyCount = (Long)results[1];
-            long errorCount = (Long)results[2];
-            return new LetterBatchCountDto(totalCount,readyCount, errorCount);
-        } catch(Throwable t) {
-            LOG.error("Getting total count failed!",t);
-            throw t;
+        List<?> resultList1 = getEntityManager().createQuery("SELECT l.id, l.batchStatus "
+            + " FROM LetterBatch l "
+            + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
+            + " AND l.templateName = :templateName AND l.language = :language"
+            + " ORDER BY l.timestamp DESC")
+            .setParameter("applicationPeriod", hakuOid)
+            .setParameter("templateName", type)
+            .setParameter("language", language.toUpperCase()).getResultList();
+
+        if(0 == resultList1.size()) {
+            return new LetterBatchCountDto();
+        }
+
+        Object[] result1 = (Object[])resultList1.get(0);
+        Long batchId = (Long)result1[0];
+        LetterBatch.Status batchStatus = (LetterBatch.Status)result1[1];
+
+        Object[] result2 = (Object[])getEntityManager().createQuery(
+              " SELECT COUNT(lr.id),"
+            + " COALESCE(SUM(CASE WHEN lrl.readyForPublish = true THEN 1 ELSE 0 END), 0),"
+            + " COALESCE(SUM(CASE WHEN lrl.letter IS NULL THEN 1 ELSE 0 END), 0)"
+            + " FROM LetterBatch l"
+            + " INNER JOIN l.letterReceivers lr "
+            + " INNER JOIN lr.letterReceiverLetter lrl "
+            + " WHERE l.id = :letterBatchId")
+            .setParameter("letterBatchId", batchId)
+            .getResultList().get(0);
+
+        Long totalCount = (Long)result2[0];
+        Long readyForPublishCount = (Long)result2[1];
+        Long notReadyCount = (Long)result2[2];
+
+        if(LetterBatch.Status.ready.equals(batchStatus)) {
+            return new LetterBatchCountDto(totalCount, totalCount, 0l, (readyForPublishCount == 0l), (readyForPublishCount == totalCount));
+        } else if(LetterBatch.Status.error.equals(batchStatus)) {
+            return new LetterBatchCountDto(totalCount, 0l, totalCount, false, false);
+        } else {
+            return new LetterBatchCountDto(totalCount, (totalCount - notReadyCount), 0l, false, false);
         }
     }
     public long longOrZero(Object[] probablyLongOrNullArray, int index) {
