@@ -7,7 +7,7 @@
   "replacements": [
     {
       "name": "subject",
-      "defaultValue": "Opintopolku.fi käyttöoikeuksia vanhentumassa",
+      "defaultValue": "=?utf-8?Q?Opintopolku.fi k=C3=A4ytt=C3=B6oikeuksia vanhentumassa?=",
       "mandatory": false,
       "timestamp": null,
       "id": 0
@@ -57,7 +57,7 @@
       {
         "key": "subject",
         "name": "Otsikko",
-        "description": "Opintopolku.fi käyttöoikeuksia vanhentumassa",
+        "description": "Sähköpostiviestin otsikko",
         "contentType": "plain",
         "numberOfRows": 1
       }

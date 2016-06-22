@@ -7,7 +7,7 @@
   "replacements": [
     {
       "name": "subject",
-      "defaultValue": "Användarrättigheterna i Studieinfo.fi utgår",
+      "defaultValue": "=?utf-8?Q?Anv=C3=A4ndarr=C3=A4ttigheterna i Studieinfo.fi utg=C3=A5r?=",
       "mandatory": false,
       "timestamp": null,
       "id": 0
@@ -57,7 +57,7 @@
       {
         "key": "subject",
         "name": "Otsikko",
-        "description": "Användarrättigheterna i Studieinfo.fi utgår",
+        "description": "Sähköpostiviestin otsikko",
         "contentType": "plain",
         "numberOfRows": 1
       }
