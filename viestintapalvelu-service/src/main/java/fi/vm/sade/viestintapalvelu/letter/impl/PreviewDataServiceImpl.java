@@ -18,6 +18,7 @@ package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
+import com.google.common.base.Suppliers;
 import com.google.common.collect.ImmutableMap;
 import com.lowagie.text.DocumentException;
 
@@ -30,7 +31,10 @@ import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
+import org.apache.commons.io.IOUtils;
 import org.joda.time.DateTime;
+import org.opensaml.util.resource.ClasspathResource;
+import org.opensaml.util.resource.ResourceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +52,13 @@ public class PreviewDataServiceImpl implements PreviewDataService {
 
     public static final Logger log = LoggerFactory.getLogger(PreviewDataServiceImpl.class);
 
-    private ResourceLoader resourceLoader;
+
+    private static final ObjectMapper mapper = new ObjectMapper();
     private LetterBuilder letterBuilder;
     private LetterEmailService letterEmailService;
 
     @Autowired
-    public PreviewDataServiceImpl(ResourceLoader resourceLoader, LetterBuilder letterBuilder, LetterEmailService letterEmailService) {
-        this.resourceLoader = resourceLoader;
+    public PreviewDataServiceImpl(LetterBuilder letterBuilder, LetterEmailService letterEmailService) {
         this.letterBuilder = letterBuilder;
         this.letterEmailService = letterEmailService;
     }
@@ -62,15 +66,14 @@ public class PreviewDataServiceImpl implements PreviewDataService {
     @Override
     public Letter getLetter(Template template) {
         try {
-            ObjectMapper mapper = new ObjectMapper();
-            final List<String> lastnames = mapper.readValue(resourceLoader.getResource("/generator/lastnames.json").getFile(), List.class);
-            final List<List<String>> countries = mapper.readValue(resourceLoader.getResource("/generator/countries.json").getFile(), List.class);
-            final List<String> firstnames = mapper.readValue(resourceLoader.getResource("/generator/firstnames.json").getFile(), List.class);
-            final List<String> hakutoive = mapper.readValue(resourceLoader.getResource("/generator/hakutoive.json").getFile(), List.class);
-            final List<String> koulut = mapper.readValue(resourceLoader.getResource("/generator/koulut.json").getFile(), List.class);
-            final List<String> language = mapper.readValue(resourceLoader.getResource("/generator/language.json").getFile(), List.class);
-            final List<String> postoffices = mapper.readValue(resourceLoader.getResource("/generator/postoffices.json").getFile(), List.class);
-            final List<String> streets = mapper.readValue(resourceLoader.getResource("/generator/streets.json").getFile(), List.class);
+            final List<String> lastnames = linesFromResource("/generator/lastnames.json", List.class);
+            final List<List<String>> countries = linesFromResource("/generator/countries.json", List.class);
+            final List<String> firstnames = linesFromResource("/generator/firstnames.json", List.class);
+            final List<String> hakutoive = linesFromResource("/generator/hakutoive.json", List.class);
+            final List<String> koulut = linesFromResource("/generator/koulut.json", List.class);
+            final List<String> language = linesFromResource("/generator/language.json", List.class);
+            final List<String> postoffices = linesFromResource("/generator/postoffices.json", List.class);
+            final List<String> streets = linesFromResource("/generator/streets.json", List.class);
 
             Random rand = new Random();
             String firstname = firstnames.get(rand.nextInt(firstnames.size()));
@@ -94,6 +97,14 @@ public class PreviewDataServiceImpl implements PreviewDataService {
 
         return new Letter();
 
+    }
+
+    private <T> T linesFromResource(String resourceFile, Class<T> t) throws IOException {
+        try {
+            return mapper.readValue(IOUtils.toString(new ClasspathResource(resourceFile).getInputStream()), t);
+        } catch (ResourceException e) {
+            throw new IOException(e);
+        }
     }
 
     @Override
@@ -151,12 +162,12 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         ObjectMapper mapper = new ObjectMapper();
 
         try {
-            final List<String> lastnames = mapper.readValue(resourceLoader.getResource("/generator/lastnames.json").getFile(), List.class);
-            final List<List<String>> countries = mapper.readValue(resourceLoader.getResource("/generator/countries.json").getFile(), List.class);
-            final List<String> firstnames = mapper.readValue(resourceLoader.getResource("/generator/firstnames.json").getFile(), List.class);
-            final List<String> language = mapper.readValue(resourceLoader.getResource("/generator/language.json").getFile(), List.class);
-            final List<String> postoffices = mapper.readValue(resourceLoader.getResource("/generator/postoffices.json").getFile(), List.class);
-            final List<String> streets = mapper.readValue(resourceLoader.getResource("/generator/streets.json").getFile(), List.class);
+            final List<String> lastnames = linesFromResource("/generator/lastnames.json", List.class);
+            final List<List<String>> countries = linesFromResource("/generator/countries.json", List.class);
+            final List<String> firstnames = linesFromResource("/generator/firstnames.json", List.class);
+            final List<String> language = linesFromResource("/generator/language.json", List.class);
+            final List<String> postoffices = linesFromResource("/generator/postoffices.json", List.class);
+            final List<String> streets = linesFromResource("/generator/streets.json", List.class);
 
             Random rand = new Random();
             String firstname = firstnames.get(rand.nextInt(firstnames.size()));
@@ -238,8 +249,8 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         Random rand = new Random();
         ObjectMapper mapper = new ObjectMapper();
         List<Map<String, Object>> tulokset = new ArrayList<>();
-        final List<String> hakutoive = mapper.readValue(resourceLoader.getResource("/generator/hakutoive.json").getFile(), List.class);
-        final List<String> koulut = mapper.readValue(resourceLoader.getResource("/generator/koulut.json").getFile(), List.class);
+        final List<String> hakutoive = linesFromResource("/generator/hakutoive.json", List.class);
+        final List<String> koulut = linesFromResource("/generator/koulut.json", List.class);
         String koulu = koulut.get(rand.nextInt(koulut.size()));
         String koulutus = hakutoive.get(rand.nextInt(hakutoive.size()));
         for (int i = 0; i < 6; i++) {
