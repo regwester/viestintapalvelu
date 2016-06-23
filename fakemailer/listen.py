@@ -42,12 +42,13 @@ class FakeSMTPServer(smtpd.SMTPServer):
         if len(messageId) == 0:
             print "No X-Message-ID found!"
             return
-        parsedMessageId = messageId[0].replace("X-Message-ID: ", "").split(".")[0]
         is_bounce = len(filter(lambda x: x.find(bounceDomain) > -1, receivers)) > 0
         if is_bounce:
-            print "Writing bounce for " + parsedMessageId
-            bounce = open(bounceFolder+parsedMessageId + ".csv", "w")
-            bounce.write("".join(receivers) + ";" + str(datetime.utcnow()) + ";" + parsedMessageId)
+            hash = messageId[0].replace("X-Message-ID: ", "").split(".")[0]
+            xMessageId = messageId[0].split(" ")[1]
+            print "Writing bounce for " + hash
+            bounce = open(bounceFolder+hash + ".csv", "w")
+            bounce.write("".join(receivers) + ";" + str(datetime.utcnow()) + ";" + xMessageId)
             bounce.close
 
     def process_message(*args, **kwargs):
