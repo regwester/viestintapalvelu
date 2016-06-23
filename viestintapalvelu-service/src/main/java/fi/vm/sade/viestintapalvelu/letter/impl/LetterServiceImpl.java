@@ -904,7 +904,6 @@ public class LetterServiceImpl implements LetterService {
 
     public LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language) {
         LetterBatchCountDto count = letterBatchDAO.countBatchStatus(hakuOid, type, language);
-        logger.error("FOO2 {}, {}, {}, {}, {}", count.letterTotalCount, count.letterReadyCount, count.letterErrorCount, count.readyForPublish, count.readyForEPosti);
         return count;
     }
 
