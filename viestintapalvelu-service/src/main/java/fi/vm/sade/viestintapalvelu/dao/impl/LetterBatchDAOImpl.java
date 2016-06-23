@@ -428,6 +428,8 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         Long readyForPublishCount = (Long)result2[1];
         Long notReadyCount = (Long)result2[2];
 
+        LOG.error("FOO {}, {}, {}, {}, {}, {}, {}, {}", hakuOid, language, type, totalCount, readyForPublishCount, notReadyCount, batchId, batchStatus.toString());
+
         if(LetterBatch.Status.ready.equals(batchStatus)) {
             return new LetterBatchCountDto(totalCount, totalCount, 0l, (readyForPublishCount == 0l), (readyForPublishCount == totalCount));
         } else if(LetterBatch.Status.error.equals(batchStatus)) {
