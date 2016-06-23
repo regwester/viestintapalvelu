@@ -17,6 +17,7 @@ pidfile = "./listen.pid"
 import smtpd
 import asyncore
 import time
+from datetime import datetime
 import random
 
 outputFolder = "./incoming/"
@@ -46,8 +47,8 @@ class FakeSMTPServer(smtpd.SMTPServer):
         print receivers
         if is_bounce:
             print "Writing bounce for " + parsedMessageId
-            bounce = open(bounceFolder+parsedMessageId + ".txt", "w")
-            bounce.write("".join(receivers))
+            bounce = open(bounceFolder+parsedMessageId + ".csv", "w")
+            bounce.write("".join(receivers) + ";" + str(datetime.utcnow()) + ";" + parsedMessageId)
             bounce.close
 
     def process_message(*args, **kwargs):
