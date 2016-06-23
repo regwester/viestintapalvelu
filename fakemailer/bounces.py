@@ -17,9 +17,10 @@ class BounceJsonCreator:
         bounces = []
         for root, dirs, filenames in os.walk(bounceFolder):
             for f in filenames:
-                bounceCsv = open(os.path.join(root, f),'r')
-                bounceData = bounceCsv.read().split(";")
-                bounces.append(bounceData)
+                if f.endswith(".csv"):
+                    bounceCsv = open(os.path.join(root, f),'r')
+                    bounceData = bounceCsv.read().split(";")
+                    bounces.append(bounceData)
         return bounces
 
     def convert(self, bounces):
