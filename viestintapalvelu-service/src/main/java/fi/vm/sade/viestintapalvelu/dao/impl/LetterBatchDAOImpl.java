@@ -410,7 +410,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
 
         Object[] result1 = (Object[])resultList1.get(0);
-        Long batchId = (Long)result1[0];
+        long batchId = (Long)result1[0];
         LetterBatch.Status batchStatus = (LetterBatch.Status)result1[1];
 
         Object[] result2 = (Object[])getEntityManager().createQuery(
@@ -424,9 +424,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             .setParameter("letterBatchId", batchId)
             .getResultList().get(0);
 
-        Long totalCount = (Long)result2[0];
-        Long readyForPublishCount = (Long)result2[1];
-        Long notReadyCount = (Long)result2[2];
+        long totalCount = (Long)result2[0];
+        long readyForPublishCount = (Long)result2[1];
+        long notReadyCount = (Long)result2[2];
 
         LOG.error("FOO {}, {}, {}, {}, {}, {}, {}, {}", hakuOid, language, type, totalCount, readyForPublishCount, notReadyCount, batchId, batchStatus.toString());
 
