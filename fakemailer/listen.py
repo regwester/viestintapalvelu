@@ -44,7 +44,6 @@ class FakeSMTPServer(smtpd.SMTPServer):
             return
         parsedMessageId = messageId[0].replace("X-Message-ID: ", "").split(".")[0]
         is_bounce = len(filter(lambda x: x.find(bounceDomain) > -1, receivers)) > 0
-        print receivers
         if is_bounce:
             print "Writing bounce for " + parsedMessageId
             bounce = open(bounceFolder+parsedMessageId + ".csv", "w")
