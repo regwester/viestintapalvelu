@@ -87,6 +87,8 @@ public class LetterBuilder {
         this.attachmentService = attachmentService;
         this.objectMapperProvider = objectMapperProvider;
     }
+    public LetterBuilder() {
+    }
     
     public byte[] printZIP(List<LetterReceiverLetter> receivers, String templateName, String zipName) {
         MergedPdfDocument pdf = getMergedPDFDocument(receivers);

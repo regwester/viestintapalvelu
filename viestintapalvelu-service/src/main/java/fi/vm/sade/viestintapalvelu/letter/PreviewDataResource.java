@@ -55,7 +55,10 @@ public class PreviewDataResource {
         this.templateService = templateService;
         this.previewDataService = previewDataService;
     }
-
+public PreviewDataResource() {
+    this.templateService = null;
+    this.previewDataService = null;
+}
 
     @POST
     @Path("letterbatch/pdf")
