@@ -46,16 +46,11 @@
             "role": "body",
             "name": "email_body",
             "contentType": "html",
-            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head>    <meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/>    <meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/>    <style type=\"text/css\">$tyylit</style>    <title>Taulukkoliite</title></head><body><div class=\"liiteSisalto\">    <p><b>$addressLabel.firstName $addressLabel.lastName</b></p>    <br/>    <p>$liiteotsikko</p>    <br/>    <table>        <thead>        <tr>            <th class=\"hakutoive\">Hakutoiveesi ja prioriteetti</th>  <th>Valinnan tulos</th>            <th>Hylkäysperuste</th>            <th>Sijoituksesi valintatavoittain / hyväksytyt valintatavoittain</th>            <th>Pistemääräsi / alin hyväksytty pistemäärä valintatavoittain</th>        </tr>        </thead>        <tbody>        #foreach( $tulos in $tulokset )        <tr>            <td class=\"hakutoive\">$foreach.count. $tulos.organisaationNimi, $tulos.oppilaitoksenNimi<br/>$tulos.hakukohteenNimi</td>  <td>$tulos.valinnanTulos</td>                <td>$tulos.hylkaysperuste</td>            <td>#foreach($sijoitus in $tulos.sijoitukset)<p>$sijoitus.nimi $sijoitus.oma / $sijoitus.hyvaksytyt</p>#end</td>            <td>#foreach($pisteet in $tulos.pisteet)<p>$pisteet.nimi $pisteet.oma / $pisteet.minimi</p>#end</td>        </tr>        #end        </tbody>    </table>   </div> </body></html>"
+            "content": "{{email.html}}"
           },
           {
             "role": "attachment",
             "name": "sivu_2",
-            "contentType": "html"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_3",
             "contentType": "html"
           }
         ]
