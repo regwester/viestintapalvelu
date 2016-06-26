@@ -1,20 +1,20 @@
 {
-  "name": "hyvaksymiskirje",
+  "name": "jalkiohjauskirje",
   "language": "EN",
   "description": null,
   "structure": {
-    "name": "kk_hyvaksymiskirje_rakenne",
+    "name": "kk_jalkiohjauskirje_rakenne",
     "language": "EN",
     "description": null,
     "contentStructures": [
       {
         "type": "letter",
-        "styleName": "kk_hyvaksymiskirje_tyyli",
+        "styleName": "kk_jalkiohjauskirje_tyyli",
         "style": "{{styles.css}}",
         "contents": [
           {
             "role": "body",
-            "name": "hyvaksymiskirje_sivu_1",
+            "name": "jalkiohjauskirje_sivu_1",
             "contentType": "html",
             "content": "{{sivu_1.html}}"
           },
@@ -34,7 +34,7 @@
       },
       {
         "type": "email",
-        "styleName": "kk_hyvaksymiskirje_tyyli",
+        "styleName": "kk_jalkiohjauskirje_tyyli",
         "contents": [
           {
             "role": "header",

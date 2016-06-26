@@ -26,16 +26,19 @@ import static java.util.Arrays.*;
 /**
  * usage example:
  * -Dtemplate=kk_hyvaksymiskirje_2016
+ * -Dtemplate=kk_hyvaksymiskirje_2016,kk_jalkiohjauskirje_2016
  */
 public class TemplateTestDataGenerator {
 
 
 
     public static void main(String[] args) throws IOException {
-        String templateKey = System.getProperty("template");
-        if(templateKey != null) {
-            for(String language : asList("FI","EN","SV")) {
-                generateTemplate(templateKey, language);
+        String templateKeys = System.getProperty("template");
+        if(templateKeys != null) {
+            for(String templateKey : templateKeys.split(",")) {
+                for (String language : asList("FI", "EN", "SV")) {
+                    generateTemplate(templateKey, language);
+                }
             }
         }
     }
@@ -50,7 +53,8 @@ public class TemplateTestDataGenerator {
         List<String> files = filesInPath(path);
         Map<String, String> replaces = filesToReplacements(path, templatePrefix, templateFile, outputFile, files);
 
-        final Gson gson = new GsonBuilder().registerTypeAdapter(String.class, new MustacheStringReader(replaces)).create();
+        final Gson gson = new GsonBuilder()
+                .disableHtmlEscaping().registerTypeAdapter(String.class, new MustacheStringReader(replaces)).create();
         final Template renderedTemplate = gson.fromJson(template, Template.class);
 
         final String testDataPath = "/viestintapalvelu-service/src/main/resources";
@@ -106,7 +110,8 @@ public class TemplateTestDataGenerator {
             writer.getBuffer().setLength(0);
             Mustache mustache = mf.compile(new StringReader(value), "");
             String rendered = mustache.execute(writer, replaces).toString();
-            return StringEscapeUtils.unescapeHtml(rendered);
+            String unescaped =StringEscapeUtils.unescapeHtml(rendered);
+            return unescaped;
 
         }
     }

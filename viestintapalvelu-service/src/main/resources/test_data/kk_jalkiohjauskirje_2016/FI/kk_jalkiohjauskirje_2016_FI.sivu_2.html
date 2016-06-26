@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml">
+
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+  <meta http-equiv="Content-Style-Type" content="text/css" />
+  <style type="text/css">
+    $tyylit
+  </style>
+  <title>Taulukkoliite</title>
+</head>
+
+<body>
+<div class="liiteSisalto">
+  <p><div class="pull-left"><b>$addressLabel.firstName $addressLabel.lastName</b></div><div class="pull-right">TILANTEESI SYKSYN 2014 KORKEAKOULUJEN YHTEISHAUSSA</div></p>
+  <br/>
+  <p>Näet tässä hakukohteesi asettamassasi järjestyksessä</p>
+  <br/>
+  <table>
+    <thead>
+    <tr>
+      <th>Valinnan tulos</th>
+      <th>Hakukohde</th>
+      <th>Valintatapa</th>
+      <th>Pisteesi</th>
+      <th>Alin hyv.</th>
+      <th>Ensikert.</th>
+      <th>Varasijasi</th>
+    </tr>
+    </thead>
+    <tbody> #foreach( $tulos in $tulokset )
+    #set($hyvaksytty = "#if($tulos.hyvaksytty=='true')hyvaksytty#{else}#end")
+    #set($even = "#if($foreach.count % 2 == 0)even#{else}#end")
+    #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
+    <tr class="$hyvaksytty $even">
+      <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
+      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/><span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span></td>
+    </tr>
+    #foreach( $sijoitus in $tulos.sijoitukset )
+    <tr class="$hyvaksytty $even">
+      <td>$sijoitus.nimi<br/></td>
+      <td>$sijoitus.oma<br/></td>
+      <td>$sijoitus.minimi<br/></td>
+      <td></td>
+      <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
+    </tr>
+    #end
+    #end
+    </tbody>
+    <tfoot>
+    <tr><td colspan="7"></td></tr>
+    </tfoot>
+  </table>
+  <p><b>Valinnan tulos</b> voi olla hyväksytty, hyväksytty (ehdollinen), varasijalla, hylätty tai peruuntunut. Valinnan tulos on peruuntunut, jos sinut on hyväksytty johonkin ylempään hakukohteeseesi. Valinnan tulos on peruuntunut myös, jos hakukohteen kaikki aloituspaikat ovat täyttyneet, eikä pistemääräsi ole riittänyt opiskelupaikan saamiseen. Jos valintatietonasi on hylätty, et voi tulla hyväksytyksi kyseiseen koulutukseen, koska et täytä hyväksymisen edellytyksenä olevia vähimmäisvaatimuksia.
+  </p>
+  <p><b>Valintatapa</b> - Pisteesi / Alin hyväksytty pistemäärä (Alin hyv.) / Ensikertalaisten alin hyväksytty pistemäärä (Ensikert.):
+    Näet tässä oman pistemääräsi eriteltynä hakukohteen jokaisen valintatavan mukaan, alimman pistemäärän, jolla koulutukseen on hyväksytty kyseisen valintatavan mukaan, sekä ensikertalaisina hakevien alimman hyväksytyn pistemäärän. Pistemäärä voi koostua useasta eri osasta, ja tietoa pisteytettävistä tekijöistä löydät hakukohteen valintaperusteista. Pistemäärä ei aina yksin vaikuta valinnan tulokseen, sillä esimerkiksi yksittäisestä valintakokeen osasta saatu hylkäävä tulos tai hylätty kielikoetulos voi estää valinnan kokonaispistemäärästä riippumatta. Näet pistemäärän vain, jos sinulle on voitu laskea pisteet kyseisen valintatavan mukaisesti. Jos valintatavassa ei lasketa pisteitä tai sinulle ei voida niitä laskea, niin sarake on tyhjä.</p>
+  <p><b>Varasijasi</b>-näet varasijasi kyseisessä jonossa, jos olet varalla. Voit olla varasijalla yhdessä hakukohteessa useammassa jonossa. Valintatavat vastaavat korkeakoulun valintaperusteissaan ilmoittamia valintatapoja ja löydät niistä tarkempaa tietoa hakukohteen valintaperusteista.</p>
+  <p><b>Ehdollisesti hyväksytty</b> -valinnan tulos tarkoittaa, että valintapäätös on ehdollinen ja vahvistuu vasta, kun olet osoittanut yliopistolle, että ehto on täyttynyt.</p>
+  <p>Jos tarvitset apua valinnan tuloksen tulkitsemisessa tai tarkempaa tietoa hylkäysperusteistasi, ota yhteyttä ko. hakukohteen korkeakoulun hakijapalveluihin.</p>
+</div>
+</body>
+
+</html>
