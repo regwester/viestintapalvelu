@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.*;
 
 import static java.util.Arrays.*;
@@ -276,26 +277,25 @@ public class PreviewDataServiceImpl implements PreviewDataService {
             final String valinnanTulos = asList("Hyväksytty", "Hyväksytty (ehdollinen)", "Hylätty", "Peruuntunut","Varalla").get(Math.abs(rand.nextInt(5)));
             haku.put("valinnanTulos", valinnanTulos);
             if(asList("Hyväksytty", "Hyväksytty (ehdollinen)").contains(valinnanTulos)){
-                haku.put("hyvaksytty", "true");
+                haku.put("hyvaksytty", true);
             } else {
-                haku.put("hyvaksytty", "false");
+                haku.put("hyvaksytty", false);
             }
-            Map<String, Object> stringObjectHashMap = ImmutableMap.<String,Object>builder()
-            .put("nimi", "Yhteispistejono")
-            .put("oma", "123")
-            .put("minimi", "456").build();
-            List<ImmutableMap<String, String>> sijoitukset = Collections.unmodifiableList(Arrays.asList(ImmutableMap.of(
+            List<ImmutableMap<String, Serializable>> sijoitukset = Collections.unmodifiableList(Arrays.asList(ImmutableMap.of(
                     "nimi", "Yhteispistejono",
                     "oma", "123",
-                    "minimi", "456"),
+                    "minimi", "456",
+                    "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222")),
                     ImmutableMap.of(
                             "nimi", "DIA-DI Valintaryhmä 1",
                             "oma", "464",
-                            "minimi", "111"),
+                            "minimi", "111",
+                            "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222")),
                     ImmutableMap.of(
                             "nimi", "DIA-DI Valintaryhmä 2",
                             "oma", "222",
-                            "minimi", "333")));
+                            "minimi", "333",
+                            "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222"))));
             haku.put("sijoitukset", sijoitukset);
             if(rand.nextInt() % 3 == 0) {
                 haku.put("varasija", 54);

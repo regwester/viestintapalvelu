@@ -40,9 +40,9 @@
     #foreach( $sijoitus in $tulos.sijoitukset )
     <tr class="$hyvaksytty $even">
       <td>$sijoitus.nimi<br/></td>
-      <td>$sijoitus.oma<br/></td>
-      <td>$sijoitus.minimi<br/></td>
-      <td></td>
+      <td>$sijoitus.pisteet.oma<br/></td>
+      <td>$sijoitus.pisteet.minimi<br/></td>
+      <td>$sijoitus.pisteet.ensikertMinimi<br/></td>
       <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
     </tr>
     #end

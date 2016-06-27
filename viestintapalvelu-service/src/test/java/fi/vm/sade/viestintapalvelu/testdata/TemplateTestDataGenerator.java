@@ -61,7 +61,7 @@ public class TemplateTestDataGenerator {
         final String viestintapalveluPath = new File("").getAbsolutePath();
         final String outputUrl = String.format("%s/%s/%s%s", viestintapalveluPath, testDataPath, path, outputFile);
         FileOutputStream fileOutputStream = new FileOutputStream(outputUrl);
-        IOUtils.write(new GsonBuilder().disableHtmlEscaping().setPrettyPrinting().create().toJson(renderedTemplate), fileOutputStream);
+        IOUtils.write(new GsonBuilder().disableHtmlEscaping().create().toJson(renderedTemplate), fileOutputStream);
         IOUtils.closeQuietly(fileOutputStream);
 
     }
