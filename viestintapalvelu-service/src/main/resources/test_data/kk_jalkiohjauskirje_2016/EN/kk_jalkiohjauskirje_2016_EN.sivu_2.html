@@ -13,20 +13,20 @@
 
 <body>
 <div class="liiteSisalto">
-  <p><div class="pull-left"><b>$addressLabel.firstName $addressLabel.lastName</b></div><div class="pull-right">TILANTEESI SYKSYN 2014 KORKEAKOULUJEN YHTEISHAUSSA</div></p>
+  <p><div class="pull-left"><b>$addressLabel.firstName $addressLabel.lastName</b></div><div class="pull-right">YOUR CURRENT SITUATION IN JOINT APPLICATION TO HIGHER EDUCATION SPRING 2016</div></p>
   <br/>
-  <p>Näet tässä hakukohteesi asettamassasi järjestyksessä</p>
+  <p>Here you can see all your study options in the order stated on your application.</p>
   <br/>
   <table>
     <thead>
     <tr>
-      <th>Valinnan tulos</th>
-      <th>Hakukohde</th>
-      <th>Valintatapa</th>
-      <th>Pisteesi</th>
-      <th>Alin hyv.</th>
-      <th>Ensikert.</th>
-      <th>Varasijasi</th>
+      <th>Admission result</th>
+      <th>Study option</th>
+      <th>Selection method</th>
+      <th>Your score</th>
+      <th>The lowest accepted score</th>
+      <th>The lowest accepted score of a first-time applicant</th>
+      <th>Your reserve place status</th>
     </tr>
     </thead>
     <tbody> #foreach( $tulos in $tulokset )
@@ -52,13 +52,13 @@
     <tr><td colspan="7"></td></tr>
     </tfoot>
   </table>
-  <p><b>Valinnan tulos</b> voi olla hyväksytty, hyväksytty (ehdollinen), varasijalla, hylätty tai peruuntunut. Valinnan tulos on peruuntunut, jos sinut on hyväksytty johonkin ylempään hakukohteeseesi. Valinnan tulos on peruuntunut myös, jos hakukohteen kaikki aloituspaikat ovat täyttyneet, eikä pistemääräsi ole riittänyt opiskelupaikan saamiseen. Jos valintatietonasi on hylätty, et voi tulla hyväksytyksi kyseiseen koulutukseen, koska et täytä hyväksymisen edellytyksenä olevia vähimmäisvaatimuksia.
+  <p><b>Admission result</b>  can be accepted, conditionally accepted, on the waiting list, failed or cancelled. The admission result will state “cancelled”, if you have been accepted to a higher preference. The admission result will also be cancelled if all the study places for that study option have been filled and your score has not been sufficient for you to be admitted to this study place. If your admission result states “failed”, you cannot be accepted to that study place because you have not met the minimum of the admission requirements necessary to be admitted.
   </p>
-  <p><b>Valintatapa</b> - Pisteesi / Alin hyväksytty pistemäärä (Alin hyv.) / Ensikertalaisten alin hyväksytty pistemäärä (Ensikert.):
-    Näet tässä oman pistemääräsi eriteltynä hakukohteen jokaisen valintatavan mukaan, alimman pistemäärän, jolla koulutukseen on hyväksytty kyseisen valintatavan mukaan, sekä ensikertalaisina hakevien alimman hyväksytyn pistemäärän. Pistemäärä voi koostua useasta eri osasta, ja tietoa pisteytettävistä tekijöistä löydät hakukohteen valintaperusteista. Pistemäärä ei aina yksin vaikuta valinnan tulokseen, sillä esimerkiksi yksittäisestä valintakokeen osasta saatu hylkäävä tulos tai hylätty kielikoetulos voi estää valinnan kokonaispistemäärästä riippumatta. Näet pistemäärän vain, jos sinulle on voitu laskea pisteet kyseisen valintatavan mukaisesti. Jos valintatavassa ei lasketa pisteitä tai sinulle ei voida niitä laskea, niin sarake on tyhjä.</p>
-  <p><b>Varasijasi</b>-näet varasijasi kyseisessä jonossa, jos olet varalla. Voit olla varasijalla yhdessä hakukohteessa useammassa jonossa. Valintatavat vastaavat korkeakoulun valintaperusteissaan ilmoittamia valintatapoja ja löydät niistä tarkempaa tietoa hakukohteen valintaperusteista.</p>
-  <p><b>Ehdollisesti hyväksytty</b> -valinnan tulos tarkoittaa, että valintapäätös on ehdollinen ja vahvistuu vasta, kun olet osoittanut yliopistolle, että ehto on täyttynyt.</p>
-  <p>Jos tarvitset apua valinnan tuloksen tulkitsemisessa tai tarkempaa tietoa hylkäysperusteistasi, ota yhteyttä ko. hakukohteen korkeakoulun hakijapalveluihin.</p>
+  <p><b>Selection method</b> - Your score / the lowest accepted score / the lowest accepted score of a first-time applicant:</p>
+  <p>Here you can see your own score in each of the study options’ selection methods, the lowest score that an applicant has been accepted with by the selection method in question and the lowest score that a first-time applicant has been accepted with. The score may consist of several different parts. You can find information on how points are given from the study programme’s admission criteria. The total score is not always the only thing that has influence on the result of student selection. For example, a failed language test or one failed section of the entrance examination may prevent the selection despite the total score. You can see the score only if it is possible to count the points for you according to this selection method. The column is empty if there are no points given in the selection method or if it is not possible to count your points.</p>
+  <p><b>Your reserve place status</b> - Here you can see your reserve place status for the study place for which you have been placed on the waiting list. It is possible that you are on several reserve place queues for one study place. The selection methods are applied according to the higher education institution’s admission criteria. You can find more detailed information on the selection methods from the admission criteria of the study programme in question.</p>
+  <p><b>Conditional acceptance</b> - This admission result means that the admission decision is conditional and will be confirmed only after you have proven to the higher education institution that the condition has been met.</p>
+  <p>If you need help with interpreting the selection results or if you need more detailed information about the basis for rejection, you can contact the admission services of the higher education institution in question.</p>
 </div>
 </body>
 
