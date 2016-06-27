@@ -236,7 +236,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         batchreplacements.put("koulutus", letterreplacements.get("koulutus"));
         batchreplacements.put("henkilotunnus", "123456-7890");
         batchreplacements.put("hakemusOid", "1.2.246.562.11.00005902048");
-        batchreplacements.put("ohjeetUudelleOpiskelijalle","https://opintopolku.fi/wp/valintojen-tuki/yhteishaku/korkeakoulujen-yhteishaku/ensikertalaiskiintio/");
+        batchreplacements.put("ohjeetUudelleOpiskelijalle","www.mamk.fi");
         batchreplacements.put("hakijapalveluidenOsoite", ImmutableMap.of(
                 "organisaationimi","Helsingin yliopisto, hakijapalvelut, hakijapalvelut(at)helsinki.fi, 02941 24140",
                 "addressline","Fabianinkatu 3",

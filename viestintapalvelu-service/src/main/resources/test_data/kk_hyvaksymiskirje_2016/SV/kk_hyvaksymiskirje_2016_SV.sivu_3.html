@@ -13,40 +13,42 @@
 
 <body>
 <div class="liitteet">
-  <p>OPISKELUPAIKAN VASTAANOTTAMINEN SEKÄ ILMOITTAUTUMINEN OPISKELEMAAN</p>
+  <p>MOTTAGANDE AV STUDIEPLATS OCH ANMÄLAN TILL STUDIER</p>
   <blockquote>
-    <b>Muista sekä ottaa opiskelupaikka vastaan että ilmoittautua korkeakouluun määräaikana, muuten menetät opiskelupaikkasi.</b>
-    (Yliopistolaki 38 § /Ammattikorkeakoululaki 28 c §) Ota opiskelupaikka vastaan ensisijaisesti sähköisesti Oma Opintopolku -palvelussa. Otettuasi paikan vastaan, voit ilmoittautua korkeakouluun joko sähköisesti valtakunnallisessa ilmoittautumispalvelussa OILIssa (linkki OILIin avautuu kun olet ottanut paikan vastaan Oma Opintopolku -palvelun kautta), tai muulla korkeakoulusi ilmoittamalla tavalla.</blockquote>
-  <h2>Opiskelupaikan vastaanottaminen</h2>
-  <p>
-    Vahvistaaksesi opiskelupaikan sinun täytyy ottaa se vastaan <b>#if($palautusPvm) $palautusPvm #else 9.12.2014 #end klo #if($palautusAika) $palautusAika #else 15:00 #end</b> mennessä. Voit tehdä opiskelupaikkaa koskevan vastaanottoilmoituksen vain kerran, etkä voi muuttaa tekemääsi ilmoitusta jälkikäteen.
+    <b>Kom ihåg att både ta emot studieplatsen och anmäla dig till högskolan inom utsatt tid. I annat fall går du miste om studieplatsen.</b>
+    (Universitetslag 38 §, 43 § /Yrkeshögskolelag 28 c §, 32 §). Ta i första hand emot studieplatsen via Min Studieinfo-tjänsten. Efter att du tagit emot studieplatsen, kan du anmäla dig till högskolan antingen via den riksomfattande anmälningstjänsten OILI (en länk till OILI öppnas i Min Studieinfo-tjänsten efter att du tagit emot din studieplats) eller på det sätt som högskolan informerar om.</blockquote>
+  <h2>Att ta emot studieplatsen</h2>
+  <p>För att kunna bekräfta din studieplats bör du ta emot platsen före fredag <b>15.7.2016 kl. 15.00</b>. Du kan göra en anmälan om mottagande av en studieplats endast en gång. Du kan inte i efterhand ändra den anmälan du gjort.</p>
+  <p>Du kan ta emot din studieplats elektroniskt genom att logga in i Min Studieinfo-tjänsten via en länk som du hittar i övre kanten av startsidan i Studieinfo.fi. För att kunna logga in med stark autentisering behöver du nätbankskoder, mobilcertifikat eller ett elektroniskt id-kort som beviljats av polis och dessutom en kortläsare. I Min Studieinfo-tjänsten finns anvisningar för hur man elektroniskt tar emot studieplatsen.</p>
+  <p>Om du inte kan ta emot studieplatsen elektroniskt, ska du ta emot platsen med denna blankett. Skicka blanketten till den adress som finns i blankettens nedre kant. Se till att blanketten är framme före fredag <b>15.7.2016 kl. 15.00</b>. Ifall anmälan om mottagandet når högskolan för sent, går du miste om studieplatsen.</p>
+
+  <p><b>Då du tar emot en studieplats, är du inte längre förstagångssökande i kommande ansökningar.</b>
+    Mera information: <a href="https://studieinfo.fi/wp/stod-for-studievalet/gemensam-ansokan/gemensam-ansokan-till-hogskolor/kvot-for-forstagangssokande/">https://studieinfo.fi/wp/stod-for-studievalet/gemensam-ansokan/gemensam-ansokan-till-hogskolor/kvot-for-forstagangssokande/</a>. Efter att du tagit emot studieplatsen, bör du inom den tidsfrist som högskolan angett dessutom anmäla dig som när- eller frånvarande vid ansökningsmålet för läsåret 2016-2017. I annat fall går du miste om din studierätt.
   </p>
-  <p>Kirjauduttuasi sisään Oma Opintopolku -palveluun, pääset vastaanottamaan paikan etusivun yläreunassa olevasta linkistä. Voidaksesi kirjautua sisään vahvasti tunnistautuneena tarvitset verkkopankkitunnukset, mobiilivarmenteen tai poliisin myöntämän sirullisen henkilökortin ja sen lukijalaitteen. Oma Opintopolku -palvelussa on ohjeet opiskelupaikan sähköiseen vastaanottoon.</p>
-  <p>Jos et voi ottaa opiskelupaikkaa vastaan sähköisesti, käytä paikan vastaanottamiseen tätä lomaketta. Toimita lomake sivun alareunassa annettuun osoitteeseen siten, että se on perillä <b>#if($palautusPvm) $palautusPvm #else 9.12.2014 #end klo #if($palautusAika) $palautusAika #else 15:00 #end</b> mennessä. Jos vastaanottoilmoitus saapuu korkeakouluun myöhässä, menetät opiskelupaikan.</p>
-  <p><b>Kun otat opiskelupaikan vastaan, et ole tulevissa hauissa ensikertalainen.</b> Lisätietoa:<a href="$ohjeetUudelleOpiskelijalle">$ohjeetUudelleOpiskelijalle</a>. Opiskelupaikan vastaanotettuasi, sinun täytyy lisäksi ilmoittautua hakukohteesi korkeakoulun asettamassa määräajassa läsnä tai poissa olevaksi opiskelijaksi lukuvuodeksi 2016-2017 tai menetät opiskeluoikeutesi.</p>
-  <h2>Korkeakouluun ilmoittautuminen</h2>
-  <p>Voit ilmoittautua korkeakouluun joko sähköisesti valtakunnallisessa ilmoittautumispalvelussa (OILI) opiskelupaikan vastaanoton yhteydessä tai muulla korkeakoulusi ilmoittamalla tavalla.</p>
-  <p>Jos otat opiskelupaikan vastaan mutta jäät odottamaan hakukohdejärjestyksessä ylemmällä sijalla olevaa opiskelupaikkaa, voit ilmoittautua läsnä tai poissa olevaksi opiskelijaksi vasta, kun opiskelupaikkasi on vahvistunut. Tarkemmat ohjeet ilmoittautumisesta 1) OILI-palvelussa 2) hakukohteesi korkeakoulusta (katso linkki ”Ohjeet uusille opiskelijoille” sivun alaosassa).</p>
-  <p>Voit ilmoittautua poissa olevaksi vain lakisääteisten syiden eli ase- tai siviilipalveluksen, äitiys-, isyys- tai vanhempainvapaan tai oman sairauden tai vamman perusteella. Ilmoittautumisen tekemättä jättäminen johtaa opiskeluoikeuden menettämiseen. (Yliopistolaki 43 §/ Ammattikorkeakoululaki 32 §).</p>
-  <h2>Ohjeet uudelle opiskelijalle</h2>
-  <p>www.mamk.fi</p>
+
+  <h2>Att anmäla sig till högskolan</h2>
+  <p>Du kan anmäla dig till högskolan antingen elektroniskt via den riksomfattande anmälningstjänsten (OILI) i samband med mottagandet av studieplatsen eller på annat sätt som högskolan meddelar om.</p>
+  <p>Om du tar emot studieplatsen, men blir och väntar på en studieplats på en högre placering, kan du anmäla dig som när- eller frånvarande först efter att din studieplats har bekräftats. Du får närmare anvisningar för anmälan i 1) OILI-tjänsten eller 2) av högskolan där ditt ansökningsmål finns (se länken ”Anvisningar för nya studerande” nedan).</p>
+  <p>Du kan anmäla dig som frånvarande endast på basis av lagstadgade skäl, dvs. militär- eller civiltjänstgöring, moderskaps-, faderskaps- eller föräldraledighet eller på grund av egen sjukdom eller skada. Om du inte anmäler dig går du miste om studieplatsen (Universitetslag 43 § /Yrkeshögskolelag 32 §).</p>
+
+  <h2>Anvisningar för nya studerande</h2>
+  <p>$ohjeetUudelleOpiskelijalle</p>
 </div>
 
 <div class="cuthere"></div>
 
 <div class="liitteet">
-  <p><div class="pull-left"><b>OPISKELUPAIKAN VASTAANOTTOILMOITUS</b></div><div class="pull-right"><b>$addressLabel.firstName $addressLabel.lastName</b></div></p>
+  <p><div class="pull-left"><b>MEDDELANDE OM MOTTAGANDE AV STUDIEPLATS</b></div><div class="pull-right"><b>$addressLabel.firstName $addressLabel.lastName</b></div></p>
   <div class="clear"></div>
   <p><b>$koulu</b><br/><b>$koulutus</b></p>
-  <p>Sinut on hyväksytty kevään 2016 korkeakoulujen yhteishaussa yllä mainittuun opiskelupaikkaan</p>
-  <p>Jos et käytä Oma Opintopolku -palvelua, toimita tämä ilmoitus täytettynä ja allekirjoitettuna alla annettuun osoitteeseen siten, että se
-    on perillä <b>#if($palautusPvm) $palautusPvm #else 9.12.2014 #end klo #if($palautusAika) $palautusAika #else 15:00 #end</b> mennessä.</p>
-  <p><em>Ilmoitan yllä mainitun opiskelupaikan vastaanottamisesta sitovasti seuraavaa (rastita yksi ruutu):</em></p>
-  <p class="selection">Otan opiskelupaikan vastaan. En ole ennen tätä ilmoitusta ottanut vastaan korkeakoulututkintoon johtavaa opiskelupaikkaa, jossa koulutus alkaa syyslukukaudella 2016. Tämän ilmoituksen tehtyäni en voi ottaa vastaan toista korkeakoulupaikkaa, jossa koulutus alkaa syyslukukaudella 2016.</p>
-  <p class="selection">Otan opiskelupaikan vastaan, mutta jään odottamaan hakukohdejärjestyksessäni ylemmällä sijalla olevaa opiskelupaikkaa, johon olen varasijalla. Jos minut hyväksytään ylemmälle hakukohteelleni <b>#if($palautusPvm) $palautusPvm #else 9.12.2014 #end klo #if($palautusAika) $palautusAika #else 15:00 #end</b> mennessä, nyt tarjottu opiskelupaikka peruuntuu automaattisesti. Jos en tule hyväksytyksi ylemmälle hakukohteelleni <b>#if($palautusPvm) $palautusPvm #else 9.12.2014 #end klo #if($palautusAika) $palautusAika #else 15:00 #end</b> mennessä, tässä lomakkeessa mainitun opiskelupaikan vastaanotto jää voimaan.</p>
-  <p class="selection">En ota opiskelupaikkaa vastaan.</p>
+  <p>Du har godkänts till ovan nämnda studieplats i gemensam ansökan till högskolor våren 2016.</p>
+  <p>Om du inte använder Min Studieinfo-tjänsten, ska du skicka denna blankett ifylld och undertecknad till nedan nämnda adress. Se till att blanketten är framme före fredag <b>15.7.2016 kl. 15.00.</b></p>
+  <p><em>Jag meddelar att jag tar emot den ovan nämnda studieplatsen bindande (kryssa för en ruta):</em></p>
+  <p class="selection">Jag tar emot studieplatsen. Jag har inte tidigare tagit emot en studieplats som leder till högskoleexamen, där utbildningen inleds under höstterminen 2016. Efter att jag tagit emot denna studieplats kan jag inte ta emot en annan studieplats inom utbildning som startar under höstterminen 2016.</p>
+  <p class="selection">Jag tar emot studieplatsen, men blir och väntar på en högre studieplats i min ansökningsmålsordning, till vilken jag är på reservplats. Om jag godkänns till ett högre önskemål före <b>15.8.2016 kl. 15.00</b>, annulleras den erbjudna studieplatsen automatiskt. Om jag inte antas till mitt högre önskemål före <b>15.8.2016 kl. 15.00</b>, blir den studieplats som nämns i denna blankett i kraft.</p>
+  <p class="selection">Jag tar inte emot studieplatsen.</p>
 
-  <p>Paikka ja päivämäärä: _________________________ ____.____.2016 ______________________________<br/><div class="signature">Allekirjoitus</div></p>
+  <p>Ort och datum: _________________________ ____.____.2016 ______________________________<br/><div class="signature">Underskrift</div></p>
 
 
 </div>
@@ -63,7 +65,7 @@
   <div class="pull-right">
     <p>
       <br/>
-      Hakemusnumero:<br/>
+      Ansöknings nummer:<br/>
       $hakemusOid
     </p>
   </div>
