@@ -25,7 +25,6 @@ import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 
 import javax.servlet.http.HttpServletRequest;
@@ -96,7 +95,6 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @GET
     @Produces("text/plain")
     @Path("/publishLetterBatch/{letterBatchId}")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Julkaisee kirjelähetyksen")
     public Response publishLetterBatch(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
@@ -117,7 +115,6 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @GET
     @Produces("text/plain")
     @Path("/getBatchIdReadyForPublish")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa viimeisimmän kirjelähetyksen ID:n, jos sitä ei ole vielä julkaistu")
     public Response getLetterBatchIdReadyForPublish(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
                                                     @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
@@ -129,7 +126,6 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @GET
     @Produces("text/plain")
     @Path("/getBatchIdReadyForEPosti")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa viimeisimmän kirjelähetyksen ID:n, jos se on jo julkaistu")
     public Response getLetterBatchIdReadyForEPosti(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
                                                    @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
@@ -141,7 +137,6 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @GET
     @Produces("application/json")
     @Path("/getEPostiAddressesForLetterBatch/{letterBatchId}")
-    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksen vastaanottajien ePosti-osoitteet (vain julkaistuille kirjeille)")
     public Response getEPostiEmailAddresses(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
