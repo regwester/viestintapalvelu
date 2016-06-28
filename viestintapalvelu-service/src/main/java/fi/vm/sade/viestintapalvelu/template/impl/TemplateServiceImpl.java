@@ -214,7 +214,7 @@ public class TemplateServiceImpl implements TemplateService {
         model.setName(replacement.getName());
         model.setTimestamp(new Date());
         model.setTemplate(to);
-        model.setDefaultValue(model.getDefaultValue());
+        model.setDefaultValue(replacement.getDefaultValue());
     }
 
     private void validateTemplateAgainstStructure(fi.vm.sade.viestintapalvelu.template.Template template, Structure structure) {
