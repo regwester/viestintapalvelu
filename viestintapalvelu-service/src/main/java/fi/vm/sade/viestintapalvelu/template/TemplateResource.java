@@ -347,8 +347,9 @@ public class TemplateResource extends AsynchronousResource {
         return Response.status(Status.OK).build();
     }
 
-    @PUT
+    @POST
     @Path("/saveAttachedApplicationPeriods")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = AttachApplicationPeriod, notes = AttachApplicationPeriod)
@@ -371,8 +372,9 @@ public class TemplateResource extends AsynchronousResource {
         return Response.status(Status.OK).build();
     }
     
-    @PUT
+    @POST
     @Path("/updateDraft")
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Päivittää annetun kirjeluonnoksen kantaan", notes = "Vain korvauskentät voi päivittää")

@@ -53,11 +53,12 @@ angular.module('app').factory('Template', ['$http', '$window', function ($http, 
         }
 
         function saveAttachedApplicationPeriods(templateId, applicationPeriods, useAsDefault) {
-            return $http.put(window.url("viestintapalvelu.template.saveAttachedApplicationPeriods", {
+            var url = window.url("viestintapalvelu.template.saveAttachedApplicationPeriods");
+            return $http.post(url, {
                 templateId: templateId,
                 applicationPeriods: applicationPeriods,
                 useAsDefault: useAsDefault
-            }));
+            });
         }
 
         return {
