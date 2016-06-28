@@ -8,38 +8,25 @@
     <style type="text/css">
         $tyylit
     </style>
-    <title>Taulukkoliite</title>
+    <title>Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa</title>
 </head>
 
 <body>
-<div class="liiteSisalto">
-    <p><b>$addressLabel.firstName $addressLabel.lastName</b></p>
-    <br/>
-    <p>$liiteotsikko</p>
-    <br/>
-    <table>
-        <thead>
-        <tr>
-            <th class="hakutoive">Hakutoiveesi ja prioriteetti</th>
-            <th>Valinnan tulos</th>
-            <th>Hylkäysperuste</th>
-            <th>Sijoituksesi valintatavoittain / hyväksytyt valintatavoittain</th>
-            <th>Pistemääräsi / alin hyväksytty pistemäärä valintatavoittain</th>
-        </tr>
-        </thead>
-        <tbody> #foreach( $tulos in $tulokset )
-        <tr>
-            <td class="hakutoive">$foreach.count. $tulos.organisaationNimi, $tulos.oppilaitoksenNimi
-                <br/>$tulos.hakukohteenNimi</td>
-            <td>$tulos.valinnanTulos</td>
-            <td>$tulos.hylkaysperuste</td>
-            <td>#foreach($sijoitus in $tulos.sijoitukset)
-                <p>$sijoitus.nimi $sijoitus.oma / $sijoitus.hyvaksytyt</p>#end</td>
-            <td>#foreach($pisteet in $tulos.pisteet)
-                <p>$pisteet.nimi $pisteet.oma / $pisteet.minimi</p>#end</td>
-        </tr> #end </tbody>
-    </table>
-</div>
-</body>
+<p><b>Hyvä hakija,</b></p>
 
+<p>olet hakenut korkeakoulujen kevään 2016 yhteishaussa. Valinnantulokset on nähtävissä osoitteessa {{securelink}}.</p>
+
+<p>Jos olet varasijalla, hakukohteittesi tieto voi muuttua päivittäin. Löydät ajantasaiset tiedot Oma Opintopolku –palvelusta, johon pääset Opintopolku.fi:n etusivulta. Voidaksesi kirjautua sisään vahvasti tunnistautuneena tarvitset verkkopankkitunnukset, mobiilivarmenteen tai sirullisen henkilökortin ja sen lukijalaitteen.</p>
+
+<p>Tärkeimmät päivämäärät:</p>
+
+<p> - Opiskelupaikka on otettava vastaan 15.7.2016 klo 15 mennessä</p>
+
+<p> - Varasijalta voidaan hyväksyä 15.8.2016 klo 15 saakka (hakukohteesta riippuen). Jos tulet varasijalta hyväksytyksi tämän viestin jälkeen, saat siitä erillisen ilmoituksen.</p>
+
+<p>Voit vastaanottaa vain yhden korkeakoulupaikan samana lukukautena alkavasta koulutuksesta (1.8.-31.12.2016). Yhden korkeakoulupaikan sääntö koskee sekä korkeakoulujen yhteis- että erillishakuja.</p>
+
+<p><b>Huom!</b> Tämä viesti on lähetetty Opintopolku.fi-palvelusta, älä vastaa tähän automaattiseen viestiin!</p>
+
+</body>
 </html>
