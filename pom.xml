@@ -721,7 +721,7 @@
                         <target>1.7</target>
                         <encoding>UTF-8</encoding>
                         <debug>true</debug>
-                        <debuglevel>none</debuglevel>
+                        <debuglevel>lines,vars,source</debuglevel>
                     </configuration>
                 </plugin>
                 <plugin>
