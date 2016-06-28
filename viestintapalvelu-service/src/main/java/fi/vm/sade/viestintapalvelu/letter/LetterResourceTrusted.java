@@ -15,25 +15,31 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import com.google.common.base.Optional;
+import com.wordnik.swagger.annotations.ApiOperation;
+import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.viestintapalvelu.Constants;
+import fi.vm.sade.viestintapalvelu.Urls;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.stereotype.Component;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-
-import fi.vm.sade.viestintapalvelu.Constants;
-import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
-import org.springframework.stereotype.Component;
-
-import com.wordnik.swagger.annotations.ApiOperation;
-import com.wordnik.swagger.annotations.ApiParam;
-
-import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import java.util.List;
 
 @Component("LetterResourceTrusted")
 @Path(Urls.TRUSTED_PATH + "/" + Urls.LETTER_PATH)
 public class LetterResourceTrusted extends AbstractLetterResource {
+
+    private final Logger LOG = LoggerFactory.getLogger(LetterResourceTrusted.class);
 
     @POST
     @Consumes("application/json")
@@ -87,4 +93,59 @@ public class LetterResourceTrusted extends AbstractLetterResource {
         }
     }
 
+    @GET
+    @Produces("text/plain")
+    @Path("/publishLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Julkaisee kirjelähetyksen")
+    public Response publishLetterBatch(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
+        LOG.info("Publishing letter batch with batch id {}", letterBatchId);
+        LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
+        if(null == status) {
+            return Response.status(Response.Status.BAD_REQUEST).build();
+        } else if ( !isLetterBatchStatusReady(status)) {
+            LOG.info("Batch with id {} is not ready for publish. ", letterBatchId);
+            return Response.status(Response.Status.FORBIDDEN).entity("Batch is not ready for publish.").build();
+        } else {
+            int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
+            LOG.info("Published {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
+            return Response.ok(numberOfPublishedLetters).build();
+        }
+    }
+
+    @GET
+    @Produces("text/plain")
+    @Path("/getBatchIdReadyForPublish")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa viimeisimmän kirjelähetyksen ID:n, jos sitä ei ole vielä julkaistu")
+    public Response getLetterBatchIdReadyForPublish(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
+                                                    @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
+                                                    @QueryParam("language") @ApiParam(value = "Kirjelähetyksen kieli", required = true) String language) {
+        Optional<Long> batchId = letterService.getLetterBatchIdReadyForPublish(hakuOid, type, language);
+        return batchId.isPresent() ? Response.ok(batchId.get()).build() : Response.status(Response.Status.NOT_FOUND).entity("Unable to find batch id.").build();
+    }
+
+    @GET
+    @Produces("text/plain")
+    @Path("/getBatchIdReadyForEPosti")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa viimeisimmän kirjelähetyksen ID:n, jos se on jo julkaistu")
+    public Response getLetterBatchIdReadyForEPosti(@QueryParam("hakuOid") @ApiParam(value = "Haku OID", required = true) String hakuOid,
+                                                   @QueryParam("type") @ApiParam(value = "Kirjelähetyksen tyyppi (hyvaksymiskirje/jalkiohjauskirje)", required = true) String type,
+                                                   @QueryParam("language") @ApiParam(value = "Kirjelähetyksen kieli", required = true) String language) {
+        Optional<Long> batchId = letterService.getLetterBatchIdReadyForEPosti(hakuOid, type, language);
+        return batchId.isPresent() ? Response.ok(batchId.get()).build() : Response.status(Response.Status.NOT_FOUND).entity("Unable to find batch id.").build();
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/getEPostiAddressesForLetterBatch/{letterBatchId}")
+    @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
+    @ApiOperation(value = "Palauttaa kirjelähetyksen vastaanottajien ePosti-osoitteet (vain julkaistuille kirjeille)")
+    public Response getEPostiEmailAddresses(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
+        long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
+        List<String> letterReceiverEPostiAddresses = letterService.getEPostiEmailAddresses(letterBatchId);
+        return Response.ok(letterReceiverEPostiAddresses).build();
+    }
 }
