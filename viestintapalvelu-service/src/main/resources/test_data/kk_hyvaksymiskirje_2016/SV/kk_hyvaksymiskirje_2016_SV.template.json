@@ -116,6 +116,13 @@
       "mandatory": false
     },
     {
+      "id": 0,
+      "name": "sisalto_3",
+      "defaultValue": "{{sisalto_3.html}}",
+      "timestamp": null,
+      "mandatory": false
+    },
+    {
       "id": 1,
       "name": "subject",
       "defaultValue": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna",
