@@ -30,6 +30,7 @@ import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import java.util.Map;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -190,5 +191,5 @@ public interface LetterService {
 
     LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language);
 
-    List<String> getEPostiEmailAddresses(long letterBatchId);
+    Map<String, String> getEPostiEmailAddresses(long letterBatchId);
 }

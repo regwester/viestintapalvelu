@@ -908,7 +908,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public List<String> getEPostiEmailAddresses(long letterBatchId) {
+    public Map<String, String> getEPostiEmailAddresses(long letterBatchId) {
         return letterBatchDAO.getEPostiEmailAddressesByBatchId(letterBatchId);
     }
 }

@@ -439,8 +439,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
     }
 
-    public List<String> getEPostiEmailAddressesByBatchId(long letterBatchId) {
-        return getEntityManager().createQuery("SELECT lr.emailAddressEPosti"
+    public Map<String, String> getEPostiEmailAddressesByBatchId(long letterBatchId) {
+        Map<String, String> applicationOidToEmailAddress = new HashMap<>();
+        List<Object[]> resultList = getEntityManager().createQuery("SELECT lr.oidApplication, lr.emailAddressEPosti"
                 + " FROM LetterBatch l"
                 + " INNER JOIN l.letterReceivers lr "
                 + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish"
@@ -448,5 +449,9 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 .setParameter("readyForPublish", true)
                 .setParameter("letterBatchId", letterBatchId)
                 .getResultList();
+        for (Object[] row : resultList) {
+            applicationOidToEmailAddress.put((String) row[0], (String) row[1]);
+        }
+        return applicationOidToEmailAddress;
     }
 }

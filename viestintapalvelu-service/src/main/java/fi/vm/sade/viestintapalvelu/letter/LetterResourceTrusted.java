@@ -33,6 +33,7 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import java.util.List;
+import java.util.Map;
 
 @Component("LetterResourceTrusted")
 @Path(Urls.TRUSTED_PATH + "/" + Urls.LETTER_PATH)
@@ -140,7 +141,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @ApiOperation(value = "Palauttaa kirjelähetyksen vastaanottajien ePosti-osoitteet (vain julkaistuille kirjeille)")
     public Response getEPostiEmailAddresses(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
-        List<String> letterReceiverEPostiAddresses = letterService.getEPostiEmailAddresses(letterBatchId);
-        return Response.ok(letterReceiverEPostiAddresses).build();
+        Map<String, String> applicationOidToEmailAddress = letterService.getEPostiEmailAddresses(letterBatchId);
+        return Response.ok(applicationOidToEmailAddress).build();
     }
 }
