@@ -64,7 +64,7 @@
         "key": "sisalto",
         "name": "sisalto",
         "description": "Kirjeen ja sähköpostin varsinainen sisältö",
-        "contentType": "html",
+        "contentType": "plain",
         "numberOfRows": 20
       },
       {
