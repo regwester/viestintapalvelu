@@ -40,8 +40,8 @@
   #if($hakijapalveluidenOsoite)
   <div class="pull-left hakijapalveluidenosoite">
     $hakijapalveluidenOsoite.organisaationimi,<br/>
-    $hakijapalveluidenOsoite.addressline,<br/>
-    $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city
+    $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
+    $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
   </div>
   #end
   <div class="pull-right">

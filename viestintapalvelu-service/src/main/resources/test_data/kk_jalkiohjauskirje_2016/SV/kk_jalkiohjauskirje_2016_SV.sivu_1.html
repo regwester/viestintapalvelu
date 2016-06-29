@@ -18,8 +18,8 @@
     <p>
       Avsändare:<br/>
       $hakijapalveluidenOsoite.organisaationimi,<br/>
-      $hakijapalveluidenOsoite.addressline,<br/>
-      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city
+      $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
+      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
     </p>
     #end
   </div>
@@ -38,7 +38,7 @@
   <table>
     <tbody>
     <tr>
-      <td>Utbildningsstyrelsen</td>
+      <td colspan="4">Utbildningsstyrelsen</td>
     </tr>
     <tr>
       <td><br/></td>
