@@ -1,0 +1,1 @@
+ALTER TABLE kirjeet.vastaanottaja ADD COLUMN oid_application CHARACTER VARYING(256) NULL;

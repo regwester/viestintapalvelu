@@ -52,6 +52,9 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "oid_henkilo")
     private String oidPerson;
 
+    @Column(name = "oid_application")
+    private String oidApplication;
+
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
@@ -153,6 +156,14 @@ public class LetterReceivers extends BaseEntity {
 
     public void setOidPerson(String oidPerson) {
         this.oidPerson = oidPerson;
+    }
+
+    public String getOidApplication() {
+        return oidApplication;
+    }
+
+    public void setOidApplication(String oidApplication) {
+        this.oidApplication = oidApplication;
     }
 
     public boolean getSkipIPost() {

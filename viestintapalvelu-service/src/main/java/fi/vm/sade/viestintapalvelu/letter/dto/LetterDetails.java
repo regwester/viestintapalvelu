@@ -35,6 +35,8 @@ public interface LetterDetails {
 
     String getPersonOid();
 
+    String getApplicationOid();
+
     boolean isSkipIPosti();
 
     String getEmailAddressEPosti();

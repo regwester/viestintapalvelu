@@ -33,6 +33,9 @@ public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
     @ApiModelProperty(value = "Henkilön oid", required =  false)
     private String personOid;
 
+    @ApiModelProperty(value = "Hakemuksen oid", required = false)
+    private String applicationOid;
+
     @ApiModelProperty(value = "Ohita iPosti. Koskee vain iPosti-lähetystä. Oletuksena ei ohiteta.", required = false)
     private boolean skipIPosti = false;
 
@@ -113,5 +116,14 @@ public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
 
     public void setEmailAddressEPosti(String emailAddressEPosti) {
         this.emailAddressEPosti = emailAddressEPosti;
+    }
+
+    @Override
+    public String getApplicationOid() {
+        return applicationOid;
+    }
+
+    public void setApplicationOid(String applicationOid) {
+        this.applicationOid = applicationOid;
     }
 }

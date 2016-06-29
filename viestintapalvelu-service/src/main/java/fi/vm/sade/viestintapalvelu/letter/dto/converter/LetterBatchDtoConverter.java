@@ -97,6 +97,7 @@ public class LetterBatchDtoConverter {
         to.setWantedLanguage(from.getLanguageCode());
         to.setSkipIPost(from.isSkipIPosti());
         to.setOidPerson(from.getPersonOid());
+        to.setOidApplication(from.getApplicationOid());
         to.setEmailAddressEPosti(from.getEmailAddressEPosti());
 
         mapper = initMapperIfNull(mapper);
