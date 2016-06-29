@@ -40,7 +40,7 @@
             "role": "header",
             "name": "email_subject",
             "contentType": "plain",
-            "content": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa"
+            "content": "$subject"
           },
           {
             "role": "body",
@@ -52,6 +52,13 @@
       }
     ],
     "replacements": [
+      {
+        "key": "subject",
+        "name": "Otsikko",
+        "description": "Sähköpostiviestin otsikko",
+        "contentType": "plain",
+        "numberOfRows": 1
+      },
       {
         "key": "sisalto",
         "name": "sisalto",
@@ -102,6 +109,12 @@
       "name": "sisalto_3",
       "defaultValue": "{{sisalto_3.html}}",
       "timestamp": null,
+      "mandatory": false
+    },
+    {
+      "id": 1,
+      "name": "subject",
+      "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
       "mandatory": false
     },
     {

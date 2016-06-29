@@ -34,7 +34,7 @@
             "role": "header",
             "name": "email_subject",
             "contentType": "plain",
-            "content": "Notification of the student selection results in joint application to higher education"
+            "content": "$subject"
           },
           {
             "role": "body",
@@ -46,6 +46,13 @@
       }
     ],
     "replacements": [
+      {
+        "key": "subject",
+        "name": "Otsikko",
+        "description": "Sähköpostiviestin otsikko",
+        "contentType": "plain",
+        "numberOfRows": 1
+      },
       {
         "key": "sisalto",
         "name": "sisalto",
@@ -82,6 +89,12 @@
       "name": "sisalto_2",
       "defaultValue": "{{sisalto_2.html}}",
       "timestamp": null,
+      "mandatory": false
+    },
+    {
+      "id": 1,
+      "name": "subject",
+      "defaultValue": "Notification of the student selection results in joint application to higher education",
       "mandatory": false
     },
     {
