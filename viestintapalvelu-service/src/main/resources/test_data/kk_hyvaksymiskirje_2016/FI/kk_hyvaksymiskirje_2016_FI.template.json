@@ -47,16 +47,6 @@
             "name": "email_body",
             "contentType": "html",
             "content": "{{email.html}}"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_2",
-            "contentType": "html"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_3",
-            "contentType": "html"
           }
         ]
       }

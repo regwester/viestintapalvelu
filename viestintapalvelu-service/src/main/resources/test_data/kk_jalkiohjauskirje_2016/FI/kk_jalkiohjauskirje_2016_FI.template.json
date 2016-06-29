@@ -41,11 +41,6 @@
             "name": "email_body",
             "contentType": "html",
             "content": "{{email.html}}"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_2",
-            "contentType": "html"
           }
         ]
       }

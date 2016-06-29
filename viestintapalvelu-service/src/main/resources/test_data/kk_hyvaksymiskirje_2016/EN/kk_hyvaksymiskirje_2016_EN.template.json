@@ -26,7 +26,7 @@
           },
           {
             "role": "body",
-            "name": "sivu_4",
+            "name": "sivu_3",
             "contentType": "html",
             "content": "{{sivu_3.html}}"
           }
@@ -47,16 +47,6 @@
             "name": "email_body",
             "contentType": "html",
             "content": "{{email.html}}"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_2",
-            "contentType": "html"
-          },
-          {
-            "role": "attachment",
-            "name": "sivu_4",
-            "contentType": "html"
           }
         ]
       }
