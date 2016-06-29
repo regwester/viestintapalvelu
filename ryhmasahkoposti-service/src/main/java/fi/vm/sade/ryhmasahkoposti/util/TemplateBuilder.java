@@ -15,18 +15,11 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
+import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
@@ -34,15 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
-import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
-import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 public class TemplateBuilder {
@@ -177,8 +166,14 @@ public class TemplateBuilder {
                 dataContext.put(ReplacementDTO.NAME_EMAIL_BODY, InputCleaner.cleanHtmlFragment(message.getBody()));
             }
             // Replace Email's subject with otsikko parameter if there is one (always replaced)
-            if (dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT) != null) {
-                message.setSubject(dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT).toString());
+            ReplacementDTO subject = Iterables.find(template.getReplacements(), new Predicate<ReplacementDTO>() {
+                @Override
+                public boolean apply(ReplacementDTO replacement) {
+                    return ReplacementDTO.NAME_EMAIL_SUBJECT.equals(replacement.getName());
+                }
+            }, null);
+            if (subject != null) {
+                message.setSubject(subject.getDefaultValue());
             }
             // reply-to-personal overrides possible reply-to, default to email's replyTo
             if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL) != null) {
