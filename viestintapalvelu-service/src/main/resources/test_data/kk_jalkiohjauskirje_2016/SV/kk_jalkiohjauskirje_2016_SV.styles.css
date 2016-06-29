@@ -216,3 +216,11 @@ ul.dash li:before {
   position: running(footer);
   margin-top: -1cm;
 }
+.footer>table {
+  text-align: left;
+  margin-left: 0;
+  padding-left: 0;
+}
+.footer>td {
+  font-size: 9px;
+}

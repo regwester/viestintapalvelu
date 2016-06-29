@@ -34,7 +34,7 @@
             "role": "header",
             "name": "email_subject",
             "contentType": "plain",
-            "content": "$subject"
+            "content": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa"
           },
           {
             "role": "body",
@@ -46,13 +46,6 @@
       }
     ],
     "replacements": [
-      {
-        "key": "subject",
-        "name": "Otsikko",
-        "description": "Sähköpostiviestin otsikko",
-        "contentType": "plain",
-        "numberOfRows": 1
-      },
       {
         "key": "sisalto",
         "name": "sisalto",
@@ -92,15 +85,9 @@
       "mandatory": false
     },
     {
-      "id": 1,
-      "name": "subject",
-      "defaultValue": "Hyväksymiskirje",
-      "mandatory": false
-    },
-    {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "<p>ILMOITUS OPISKELIJAVALINNAN TULOKSESTA KORKEAKOULUJEN YHTEISHAUSSA KEV&Auml;&Auml;LL&Auml; 2015</p>",
+      "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
       "mandatory": false
     }
   ]

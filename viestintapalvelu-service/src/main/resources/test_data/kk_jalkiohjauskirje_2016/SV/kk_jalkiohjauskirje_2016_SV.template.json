@@ -34,7 +34,7 @@
             "role": "header",
             "name": "email_subject",
             "contentType": "plain",
-            "content": "$subject"
+            "content": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna"
           },
           {
             "role": "body",
@@ -46,13 +46,6 @@
       }
     ],
     "replacements": [
-      {
-        "key": "subject",
-        "name": "Otsikko",
-        "description": "Sähköpostiviestin otsikko",
-        "contentType": "plain",
-        "numberOfRows": 1
-      },
       {
         "key": "sisalto",
         "name": "sisalto",
@@ -92,15 +85,9 @@
       "mandatory": false
     },
     {
-      "id": 1,
-      "name": "subject",
-      "defaultValue": "Hyväksymiskirje",
-      "mandatory": false
-    },
-    {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "<p><em>MEDDELANDE OM BESLUT OM ANTAGNING AV STUDERANDE I GEMENSAM ANS&Ouml;KAN TILL H&Ouml;GSKOLOR V&Aring;REN 2015</em></p>",
+      "defaultValue": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna",
       "mandatory": false
     }
   ]
