@@ -81,8 +81,10 @@ blockquote {
   float: left;
 }
 .organisaatio {
-  width: 80mm;
+  width: 100mm;
   height: 26mm;
+  font-family: OpenSans-Semibold;
+  font-size: 12px;
   margin: 0;
   padding: 0;
 }

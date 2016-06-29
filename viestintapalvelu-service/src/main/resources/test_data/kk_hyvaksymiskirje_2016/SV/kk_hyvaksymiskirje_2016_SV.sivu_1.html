@@ -13,7 +13,16 @@
 
 <body>
 <div class='header'>
-  <div class="organisaatio"></div>
+  <div class="organisaatio">
+    #if($hakijapalveluidenOsoite)
+    <p>
+      Sender:<br/>
+      $hakijapalveluidenOsoite.organisaationimi,<br/>
+      $hakijapalveluidenOsoite.addressline,<br/>
+      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city
+    </p>
+    #end
+  </div>
   <div class='osoitetarra'>
     <div>$osoite</div>
   </div>
