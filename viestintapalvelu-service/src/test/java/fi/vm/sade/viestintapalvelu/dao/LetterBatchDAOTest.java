@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
+import com.google.common.collect.ImmutableMap;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.junit.Test;
@@ -436,8 +437,9 @@ public class LetterBatchDAOTest {
                 Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
         Long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-1",
                 Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
-
-        assertEquals(Arrays.asList("test-person-oid-1@testi.fi", "test-person-oid-2@testi.fi", "test-person-oid-3@testi.fi"),
+        assertEquals(ImmutableMap.of(   "oid0", "test-person-oid-1@testi.fi",
+                                        "oid1", "test-person-oid-2@testi.fi",
+                                        "oid2", "test-person-oid-3@testi.fi"),
                 letterBatchDAO.getEPostiEmailAddressesByBatchId(batchId1));
         assertEquals(0, letterBatchDAO.getEPostiEmailAddressesByBatchId(batchId2).size());
     }
@@ -474,6 +476,7 @@ public class LetterBatchDAOTest {
         while(receiversIterator.hasNext()) {
             LetterReceivers letterReceivers = receiversIterator.next();
             letterReceivers.setOidPerson(personOids.get(i));
+            letterReceivers.setOidApplication("oid" + i);
             letterReceivers.setEmailAddressEPosti(personOids.get(i) + "@testi.fi");
             letterReceivers.getLetterReceiverLetter().setReadyForPublish(readyForPublish);
             letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
