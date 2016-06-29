@@ -237,11 +237,23 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         batchreplacements.put("henkilotunnus", "123456-7890");
         batchreplacements.put("hakemusOid", "1.2.246.562.11.00005902048");
         batchreplacements.put("ohjeetUudelleOpiskelijalle","www.mamk.fi");
-        batchreplacements.put("hakijapalveluidenOsoite", ImmutableMap.of(
-                "organisaationimi","Helsingin yliopisto, hakijapalvelut, hakijapalvelut(at)helsinki.fi, 02941 24140",
-                "addressline","Fabianinkatu 3",
-                "postalCode","00014",
-                "city","Helsinki"));
+        boolean heads = new Random(System.currentTimeMillis()).nextBoolean();
+        if(heads) { // heads: oikein formatoitu hakijapalveluiden osoite
+            batchreplacements.put("hakijapalveluidenOsoite", ImmutableMap.of(
+                    "organisaationimi","Helsingin yliopisto, hakijapalvelut, hakijapalvelut(at)helsinki.fi, 02941 24140",
+                    "addressline","Fabianinkatu 3",
+                    "postalCode","00014",
+                    "city","Helsinki",
+                    "country", "FINLAND"));
+        } else { // tails : hassusti formatoitu hakijapalveluiden osoite
+            batchreplacements.put("hakijapalveluidenOsoite", ImmutableMap.of(
+                    "organisaationimi","Admission Services, Karelia University of Applied Sciences",
+                    "addressline","Tikkarinne 9, FI-80200 Joensuu",
+                    "postalCode","",
+                    "city","",
+                    "country", "FINLAND"));
+        }
+
         batchreplacements.put("sisalto", letterContents);
         return letterBuilder.constructPDFForLetterReceiverLetter(letterReceivers, template, batchreplacements, letterreplacements).getLetter();
     }
