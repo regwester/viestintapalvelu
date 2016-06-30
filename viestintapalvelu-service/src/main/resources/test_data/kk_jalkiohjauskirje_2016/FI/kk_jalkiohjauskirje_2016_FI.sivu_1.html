@@ -14,14 +14,13 @@
 <body>
 <div class='header'>
   <div class="organisaatio">
-    #if($hakijapalveluidenOsoite)
     <p>
       Lähettäjä:<br/>
-      $hakijapalveluidenOsoite.organisaationimi,<br/>
-      $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
+      Opetushallitus<br/>
+      Hakaniemenranta 6,<br/>
+      PL 380,<br/>
+      00531 Helsinki
     </p>
-    #end
   </div>
   <div class='osoitetarra'>
     <div>$osoite</div>
@@ -33,31 +32,6 @@
 
   $sisalto
 
-</div>
-<div class="footer">
-  <table>
-    <tbody>
-    <tr>
-      <td colspan="4">Opetushallitus</td>
-    </tr>
-    <tr>
-      <td><br/></td>
-    </tr>
-    <tr>
-        <td>Postiosoite:</td>
-        <td>
-          Opetushallitus,<br/>
-          PL 380,<br/>
-          00531 Helsinki
-        </td>
-        <td>Käyntiosoite:</td>
-        <td>
-          Hakaniemenranta 6,<br/>
-          00530 Helsinki
-        </td>
-    </tr>
-    </tbody>
-  </table>
 </div>
 </body>
 
