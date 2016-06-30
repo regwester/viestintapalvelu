@@ -67,15 +67,15 @@
         "numberOfRows": 20
       },
       {
-        "key": "sisalto_2",
-        "name": "sisalto_2",
+        "key": "sis2",
+        "name": "sis2",
         "description": "Kirjeen tilanteet sivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
       },
       {
-        "key": "sisalto_3",
-        "name": "sisalto_3",
+        "key": "sis3",
+        "name": "sis3",
         "description": "Kirjeen vastaanottoilmoitussivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
@@ -98,27 +98,27 @@
       "mandatory": false
     },
     {
-      "id": 0,
-      "name": "sisalto_2",
+      "id": 1,
+      "name": "sis2",
       "defaultValue": "{{sisalto_2.html}}",
       "timestamp": null,
       "mandatory": false
     },
     {
-      "id": 0,
-      "name": "sisalto_3",
+      "id": 2,
+      "name": "sis3",
       "defaultValue": "{{sisalto_3.html}}",
       "timestamp": null,
       "mandatory": false
     },
     {
-      "id": 1,
+      "id": 3,
       "name": "subject",
       "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
       "mandatory": false
     },
     {
-      "id": 2,
+      "id": 4,
       "name": "kirjeotsikko",
       "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
       "mandatory": false

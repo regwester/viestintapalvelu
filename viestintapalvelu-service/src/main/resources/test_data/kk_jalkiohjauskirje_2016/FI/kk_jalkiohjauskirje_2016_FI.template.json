@@ -61,8 +61,8 @@
         "numberOfRows": 20
       },
       {
-        "key": "sisalto_2",
-        "name": "sisalto_2",
+        "key": "sis2",
+        "name": "sis2",
         "description": "Kirjeen tilanteet sivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
@@ -86,7 +86,7 @@
     },
     {
       "id": 0,
-      "name": "sisalto_2",
+      "name": "sis2",
       "defaultValue": "{{sisalto_2.html}}",
       "timestamp": null,
       "mandatory": false
