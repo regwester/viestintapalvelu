@@ -1,0 +1,1 @@
+create index kirjeet_vastaanottaja_oid_henkilo_index on kirjeet.vastaanottaja(oid_henkilo);
