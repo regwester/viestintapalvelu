@@ -35,14 +35,14 @@
     #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
     <tr class="$hyvaksytty $even">
       <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
-      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/><span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span></td>
+      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>#if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end</td>
     </tr>
     #foreach( $sijoitus in $tulos.sijoitukset )
     <tr class="$hyvaksytty $even">
       <td>$sijoitus.nimi<br/></td>
-      <td>$sijoitus.pisteet.oma<br/></td>
-      <td>$sijoitus.pisteet.minimi<br/></td>
-      <td>$sijoitus.pisteet.ensikertMinimi<br/></td>
+      <td>#if($sijoitus.pisteet.oma)${$sijoitus.pisteet.oma}#{else} - #end<br/></td>
+      <td>#if($sijoitus.pisteet.minimi)${$sijoitus.pisteet.minimi}#{else} - #end<br/></td>
+      <td>#if($sijoitus.pisteet.ensikertMinimi)${$sijoitus.pisteet.ensikertMinimi}#{else} - #end<br/></td>
       <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
     </tr>
     #end
