@@ -32,8 +32,8 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class SchedulerResponse implements Serializable {
     private static final long serialVersionUID = -818989152242206206L;
 
-    private Map<String,Object> commonContext = new HashMap<String, Object>();
-    private List<ReceiverItem> items = new ArrayList<ReceiverItem>();
+    private Map<String,Object> commonContext = new HashMap<>();
+    private List<ReceiverItem> items = new ArrayList<>();
 
     public Map<String, Object> getCommonContext() {
         return commonContext;

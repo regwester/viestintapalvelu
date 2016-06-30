@@ -36,7 +36,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public TemplateDTO getTemplate(String id) {
         if (id != null) {
-            return templateComponent.getTemplateContent(id.toString());
+            return templateComponent.getTemplateContent(id);
         }
         return null;
     }

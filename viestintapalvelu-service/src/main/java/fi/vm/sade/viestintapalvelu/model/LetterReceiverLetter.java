@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.model;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -51,8 +52,11 @@ public class LetterReceiverLetter extends BaseEntity {
     @Column(name = "alkuperainensisaltotyyppi")
     private String originalContentType = "";
 
+    @Column(name = "julkaistavissa")
+    private boolean readyForPublish;
+
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "letterReceiverLetter", cascade = CascadeType.PERSIST)
-    private Set<LetterReceiverLetterAttachment> attachments = new HashSet<LetterReceiverLetterAttachment>();
+    private Set<LetterReceiverLetterAttachment> attachments = new HashSet<>();
 
     public Date getTimestamp() {
         return timestamp;
@@ -102,9 +106,16 @@ public class LetterReceiverLetter extends BaseEntity {
         this.attachments = attachments;
     }
 
-    @Override
-    public String toString() {
-        return "LetterReceiverLetter [letter=" + letter + ", timestamp=" + timestamp + "]";
+    public boolean isReadyForPublish() {
+        return readyForPublish;
     }
 
+    public void setReadyForPublish(boolean readyForPublish) {
+        this.readyForPublish = readyForPublish;
+    }
+
+    @Override
+    public String toString() {
+        return "LetterReceiverLetter [letter=" + Arrays.toString(letter) + ", timestamp=" + timestamp + "]";
+    }
 }

@@ -20,13 +20,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabelDetails;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterDetails;
 import fi.vm.sade.viestintapalvelu.model.*;
@@ -35,6 +36,7 @@ import fi.vm.sade.viestintapalvelu.model.*;
  * User: ratamaa Date: 18.9.2014 Time: 14:53
  */
 @Component
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterBatchDtoConverter {
     @Autowired
     private ObjectMapperProvider objectMapperProvider;
@@ -48,6 +50,7 @@ public class LetterBatchDtoConverter {
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTag(from.getTag());
         to.setIposti(from.isIposti());
+        to.setSkipDokumenttipalvelu(from.isSkipDokumenttipalvelu());
 
         // kirjeet.lahetyskorvauskentat
         to.setLetterReplacements(parseLetterReplacementsModels(from, to, mapper));
@@ -55,14 +58,12 @@ public class LetterBatchDtoConverter {
     }
 
     public Set<LetterReplacement> parseLetterReplacementsModels(LetterBatchDetails from, LetterBatch to, ObjectMapper mapper) throws JsonProcessingException {
-        Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
+        Set<LetterReplacement> replacements = new HashSet<>();
 
         Object replKeys[] = from.getTemplateReplacements().keySet().toArray();
         Object replVals[] = from.getTemplateReplacements().values().toArray();
 
-        if (mapper == null) {
-            mapper = objectMapperProvider.getContext(getClass());
-        }
+        mapper = initMapperIfNull(mapper);
 
         for (int i = 0; i < replVals.length; i++) {
             LetterReplacement repl = new LetterReplacement();
@@ -83,18 +84,27 @@ public class LetterBatchDtoConverter {
         return replacements;
     }
 
+    private ObjectMapper initMapperIfNull(ObjectMapper mapper) {
+        if (mapper == null) {
+            mapper = objectMapperProvider.getContext(getClass());
+        }
+        return mapper;
+    }
+
     public LetterReceivers convert(LetterDetails from, LetterReceivers to, ObjectMapper mapper) throws JsonProcessingException {
         to.setTimestamp(new Date());
         to.setEmailAddress(from.getEmailAddress());
         to.setWantedLanguage(from.getLanguageCode());
+        to.setSkipIPost(from.isSkipIPosti());
+        to.setOidPerson(from.getPersonOid());
+        to.setOidApplication(from.getApplicationOid());
+        to.setEmailAddressEPosti(from.getEmailAddressEPosti());
 
-        if (mapper == null) {
-            mapper = objectMapperProvider.getContext(getClass());
-        }
+        mapper = initMapperIfNull(mapper);
 
         // kirjeet.vastaanottajakorvauskentat
         if ((from.getTemplateReplacements() != null) || (from.getTemplateReplacements().isEmpty())) {
-            Set<LetterReceiverReplacement> letterRepl = new HashSet<LetterReceiverReplacement>();
+            Set<LetterReceiverReplacement> letterRepl = new HashSet<>();
 
             Object letReplKeys[] = from.getTemplateReplacements().keySet().toArray();
             Object letReplVals[] = from.getTemplateReplacements().values().toArray();

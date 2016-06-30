@@ -31,3 +31,5 @@ viestintapalvelu-ui/src/main/webapp
 node_modules/
 node/
 
+fakemailer/incoming/*
+fakemailer/bounces/*

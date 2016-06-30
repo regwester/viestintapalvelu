@@ -19,13 +19,13 @@ import java.util.*;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
@@ -72,19 +72,7 @@ public class OrganizationComponent {
      * @return Organisaation nimi
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-        String[] language = { "fi", "sv", "en" };
-        if (organisaatio == null || organisaatio.getNimi() == null) {
-            return "";
-        }
-
-        for (int i = 0; language.length > i; i++) {
-            String nameOfOrganisation = organisaatio.getNimi().get(language[i]);
-            if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
-                return nameOfOrganisation;
-            }
-        }
-
-        return "";
+        return ComponentUtil.getOrganizationNameFromRDTO(organisaatio);
     }
 
     /**
@@ -114,7 +102,7 @@ public class OrganizationComponent {
             OrganisaatioHierarchyDto root = new OrganisaatioHierarchyDto();
             root.setChildren(rootResults.getOrganisaatiot());
             root.setOid(rootOrganizationOID);
-            Map<String, String> nimi = new HashMap<String, String>();
+            Map<String, String> nimi = new HashMap<>();
             nimi.put("fi", "Opetushallitus");
             nimi.put("sv", "Utbildningsstyrelsen");
             nimi.put("en", "The Finnish National Board of Education");
@@ -135,7 +123,7 @@ public class OrganizationComponent {
      */
     private List<String> getParentOidList(String parents) {
         if (parents == null || parents.isEmpty()) {
-            return new ArrayList<String>();
+            return new ArrayList<>();
         }
 
         String[] parentOids = parents.split("/");

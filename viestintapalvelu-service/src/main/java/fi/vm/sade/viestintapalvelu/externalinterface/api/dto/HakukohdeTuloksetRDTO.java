@@ -16,7 +16,6 @@
 
 package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import java.util.List;

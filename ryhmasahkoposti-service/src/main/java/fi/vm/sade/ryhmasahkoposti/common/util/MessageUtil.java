@@ -33,28 +33,24 @@ public class MessageUtil {
     }
 
     public static String getMessage(String key) {
-        Locale locale = Locale.getDefault();
-
-        if (locale == null) {
-            locale = DEFAULT_LOCALE;
-        }
-
         try {
-            return messageSource.getMessage(key, new Object[] {}, locale);
+            return messageSource.getMessage(key, new Object[] {}, getLocale());
         } catch (NoSuchMessageException e) {
             return messageSource.getMessage(key, new Object[] {}, DEFAULT_LOCALE);
         }
     }
 
-    public static String getMessage(String key, Object... args) {
+    private static Locale getLocale() {
         Locale locale = Locale.getDefault();
-
         if (locale == null) {
             locale = DEFAULT_LOCALE;
         }
+        return locale;
+    }
 
+    public static String getMessage(String key, Object... args) {
         try {
-            return messageSource.getMessage(key, args, locale);
+            return messageSource.getMessage(key, args, getLocale());
         } catch (NoSuchMessageException e) {
             return messageSource.getMessage(key, args, DEFAULT_LOCALE);
         }

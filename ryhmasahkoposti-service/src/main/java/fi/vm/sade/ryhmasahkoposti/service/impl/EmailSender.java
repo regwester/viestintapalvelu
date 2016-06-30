@@ -50,9 +50,9 @@ public class EmailSender {
     String smtpPort;
     
     public void handleMail(EmailMessage emailMessage, String emailAddress,
-                           Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
+                           String letterHash, Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
         try {
-            MimeMessage message = createMail(emailMessage, emailAddress, additionalAttachments);
+            MimeMessage message = createMail(emailMessage, emailAddress, letterHash, additionalAttachments);
             if (EmailConstants.TEST_MODE.equals("NO")) {
                 LOGGER.debug("Sending message: " + message.toString());
                 long start = System.currentTimeMillis();
@@ -60,6 +60,7 @@ public class EmailSender {
                 long took = System.currentTimeMillis() -start;
                 LOGGER.debug("Message sent took: " + took);
             } else {
+                LOGGER.info("Sending mock message to {}, hash {}", emailAddress, letterHash);
                 mockSendMail(emailMessage, emailAddress, additionalAttachments); //just log the message
             }
         } catch (Exception e) {
@@ -69,7 +70,7 @@ public class EmailSender {
     }
 
     public MimeMessage createMail(EmailMessage emailMessage, String emailAddress,
-                                  Optional<? extends AttachmentContainer> additionalAttachments)
+                                  String letterHash, Optional<? extends AttachmentContainer> additionalAttachments)
             throws MessagingException, UnsupportedEncodingException {
         Session session = createSession();
         MimeMessage msg = new MimeMessage(session);
@@ -81,6 +82,9 @@ public class EmailSender {
             InternetAddress[] replyToAddrs = InternetAddress.parse(emailMessage.getReplyTo(), false);
             msg.setReplyTo(replyToAddrs);
         }
+        msg.addHeader("X-Batch-ID", "Opetushallitus");
+        msg.addHeader("X-Message-ID", letterHash + ".posti@hard.ware.fi");
+        msg.addHeader("Return-Path", "shredder@shredder.ware.fi");
 
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();
@@ -148,8 +152,7 @@ public class EmailSender {
         Properties mailProps = new Properties();
         mailProps.put("mail.smtp.host", smtpHost);
         mailProps.put("mail.smtp.port", smtpPort);
-        Session session = Session.getInstance(mailProps);
-        return session;
+        return Session.getInstance(mailProps);
     }
 
     private void mockSendMail(EmailMessage emailMessage, String emailAddress,

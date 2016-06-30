@@ -48,7 +48,7 @@ public class ViestintapalveluEmailAttachmentDownloaderImpl implements EmailAttac
     }
 
     @Override
-    public EmailAttachment download(String uri) throws Exception {
+    public EmailAttachment download(String uri) {
         if (!isApplicableForUri(uri)) {
             throw new IllegalArgumentException("ViestintapalveluEmailAttachmentDownloaderImpl can't handle URI=" + uri);
         }

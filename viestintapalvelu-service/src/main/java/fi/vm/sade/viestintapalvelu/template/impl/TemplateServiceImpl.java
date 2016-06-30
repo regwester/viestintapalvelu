@@ -21,7 +21,6 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -204,14 +203,18 @@ public class TemplateServiceImpl implements TemplateService {
                 to.addReplacement(toAdd);
             } else {
                 Replacement model = new Replacement();
-                model.setDefaultValue(model.getDefaultValue());
-                model.setMandatory(replacement.isMandatory());
-                model.setName(replacement.getName());
-                model.setTimestamp(new Date());
-                model.setTemplate(to);
+                setModelValues(to, replacement, model);
                 to.addReplacement(model);
             }
         }
+    }
+
+    private void setModelValues(Template to, fi.vm.sade.viestintapalvelu.template.Replacement replacement, Replacement model) {
+        model.setMandatory(replacement.isMandatory());
+        model.setName(replacement.getName());
+        model.setTimestamp(new Date());
+        model.setTemplate(to);
+        model.setDefaultValue(replacement.getDefaultValue());
     }
 
     private void validateTemplateAgainstStructure(fi.vm.sade.viestintapalvelu.template.Template template, Structure structure) {
@@ -311,8 +314,8 @@ public class TemplateServiceImpl implements TemplateService {
         }).or(new DraftReplacement());
         repl.setDraft(model);
         repl.setName("sisalto");
-        repl.setDefaultValue(draft.content.toString());
-        model.setReplacements(new HashSet<DraftReplacement>(Arrays.asList(repl)));
+        repl.setDefaultValue(draft.content);
+        model.setReplacements(new HashSet<>(Collections.singletonList(repl)));
         draftDAO.update(model);        
     }
 
@@ -320,7 +323,7 @@ public class TemplateServiceImpl implements TemplateService {
      * kirjeet.luonnoskorvauskentat
      */
     private Set<DraftReplacement> parseDraftReplacementsModels(fi.vm.sade.viestintapalvelu.template.Draft draft, Draft draftB) {
-        Set<DraftReplacement> replacements = new HashSet<DraftReplacement>();
+        Set<DraftReplacement> replacements = new HashSet<>();
 
         Object replKeys[] = draft.getReplacements().keySet().toArray();
         Object replVals[] = draft.getReplacements().values().toArray();
@@ -394,23 +397,27 @@ public class TemplateServiceImpl implements TemplateService {
 
     private fi.vm.sade.viestintapalvelu.template.Template convert(Template searchResult) {
         fi.vm.sade.viestintapalvelu.template.Template result = new fi.vm.sade.viestintapalvelu.template.Template();
+        convertTemplateToTemplate(searchResult, result);
+        result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
+        convertApplicationPeriods(searchResult, result);
+        return result;
+    }
+
+    private void convertTemplateToTemplate(Template searchResult, fi.vm.sade.viestintapalvelu.template.Template result) {
         result.setId(searchResult.getId());
         result.setName(searchResult.getName());
         result.setStructureId(searchResult.getStructure().getId());
         result.setStructureName(searchResult.getStructure().getName());
         result.setLanguage(searchResult.getLanguage());
         result.setTimestamp(searchResult.getTimestamp());
-        result.setReplacements(parseReplacementDTOs(searchResult.getReplacements()));
         result.setState(searchResult.getState());
         result.setUsedAsDefault(searchResult.isUsedAsDefault());
         result.setStoringOid(searchResult.getStoringOid());
-        convertApplicationPeriods(searchResult, result);
-        return result;
     }
 
     @Deprecated
     private List<fi.vm.sade.viestintapalvelu.template.TemplateContent> parseContentDTOs(Set<TemplateContent> contents) {
-        List<fi.vm.sade.viestintapalvelu.template.TemplateContent> result = new ArrayList<fi.vm.sade.viestintapalvelu.template.TemplateContent>();
+        List<fi.vm.sade.viestintapalvelu.template.TemplateContent> result = new ArrayList<>();
 
         for (TemplateContent tc : contents) {
             fi.vm.sade.viestintapalvelu.template.TemplateContent dto = new fi.vm.sade.viestintapalvelu.template.TemplateContent();
@@ -426,7 +433,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private List<fi.vm.sade.viestintapalvelu.template.Replacement> parseReplacementDTOs(Set<Replacement> replacements) {
-        List<fi.vm.sade.viestintapalvelu.template.Replacement> result = new ArrayList<fi.vm.sade.viestintapalvelu.template.Replacement>();
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> result = new ArrayList<>();
         for (Replacement r : replacements) {
             fi.vm.sade.viestintapalvelu.template.Replacement dto = new fi.vm.sade.viestintapalvelu.template.Replacement();
             dto.setDefaultValue(r.getDefaultValue());
@@ -442,7 +449,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Deprecated
     private Set<TemplateContent> parseContentModels(List<fi.vm.sade.viestintapalvelu.template.TemplateContent> contents, Template template) {
-        Set<TemplateContent> result = new HashSet<TemplateContent>();
+        Set<TemplateContent> result = new HashSet<>();
 
         for (fi.vm.sade.viestintapalvelu.template.TemplateContent tc : contents) {
             TemplateContent model = new TemplateContent();
@@ -458,17 +465,13 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private Set<Replacement> parseReplacementModels(List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements, Template template, boolean isUpdate) {
-        Set<Replacement> result = new HashSet<Replacement>();
+        Set<Replacement> result = new HashSet<>();
         for (fi.vm.sade.viestintapalvelu.template.Replacement r : replacements) {
             Replacement model = new Replacement();
-            model.setDefaultValue(r.getDefaultValue());
             if (isUpdate) {
                 model.setId(r.getId());
             }
-            model.setMandatory(r.isMandatory());
-            model.setName(r.getName());
-            model.setTimestamp(new Date()); // r.getTimestamp());
-            model.setTemplate(template);
+            setModelValues(template, r, model);
             result.add(model);
         }
         return result;
@@ -494,7 +497,7 @@ public class TemplateServiceImpl implements TemplateService {
      * .String, java.lang.String, java.lang.String)
      */
     @Override
-    public Template template(String name, String languageCode, String type) throws IOException, DocumentException {
+    public Template template(String name, String languageCode, String type) throws IOException {
 
         Template result = new Template();
         String templateName = Utils.resolveTemplateName(name, languageCode, type);
@@ -510,12 +513,12 @@ public class TemplateServiceImpl implements TemplateService {
         TemplateContent content = new TemplateContent();
         content.setName(templateName);
         content.setContent(sb.toString());
-        List<TemplateContent> contents = new ArrayList<TemplateContent>();
+        List<TemplateContent> contents = new ArrayList<>();
         contents.add(content);
 
         Replacement replacement = new Replacement();
         replacement.setName("$sisalto");
-        ArrayList<Replacement> rList = new ArrayList<Replacement>();
+        ArrayList<Replacement> rList = new ArrayList<>();
         rList.add(replacement);
         return result;
     }
@@ -524,7 +527,7 @@ public class TemplateServiceImpl implements TemplateService {
     public List<fi.vm.sade.viestintapalvelu.template.Template> listTemplateVersionsByName(TemplateCriteria templateCriteria, boolean content, boolean periods) {
         List<Template> templates = templateDAO.findTemplates(templateCriteria);
 
-        List<fi.vm.sade.viestintapalvelu.template.Template> dtos = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
+        List<fi.vm.sade.viestintapalvelu.template.Template> dtos = new ArrayList<>();
         for (Template template : templates) {
             fi.vm.sade.viestintapalvelu.template.Template dto = convertBasicData(template, new fi.vm.sade.viestintapalvelu.template.Template());
             if (periods) {
@@ -541,7 +544,7 @@ public class TemplateServiceImpl implements TemplateService {
 
     @Override
     public List<fi.vm.sade.viestintapalvelu.template.Template> findByCriteria(TemplateCriteria criteria) {
-        List<fi.vm.sade.viestintapalvelu.template.Template> templates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
+        List<fi.vm.sade.viestintapalvelu.template.Template> templates = new ArrayList<>();
         for (Template t : templateDAO.findTemplates(criteria)) {
             fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(t, true, false);
             templates.add(convertedTemplate);
@@ -552,7 +555,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public List<fi.vm.sade.viestintapalvelu.template.Template> findByOrganizationOIDs(List<String> oids) {
         List<Template> templates = templateDAO.findByOrganizationOIDs(oids);
-        List<fi.vm.sade.viestintapalvelu.template.Template> convertedTemplates = new ArrayList<fi.vm.sade.viestintapalvelu.template.Template>();
+        List<fi.vm.sade.viestintapalvelu.template.Template> convertedTemplates = new ArrayList<>();
         for (Template template : templates) {
             fi.vm.sade.viestintapalvelu.template.Template convertedTemplate = getConvertedTemplate(template, true, false);
             convertedTemplates.add(convertedTemplate);
@@ -626,25 +629,17 @@ public class TemplateServiceImpl implements TemplateService {
 
     // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template convertBasicData(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
-        to.setId(from.getId());
-        to.setName(from.getName());
-        to.setStructureId(from.getStructure().getId());
-        to.setStructureName(from.getStructure().getName());
-        to.setUsedAsDefault(from.isUsedAsDefault());
+        convertTemplateToTemplate(from, to);
         // searchTempl.setStyles(template.getStyles());
-        to.setLanguage(from.getLanguage());
-        to.setTimestamp(from.getTimestamp());
-        to.setStoringOid(from.getStoringOid());
         to.setOrganizationOid(from.getOrganizationOid());
         to.setTemplateVersio(from.getVersionro());
         to.setDescription(from.getDescription());
-        to.setState(from.getState());
         return to;
     }
 
     // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template convertApplicationPeriods(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
-        List<String> periods = new ArrayList<String>();
+        List<String> periods = new ArrayList<>();
         for (TemplateApplicationPeriod applicationPeriod : from.getApplicationPeriods()) {
             periods.add(applicationPeriod.getId().getApplicationPeriod());
         }
@@ -656,14 +651,12 @@ public class TemplateServiceImpl implements TemplateService {
     // TODO: move to separate DTO converter:
     private fi.vm.sade.viestintapalvelu.template.Template convertReplacements(Template from, fi.vm.sade.viestintapalvelu.template.Template to) {
         // Replacement
-        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacement = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacement = new LinkedList<>();
         for (Replacement rep : from.getReplacements()) {
             fi.vm.sade.viestintapalvelu.template.Replacement repl = new fi.vm.sade.viestintapalvelu.template.Replacement();
             repl.setId(rep.getId());
             repl.setName(rep.getName());
-            ;
             repl.setDefaultValue(rep.getDefaultValue());
-            ;
             repl.setMandatory(rep.isMandatory());
             repl.setTimestamp(rep.getTimestamp());
             replacement.add(repl);
@@ -711,7 +704,6 @@ public class TemplateServiceImpl implements TemplateService {
     public fi.vm.sade.viestintapalvelu.template.Draft findDraftByNameOrgTag(String templateName, String languageCode, String oid, String applicationPeriod,
             String fetchTarget, String tag) {
 
-        fi.vm.sade.viestintapalvelu.template.Draft result = new fi.vm.sade.viestintapalvelu.template.Draft();
         Draft draft = draftDAO.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
         return getConvertedDraft(draft);
     }
@@ -739,7 +731,7 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     private Map<String, Object> parseDraftReplDTOs(Set<DraftReplacement> draftReplacements) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
 
         for (DraftReplacement draftRepl : draftReplacements) {
             replacements.put(draftRepl.getName(), draftRepl.getDefaultValue());
@@ -754,7 +746,7 @@ public class TemplateServiceImpl implements TemplateService {
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findDraftReplacement(String templateName, String languageCode, String oid,
             String applicationPeriod, String fetchTarget, String tag) {
 
-        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<>();
 
         Draft draft = draftDAO.findDraftByNameOrgTag(templateName, languageCode, oid, applicationPeriod, fetchTarget, tag);
 
@@ -779,6 +771,10 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     public List<fi.vm.sade.viestintapalvelu.template.Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod) {
         List<Draft> drafts = draftDAO.findByOrgOidsAndApplicationPeriod(oids, applicationPeriod);
+        return getDrafts(drafts);
+    }
+
+    private List<fi.vm.sade.viestintapalvelu.template.Draft> getDrafts(List<Draft> drafts) {
         List<fi.vm.sade.viestintapalvelu.template.Draft> convertedDrafts = new ArrayList<>();
         for (Draft draft : drafts) {
             convertedDrafts.add(getConvertedDraft(draft));
@@ -837,12 +833,7 @@ public class TemplateServiceImpl implements TemplateService {
     @Override
     @Transactional(readOnly = true)
     public List<fi.vm.sade.viestintapalvelu.template.Draft> getDraftsByTags(List<String> tags) {
-        List<fi.vm.sade.viestintapalvelu.template.Draft> drafts = new ArrayList<>();
         final List<Draft> draftsByTags = draftDAO.findDraftsByTags(tags);
-        for(Draft draft : draftsByTags) {
-            drafts.add(getConvertedDraft(draft));
-        }
-        return drafts;
+        return getDrafts(draftsByTags);
     }
-
 }

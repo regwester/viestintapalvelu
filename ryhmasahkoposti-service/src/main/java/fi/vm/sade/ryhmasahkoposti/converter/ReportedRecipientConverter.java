@@ -20,6 +20,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.stereotype.Component;
 
 import com.google.common.base.Optional;
@@ -51,20 +52,26 @@ public class ReportedRecipientConverter {
     }
 
     public Set<ReportedRecipient> convert(ReportedMessage reportedMessage, List<EmailRecipient> emailRecipients) {
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
 
         for (EmailRecipient emailRecipient : emailRecipients) {
-            ReportedRecipient reportedRecipient = convert(emailRecipient);
-            reportedRecipient.setReportedMessage(reportedMessage);
-            reportedRecipients.add(reportedRecipient);
+            reportedRecipients.add(getReportedRecipient(reportedMessage, emailRecipient));
         }
-
         return reportedRecipients;
     }
 
-    public ReportedRecipient convert(ReportedMessage reportedMessage, EmailRecipient emailRecipient) {
+    private ReportedRecipient getReportedRecipient(ReportedMessage reportedMessage, EmailRecipient emailRecipient) {
         ReportedRecipient reportedRecipient = convert(emailRecipient);
         reportedRecipient.setReportedMessage(reportedMessage);
+        reportedRecipient.setLetterHash(createLetterHash(reportedMessage.getTimestamp(), emailRecipient.getEmail()));
         return reportedRecipient;
+    }
+
+    private String createLetterHash(Date timestamp, String email) {
+        return DigestUtils.md5Hex(timestamp.toString() + ":" +  email);
+    }
+
+    public ReportedRecipient convert(ReportedMessage reportedMessage, EmailRecipient emailRecipient) {
+        return getReportedRecipient(reportedMessage, emailRecipient);
     }
 }

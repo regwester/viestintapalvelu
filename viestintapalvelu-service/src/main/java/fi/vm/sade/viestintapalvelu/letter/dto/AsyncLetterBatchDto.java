@@ -34,7 +34,7 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     private static final long serialVersionUID = 4947130071223481115L;
 
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
-    private List<AsyncLetterBatchLetterDto> letters = new ArrayList<AsyncLetterBatchLetterDto>();
+    private List<AsyncLetterBatchLetterDto> letters = new ArrayList<>();
 
     @ApiModelProperty(value = "Kirjepohja")
     private Template template;
@@ -68,8 +68,11 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
 
     @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
     private boolean iposti = false;
+
+    @ApiModelProperty(value = "Ohitetaanko tuotetun dokumentin tallennus dokumenttipalveluun. Oletuksena ei.", required = false)
+    private boolean skipDokumenttipalvelu = false;
     
-    private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
+    private Map<String, byte[]> iPostiData = new LinkedHashMap<>();
 
 
     @Override
@@ -191,11 +194,24 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
     }
 
     @Override
+    public boolean isSkipDokumenttipalvelu() {
+        return skipDokumenttipalvelu;
+    }
+
+    public void setSkipDokumenttipalvelu(boolean skipDokumenttipalvelu) {
+        this.skipDokumenttipalvelu = skipDokumenttipalvelu;
+    }
+
+    @Override
     public String toString() {
         return "AsyncLetterBatchDto [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements="
                 + templateReplacements + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid
                 + ", organizationOid=" + organizationOid + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag
-                + ", iposti=" + iposti + ", iPostiData=" + iPostiData + "]";
+                + ", iposti=" + iposti + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + ", iPostiData=" + iPostiData + "]";
     }
-    
+
+    public String toStringForLogging() {
+        return "haku=" + applicationPeriod + ", hakukohde=" + fetchTarget + ", kieli=" + languageCode
+                + ", pohjan nimi=" + templateName + ", kirjeitä=" + ( null == letters ? 0 : letters.size() ) + " kpl";
+    }
 }

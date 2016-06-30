@@ -77,16 +77,7 @@ public class LetterBatchReportDTO implements Serializable {
 
     public LetterBatchReportDTO(Long letterBatchID, Long templateId, String templateName, String applicationPeriod, String fetchTarget, String tag,
             boolean deliveryTypeIPosti, Date timestamp, String organisaatioOid, LetterBatch.Status status, Long receiverLetterId, String receiverName) {
-        this.letterBatchID = letterBatchID;
-        this.templateId = templateId;
-        this.templateName = templateName;
-        this.applicationPeriod = applicationPeriod;
-        this.fetchTarget = fetchTarget;
-        this.tag = tag;
-        this.deliveryTypeIPosti = deliveryTypeIPosti;
-        this.timestamp = timestamp;
-        this.organisaatioOid = organisaatioOid;
-        this.status = status == null ? null : status.name();
+        this(letterBatchID, templateId, templateName, applicationPeriod, fetchTarget, tag, deliveryTypeIPosti, timestamp, organisaatioOid, status);
         this.receiverName = receiverName;
         this.receiverLetterId = receiverLetterId;
     }

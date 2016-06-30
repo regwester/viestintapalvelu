@@ -18,15 +18,9 @@ package fi.vm.sade.ajastuspalvelu.service.external.api;
 
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
-import javax.ws.rs.core.Response;
 
 import fi.vm.sade.ajastuspalvelu.api.dto.SchedulerResponse;
 
-/**
- * User: ratamaa
- * Date: 23.10.2014
- * Time: 15:22
- */
 @Path("")
 public interface SchedulerResource {
 
@@ -34,5 +28,4 @@ public interface SchedulerResource {
     @Path("")
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     SchedulerResponse get();
-
 }

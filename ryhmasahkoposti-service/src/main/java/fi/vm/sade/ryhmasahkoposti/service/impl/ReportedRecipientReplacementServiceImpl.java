@@ -54,7 +54,7 @@ public class ReportedRecipientReplacementServiceImpl implements ReportedRecipien
     @Override
     public List<ReportedRecipientReplacement> saveReportedRecipientReplacements(List<ReportedRecipientReplacement> reportedRecientReplacements) {
 
-        List<ReportedRecipientReplacement> result = new ArrayList<ReportedRecipientReplacement>();
+        List<ReportedRecipientReplacement> result = new ArrayList<>();
         if (reportedRecientReplacements != null) {
             for (ReportedRecipientReplacement receiverReplacement : reportedRecientReplacements) {
                 reportedRecipientReplacementDAO.insert(receiverReplacement);

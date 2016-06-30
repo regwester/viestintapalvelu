@@ -42,7 +42,7 @@ import static com.google.common.base.Optional.fromNullable;
 @Component
 public class StructureDtoConverter extends AbstractDtoConverter {
     public class ContentStore<T extends NamedContent> {
-        private Map<String,T> contentsByName = new HashMap<String, T>();
+        private Map<String,T> contentsByName = new HashMap<>();
 
         public Optional<T> get(String name) {
             return fromNullable(contentsByName.get(name));
@@ -79,14 +79,14 @@ public class StructureDtoConverter extends AbstractDtoConverter {
     }
 
     public Structure convert(StructureSaveDto from, Structure to) {
-        ContentStore<Content> contentStore = new ContentStore<Content>();
+        ContentStore<Content> contentStore = new ContentStore<>();
         convertValue(from, to, contentStore);
         for (ContentStructure cs : to.getContentStructures()) {
             cs.setStructure(to);
         }
 
         int orderNumber = 1;
-        Set<String> usedKeys = new HashSet<String>();
+        Set<String> usedKeys = new HashSet<>();
         for (ContentReplacementSaveDto dto : from.getReplacements()) {
             if (!usedKeys.add(dto.getKey())) {
                 throw BeanValidatorImpl.badRequest("Replacements contained key: " + dto.getKey() + " twice.");

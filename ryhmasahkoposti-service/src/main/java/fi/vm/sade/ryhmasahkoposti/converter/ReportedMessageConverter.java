@@ -15,16 +15,12 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import java.io.IOException;
 import java.util.Date;
 
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.authentication.AnonymousAuthenticationToken;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -42,7 +38,7 @@ public class ReportedMessageConverter {
         this.currentUserComponent = currentUserComponent;
     }
 
-    public ReportedMessage convert(EmailMessage emailMessage) throws IOException {
+    public ReportedMessage convert(EmailMessage emailMessage) {
         ReportedMessage reportedMessage = new ReportedMessage();
         if(SecurityUtil.isAuthenticated()) {
             Henkilo henkilo = currentUserComponent.getCurrentUser();
@@ -73,12 +69,6 @@ public class ReportedMessageConverter {
     }
 
     private String getPersonName(Henkilo henkilo) {
-        StringBuilder sb = new StringBuilder();
-
-        sb.append(henkilo.getSukunimi().trim());
-        sb.append(" ");
-        sb.append(henkilo.getKutsumanimi().trim());
-
-        return sb.toString();
+        return henkilo.getSukunimi().trim() + " " + henkilo.getKutsumanimi().trim();
     }
 }

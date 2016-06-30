@@ -43,7 +43,7 @@ public class ContentStructureViewDto implements Serializable {
     @DtoPath("style.style")
     private String style;
     @DtoConversion
-    private List<ContentStructureContentViewDto> contents = new ArrayList<ContentStructureContentViewDto>();
+    private List<ContentStructureContentViewDto> contents = new ArrayList<>();
 
     public Long getId() {
         return id;

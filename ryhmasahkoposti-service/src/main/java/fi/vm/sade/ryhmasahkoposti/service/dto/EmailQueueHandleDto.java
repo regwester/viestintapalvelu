@@ -32,7 +32,7 @@ public class EmailQueueHandleDto implements Serializable {
     private long id;
     private long version;
     private SendQueueState state;
-    private List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
+    private List<EmailRecipientDTO> recipients = new ArrayList<>();
 
     public long getId() {
         return id;

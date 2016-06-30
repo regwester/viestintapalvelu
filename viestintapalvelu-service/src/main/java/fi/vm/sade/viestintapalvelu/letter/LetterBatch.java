@@ -64,7 +64,10 @@ public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Onko iposti-tyyppinen oletuksena ei iposti", required = false)
     private boolean iposti = false;
 
-    private Map<String, byte[]> iPostiData = new LinkedHashMap<String, byte[]>();
+    @ApiModelProperty(value = "Ohitetaanko dokumentin tallennus dokumenttipalveluun", required = false)
+    private boolean skipDokumenttipalvelu = false;
+
+    private Map<String, byte[]> iPostiData = new LinkedHashMap<>();
 
     public Map<String, Object> getTemplateReplacements() {
         return templateReplacements;
@@ -166,8 +169,17 @@ public class LetterBatch implements LetterBatchDetails {
         this.tag = tag;
     }
 
+    @Override
+    public boolean isSkipDokumenttipalvelu() {
+        return skipDokumenttipalvelu;
+    }
+
+    public void setSkipDokumenttipalvelu(boolean skipDokumenttipalvelu) {
+        this.skipDokumenttipalvelu = skipDokumenttipalvelu;
+    }
+
     public List<LetterBatch> split(int limit) {
-        List<LetterBatch> batches = new ArrayList<LetterBatch>();
+        List<LetterBatch> batches = new ArrayList<>();
         split(letters, batches, limit);
         return batches;
     }
@@ -189,9 +201,9 @@ public class LetterBatch implements LetterBatchDetails {
 
     private void split(List<Letter> remaining, List<LetterBatch> batches, int limit) {
         if (limit >= remaining.size()) {
-            batches.add(createSubBatch(new ArrayList<Letter>(remaining)));
+            batches.add(createSubBatch(new ArrayList<>(remaining)));
         } else {
-            batches.add(createSubBatch(new ArrayList<Letter>(remaining.subList(0, limit))));
+            batches.add(createSubBatch(new ArrayList<>(remaining.subList(0, limit))));
             split(remaining.subList(limit, remaining.size()), batches, limit);
         }
     }
@@ -200,7 +212,7 @@ public class LetterBatch implements LetterBatchDetails {
     public String toString() {
         return "LetterBatch [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements=" + templateReplacements
                 + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid
-                + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag + "]";
+                + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + "]";
     }
 
     public Map<String, byte[]> getIPostiData() {

@@ -79,7 +79,7 @@ public class EmailRecipientDtoConverter {
         if (firstRecipient != null) {
             recipient.setAttachments(firstRecipient.getAttachments());
             if (firstRecipient.getRecipientReplacements() != null) {
-                recipient.setRecipientReplacements(new ArrayList<ReportedRecipientReplacementDTO>(
+                recipient.setRecipientReplacements(new ArrayList<>(
                         firstRecipient.getRecipientReplacements()));
             }
             recipient.setName(firstRecipient.getName());

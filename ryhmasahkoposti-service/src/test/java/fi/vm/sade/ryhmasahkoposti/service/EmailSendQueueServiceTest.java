@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -34,7 +35,6 @@ import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
 import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.RecipientReportedAttachmentQueryResult;
 import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.*;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueDtoConverter;
 import fi.vm.sade.ryhmasahkoposti.service.dto.EmailQueueHandleDto;

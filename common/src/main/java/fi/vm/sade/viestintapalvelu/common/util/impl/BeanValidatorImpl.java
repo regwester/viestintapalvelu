@@ -44,7 +44,7 @@ import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
  */
 @Component
 public class BeanValidatorImpl implements BeanValidator {
-    private ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
+    private final ValidatorFactory validatorFactory = Validation.buildDefaultValidatorFactory();
 
     private static final Function<ConstraintViolation, String> VIOLATION_TRANSLATOR =
             new Function<ConstraintViolation, String>() {
@@ -77,7 +77,7 @@ public class BeanValidatorImpl implements BeanValidator {
     }
 
     public static BadRequestException badRequest(String... errors) {
-        Map<String,Object> result = new HashMap<String, Object>();
+        Map<String,Object> result = new HashMap<>();
         result.put("status", 400);
         result.put("description", StringHelper.join(", ", errors));
         result.put("errors", errors);

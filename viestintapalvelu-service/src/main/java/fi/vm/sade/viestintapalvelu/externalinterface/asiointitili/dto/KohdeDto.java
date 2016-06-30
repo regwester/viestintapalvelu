@@ -47,7 +47,7 @@ public class KohdeDto implements Serializable {
     @DtoConversion(path="asiakas")
     @ApiModelProperty("Asiaan liittyvän asiakkaan tiedot. Asia liitetään kyseisen asiakkaan asiointitiliin.\n" +
        "Mahdollistetaan saman asian lähettäminen useille asiakkaille, jolloin näitä elementtejä voi olla useita.")
-    private List<AsiakasDto> asiakkaat = new ArrayList<AsiakasDto>();
+    private List<AsiakasDto> asiakkaat = new ArrayList<>();
     @NotNull
     @Size(max = 100)
     private String viranomaisTunniste;
@@ -97,7 +97,7 @@ public class KohdeDto implements Serializable {
     @Valid
     @DtoConversion
     @ApiModelProperty("Asiaan liittyvät asiakirjat.")
-    private List<TiedostoDto> tiedostot = new ArrayList<TiedostoDto>();
+    private List<TiedostoDto> tiedostot = new ArrayList<>();
     @Size(max=1000)
     @ApiModelProperty("Heräteviestin sisältö, joka välitetään matkapuhelimeen. Uusi kenttä 12/2013 alkaen.")
     protected String smsLisatieto;

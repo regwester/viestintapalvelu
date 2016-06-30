@@ -28,7 +28,7 @@ import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
  */
 public class LetterBatchSplitedIpostDto implements Serializable {
     private static final long serialVersionUID = 1L;
-    private List<IPostiProcessable> processables = new ArrayList<IPostiProcessable>();
+    private List<IPostiProcessable> processables = new ArrayList<>();
 
     public List<IPostiProcessable> getProcessables() {
         return processables;

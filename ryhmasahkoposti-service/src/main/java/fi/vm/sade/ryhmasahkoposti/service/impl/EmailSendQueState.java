@@ -24,7 +24,7 @@ import java.util.List;
  * Time: 17:02
  */
 public class EmailSendQueState {
-    private List<String> downloadedAttachmentUris = new ArrayList<String>();
+    private List<String> downloadedAttachmentUris = new ArrayList<>();
     private boolean saveAttachments = true;
 
     public void addDownloadedAttachmentUri(String uri) {

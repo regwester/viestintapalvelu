@@ -48,5 +48,5 @@ public interface HenkiloResource {
     @JsonView(JsonViews.Basic.class)
     @Path("{oid}")
     @GET
-    public Henkilo findByOid(@PathParam("oid") String oid);
+    Henkilo findByOid(@PathParam("oid") String oid);
 }

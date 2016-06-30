@@ -56,11 +56,11 @@ public class Structure implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "structure",
             cascade = CascadeType.PERSIST)
-    private Set<ContentStructure> contentStructures = new HashSet<ContentStructure>();
+    private Set<ContentStructure> contentStructures = new HashSet<>();
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "structure",
             cascade = CascadeType.PERSIST)
-    private Set<ContentReplacement> replacements = new HashSet<ContentReplacement>();
+    private Set<ContentReplacement> replacements = new HashSet<>();
 
     public Structure() {
     }

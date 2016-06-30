@@ -36,7 +36,7 @@ public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiv
     @Override
     public List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverIds(List<Long> letterReceiverIDs) {
         if (letterReceiverIDs.isEmpty()) {
-            return new ArrayList<LetterReceiverLetter>();
+            return new ArrayList<>();
         }
         QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
 

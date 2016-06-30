@@ -30,7 +30,7 @@ import java.util.Map;
 public class ReportedMessageDTOConverter {
 
     public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages) {
-        List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<>();
 
         for (ReportedMessage reportedMessage : reportedMessages) {
             ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
@@ -42,7 +42,7 @@ public class ReportedMessageDTOConverter {
     }
 
     public List<ReportedMessageDTO> convert(List<ReportedMessage> reportedMessages, Map<Long, SendingStatusDTO> sendingStatuses) {
-        List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        List<ReportedMessageDTO> reportedMessageDTOs = new ArrayList<>();
 
         for (ReportedMessage reportedMessage : reportedMessages) {
             ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
@@ -59,34 +59,23 @@ public class ReportedMessageDTOConverter {
     }
 
     public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
-        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
-
-        convert(reportedMessageDTO, reportedMessage);
-
-        List<ReportedRecipient> reportedRecipients = new ArrayList<ReportedRecipient>(reportedMessage.getReportedRecipients());
-        reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedRecipients));
-
-        reportedMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
-        reportedMessageDTO.setSendingStatus(sendingStatusDTO);
-
-        setSendingReport(reportedMessageDTO, sendingStatusDTO);
-        setStatusReport(reportedMessageDTO, sendingStatusDTO);
-
-        return reportedMessageDTO;
+        List<ReportedRecipient> reportedRecipients = new ArrayList<>(reportedMessage.getReportedRecipients());
+        return createReportedMessageDTO(reportedMessage, reportedRecipients, reportedAttachments, sendingStatusDTO);
     }
 
     public ReportedMessageDTO convert(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients,
             List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
-        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
+        return createReportedMessageDTO(reportedMessage, reportedRecipients, reportedAttachments, sendingStatusDTO);
+    }
 
+    private ReportedMessageDTO createReportedMessageDTO(ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients, List<ReportedAttachment> reportedAttachments, SendingStatusDTO sendingStatusDTO) {
+        ReportedMessageDTO reportedMessageDTO = new ReportedMessageDTO();
         convert(reportedMessageDTO, reportedMessage);
         reportedMessageDTO.setEmailRecipients(convertEmailRecipientDTO(reportedRecipients));
         reportedMessageDTO.setAttachments(convertEmailAttachmentDTO(reportedAttachments));
         reportedMessageDTO.setSendingStatus(sendingStatusDTO);
-
         setSendingReport(reportedMessageDTO, sendingStatusDTO);
         setStatusReport(reportedMessageDTO, sendingStatusDTO);
-
         return reportedMessageDTO;
     }
 
@@ -103,18 +92,12 @@ public class ReportedMessageDTOConverter {
     }
 
     private List<EmailRecipientDTO> convertEmailRecipientDTO(List<ReportedRecipient> reportedRecipients) {
-        List<EmailRecipientDTO> recipients = new ArrayList<EmailRecipientDTO>();
+        List<EmailRecipientDTO> recipients = new ArrayList<>();
 
         for (ReportedRecipient reportedRecipient : reportedRecipients) {
-            EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
-
-            emailRecipientDTO.setRecipientID(reportedRecipient.getId());
-            emailRecipientDTO.setRecipientVersion(reportedRecipient.getVersion());
+            EmailRecipientDTO emailRecipientDTO = EmailRecipientDTOConverter.initEmailRecipientDTO(reportedRecipient);
             emailRecipientDTO.setSendSuccessful(reportedRecipient.getSendingSuccessful());
-            emailRecipientDTO.setOid(reportedRecipient.getRecipientOid());
-            emailRecipientDTO.setEmail(reportedRecipient.getRecipientEmail());
             setRecipientName(emailRecipientDTO, reportedRecipient);
-
             recipients.add(emailRecipientDTO);
         }
 
@@ -122,32 +105,33 @@ public class ReportedMessageDTOConverter {
     }
 
     private List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
-        List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
+        List<EmailAttachment> attachments = new ArrayList<>();
 
         for (ReportedAttachment reportedAttachment : reportedAttachments) {
             EmailAttachmentDTO attachmentDTO = new EmailAttachmentDTO();
-            attachmentDTO.setAttachmentID(reportedAttachment.getId());
-            attachmentDTO.setName(reportedAttachment.getAttachmentName());
-            attachmentDTO.setData(reportedAttachment.getAttachment());
-            attachmentDTO.setContentType(reportedAttachment.getContentType());
+            EmailMessageDTOConverter.initEmailAttachmentDTO(reportedAttachment, attachmentDTO);
             attachments.add(attachmentDTO);
         }
-
         return attachments;
     }
 
     private void setSendingReport(ReportedMessageDTO reportedMessageDTO, SendingStatusDTO sendingStatusDTO) {
-        Long numberOfSuccessfulSendings = new Long(0);
+        Long numberOfSuccessfulSendings = 0L;
         if (sendingStatusDTO.getNumberOfSuccessfulSendings() != null) {
             numberOfSuccessfulSendings = sendingStatusDTO.getNumberOfSuccessfulSendings();
         }
 
-        Long numberOfFailedSendings = new Long(0);
+        Long numberOfFailedSendings = 0L;
         if (sendingStatusDTO.getNumberOfFailedSendings() != null) {
             numberOfFailedSendings = sendingStatusDTO.getNumberOfFailedSendings();
         }
 
-        Object[] parameters = { numberOfSuccessfulSendings, numberOfFailedSendings };
+        Long numberOfBouncedSendings = 0L;
+        if (sendingStatusDTO.getNumberOfBouncedSendings() != null) {
+            numberOfBouncedSendings = sendingStatusDTO.getNumberOfBouncedSendings();
+        }
+
+        Object[] parameters = { numberOfSuccessfulSendings, numberOfFailedSendings, numberOfBouncedSendings };
         reportedMessageDTO.setSendingReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", parameters));
     }
 
@@ -166,13 +150,10 @@ public class ReportedMessageDTOConverter {
             }
         }
 
-        if (sendingStatus.getNumberOfFailedSendings() != null && sendingStatus.getNumberOfFailedSendings().compareTo(new Long(0)) > 0) {
+        if (sendingStatus.getNumberOfFailedSendings() != null && sendingStatus.getNumberOfFailedSendings().compareTo(0L) > 0) {
             Object[] parameters = { sendingStatus.getNumberOfFailedSendings() };
             reportedMessageDTO.setStatusReport(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", parameters));
-            return;
         }
-
-        return;
     }
 
     private void setRecipientName(EmailRecipientDTO emailRecipient, ReportedRecipient reportedRecipient) {

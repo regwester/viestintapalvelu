@@ -74,10 +74,7 @@ public class TemplateApplicationPeriodId implements Serializable {
         if (applicationPeriod != null ? !applicationPeriod.equals(that.applicationPeriod) : that.applicationPeriod != null) {
             return false;
         }
-        if (templateId != null ? !templateId.equals(that.templateId) : that.templateId != null) {
-            return false;
-        }
-        return true;
+        return templateId != null ? templateId.equals(that.templateId) : that.templateId == null;
     }
 
     @Override

@@ -18,9 +18,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 import com.google.common.base.Optional;
 
 import fi.vm.sade.viestintapalvelu.letter.dto.LanguageCodeOptionsDto;
-import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.template.*;
 
 /**
  * User: ratamaa

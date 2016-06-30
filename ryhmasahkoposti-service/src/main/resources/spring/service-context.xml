@@ -92,7 +92,7 @@
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -109,7 +109,7 @@
         </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -127,7 +127,7 @@
         </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -141,7 +141,20 @@
         </jaxrs-client:outInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
+        </jaxrs-client:providers>
+    </jaxrs-client:client>
+
+    <!-- External interface BounceResource -->
+    <jaxrs-client:client id="bounceResourceClient"
+                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.BounceResource"
+                         address="${ryhmasahkoposti.bounces.host}" inheritHeaders="true">
+        <jaxrs-client:outInterceptors>
+            <ref bean="ophRequestHeaders"/>
+        </jaxrs-client:outInterceptors>
+        <jaxrs-client:providers>
+            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -158,7 +171,7 @@
         </jaxrs-client:inInterceptors>
         <jaxrs-client:providers>
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider"/>
+            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
@@ -177,12 +190,16 @@
 
     <!-- Sending emails -->
     <bean id="dailyTaskRunner" class="fi.vm.sade.ryhmasahkoposti.service.DailyTaskRunnerImpl"/>
-    <bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"></bean>
+    <bean id="emailServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailServiceImpl"/>
+    <bean id="emailBounceServiceImpl" class="fi.vm.sade.ryhmasahkoposti.service.impl.EmailBounceServiceImpl">
+        <property name="run" value="${ryhmasahkoposti.bounces.run}"/>
+    </bean>
     <task:executor id="emailExecutor" rejection-policy="ABORT" pool-size="10"/>
     <task:scheduler id="emailScheduler" pool-size="10"/>
     <task:scheduled-tasks scheduler="emailScheduler">
         <task:scheduled ref="emailServiceImpl" method="checkEmailQueues" cron="${ryhmasahkoposti.sender.cron}"/>
         <task:scheduled ref="dailyTaskRunner" method="runDailyTasks" fixed-delay="86400000" initial-delay="5000"/>
+        <task:scheduled ref="emailBounceServiceImpl" method="checkEmailBounces" cron="${ryhmasahkoposti.bounces.cron}" />
     </task:scheduled-tasks>
 
     <!-- Swagger configuration -->

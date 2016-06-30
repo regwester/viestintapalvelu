@@ -59,7 +59,7 @@ public class Template {
 
     @NotNull
     @Size(min = 1)
-    private List<Replacement> replacements = new ArrayList<Replacement>();
+    private List<Replacement> replacements = new ArrayList<>();
 
     @ApiModelProperty("Haku OID:t, joihin tämä kirjepohja linkittyy")
     private List<String> applicationPeriods;

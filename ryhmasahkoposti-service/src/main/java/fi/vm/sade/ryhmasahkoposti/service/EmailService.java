@@ -18,8 +18,8 @@ package fi.vm.sade.ryhmasahkoposti.service;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 
 public interface EmailService {
-    public Long getCount(String oid);
-    public String getEML(EmailData emailMessage, String emailAddress) throws Exception;
+    Long getCount(String oid);
+    String getEML(EmailData emailMessage, String emailAddress) throws Exception;
 
     void checkEmailQueues();
 }

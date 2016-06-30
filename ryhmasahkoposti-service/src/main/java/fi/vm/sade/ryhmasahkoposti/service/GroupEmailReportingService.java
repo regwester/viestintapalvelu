@@ -26,7 +26,7 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
@@ -93,6 +93,15 @@ public interface GroupEmailReportingService {
      */
     ReportedMessageDTO getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID,
 	    PagingAndSortingDTO pagingAndSorting);
+
+    /**
+     * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja vastaanottajat, joille lähetys palautui
+     *
+     * @param messageID Viestintunnus
+     * @param pagingAndSorting Sivutus ja lajittelutiedot
+     * @return Raportoitavan ryhmäsähköpostiviestin tiedot, vastaanottajat ja lähetysraportin
+     */
+    ReportedMessageDTO getReportedMessageAndRecipientsSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee käyttäjän ja hänen käyttäjäryhmänsä raportoitavat viestit 
@@ -177,7 +186,7 @@ public interface GroupEmailReportingService {
      * @param attachmentID Liitetiedoston tunniste
      * @return Liitteen tiedot
      */
-    ReportedAttachment getAttachment(Long attachmentID) throws IOException;
+    ReportedAttachment getAttachment(Long attachmentID);
 
     /**
      * Tallentaa ryhmäsähköpostin liitteen tietokantaan raportointia varten

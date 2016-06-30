@@ -53,7 +53,7 @@ public interface DraftResource {
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{draftId}")
     @ApiOperation(value = "Palauttaa halutun luonnoksen tiedot", response = Draft.class)
-    public Draft getDraft(@PathParam(value = "draftId") Long id);
+    Draft getDraft(@PathParam(value = "draftId") Long id);
 
     /**
      * Hakee kaikki käyttäjän tallentamat luonnokset.
@@ -62,7 +62,7 @@ public interface DraftResource {
      */
     @GET
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
-    public List<Draft> getAllDrafts();
+    List<Draft> getAllDrafts();
 
     /**
      * Hakee käyttäjän tallentamien luonnoksien lukumäärän.
@@ -72,7 +72,7 @@ public interface DraftResource {
     @GET
     @Produces(MediaType.APPLICATION_JSON)
     @Path("/count")
-    public String getCount();
+    String getCount();
 
     /**
      * Poistaa käyttäjän tallentaman luonnoksen annetun tunnisteen perusteella.
@@ -84,7 +84,7 @@ public interface DraftResource {
     @DELETE
     @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Path("/{draftId}")
-    public String deleteDraft(@PathParam(value = "draftId") Long id) throws Exception;
+    String deleteDraft(@PathParam(value = "draftId") Long id) throws Exception;
 
     /**
      * Tallentaa annetun luonnoksen.
@@ -96,7 +96,7 @@ public interface DraftResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
-    public Long saveDraft(Draft draft);
+    Long saveDraft(Draft draft);
 
     /**
      * Muokkaa tallennettua luonnosta annetun tunnisteen ja luonnos objektin
@@ -112,5 +112,5 @@ public interface DraftResource {
     @Consumes(MediaType.APPLICATION_JSON + ";charset=utf-8")
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Path("/{draftId}")
-    public String updateDraft(@PathParam(value = "draftId") Long id, Draft draft) throws Exception;
+    String updateDraft(@PathParam(value = "draftId") Long id, Draft draft) throws Exception;
 }

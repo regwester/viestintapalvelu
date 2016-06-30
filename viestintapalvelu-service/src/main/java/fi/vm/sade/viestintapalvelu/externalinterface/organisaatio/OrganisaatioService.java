@@ -30,7 +30,7 @@ public interface OrganisaatioService {
      * @param organizationOid
      * @return all children organization DTO objects for the given organizationOid
      */
-    public OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid);
+    OrganisaatioHierarchyDto getOrganizationHierarchy(String organizationOid);
 
     /**
      * @param organisaatioOid

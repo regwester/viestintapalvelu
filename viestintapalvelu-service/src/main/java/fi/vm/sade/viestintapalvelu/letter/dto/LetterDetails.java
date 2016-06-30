@@ -32,4 +32,12 @@ public interface LetterDetails {
     String getLanguageCode();
 
     Map<String, Object> getTemplateReplacements();
+
+    String getPersonOid();
+
+    String getApplicationOid();
+
+    boolean isSkipIPosti();
+
+    String getEmailAddressEPosti();
 }

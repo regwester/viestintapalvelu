@@ -25,9 +25,6 @@ import fi.vm.sade.generic.model.BaseEntity;
 
 import static javax.persistence.DiscriminatorType.STRING;
 
-/**
- * Created by jonimake on 22.9.2014.
- */
 @Table(name = "kirjelahetysvirhe", schema = "kirjeet")
 @Entity(name = "LetterBatchProcessingError")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)

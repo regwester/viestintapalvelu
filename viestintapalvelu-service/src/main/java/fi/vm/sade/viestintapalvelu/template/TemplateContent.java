@@ -85,7 +85,7 @@ public class TemplateContent implements Comparable<TemplateContent> {
 
     @Override
     public int compareTo(TemplateContent o) {
-        Integer ord = new Integer(order);
+        Integer ord = order;
         return ord.compareTo(o.order);
     }
 

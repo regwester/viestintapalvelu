@@ -40,7 +40,7 @@ public class HakuDetailsDto implements Serializable {
     private String tila;
     @ApiModelProperty("Haun nimi (avaimilla kieli_[koodi])")
     // in format: kieli_<code> -> nimi
-    private Map<String,String> nimi = new HashMap<String, String>();
+    private Map<String,String> nimi = new HashMap<>();
 
     @ApiModelProperty("Tarjoajan oid")
     private List<String> tarjoajaOids;

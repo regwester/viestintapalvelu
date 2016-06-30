@@ -33,7 +33,7 @@ public class Draft {
     private String body;
     private String organizationOid;
     private String userOid;
-    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<>();
     private boolean isHtml;
     //Pattern conforms to ISO 8601 ( http://en.wikipedia.org/wiki/ISO_8601 )
     //Example 1989-08-14T15:20:50Z
@@ -126,7 +126,7 @@ public class Draft {
         private String body;
         private String organizationOid;
         private String userOid;
-        private List<AttachmentResponse> attachInfo = new ArrayList<AttachmentResponse>();
+        private List<AttachmentResponse> attachInfo = new ArrayList<>();
         private boolean isHtml;
         private DateTime createDate;
         

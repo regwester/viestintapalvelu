@@ -33,11 +33,11 @@ import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructureContent;
 * Time: 14:27
 */
 public class ContentStructurePredicate implements Predicate<TypedContentStructureContent> {
-    private Set<ContentRole> roles = new HashSet<ContentRole>();
+    private Set<ContentRole> roles = new HashSet<>();
     private Integer max;
     private int consumed = 0;
     private Integer min;
-    private Set<ContentType> types = new HashSet<ContentType>();
+    private Set<ContentType> types = new HashSet<>();
     private ContentStructurePredicate and;
 
     public ContentStructurePredicate(ContentRole... roles) {
@@ -101,9 +101,6 @@ public class ContentStructurePredicate implements Predicate<TypedContentStructur
         if (!this.types.isEmpty() && !this.types.contains(csc.getContentType())) {
             return false;
         }
-        if (this.and != null && !this.and.apply(csc)) {
-            return false;
-        }
-        return true;
+        return !(this.and != null && !this.and.apply(csc));
     }
 }

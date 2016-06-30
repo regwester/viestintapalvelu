@@ -6,5 +6,5 @@ import fi.vm.sade.ajastuspalvelu.service.dto.TaskListDto;
 
 public interface TaskService {
     
-    public List<TaskListDto> list();
+    List<TaskListDto> list();
 }

@@ -18,19 +18,6 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling;
 
 import org.quartz.JobExecutionContext;
 
-import fi.vm.sade.ajastuspalvelu.service.scheduling.exception.RetryException;
-
-/**
- * User: ratamaa
- * Date: 23.10.2014
- * Time: 13:29
- */
 public interface ScheduledTaskExecutorService {
-
-    /**
-     * @param scheduledTaskId
-     * @param context
-     */
-    void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context)
-            throws RetryException, Exception;
+    void executeScheduledTask(Long scheduledTaskId, JobExecutionContext context) throws Exception;
 }

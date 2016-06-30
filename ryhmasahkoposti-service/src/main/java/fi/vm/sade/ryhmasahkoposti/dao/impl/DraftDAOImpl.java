@@ -63,7 +63,7 @@ public class DraftDAOImpl extends AbstractJpaDAOImpl<DraftModel, Long> implement
 
     @Override
     public void updateDraft(Long id, String oid, DraftModel draft) {
-        DraftModel draftModel = (DraftModel) getEntityManager().find(DraftModel.class, id);
+        DraftModel draftModel = getEntityManager().find(DraftModel.class, id);
         if (draftModel.getUserOid().equals(oid)) {
             draftModel.setBody(draft.getSender());
             draftModel.setBody(draft.getSubject());

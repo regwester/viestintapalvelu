@@ -2,7 +2,14 @@
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
-    <!-- Spring service and persistence configuration --> 
-    <import resource="classpath:/spring/service-context.xml"/>
-    <import resource="classpath:/spring/dao-context.xml"/>
+    <!-- Spring service and persistence configuration -->
+    <beans profile="default">
+        <import resource="classpath:/spring/service-context.xml"/>
+        <import resource="classpath:/spring/dao-context.xml"/>
+    </beans>
+
+    <beans profile="dev">
+        <import resource="classpath:/spring/service-context.xml"/>
+        <import resource="classpath:/dev-dao-context.xml"/>
+    </beans>
 </beans>

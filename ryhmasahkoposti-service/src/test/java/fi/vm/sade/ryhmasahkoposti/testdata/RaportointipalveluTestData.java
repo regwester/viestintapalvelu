@@ -17,6 +17,7 @@ package fi.vm.sade.ryhmasahkoposti.testdata;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
@@ -317,6 +318,7 @@ public class RaportointipalveluTestData {
         sendingStatusDTO.setNumberOfRecipients(new Long(10));
         sendingStatusDTO.setNumberOfFailedSendings(new Long(2));
         sendingStatusDTO.setNumberOfSuccessfulSendings(new Long(5));
+        sendingStatusDTO.setNumberOfBouncedSendings(new Long(6));
         sendingStatusDTO.setSendingStarted(new Date());
 
         return sendingStatusDTO;

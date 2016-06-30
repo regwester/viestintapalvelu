@@ -21,11 +21,11 @@ import fi.vm.sade.viestintapalvelu.model.IPosti;
 
 public interface IPostiService {
 
-    public List<IPosti> findUnsent();
+    List<IPosti> findUnsent();
 
-    public IPosti findBatchById(Long ipostiId);
+    IPosti findBatchById(Long ipostiId);
 
-    public List<IPosti> findMailById(Long mailId);
+    List<IPosti> findMailById(Long mailId);
 
     void update(IPosti iposti);
 

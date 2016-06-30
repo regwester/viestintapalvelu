@@ -18,10 +18,10 @@ package fi.vm.sade.viestintapalvelu.testdata;
 import java.util.*;
 
 import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.letter.Letter;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatch;
 import fi.vm.sade.viestintapalvelu.letter.LetterContent;
@@ -165,7 +165,7 @@ public class DocumentProviderTestData {
         letterBatch.setTimestamp(new Date());
         letterBatch.setVersion(new Long(0));
         
-        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch));
+        letterBatch.setLetterReceivers(getLetterReceivers(id, letterBatch, count));
         letterBatch.setLetterReplacements(getLetterReplacements(id, letterBatch));
         
         return letterBatch;

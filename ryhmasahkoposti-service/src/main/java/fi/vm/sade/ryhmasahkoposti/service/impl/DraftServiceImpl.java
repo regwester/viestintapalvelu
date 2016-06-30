@@ -29,7 +29,6 @@ import fi.vm.sade.ryhmasahkoposti.converter.DraftConverter;
 import fi.vm.sade.ryhmasahkoposti.dao.DraftDAO;
 import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
 import fi.vm.sade.ryhmasahkoposti.service.DraftService;
-import fi.vm.sade.viestintapalvelu.common.exception.PersistenceException;
 
 @Service
 public class DraftServiceImpl implements DraftService {
@@ -52,7 +51,7 @@ public class DraftServiceImpl implements DraftService {
     @Override
     public List<Draft> getAllDrafts(String oid) {
         List<DraftModel> draftModels = draftDao.getAllDrafts(oid);
-        List<Draft> drafts = new ArrayList<Draft>();
+        List<Draft> drafts = new ArrayList<>();
         for(DraftModel draftModel : draftModels) {
             drafts.add(draftConverter.convert(draftModel));
         }
@@ -66,7 +65,7 @@ public class DraftServiceImpl implements DraftService {
 
     @Override
     @Transactional
-    public void deleteDraft(Long id, String oid) throws Exception {
+    public void deleteDraft(Long id, String oid) {
         draftDao.deleteDraft(id, oid);
     }
 
@@ -79,7 +78,7 @@ public class DraftServiceImpl implements DraftService {
             return draftModel.getId();
         } catch(Exception e) {
             log.error("JPA Exception: {}", e);
-            throw new PersistenceException("error.msg.savingDraft", e);
+            throw new RuntimeException("error.msg.savingDraft", e);
         }
 
     }
@@ -92,7 +91,7 @@ public class DraftServiceImpl implements DraftService {
             draftDao.updateDraft(id, oid, draftModel);
         } catch(Exception e) {
             log.error("JPA Exception: {}", e);
-            throw new PersistenceException("error.msg.updatingDraft", e);
+            throw new RuntimeException("error.msg.updatingDraft", e);
         }
 
     }

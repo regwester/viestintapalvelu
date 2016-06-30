@@ -32,10 +32,10 @@ public class AttachmentUri {
         private final String prefix;
         private final Class<?>[] segments;
 
-        private TargetType(String prefix) {
+        TargetType(String prefix) {
             this(prefix, new Class<?>[0]);
         }
-        private TargetType(String prefix, Class<?>... segments) {
+        TargetType(String prefix, Class<?>... segments) {
             this.prefix = prefix;
             this.segments = segments;
         }
@@ -51,14 +51,14 @@ public class AttachmentUri {
         public Class<?>[] getSegments() {
             return segments;
         }
-    };
+    }
 
     public static AttachmentUri getLetterReceiverLetterAttachment(Long attachmentId) {
         return new AttachmentUri(SCHEME_PREFIX + TargetType.LetterReceiverLetterAttachment.getPrefix() + "/" + attachmentId);
     }
 
     public static List<String> uriStringsOfList(List<AttachmentUri> attachmentUris) {
-        List<String> uris = new ArrayList<String>();
+        List<String> uris = new ArrayList<>();
         for (AttachmentUri uri : attachmentUris) {
             uris.add(uri.getUri());
         }

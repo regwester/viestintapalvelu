@@ -18,10 +18,7 @@ package fi.vm.sade.ajastuspalvelu.service.external.email;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
@@ -29,6 +26,7 @@ import javax.ws.rs.core.Response;
 
 import org.dom4j.DocumentException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -40,7 +38,7 @@ import fi.vm.sade.ajastuspalvelu.service.external.email.dto.EmailReceiver;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.resource.EmailResource;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 
 import static com.google.common.base.Optional.fromNullable;
 
@@ -50,6 +48,7 @@ import static com.google.common.base.Optional.fromNullable;
  * Time: 15:39
  */
 @Service
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class EmailServiceImpl implements EmailService {
     public static final String AJASTUSPROSESSI = "ajastusprosessi";
     public static final String GET_CONTENT_TRUE_VALUE = "YES";
@@ -82,7 +81,7 @@ public class EmailServiceImpl implements EmailService {
         emailData.getEmail().setSender(toString(details.getReplacements().get("sender")));
         emailData.getEmail().setSenderOid(toString(details.getReplacements().get("senderOid")));
         emailData.getEmail().setOrganizationOid(toString(details.getReplacements().get("organizationOid")));
-        List<SourceRegister> registers = new ArrayList<SourceRegister>();
+        List<SourceRegister> registers = new ArrayList<>();
         if (details.getReplacements().get("sourceRegister") != null
                  && details.getReplacements().get("sourceRegister") instanceof List) {
             for (Object val : (List) details.getReplacements().get("sourceRegister")) {
@@ -99,7 +98,7 @@ public class EmailServiceImpl implements EmailService {
         if (!registers.isEmpty()) {
             emailData.getEmail().setSourceRegister(registers);
         } else {
-            emailData.getEmail().setSourceRegister(Arrays.asList(new SourceRegister("opintopolku")));
+            emailData.getEmail().setSourceRegister(Collections.singletonList(new SourceRegister("opintopolku")));
         }
         TemplateDTO templateDTO = getTemplate(emailData);
 
@@ -145,11 +144,10 @@ public class EmailServiceImpl implements EmailService {
 
         Response response = emailResourceClient.sendEmail(emailData);
         if (response.getStatus() == HttpStatus.OK.value()) {
-            EmailSendId id = objectMapperProvider.getContext(EmailServiceImpl.class).reader(EmailSendId.class)
+            return objectMapperProvider.getContext(EmailServiceImpl.class).reader(EmailSendId.class)
                     .readValue((InputStream) response.getEntity());
-            return id;
         }
-        throw new ExternalInterfaceException("Ryhhmasahkoposti-service sendMail returned code " + response.getStatus());
+        throw new ExternalInterfaceException("Ryhhmasahkoposti-service sendMail returned code " + response.getStatus(), new Throwable());
     }
 
     private String toString(Object replacement) {

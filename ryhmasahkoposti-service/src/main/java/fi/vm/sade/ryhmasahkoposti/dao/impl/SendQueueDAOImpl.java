@@ -77,7 +77,7 @@ public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implem
     @Override
     public List<RecipientReportedAttachmentQueryResult> findRecipientAttachments(List<Long> reportedRecipientIds) {
         if (reportedRecipientIds.isEmpty()) {
-            return new ArrayList<RecipientReportedAttachmentQueryResult>();
+            return new ArrayList<>();
         }
         return getEntityManager()
                 .createQuery(
@@ -91,7 +91,7 @@ public class SendQueueDAOImpl extends AbstractJpaDAOImpl<SendQueue, Long> implem
     @Override
     public List<ReportedRecipientReplacement> findRecipientReplacements(List<Long> reportedRecipientIds) {
         if (reportedRecipientIds.isEmpty()) {
-            return new ArrayList<ReportedRecipientReplacement>();
+            return new ArrayList<>();
         }
         return getEntityManager()
                 .createQuery(

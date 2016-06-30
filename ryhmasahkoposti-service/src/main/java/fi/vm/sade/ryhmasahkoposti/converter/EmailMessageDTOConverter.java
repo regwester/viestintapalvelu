@@ -31,7 +31,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedMessageReplacement;
 @Component
 public class EmailMessageDTOConverter {
     public List<EmailMessageDTO> convert(List<ReportedMessage> reportedMessages) {
-        List<EmailMessageDTO> emailMessageDTOs = new ArrayList<EmailMessageDTO>();
+        List<EmailMessageDTO> emailMessageDTOs = new ArrayList<>();
 
         for (ReportedMessage reportedMessage : reportedMessages) {
             EmailMessageDTO emailMessageDTO = convertToEmailMessageDTO(reportedMessage);
@@ -52,7 +52,7 @@ public class EmailMessageDTOConverter {
     }
 
     private List<ReplacementDTO> convertMessageReplacementDTO(List<ReportedMessageReplacement> reportedMessageReplacements) {
-        List<ReplacementDTO> replacements = new ArrayList<ReplacementDTO>();
+        List<ReplacementDTO> replacements = new ArrayList<>();
         if (reportedMessageReplacements == null) {
             return replacements;
         }
@@ -72,7 +72,7 @@ public class EmailMessageDTOConverter {
     }
 
     private List<EmailAttachment> convertEmailAttachmentDTO(List<ReportedAttachment> reportedAttachments) {
-        List<EmailAttachment> attachments = new ArrayList<EmailAttachment>();
+        List<EmailAttachment> attachments = new ArrayList<>();
         for (ReportedAttachment reportedAttachment : reportedAttachments) {
             attachments.add(convert(reportedAttachment, new EmailAttachmentDTO()));
         }
@@ -80,6 +80,10 @@ public class EmailMessageDTOConverter {
     }
 
     public EmailAttachment convert(ReportedAttachment from, EmailAttachmentDTO to) {
+        return initEmailAttachmentDTO(from, to);
+    }
+
+    public static EmailAttachmentDTO initEmailAttachmentDTO(ReportedAttachment from, EmailAttachmentDTO to) {
         to.setAttachmentID(from.getId());
         to.setName(from.getAttachmentName());
         to.setData(from.getAttachment());

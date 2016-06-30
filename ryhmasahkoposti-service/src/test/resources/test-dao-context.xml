@@ -13,7 +13,7 @@
         <property name="loadTimeWeaver">
             <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver"/>
         </property>
-        <property name="persistenceXmlLocation" value="/test-persistence.xml"/>
+        <property name="persistenceXmlLocation" value="classpath:test-persistence.xml"/>
     </bean>
 
     <!-- transaction manager -->

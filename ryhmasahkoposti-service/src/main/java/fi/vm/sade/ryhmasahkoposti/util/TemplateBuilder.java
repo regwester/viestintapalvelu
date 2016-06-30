@@ -15,18 +15,11 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.util;
 
-import java.io.ByteArrayInputStream;
-import java.io.InputStreamReader;
-import java.io.StringWriter;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
-
+import com.google.common.base.Predicate;
+import com.google.common.collect.Iterables;
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
+import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
@@ -34,15 +27,11 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientMessage;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SourceRegister;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateContentDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
-import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
-import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
+import java.io.ByteArrayInputStream;
+import java.io.InputStreamReader;
+import java.io.StringWriter;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 @Component
 public class TemplateBuilder {
@@ -135,7 +124,7 @@ public class TemplateBuilder {
         }
 
         // Create a list to sort
-        List<TemplateContentDTO> contentList = new ArrayList<TemplateContentDTO>();
+        List<TemplateContentDTO> contentList = new ArrayList<>();
         for (TemplateContentDTO templateContent : template.getContents()) {
             contentList.add(templateContent);
         }
@@ -144,7 +133,7 @@ public class TemplateBuilder {
         Collections.sort(contentList);
 
         // Create page
-        StringBuffer result = new StringBuffer();
+        StringBuilder result = new StringBuilder();
         for (TemplateContentDTO tc : contentList) {
 //            String page = createPage(template, emailData, tc.getContent().getBytes());
             result.append(tc.getContent());
@@ -177,8 +166,14 @@ public class TemplateBuilder {
                 dataContext.put(ReplacementDTO.NAME_EMAIL_BODY, InputCleaner.cleanHtmlFragment(message.getBody()));
             }
             // Replace Email's subject with otsikko parameter if there is one (always replaced)
-            if (dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT) != null) {
-                message.setSubject(dataContext.get(ReplacementDTO.NAME_EMAIL_SUBJECT).toString());
+            ReplacementDTO subject = Iterables.find(template.getReplacements(), new Predicate<ReplacementDTO>() {
+                @Override
+                public boolean apply(ReplacementDTO replacement) {
+                    return ReplacementDTO.NAME_EMAIL_SUBJECT.equals(replacement.getName());
+                }
+            }, null);
+            if (subject != null) {
+                message.setSubject(subject.getDefaultValue());
             }
             // reply-to-personal overrides possible reply-to, default to email's replyTo
             if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL) != null) {
@@ -192,14 +187,9 @@ public class TemplateBuilder {
             if (dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_FROM) != null) {
                 message.setFrom(dataContext.get(ReplacementDTO.NAME_EMAIL_SENDER_FROM).toString());
             }
-            if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL) != null) {
-                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO_PERSONAL).toString());
-            } else if (dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO) != null) {
-                message.setReplyTo(dataContext.get(ReplacementDTO.NAME_EMAIL_REPLY_TO).toString());
-            }
 
             if (message.getSourceRegister() != null) {
-                Map<String, Boolean> sourceRegisters = new HashMap<String, Boolean>();
+                Map<String, Boolean> sourceRegisters = new HashMap<>();
 
                 for (SourceRegister sourceRegister : message.getSourceRegister()) {
                     sourceRegisters.put(sourceRegister.getName(), true);
@@ -207,15 +197,19 @@ public class TemplateBuilder {
 
                 dataContext.put("sourceregisters", sourceRegisters);
             }
-            
-            StringWriter writer = new StringWriter();
-            templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG",
-                    new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+
+            StringWriter writer = createStringWriter(content, dataContext);
             message.setBody(writer.toString());
         } else {
             LOGGER.warn("No template used for message with templateId={}", message.getTemplateId());
         }
         return message;
+    }
+
+    private StringWriter createStringWriter(String content, Map<String, Object> dataContext) {
+        StringWriter writer = new StringWriter();
+        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(content.getBytes())));
+        return writer;
     }
 
     /**
@@ -225,7 +219,7 @@ public class TemplateBuilder {
      * @return
      */
     public String buildTempleMessage(String message, List<ReplacementDTO> messageReplacements, List<ReportedRecipientReplacementDTO> recipientReplacements) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
 
         // Message replacements exist
         if (messageReplacements != null) {
@@ -258,14 +252,12 @@ public class TemplateBuilder {
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(replacements);
 
-        StringWriter writer = new StringWriter();
-        templateEngine.evaluate(new VelocityContext(dataContext), writer, "LOG", new InputStreamReader(new ByteArrayInputStream(message.getBytes())));
-        return writer.toString();
+        return createStringWriter(message, dataContext).toString();
     }
 
     @SuppressWarnings("unchecked")
     private Map<String, Object> createDataContext(TemplateDTO template, EmailRecipientMessage message) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (ReplacementDTO r : template.getReplacements()) {
             replacements.put(r.getName(), r.getDefaultValue());
         }
@@ -286,23 +278,16 @@ public class TemplateBuilder {
      * @param replacementsList
      * @return
      */
-    private Map<String, Object> createDataContext(Map<String, Object>... replacementsList) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        for (Map<String, Object> replacements : replacementsList) {
-            if (replacements == null) {
-                continue;
-            }
-
-            for (String key : replacements.keySet()) {
-                if (replacements.get(key) instanceof String) {
-                    data.put(key, InputCleaner.cleanHtmlFragment((String) replacements.get(key)));
-                } else {
-                    data.put(key, replacements.get(key));
-                }
+    private Map<String, Object> createDataContext(Map<String, Object> replacements) {
+        Map<String, Object> data = new HashMap<>();
+        for (String key : replacements.keySet()) {
+            if (replacements.get(key) instanceof String) {
+                data.put(key, InputCleaner.cleanHtmlFragment((String) replacements.get(key)));
+            } else {
+                data.put(key, replacements.get(key));
             }
         }
-        
-        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         return data;
     }
 }

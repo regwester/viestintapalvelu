@@ -670,6 +670,12 @@
                 <version>${springockito.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>fi.vm.sade</groupId>
+                <artifactId>embedded-tomcat</artifactId>
+                <version>1.0-SNAPSHOT</version>
+                <scope>test</scope>
+            </dependency>
 
             <!-- HyperSQL DataBase for testing -->
             <dependency>
@@ -715,7 +721,7 @@
                         <target>1.7</target>
                         <encoding>UTF-8</encoding>
                         <debug>true</debug>
-                        <debuglevel>none</debuglevel>
+                        <debuglevel>lines,vars,source</debuglevel>
                     </configuration>
                 </plugin>
                 <plugin>

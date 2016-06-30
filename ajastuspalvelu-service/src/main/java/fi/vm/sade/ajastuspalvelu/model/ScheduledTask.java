@@ -61,7 +61,7 @@ public class ScheduledTask implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "scheduledTask",
         cascade = CascadeType.PERSIST)
-    private Set<ScheduledRun> runs = new HashSet<ScheduledRun>(0);
+    private Set<ScheduledRun> runs = new HashSet<>(0);
 
     public Long getId() {
         return id;

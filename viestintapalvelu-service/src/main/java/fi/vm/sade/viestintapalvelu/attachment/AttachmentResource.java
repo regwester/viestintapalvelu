@@ -15,8 +15,6 @@
  **/
 package fi.vm.sade.viestintapalvelu.attachment;
 
-import java.util.List;
-
 import javax.ws.rs.core.Response;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;

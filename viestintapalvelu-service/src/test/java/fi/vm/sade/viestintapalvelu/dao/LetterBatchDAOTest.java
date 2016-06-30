@@ -15,18 +15,15 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Date;
-import java.util.HashSet;
+import java.util.*;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.PersistenceException;
 
+import com.google.common.collect.ImmutableMap;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -50,6 +47,8 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+
+import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
@@ -286,6 +285,206 @@ public class LetterBatchDAOTest {
         Long first = givenLetterBatchWithDateModified(Status.processing, null, new Date(0));
         assertEquals(first, letterBatchDAO.findUnfinishedLetterBatches().get(0));
     }
+
+    @Test
+    public void findLettersReadyForPublishByPersonOid() throws Exception {
+        insertLetterBatchForPersonOid("test-haku-oid-1", "test-person-oid-1", "hyvaksymiskirje", true);
+        insertLetterBatchForPersonOid("test-haku-oid-1", "test-person-oid-1", "hyvaksymiskirje", false);
+        insertLetterBatchForPersonOid("test-haku-oid-2", "test-person-oid-1", "jalkiohjauskirje", true);
+        insertLetterBatchForPersonOid("test-haku-oid-2", "test-person-oid-2", "hyvaksymiskirje", true);
+
+        List<LetterListItem> listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
+
+        assertEquals(2, listItems.size());
+        for(LetterListItem item : listItems) {
+            logger.info(item.toString());
+        }
+        assertTrue(expectedListItemInList(listItems, "test-haku-oid-1", "hyvaksymiskirje"));
+        assertTrue(expectedListItemInList(listItems, "test-haku-oid-2", "jalkiohjauskirje"));
+
+        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-2");
+
+        assertEquals(1, listItems.size());
+        logger.info(listItems.get(0).toString());
+        assertTrue(listItemEquals(listItems.get(0), "test-haku-oid-2", "hyvaksymiskirje"));
+    }
+
+   @Test
+    public void publishLetterBatch() throws Exception {
+       long batchId1 = insertLetterBatchForPersonOids("test-haku-oid-1",
+               Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+       long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-2",
+               Arrays.asList("test-person-oid-1", "test-person-oid-2"), "jalkiohjauskirje", false);
+
+       List<LetterListItem> listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
+       assertEquals(0, listItems.size());
+
+       assertEquals(3l, letterBatchDAO.publishLetterBatch(batchId1));
+
+       listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
+       assertEquals(1, listItems.size());
+       logger.info(listItems.get(0).toString());
+       assertTrue(listItemEquals(listItems.get(0), "test-haku-oid-1", "hyvaksymiskirje"));
+
+       assertEquals(2l, letterBatchDAO.publishLetterBatch(batchId2));
+
+       listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
+       assertEquals(2, listItems.size());
+       for(LetterListItem item : listItems) {
+           logger.info(item.toString());
+       }
+       assertTrue(expectedListItemInList(listItems, "test-haku-oid-1", "hyvaksymiskirje"));
+       assertTrue(expectedListItemInList(listItems, "test-haku-oid-2", "jalkiohjauskirje"));
+   }
+
+   @Test
+   public void letterBatchCount() throws Exception {
+       List<String> personOids = Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3");
+       LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null, personOids.size());
+       letterBatch.setApplicationPeriod("test-haku-oid-1");
+       letterBatch.setTag("test-haku-oid-1");
+       letterBatch.setTemplateName("hyvaksymiskirje");
+       letterBatch.setBatchStatus(Status.processing);
+       Iterator<LetterReceivers> receiversIterator = letterBatch.getLetterReceivers().iterator();
+       int i = 0;
+       while(receiversIterator.hasNext()) {
+           LetterReceivers letterReceivers = receiversIterator.next();
+           letterReceivers.setOidPerson(personOids.get(i));
+           letterReceivers.setEmailAddressEPosti(personOids.get(i) + "@testi.fi");
+           letterReceivers.getLetterReceiverLetter().setReadyForPublish(false);
+           letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
+           if(1 == i) {
+               letterReceivers.getLetterReceiverLetter().setLetter(null);
+           }
+           i++;
+       }
+       long batchId1 = letterBatchDAO.insert(letterBatch).getId();
+
+       long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-2",
+               Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+       long batchId3 = insertLetterBatchForPersonOids("test-haku-oid-3",
+               Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+       long batchId4 = insertLetterBatchForPersonOids("test-haku-oid-4",
+               Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true, Status.error);
+
+
+       LetterBatchCountDto letterBatchCountDto = letterBatchDAO.countBatchStatus("test-haku-oid-1", "hyvaksymiskirje", "fi");
+       assertEquals(3, letterBatchCountDto.letterTotalCount);
+       assertEquals(2, letterBatchCountDto.letterReadyCount);
+       assertEquals(0, letterBatchCountDto.letterErrorCount);
+       assertFalse(letterBatchCountDto.readyForPublish);
+       assertFalse(letterBatchCountDto.readyForEPosti);
+
+       LetterBatchCountDto letterBatchCountDto2 = letterBatchDAO.countBatchStatus("test-haku-oid-2", "hyvaksymiskirje", "fi");
+       assertEquals(3, letterBatchCountDto2.letterTotalCount);
+       assertEquals(3, letterBatchCountDto2.letterReadyCount);
+       assertEquals(0, letterBatchCountDto2.letterErrorCount);
+       assertTrue(letterBatchCountDto2.readyForPublish);
+       assertFalse(letterBatchCountDto2.readyForEPosti);
+
+       LetterBatchCountDto letterBatchCountDto3 = letterBatchDAO.countBatchStatus("test-haku-oid-3", "hyvaksymiskirje", "fi");
+       assertEquals(3, letterBatchCountDto3.letterTotalCount);
+       assertEquals(3, letterBatchCountDto3.letterReadyCount);
+       assertEquals(0, letterBatchCountDto3.letterErrorCount);
+       assertFalse(letterBatchCountDto3.readyForPublish);
+       assertTrue(letterBatchCountDto3.readyForEPosti);
+
+       LetterBatchCountDto letterBatchCountDto4 = letterBatchDAO.countBatchStatus("test-haku-oid-4", "hyvaksymiskirje", "fi");
+       assertEquals(3, letterBatchCountDto4.letterTotalCount);
+       assertEquals(0, letterBatchCountDto4.letterReadyCount);
+       assertEquals(3, letterBatchCountDto4.letterErrorCount);
+       assertFalse(letterBatchCountDto4.readyForPublish);
+       assertFalse(letterBatchCountDto4.readyForEPosti);
+
+       LetterBatchCountDto letterBatchCountDto5 = letterBatchDAO.countBatchStatus("test-haku-oid-2", "hyvaksymiskirje", "sv");
+       assertEquals(0, letterBatchCountDto5.letterTotalCount);
+       assertEquals(0, letterBatchCountDto5.letterReadyCount);
+       assertEquals(0, letterBatchCountDto5.letterErrorCount);
+       assertFalse(letterBatchCountDto5.readyForPublish);
+       assertFalse(letterBatchCountDto5.readyForEPosti);
+   }
+
+    @Test
+    public void getLetterBatchIdReadyForPublishOrEPosti() throws Exception {
+        Long batchId1 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+        Long batchId3 = insertLetterBatchForPersonOids("test-haku-oid-2",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+        Long batchId4 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "jalkiohjauskirje", false);
+        Long batchId5 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+
+        assertEquals(batchId5, letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-1", "hyvaksymiskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-1", "hyvaksymiskirje", "FI").isPresent());
+
+        assertEquals(batchId3, letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-2", "hyvaksymiskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-2", "hyvaksymiskirje", "FI").isPresent());
+
+        Long batchId6 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+
+        assertEquals(batchId6, letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-1", "hyvaksymiskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-1", "hyvaksymiskirje", "FI").isPresent());
+
+        assertEquals(batchId4, letterBatchDAO.getLetterBatchIdReadyForPublish("test-haku-oid-1", "jalkiohjauskirje", "FI").get());
+        assertFalse(letterBatchDAO.getLetterBatchIdReadyForEPosti("test-haku-oid-1", "jalkiohjauskirje", "FI").isPresent());
+    }
+
+    @Test
+    public void getEPostiEmailAddressesByBatchId() throws Exception {
+        Long batchId1 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", true);
+        Long batchId2 = insertLetterBatchForPersonOids("test-haku-oid-1",
+                Arrays.asList("test-person-oid-1", "test-person-oid-2", "test-person-oid-3"), "hyvaksymiskirje", false);
+        assertEquals(ImmutableMap.of(   "oid0", "test-person-oid-1@testi.fi",
+                                        "oid1", "test-person-oid-2@testi.fi",
+                                        "oid2", "test-person-oid-3@testi.fi"),
+                letterBatchDAO.getEPostiEmailAddressesByBatchId(batchId1));
+        assertEquals(0, letterBatchDAO.getEPostiEmailAddressesByBatchId(batchId2).size());
+    }
+
+    private boolean expectedListItemInList(List<LetterListItem> listItems, String hakuOid, String templateName) {
+        for(LetterListItem actual : listItems) {
+            if(listItemEquals(actual, hakuOid, templateName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean listItemEquals(LetterListItem actual, String hakuOid, String templateName) {
+        return hakuOid.equals(actual.getHakuOid()) && templateName.equals(actual.getTyyppi()) && "application/pdf".equals(actual.getTiedostotyyppi());
+    }
+
+    private void insertLetterBatchForPersonOid(String hakuOid, String personOid, String templateName, boolean readyForPublish) {
+        insertLetterBatchForPersonOids(hakuOid, Arrays.asList(personOid), templateName, readyForPublish);
+    }
+
+    private long insertLetterBatchForPersonOids(String hakuOid, List<String> personOids, String templateName, boolean readyForPublish) {
+        return insertLetterBatchForPersonOids(hakuOid, personOids, templateName, readyForPublish, Status.ready);
+    }
+
+    private long insertLetterBatchForPersonOids(String hakuOid, List<String> personOids, String templateName, boolean readyForPublish, LetterBatch.Status status) {
+        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null, personOids.size());
+        letterBatch.setApplicationPeriod(hakuOid);
+        letterBatch.setTag(hakuOid);
+        letterBatch.setTemplateName(templateName);
+        letterBatch.setBatchStatus(status);
+        Iterator<LetterReceivers> receiversIterator = letterBatch.getLetterReceivers().iterator();
+        int i = 0;
+        while(receiversIterator.hasNext()) {
+            LetterReceivers letterReceivers = receiversIterator.next();
+            letterReceivers.setOidPerson(personOids.get(i));
+            letterReceivers.setOidApplication("oid" + i);
+            letterReceivers.setEmailAddressEPosti(personOids.get(i) + "@testi.fi");
+            letterReceivers.getLetterReceiverLetter().setReadyForPublish(readyForPublish);
+            letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
+            i++;
+        }
+        return letterBatchDAO.insert(letterBatch).getId();
+    }
+
 
     private long givenLetterBatchWithLetter(Status status, byte[] letter) {
         return givenLetterBatchWithDateModified(status, letter, new Date());

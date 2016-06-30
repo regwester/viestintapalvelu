@@ -56,8 +56,8 @@ public class EmailSourceData {
 
     public void addAttachment(String name, byte[] data, String contentType) {
         if (attachmentData == null) {
-            attachmentData = new HashMap<String, byte[]>();
-            attachmentContentType = new HashMap<String, String>();
+            attachmentData = new HashMap<>();
+            attachmentContentType = new HashMap<>();
         }
         this.attachmentData.put(name, data);
         this.attachmentContentType.put(name, contentType);
@@ -83,7 +83,7 @@ public class EmailSourceData {
         return recipients;
     }
 
-    public Map<TemplateEmailField, Object> getEmailContext() throws Exception {
+    public Map<TemplateEmailField, Object> getEmailContext() {
 
         return emailContext;
     }
@@ -107,13 +107,13 @@ public class EmailSourceData {
         EmailRecipient recipient = new EmailRecipient();
         recipient.setEmail(letter.getEmailAddress());
         recipient.setLanguageCode(letter.getLanguageCode());
-        recipients = new ArrayList<EmailRecipient>();
+        recipients = new ArrayList<>();
         recipients.add(recipient);
     }
 
     private void initEmailContext() throws Exception {
         // handle email context
-        emailContext = new HashMap<TemplateEmailField, Object>();
+        emailContext = new HashMap<>();
 
         LOGGER.debug("CONTEXT START");
         for (String k : this.templateDataContext.keySet()) {
@@ -128,22 +128,20 @@ public class EmailSourceData {
         validateContext();
     }
 
-    private void validateContext() throws Exception {
+    private void validateContext() {
 
         for (TemplateEmailField t : TemplateEmailField.values()) {
             Object value = emailContext.get(t);
 
             if (t.isMandatory()) {
                 if (value == null) {
-                    LOGGER.debug("EmailData building fails missing mandatory field " + t);
-                    throw new IllegalArgumentException("Pakollinen kenttä puuttuu " + t);
+                    logAndThrowMissing(t);
                 }
                 if (t.getType() != null && String.class == t.getType()) {
                     if (value instanceof String) {
                         String stringValue = (String) value;
                         if (stringValue.isEmpty()) {
-                            LOGGER.debug("EmailData building fails missing mandatory field " + t);
-                            throw new IllegalArgumentException("Pakollinen kenttä puuttuu " + t);
+                            logAndThrowMissing(t);
                         }
                     } else {
                         LOGGER.debug("Expected String but got something else ");
@@ -152,5 +150,10 @@ public class EmailSourceData {
                 }
             }
         }
+    }
+
+    private void logAndThrowMissing(TemplateEmailField t) {
+        LOGGER.debug("EmailData building fails missing mandatory field " + t);
+        throw new IllegalArgumentException("Pakollinen kenttä puuttuu " + t);
     }
 }

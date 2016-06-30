@@ -65,7 +65,7 @@ public class DownloadResource {
     public Collection<Header> available() {
         // Wrapping to TreeSet automatically sorts the elements as TreeSet is
         // SortedSet. Header is sorted by createdAt value.
-        return new TreeSet<Header>(downloadCache.getListOfAvailableDocuments());
+        return new TreeSet<>(downloadCache.getListOfAvailableDocuments());
     }
 
     @GET

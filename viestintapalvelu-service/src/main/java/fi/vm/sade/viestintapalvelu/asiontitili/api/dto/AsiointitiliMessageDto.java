@@ -65,13 +65,13 @@ public class AsiointitiliMessageDto implements Serializable, LinkOrAttachmentCon
     private String overriddenContent;
 
     @ApiModelProperty(value = "Kirjepohjan vastaanottajakohtaiset personointikentät", required = false, notes = "")
-    private Map<String, Object> templateReplacements = new HashMap<String, Object>();
+    private Map<String, Object> templateReplacements = new HashMap<>();
 
     @ApiModelProperty(value = "Vastaanottajakohtaiset linkit", required = false)
-    private List<AsiointitiliLinkDto> links = new ArrayList<AsiointitiliLinkDto>();
+    private List<AsiointitiliLinkDto> links = new ArrayList<>();
 
     @ApiModelProperty(value = "Vastaanottajakohtaiset liitteet", required = false)
-    private List<AsiointitiliAttachmentDto> attachments = new ArrayList<AsiointitiliAttachmentDto>();
+    private List<AsiointitiliAttachmentDto> attachments = new ArrayList<>();
 
     public String getReceiverHenkiloOid() {
         return receiverHenkiloOid;

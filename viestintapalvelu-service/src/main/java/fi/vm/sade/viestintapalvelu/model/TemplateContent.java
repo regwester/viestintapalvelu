@@ -104,7 +104,7 @@ public class TemplateContent extends BaseEntity implements Comparable<TemplateCo
 
     @Override
     public int compareTo(TemplateContent o) {
-        Integer ord = new Integer(order);
+        Integer ord = order;
         return ord.compareTo(o.order);
     }
 }

@@ -46,7 +46,7 @@ public class StructureConverterImpl implements StructureConverter {
 
     @Override
     public List<TemplateContent> toContents(ContentStructure structure, ContentStructurePredicate predicate) {
-        List<TemplateContent> results = new ArrayList<TemplateContent>();
+        List<TemplateContent> results = new ArrayList<>();
         if (!isValid(structure)) {
             throw new IllegalStateException("Invalid contentStructure=" + structure.getId());
         }
@@ -93,7 +93,7 @@ public class StructureConverterImpl implements StructureConverter {
     }
 
     protected List<TemplateContent> convert(String name, ContentStructurePredicate predicate, Collection<ContentStructureContent> from) {
-        List<TemplateContent> results = new ArrayList<TemplateContent>();
+        List<TemplateContent> results = new ArrayList<>();
         for (ContentStructureContent csc : from) {
             TemplateContent content = convert(name, predicate, csc);
             if (content != null) {
@@ -135,7 +135,7 @@ public class StructureConverterImpl implements StructureConverter {
     }
 
     protected List<ContentStructureContent> contents(ContentStructure structure, ContentStructurePredicate predicate) {
-        List<ContentStructureContent> contents = new ArrayList<ContentStructureContent>(Collections2.filter(structure.getContents(), predicate));
+        List<ContentStructureContent> contents = new ArrayList<>(Collections2.filter(structure.getContents(), predicate));
         Collections.sort(contents, new Comparator<ContentStructureContent>() {
             @Override
             public int compare(ContentStructureContent o1, ContentStructureContent o2) {

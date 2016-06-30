@@ -22,7 +22,6 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
-import org.apache.commons.lang.time.FastDateFormat;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;

@@ -18,13 +18,13 @@ package fi.vm.sade.ryhmasahkoposti.service.impl;
 import java.io.IOException;
 import java.util.*;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -164,7 +164,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
     private void processRecipients(ReportedMessage savedReportedMessage, List<EmailRecipient> emailRecipients) throws IOException {
         log.debug("Processing emailRecipients");
-        List<ReportedRecipient> recipients = new ArrayList<ReportedRecipient>();
+        List<ReportedRecipient> recipients = new ArrayList<>();
         for (EmailRecipient emailRecipient : emailRecipients) {
             log.debug("Converting emailRecipient to reportedRecipient");
             ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage, emailRecipient);
@@ -194,7 +194,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     private List<SendQueue> createSendQueues(Collection<ReportedRecipient> recipients) {
         log.debug("Creating send queue for {} recipients", recipients.size());
         Iterator<ReportedRecipient> it = recipients.iterator();
-        List<SendQueue> queues = new ArrayList<SendQueue>();
+        List<SendQueue> queues = new ArrayList<>();
         while (it.hasNext()) {
             SendQueue queue = new SendQueue();
             for (int i = 0; i < queueSize && it.hasNext(); ++i) {
@@ -266,18 +266,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("getReportedMessageAndRecipients(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-
         List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipients(messageID, pagingAndSorting);
-
-        SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
-        sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
-
-        List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(reportedMessage.getReportedMessageAttachments());
-
-        ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, reportedAttachments, sendingStatus);
-        reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
-
-        return reportedMessageDTO;
+        return createReportedMessageDTO(messageID, reportedMessage, reportedRecipients);
     }
 
     @Override
@@ -285,9 +275,20 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         log.info("getReportedMessageAndRecipientsSendingUnsuccessful(" + messageID + ") called");
 
         ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
-
         List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipientsByStatusSendingUnsuccessful(messageID, pagingAndSorting);
+        return createReportedMessageDTO(messageID, reportedMessage, reportedRecipients);
+    }
 
+    @Override
+    public ReportedMessageDTO getReportedMessageAndRecipientsSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        log.info("getReportedMessageAndRecipientsSendingBounced(" + messageID + ") called");
+
+        ReportedMessage reportedMessage = reportedMessageService.getReportedMessage(messageID);
+        List<ReportedRecipient> reportedRecipients = reportedRecipientService.getReportedRecipientsByStatusSendingBounced(messageID, pagingAndSorting);
+        return createReportedMessageDTO(messageID, reportedMessage, reportedRecipients);
+    }
+
+    private ReportedMessageDTO createReportedMessageDTO(Long messageID, ReportedMessage reportedMessage, List<ReportedRecipient> reportedRecipients) {
         SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(messageID);
         sendingStatus.setSendingStarted(reportedMessage.getSendingStarted());
 
@@ -295,7 +296,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
         ReportedMessageDTO reportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessage, reportedRecipients, reportedAttachments, sendingStatus);
         reportedMessageDTO.setEndTime(sendingStatus.getSendingEnded());
-
         return reportedMessageDTO;
     }
 
@@ -308,18 +308,21 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(organizationOid, pagingAndSorting);
         Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(organizationOid);
 
-        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
-        for (ReportedMessage reportedMessage : reportedMessages) {
-            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
-            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
-        }
-
-        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = convertReportedMessagesToReportedMessageDTO(reportedMessages);
 
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
         reportedMessagesDTO.setNumberOfReportedMessages(numberOfReportedMessages);
 
         return reportedMessagesDTO;
+    }
+
+    private List<ReportedMessageDTO> convertReportedMessagesToReportedMessageDTO(List<ReportedMessage> reportedMessages) {
+        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<>();
+        for (ReportedMessage reportedMessage : reportedMessages) {
+            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
+            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
+        }
+        return reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
     }
 
     @Override
@@ -346,13 +349,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         List<ReportedMessage> reportedMessages = reportedMessageService.getReportedMessages(query, pagingAndSorting);
         Long numberOfReportedMessages = reportedMessageService.getNumberOfReportedMessages(query);
 
-        Map<Long, SendingStatusDTO> sendingStatuses = new HashMap<Long, SendingStatusDTO>();
-        for (ReportedMessage reportedMessage : reportedMessages) {
-            SendingStatusDTO sendingStatus = reportedRecipientService.getSendingStatusOfRecipients(reportedMessage.getId());
-            sendingStatuses.put(reportedMessage.getId(), sendingStatus);
-        }
-
-        List<ReportedMessageDTO> listOfReportedMessageDTO = reportedMessageDTOConverter.convert(reportedMessages, sendingStatuses);
+        List<ReportedMessageDTO> listOfReportedMessageDTO = convertReportedMessagesToReportedMessageDTO(reportedMessages);
 
         ReportedMessagesDTO reportedMessagesDTO = new ReportedMessagesDTO();
         reportedMessagesDTO.setReportedMessages(listOfReportedMessageDTO);
@@ -389,7 +386,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
     @Override
     public List<OrganizationDTO> getUserOrganizations() {
-        List<OrganizationDTO> organizations = new ArrayList<OrganizationDTO>();
+        List<OrganizationDTO> organizations = new ArrayList<>();
         List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
         for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
@@ -477,8 +474,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     public ReportedAttachment getAttachment(Long attachmentID) {
         log.info("getAttachment(" + attachmentID + ") called");
 
-        ReportedAttachment reportedAttachment = reportedAttachmentService.getReportedAttachment(attachmentID);
-        return reportedAttachment;
+        return reportedAttachmentService.getReportedAttachment(attachmentID);
     }
 
     public Integer getQueueSize() {

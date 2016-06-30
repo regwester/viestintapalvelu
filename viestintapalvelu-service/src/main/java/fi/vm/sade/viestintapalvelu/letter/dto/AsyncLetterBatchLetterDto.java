@@ -30,11 +30,23 @@ import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
     private static final long serialVersionUID = 1L;
 
+    @ApiModelProperty(value = "Henkilön oid", required =  false)
+    private String personOid;
+
+    @ApiModelProperty(value = "Hakemuksen oid", required = false)
+    private String applicationOid;
+
+    @ApiModelProperty(value = "Ohita iPosti. Koskee vain iPosti-lähetystä. Oletuksena ei ohiteta.", required = false)
+    private boolean skipIPosti = false;
+
     @ApiModelProperty(value = "Osoitetiedot", required = true)
     private AddressLabel addressLabel;
 
     @ApiModelProperty(value = "Kirjeen vastaanottajan sähköpostiosoite. Kirjeestä lähetetään sähköposti, mikäli sähköpostiosoite on annettu.", required = false)
     private String emailAddress;
+
+    @ApiModelProperty(value = "ePostin (securelink) vastaanottajan sähköpostiosoite.", required = false)
+    private String emailAddressEPosti;
 
     @ApiModelProperty(value = "Kirjepohjan vastaanottaja kielikoodi. Mikäli annettua kielikoodia vastaava kirjepohja löytyy, käytetään sitä."
             + " kielikoodi ISO 639-1")
@@ -77,5 +89,41 @@ public class AsyncLetterBatchLetterDto implements Serializable, LetterDetails {
 
     public void setTemplateReplacements(Map<String, Object> templateReplacements) {
         this.templateReplacements = templateReplacements;
+    }
+
+    @Override
+    public String getPersonOid() {
+        return personOid;
+    }
+
+    public void setPersonOid(String personOid) {
+        this.personOid = personOid;
+    }
+
+    @Override
+    public boolean isSkipIPosti() {
+        return skipIPosti;
+    }
+
+    public void setSkipIPosti(boolean skipIPosti) {
+        this.skipIPosti = skipIPosti;
+    }
+
+    @Override
+    public String getEmailAddressEPosti() {
+        return emailAddressEPosti;
+    }
+
+    public void setEmailAddressEPosti(String emailAddressEPosti) {
+        this.emailAddressEPosti = emailAddressEPosti;
+    }
+
+    @Override
+    public String getApplicationOid() {
+        return applicationOid;
+    }
+
+    public void setApplicationOid(String applicationOid) {
+        this.applicationOid = applicationOid;
     }
 }

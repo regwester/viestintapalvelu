@@ -19,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 
@@ -36,21 +36,21 @@ public interface ReportedRecipientService {
      * @param messageID vistin tunnus
      * @return Viimeisin lähetysajankohta tai null, jos mitään ei ole vielä lähetetty
      */
-    public Date getLatestReportedRecipientsSendingEndedDate(Long messageID);
+    Date getLatestReportedRecipientsSendingEndedDate(Long messageID);
 
     /**
      * Hakee ryhmäsähköpostin vastaanottajien lukumäärän, joiden lähetys on epäonnistunut 
      * @param messageID
      * @return
      */
-    public Long getNumberOfSendingFailed(Long messageID);
+    Long getNumberOfSendingFailed(Long messageID);
     /**
      * Hakee raportoitavan viestin vastaanottajan tiedot
      * 
      * @param id Raportoitavan viestin vastaanottajan tunnus
      * @return Raportoitavan viestin vastaanottajan tiedot {@link ReportedRecipient}
      */
-    public ReportedRecipient getReportedRecipient(Long id);
+    ReportedRecipient getReportedRecipient(Long id);
 
     /**
      * Hakee raportoitavan viestin vastaanottajien tiedot viestin tunnuksella. Palauttaa halutun määrän vastaanottajia
@@ -59,7 +59,7 @@ public interface ReportedRecipientService {
      * @param pagingAndSorting Sivitus ja lajittelutiedot
      * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
-    public List<ReportedRecipient> getReportedRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
+    List<ReportedRecipient> getReportedRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee raportoitavan viestin vastaanottajien tiedot viestin tunnuksella, joille lähetys on epäonnistunut
@@ -68,15 +68,24 @@ public interface ReportedRecipientService {
      * @param pagingAndSorting Sivitus ja lajittelutiedot
      * @return Lista raportoitavan viestin vastaanottajien tietoja, joille lähetys on epäonnistunut {@link ReportedRecipient}
      */
-    public List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccessful(Long messageID,
-	    PagingAndSortingDTO pagingAndSorting);
+    List<ReportedRecipient> getReportedRecipientsByStatusSendingUnsuccessful(Long messageID,
+                                                                             PagingAndSortingDTO pagingAndSorting);
+
+    /**
+     * Hakee raportoitavan viestin vastaanottajien tiedot viestin tunnuksella, joille lähetys on palautunut
+     *
+     * @param messageID Raportoitavan viestin tunnus
+     * @param pagingAndSorting Sivitus ja lajittelutiedot
+     * @return Lista raportoitavan viestin vastaanottajien tietoja, joille lähetys on epäonnistunut {@link ReportedRecipient}
+     */
+    List<ReportedRecipient> getReportedRecipientsByStatusSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting);
 
     /**
      * Hakee kaikkien raportoittavien viestin vastaanottajien tiedot
      * 
      * @return Lista raportoittavien viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
-    public List<ReportedRecipient> getReportedRecipients();
+    List<ReportedRecipient> getReportedRecipients();
 
     /**
      * Hakee lähetyksen tilannetietojen vastaanottajien lukumäärät
@@ -84,7 +93,7 @@ public interface ReportedRecipientService {
      * @param messageID Sanoman tunnus
      * @return Lähetyksen tilannetiedot täydennettynä vastaanottajien lukumäärillä
      */
-    public SendingStatusDTO getSendingStatusOfRecipients(Long messageID);
+    SendingStatusDTO getSendingStatusOfRecipients(Long messageID);
 
     /**
      * Hakee raportoitavan viestin vastaanottajien tiedot, joille viesti on lähettämättä
@@ -92,26 +101,34 @@ public interface ReportedRecipientService {
      * @param vastaanottajienLukumaara Palautettavien vasttanottajien lukumaara
      * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
-    public List<ReportedRecipient> getUnhandledReportedRecipients(int listSize);
+    List<ReportedRecipient> getUnhandledReportedRecipients(int listSize);
 
     /**
      * Tallentaa raportoitavan viestin vastaanottajien tiedot 
      * 
      * @param raportoitavatVastaanottajat Lista raportoitavan viestin vastaanottajien tietoja
      */
-    public void saveReportedRecipients(Set<ReportedRecipient> reportedRecipients);
+    void saveReportedRecipients(Set<ReportedRecipient> reportedRecipients);
 
     /**
      * Tallentaa raportoitavan viestin vastaanottajien tiedot 
      * 
      * @param raportoitavatVastaanottajat raportoitavan viestin vastaanottajien tietoja
      */
-    public void saveReportedRecipient(ReportedRecipient reportedRecipient);
+    void saveReportedRecipient(ReportedRecipient reportedRecipient);
     
     /**
      * Päivittää raportoitavan viestin vastaanottajan tiedot 
      * 
      * @param raportoitavaVastaanottaja Raportoitavan viestin vastaanottajan tiedot
      */
-    public void updateReportedRecipient(ReportedRecipient reportedRecipient);
+    void updateReportedRecipient(ReportedRecipient reportedRecipient);
+
+    /**
+     * Hakee viestin tiivisteen perusteella
+     *
+     * @param letterHash Palautuneen viestin tiiviste
+     * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
+    */
+    List<ReportedRecipient> findByLetterHash(String letterHash);
 }

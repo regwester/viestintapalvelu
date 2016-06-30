@@ -15,15 +15,12 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.IOException;
 import java.util.List;
-import java.util.zip.DataFormatException;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
-import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 
 /**
@@ -69,17 +66,6 @@ public interface LetterReportService {
      * @return Näytettävät kirjelähetyksen raporttitiedot
      */
     LetterBatchesReportDTO getLetterBatchesReport(LetterReportQueryDTO query, PagingAndSortingDTO pagingAndSorting);
-
-    /**
-     * Hakee vastaanottajan kirjeen sisällön
-     * 
-     * @param id
-     *            Vastaanottajan kirjeen sisällön ID
-     * @return Vastaanottajan kirjeen tiedot
-     * @throws DataFormatException
-     * @throws IOException
-     */
-    LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 
     /**
      * Hakee käyttäjän organisaatiotiedot

@@ -50,7 +50,7 @@ public class EmailDetailsDtoConverter {
     }
 
     public List<EmailReceiver> convert(List<ReceiverItem> from, ArrayList<EmailReceiver> to) {
-        to.clear();;
+        to.clear();
         for (ReceiverItem fromItem : from) {
             to.add(convert(fromItem, new EmailReceiver()));
         }

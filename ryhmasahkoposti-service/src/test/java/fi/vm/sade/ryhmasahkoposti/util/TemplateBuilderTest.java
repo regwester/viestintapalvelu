@@ -90,7 +90,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals(buildMessage, "test-content- email-1 - recipient-2 - recipient-3 - " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        assertEquals(buildMessage, "test-content- email-1 - recipient-2 - recipient-3 - " + new SimpleDateFormat("d.M.yyyy").format(new Date()));
 
     }
 
@@ -116,7 +116,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals(buildMessage, "test-content- email-1 - email-2 - email-3 - " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        assertEquals(buildMessage, "test-content- email-1 - email-2 - email-3 - " + new SimpleDateFormat("d.M.yyyy").format(new Date()));
 
     }
 
@@ -142,7 +142,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals(buildMessage, "test-content- recipient-1 - recipient-2 - recipient-3 - " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        assertEquals(buildMessage, "test-content- recipient-1 - recipient-2 - recipient-3 - " + new SimpleDateFormat("d.M.yyyy").format(new Date()));
 
     }
 
@@ -168,7 +168,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals(buildMessage, "test-content- email-1 - email-2 - email-3 - " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        assertEquals(buildMessage, "test-content- email-1 - email-2 - email-3 - " + new SimpleDateFormat("d.M.yyyy").format(new Date()));
 
     }
 
@@ -194,7 +194,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals(buildMessage, "test-content- recipient-1 - recipient-2 - recipient-3 - " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        assertEquals(buildMessage, "test-content- recipient-1 - recipient-2 - recipient-3 - " + new SimpleDateFormat("d.M.yyyy").format(new Date()));
 
     }
 
@@ -220,7 +220,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals(buildMessage, "test-content- " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        assertEquals(buildMessage, "test-content- " + new SimpleDateFormat("d.M.yyyy").format(new Date()));
 
     }
 
@@ -236,7 +236,7 @@ public class TemplateBuilderTest {
         String buildMessage = builder.buildTempleMessage(message, messageReplacements, recipientReplacements);
 
         assertNotNull(buildMessage);
-        assertEquals("test-content- " + new SimpleDateFormat("dd.MM.yyyy").format(new Date()) + " <ul><li>a</li><li>b</li><li>c</li></ul>", buildMessage);
+        assertEquals("test-content- " + new SimpleDateFormat("d.M.yyyy").format(new Date()) + " <ul><li>a</li><li>b</li><li>c</li></ul>", buildMessage);
     }
 
 }

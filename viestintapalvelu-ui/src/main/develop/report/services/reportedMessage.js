@@ -11,7 +11,12 @@ angular.module('report')
     return $resource(window.url("ryhmasahkoposti-service.report.failed"), {messageID: '@messageID'});
 }])
 
-// Hakee REST-rajapinnan avulla hakuparametrin mukaiset raportoitavat viestit 
+// Hakee REST-rajapinnan avulla raportoitavan viestin tiedot vastaanottajineen, joille viestin lähetys palautui
+.factory('ReportedMessageAndRecipientsSendingBounced', ['$resource', function($resource) {
+  return $resource(window.url("ryhmasahkoposti-service.report.bounced"), {messageID: '@messageID'});
+}])
+
+  // Hakee REST-rajapinnan avulla hakuparametrin mukaiset raportoitavat viestit
 .factory('GetReportedMessagesBySearchArgument', ['$resource', function($resource) {
     return $resource(window.url("ryhmasahkoposti-service.report.search"), {}, {
         get: {method: "GET", isArray: false}
@@ -50,5 +55,19 @@ angular.module('report')
           delay.reject('Unable to get reported message ' + $route.current.params.messageID);
         });
         return delay.promise;
+    };
+}])
+
+// Hae raportoitava viesti ja vastaanottajat, joille lähetys on palautunut
+.factory('GetReportedMessageAndRecipientsSendingBounced', ['$route', '$q', 'ReportedMessageAndRecipientsSendingBounced',
+  function($route, $q, ReportedMessageAndRecipientsSendingBounced) {
+    return function() {
+      var delay = $q.defer();
+      ReportedMessageAndRecipientsSendingBounced.get({messageID: $route.current.params.messageID}, function(reportedMessage) {
+        delay.resolve(reportedMessage);
+      }, function() {
+        delay.reject('Unable to get reported message ' + $route.current.params.messageID);
+      });
+      return delay.promise;
     };
 }]);

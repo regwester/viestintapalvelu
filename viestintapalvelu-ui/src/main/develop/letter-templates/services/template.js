@@ -112,7 +112,7 @@ angular.module('letter-templates')
             updateDraft: function() {
                 return $resource(window.url("viestintapalvelu.template.updateDraft"), {}, {
                     put: {
-                        method: "PUT"
+                        method: "POST"
                     }
                 });
             },

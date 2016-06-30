@@ -15,7 +15,6 @@
  **/
 package fi.vm.sade.viestintapalvelu.koekutsukirje;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -63,7 +62,7 @@ public class KoekutsukirjeBuilder {
     }
 
     public byte[] printPDF(KoekutsukirjeBatch batch) throws IOException, DocumentException {
-        List<PdfDocument> source = new ArrayList<PdfDocument>();
+        List<PdfDocument> source = new ArrayList<>();
         for (Koekutsukirje kirje : batch.getLetters()) {
             String kirjeTemplateName = Utils.resolveTemplateName(Constants.KOEKUTSUKIRJE_TEMPLATE, kirje.getLanguageCode());
             String tarjoaja = Strings.nullToEmpty(kirje.getTarjoaja());
@@ -74,18 +73,18 @@ public class KoekutsukirjeBuilder {
     }
 
     private byte[] createFirstPagePDF(String templateName, AddressLabel addressLabel, String hakukohde, String tarjoaja, String letterBodyText)
-            throws FileNotFoundException, IOException, DocumentException {
+            throws IOException, DocumentException {
         Map<String, Object> dataContext = createDataContext(new HtmlAddressLabelDecorator(addressLabel), hakukohde, tarjoaja, letterBodyText);
         byte[] xhtml = documentBuilder.applyTextTemplate(templateName, dataContext);
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
     private Map<String, Object> createDataContext(AddressLabelDecorator decorator, String hakukohde, String tarjoaja, String letterBodyText) {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         data.put("osoite", decorator);
         data.put("hakukohde", StringEscapeUtils.escapeHtml(hakukohde));
         data.put("tarjoaja", StringEscapeUtils.escapeHtml(tarjoaja));
-        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         data.put("letterBodyText", cleanHtmlFromApi(letterBodyText));
         return data;
     }

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.component.ComponentUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,20 +71,7 @@ public class OrganizationComponent {
      * @return Organisaation nimi
      */
     public String getNameOfOrganisation(OrganisaatioRDTO organisaatio) {
-        String[] language = { "fi", "sv", "en" };
-
-        if (organisaatio.getNimi() == null) {
-            return "";
-        }
-
-        for (int i = 0; language.length > i; i++) {
-            String nameOfOrganisation = organisaatio.getNimi().get(language[i]);
-            if (nameOfOrganisation != null && !nameOfOrganisation.isEmpty()) {
-                return nameOfOrganisation;
-            }
-        }
-
-        return "";
+        return ComponentUtil.getOrganizationNameFromRDTO(organisaatio);
     }
 
     /**
@@ -96,7 +84,7 @@ public class OrganizationComponent {
             OrganisaatioHierarchyDto root = new OrganisaatioHierarchyDto();
             root.setChildren(rootResults.getOrganisaatiot());
             root.setOid(rootOrganizationOID);
-            Map<String, String> nimi = new HashMap<String, String>();
+            Map<String, String> nimi = new HashMap<>();
             nimi.put("fi", "Opetushallitus");
             nimi.put("sv", "Utbildningsstyrelsen");
             nimi.put("en", "The Finnish National Board of Education");

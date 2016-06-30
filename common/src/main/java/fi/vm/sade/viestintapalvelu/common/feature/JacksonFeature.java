@@ -16,15 +16,10 @@
 
 package fi.vm.sade.viestintapalvelu.common.feature;
 
-import javax.ws.rs.core.Feature;
-import javax.ws.rs.core.FeatureContext;
-
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
-import com.fasterxml.jackson.jaxrs.base.JsonMappingExceptionMapper;
-import com.fasterxml.jackson.jaxrs.base.JsonParseExceptionMapper;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
 public class JacksonFeature extends JacksonJaxbJsonProvider {

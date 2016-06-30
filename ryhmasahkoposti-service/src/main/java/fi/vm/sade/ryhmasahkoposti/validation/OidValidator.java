@@ -25,11 +25,8 @@ public class OidValidator {
     public static boolean isOID(String searchArgument) {
         String trimmedSearchArgument = searchArgument.trim();
 
-        if (!trimmedSearchArgument.startsWith(GroupEmailConstants.OID_OPH_TREE)) {
-            return false;
-        }
+        return trimmedSearchArgument.startsWith(GroupEmailConstants.OID_OPH_TREE);
 
-        return true;
     }
 
     public static boolean isHenkiloOID(String searchArgument) {
@@ -39,11 +36,8 @@ public class OidValidator {
             return false;
         }
 
-        if (!trimmedSearchArgument.startsWith(GroupEmailConstants.OID_OPH_PERSON_TREE)) {
-            return false;
-        }
+        return trimmedSearchArgument.startsWith(GroupEmailConstants.OID_OPH_PERSON_TREE);
 
-        return true;
     }
 
     public static boolean isOrganisaatioOID(String searchArgument) {
@@ -53,10 +47,7 @@ public class OidValidator {
             return false;
         }
 
-        if (!trimmedsearchargument.startsWith(GroupEmailConstants.OID_OPH_ORGANISATION_TREE)) {
-            return false;
-        }
+        return trimmedsearchargument.startsWith(GroupEmailConstants.OID_OPH_ORGANISATION_TREE);
 
-        return true;
     }
 }

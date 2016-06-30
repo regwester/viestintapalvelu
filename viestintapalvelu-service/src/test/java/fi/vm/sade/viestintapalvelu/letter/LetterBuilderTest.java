@@ -15,24 +15,42 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.util.HashMap;
+import java.util.Iterator;
 
+import com.google.gson.Gson;
+import com.lowagie.text.DocumentException;
+import fi.vm.sade.viestintapalvelu.letter.impl.PreviewDataServiceImpl;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.template.Replacement;
+import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateContent;
+import org.apache.commons.io.IOUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.DefaultResourceLoader;
+
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 
@@ -51,11 +69,7 @@ public class LetterBuilderTest {
     
     @Before
     public void init() throws Exception {
-        builder = new LetterBuilder(docBuilder);
-        builder.setObjectMapperProvider(new ObjectMapperProvider());
-        Field field = builder.getClass().getDeclaredField("templateService");
-        field.setAccessible(true);
-        field.set(builder, templateService);
+        builder = new LetterBuilder(docBuilder, templateService, null, new ObjectMapperProvider());
     }
     
     @Test
@@ -68,5 +82,5 @@ public class LetterBuilderTest {
         builder.constructPDFForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertNotNull(receiver.getLetterReceiverLetter().getLetter());
     }
-    
+
 }

@@ -15,9 +15,6 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
-/**
- * Created by jonimake on 10.12.2014.
- */
 public class HakuRDTO<T> {
     private T result;
     private String status;

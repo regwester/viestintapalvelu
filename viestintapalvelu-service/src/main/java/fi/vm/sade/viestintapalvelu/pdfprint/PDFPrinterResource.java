@@ -106,14 +106,11 @@ public class PDFPrinterResource extends AsynchronousResource {
         String documentId = null;
         try {
             byte[] pdf = buildDocument(input);
-            String documentName = input.getDocumentName();
-            documentName = input.getDocumentName() == null ? "document.pdf"
-                    : input.getDocumentName() + ".pdf";
+            String documentName = input.getDocumentName() == null ? "document.pdf" : input.getDocumentName() + ".pdf";
             documentId = downloadCache.addDocument(new Download(
                     "application/pdf;charset=utf-8", documentName, pdf));
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Sync PDF failed: {}", e.getMessage());
+            LOG.error("Sync PDF failed: " + e.getMessage(), e);
             return createFailureResponse(request);
         }
         return createResponse(request, documentId+".pdf");
@@ -141,8 +138,7 @@ public class PDFPrinterResource extends AsynchronousResource {
             byte[] pdf = buildDocument(input);
             return Response.ok(pdf).build();
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Getting PDF content failed: {}", e.getMessage());
+            LOG.error("Getting PDF content failed: " + e.getMessage(), e);
             return createFailureResponse(request);
         }
     }
@@ -167,17 +163,14 @@ public class PDFPrinterResource extends AsynchronousResource {
             @Context final HttpServletRequest request) throws IOException,
             DocumentException {
         if (input == null || input.getSources().isEmpty()) {
-            LOG.error("Nothing to do ", input);
+            LOG.error("Nothing to do {}", input);
             return Response.serverError().entity("Batch was empty!").build();
         }
-        final Authentication auth = SecurityContextHolder.getContext()
-                .getAuthentication();
+        final Authentication auth = SecurityContextHolder.getContext().getAuthentication();
         try {
-            LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}",
-                    new Object[] { auth.getName(), auth.getPrincipal() });
-
+            LOG.info("Authentication {\r\n\tName: {}\r\n\tPrincipal: {}\r\n}", new Object[] { auth.getName(), auth.getPrincipal() });
         } catch (Exception e) {
-            LOG.error("No authentication!!!");
+            LOG.error("No authentication!!!", e);
         }
 
         final String documentId = globalRandomId();
@@ -198,8 +191,7 @@ public class PDFPrinterResource extends AsynchronousResource {
                                     "application/pdf;charset=utf-8",
                                     new ByteArrayInputStream(pdf));
                 } catch (Exception e) {
-                    e.printStackTrace();
-                    LOG.error("PDF async failed: {}", e.getMessage());
+                    LOG.error("PDF async failed: " + e.getMessage(), e);
                 }
             }
         });
@@ -212,7 +204,7 @@ public class PDFPrinterResource extends AsynchronousResource {
     public Response getDocumentSource() {
         DocumentSource ds = new DocumentSource();
         
-        List<String> sources = new ArrayList<String>();
+        List<String> sources = new ArrayList<>();
         sources.add("documentsource text");
         ds.setDocumentName("documentName");
         ds.setSources(sources);
@@ -222,7 +214,7 @@ public class PDFPrinterResource extends AsynchronousResource {
 
     private byte[] buildDocument(DocumentSource input)
             throws DocumentException, IOException {
-        List<PdfDocument> pdfs = new ArrayList<PdfDocument>();
+        List<PdfDocument> pdfs = new ArrayList<>();
 
         for (String source : input.getSources()) {
             Document jsoupDoc = Jsoup.parse(source);

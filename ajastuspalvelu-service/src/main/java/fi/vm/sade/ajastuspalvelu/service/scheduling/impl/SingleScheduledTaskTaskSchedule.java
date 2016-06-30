@@ -19,7 +19,6 @@ package fi.vm.sade.ajastuspalvelu.service.scheduling.impl;
 import java.text.ParseException;
 
 import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
 import org.joda.time.LocalDateTime;
 import org.quartz.CronExpression;
 
@@ -35,8 +34,8 @@ import static org.joda.time.DateTime.now;
  * Time: 13:01
  */
 public class SingleScheduledTaskTaskSchedule implements Schedule {
-    private DateTime runtimeForSingle;
-    private String cron;
+    private final DateTime runtimeForSingle;
+    private final String cron;
 
     public SingleScheduledTaskTaskSchedule(DateTime runtimeForSingle) {
         this.runtimeForSingle = runtimeForSingle;

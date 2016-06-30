@@ -37,7 +37,7 @@ public class AsiakasTilaKyselyVastausDto implements Serializable {
     @DtoPath("tilaKoodi.sanomaTunniste")
     private String sanomaTunniste;
     @DtoConversion
-    private List<AsiakasTilaDto> asiakkaat = new ArrayList<AsiakasTilaDto>();
+    private List<AsiakasTilaDto> asiakkaat = new ArrayList<>();
 
     public int getTilaKoodi() {
         return tilaKoodi;

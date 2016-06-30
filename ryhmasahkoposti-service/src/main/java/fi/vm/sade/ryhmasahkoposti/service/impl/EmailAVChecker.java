@@ -88,17 +88,6 @@ public class EmailAVChecker {
         message.setVirusChecked(true);
     }
 
-    public void checkRecipientMessage(EmailSender sender, EmailMessageDTO message, Optional<? extends AttachmentContainer> additionalAttachments)
-            throws Exception {
-        if (!checkAlive()) {
-            log.warning("Antivirus service not alive at: " + hostname + " port " + port);
-            throw new Exception("Cannot check viruses ClamAV service not available");
-        }
-        boolean isInfected = isInfected(sender, message, additionalAttachments);
-        message.setInfected(isInfected);
-        message.setVirusChecked(true);
-    }
-
     /*
      * Checks emailMessageDTO for Viruses
      * 
@@ -115,7 +104,7 @@ public class EmailAVChecker {
     private boolean isInfected(EmailSender sender, EmailMessage message, Optional<? extends AttachmentContainer> additionalAttachments) throws IOException,
             MessagingException {
 
-        MimeMessage msg = sender.createMail(message, "noone@localhost.local", additionalAttachments);
+        MimeMessage msg = sender.createMail(message, "noone@localhost.local", "letterHash", additionalAttachments);
 
         // check attachments separately..
         for (EmailAttachment attachment : message.getAttachments()) {
@@ -172,7 +161,7 @@ public class EmailAVChecker {
      * 
      * @throws MessagingException
      */
-    private boolean isInfected(InputStream data) throws IOException, MessagingException {
+    private boolean isInfected(InputStream data) throws IOException {
 
         String response = getAVResponse(CMD_INSTREAM, data);
         boolean isInfected = !(response != null && response.trim().equals(RESULT_CLEAN));
@@ -221,7 +210,7 @@ public class EmailAVChecker {
                 dos.flush();
             }
 
-            int read = -1;
+            int read;
             responseStream = socket.getInputStream();
             byte[] buffer = new byte[BUFFER_SIZE];
             while (true) {

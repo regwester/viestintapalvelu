@@ -32,7 +32,7 @@ public class Task implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "task",
         cascade = CascadeType.PERSIST)
-    private Set<ScheduledTask> scheduledTasks = new HashSet<ScheduledTask>(0);
+    private Set<ScheduledTask> scheduledTasks = new HashSet<>(0);
 
     public String getTemplateName() {
         return templateName;

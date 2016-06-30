@@ -83,7 +83,7 @@ public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseI
     }
 
     private Map<String, String> provideTicketHeaders(String serviceUrl, String username, String password) {
-        Map<String, String> headers = new HashMap<String, String>();
+        Map<String, String> headers = new HashMap<>();
         String casHeader = CasClient.getTicket(casService + "/v1/tickets", username, password, serviceUrl);
         headers.put(CAS_HEADER, casHeader);
         return headers;
@@ -105,32 +105,16 @@ public class LocalDevModeSecurityTicketInterceptorAdapter extends AbstractPhaseI
         return url.replaceAll("(.*?//.*?/.*?)/.*", "$1") + "/j_spring_cas_security_check";
     }
 
-    public boolean isBasicAuthentication() {
-        return basicAuthentication;
-    }
-
     public void setBasicAuthentication(boolean basicAuthentication) {
         this.basicAuthentication = basicAuthentication;
-    }
-
-    public AbstractPhaseInterceptor<Message> getTarget() {
-        return target;
     }
 
     public void setTarget(AbstractPhaseInterceptor<Message> target) {
         this.target = target;
     }
 
-    public String getAppClientUsername() {
-        return appClientUsername;
-    }
-
     public void setAppClientUsername(String appClientUsername) {
         this.appClientUsername = appClientUsername;
-    }
-
-    public String getAppClientPassword() {
-        return appClientPassword;
     }
 
     public void setAppClientPassword(String appClientPassword) {

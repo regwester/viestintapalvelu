@@ -29,18 +29,22 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.zip.DataFormatException;
-import java.util.zip.Deflater;
-import java.util.zip.Inflater;
 
 import javax.annotation.Resource;
 import javax.ws.rs.NotFoundException;
 
 import com.google.common.base.Supplier;
+import fi.vm.sade.viestintapalvelu.LetterZipUtil;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
+import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
+import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -61,7 +65,7 @@ import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
@@ -95,6 +99,7 @@ import static org.joda.time.DateTime.now;
  */
 @Service
 @Transactional
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterServiceImpl implements LetterService {
     public static final int STORE_DOKUMENTTIS_DAYS = 1;
     private static final int MAX_IPOST_CHUNK_SIZE = 500;
@@ -222,8 +227,8 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB) {
-        Set<UsedTemplate> templates = new HashSet<UsedTemplate>();
-        Set<String> languageCodes = new HashSet<String>();
+        Set<UsedTemplate> templates = new HashSet<>();
+        Set<String> languageCodes = new HashSet<>();
         String templateName = getTemplateNameFromBatch(letterBatch);
         for (LetterDetails letter : letterBatch.getLetters()) {
             languageCodes.add(letter.getLanguageCode());
@@ -260,12 +265,17 @@ public class LetterServiceImpl implements LetterService {
         } else {
             return null;
         }
-
-        // kirjeet.kirjelahetys
         fi.vm.sade.viestintapalvelu.letter.LetterBatch result = new fi.vm.sade.viestintapalvelu.letter.LetterBatch();
+        result.setApplicationPeriod(searchResult.getApplicationPeriod());
+        setCommonLetterBatchFields(searchResult, result);
+        // kirjeet.vastaanottaja
+        // result.setLetters(parseLetterDTOs(searchResult.getLetterReceivers()));
+        return result;
+    }
+
+    private void setCommonLetterBatchFields(LetterBatch searchResult, fi.vm.sade.viestintapalvelu.letter.LetterBatch result) {
         result.setTemplateId(searchResult.getTemplateId());
         result.setTemplateName(searchResult.getTemplateName());
-        result.setApplicationPeriod(searchResult.getApplicationPeriod());
         result.setFetchTarget(searchResult.getFetchTarget());
         result.setLanguageCode(searchResult.getLanguage());
         result.setStoringOid(searchResult.getStoringOid());
@@ -273,12 +283,6 @@ public class LetterServiceImpl implements LetterService {
         result.setTag(searchResult.getTag());
         // kirjeet.lahetyskorvauskentat
         result.setTemplateReplacements(parseReplDTOs(searchResult.getLetterReplacements()));
-
-        // kirjeet.vastaanottaja
-        // result.setLetters(parseLetterDTOs(searchResult.getLetterReceivers()));
-        // Not implemented
-
-        return result;
     }
 
     /* ------------------------------- */
@@ -291,21 +295,10 @@ public class LetterServiceImpl implements LetterService {
 
         LetterBatch letterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(templateName, languageCode, organizationOid, tag, applicationPeriod);
         if (letterBatch != null) {
-
-            // kirjeet.kirjelahetys
-            result.setTemplateId(letterBatch.getTemplateId());
-            result.setTemplateName(letterBatch.getTemplateName());
-            result.setFetchTarget(letterBatch.getFetchTarget());
             result.setApplicationPeriod(letterBatch.getApplicationPeriod());
             result.setTag(letterBatch.getTag());
-            result.setLanguageCode(letterBatch.getLanguage());
-            result.setStoringOid(letterBatch.getStoringOid());
-            result.setOrganizationOid(letterBatch.getOrganizationOid());
-            result.setTag(letterBatch.getTag());
-            // kirjeet.lahetyskorvauskentat
-            result.setTemplateReplacements(parseReplDTOs(letterBatch.getLetterReplacements()));
+            setCommonLetterBatchFields(letterBatch, result);
         }
-
         return result;
     }
 
@@ -316,7 +309,7 @@ public class LetterServiceImpl implements LetterService {
     public List<fi.vm.sade.viestintapalvelu.template.Replacement> findReplacementByNameOrgTag(String templateName, String languageCode, String organizationOid,
             Optional<String> tag, Optional<String> applicationPeriod) {
 
-        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<fi.vm.sade.viestintapalvelu.template.Replacement>();
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = new LinkedList<>();
         LetterBatch letterBatch = null;
         if (!tag.isPresent() && !applicationPeriod.isPresent()) {
             letterBatch = letterBatchDAO.findLetterBatchByNameOrg(templateName, languageCode, organizationOid);
@@ -358,12 +351,8 @@ public class LetterServiceImpl implements LetterService {
 
             if (DOCUMENT_TYPE_APPLICATION_ZIP.equals(lb.getContentType())) {
                 try {
-                    content.setContent(unZip(lb.getLetter()));
-
-                } catch (IOException e) {
-                    content.setContent(lb.getLetter());
-                    content.setContentType(lb.getContentType());
-                } catch (DataFormatException e) {
+                    content.setContent(LetterZipUtil.unZip(lb.getLetter()));
+                } catch (IOException | DataFormatException e) {
                     content.setContent(lb.getLetter());
                     content.setContentType(lb.getContentType());
                 }
@@ -390,7 +379,7 @@ public class LetterServiceImpl implements LetterService {
 
             byte[] content = letter.getLetter();
             if (letter.getContentType().equals(DOCUMENT_TYPE_APPLICATION_ZIP)) {
-                content = unZip(content);
+                content = LetterZipUtil.unZip(content);
             }
             merger.addSource(new ByteArrayInputStream(content));
         }
@@ -420,7 +409,7 @@ public class LetterServiceImpl implements LetterService {
      */
     private Set<LetterReceivers> parseLetterReceiversModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB, ObjectMapper mapper)
             throws JsonProcessingException {
-        Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
+        Set<LetterReceivers> receivers = new HashSet<>();
         for (fi.vm.sade.viestintapalvelu.letter.Letter letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
@@ -430,29 +419,16 @@ public class LetterServiceImpl implements LetterService {
             if (letter.getLetterContent() != null) {
                 LetterReceiverLetter lrl = new LetterReceiverLetter();
                 lrl.setTimestamp(new Date());
-
-                boolean zippaa = true;
-
-                if (zippaa) { // ZIP
-                    try {
-                        lrl.setLetter(zip(letter.getLetterContent().getContent()));
-                        lrl.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP); // application/zip
-                        lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
-
-                    } catch (IOException e) {
-                        lrl.setLetter(letter.getLetterContent().getContent());
-                        lrl.setContentType(letter.getLetterContent().getContentType()); // application/pdf
-                        lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
-                    }
-
-                } else { // Not zipped
+                try {
+                    lrl.setLetter(LetterZipUtil.zip(letter.getLetterContent().getContent()));
+                    lrl.setContentType(DOCUMENT_TYPE_APPLICATION_ZIP); // application/zip
+                    lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
+                } catch (IOException e) {
                     lrl.setLetter(letter.getLetterContent().getContent());
                     lrl.setContentType(letter.getLetterContent().getContentType()); // application/pdf
                     lrl.setOriginalContentType(letter.getLetterContent().getContentType()); // application/pdf
                 }
-
                 lrl.setLetterReceivers(rec);
-
                 rec.setLetterReceiverLetter(lrl);
             }
 
@@ -463,7 +439,7 @@ public class LetterServiceImpl implements LetterService {
 
     private Set<LetterReceivers> parseLetterReceiversModels(AsyncLetterBatchDto letterBatch, LetterBatch letterB, ObjectMapper mapper)
             throws JsonProcessingException {
-        Set<LetterReceivers> receivers = new HashSet<LetterReceivers>();
+        Set<LetterReceivers> receivers = new HashSet<>();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
@@ -475,6 +451,7 @@ public class LetterServiceImpl implements LetterService {
             lrl.setLetterReceivers(rec);
             lrl.setContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
             lrl.setOriginalContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
+            lrl.setReadyForPublish(false);
             rec.setLetterReceiverLetter(lrl);
 
             receivers.add(rec);
@@ -486,7 +463,7 @@ public class LetterServiceImpl implements LetterService {
      * kirjeet.lahetyskorvauskentat
      */
     private Set<LetterReplacement> parseLetterReplacementsModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
-        Set<LetterReplacement> replacements = new HashSet<LetterReplacement>();
+        Set<LetterReplacement> replacements = new HashSet<>();
 
         Object replKeys[] = letterBatch.getTemplateReplacements().keySet().toArray();
         Object replVals[] = letterBatch.getTemplateReplacements().values().toArray();
@@ -507,7 +484,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Map<String, Object> parseReplDTOs(Set<LetterReplacement> letterReplacements) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
 
         for (LetterReplacement letterRepl : letterReplacements) {
             replacements.put(letterRepl.getName(), letterRepl.getDefaultValue());
@@ -517,40 +494,6 @@ public class LetterServiceImpl implements LetterService {
 
     private LetterBatch storeLetterBatch(LetterBatch letterB) {
         return letterBatchDAO.insert(letterB);
-    }
-
-    private static byte[] unZip(byte[] content) throws IOException, DataFormatException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
-
-        Inflater inflater = new Inflater();
-        inflater.setInput(content);
-
-        byte[] buffer = new byte[1024];
-
-        while (!inflater.finished()) {
-            int count = inflater.inflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-
-        outputStream.close();
-        return outputStream.toByteArray();
-    }
-
-    private static byte[] zip(byte[] content) throws IOException {
-        ByteArrayOutputStream outputStream = new ByteArrayOutputStream(content.length);
-
-        Deflater deflater = new Deflater();
-        deflater.setInput(content);
-        deflater.finish();
-
-        byte[] buffer = new byte[1024];
-
-        while (!deflater.finished()) {
-            int count = deflater.deflate(buffer);
-            outputStream.write(buffer, 0, count);
-        }
-        outputStream.close();
-        return outputStream.toByteArray();
     }
 
     @Override
@@ -622,7 +565,7 @@ public class LetterServiceImpl implements LetterService {
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 
-    protected void processIpostiBatchForLetterReceivers(long letterBatchId, List<Long> batchReceiversIds, int index) throws Exception {
+    protected void processIpostiBatchForLetterReceivers(long letterBatchId, List<Long> batchReceiversIds, int index) {
         logger.info("Processing IPosti {} for LetterBatch={} with {} receivers", index, letterBatchId, batchReceiversIds.size());
         LetterBatch batch = letterBatchDAO.read(letterBatchId);
         List<LetterReceiverLetter> receiverLetters = letterReceiverLetterDAO.getLetterReceiverLettersByLetterReceiverIds(batchReceiversIds);
@@ -641,7 +584,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Map<String, Object> formReplacementMap(fi.vm.sade.viestintapalvelu.model.LetterBatch batch, ObjectMapper mapper) throws IOException {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (LetterReplacement repl : batch.getLetterReplacements()) {
             replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
@@ -649,7 +592,7 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private Map<String, Object> formReplacementMap(LetterReceivers receiver, ObjectMapper mapper) throws IOException {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (LetterReceiverReplacement repl : receiver.getLetterReceiverReplacement()) {
             replacements.put(repl.getName(), repl.getEffectiveValue(mapper));
         }
@@ -678,14 +621,22 @@ public class LetterServiceImpl implements LetterService {
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 logger.info("LETTER processing finished for  letter batch {}", id);
-                savePdfDocument(batch);
+                if(!batch.getSkipDokumenttipalvelu() ) {
+                    savePdfDocument(batch);
+                } else {
+                    logger.info("NOT saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+                }
                 newStatus = LetterBatch.Status.ready;
             }
             break;
         case IPOSTI:
             logger.info("IPOSTI processing finished for  letter batch {}", id);
             batch.setIpostHandlingFinished(new Date());
-            saveZipDocument(batch);
+            if(!batch.getSkipDokumenttipalvelu() ) {
+                saveZipDocument(batch);
+            } else {
+                logger.info("NOT saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+            }
             newStatus = LetterBatch.Status.ready;
             break;
         }
@@ -749,7 +700,7 @@ public class LetterServiceImpl implements LetterService {
 
         if (batch == null) {
             batch = new LetterBatchStatusDto(null, null, null, LetterBatch.Status.error, 0);
-            List<LetterBatchStatusErrorDto> errors = new ArrayList<LetterBatchStatusErrorDto>();
+            List<LetterBatchStatusErrorDto> errors = new ArrayList<>();
             LetterBatchStatusErrorDto error = new LetterBatchStatusErrorDto();
             error.setErrorCause("Batch not found for id " + batchId);
             error.setErrorTime(new Date());
@@ -766,7 +717,7 @@ public class LetterServiceImpl implements LetterService {
         // to get hold of the error messages and pass them to the DTO.
         if (LetterBatch.Status.error.equals(batch.getStatus())) {
             LetterBatch actualBatch = fetchById(batchId);
-            List<LetterBatchStatusErrorDto> processingErrors = new ArrayList<LetterBatchStatusErrorDto>();
+            List<LetterBatchStatusErrorDto> processingErrors = new ArrayList<>();
             for (LetterBatchProcessingError error : actualBatch.getProcessingErrors()) {
                 LetterBatchStatusErrorDto errorDto = new LetterBatchStatusErrorDto();
                 errorDto.setErrorCause(error.getErrorCause());
@@ -798,7 +749,6 @@ public class LetterServiceImpl implements LetterService {
     @Transactional
     public LetterBatchSplitedIpostDto splitBatchForIpostProcessing(long letterBatchId) {
         logger.info("splitBatchForIpostProcessing {}", letterBatchId);
-        LetterBatch batch = letterBatchDAO.read(letterBatchId);
 
         LetterBatchSplitedIpostDto job = new LetterBatchSplitedIpostDto();
         List<Long> allReceiverIds = letterReceiversDAO.findLetterRecieverIdsByLetterBatchId(letterBatchId);
@@ -902,7 +852,63 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception {
+    public String getLetterTypeByLetterBatchID(Long letterBatchID) {
         return letterBatchDAO.findTemplateNameForLetterBatch(letterBatchID);
+    }
+
+    @Override
+    public LetterListResponse listLettersByUser(String persoinOid) {
+        LetterListResponse response = new LetterListResponse();
+        if(StringUtils.isNotBlank(persoinOid)) {
+            response.setLetters(letterBatchDAO.findLettersReadyForPublishByPersonOid(persoinOid));
+        }
+        logger.debug("Found " + response.toString() + " for person " + persoinOid + " for publish.");
+        return response;
+    }
+
+    @Override
+    public LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException {
+        LetterReceiverLetterDTO letterReceiverLetterDTO = new LetterReceiverLetterDTO();
+
+        LetterReceiverLetter letterReceiverLetter = letterReceiverLetterDAO.read(id);
+        LetterBatch letterBatch = letterReceiverLetter.getLetterReceivers().getLetterBatch();
+
+        letterReceiverLetterDTO.setContentType(letterReceiverLetter.getOriginalContentType());
+        letterReceiverLetterDTO.setId(letterReceiverLetter.getId());
+
+        if (letterReceiverLetter.getContentType().equalsIgnoreCase("application/zip")) {
+            letterReceiverLetterDTO.setLetter(LetterZipUtil.unZip(letterReceiverLetter.getLetter()));
+        } else {
+            letterReceiverLetterDTO.setLetter(letterReceiverLetter.getLetter());
+        }
+
+        letterReceiverLetterDTO.setTemplateName(letterBatch.getTemplateName());
+
+        return letterReceiverLetterDTO;
+    }
+
+    @Override
+    public int publishLetterBatch(long letterBatchId) {
+        return letterBatchDAO.publishLetterBatch(letterBatchId);
+    }
+
+    @Override
+    public Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language) {
+        return letterBatchDAO.getLetterBatchIdReadyForPublish(hakuOid, type, language);
+    }
+
+    @Override
+    public Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language) {
+        return letterBatchDAO.getLetterBatchIdReadyForEPosti(hakuOid, type, language);
+    }
+
+    public LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language) {
+        LetterBatchCountDto count = letterBatchDAO.countBatchStatus(hakuOid, type, language);
+        return count;
+    }
+
+    @Override
+    public Map<String, String> getEPostiEmailAddresses(long letterBatchId) {
+        return letterBatchDAO.getEPostiEmailAddressesByBatchId(letterBatchId);
     }
 }

@@ -51,7 +51,7 @@ public class AttachmentResponse {
     }
     
     public Map<String, String> toMap() {
-        Map<String, String> result = new HashMap<String, String>();
+        Map<String, String> result = new HashMap<>();
         result.put("uuid", this.uuid);
         result.put("fileName", fileName);
         result.put("contentType", contentType);

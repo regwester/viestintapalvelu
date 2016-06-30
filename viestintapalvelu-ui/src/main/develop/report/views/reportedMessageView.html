@@ -76,21 +76,15 @@
         <div class="span10">{{reportedMessageDTO.messageID}}</div>
     </div>
 
-    <div class="row-fluid" ng-if="reportedMessageDTO.emailRecipients.length > 0">
-        <div class="row-fluid">
-            <div class="span2">
-                {{'reportedmessageview.text.vastaanottajaa' | i18n}}
-            </div>
-            <div class="span8">
-                {{reportedMessageDTO.sendingStatus.numberOfRecipients}}
-            </div>
-            <div class="span2" ng-if="reportedMessageDTO.sendingStatus.numberOfFailedSendings > 0">
-                <a href ng-if="showSendingUnsuccessfulClicked == false" ng-click="showSendingUnsuccessful()">{{'reportedmessageview.text.naytaepaonnistuneet'
-                    | i18n}}</a>
-                <a href ng-if="showSendingUnsuccessfulClicked == true" ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki'
-                    | i18n}}</a>
-            </div>
+    <div class="row-fluid">
+        <div class="span12">
+            <a href ng-click="showAll()">{{'reportedmessageview.text.nayta_kaikki'| i18n}} ({{reportedMessageDTO.sendingStatus.numberOfRecipients}})</a><br/>
+            <a href ng-click="showSendingUnsuccessful()">{{'reportedmessageview.text.naytaepaonnistuneet'| i18n}} ({{reportedMessageDTO.sendingStatus.numberOfFailedSendings}})</a><br/>
+            <a href ng-click="showSendingBounced()">{{'reportedmessageview.text.naytapalautui'| i18n}} ({{reportedMessageDTO.sendingStatus.numberOfBouncedSendings}})</a><br/>
         </div>
+    </div>
+
+    <div class="row-fluid" ng-if="reportedMessageDTO.emailRecipients.length > 0">
         <table class="table table-striped">
             <thead>
             <tr>
@@ -111,11 +105,14 @@
                 <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
                 <td>{{emailRecipient.oid}}</td>
                 <td>{{emailRecipient.email}}</td>
+                <td ng-if="emailRecipient.sendSuccessful === '2'">
+                    {{'reportedmessageview.text.lahetys_vastaanottajalle_palautui' | i18n}}
+                </td>
                 <td ng-if="emailRecipient.sendSuccessful === '1'">
                     {{'reportedmessageview.text.lahetys_vastaanottajalle_onnistui' | i18n}}
                 </td>
                 <td ng-if="emailRecipient.sendSuccessful === '0'">
-                    <img style="margin-right:10px;" src="./assets/img/error-icon28x29.png">
+                    <img style="margin-right:10px;" src="./img/error-icon28x29.png">
                     {{'reportedmessageview.text.lahetys_vastaanottajalle_epaonnistui' | i18n}}
                 </td>
                 <td ng-if="emailRecipient.sendSuccessful === null">

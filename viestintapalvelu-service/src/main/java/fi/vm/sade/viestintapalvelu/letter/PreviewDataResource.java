@@ -38,9 +38,6 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
-/**
- * Created by jonimake on 9.1.2015.
- */
 @Component("PreviewDataResource")
 @Path("preview")
 @PreAuthorize("isAuthenticated()")
@@ -50,10 +47,18 @@ public class PreviewDataResource {
     public static final String testApplicationId = "-1";
     public static final Logger log = LoggerFactory.getLogger(PreviewDataResource.class);
 
+    final private TemplateService templateService;
+    final private PreviewDataService previewDataService;
+
     @Autowired
-    private TemplateService templateService;
-    @Autowired
-    private PreviewDataService previewDataService;
+    public PreviewDataResource(TemplateService templateService, PreviewDataService previewDataService) {
+        this.templateService = templateService;
+        this.previewDataService = previewDataService;
+    }
+public PreviewDataResource() {
+    this.templateService = null;
+    this.previewDataService = null;
+}
 
     @POST
     @Path("letterbatch/pdf")
@@ -63,8 +68,7 @@ public class PreviewDataResource {
     public byte[] dummyBatchPdf(PreviewRequest request) throws IOException, DocumentException {
         try {
             final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getTemplateState());
-            final byte[] previewPdf = previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
-            return previewPdf;
+            return previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());
         } catch (Exception e) {
             log.error("Esikatselu-PDF:n muodostus epäonnistui: {}", request.toString(), e);
             throw e;

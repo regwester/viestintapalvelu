@@ -95,20 +95,20 @@ public class MessageDataResource implements MessageResource {
     }
 
     private List<Receiver> getFailedReceiversForAsiointiTili(final List<AsiointitiliReceiverStatusDto> receiverStatuses, List<Receiver> receivers) {
-       return new ArrayList<Receiver>(Collections2.filter(receivers, new Predicate<Receiver>() {
+       return new ArrayList<>(Collections2.filter(receivers, new Predicate<Receiver>() {
 
-                @Override
-                public boolean apply(final Receiver receiver) {
-                    return Iterables.tryFind(receiverStatuses, new Predicate<AsiointitiliReceiverStatusDto>() {
+           @Override
+           public boolean apply(final Receiver receiver) {
+               return Iterables.tryFind(receiverStatuses, new Predicate<AsiointitiliReceiverStatusDto>() {
 
-                        @Override
-                        public boolean apply(AsiointitiliReceiverStatusDto input) {
-                            return input.getReceiverOid().equals(receiver.oid) && input.getStateCode() != Status.OK.getStatusCode();
-                        }
-                    }).isPresent();
-                }
-                
-            }));
+                   @Override
+                   public boolean apply(AsiointitiliReceiverStatusDto input) {
+                       return input.getReceiverOid().equals(receiver.oid) && input.getStateCode() != Status.OK.getStatusCode();
+                   }
+               }).isPresent();
+           }
+
+       }));
     }
 
     private List<ReceiverStatus> constructMessageResponseReceiverStatusesForEmail(ConvertedMessageWrapper<EmailData> emailWrapper) {

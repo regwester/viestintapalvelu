@@ -22,9 +22,6 @@ import fi.vm.sade.viestintapalvelu.template.Template;
 
 import java.io.IOException;
 
-/**
- * Created by jonimake on 12.1.2015.
- */
 public interface PreviewDataService {
     Letter getLetter(Template template);
 

@@ -15,7 +15,6 @@
  */
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -33,6 +32,9 @@ import com.google.common.base.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Required;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -51,7 +53,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.viestintapalvelu.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.html.Cleaner;
@@ -69,31 +71,25 @@ import fi.vm.sade.viestintapalvelu.template.TemplateService;
 
 @Service
 @Singleton
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterBuilder {
     private final Logger LOG = LoggerFactory.getLogger(LetterBuilder.class);
 
     private DocumentBuilder documentBuilder;
-
-    @Autowired
     private TemplateService templateService;
-
-    @Autowired
-    private LetterService letterService;
-
-    @Autowired
-    private EmailComponent emailComponent;
-
-    @Autowired
     private AttachmentService attachmentService;
-
-    @Autowired
     private ObjectMapperProvider objectMapperProvider;
 
-    @Inject
-    public LetterBuilder(DocumentBuilder documentBuilder) {
+    @Autowired(required = false)
+    public LetterBuilder(DocumentBuilder documentBuilder, TemplateService templateService, AttachmentService attachmentService, ObjectMapperProvider objectMapperProvider) {
         this.documentBuilder = documentBuilder;
+        this.templateService = templateService;
+        this.attachmentService = attachmentService;
+        this.objectMapperProvider = objectMapperProvider;
     }
-
+    public LetterBuilder() {
+    }
+    
     public byte[] printZIP(List<LetterReceiverLetter> receivers, String templateName, String zipName) {
         MergedPdfDocument pdf = getMergedPDFDocument(receivers);
         try {
@@ -123,8 +119,7 @@ public class LetterBuilder {
                 return ipostXml;
             }
         });
-        byte[] zip = documentBuilder.zip(documents);
-        return zip;
+        return documentBuilder.zip(documents);
     }
 
     private MergedPdfDocument getMergedPDFDocument(List<LetterReceiverLetter> receivers) {
@@ -168,7 +163,7 @@ public class LetterBuilder {
     }
 
     public Map<String, Object> getTemplateReplacements(Template template) {
-        Map<String, Object> replacements = new HashMap<String, Object>();
+        Map<String, Object> replacements = new HashMap<>();
         for (Replacement r : template.getReplacements()) {
             replacements.put(r.getName(), r.getDefaultValue());
         }
@@ -176,7 +171,7 @@ public class LetterBuilder {
     }
 
     public byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
-            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws FileNotFoundException, IOException, DocumentException {
+            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         @SuppressWarnings("unchecked")
         Map<String, Object> dataContext = createDataContext(XhtmlCleaner.INSTANCE,
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
@@ -186,7 +181,7 @@ public class LetterBuilder {
 
     public Map<String, Object> createDataContext(Cleaner cleaner,
                      Template template, AddressLabel addressLabel, Map<String, Object>... replacementsList) {
-        Map<String, Object> data = new HashMap<String, Object>();
+        Map<String, Object> data = new HashMap<>();
         for (Map<String, Object> replacements : replacementsList) {
             if (replacements != null) {
                 for(Map.Entry<String, Object> entry : replacements.entrySet()) {
@@ -203,17 +198,10 @@ public class LetterBuilder {
         if (styles == null) {
             styles = "";
         }
-        data.put("letterDate", new SimpleDateFormat("dd.MM.yyyy").format(new Date()));
+        data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
-        // liite specific handling
-        if (data.containsKey("tulokset")) {
-            List<Map<String, Object>> tulokset = (List<Map<String, Object>>) data.get("tulokset");
-            Map<String, Boolean> columns = distinctColumns(tulokset);
-            data.put("tulokset", normalizeColumns(cleaner, columns, tulokset));
-            data.put("columns", columns);
-        }
         if (data.containsKey("muut_hakukohteet")) {
             List<String> muidenHakukohteidenNimet = (List<String>) data.get("muut_hakukohteet");
             data.put("muut_hakukohteet", muidenHakukohteidenNimet);
@@ -255,7 +243,7 @@ public class LetterBuilder {
     }
 
     private Map<String, Boolean> distinctColumns(List<Map<String, Object>> tulokset) {
-        Map<String, Boolean> printedColumns = new HashMap<String, Boolean>();
+        Map<String, Boolean> printedColumns = new HashMap<>();
         if (tulokset == null) {
             return printedColumns;
         }
@@ -271,10 +259,10 @@ public class LetterBuilder {
     }
 
     private Map<String, Object> createIPostDataContext(final List<DocumentMetadata> documentMetadataList) {
-        Map<String, Object> data = new HashMap<String, Object>();
-        List<Map<String, Object>> metadataList = new ArrayList<Map<String, Object>>();
+        Map<String, Object> data = new HashMap<>();
+        List<Map<String, Object>> metadataList = new ArrayList<>();
         for (DocumentMetadata documentMetadata : documentMetadataList) {
-            Map<String, Object> metadata = new HashMap<String, Object>();
+            Map<String, Object> metadata = new HashMap<>();
             metadata.put("startPage", documentMetadata.getStartPage());
             metadata.put("pages", documentMetadata.getPages());
             metadata.put("addressLabel", new XmlAddressLabelDecorator(documentMetadata.getAddressLabel()));
@@ -341,7 +329,7 @@ public class LetterBuilder {
     }
 
     public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
-        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        Map<String, Object> templReplacements = new HashMap<>();
         for (LetterReceiverReplacement replacement : replacements) {
             templReplacements.put(replacement.getName(), replacement.getEffectiveValue(mapper));
         }
@@ -349,7 +337,7 @@ public class LetterBuilder {
     }
 
     public static Map<String, Object> formReplacementMap(List<Replacement> replacements) {
-        Map<String, Object> templReplacements = new HashMap<String, Object>();
+        Map<String, Object> templReplacements = new HashMap<>();
         for (Replacement templRepl : replacements) {
             templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
         }

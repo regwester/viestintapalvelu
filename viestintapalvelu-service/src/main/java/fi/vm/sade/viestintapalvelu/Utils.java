@@ -70,8 +70,7 @@ public final class Utils {
     }
 
     public static String filenamePrefixWithUsernameAndTimestamp(String filename) {
-        return new StringBuilder().append(getAuthenticatedUserName()).append(".").append(THREAD_SAFE_DATE_FORMATTER.format(new Date())).append(".")
-                .append(filename).toString();
+        return getAuthenticatedUserName() + "." + THREAD_SAFE_DATE_FORMATTER.format(new Date()) + "." + filename;
     }
 
     public static String getResource(String relativePath) {

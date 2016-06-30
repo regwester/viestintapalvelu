@@ -52,4 +52,7 @@ public interface LetterBatchDetails {
     Map<String, byte[]> getIPostiData();
 
     void setTemplateId(Long id);
+
+    boolean isSkipDokumenttipalvelu();
+
 }

@@ -29,8 +29,11 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.converter.PagingAndSortingDTOConverter;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
@@ -46,10 +49,8 @@ import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.convert.PagingAndSortingDTOConverter;
 import fi.vm.sade.viestintapalvelu.download.DownloadCache;
 import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
@@ -63,6 +64,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
  *
  */
 @Component("LetterReportResource")
+@ComponentScan(value = { "fi.vm.sade.converter" })
 @PreAuthorize("isAuthenticated()")
 @Path(Urls.REPORTING_PATH)
 @Api(value = "/reporting", description = "Kirjel&auml;hetysten raportointi")
@@ -81,7 +83,7 @@ public class LetterReportResource extends AsynchronousResource {
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
     private LoadingCache<String, List<OrganizationDTO>> currentUserOrganisaatiosCache = CacheBuilder.newBuilder().maximumSize(100)
-            .expireAfterAccess(3l, TimeUnit.MINUTES).build(new CacheLoader<String, List<OrganizationDTO>>() {
+            .expireAfterAccess(3L, TimeUnit.MINUTES).build(new CacheLoader<String, List<OrganizationDTO>>() {
                 public List<OrganizationDTO> load(String oid) throws Exception {
                     return letterReportService.getUserOrganizations();
                 }
@@ -121,14 +123,7 @@ public class LetterReportResource extends AsynchronousResource {
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(organizationOid, pagingAndSorting);
 
-        letterBatchesReport.setOrganizations(organizations);
-        for (int i = 0; i < organizations.size(); i++) {
-            OrganizationDTO organization = organizations.get(i);
-            if (organization.getOid().equals(organizationOid)) {
-                letterBatchesReport.setSelectedOrganization(i);
-                break;
-            }
-        }
+        setOrganizations(organizationOid, organizations, letterBatchesReport);
 
         return Response.ok(letterBatchesReport).build();
     }
@@ -181,26 +176,14 @@ public class LetterReportResource extends AsynchronousResource {
     public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @QueryParam(Constants.PARAM_ID) Long id,
             @Context HttpServletRequest request, @Context HttpServletResponse response) {
         try {
-            LetterReceiverLetterDTO letterReceiverLetter = letterReportService.getLetterReceiverLetter(id);
+            LetterReceiverLetterDTO letterReceiverLetter = letterService.getLetterReceiverLetter(id);
             byte[] letterContents = letterReceiverLetter.getLetter();
-            return downloadPdfResponse(letterReceiverLetter.getTemplateName() + determineExtension(letterReceiverLetter.getContentType()), response,
+            return LetterDownloadHelper.downloadPdfResponse(letterReceiverLetter.getTemplateName() +
+                            LetterDownloadHelper.determineExtension(letterReceiverLetter.getContentType()), response,
                     letterContents);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
-    }
-
-    private String determineExtension(String contentType) {
-        if (contentType == null) {
-            return "";
-        }
-        if (contentType.endsWith("/zip")) {
-            return ".zip";
-        }
-        if (contentType.endsWith("/pdf")) {
-            return ".pdf";
-        }
-        return "";
     }
 
     /**
@@ -223,7 +206,7 @@ public class LetterReportResource extends AsynchronousResource {
         try {
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
             String type = letterService.getLetterTypeByLetterBatchID(id);
-            return downloadPdfResponse(type + ".pdf", response, letterContents);
+            return LetterDownloadHelper.downloadPdfResponse(type + ".pdf", response, letterContents);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
@@ -281,6 +264,12 @@ public class LetterReportResource extends AsynchronousResource {
 
         LetterBatchesReportDTO letterBatchesReport = letterReportService.getLetterBatchesReport(query, pagingAndSorting);
 
+        setOrganizations(organizationOid, organizations, letterBatchesReport);
+
+        return Response.ok(letterBatchesReport).build();
+    }
+
+    private void setOrganizations(@ApiParam(value = "Organisaation oid-tunnus", required = false) @QueryParam(Constants.PARAM_ORGANIZATION_OID) String organizationOid, List<OrganizationDTO> organizations, LetterBatchesReportDTO letterBatchesReport) {
         letterBatchesReport.setOrganizations(organizations);
         for (int i = 0; i < organizations.size(); i++) {
             OrganizationDTO organization = organizations.get(i);
@@ -289,8 +278,6 @@ public class LetterReportResource extends AsynchronousResource {
                 break;
             }
         }
-
-        return Response.ok(letterBatchesReport).build();
     }
 
     private String getLoggedInUserOid() {
@@ -307,13 +294,4 @@ public class LetterReportResource extends AsynchronousResource {
         }
         return allowedOrganizations.get(0).getOid();
     }
-
-    private Response downloadPdfResponse(String filename, HttpServletResponse response, byte[] data) {
-        response.setHeader("Content-Type", "application/pdf");
-        response.setHeader("Content-Disposition", "attachment; filename=\"" + filename + ".pdf\"");
-        response.setHeader("Content-Length", String.valueOf(data.length));
-        response.setHeader("Cache-Control", "private");
-        return Response.ok(data).type("application/pdf").build();
-    }
-
 }

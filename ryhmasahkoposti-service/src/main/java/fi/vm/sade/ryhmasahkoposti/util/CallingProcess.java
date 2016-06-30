@@ -24,7 +24,7 @@ public enum CallingProcess {
     
     private String name;
     
-    private CallingProcess(String name) {
+    CallingProcess(String name) {
        this.name = name;
     }
     public String toString() {

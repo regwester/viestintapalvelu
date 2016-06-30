@@ -15,10 +15,6 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.api.dto;
 
-/**
- * Created by jonimake on 21.11.2014.
- */
-
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_EMPTY)

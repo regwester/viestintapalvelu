@@ -20,6 +20,7 @@ import java.io.InputStream;
 import javax.annotation.Resource;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -29,7 +30,6 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 import fi.vm.sade.viestintapalvelu.email.EmailBuilder;
 import fi.vm.sade.viestintapalvelu.email.EmailSourceData;
-import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource;
 
 @Component
@@ -70,7 +70,6 @@ public class EmailComponent {
     }
 
     private boolean checkResponse(Response response) {
-        // if response is ok..
         LOGGER.debug("Got email response: " + response.toString() + " " + response.getStatus());
         return true;
     }

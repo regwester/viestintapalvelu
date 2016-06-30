@@ -15,18 +15,18 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao;
 
-import java.util.List;
-
 import com.google.common.base.Optional;
-
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.generic.dao.JpaDAO;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 
-;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Rajapinta kirjelähetysten tietokantakäsittelyä varten
@@ -161,4 +161,16 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
      */
 
     String findTemplateNameForLetterBatch(long batchId);
+
+    List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid);
+
+    int publishLetterBatch(long batchId);
+
+    Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
+
+    Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language);
+
+    LetterBatchCountDto countBatchStatus(String hakuOid, String type, String language);
+
+    Map<String, String> getEPostiEmailAddressesByBatchId(long letterBatchId);
 }

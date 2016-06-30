@@ -16,10 +16,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-import java.util.LinkedHashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.inject.Named;
 import javax.mail.internet.MimeMessage;
@@ -101,7 +98,7 @@ public class EmailServiceImpl implements EmailService {
         @Override
         protected boolean removeEldestEntry(Map.Entry<Long, EmailMessageDTO> eldest) {
             return size() > MAX_CACHE_ENTRIES;
-        };
+        }
     };
 
     @Override
@@ -123,7 +120,7 @@ public class EmailServiceImpl implements EmailService {
         templateBuilder.applyTemplate(emailMessage);
 
         MimeMessage message = emailSender.createMail(emailMessage, emailAddress,
-                optionalEmailRecipientAttachments(emailMessage.getRecipient()));
+                "hashNotUsedInPreview", optionalEmailRecipientAttachments(emailMessage.getRecipient()));
         message.writeTo(baos);
         return new String(baos.toByteArray());
     }
@@ -181,12 +178,14 @@ public class EmailServiceImpl implements EmailService {
         EmailQueueHandleDto queue = reserveQueue();
         if (queue != null) {
             log.info("Handling EmailQueue={}. Sending emails using: {}", queue.getId(), emailSender);
+            final List<EmailRecipientDTO> recipients = queue.getRecipients();
             int sent = 0,
                 errors = 0,
-                queueSize = queue.getRecipients().size();
+                queueSize = recipients.size();
             EmailSendQueState state = new EmailSendQueState();
 
-            for (EmailRecipientDTO emailRecipient : queue.getRecipients()) {
+            log.info("EmailQueue={} started at {}, has {} recipients waiting for handling.", queue.getId(), new Date(), queueSize);
+            for (EmailRecipientDTO emailRecipient : recipients) {
                 long recipientStart = System.currentTimeMillis();
 
                 if (!emailQueueService.continueQueueHandling(queue)) {
@@ -254,9 +253,9 @@ public class EmailServiceImpl implements EmailService {
     private void cleanupEmailSendQueueAfterHandled(EmailSendQueState state) {
         // We don't want to store beans nor expect them to implement hashCode/equals, but each have an unique class:
         Map<Class<? extends EmailAttachmentDownloader>, EmailAttachmentDownloader> downloaders
-                = new HashMap<Class<? extends EmailAttachmentDownloader>, EmailAttachmentDownloader>();
+                = new HashMap<>();
         Map<Class<? extends EmailAttachmentDownloader>, List<String>> urisByDownloaders
-                = new HashMap<Class<? extends EmailAttachmentDownloader>, List<String>>();
+                = new HashMap<>();
         for (String uri : state.getDownloadedAttachmentUris()) {
             EmailAttachmentDownloader downloader = downloaderForUri(uri);
             if (addToMappedList(urisByDownloaders, downloader.getClass(), uri)) {
@@ -281,7 +280,7 @@ public class EmailServiceImpl implements EmailService {
      * if message contains recipient specific attachments. If virus check fails will lead to failure
      * and the message not being send.
      *
-     * For email sending, calls {@link fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender#handleMail(fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage, String, com.google.common.base.Optional)}
+     * For email sending, calls {@link EmailSender#handleMail(EmailMessage, String, String, Optional)}
      *
      * @param emailRecipient the recipient to send email to (NOTE: same queue may contain recipients for different emails)
      * @param emailSendQueState state of the send queue
@@ -289,11 +288,11 @@ public class EmailServiceImpl implements EmailService {
      */
     private boolean handleRecipient(EmailRecipientDTO emailRecipient, EmailSendQueState emailSendQueState) {
         long vStart = System.currentTimeMillis();
-        log.info("Handling " + emailRecipient + " " + emailRecipient.getRecipientID());
+        final String s = emailRecipient + ",id=" + emailRecipient.getRecipientID() + ",hash=" + emailRecipient.getLetterHash();
+        log.info("Handling recipient " + s);
         boolean success = false;
         if (rrService.startSending(emailRecipient)) {
-            log.info("Handling really " + emailRecipient + " " + emailRecipient.getRecipientID());
-
+            log.info("Started sending for recipient " + s);
             try {
                 // loads remote attachments if available 
                 loadReferencedAttachments(emailRecipient, emailSendQueState);
@@ -303,7 +302,7 @@ public class EmailServiceImpl implements EmailService {
                 
                 if (virusCheckPassed(message)) {
                     templateBuilder.applyTemplate(message);
-                    emailSender.handleMail(message, emailRecipient.getEmail(), optionalEmailRecipientAttachments(emailRecipient));
+                    emailSender.handleMail(message, emailRecipient.getEmail(), emailRecipient.getLetterHash(), optionalEmailRecipientAttachments(emailRecipient));
                 } else {
                     throw new Exception("Virus check problem. File infected: " + message.isInfected());
                 }
@@ -317,7 +316,7 @@ public class EmailServiceImpl implements EmailService {
             }
         }
         long took = System.currentTimeMillis() - vStart;
-        log.info("Message handling took " + took);
+        log.info("Message handling took {} for recipient {}", took, s);
         return success;
     }
 

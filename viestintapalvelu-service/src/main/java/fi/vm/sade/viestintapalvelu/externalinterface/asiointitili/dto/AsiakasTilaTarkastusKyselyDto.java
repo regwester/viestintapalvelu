@@ -37,7 +37,7 @@ public class AsiakasTilaTarkastusKyselyDto implements Serializable {
 
     @DtoConversion
     @Size(min=1) @Valid
-    private List<AsiakasDto> asiakkaat = new ArrayList<AsiakasDto>();
+    private List<AsiakasDto> asiakkaat = new ArrayList<>();
 
     public List<AsiakasDto> getAsiakkaat() {
         return asiakkaat;

@@ -42,13 +42,13 @@ public class CollectionHelper {
      * @return a list of chunks
      */
     public static<T,C extends Collection<? extends T>> List<List<T>> split(C c, int chunkSize) {
-        List<List<T>> ready = new ArrayList<List<T>>();
-        List<T> current = new ArrayList<T>();
+        List<List<T>> ready = new ArrayList<>();
+        List<T> current = new ArrayList<>();
         if (c != null) {
             for (T e : c) {
                 if (current.size() >= chunkSize) {
                     ready.add(current);
-                    current = new ArrayList<T>();
+                    current = new ArrayList<>();
                 }
                 current.add(e);
             }
@@ -69,11 +69,11 @@ public class CollectionHelper {
     };
 
     public static<T extends BaseEntity> List<Long> extractIds(Collection<T> entities) {
-        return new ArrayList<Long>(Collections2.transform(entities, ENTITY_ID));
+        return new ArrayList<>(Collections2.transform(entities, ENTITY_ID));
     }
 
     public static<By, T> Map<By, T> map(Collection<T> entries, Function<? super T,By> function) {
-        Map<By, T> map = new HashMap<By, T>();
+        Map<By, T> map = new HashMap<>();
         for (T entry : entries) {
             map.put(function.apply(entry), entry);
         }
@@ -84,7 +84,7 @@ public class CollectionHelper {
         List<V> values = map.get(key);
         boolean newKey = values == null;
         if (newKey) {
-            values = new ArrayList<V>();
+            values = new ArrayList<>();
             map.put(key, values);
         }
         values.add(value);
@@ -93,7 +93,7 @@ public class CollectionHelper {
 
     public static<CommonKey,KeyType,ValueType> Map<KeyType,ValueType> combine(Map<CommonKey,KeyType> keys,
                                                                               Map<CommonKey,ValueType> values) {
-        Map<KeyType,ValueType> map = new HashMap<KeyType, ValueType>();
+        Map<KeyType,ValueType> map = new HashMap<>();
         for (Map.Entry<CommonKey,ValueType> value : values.entrySet()) {
             KeyType key = keys.get(value.getKey());
             if (key != null) {

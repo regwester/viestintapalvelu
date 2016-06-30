@@ -15,16 +15,22 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.IOException;
 import java.util.List;
+import java.util.zip.DataFormatException;
 
 import com.google.common.base.Optional;
 
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
+import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import java.util.Map;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -33,10 +39,10 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
  *
  */
 public interface LetterService {
-    public static final String DOKUMENTTI_ID_PREFIX_PDF = "VIES-1-";
-    public static final String DOKUMENTTI_ID_PREFIX_ZIP = "VIES-2-";
+    String DOKUMENTTI_ID_PREFIX_PDF = "VIES-1-";
+    String DOKUMENTTI_ID_PREFIX_ZIP = "VIES-2-";
 
-    public enum LetterBatchProcess {
+    enum LetterBatchProcess {
         EMAIL, LETTER, IPOSTI
     }
 
@@ -121,7 +127,7 @@ public interface LetterService {
      */
     byte[] getLetterContentsByLetterBatchID(Long letterBatchID) throws Exception;
 
-    String getLetterTypeByLetterBatchID(Long letterBatchID) throws Exception;
+    String getLetterTypeByLetterBatchID(Long letterBatchID);
 
     void updateBatchProcessingStarted(long id, LetterBatchProcess process);
 
@@ -164,4 +170,26 @@ public interface LetterService {
      */
     void errorProcessingBatch(long letterBatchId, Exception e);
 
+    LetterListResponse listLettersByUser(String persoinOid);
+
+    /**
+     * Hakee vastaanottajan kirjeen sisällön
+     *
+     * @param id
+     *            Vastaanottajan kirjeen sisällön ID
+     * @return Vastaanottajan kirjeen tiedot
+     * @throws DataFormatException
+     * @throws IOException
+     */
+    LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
+
+    int publishLetterBatch(long letterBatchId);
+
+    Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
+
+    Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language);
+
+    LetterBatchCountDto countLetterStatuses(String hakuOid, String type, String language);
+
+    Map<String, String> getEPostiEmailAddresses(long letterBatchId);
 }

@@ -37,8 +37,6 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.common.util.BeanValidator;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliAsyncResponseDto;
 import fi.vm.sade.viestintapalvelu.asiontitili.api.dto.AsiointitiliSendBatchDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.AsiointitiliCommunicationService;
-import fi.vm.sade.viestintapalvelu.externalinterface.asiointitili.dto.*;
 
 /**
  * User: ratamaa

@@ -24,6 +24,7 @@ public class EmailRecipientDTO extends EmailRecipient {
     private String organizationName;
     private String sendSuccessful;
     private String timestamp;
+    private String letterHash;
     
     public Long getRecipientID() {
         return recipientID;
@@ -86,5 +87,13 @@ public class EmailRecipientDTO extends EmailRecipient {
 
     public void setTimestamp(String timestamp) {
         this.timestamp = timestamp;
+    }
+
+    public String getLetterHash() {
+        return letterHash;
+    }
+
+    public void setLetterHash(String letterHash) {
+        this.letterHash = letterHash;
     }
 }

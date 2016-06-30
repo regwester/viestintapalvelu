@@ -25,8 +25,8 @@ import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.viestintapalvelu.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource;
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**
  * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service

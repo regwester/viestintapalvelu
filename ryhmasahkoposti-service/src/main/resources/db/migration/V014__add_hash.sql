@@ -1,0 +1,1 @@
+ALTER TABLE raportoitavavastaanottaja ADD COLUMN letter_hash CHARACTER VARYING(32);

@@ -18,6 +18,7 @@ package fi.vm.sade.ryhmasahkoposti.service;
 import java.io.IOException;
 import java.util.*;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.apache.commons.fileupload.FileItem;
 import org.junit.Before;
 import org.junit.Test;
@@ -298,6 +299,7 @@ public class GroupEmailReportingServiceTest {
         assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
         assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
         assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(5)));
+        assertTrue(sendingStatus.getNumberOfBouncedSendings().equals(new Long(6)));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
         assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
         assertNull(sendingStatus.getSendingEnded());

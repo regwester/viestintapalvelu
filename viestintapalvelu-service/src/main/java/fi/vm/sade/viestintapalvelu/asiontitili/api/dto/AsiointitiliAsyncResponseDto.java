@@ -31,7 +31,7 @@ public class AsiointitiliAsyncResponseDto implements Serializable {
     private int statusCode;
     private String description;
     private String messageId;
-    private List<AsiointitiliReceiverStatusDto> receiverStatuses = new ArrayList<AsiointitiliReceiverStatusDto>();
+    private List<AsiointitiliReceiverStatusDto> receiverStatuses = new ArrayList<>();
 
     public String getId() {
         return id;

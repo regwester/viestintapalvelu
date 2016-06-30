@@ -16,7 +16,7 @@
 
 package fi.vm.sade.viestintapalvelu.common.util;
 
-import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,10 +38,10 @@ public class OptionalHelper {
     public static<T> Supplier<T> notFound(final String message) throws NotFoundException {
         return new Supplier<T>() {
             public T get() {
-                Map<String,Object> result = new HashMap<String, Object>();
+                Map<String,Object> result = new HashMap<>();
                 result.put("status", Response.Status.NOT_FOUND.getStatusCode());
                 result.put("description", message);
-                result.put("errors", Arrays.asList(message));
+                result.put("errors", Collections.singletonList(message));
                 Response response = Response.status(Response.Status.NOT_FOUND)
                         .entity(result).build();
                 throw new NotFoundException(message, response);
@@ -53,15 +53,6 @@ public class OptionalHelper {
         return new Supplier<T>() {
             public T get() {
                 throw new IllegalStateException(message);
-            }
-        };
-    }
-
-    public static<T, E extends RuntimeException> Supplier<T> doThrow(final E e) throws E {
-        return new Supplier<T>() {
-            @Override
-            public T get() {
-                throw e;
             }
         };
     }

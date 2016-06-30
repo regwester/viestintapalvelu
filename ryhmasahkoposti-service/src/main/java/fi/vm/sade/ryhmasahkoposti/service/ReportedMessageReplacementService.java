@@ -34,7 +34,7 @@ public interface ReportedMessageReplacementService {
      * @param reportedMessageReplacements
      * @return
      */
-    public List<ReportedMessageReplacement> saveReportedMessageReplacements(List<ReportedMessageReplacement> reportedMessageReplacements);
+    List<ReportedMessageReplacement> saveReportedMessageReplacements(List<ReportedMessageReplacement> reportedMessageReplacements);
 
     /**
      * Save message replacement
@@ -42,7 +42,7 @@ public interface ReportedMessageReplacementService {
      * @param reportedMessageReplacement
      * @return
      */
-    public ReportedMessageReplacement saveReportedMessageReplacement(ReportedMessageReplacement reportedMessageReplacement);
+    ReportedMessageReplacement saveReportedMessageReplacement(ReportedMessageReplacement reportedMessageReplacement);
 
     /**
      * Get reported message replacements
@@ -50,6 +50,6 @@ public interface ReportedMessageReplacementService {
      * @param message
      * @return
      */
-    public List<ReportedMessageReplacement> getReportedMessageReplacements(ReportedMessage message);
+    List<ReportedMessageReplacement> getReportedMessageReplacements(ReportedMessage message);
 
 }

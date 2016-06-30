@@ -20,13 +20,14 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Component;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
 
@@ -37,6 +38,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipientReplacement;
  *
  */
 @Component
+@ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class ReportedRecipientReplacementConverter {
 
     @Autowired
@@ -54,7 +56,7 @@ public class ReportedRecipientReplacementConverter {
                                                       List<ReportedRecipientReplacementDTO> replacements)
             throws IOException {
 
-        List<ReportedRecipientReplacement> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacement>();
+        List<ReportedRecipientReplacement> reportedRecipientReplacements = new ArrayList<>();
 
         ObjectMapper mapper = objectMapperProvider.getContext(ReportedRecipientReplacementConverter.class);
 
@@ -89,7 +91,7 @@ public class ReportedRecipientReplacementConverter {
      */
     public List<ReportedRecipientReplacementDTO> convertDTO(List<ReportedRecipientReplacement> replacements)
             throws IOException {
-        List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<ReportedRecipientReplacementDTO>();
+        List<ReportedRecipientReplacementDTO> reportedRecipientReplacements = new ArrayList<>();
 
         ObjectMapper mapper = objectMapperProvider.getContext(ReportedRecipientReplacementConverter.class);
 

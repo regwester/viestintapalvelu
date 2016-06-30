@@ -17,17 +17,16 @@ package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import java.util.List;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
-import com.mysema.query.types.path.PathBuilder;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverAddressDAO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverAddress;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverAddress;
 
@@ -50,20 +49,6 @@ public class LetterReceiverAddressDAOImpl extends AbstractJpaDAOImpl<LetterRecei
     }
 
     protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting) {
-        PathBuilder<LetterReceiverAddress> pb = new PathBuilder<LetterReceiverAddress>(LetterReceiverAddress.class, "letterReceiverAddress");
-
-        if (pagingAndSorting.getSortedBy() != null && !pagingAndSorting.getSortedBy().isEmpty()) {
-            if (pagingAndSorting.getSortOrder() == null || pagingAndSorting.getSortOrder().isEmpty()) {
-                return pb.getString(pagingAndSorting.getSortedBy()).asc();
-            }
-
-            if (pagingAndSorting.getSortOrder().equalsIgnoreCase("asc")) {
-                return pb.getString(pagingAndSorting.getSortedBy()).asc();
-            }
-
-            return pb.getString(pagingAndSorting.getSortedBy()).desc();
-        }
-
-        return pb.getString("lastName").asc();
+        return LetterReceiverUtil.orderBy(pagingAndSorting);
     }
 }

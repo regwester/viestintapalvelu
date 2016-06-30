@@ -36,10 +36,11 @@ public class EmailMessage implements AttachmentContainer {
     private String organizationOid;
     private String subject;
     private String body;
+
     private boolean isHtml = false;
     private String charset = EmailConstants.UTF8;
-    private List<EmailAttachment> attachments = new LinkedList<EmailAttachment>();
-    private List<AttachmentResponse> attachInfo = new LinkedList<AttachmentResponse>();
+    private List<EmailAttachment> attachments = new LinkedList<>();
+    private List<AttachmentResponse> attachInfo = new LinkedList<>();
     private boolean isValid = true;
     private String templateName;
     private String templateId;
@@ -60,10 +61,7 @@ public class EmailMessage implements AttachmentContainer {
 
     public EmailMessage(String callingProcess, String from, String replyTo, String subject, String templateName, 
         String languageCode, List<SourceRegister> sourceRegister) {
-        this.callingProcess = callingProcess;
-        this.from = from;
-        this.replyTo = replyTo;
-        this.subject = subject;
+        this(callingProcess, from, replyTo, subject, "");
         this.templateName = templateName;
         this.languageCode = languageCode;
         this.sourceRegister = sourceRegister;
@@ -147,7 +145,7 @@ public class EmailMessage implements AttachmentContainer {
 
     public void addEmailAttachement(EmailAttachment attachment) {
         if (this.attachments == null) {
-            this.attachments = new ArrayList<EmailAttachment>();
+            this.attachments = new ArrayList<>();
         }
         this.attachments.add(attachment);
     }
@@ -164,7 +162,7 @@ public class EmailMessage implements AttachmentContainer {
     @Override
     public void addAttachInfo(AttachmentResponse attachInfo) {
         if (this.attachInfo == null) {
-            this.attachInfo = new LinkedList<AttachmentResponse>();
+            this.attachInfo = new LinkedList<>();
         }
         this.attachInfo.add(attachInfo);
     }
@@ -250,5 +248,4 @@ public class EmailMessage implements AttachmentContainer {
                 + ", attachments=" + attachments + ", attachInfo=" + attachInfo + ", isValid=" + isValid + ", templateName=" + templateName + ", templateId="
                 + templateId + ", languageCode=" + languageCode + ", sourceRegister=" + sourceRegister + ", hakuOid=" + hakuOid + "]";
     }
-
 }

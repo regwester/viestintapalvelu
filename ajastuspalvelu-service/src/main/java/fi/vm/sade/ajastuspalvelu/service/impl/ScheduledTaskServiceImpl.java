@@ -70,7 +70,7 @@ public class ScheduledTaskServiceImpl implements ScheduledTaskService {
     @Transactional(readOnly = true)
     public List<ScheduledTaskListDto> list(ScheduledTaskCriteriaDto criteriaDto) {
         List<ScheduledTask> tasks = dao.find(criteriaDto);
-        List<ScheduledTaskListDto> dtos = new ArrayList<ScheduledTaskListDto>();
+        List<ScheduledTaskListDto> dtos = new ArrayList<>();
         for (ScheduledTask scheduledTask : tasks) {
             dtos.add(scheduledTaskConverter.convert(scheduledTask));
         }

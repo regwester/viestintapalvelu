@@ -15,7 +15,6 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.Arrays;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
@@ -66,9 +65,18 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
     @Autowired
     protected DokumenttiIdProvider dokumenttiIdProvider;
 
+    protected Response listByPerson(String personOid) {
+        return Response.ok(letterService.listLettersByUser(personOid)).build();
+    }
+
+    protected Response countLetterStatuses(String hakuOid, String type, String language) {
+        return Response.ok(letterService.countLetterStatuses(hakuOid,type,language)).build();
+    }
+
     protected Response createAsyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true) final AsyncLetterBatchDto input,
             boolean anonymousRequest) {
 
+        LOG.info("New letter batch received. Starting validation.");
         LetterResponse response = new LetterResponse();
         try {
             Map<String, String> errors = LetterBatchValidator.validate(input);
@@ -79,22 +87,24 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
                 return Response.ok(response).build();
             }
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Validation error: {} {}", e.getMessage(), Arrays.toString(e.getStackTrace()));
+            LOG.error("Validation error.", e);
             return Response.status(Status.BAD_REQUEST).build();
         }
 
         try {
+            LOG.info("Letter batch is valid. Starting to fetch template. {}", input.toStringForLogging());
             letterBuilder.initTemplateId(input);
+            LOG.info("Fetching template is ready. Saving letter batch for further processing. {}", input.toStringForLogging());
             fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input, anonymousRequest);
+            LOG.info("Letter batch is saved with batchID={}. Scheduling async processing for it. {}", letter.getId(), input.toStringForLogging());
             Long id = letter.getId();
             letterPDFProcessor.processLetterBatch(id);
+            LOG.info("Letter batch with batchID={} is scheduled.", letter.getId());
             response.setStatus(LetterResponse.STATUS_SUCCESS);
             response.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
             return Response.ok(response).build();
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("Letter async failed {}", e);
+            LOG.error("Letter async failed. " + input.toStringForLogging(), e);
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -128,5 +138,9 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
         } else {
             return dokumenttiIdProvider.generateDocumentIdForLetterBatchId(id, LetterService.DOKUMENTTI_ID_PREFIX_PDF);
         }
+    }
+
+    protected boolean isLetterBatchStatusReady(LetterBatchStatusDto status) {
+        return fi.vm.sade.viestintapalvelu.model.LetterBatch.Status.ready.equals(status.getStatus());
     }
 }

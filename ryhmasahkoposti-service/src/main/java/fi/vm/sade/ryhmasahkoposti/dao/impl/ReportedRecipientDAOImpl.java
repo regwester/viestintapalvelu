@@ -21,6 +21,7 @@ import java.util.List;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
+import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -29,7 +30,7 @@ import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.ryhmasahkoposti.api.dto.PagingAndSortingDTO;
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
@@ -41,32 +42,43 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
 
     @Override
     public List<ReportedRecipient> findByMessageId(Long messageID, PagingAndSortingDTO pagingAndSorting) {
-
         BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-
-        JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(pagingAndSorting.getNumberOfRows())
-                .offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
-
-        return findByMessageIdQuery.list(reportedRecipient);
+        return findWithPagingAndWhere(pagingAndSorting, whereExpression);
     }
 
     @Override
     public List<ReportedRecipient> findByMessageIdAndSendingUnsuccessful(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        return getByRecipientsStatus(messageID, pagingAndSorting, GroupEmailConstants.SENDING_FAILED);
+    }
 
+    @Override
+    public List<ReportedRecipient> findByMessageIdAndSendingBounced(Long messageID, PagingAndSortingDTO pagingAndSorting) {
+        return getByRecipientsStatus(messageID, pagingAndSorting, GroupEmailConstants.SENDING_BOUNCED);
+    }
+
+    private List<ReportedRecipient> getByRecipientsStatus(Long messageID, PagingAndSortingDTO pagingAndSorting, String status) {
         BooleanExpression whereExpression = reportedRecipient.reportedMessage.id.eq(messageID);
-        whereExpression = whereExpression.and(reportedRecipient.sendingSuccessful.eq("0"));
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
+        whereExpression = whereExpression.and(reportedRecipient.sendingSuccessful.eq(status));
+        return findWithPagingAndWhere(pagingAndSorting, whereExpression);
+    }
 
+    private List<ReportedRecipient> findWithPagingAndWhere(PagingAndSortingDTO pagingAndSorting, BooleanExpression whereExpression) {
+        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
         JPAQuery findByMessageIdQuery = from(reportedRecipient).where(whereExpression).limit(pagingAndSorting.getNumberOfRows())
                 .offset(pagingAndSorting.getFromIndex()).orderBy(orderBy);
-
         return findByMessageIdQuery.list(reportedRecipient);
     }
 
     @Override
     public ReportedRecipient findByRecipientID(Long recipientID) {
         return read(recipientID);
+    }
+
+    @Override
+    public List<ReportedRecipient> findByLetterHash(String letterHash) {
+        BooleanExpression whereExpression = reportedRecipient.letterHash.eq(letterHash);
+        JPAQuery findByLetterHashQuery = from(reportedRecipient).where(whereExpression);
+        return findByLetterHashQuery.list(reportedRecipient);
     }
 
     @Override
@@ -92,20 +104,14 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
     }
 
     @Override
-    public Long findNumberOfRecipientsByMessageIDAndSendingSuccessful(Long messageID, boolean sendingSuccessful) {
+    public Long findNumberOfRecipientsByMessageIDAndSendingStatus(Long messageID, String sendingStatus) {
         EntityManager em = getEntityManager();
 
         String findNumberOfRecipients = "SELECT COUNT(*) FROM ReportedRecipient a "
                 + "JOIN a.reportedMessage WHERE a.reportedMessage.id = :messageID AND a.sendingSuccessful = :sendingSuccessful";
         TypedQuery<Long> query = em.createQuery(findNumberOfRecipients, Long.class);
         query.setParameter("messageID", messageID);
-
-        if (sendingSuccessful) {
-            query.setParameter("sendingSuccessful", "1");
-        } else {
-            query.setParameter("sendingSuccessful", "0");
-        }
-
+        query.setParameter("sendingSuccessful", sendingStatus);
         return query.getSingleResult();
     }
 

@@ -48,7 +48,7 @@ public class MessageToEmailConverter implements MessageDataConverter<MessageData
         email.setReplacements(convertToEmailReplacements(data.commonReplacements));
         List<Receiver> incompatibleReceivers = filterIncompatibleReceivers(data);
         email.setRecipient(convertToEmailRecipients(filterCompatibleReceivers(data, incompatibleReceivers)));
-        return new ConvertedMessageWrapper<EmailData>(email, incompatibleReceivers);
+        return new ConvertedMessageWrapper<>(email, incompatibleReceivers);
     }
 
     private List<Receiver> filterCompatibleReceivers(MessageData data, List<Receiver> incompatibleReceivers) {

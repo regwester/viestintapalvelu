@@ -63,7 +63,7 @@ public interface TemplateService {
 
     fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode) throws IOException, DocumentException;
 
-    fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode, String type) throws IOException, DocumentException;
+    fi.vm.sade.viestintapalvelu.model.Template template(String name, String languageCode, String type) throws IOException;
 
     Template getTemplateByName(TemplateCriteria criteria, boolean content);
 
@@ -77,9 +77,9 @@ public interface TemplateService {
 
     List<TemplateInfo> findTemplateInfoByCriteria(TemplateCriteria withState);
 
-    public List<Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod);
+    List<Draft> getDraftsByOrgOidsAndApplicationPeriod(List<String> oids, String applicationPeriod);
 
-    public List<TemplateListing> getTemplateIdsAndApplicationPeriodNames();
+    List<TemplateListing> getTemplateIdsAndApplicationPeriodNames();
 
     List<Draft> getDraftsByTags(List<String> tags);
 

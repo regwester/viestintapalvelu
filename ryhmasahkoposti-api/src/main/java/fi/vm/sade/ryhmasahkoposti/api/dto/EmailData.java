@@ -23,8 +23,8 @@ import java.util.List;
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class EmailData {
 
-    private List<EmailRecipient> recipient = new LinkedList<EmailRecipient>();
-    private List<ReplacementDTO> replacements = new LinkedList<ReplacementDTO>();
+    private List<EmailRecipient> recipient = new LinkedList<>();
+    private List<ReplacementDTO> replacements = new LinkedList<>();
     private EmailMessage email = new EmailMessage();
 
     public EmailData() {

@@ -43,6 +43,18 @@ public class Letter implements LetterDetails {
     @ApiModelProperty(value = "Kirjeen sisältö")
     private LetterContent letterContent;
 
+    @ApiModelProperty(value = "Ohitetaanko iPostin generointi tälle vastaanottajalle", required = false)
+    private boolean skipIPosti = false;
+
+    @ApiModelProperty(value = "Henkilön OID", required = false)
+    private String personOid;
+
+    @ApiModelProperty(value = "Hakemuksen oid", required = false)
+    private String applicationOid;
+
+    @ApiModelProperty(value = "ePostin (securelink) vastaanottajan sähköpostiosoite.", required = false)
+    private String emailAddressEPosti;
+
     public Letter() {
     }
 
@@ -108,8 +120,45 @@ public class Letter implements LetterDetails {
     }
 
     @Override
+    public boolean isSkipIPosti() {
+        return skipIPosti;
+    }
+
+    public void setSkipIPosti(boolean skipIPosti) {
+        this.skipIPosti = skipIPosti;
+    }
+
+    @Override
+    public String getPersonOid() {
+        return personOid;
+    }
+
+    @Override
+    public String getApplicationOid() {
+        return applicationOid;
+    }
+
+    public void setApplicationOid(String applicationOid) {
+        this.applicationOid = applicationOid;
+    }
+
+    public void setPersonOid(String personOid) {
+        this.personOid = personOid;
+    }
+
+    @Override
+    public String getEmailAddressEPosti() {
+        return emailAddressEPosti;
+    }
+
+    public void setEmailAddressEPosti(String emailAddressEPosti) {
+        this.emailAddressEPosti = emailAddressEPosti;
+    }
+
+    @Override
     public String toString() {
-        return "Letter [addressLabel=" + addressLabel + ", templateReplacements=" + templateReplacements + "]";
+        return "Letter [addressLabel=" + addressLabel + ", templateReplacements=" + templateReplacements +
+                ", personOid=" + personOid + ", skipIPosti=" + skipIPosti + "]";
     }
 
 }

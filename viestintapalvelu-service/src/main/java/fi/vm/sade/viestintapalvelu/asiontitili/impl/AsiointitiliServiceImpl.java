@@ -74,7 +74,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     };
     private static final Supplier<? extends Map<String, Object>> EMPTY_MAP = new Supplier<Map<String, Object>>() {
         public Map<String, Object> get() {
-            return new HashMap<String, Object>();
+            return new HashMap<>();
         }
     };
 
@@ -98,7 +98,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     public AsiointitiliAsyncResponseDto send(AsiointitiliSendBatchDto sendBatch) throws NotFoundException {
         Template template = resolveTemplate(sendBatch);
 
-        Map<String,AsiointitiliMessageDto> messagesByHetu = new HashMap<String, AsiointitiliMessageDto>();
+        Map<String,AsiointitiliMessageDto> messagesByHetu = new HashMap<>();
         AsiakasTilaTarkastusKyselyDto kysely = buildAsiakaskysely(sendBatch, messagesByHetu);
 
         AsiakasTilaKyselyVastausDto tilat = asiointitiliCommunicationService.tarkistaAsiointitilinTila(kysely);
@@ -155,7 +155,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     }
 
     private List<AsiointitiliMessageDto> resolveReceivers(Map<String, AsiointitiliMessageDto> messagesByHetu, AsiakasTilaKyselyVastausDto tilat, AsiointitiliAsyncResponseDto response) {
-        List<AsiointitiliMessageDto> messagesToSend = new ArrayList<AsiointitiliMessageDto>();
+        List<AsiointitiliMessageDto> messagesToSend = new ArrayList<>();
         for (AsiakasTilaDto asikasTila : tilat.getAsiakkaat()) {
             AsiointitiliMessageDto message = messagesByHetu.get(asikasTila.getAsiakasTunnus());
             boolean accountExists = isAccount(asikasTila.getTila());
@@ -266,14 +266,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     private String evaluateTemplateContent(TemplateContent content, Map<String, Object> dataContext,
                                            Template template) {
         String contentStr = content.getContent();
-        try {
-            return new String(documentBuilder
-                    .applyTextTemplate(contentStr.getBytes(), dataContext));
-        } catch (IOException e) {
-            throw new IllegalStateException("Error processing template's ("
-                    +template.getName()+":"+template.getLanguage()+") velocity content "
-                    +content.getName() + ": " +e.getMessage(), e);
-        }
+        return new String(documentBuilder.applyTextTemplate(contentStr.getBytes(), dataContext));
     }
 
     private void processAttachmentsByTemplateContent(Template template, AsiointitiliMessageDto messageDto, Map<String, Object> dataContext) {
@@ -307,7 +300,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     }
 
     private List<TiedostoDto> buildAttachments(LinkOrAttachmentContainer container) {
-        List<TiedostoDto> attachments = new ArrayList<TiedostoDto>();
+        List<TiedostoDto> attachments = new ArrayList<>();
         if (container.getLinks() != null) {
             for (AsiointitiliLinkDto link : container.getLinks()) {
                 TiedostoDto attachment = new TiedostoDto();

@@ -15,7 +15,6 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import java.io.IOException;
 import java.util.Date;
 
 import org.apache.commons.fileupload.FileItem;
@@ -28,7 +27,7 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 @Component
 public class ReportedAttachmentConverter {
 
-    public ReportedAttachment convert(FileItem fileItem) throws IOException {
+    public ReportedAttachment convert(FileItem fileItem) {
         ReportedAttachment liite = new ReportedAttachment();
 
         String filename = fileItem.getName();

@@ -49,6 +49,12 @@ public class LetterReceivers extends BaseEntity {
     @Column(name = "email_osoite")
     private String emailAddress;
 
+    @Column(name = "oid_henkilo")
+    private String oidPerson;
+
+    @Column(name = "oid_application")
+    private String oidApplication;
+
     @OneToMany(mappedBy = "letterReceivers", fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JsonManagedReference
     private Set<LetterReceiverReplacement> letterReceiverReplacement;
@@ -65,6 +71,12 @@ public class LetterReceivers extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinColumn(name = "iposti")
     private IPosti containedInIposti;
+
+    @Column(name = "ohita_iposti")
+    private boolean skipIPost;
+
+    @Column(name = "email_osoite_eposti")
+    private String emailAddressEPosti;
 
     public LetterBatch getLetterBatch() {
         return letterBatch;
@@ -138,11 +150,43 @@ public class LetterReceivers extends BaseEntity {
         this.containedInIposti = containedInIposti;
     }
 
+    public String getOidPerson() {
+        return oidPerson;
+    }
+
+    public void setOidPerson(String oidPerson) {
+        this.oidPerson = oidPerson;
+    }
+
+    public String getOidApplication() {
+        return oidApplication;
+    }
+
+    public void setOidApplication(String oidApplication) {
+        this.oidApplication = oidApplication;
+    }
+
+    public boolean getSkipIPost() {
+        return skipIPost;
+    }
+
+    public void setSkipIPost(boolean skipIPost) {
+        this.skipIPost = skipIPost;
+    }
+
+    public String getEmailAddressEPosti() {
+        return emailAddressEPosti;
+    }
+
+    public void setEmailAddressEPosti(String emailAddressEPosti) {
+        this.emailAddressEPosti = emailAddressEPosti;
+    }
+
     @Override
     public String toString() {
         return "LetterReceivers [letterBatch=" + letterBatch + ", timestamp=" + timestamp + ", letterReceiverReplacement=" + letterReceiverReplacement
                 + ", letterReceiverAddress=" + letterReceiverAddress + ", letterReceiverEmail=" + letterReceiverEmail + ", letterReceiverLetter="
-                + letterReceiverLetter + "]";
+                + letterReceiverLetter + ", oidPerson=" + oidPerson + ", skipIPost=" + skipIPost + ", emailAddressEPosti=" + emailAddressEPosti + "]";
     }
 
 }

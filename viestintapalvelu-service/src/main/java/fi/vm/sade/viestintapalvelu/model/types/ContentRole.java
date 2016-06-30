@@ -24,5 +24,5 @@ public enum ContentRole {
     header,
     body,
     sms,
-    attachment;
+    attachment
 }

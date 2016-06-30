@@ -22,11 +22,11 @@ import fi.vm.sade.ryhmasahkoposti.model.DraftModel;
 
 public interface DraftDAO extends JpaDAO<DraftModel, Long> {
 
-    public List<DraftModel> getAllDrafts(String oid);
-    public DraftModel getDraft(Long id, String oid);
-    public Long getCount(String oid);
-    public DraftModel saveDraft(DraftModel draft);
-    public void deleteDraft(Long id, String oid);
-    public void updateDraft(Long id, String oid, DraftModel draft);
+    List<DraftModel> getAllDrafts(String oid);
+    DraftModel getDraft(Long id, String oid);
+    Long getCount(String oid);
+    DraftModel saveDraft(DraftModel draft);
+    void deleteDraft(Long id, String oid);
+    void updateDraft(Long id, String oid, DraftModel draft);
 
 }

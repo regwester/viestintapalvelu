@@ -5,17 +5,14 @@ import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
@@ -25,14 +22,11 @@ import com.lowagie.text.DocumentException;
 import com.wordnik.swagger.annotations.*;
 
 import fi.vm.sade.valinta.dokumenttipalvelu.dto.MetaData;
-import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
-import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
-import fi.vm.sade.viestintapalvelu.validator.LetterBatchValidator;
-import fi.vm.sade.viestintapalvelu.validator.UserRightsValidator;
+
 import static org.joda.time.DateTime.now;
 
 @Component("LetterResource")
@@ -72,6 +66,14 @@ public class LetterResource extends AbstractLetterResource {
     @Path("/isAlive")
     public String isAlive() {
         return "alive";
+    }
+
+    @GET
+    @Produces("application/json")
+    @Path("/list/person/{personOid}")
+    @ApiOperation(value="Tuottaa listan hakijan kirjeistä")
+    public Response listByPerson( @PathParam("personOid") @ApiParam(name="Henkilön OID", required = true) String personOid) {
+        return super.listByPerson(personOid);
     }
 
     @POST
@@ -165,7 +167,7 @@ public class LetterResource extends AbstractLetterResource {
         }
 
         return Response.ok(letterService.findLetterBatchByNameOrgTag(name, language, oid,
-                Optional.fromNullable(tag),
+                Optional.of(tag),
                 Optional.fromNullable(applicationPeriod))).build();
     }
 
@@ -285,5 +287,4 @@ public class LetterResource extends AbstractLetterResource {
             return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
-
 }

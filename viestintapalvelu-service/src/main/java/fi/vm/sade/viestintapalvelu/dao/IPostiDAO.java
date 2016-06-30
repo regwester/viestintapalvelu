@@ -32,7 +32,7 @@ public interface IPostiDAO extends JpaDAO<IPosti, Long>{
      * 
      * @return Lista IPosti-luokan ilmentymiä
      */
-    public List<IPosti> findUnSent();
+    List<IPosti> findUnSent();
 
     /**
      * Hakee iPostien lähetystiedot kirjelähetyksen tunnuksella
@@ -40,7 +40,7 @@ public interface IPostiDAO extends JpaDAO<IPosti, Long>{
      * @param id Kirjelähetyksen tunnus
      * @return Lista IPosti-luokan ilmentymiä
      */
-    public List<IPosti> findMailById(Long id);
+    List<IPosti> findMailById(Long id);
 
     /**
      * Hakee iPostien lähetystiedot kirjelähetyksen tunnuksella
@@ -48,7 +48,7 @@ public interface IPostiDAO extends JpaDAO<IPosti, Long>{
      * @param id Kirjelähetyksen tunnus
      * @return Lista IPosti-luokan ilmentymiä ilman binaari sisältöä
      */
-    public List<IPosti> findByLetterBatchId(Long id);
+    List<IPosti> findByLetterBatchId(Long id);
     
-    public int markAsSent(Long id, Long version);
+    int markAsSent(Long id, Long version);
 }

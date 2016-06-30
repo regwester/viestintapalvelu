@@ -16,20 +16,16 @@
 package fi.vm.sade.ryhmasahkoposti.api.jackson;
 
 import com.fasterxml.jackson.core.JsonParser;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationContext;
 import com.fasterxml.jackson.databind.JsonDeserializer;
 
 import java.io.IOException;
 import java.util.List;
 
-/**
- * User: ratamaa Date: 29.9.2014 Time: 19:15
- */
 public class JacksonReplacementValueDeserializer extends JsonDeserializer<Object> {
 
     @Override
-    public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException, JsonProcessingException {
+    public Object deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException {
         try {
             return ctxt.readValue(jp, List.class);
         } catch (Exception e) {

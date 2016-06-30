@@ -16,18 +16,19 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import java.util.*;
-import java.util.concurrent.atomic.AtomicInteger;
 
-import javax.annotation.Nullable;
 import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
-import org.hibernate.internal.util.StringHelper;
+import fi.vm.sade.dto.PagingAndSortingDTO;
+import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Repository;
 
-import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.collect.Collections2;
 import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.JPASubQuery;
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -38,14 +39,11 @@ import com.mysema.query.types.OrderSpecifier;
 import com.mysema.query.types.expr.BooleanExpression;
 import com.mysema.query.types.expr.ComparableExpressionBase;
 import com.mysema.query.types.path.PathBuilder;
-import com.mysema.query.types.path.StringPath;
 import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
-import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.model.*;
@@ -53,6 +51,7 @@ import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
 @Repository
 public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> implements LetterBatchDAO {
+    private static final Logger LOG = LoggerFactory.getLogger(LetterBatchDAOImpl.class);
 
     public static final int MAX_CHUNK_SIZE_FOR_IN_EXPRESSION = 1000;
 
@@ -70,27 +69,28 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         }
         findTemplate += "ORDER BY a.timestamp DESC";
 
-        TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
-        query.setParameter("templateName", templateName);
-        query.setParameter("language", language);
-        query.setParameter("organizationOid", organizationOid);
+        TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, em, findTemplate);
         if (tag.isPresent()) {
             query.setParameter("tag", tag.get());
         }
         if (applicationPeriod.isPresent()) {
             query.setParameter("applicationPeriod", applicationPeriod.get());
         }
+        try {
+            return query.getSingleResult();
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    private TypedQuery<LetterBatch> getLetterBatchTypedQuery(String templateName, String language, String organizationOid, EntityManager em, String findTemplate) {
+        TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
+        query.setParameter("templateName", templateName);
+        query.setParameter("language", language);
+        query.setParameter("organizationOid", organizationOid);
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
-
-        LetterBatch letterBatch = new LetterBatch();
-        try {
-            letterBatch = query.getSingleResult();
-        } catch (Exception e) {
-            letterBatch = null;
-        }
-
-        return letterBatch;
+        return query;
     }
 
     public LetterBatch findLetterBatchByNameOrg(String templateName, String language, String organizationOid) {
@@ -99,21 +99,12 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         String findTemplate = "SELECT a FROM LetterBatch a WHERE " + "a.templateName=:templateName AND " + "a.language=:language AND "
                 + "a.organizationOid=:organizationOid " + "ORDER BY a.timestamp DESC";
 
-        TypedQuery<LetterBatch> query = em.createQuery(findTemplate, LetterBatch.class);
-        query.setParameter("templateName", templateName);
-        query.setParameter("language", language);
-        query.setParameter("organizationOid", organizationOid);
-        query.setFirstResult(0); // LIMIT 1
-        query.setMaxResults(1); //
-
-        LetterBatch letterBatch = new LetterBatch();
+        TypedQuery<LetterBatch> query = getLetterBatchTypedQuery(templateName, language, organizationOid, em, findTemplate);
         try {
-            letterBatch = query.getSingleResult();
+            return query.getSingleResult();
         } catch (Exception e) {
-            letterBatch = null;
+            return null;
         }
-
-        return letterBatch;
     }
 
     @Override
@@ -123,10 +114,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting, null);
         JPAQuery findLetterBatches = from(letterBatch).orderBy(orderBy);
 
+        return getLetterBatches(pagingAndSorting, letterBatch, findLetterBatches);
+    }
+
+    private List<LetterBatch> getLetterBatches(PagingAndSortingDTO pagingAndSorting, QLetterBatch letterBatch, JPAQuery findLetterBatches) {
         if (pagingAndSorting.getNumberOfRows() != 0) {
             findLetterBatches.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
         }
-
         return findLetterBatches.list(letterBatch);
     }
 
@@ -141,19 +135,15 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public List<LetterBatch> findLetterBatchesByOrganizationOid(List<String> organizationOIDs, PagingAndSortingDTO pagingAndSorting) {
         if (organizationOIDs.isEmpty()) {
-            return new ArrayList<LetterBatch>();
+            return new ArrayList<>();
         }
 
         QLetterBatch letterBatch = QLetterBatch.letterBatch;
         OrderSpecifier<?> orderBy = orderBy(pagingAndSorting, null);
-        BooleanExpression whereExpression = anyOf(splittedInExpression(organizationOIDs, letterBatch.organizationOid));
+        BooleanExpression whereExpression = anyOf(DAOUtil.splittedInExpression(organizationOIDs, letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
 
-        if (pagingAndSorting.getNumberOfRows() != 0) {
-            findLetterBatches.limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
-        }
-
-        return findLetterBatches.list(letterBatch);
+        return getLetterBatches(pagingAndSorting, (QLetterBatch) findLetterBatches.list(letterBatch), findLetterBatches);
     }
 
     @Override
@@ -187,18 +177,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     @Override
     public Long findNumberOfLetterBatches(List<String> oids) {
         if (oids.isEmpty()) {
-            return 0l;
-        }
-        EntityManager em = getEntityManager();
-
-        Map<String, Object> params = new HashMap<String, Object>();
-        String findNumberOfLetterBatches = "SELECT COUNT(*) FROM LetterBatch a WHERE " + splittedInExpression(oids, "a.organizationOid", params, "_oids");
-        TypedQuery<Long> query = em.createQuery(findNumberOfLetterBatches, Long.class);
-        for (Map.Entry<String, Object> kv : params.entrySet()) {
-            query.setParameter(kv.getKey(), kv.getValue());
+            return 0L;
         }
 
-        return query.getSingleResult();
+        Map<String, Object> params = new HashMap<>();
+        String findNumberOfLetterBatches = "SELECT COUNT(*) FROM LetterBatch a WHERE " + DAOUtil.splittedInExpression(oids, "a.organizationOid", params, "_oids");
+
+        return DAOUtil.querySingleLong(getEntityManager(), params, findNumberOfLetterBatches);
     }
 
     @Override
@@ -212,7 +197,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             // can not get count effectively (runtime of receiver join
             // explodes), just tell if we got more than maxCount
             return (long) q
-                    .limit(maxCount + 1l)
+                    .limit(maxCount + 1L)
                     .orderBy(letterBatch.timestamp.desc())
                     .list(letterReportQuery.getTarget() == LetterReportQueryDTO.SearchTarget.receiver ? new Expression<?>[] { receiver.letterReceiverLetter.id,
                             letterBatch.timestamp } : new Expression<?>[] { letterBatch.timestamp }).size();
@@ -266,12 +251,23 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 Long.class).getResultList();
     }
 
+    @Override
+    public List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid) {
+        return getEntityManager().createQuery(
+            "SELECT new fi.vm.sade.viestintapalvelu.letter.LetterListItem(lrl.id, lb.applicationPeriod, lb.templateName, lrl.contentType, lrl.timestamp)"
+                + " FROM LetterBatch lb"
+                + " INNER JOIN lb.letterReceivers lr WITH lr.oidPerson = :oidPerson"
+                + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish"
+                + " WHERE lb.tag = lb.applicationPeriod", LetterListItem.class)
+                .setParameter("oidPerson", personOid).setParameter("readyForPublish", true).getResultList();
+    }
+
     protected JPAQuery from(EntityPath<?>... o) {
         return new JPAQuery(getEntityManager()).from(o);
     }
 
     protected OrderSpecifier<?> orderBy(PagingAndSortingDTO pagingAndSorting, QLetterReceiverAddress receiverAddress) {
-        PathBuilder<LetterBatch> pb = new PathBuilder<LetterBatch>(LetterBatch.class, "letterBatch");
+        PathBuilder<LetterBatch> pb = new PathBuilder<>(LetterBatch.class, "letterBatch");
 
         if (pagingAndSorting.getSortedBy() != null && !pagingAndSorting.getSortedBy().isEmpty()) {
             if (receiverAddress != null && "receiverName".equals(pagingAndSorting.getSortedBy())) {
@@ -312,7 +308,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 // no organisaatios should yield no results, thus:
                 booleanBuilder.and(BooleanTemplate.TRUE.eq(BooleanTemplate.FALSE));
             } else {
-                booleanBuilder.andAnyOf(splittedInExpression(query.getOrganizationOids(), letterBatch.organizationOid));
+                booleanBuilder.andAnyOf(DAOUtil.splittedInExpression(query.getOrganizationOids(), letterBatch.organizationOid));
             }
         }
 
@@ -353,28 +349,109 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                 letterBatch.fetchTarget.containsIgnoreCase(word).or(letterBatch.applicationPeriod.containsIgnoreCase(word)));
     }
 
-    private BooleanExpression[] splittedInExpression(List<String> values, final StringPath column) {
-        List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        Collection<BooleanExpression> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, BooleanExpression>() {
-            public BooleanExpression apply(@Nullable List<String> oidsChunk) {
-                return column.in(oidsChunk);
-            }
-        });
-        return inExcepssionsCollection.toArray(new BooleanExpression[inExcepssionsCollection.size()]);
+    @Override
+    public int publishLetterBatch(long letterBatchId) {
+        return getEntityManager().createQuery( "UPDATE LetterReceiverLetter l"
+                + " SET l.readyForPublish = :readyForPublish"
+                + " WHERE l.id IN ("
+                + " SELECT lrl.id FROM LetterBatch lb"
+                + " INNER JOIN lb.letterReceivers lr"
+                + " INNER JOIN lr.letterReceiverLetter lrl"
+                + " WHERE lb.id = :letterBatchId AND lb.batchStatus = :status)"
+        ).setParameter("readyForPublish", true)
+         .setParameter("letterBatchId", letterBatchId)
+         .setParameter("status", LetterBatch.Status.ready).executeUpdate();
     }
 
-    private String splittedInExpression(List<String> values, final String hqlColumn, final Map<String, Object> params, final String valPrefix) {
-        final List<List<String>> oidChunks = CollectionHelper.split(values, MAX_CHUNK_SIZE_FOR_IN_EXPRESSION);
-        final AtomicInteger n = new AtomicInteger(0);
-        Collection<String> inExcepssionsCollection = Collections2.transform(oidChunks, new Function<List<String>, String>() {
-            public String apply(@Nullable List<String> oidsChunk) {
-                int pNum = n.incrementAndGet();
-                String paramName = valPrefix + "_" + pNum;
-                params.put(paramName, oidsChunk);
-                return hqlColumn + " in (:" + paramName + ")";
-            }
-        });
-        return StringHelper.join(" OR ", inExcepssionsCollection.toArray(new String[inExcepssionsCollection.size()]));
+    @Override
+    public Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language) {
+        return getLatestLetterBatchId(hakuOid, type, language, false);
     }
 
+    @Override
+    public Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language) {
+        return getLatestLetterBatchId(hakuOid, type, language, true);
+    }
+
+    private Optional<Long> getLatestLetterBatchId(String hakuOid, String type, String language, boolean published) {
+        List<Long> batchIds = getEntityManager().createQuery("SELECT l.id "
+                + " FROM LetterBatch l"
+                + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
+                + " AND l.templateName = :templateName AND l.language = :language AND l.id NOT IN ("
+                    + " SELECT lb.id "
+                    + " FROM LetterBatch lb"
+                    + " INNER JOIN lb.letterReceivers lr "
+                    + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish)"
+                + " AND l.timestamp = ("
+                    + " SELECT MAX(lb.timestamp)"
+                    + " FROM LetterBatch lb"
+                    + " WHERE lb.tag = lb.applicationPeriod AND lb.applicationPeriod = :applicationPeriod"
+                    + " AND lb.templateName = :templateName AND lb.language = :language"
+                + ")")
+                .setParameter("applicationPeriod", hakuOid)
+                .setParameter("templateName", type)
+                .setParameter("language", language.toUpperCase())
+                .setParameter("readyForPublish", !published).getResultList();
+        return 0 == batchIds.size() ? Optional.<Long>absent() : Optional.of(batchIds.get(0));
+    }
+
+    public LetterBatchCountDto countBatchStatus(String hakuOid, String type, String language) {
+        List<?> resultList1 = getEntityManager().createQuery("SELECT l.id, l.batchStatus "
+            + " FROM LetterBatch l "
+            + " WHERE l.tag = l.applicationPeriod AND l.applicationPeriod = :applicationPeriod"
+            + " AND l.templateName = :templateName AND l.language = :language"
+            + " ORDER BY l.timestamp DESC")
+            .setParameter("applicationPeriod", hakuOid)
+            .setParameter("templateName", type)
+            .setParameter("language", language.toUpperCase()).getResultList();
+
+        if(0 == resultList1.size()) {
+            return new LetterBatchCountDto();
+        }
+
+        Object[] result1 = (Object[])resultList1.get(0);
+        long batchId = (Long)result1[0];
+        LetterBatch.Status batchStatus = (LetterBatch.Status)result1[1];
+
+        Object[] result2 = (Object[])getEntityManager().createQuery(
+              " SELECT COUNT(lr.id),"
+            + " COALESCE(SUM(CASE WHEN lrl.readyForPublish = true THEN 1 ELSE 0 END), 0),"
+            + " COALESCE(SUM(CASE WHEN lrl.letter IS NULL THEN 1 ELSE 0 END), 0)"
+            + " FROM LetterBatch l"
+            + " INNER JOIN l.letterReceivers lr "
+            + " INNER JOIN lr.letterReceiverLetter lrl "
+            + " WHERE l.id = :letterBatchId")
+            .setParameter("letterBatchId", batchId)
+            .getResultList().get(0);
+
+        long totalCount = (Long)result2[0];
+        long readyForPublishCount = (Long)result2[1];
+        long notReadyCount = (Long)result2[2];
+
+        if(LetterBatch.Status.ready.equals(batchStatus)) {
+            boolean readyForPublish = readyForPublishCount == 0l;
+            boolean readyForEPosti = readyForPublishCount == totalCount;
+            return new LetterBatchCountDto(totalCount, totalCount, 0l, readyForPublish, readyForEPosti);
+        } else if(LetterBatch.Status.error.equals(batchStatus)) {
+            return new LetterBatchCountDto(totalCount, 0l, totalCount, false, false);
+        } else {
+            return new LetterBatchCountDto(totalCount, (totalCount - notReadyCount), 0l, false, false);
+        }
+    }
+
+    public Map<String, String> getEPostiEmailAddressesByBatchId(long letterBatchId) {
+        Map<String, String> applicationOidToEmailAddress = new HashMap<>();
+        List<Object[]> resultList = getEntityManager().createQuery("SELECT lr.oidApplication, lr.emailAddressEPosti"
+                + " FROM LetterBatch l"
+                + " INNER JOIN l.letterReceivers lr "
+                + " INNER JOIN lr.letterReceiverLetter lrl WITH lrl.readyForPublish = :readyForPublish"
+                + " WHERE l.id = :letterBatchId")
+                .setParameter("readyForPublish", true)
+                .setParameter("letterBatchId", letterBatchId)
+                .getResultList();
+        for (Object[] row : resultList) {
+            applicationOidToEmailAddress.put((String) row[0], (String) row[1]);
+        }
+        return applicationOidToEmailAddress;
+    }
 }

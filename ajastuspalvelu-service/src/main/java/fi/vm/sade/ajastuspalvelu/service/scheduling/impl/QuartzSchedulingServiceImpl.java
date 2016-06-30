@@ -55,11 +55,7 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
             scheduler.addJob(job, false);
             logger.info("Added job {}", job);
         } else {
-            // Remove all triggers from given job:
-            for (Trigger trigger : scheduler.getTriggersOfJob(key)) {
-                scheduler.unscheduleJob(trigger.getKey());
-                logger.info("Removed trigger {}", trigger);
-            }
+            removeAllTriggersFromGivenJob(key);
         }
         if (schedule.isValid()) {
             // And schedule with a new trigger:
@@ -81,6 +77,13 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
         }
     }
 
+    private void removeAllTriggersFromGivenJob(JobKey key) throws SchedulerException {
+        for (Trigger trigger : scheduler.getTriggersOfJob(key)) {
+            scheduler.unscheduleJob(trigger.getKey());
+            logger.info("Removed trigger {}", trigger);
+        }
+    }
+
     private JobKey createKey(Long scheduledTaskId) {
         return new JobKey(""+ scheduledTaskId, QVARTZ_GROUP_NAME);
     }
@@ -90,11 +93,7 @@ public class QuartzSchedulingServiceImpl implements QuartzSchedulingService {
         JobKey key = createKey(scheduledTaskId);
         JobDetail job = scheduler.getJobDetail(key);
         if (job != null) {
-            // Remove all triggers from given job:
-            for (Trigger trigger : scheduler.getTriggersOfJob(key)) {
-                scheduler.unscheduleJob(trigger.getKey());
-                logger.info("Removed trigger {}", trigger);
-            }
+            removeAllTriggersFromGivenJob(key);
             scheduler.deleteJob(key);
             logger.info("Removed job {}", job);
         }

@@ -39,9 +39,9 @@ public class StructureViewDto implements Serializable {
     @DtoConversion
     private DateTime timestamp;
     @DtoConversion
-    private List<ContentStructureViewDto> contentStructures = new ArrayList<ContentStructureViewDto>();
+    private List<ContentStructureViewDto> contentStructures = new ArrayList<>();
     @DtoConversion
-    private List<ContentReplacementDto> replacements = new ArrayList<ContentReplacementDto>();
+    private List<ContentReplacementDto> replacements = new ArrayList<>();
 
     public Long getId() {
         return id;

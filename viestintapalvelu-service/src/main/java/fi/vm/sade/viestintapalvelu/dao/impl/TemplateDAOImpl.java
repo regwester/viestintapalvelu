@@ -42,13 +42,11 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
         query.setFirstResult(0); // LIMIT 1
         query.setMaxResults(1); //
 
-        Template templ = new Template();
         try {
-            templ = query.getSingleResult();
+            return query.getSingleResult();
         } catch (NoResultException e) {
-            templ = null;
+            return null;
         }
-        return templ;
     }
 
     @Override
@@ -157,7 +155,7 @@ public class TemplateDAOImpl extends AbstractJpaDAOImpl<Template, Long> implemen
     }
     
     private List<String> resultsToNameLanguage(List<Object[]> qResult) {
-        List<String> result = new ArrayList<String>();
+        List<String> result = new ArrayList<>();
         for (Object[] o : qResult) {
             StringBuilder current = new StringBuilder();
             for (Object ob : o) {

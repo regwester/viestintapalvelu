@@ -15,13 +15,12 @@
  **/
 package fi.vm.sade.viestintapalvelu.service;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
-import java.util.zip.DataFormatException;
 
+import fi.vm.sade.dto.PagingAndSortingDTO;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -40,10 +39,8 @@ import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
-import fi.vm.sade.viestintapalvelu.dto.PagingAndSortingDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;
-import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.HenkiloComponent;
@@ -53,7 +50,6 @@ import fi.vm.sade.viestintapalvelu.letter.LetterReportService;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterReportServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
-import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
@@ -199,20 +195,5 @@ public class LetterReportServiceTest {
         assertTrue(letterBatchesReport.getLetterBatchReports().size() == 1);
         assertTrue(letterBatchesReport.getNumberOfLetterBatches().equals(new Long(1)));
         assertTrue(letterBatchesReport.getLetterBatchReports().get(0).getFetchTarget().equalsIgnoreCase("fetchTarget"));
-    }
-
-    @Test
-    public void testGetLetterReceiverLetter() throws IOException, DataFormatException {
-        LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
-        Set<LetterReceivers> letterReceiversSet = DocumentProviderTestData.getLetterReceivers(new Long(2), letterBatch);
-        LetterReceivers letterReceivers = letterReceiversSet.iterator().next();
-        LetterReceiverLetter mockedLetterReceiverLetter = 
-            DocumentProviderTestData.getLetterReceiverLetter(new Long(3), letterReceivers);
-        when(mockedLetterReceiverLetterDAO.read(any(Long.class))).thenReturn(mockedLetterReceiverLetter);
-        
-        LetterReceiverLetterDTO letterReceiverLetterDTO = letterReportService.getLetterReceiverLetter(new Long(3));
-        
-        assertNotNull(letterReceiverLetterDTO);
-        assertTrue(new String(letterReceiverLetterDTO.getLetter()).equals("letter"));       
     }
 }
