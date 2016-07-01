@@ -67,7 +67,7 @@ import static org.joda.time.DateTime.now;
 public class PDFPrinterResource extends AsynchronousResource {
     private final Logger LOG = LoggerFactory.getLogger(LetterResource.class);
 
-    @Resource
+    @Autowired(required = false)
     private DokumenttiResource dokumenttiResource;
     @Autowired
     private DownloadCache downloadCache;
