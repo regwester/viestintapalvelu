@@ -29,6 +29,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.google.common.base.Supplier;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -235,7 +236,8 @@ public class LetterBuilder {
     }
 
     private String cleanString(Cleaner cleaner, Object entry) {
-        return ((String) entry).replaceAll("&", "");
+        return StringEscapeUtils.unescapeHtml(((String) entry))
+                .replaceAll("&", "");
     }
 
     private List<Map<String, Object>> normalizeColumns(Cleaner cleaner,
