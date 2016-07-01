@@ -206,17 +206,36 @@ public class LetterBuilder {
             if (replacements != null) {
                 for(Map.Entry<String, Object> entry : replacements.entrySet()) {
                     if (entry.getValue() instanceof String) {
-                        data.put(entry.getKey(), cleaner.clean((String) entry.getValue()).replaceAll("&", "&amp;"));
+                        data.put(entry.getKey(), cleanString(cleaner, entry.getValue()));
                     } else if(entry.getValue() instanceof Map){
-                        Map<String,Object> value = (Map<String,Object>)entry.getValue();
-                        data.put(entry.getKey(), cleanValues(cleaner,value));
+                        Map<String,Object> v = (Map<String,Object>)entry.getValue();
+                        data.put(entry.getKey(), cleanValues(cleaner,v));
+                    } else if(entry.getValue() instanceof List){
+                        List<Object> values = (List<Object>)entry.getValue();
+                        List<Object> nv = new ArrayList<>();
+                        for(Object v : values) {
+                            if(v instanceof String) {
+                                nv.add(cleanString(cleaner, v));
+                            } else if(v instanceof Map) {
+                                Map<String, Object> adsf = (Map<String, Object>)v;
+                                nv.add(cleanValues(cleaner, adsf));
+                            } else {
+                                nv.add(v);
+                            }
+                        }
+                        data.put(entry.getKey(), nv);
                     } else {
                         data.put(entry.getKey(), entry.getValue());
                     }
+
                 }
             }
         }
         return data;
+    }
+
+    private String cleanString(Cleaner cleaner, Object entry) {
+        return cleaner.clean((String) entry).replaceAll("&", "&amp;");
     }
 
     private List<Map<String, Object>> normalizeColumns(Cleaner cleaner,
