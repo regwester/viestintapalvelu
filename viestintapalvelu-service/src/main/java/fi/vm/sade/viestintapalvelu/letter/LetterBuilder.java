@@ -235,7 +235,7 @@ public class LetterBuilder {
     }
 
     private String cleanString(Cleaner cleaner, Object entry) {
-        return cleaner.clean((String) entry).replaceAll("&", "&amp;");
+        return ((String) entry).replaceAll("&", "");
     }
 
     private List<Map<String, Object>> normalizeColumns(Cleaner cleaner,
