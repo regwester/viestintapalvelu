@@ -294,7 +294,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
                 haku.put("hyvaksytty", false);
             }
             List<ImmutableMap<String, Serializable>> sijoitukset = Collections.unmodifiableList(Arrays.asList(ImmutableMap.of(
-                    "nimi", "Yhteispistejono",
+                    "nimi", "Yhteispistejono & jono",
                     "oma", "123",
                     "minimi", "456",
                     "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222")),
