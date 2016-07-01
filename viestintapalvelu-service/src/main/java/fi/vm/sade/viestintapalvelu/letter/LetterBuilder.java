@@ -181,18 +181,7 @@ public class LetterBuilder {
 
     public Map<String, Object> createDataContext(Cleaner cleaner,
                      Template template, AddressLabel addressLabel, Map<String, Object>... replacementsList) {
-        Map<String, Object> data = new HashMap<>();
-        for (Map<String, Object> replacements : replacementsList) {
-            if (replacements != null) {
-                for(Map.Entry<String, Object> entry : replacements.entrySet()) {
-                    if (entry.getValue() instanceof String) {
-                        data.put(entry.getKey(), cleaner.clean((String) entry.getValue()));
-                    } else {
-                        data.put(entry.getKey(), entry.getValue());
-                    }
-                }
-            }
-        }
+        Map<String, Object> data = cleanValues(cleaner, replacementsList);
 
         String styles = template.getStyles();
         if (styles == null) {
@@ -208,6 +197,25 @@ public class LetterBuilder {
         }
 
         data.put("tyylit", styles);
+        return data;
+    }
+
+    private Map<String, Object> cleanValues(Cleaner cleaner, Map<String, Object>... replacementsList) {
+        Map<String, Object> data = new HashMap<>();
+        for (Map<String, Object> replacements : replacementsList) {
+            if (replacements != null) {
+                for(Map.Entry<String, Object> entry : replacements.entrySet()) {
+                    if (entry.getValue() instanceof String) {
+                        data.put(entry.getKey(), cleaner.clean((String) entry.getValue()).replaceAll("&", "&amp;"));
+                    } else if(entry.getValue() instanceof Map){
+                        Map<String,Object> value = (Map<String,Object>)entry.getValue();
+                        data.put(entry.getKey(), cleanValues(cleaner,value));
+                    } else {
+                        data.put(entry.getKey(), entry.getValue());
+                    }
+                }
+            }
+        }
         return data;
     }
 
