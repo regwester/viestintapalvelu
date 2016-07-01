@@ -25,7 +25,6 @@
       <th>Selection method</th>
       <th>Your score</th>
       <th>The lowest accepted score</th>
-      <th>The lowest accepted score of a first-time applicant</th>
       <th>Your reserve place status</th>
     </tr>
     </thead>
@@ -42,7 +41,6 @@
       <td>$sijoitus.nimi<br/></td>
       <td>#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end<br/></td>
       <td>#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end<br/></td>
-      <td>#if($sijoitus.pisteet.ensikertMinimi)${sijoitus.pisteet.ensikertMinimi}#{else} - #end<br/></td>
       <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
     </tr>
     #end
