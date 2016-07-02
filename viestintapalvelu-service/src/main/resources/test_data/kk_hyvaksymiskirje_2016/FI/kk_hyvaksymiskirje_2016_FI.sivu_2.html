@@ -37,11 +37,16 @@
       <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>#if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end</td>
     </tr>
     #foreach( $sijoitus in $tulos.sijoitukset )
+
     <tr class="$hyvaksytty $even">
       <td>$sijoitus.nimi<br/></td>
       <td>#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end<br/></td>
       <td>#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end<br/></td>
-      <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
+      #if($foreach.count == 1)
+        <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
+      #else
+        <td></td>
+      #end
     </tr>
     #end
     #end
