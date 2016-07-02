@@ -302,7 +302,6 @@ public class PreviewDataServiceImpl implements PreviewDataService {
                     ImmutableMap.of(
                             "nimi", "DIA-DI Valintaryhmä 1",
                             "oma", "464",
-                            "varasija", null,
                             "minimi", "111",
                             "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222")),
                     ImmutableMap.of(
