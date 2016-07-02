@@ -297,16 +297,19 @@ public class PreviewDataServiceImpl implements PreviewDataService {
                     "nimi", "\u200BYhteispistejon&auml;&auml;&auml; &",
                     "oma", "123",
                     "minimi", "456",
+                    "varasija", "33",
                     "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222")),
                     ImmutableMap.of(
                             "nimi", "DIA-DI Valintaryhmä 1",
                             "oma", "464",
+                            "varasija", null,
                             "minimi", "111",
                             "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222")),
                     ImmutableMap.of(
                             "nimi", "DIA-DI Valintaryhmä 2",
                             "oma", "222",
                             "minimi", "333",
+                            "varasija", "varasija 66.",
                             "pisteet", ImmutableMap.of("oma", "443", "minimi", "343", "ensikertMinimi", "222"))));
             haku.put("sijoitukset", sijoitukset);
             if(rand.nextInt() % 3 == 0) {

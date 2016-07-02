@@ -41,11 +41,7 @@
       <td>$sijoitus.nimi<br/></td>
       <td>#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end<br/></td>
       <td>#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end<br/></td>
-      #if($foreach.count == 1)
-      <td class="numeerinen">#if($tulos.varasija)${tulos.varasija}.#{else} - #end</td>
-      #else
-      <td></td>
-      #end
+      <td>#if($sijoitus.varasija)${sijoitus.varasija}#{else} - #end<br/></td>
     </tr>
     #end
     #end
