@@ -41,18 +41,25 @@
 
 </div>
 <div class="footer">
+  <div class="center">
+    <p>
+    Vastaanoton määräaika: <b>$palautusTimestampFi</b> mennessä.
+    </p>
+    <p></p><br/>
+  </div>
   #if($hakijapalveluidenOsoite)
   <div class="pull-left hakijapalveluidenosoite">
-      $hakijapalveluidenOsoite.organisaationimi,<br/>
-      $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
+    $hakijapalveluidenOsoite.organisaationimi,<br/>
+    $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
+    $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
   </div>
   #end
   <div class="pull-right">
-      <br/>
-      Hakemusnumero:<br/>
-      $hakemusOid
+    <br/>
+    Hakemusnumero:<br/>
+    $hakemusOid
   </div>
+
 </div>
 </body>
 
