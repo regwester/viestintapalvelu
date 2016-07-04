@@ -323,6 +323,8 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         letterreplacements.put("tulokset", tulokset);
         letterreplacements.put("koulu", koulu);
         letterreplacements.put("koulutus", koulutus);
+        letterreplacements.put("palautusPvm", "11.11.2019");
+        letterreplacements.put("palautusAika", "15.00");
         return letterreplacements;
     }
 
