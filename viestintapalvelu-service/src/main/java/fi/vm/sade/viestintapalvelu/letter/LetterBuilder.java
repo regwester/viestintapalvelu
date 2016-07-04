@@ -255,7 +255,7 @@ public class LetterBuilder {
 
     private String cleanString(Cleaner cleaner, Object entry) {
         return StringEscapeUtils.unescapeHtml(((String) entry))
-                .replaceAll("[&\u200B]", "").replaceAll("’","'").replaceAll("”","\"");
+                .replaceAll("[&\u200B]", "").replaceAll("’","'").replaceAll("”","\"").replaceAll("–","-");
     }
 
     private List<Map<String, Object>> normalizeColumns(Cleaner cleaner,
