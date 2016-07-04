@@ -16,6 +16,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -180,6 +181,8 @@ public class LetterBuilder {
         return documentBuilder.xhtmlToPDF(xhtml);
     }
 
+
+
     public Map<String, Object> createDataContext(Cleaner cleaner,
                      Template template, AddressLabel addressLabel, Map<String, Object>... replacementsList) {
         Map<String, Object> data = cleanValues(cleaner, replacementsList);
@@ -187,6 +190,21 @@ public class LetterBuilder {
         String styles = template.getStyles();
         if (styles == null) {
             styles = "";
+        }
+
+        String palautusPvm = (String)data.get("palautusPvm");
+        String palautusAika = (String)data.get("palautusAika");
+        String palautusTimestampFi = palautusTimestampFi(palautusPvm, palautusAika);
+        if(palautusTimestampFi != null) {
+            data.put("palautusTimestampFi", palautusTimestampFi);
+        }
+        String palautusTimestampEn = palautusTimestampEn(palautusPvm, palautusAika);
+        if(palautusTimestampEn != null) {
+            data.put("palautusTimestampEn", palautusTimestampEn);
+        }
+        String palautusTimestampSv = palautusTimestampSv(palautusPvm, palautusAika);
+        if(palautusTimestampSv != null) {
+            data.put("palautusTimestampSv", palautusTimestampSv);
         }
         data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
@@ -237,7 +255,7 @@ public class LetterBuilder {
 
     private String cleanString(Cleaner cleaner, Object entry) {
         return StringEscapeUtils.unescapeHtml(((String) entry))
-                .replaceAll("[&\u200B]", "").replaceAll("’","'");
+                .replaceAll("[&\u200B]", "").replaceAll("’","'").replaceAll("”","\"");
     }
 
     private List<Map<String, Object>> normalizeColumns(Cleaner cleaner,
@@ -375,5 +393,40 @@ public class LetterBuilder {
 
     public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
         this.objectMapperProvider = objectMapperProvider;
+    }
+
+    private static String palautusTimestampFi(String pvm, String aika) {
+        Date timestamp = palautusTimestamp(pvm, aika);
+        if(timestamp == null) {
+            return null;
+        }
+        return new SimpleDateFormat("d.M.yyyy 'klo' h.m").format(timestamp);
+    }
+    private static String palautusTimestampSv(String pvm, String aika) {
+        Date timestamp = palautusTimestamp(pvm, aika);
+        if(timestamp == null) {
+            return null;
+        }
+        return new SimpleDateFormat("d.M.yyyy 'kl.' h.m").format(timestamp);
+    }
+    private static String palautusTimestampEn(String pvm, String aika) {
+        Date timestamp = palautusTimestamp(pvm, aika);
+        if(timestamp == null) {
+            return null;
+        }
+        return new SimpleDateFormat("d MMMM yyyy 'at' h a").format(timestamp);
+    }
+
+    private static Date palautusTimestamp(String pvm, String aika) {
+        if(pvm == null || aika == null) {
+            return null;
+        }
+        try {
+            Date timestamp = new SimpleDateFormat("d.M.yyyy hh.mm").parse(pvm + " " + aika);
+            return timestamp;
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        return null;
     }
 }
