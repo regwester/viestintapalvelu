@@ -193,7 +193,11 @@ public class LetterBuilder {
         }
 
         String palautusPvm = (String)data.get("palautusPvm");
-        String palautusAika = (String)data.get("palautusAika");
+        String somePalautusAika = (String)data.get("palautusAika");
+        String palautusAika = null;
+        if(somePalautusAika != null) {
+            palautusAika = somePalautusAika.replaceAll(":", ".");
+        }
         String palautusTimestampFi = palautusTimestampFi(palautusPvm, palautusAika);
         if(palautusTimestampFi != null) {
             data.put("palautusTimestampFi", palautusTimestampFi);
