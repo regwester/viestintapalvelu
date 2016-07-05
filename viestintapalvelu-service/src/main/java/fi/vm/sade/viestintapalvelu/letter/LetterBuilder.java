@@ -30,6 +30,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import com.google.common.base.Supplier;
+import fi.vm.sade.viestintapalvelu.util.DateUtil;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -70,6 +71,8 @@ import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
+
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.*;
 
 @Service
 @Singleton
@@ -399,38 +402,4 @@ public class LetterBuilder {
         this.objectMapperProvider = objectMapperProvider;
     }
 
-    private static String palautusTimestampFi(String pvm, String aika) {
-        Date timestamp = palautusTimestamp(pvm, aika);
-        if(timestamp == null) {
-            return null;
-        }
-        return new SimpleDateFormat("d.M.yyyy 'klo' h.m").format(timestamp);
-    }
-    private static String palautusTimestampSv(String pvm, String aika) {
-        Date timestamp = palautusTimestamp(pvm, aika);
-        if(timestamp == null) {
-            return null;
-        }
-        return new SimpleDateFormat("d.M.yyyy 'kl.' h.m").format(timestamp);
-    }
-    private static String palautusTimestampEn(String pvm, String aika) {
-        Date timestamp = palautusTimestamp(pvm, aika);
-        if(timestamp == null) {
-            return null;
-        }
-        return new SimpleDateFormat("d MMMM yyyy 'at' h a").format(timestamp);
-    }
-
-    private static Date palautusTimestamp(String pvm, String aika) {
-        if(pvm == null || aika == null) {
-            return null;
-        }
-        try {
-            Date timestamp = new SimpleDateFormat("d.M.yyyy hh.mm").parse(pvm + " " + aika);
-            return timestamp;
-        } catch (ParseException e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
 }
