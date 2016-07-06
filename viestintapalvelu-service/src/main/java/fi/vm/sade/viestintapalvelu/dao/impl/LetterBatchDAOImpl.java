@@ -143,7 +143,7 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         BooleanExpression whereExpression = anyOf(DAOUtil.splittedInExpression(organizationOIDs, letterBatch.organizationOid));
         JPAQuery findLetterBatches = from(letterBatch).where(whereExpression).orderBy(orderBy);
 
-        return getLetterBatches(pagingAndSorting, (QLetterBatch) findLetterBatches.list(letterBatch), findLetterBatches);
+        return getLetterBatches(pagingAndSorting, letterBatch, findLetterBatches);
     }
 
     @Override
