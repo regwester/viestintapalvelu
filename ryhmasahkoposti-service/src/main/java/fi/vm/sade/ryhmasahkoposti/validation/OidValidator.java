@@ -23,6 +23,9 @@ import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 public class OidValidator {
 
     public static boolean isOID(String searchArgument) {
+        if(searchArgument == null) {
+            return false;
+        }
         String trimmedSearchArgument = searchArgument.trim();
 
         return trimmedSearchArgument.startsWith(GroupEmailConstants.OID_OPH_TREE);
@@ -30,6 +33,9 @@ public class OidValidator {
     }
 
     public static boolean isHenkiloOID(String searchArgument) {
+        if(searchArgument == null) {
+            return false;
+        }
         String trimmedSearchArgument = searchArgument.trim();
 
         if (!trimmedSearchArgument.startsWith(GroupEmailConstants.OID_OPH_TREE)) {
@@ -41,6 +47,9 @@ public class OidValidator {
     }
 
     public static boolean isOrganisaatioOID(String searchArgument) {
+        if(searchArgument == null) {
+            return false;
+        }
         String trimmedsearchargument = searchArgument.trim();
 
         if (!isOID(trimmedsearchargument)) {
