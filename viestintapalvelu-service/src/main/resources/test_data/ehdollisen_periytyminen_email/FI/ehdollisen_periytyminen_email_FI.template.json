@@ -35,7 +35,7 @@
         },
         {
             "name":"subject",
-            "defaultValue":"Opiskelupaikka vastaanotettavissa Opintopolussa",
+            "defaultValue":"Opintopolku: Tilannetietoa jonottamisesta",
             "mandatory":false,
             "timestamp":null,
             "id":0
@@ -45,7 +45,7 @@
     "structure":{
         "name":"ehdollisen_periytyminen_email",
         "language":"FI",
-        "description":"Opiskelupaikka vastaanotettavissa Opintopolussa sähköposti",
+        "description":"Viesti ehdollisen vastaanoton periytymisestä: Lähtee hakijalle, joka on ottanut paikan vastaan ja ilmoittanut jäävänsä odottamaan ylempää toivetta, ja joka tulee sijoittelussa hyväksytyksi ylemmälle toiveelleen. Ehdollinen vastaanotto siirtyy hyväksymisen mukana ylemmälle toiveelle",
         "contentStructures":[
             {
                 "type":"email",

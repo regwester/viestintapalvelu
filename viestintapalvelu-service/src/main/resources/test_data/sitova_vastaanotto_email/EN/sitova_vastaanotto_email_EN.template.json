@@ -35,7 +35,7 @@
         },
         {
             "name":"subject",
-            "defaultValue":"Studyinfo: Your study place has been confirmed",
+            "defaultValue":"Your study place has been confirmed - register for studies",
             "mandatory":false,
             "timestamp":null,
             "id":0
@@ -45,7 +45,7 @@
     "structure":{
         "name":"sitova_vastaanotto_email",
         "language":"EN",
-        "description":"Studyinfo: Your study place has been confirmed",
+        "description":"Viesti kun ehdollisesta vastaanotosta tulee sitova: Lähtee hakijalle, jonka ehdollinen vastaanotto muuttuu sitovaksi. Viestissä muistutetaan ilmoittautumisesta, koska hakija ei ole aiemmin voinut ilmoittautua.",
         "contentStructures":[
             {
                 "type":"email",

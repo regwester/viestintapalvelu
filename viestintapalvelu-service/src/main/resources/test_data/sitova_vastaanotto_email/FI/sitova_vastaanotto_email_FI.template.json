@@ -35,7 +35,7 @@
         },
         {
             "name":"subject",
-            "defaultValue":"Opiskelupaikka vastaanotettavissa Opintopolussa",
+            "defaultValue":"Opintopolku: Paikan vastaanotto vahvistettu - ilmoittaudu opintoihin",
             "mandatory":false,
             "timestamp":null,
             "id":0
@@ -45,7 +45,7 @@
     "structure":{
         "name":"sitova_vastaanotto_email",
         "language":"FI",
-        "description":"Opiskelupaikka vastaanotettavissa Opintopolussa sähköposti",
+        "description":"Viesti kun ehdollisesta vastaanotosta tulee sitova: Lähtee hakijalle, jonka ehdollinen vastaanotto muuttuu sitovaksi. Viestissä muistutetaan ilmoittautumisesta, koska hakija ei ole aiemmin voinut ilmoittautua.",
         "contentStructures":[
             {
                 "type":"email",

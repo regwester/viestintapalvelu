@@ -45,7 +45,7 @@
     "structure":{
         "name":"ehdollisen_periytyminen_email",
         "language":"EN",
-        "description":"Studyinfo: Information about the wait list",
+        "description":"Viesti ehdollisen vastaanoton periytymisestä: Lähtee hakijalle, joka on ottanut paikan vastaan ja ilmoittanut jäävänsä odottamaan ylempää toivetta, ja joka tulee sijoittelussa hyväksytyksi ylemmälle toiveelleen. Ehdollinen vastaanotto siirtyy hyväksymisen mukana ylemmälle toiveelle",
         "contentStructures":[
             {
                 "type":"email",

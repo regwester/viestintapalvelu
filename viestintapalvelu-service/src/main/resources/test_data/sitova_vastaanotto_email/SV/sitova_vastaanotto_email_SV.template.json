@@ -35,7 +35,7 @@
         },
         {
             "name":"subject",
-            "defaultValue":"Studieinfo: Mottagandet av studieplatsen har bekräftats",
+            "defaultValue":"Studieinfo: Mottagandet av studieplatsen har bekräftats - anmäl dig till studierna",
             "mandatory":false,
             "timestamp":null,
             "id":0
@@ -45,7 +45,7 @@
     "structure":{
         "name":"sitova_vastaanotto_email",
         "language":"SV",
-        "description":"Studieinfo: Mottagandet av studieplatsen har bekräftats",
+        "description":"Viesti kun ehdollisesta vastaanotosta tulee sitova: Lähtee hakijalle, jonka ehdollinen vastaanotto muuttuu sitovaksi. Viestissä muistutetaan ilmoittautumisesta, koska hakija ei ole aiemmin voinut ilmoittautua.",
         "contentStructures":[
             {
                 "type":"email",
