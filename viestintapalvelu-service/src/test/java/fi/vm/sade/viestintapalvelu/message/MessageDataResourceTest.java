@@ -26,7 +26,7 @@ import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import static org.mockito.Matchers.any;
-
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.verify;
 
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
@@ -49,7 +49,15 @@ public class MessageDataResourceTest {
         resource.sendMessageViaAsiointiTiliOrEmail(givenMessageData());
         verify(asiointitiliService).send(any(AsiointitiliSendBatchDto.class));
     }
-    
+
+    @Test
+    public void testThatNamesAreCapitalized() {
+        AddressLabel address = new AddressLabel("juha matti JUHA-MATTI", "Virtanen Koivisto Virtanen-Koivisto",
+                null, null, null, null, null, null, null, null);
+        assertEquals("Juha Matti Juha-Matti", address.getFirstName());
+        assertEquals("Virtanen Koivisto Virtanen-Koivisto", address.getLastName());
+    }
+
     private MessageData givenMessageData() {
         return givenMessageData(Arrays.asList(givenReceiver("010101-123N")));
     }
