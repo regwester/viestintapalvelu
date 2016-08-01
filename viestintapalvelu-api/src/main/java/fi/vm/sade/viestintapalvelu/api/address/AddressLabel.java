@@ -154,7 +154,7 @@ public class AddressLabel implements AddressLabelDetails, Comparable<AddressLabe
     
     private String capitalize(String s) {
         if (s != null) {
-            return WordUtils.capitalize(s.toLowerCase());
+            return WordUtils.capitalize(s.toLowerCase(), new char[]{'-', ' '});
         }
         return s;
     }
