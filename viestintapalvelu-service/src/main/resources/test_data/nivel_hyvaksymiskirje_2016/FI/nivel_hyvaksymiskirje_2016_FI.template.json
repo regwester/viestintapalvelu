@@ -67,9 +67,9 @@
       "mandatory": false
     },
     {
-      "id": 4,
+      "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
+      "defaultValue": "Päätös opiskelijaksi ottamisesta",
       "mandatory": false
     }
   ]
