@@ -214,5 +214,19 @@ ul.dash li:before {
 .footer {
   font-size: 90%;
   position: running(footer);
+  margin-top: -2cm;
+}
+
+.footer .heading {
+  width: 100%;
+}
+
+.footer .address {
+  width: 100%;
   margin-top: -1cm;
+}
+
+.footer div {
+  float: left;
+  width: 30mm;
 }
