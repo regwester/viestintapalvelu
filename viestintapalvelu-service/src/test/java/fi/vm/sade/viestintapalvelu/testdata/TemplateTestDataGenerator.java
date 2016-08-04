@@ -48,7 +48,12 @@ public class TemplateTestDataGenerator {
         final String templatePrefix = String.format("%s_%s", templateKey, language);
         final String templateFile = String.format("%s.template.json", templatePrefix);
         final String outputFile = String.format("%s.json", templatePrefix);
-        final String template = IOUtils.toString(new ClassPathResource(String.format("%s%s", path, templateFile)).getInputStream());
+        final ClassPathResource resource = new ClassPathResource(String.format("%s%s", path, templateFile));
+        if (!resource.exists()) {
+            System.out.println("Skipping non-existing language " + language);
+            return;
+        }
+        final String template = IOUtils.toString(resource.getInputStream());
 
         List<String> files = filesInPath(path);
         Map<String, String> replaces = filesToReplacements(path, templatePrefix, templateFile, outputFile, files);
