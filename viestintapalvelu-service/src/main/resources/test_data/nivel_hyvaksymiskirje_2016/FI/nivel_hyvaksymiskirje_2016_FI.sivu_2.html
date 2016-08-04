@@ -22,9 +22,6 @@
     <tr>
       <th>Valinnan tulos</th>
       <th>Hakukohde</th>
-      <th>Valintatapa</th>
-      <th>Pisteesi</th>
-      <th>Alin hyv.</th>
       <th>Varasijasi</th>
     </tr>
     </thead>
@@ -34,25 +31,21 @@
     #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
     <tr class="$hyvaksytty $even">
       <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
-      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>#if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end</td>
+      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/></td>
     </tr>
     #foreach( $sijoitus in $tulos.sijoitukset )
     <tr class="$hyvaksytty $even">
-      <td>$sijoitus.nimi<br/></td>
-      <td>#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end<br/></td>
-      <td>#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end<br/></td>
       <td>#if($sijoitus.varasija)${sijoitus.varasija}#{else} - #end<br/></td>
     </tr>
     #end
     #end
     </tbody>
     <tfoot>
-    <tr><td colspan="7"></td></tr>
+    <tr><td colspan="4"></td></tr>
     </tfoot>
   </table>
   $sis2
 </div>
-
 
 <div class="footer">
   <div class="heading"><b>ALUEHALLINTOVIRASTOJEN OSOITTEET:</b></div>
