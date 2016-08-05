@@ -303,7 +303,11 @@ public class LetterBatchProcessor {
                                     }
                                 } catch (Exception e) {
                                     logger.error("Error processing processable " + nextProcessable + " in job " + jobDescription.getJob(), e);
-                                    jobDescription.getJob().handleFailure(e, nextProcessable);
+                                    try {
+                                        jobDescription.getJob().handleFailure(e, nextProcessable);
+                                    } catch (Exception e2) {
+                                        logger.error("handleFailure error", e2);
+                                    }
                                     okState.set(false);
                                 }
                                 nextProcessable = unprocessed.poll();
