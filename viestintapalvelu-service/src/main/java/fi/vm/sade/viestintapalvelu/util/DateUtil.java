@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.util;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Locale;
 
 public class DateUtil {
 
@@ -26,7 +27,7 @@ public class DateUtil {
         if(timestamp == null) {
             return null;
         }
-        return new SimpleDateFormat("d MMMM yyyy 'at' h a").format(timestamp);
+        return new SimpleDateFormat("d MMMM yyyy 'at' h a", Locale.US).format(timestamp);
     }
 
     private static Date palautusTimestamp(String pvm, String aika) {
