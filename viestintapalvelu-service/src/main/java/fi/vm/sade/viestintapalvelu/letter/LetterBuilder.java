@@ -182,7 +182,7 @@ public class LetterBuilder {
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         if (xhtml != null) {
-            LOG.info("CreatePagePdf using xhtml:\n" + new String(xhtml));
+            LOG.warn("CreatePagePdf using xhtml:\n" + new String(xhtml));
         }
         return documentBuilder.xhtmlToPDF(xhtml);
     }
