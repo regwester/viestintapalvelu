@@ -7,7 +7,7 @@
   "replacements": [
     {
       "name": "subject",
-      "defaultValue": "=?utf-8?Q?Opintopolku.fi k=C3=A4ytt=C3=B6oikeushakemuksia saapunut?=",
+      "defaultValue": "=?utf-8?Q?Inkomna ans=C3=B6kningar om anv=C3=A4ndarr=C3=A4ttigheter f=C3=B6r Studieinfo.fi",
       "mandatory": false,
       "timestamp": null,
       "id": 0
@@ -34,7 +34,7 @@
             "role": "body",
             "name": "sahkopostin_paasisalto",
             "contentType": "html",
-            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hei,</p> <p>Sinulle on saapunut k&auml;sitelt&auml;v&auml;ksi uusia k&auml;ytt&ouml;oikeshakemuksia.</p></body></html>"
+            "content": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><!DOCTYPE html PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd\"><html xmlns=\"http://www.w3.org/1999/xhtml\"><head><meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"/><meta http-equiv=\"Content-Style-Type\" content=\"text/css\"/></head><body><p>Hej,</p> <p>Du har nya anv&auml;ndarr&auml;ttighetsans&ouml;kningar att behandla.</p></body></html>"
           }
         ]
       }
