@@ -34,6 +34,8 @@ public class TemplateTestDataGenerator {
 
     public static void main(String[] args) throws IOException {
         String templateKeys = System.getProperty("template");
+        //String templateKeys = "2aste_jalkiohjauskirje_2016";
+        //String templateKeys = "2aste_hyvaksymiskirje_2016,2aste_jalkiohjauskirje_2016";
         if(templateKeys != null) {
             for(String templateKey : templateKeys.split(",")) {
                 for (String language : asList("FI", "EN", "SV")) {
@@ -48,7 +50,12 @@ public class TemplateTestDataGenerator {
         final String templatePrefix = String.format("%s_%s", templateKey, language);
         final String templateFile = String.format("%s.template.json", templatePrefix);
         final String outputFile = String.format("%s.json", templatePrefix);
-        final String template = IOUtils.toString(new ClassPathResource(String.format("%s%s", path, templateFile)).getInputStream());
+        final ClassPathResource resource = new ClassPathResource(String.format("%s%s", path, templateFile));
+        if (!resource.exists()) {
+            System.out.println("Skipping non-existing language " + language);
+            return;
+        }
+        final String template = IOUtils.toString(resource.getInputStream());
 
         List<String> files = filesInPath(path);
         Map<String, String> replaces = filesToReplacements(path, templatePrefix, templateFile, outputFile, files);
@@ -60,6 +67,9 @@ public class TemplateTestDataGenerator {
         final String testDataPath = "/viestintapalvelu-service/src/main/resources";
         final String viestintapalveluPath = new File("").getAbsolutePath();
         final String outputUrl = String.format("%s/%s/%s%s", viestintapalveluPath, testDataPath, path, outputFile);
+
+        System.out.println("Writing to output file " + outputFile);
+
         FileOutputStream fileOutputStream = new FileOutputStream(outputUrl);
         IOUtils.write(new GsonBuilder().disableHtmlEscaping().create().toJson(renderedTemplate), fileOutputStream);
         IOUtils.closeQuietly(fileOutputStream);

@@ -19,7 +19,7 @@
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <authentication-domain.version>1.0-SNAPSHOT</authentication-domain.version>
         <dokumenttipalvelu.version>1.0-SNAPSHOT</dokumenttipalvelu.version>
-        <dtoconverter.version>2.0.2-RELEASE</dtoconverter.version>
+        <dtoconverter.version>2.0.3-RELEASE</dtoconverter.version>
     </properties>
 
     <dependencies>
