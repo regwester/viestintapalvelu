@@ -17,6 +17,7 @@ package fi.vm.sade.viestintapalvelu.structure.impl;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -42,6 +43,8 @@ public class StructureServiceImpl implements StructureService {
     @Autowired
     private StructureDAO structureDAO;
 
+    private ModelMapper modelMapper = new ModelMapper();
+
     @Autowired
     private StructureDtoConverter dtoConverter;
 
@@ -56,7 +59,9 @@ public class StructureServiceImpl implements StructureService {
     public StructureViewDto getStructure(long id) {
         Structure structure = fromNullable(structureDAO.read(id)).or(
                 OptionalHelper.<Structure>notFound("Structure not found by id="+id));
-        return dtoConverter.convert(structure, new StructureViewDto());
+        StructureViewDto s = new StructureViewDto();
+        modelMapper.map(structure, s);
+        return s;
     }
 
     @Override
@@ -64,7 +69,9 @@ public class StructureServiceImpl implements StructureService {
     public StructureViewDto getLatestStructureByNameAndLanguage(String name, String language) {
         Structure structure = structureDAO.findLatestStructrueByNameAndLanguage(name, language).or(
                 OptionalHelper.<Structure>notFound("Structure not found by name="+name + ", language="+language));
-        return dtoConverter.convert(structure, new StructureViewDto());
+        StructureViewDto s = new StructureViewDto();
+        modelMapper.map(structure, s);
+        return s;
     }
 
     @Override
@@ -80,7 +87,9 @@ public class StructureServiceImpl implements StructureService {
     public StructureSaveDto getStructureForEditing(Long id) {
         Structure structure = fromNullable(structureDAO.read(id)).or(
                 OptionalHelper.<Structure>notFound("Structure not found by id="+id));
-        return dtoConverter.convert(structure, new StructureSaveDto());
+        StructureSaveDto s = new StructureSaveDto();
+        modelMapper.map(structure, s);
+        return s;
     }
 
     public void setStructureDAO(StructureDAO structureDAO) {
