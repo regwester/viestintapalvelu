@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.*;
 
@@ -59,7 +60,7 @@ public class ContentStructure implements Serializable, TypedContentStructure {
     private ContentStructureType type;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentStructure", cascade = CascadeType.PERSIST)
-    private Set<ContentStructureContent> contents = new HashSet<>();
+    private Set<ContentStructureContent> contents = new TreeSet<>();
 
     public Long getId() {
         return id;

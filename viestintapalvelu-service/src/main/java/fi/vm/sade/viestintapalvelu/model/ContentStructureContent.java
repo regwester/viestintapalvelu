@@ -16,6 +16,7 @@
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.io.Serializable;
+import java.util.Comparator;
 
 import javax.persistence.*;
 
@@ -31,7 +32,7 @@ import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructureContent;
 @Entity
 @Table(name = "sisalto_rakenne_sisalto", schema = "kirjeet",
     uniqueConstraints = @UniqueConstraint(columnNames = {"sisalto_rakenne", "jarjestys"}))
-public class ContentStructureContent implements Serializable, TypedContentStructureContent {
+public class ContentStructureContent implements Serializable, TypedContentStructureContent, Comparable<ContentStructureContent> {
     private static final long serialVersionUID = 2783410302027964815L;
 
     public static final Ordering<ContentStructureContent> BY_ORDER_NUMBER = Ordering.natural().onResultOf(new Function<ContentStructureContent, Integer>() {
@@ -110,5 +111,10 @@ public class ContentStructureContent implements Serializable, TypedContentStruct
 
     public void setOrderNumber(int orderNumber) {
         this.orderNumber = orderNumber;
+    }
+
+    @Override
+    public int compareTo(ContentStructureContent o) {
+        return BY_ORDER_NUMBER.compare(this, o);
     }
 }
