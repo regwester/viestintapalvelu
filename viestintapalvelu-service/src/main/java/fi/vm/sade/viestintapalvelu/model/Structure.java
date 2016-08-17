@@ -15,11 +15,11 @@
  **/
 package fi.vm.sade.viestintapalvelu.model;
 
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
+
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.persistence.*;
 
@@ -61,7 +61,8 @@ public class Structure implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "structure",
             cascade = CascadeType.PERSIST)
-    private Set<ContentReplacement> replacements = new TreeSet<>();
+    @Sort(type = SortType.NATURAL)
+    private SortedSet<ContentReplacement> replacements = new TreeSet<>();
 
     public Structure() {
     }
@@ -120,11 +121,11 @@ public class Structure implements Serializable {
         this.contentStructures = contentStructures;
     }
 
-    public Set<ContentReplacement> getReplacements() {
+    public SortedSet<ContentReplacement> getReplacements() {
         return replacements;
     }
 
-    protected void setReplacements(Set<ContentReplacement> replacements) {
+    protected void setReplacements(SortedSet<ContentReplacement> replacements) {
         this.replacements = replacements;
     }
 }

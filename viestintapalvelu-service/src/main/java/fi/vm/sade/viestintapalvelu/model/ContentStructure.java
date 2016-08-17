@@ -16,15 +16,14 @@
 package fi.vm.sade.viestintapalvelu.model;
 
 import java.io.Serializable;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.TreeSet;
+import java.util.*;
 
 import javax.persistence.*;
 
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.structure.dto.TypedContentStructure;
+import org.hibernate.annotations.Sort;
+import org.hibernate.annotations.SortType;
 
 /**
  * User: ratamaa
@@ -60,7 +59,8 @@ public class ContentStructure implements Serializable, TypedContentStructure {
     private ContentStructureType type;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "contentStructure", cascade = CascadeType.PERSIST)
-    private Set<ContentStructureContent> contents = new TreeSet<>();
+    @Sort(type = SortType.NATURAL)
+    private SortedSet<ContentStructureContent> contents = new TreeSet<>();
 
     public Long getId() {
         return id;
@@ -103,11 +103,11 @@ public class ContentStructure implements Serializable, TypedContentStructure {
     }
 
     @Override
-    public Set<ContentStructureContent> getContents() {
+    public SortedSet<ContentStructureContent> getContents() {
         return contents;
     }
 
-    protected void setContents(Set<ContentStructureContent> contents) {
+    protected void setContents(SortedSet<ContentStructureContent> contents) {
         this.contents = contents;
     }
 }
