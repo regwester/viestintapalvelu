@@ -48,6 +48,13 @@
         "description": "Kirjeen otsikko",
         "contentType": "html",
         "numberOfRows": 1
+      },
+      {
+        "key": "liiteotsikko",
+        "name": "liiteotsikko",
+        "description": "Kirjeen otsikko",
+        "contentType": "html",
+        "numberOfRows": 1
       }
     ]
   },
@@ -69,7 +76,13 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "Päätös opiskelijaksi ottamisesta",
+      "defaultValue": "BESLUT OM ANTAGNING",
+      "mandatory": false
+    },
+    {
+      "id": 3,
+      "name": "liiteotsikko",
+      "defaultValue": "DIN SITUATION I ANSÖKAN TILL FÖRBEREDANDE UTBILDNINGAR EFTER GRUNDSKOLAN 2016",
       "mandatory": false
     }
   ]

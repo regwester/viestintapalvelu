@@ -48,6 +48,13 @@
         "description": "Kirjeen otsikko",
         "contentType": "html",
         "numberOfRows": 1
+      },
+      {
+        "key": "liiteotsikko",
+        "name": "liiteotsikko",
+        "description": "Kirjeen otsikko",
+        "contentType": "html",
+        "numberOfRows": 1
       }
     ]
   },
@@ -69,7 +76,13 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "Päätös opiskelijaksi ottamisesta",
+      "defaultValue": "ILMOITUS PERUSOPETUKSEN JÄLKEISEN VALMISTAVAN KOULUTUKSEN HAUN TULOKSISTA KESÄLLÄ 2016",
+      "mandatory": false
+    },
+    {
+      "id": 3,
+      "name": "liiteotsikko",
+      "defaultValue": "TILANTEESI KEVÄÄN 2016 PERUSOPETUKSEN JÄLKEISEN VALMISTAVAN KOULUTUKSEN HAUSSA",
       "mandatory": false
     }
   ]
