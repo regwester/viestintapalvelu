@@ -19,6 +19,8 @@ import java.io.Serializable;
 
 import javax.persistence.*;
 
+import com.google.common.base.Function;
+import com.google.common.collect.Ordering;
 import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 
 /**
@@ -33,9 +35,13 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
                 @UniqueConstraint(columnNames = {"rakenne", "nimi"}),
                 @UniqueConstraint(columnNames = {"rakenne", "jarjestys"})
         })
-public class ContentReplacement implements Serializable {
+public class ContentReplacement implements Serializable, Comparable<ContentReplacement> {
     private static final long serialVersionUID = 4522333267335734593L;
-
+    public static final Ordering<ContentReplacement> BY_ORDER_NUMBER = Ordering.natural().onResultOf(new Function<ContentReplacement, Integer>() {
+        public Integer apply(ContentReplacement input) {
+            return input.getOrderNumber();
+        }
+    });
     @Id
     @Column(name = "id", nullable = false, updatable = false, unique = true)
     @GeneratedValue(generator = "sisalto_korvauskentta_id_seq")
@@ -135,5 +141,10 @@ public class ContentReplacement implements Serializable {
 
     public void setNumberOfRows(int numberOfRows) {
         this.numberOfRows = numberOfRows;
+    }
+
+    @Override
+    public int compareTo(ContentReplacement o) {
+        return BY_ORDER_NUMBER.compare(this, o);
     }
 }

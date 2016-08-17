@@ -19,6 +19,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.TreeSet;
 
 import javax.persistence.*;
 
@@ -60,7 +61,7 @@ public class Structure implements Serializable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "structure",
             cascade = CascadeType.PERSIST)
-    private Set<ContentReplacement> replacements = new HashSet<>();
+    private Set<ContentReplacement> replacements = new TreeSet<>();
 
     public Structure() {
     }
