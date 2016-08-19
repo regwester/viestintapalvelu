@@ -67,7 +67,7 @@
                                 ui-select2 class="form-control letterSearchField">
                             <option class="placeholder select2-disabled" value=""
                                     class="placeholder">{{'reportedletterlist.applicationPeriod.placeholder' | i18n}}</option>
-                            <option ng-repeat="ap in applicationPeriods | orderBy:'nimi.kieli_fi'" value="{{ap.oid}}">{{ap.nimi.kieli_fi}}</option>
+                            <option ng-repeat="ap in applicationPeriods | orderBy:'nimi.kieli_fi'" value="{{ap.oid}}">{{ap.nimi.kieli_fi | htmlToPlainText}}</option>
                         </select>
                     </td>
                 </tr>
