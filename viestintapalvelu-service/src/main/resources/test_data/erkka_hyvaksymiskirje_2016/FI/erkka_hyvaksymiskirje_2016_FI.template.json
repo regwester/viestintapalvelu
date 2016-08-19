@@ -29,32 +29,32 @@
     ],
     "replacements": [
       {
+        "key": "kirjeotsikko",
+        "name": "Kirjeen otsikko",
+        "description": "Kirjeen otsikko",
+        "contentType": "html",
+        "numberOfRows": 1
+      },
+      {
         "key": "sisalto",
-        "name": "sisalto",
+        "name": "Kirjeen sisältö",
         "description": "Kirjeen ensimmäisen sivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
       },
       {
+        "key": "liiteotsikko",
+        "name": "Liitteen otsikko",
+        "description": "Kirjeen otsikko",
+        "contentType": "html",
+        "numberOfRows": 1
+      },
+      {
         "key": "sis2",
-        "name": "sis2",
+        "name": "Liitteen sisältö",
         "description": "Kirjeen tilanteet sivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
-      },
-      {
-        "key": "kirjeotsikko",
-        "name": "kirjeotsikko",
-        "description": "Kirjeen otsikko",
-        "contentType": "html",
-        "numberOfRows": 1
-      },
-      {
-        "key": "liiteotsikko",
-        "name": "liiteotsikko",
-        "description": "Kirjeen otsikko",
-        "contentType": "html",
-        "numberOfRows": 1
       }
     ]
   },
