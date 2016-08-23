@@ -7,7 +7,7 @@
   "replacements": [
     {
       "name": "subject",
-      "defaultValue": "=?utf-8?Q?Inkomna ans=C3=B6kningar om anv=C3=A4ndarr=C3=A4ttigheter f=C3=B6r Studieinfo.fi",
+      "defaultValue": "=?utf-8?Q?Inkomna ans=C3=B6kningar om anv=C3=A4ndarr=C3=A4ttigheter f=C3=B6r Studieinfo.fi?=",
       "mandatory": false,
       "timestamp": null,
       "id": 0
