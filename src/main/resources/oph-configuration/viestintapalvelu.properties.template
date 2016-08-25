@@ -149,9 +149,9 @@ ajastuspalvelu.task.dummyEmail.endpoint = https\://${host.virkailija}/ajastuspal
 ajastuspalvelu.ryhmasahkoposti.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/
 viestintapalvelu.rest.api.url = https://${host.virkailija}/viestintapalvelu/api/v1
 
-viestintapalvelu-service.postgresql.url=jdbc:postgresql://{{host_postgresql_viestintapalvelu}}:{{port_postgresql}}/viestintapalvelu
-viestintapalvelu-service.postgresql.user={{host_postgresql_viestintapalvelu_user}}
-viestintapalvelu-service.postgresql.password={{host_postgresql_viestintapalvelu_password}}
-viestintapalvelu-service.postgresql.maxactive={{host_postgresql_viestintapalvelu_max_active}}
-viestintapalvelu-service.postgresql.maxwait={{host_postgresql_viestintapalvelu_max_wait}}
+viestintapalvelu-service.postgresql.url=jdbc:postgresql://{{host_postgresql_viestinta}}:{{port_postgresql}}/viestintapalvelu
+viestintapalvelu-service.postgresql.user={{host_postgresql_viestinta_user}}
+viestintapalvelu-service.postgresql.password={{host_postgresql_viestinta_password}}
+viestintapalvelu-service.postgresql.maxactive={{host_postgresql_viestinta_max_active}}
+viestintapalvelu-service.postgresql.maxwait={{host_postgresql_viestinta_max_wait}}
 viestintapalvelu-service.postgresql.maxlifetimemillis=60000
