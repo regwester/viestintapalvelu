@@ -305,6 +305,7 @@
             <property name="loadTimeWeaver">
                 <bean class="org.springframework.instrument.classloading.InstrumentationLoadTimeWeaver" />
             </property>
+            <property name="dataSource" ref="dbDataSource"/>
             <property name="jpaPropertyMap">
                 <map>
                     <entry key="hibernate.hbm2ddl.auto" value="${jpa.schemaUpdate}" />
