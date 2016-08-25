@@ -95,7 +95,7 @@
         <phantomjs.version>1.9.2</phantomjs.version>
         <phantomjs-maven-plugin.version>0.3</phantomjs-maven-plugin.version>
         <!-- jdbc4 is for JDK1.6 and jdbc41 is for JDK1.7 -->
-        <postgresql.version>9.3-1102-jdbc41</postgresql.version>
+        <postgresql.version>9.4.1209</postgresql.version>
         <powermock.version>1.6.0</powermock.version>
         <pdfbox.version>1.8.1</pdfbox.version>
         <querydsl.version>3.3.4</querydsl.version>
@@ -142,6 +142,18 @@
                 <version>${validation.version}</version>
             </dependency>
 
+            <!-- Hikari CP -->
+            <dependency>
+                <groupId>com.zaxxer</groupId>
+                <artifactId>HikariCP</artifactId>
+                <version>2.4.7</version>
+            </dependency>
+            <!-- Postgresql -->
+            <dependency>
+                <groupId>org.postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <version>${postgresql.version}</version>
+            </dependency>
             <!-- Javax Inject -->
             <dependency>
                 <groupId>javax.inject</groupId>
@@ -573,13 +585,6 @@
                 <groupId>org.jgroups</groupId>
                 <artifactId>jgroups</artifactId>
                 <version>${jgroups.version}</version>
-            </dependency>
-
-            <!-- Postgresql -->
-            <dependency>
-                <groupId>org.postgresql</groupId>
-                <artifactId>postgresql</artifactId>
-                <version>${postgresql.version}</version>
             </dependency>
 
             <!-- JPA and QSDL -->
