@@ -1,0 +1,49 @@
+{
+    "name": "kayttooikeusanomuskasitelty_email",
+    "language": "SV",
+    "type": "email",
+    "replacements": [
+        {
+            "name": "subject",
+            "defaultValue": "Anhållan om användarrättigheter till Studieinfo.fi behandlad",
+            "mandatory": false
+        },
+        {
+            "name": "anomuksenTila",
+            "mandatory": true
+        },
+        {
+            "name": "hylkaamisperuste",
+            "mandatory": false
+        },
+        {
+            "name": "roolit",
+            "mandatory": false
+        }
+    ],
+    "structure": {
+        "name": "kayttooikeusanomuskasitelty_email",
+        "language": "SV",
+        "contentStructures": [
+            {
+                "type": "email",
+                "contents": [
+                    {
+                        "role": "header",
+                        "name": "sahkopostin_otsikko",
+                        "contentType": "plain",
+                        "content": "$subject"
+                    },
+                    {
+                        "role": "body",
+                        "name": "sahkopostin_paasisalto",
+                        "contentType": "html",
+                        "content": "{{sivu.html}}"
+                    }
+                ]
+            }
+        ],
+        "replacements": [
+        ]
+    }
+}

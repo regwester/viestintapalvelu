@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="fi">
+    <head>
+        <meta charset="utf-8">
+        <title>$subject</title>
+    </head>
+    <body>
+        <p>
+            Hyvä virkailija,<br>
+            olet anonut Opintopolun palvelukokonaisuuteen liittyviä käyttöoikeuksia.
+        </p>
+        #set( $tilat = {"HYLATTY" : "Hylätty", "MYONNETTY" : "Myönnetty"} )
+        <table>
+            <tbody>
+                #foreach( $rooli in $roolit )
+                <tr>
+                    <td>$rooli.nimi</td>
+                    <td>$tilat.get($rooli.tila)</td>
+                </tr>
+                #end
+            </tbody>
+        </table>
+        #if( $hylkaamisperuste )
+        <p>$hylkaamisperuste</p>
+        #end
+        <p>
+            Ystävällisin terveisin,<br>
+            Opetushallinnon palvelukokonaisuuteen kuuluva käyttöoikeuksien hallinnointi
+        </p>
+    </body>
+</html>

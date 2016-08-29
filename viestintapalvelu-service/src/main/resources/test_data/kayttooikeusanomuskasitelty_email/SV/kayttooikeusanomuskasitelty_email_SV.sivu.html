@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="sv">
+    <head>
+        <meta charset="utf-8">
+        <title>$subject</title>
+    </head>
+    <body>
+        <p>
+            Bästa administratör,<br>
+            Du har anhållit om användarrättigheter till Studieinfos servicehelhet.
+        </p>
+        #set( $tilat = {"HYLATTY" : "Avslagen", "MYONNETTY" : "Godkänd"} )
+        <table>
+            <tbody>
+                #foreach( $rooli in $roolit )
+                <tr>
+                    <td>$rooli.nimi</td>
+                    <td>$tilat.get($rooli.tila)</td>
+                </tr>
+                #end
+            </tbody>
+        </table>
+        #if( $hylkaamisperuste )
+        <p>$hylkaamisperuste</p>
+        #end
+        <p>
+            Med vänlig hälsning,<br>
+            Administrationen för användarrättigheter som hör till undervisningsförvaltningens servicehelhet
+        </p>
+    </body>
+</html>
