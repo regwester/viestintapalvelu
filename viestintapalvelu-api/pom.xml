@@ -3,7 +3,7 @@
   <parent>
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>14.7</version>
+    <version>14.8-SNAPSHOT</version>
   </parent>
   <artifactId>viestintapalvelu-api</artifactId>
   <name>viestintapalvelu-api</name>
@@ -26,12 +26,12 @@
       <groupId>commons-lang</groupId>
       <artifactId>commons-lang</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.hibernate</groupId>
       <artifactId>hibernate-validator</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>javax.ws.rs</groupId>
       <artifactId>javax.ws.rs-api</artifactId>

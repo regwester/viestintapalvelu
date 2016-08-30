@@ -7,7 +7,7 @@
     <parent>
         <groupId>fi.vm.sade.viestintapalvelu</groupId>
         <artifactId>viestintapalvelu</artifactId>
-        <version>14.7</version>
+        <version>14.8-SNAPSHOT</version>
         <relativePath>../pom.xml</relativePath>
     </parent>
 
@@ -56,7 +56,7 @@
           <artifactId>viestintapalvelu-api</artifactId>
           <version>${project.version}</version>
         </dependency>
-        
+
         <!-- Henkilöpalvelu -->
         <dependency>
             <groupId>fi.vm.sade.authentication</groupId>
