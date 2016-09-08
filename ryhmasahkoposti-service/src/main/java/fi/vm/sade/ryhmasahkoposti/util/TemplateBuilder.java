@@ -20,6 +20,7 @@ import com.google.common.collect.Iterables;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.common.util.InputCleaner;
 import fi.vm.sade.ryhmasahkoposti.service.TemplateService;
+import fi.vm.sade.viestintapalvelu.SLF4JLogChute;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.slf4j.Logger;
@@ -32,6 +33,7 @@ import java.io.InputStreamReader;
 import java.io.StringWriter;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import javax.annotation.PostConstruct;
 
 @Component
 public class TemplateBuilder {
@@ -55,6 +57,12 @@ public class TemplateBuilder {
             return size() > MAX_CACHE_ENTRIES;
         }
     };
+
+    @PostConstruct
+    public void initialize() {
+        templateEngine.setProperty(VelocityEngine.RUNTIME_LOG_LOGSYSTEM, new SLF4JLogChute());
+        templateEngine.init();
+    }
 
     public TemplateDTO getTemplate(EmailRecipientMessage message) {
         TemplateDTO result = null;
