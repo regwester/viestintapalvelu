@@ -44,6 +44,8 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 public class EmailSender {
     private static final Logger LOGGER = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.service.impl.EmailSender.class);
 
+    private static final String FIVE_MINUTES = "300000";
+
     @Value("${ryhmasahkoposti.smtp.host}")
     String smtpHost;
     @Value("${ryhmasahkoposti.smtp.port}")
@@ -152,6 +154,9 @@ public class EmailSender {
         Properties mailProps = new Properties();
         mailProps.put("mail.smtp.host", smtpHost);
         mailProps.put("mail.smtp.port", smtpPort);
+        mailProps.put("mail.smtp.connectiontimeout", FIVE_MINUTES);
+        mailProps.put("mail.smtp.timeout", FIVE_MINUTES);
+        mailProps.put("mail.smtp.writetimeout", FIVE_MINUTES);
         return Session.getInstance(mailProps);
     }
 
