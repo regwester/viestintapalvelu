@@ -59,46 +59,34 @@ Viestipalvelua käytetään:
 * Osoitepalvelu
 
 # Kehitysympäristön kasaus
-* jdk 1.7
+* jdk 1.8
+* postgresql (`CREATE DATABASE viestinta`)
 * mvn clean test - huom: käyttää globaalisti asennettua boweria viestintapalvelu-ui buildaamiseen
-* oph-configuration hakemistossa:
-
-```
-ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestintapalvelu.properties.template ryhmasahkopostipalvelu.properties
-ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestintapalvelu.properties.template viestintapalvelu.properties
-```
 
 * IDEA/ECLIPSE: konfiguroi tomcat vm-parametrit
 
 ```
--Duser.home="/home/jkorkala/oph-configuration-dev/"
--Dlog4j.debug=true -XX:MaxPermSize=512m
--Dlog4j.configuration="file:///home/jkorkala/oph-configuration-dev/oph-configuration/log4j.properties"
+-Duser.home="/Users/jkytomak/workspace_oph/viestintapalvelu/src/test/resources"
+-XX:MaxPermSize=512m
+-Dlog4j.configuration="file:///Users/jkytomak/workspace_oph/viestintapalvelu/src/test/resources/oph-configuration/log4j.properties"
 ```
 * IDEA/ECLIPSE: lisää 3 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
-
-* IDEA/ECLIPSE: lisää themes projektin alta virkailija-raamit war projekti /virkailija-raamit tomcat:iin
-
-* Käyttöliittymä näkyvissä @ http://localhost:8080/viestintapalvelu-ui/
 
 # Testiosoitteita:
 
 * http://localhost:8080/viestintapalvelu/
 ** viestintapalveluservice paketin testi ja ylläpitokäyttöliittymä
 ** viestipohja-jsonien tuonti (Mallien tuonti) ja hakulinkitys
-** Letter
-**
 
 * http://localhost:8080/viestintapalvelu-ui/initpage.jsp
 ** sähköpostin lähetyksen testaus ilman osoitepalvelua
-** muuten käytetään raamit > Osoitepalvelun kautta
 
-* https://itest-virkailija.oph.ware.fi/viestintapalvelu-ui/#/reportMessages/list
-* https://itest-virkailija.oph.ware.fi/viestintapalvelu-ui/#/reportLetters
-* https://itest-virkailija.oph.ware.fi/viestintapalvelu-ui/#/letter-templates (ei vielä käytössä 30.1.2015)
+* https://localhost:8080/viestintapalvelu-ui/#/reportMessages/list
+* https://localhost:8080/viestintapalvelu-ui/#/reportLetters
+* https://localhost:8080/viestintapalvelu-ui/#/letter-templates (ei vielä käytössä 30.1.2015)
 
-http://localhost:8080/ryhmasahkoposti-service/swagger/index.html
-http://localhost:8080/viestintapalvelu/swagger/index.html
+* http://localhost:8080/ryhmasahkoposti-service/swagger/index.html
+* http://localhost:8080/viestintapalvelu/swagger/index.html
 
 # Ajastettuja prosesseja
 
