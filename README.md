@@ -21,7 +21,7 @@ mvn clean install
 
 ### Teknologiat
 
-Alla olevassa taulukossa on kerrottu tärkeimmät palvelussa käytetyt teknologiat  
+Alla olevassa taulukossa on kerrottu tärkeimmät palvelussa käytetyt teknologiat
 
 | Nimi          | Kuvaus                                                                                                      | Käyttö palvelussa            | Linkki                                                  |
 |---------------|-------------------------------------------------------------------------------------------------------------|------------------------------|---------------------------------------------------------|
@@ -76,26 +76,6 @@ ln -sf ~/src/oph/viestintapalvelu/src/main/resources/oph-configuration/viestinta
 -Dlog4j.configuration="file:///home/jkorkala/oph-configuration-dev/oph-configuration/log4j.properties"
 ```
 * IDEA/ECLIPSE: lisää 3 artifaktia tomcatin käynnistykseen ja aseta context polut: /ryhmasahkoposti-service /viestintapalvelu /viestintapalvelu-ui
-
-* lisää tomcat conf/context.xml
-
-localhost:
-```
-<Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
-    driverClassName="org.postgresql.Driver"
-    url="jdbc:postgresql://localhost:5432/viestinta?searchpath=kirjeet"
-    schema="kirjeet" username="oph" password="oph" maxActive="20" maxIdle="10"
-    maxWait="-1" />
-```
-
-taulu:
-```
-<Resource name="jdbc/viestinta" auth="Container" type="javax.sql.DataSource"
-    driverClassName="org.postgresql.Driver"
-    url="jdbc:postgresql://taulu.hard.ware.fi:5432/viestinta?searchpath=kirjeet"
-    schema="kirjeet" username="oph" password="oph" maxActive="20" maxIdle="10"
-    maxWait="-1" />
-```
 
 * IDEA/ECLIPSE: lisää themes projektin alta virkailija-raamit war projekti /virkailija-raamit tomcat:iin
 
