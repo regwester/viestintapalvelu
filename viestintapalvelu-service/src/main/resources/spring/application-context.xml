@@ -24,7 +24,7 @@
 
     <beans profile="default">
         <context:property-placeholder
-                location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+                location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="true" properties-ref="defaultProps"/>
         <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
             <property name="properties">
@@ -72,7 +72,7 @@
 
     <beans profile="dev">
         <context:property-placeholder
-                location="classpath:viestintapalvelu.properties, classpath:/viestintapalvelu-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+                location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="true" properties-ref="devProps"/>
         <bean id="devProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean"/>
 
@@ -164,7 +164,7 @@
             </jaxrs-client:providers>
         </jaxrs-client:client>
 
-        <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs-client:client id="omattiedotResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OmattiedotResource" address="${authentication-service.resources.url}" inheritHeaders="true">
             <jaxrs-client:outInterceptors>
                 <ref bean="ticketInterceptorRest"/>
                 <ref bean="ophRequestHeaders"/>
@@ -177,7 +177,7 @@
             </jaxrs-client:providers>
         </jaxrs-client:client>
 
-        <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${authentication-service.omattiedot.rest.url}" inheritHeaders="true">
+        <jaxrs-client:client id="henkiloResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource" address="${authentication-service.resources.url}" inheritHeaders="true">
             <jaxrs-client:outInterceptors>
                 <ref bean="ticketInterceptorRest"/>
                 <ref bean="ophRequestHeaders"/>

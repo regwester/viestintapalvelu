@@ -140,6 +140,15 @@ viestintapalvelu.asiointitili.ws.log.responses = true
 viestintapalvelu.rekisterinpitajaOID=1.2.246.562.10.00000000001
 viestintapalvelu.dev.session-required=true
 
+# URL properties
+
+authentication-service.resources.url=https://${host.virkailija}/authentication-service/resources
+dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
+organisaatio-service.rest.url=https://${host.virkailija}/organisaatio-service/rest
+ryhmasahkoposti-service.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
+tarjonta-service.rest.url=https://${host.virkailija}/tarjonta-service/rest/v1
+viestintapalvelu.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
+
 ##############################################################################
 #
 # Ajastuspalvelu

@@ -3,12 +3,14 @@
 
   "Makefile": "no",
 
-  "velka": "",
-
   "csrf": "viestintapalvelu-ui-front: ok, backend: ?",
 
   "projects": [
-    {"name": "koulutusinformaatio-web", "uses": "viestintapalvelu-rest oppija-raamit"},
-    {"name": "koulutusinformaatio-rest", "uses": ""}
+    {"name": "viestintapalvelu-service", "spring-urls": {
+      "xml": "ryhmasahkoposti-service/src/main/resources/spring/service-context.xml",
+      "properties" : "src/main/resources/oph-configuration/viestintapalvelu.properties.template"}},
+    {"name": "ryhmasahkoposti-service", "spring-urls": {
+      "xml": "ryhmasahkoposti-service/src/main/resources/spring/service-context.xml",
+      "properties" : "src/main/resources/oph-configuration/viestintapalvelu.properties.template"}}
   ]
 }

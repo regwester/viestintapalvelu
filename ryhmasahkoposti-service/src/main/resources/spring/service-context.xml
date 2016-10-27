@@ -24,7 +24,7 @@
 
     <!-- Application and common properties -->
     <context:property-placeholder
-            location="classpath:/properties/ryhmasahkopostipalvelu.properties, classpath:/ryhmasahkoposti-service-oph.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+            location="classpath:/properties/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/ryhmasahkopostipalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
             ignore-resource-not-found="true" properties-ref="defaultProps"/>
 
     <!-- Authentication and security -->
@@ -84,7 +84,7 @@
     <!-- External interface OmattiedotResource of HenkiloPalvelu-->
     <jaxrs-client:client id="omattiedotResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource"
-                         address="${authentication-service.omattiedot.rest.url}"
+                         address="${authentication-service.resources.url}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casInterceptorForHenkilo"/>
@@ -116,7 +116,7 @@
     <!-- External interface HenkiloResource of HenkiloPalvelu -->
     <jaxrs-client:client id="henkiloResourceClient"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.HenkiloResource"
-                         address="${authentication-service.henkilo.rest.url}"
+                         address="${authentication-service.resources.url}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
             <ref bean="casTicketInterceptorAAU"/>
