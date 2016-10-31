@@ -133,6 +133,7 @@ viestintapalvelu.recovery.initial.delay=5000
 web.url.cas=https\://${host.cas}/cas
 viestintapalvelu.use.dev.basic.authentication=false
 viestintapalvelu.swagger.base.bath=/viestintapalvelu
+viestintapalvelu.letter.publish.dir={{viestintapalvelu_letter_publish_dir}}
 
 viestintapalvelu.asiointitili.wss.keystore.instance = JKS
 viestintapalvelu.asiointitili.ws.log.requests = true

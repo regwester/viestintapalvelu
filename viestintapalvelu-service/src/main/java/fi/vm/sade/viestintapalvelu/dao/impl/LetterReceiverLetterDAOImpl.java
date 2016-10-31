@@ -16,8 +16,10 @@
 package fi.vm.sade.viestintapalvelu.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
+import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.jpa.impl.JPAQuery;
@@ -28,6 +30,9 @@ import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.QLetterReceiverLetter;
+
+import javax.persistence.EntityManager;
+import javax.persistence.Query;
 
 @Repository
 public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiverLetter, Long>
@@ -45,6 +50,16 @@ public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiv
                 .where(whereExpression);
         
         return findLetterReceiverLetter.list(letterReceiverLetter);
+    }
+
+    @Override
+    public int markAsPublished(Long id) {
+        Query query = getEntityManager().createQuery("UPDATE LetterReceiverLetter l"
+                + " SET l.readyForPublish = :readyForPublish"
+                + " WHERE l.id = :id");
+        query.setParameter("readyForPublish", true);
+        query.setParameter("id", id);
+        return query.executeUpdate();
     }
 
     protected JPAQuery from(EntityPath<?>... o) {

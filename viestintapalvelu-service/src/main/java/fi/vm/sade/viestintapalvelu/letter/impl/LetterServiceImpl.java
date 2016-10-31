@@ -15,9 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +41,7 @@ import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
@@ -125,6 +124,9 @@ public class LetterServiceImpl implements LetterService {
     private DokumenttiResource dokumenttipalveluRestClient;
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Value("${viestintapalvelu.letter.publish.dir}")
+    private File letterPublishDir;
 
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO, CurrentUserComponent currentUserComponent,
@@ -888,8 +890,36 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public int publishLetterBatch(long letterBatchId) {
-        return letterBatchDAO.publishLetterBatch(letterBatchId);
+    public int publishLetterBatch(long letterBatchId) throws IOException {
+        List<LetterReceiverLetter> letters = letterBatchDAO.getUnpublishedLetters(letterBatchId);
+        if(letters.size() > 0) {
+            logger.info("Publishing {} letters from letter batch {} to dir {} for publish", letters.size(), letterBatchId, letterPublishDir);
+            letterPublishDir.mkdirs();
+            int count = 0;
+            for (LetterReceiverLetter letter: letters) {
+                File tempPdfFile = new File(letterPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
+                File finalPdfFile = new File(letterPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
+                try {
+                    FileOutputStream out = new FileOutputStream(tempPdfFile);
+                    out.write(letter.getLetter());
+                    out.close();
+                    letterReceiverLetterDAO.markAsPublished(letter.getId());
+                    tempPdfFile.renameTo(finalPdfFile);
+                } catch (IOException e) {
+                    logger.error("Error saving letter " + finalPdfFile + " of batch " + letterBatchId + ". Published " + count + "/" + letters.size() + " documents succesfully.", e);
+                    tempPdfFile.delete();
+                    throw e;
+                }
+                count++;
+                if (count % 100 == 0) {
+                    logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letters.size(), letterBatchId, letterPublishDir);
+                }
+            }
+            logger.info("Published successfully {} letters from letter batch {} to dir {} for publish", count, letterBatchId, letterPublishDir);
+            return count;
+        } else {
+            return 0;
+        }
     }
 
     @Override

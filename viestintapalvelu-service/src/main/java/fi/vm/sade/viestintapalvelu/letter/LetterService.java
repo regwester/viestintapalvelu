@@ -183,7 +183,7 @@ public interface LetterService {
      */
     LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 
-    int publishLetterBatch(long letterBatchId);
+    int publishLetterBatch(long letterBatchId) throws IOException;
 
     Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
 

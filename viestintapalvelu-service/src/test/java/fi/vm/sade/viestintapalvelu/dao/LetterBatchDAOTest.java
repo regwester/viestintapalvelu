@@ -24,6 +24,7 @@ import javax.persistence.PersistenceException;
 import com.google.common.collect.ImmutableMap;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
+import fi.vm.sade.viestintapalvelu.model.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -39,13 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchGeneralProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchIPostProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
@@ -62,6 +57,8 @@ public class LetterBatchDAOTest {
     private EntityManager entityManager;
     @Autowired
     private LetterBatchDAO letterBatchDAO;
+    @Autowired
+    private LetterReceiverLetterDAO letterReceiverLetterDAO;
 
     @Test
     public void testFindLetterBatchByNameOrgTag() {
@@ -319,14 +316,22 @@ public class LetterBatchDAOTest {
        List<LetterListItem> listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(0, listItems.size());
 
-       assertEquals(3l, letterBatchDAO.publishLetterBatch(batchId1));
+       List<LetterReceiverLetter> letters = letterBatchDAO.getUnpublishedLetters(batchId1);
+       assertEquals(3l, letters.size());
+       for (LetterReceiverLetter letter: letters) {
+           letterReceiverLetterDAO.markAsPublished(letter.getId());
+       }
 
        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(1, listItems.size());
        logger.info(listItems.get(0).toString());
        assertTrue(listItemEquals(listItems.get(0), "test-haku-oid-1", "hyvaksymiskirje"));
 
-       assertEquals(2l, letterBatchDAO.publishLetterBatch(batchId2));
+       letters = letterBatchDAO.getUnpublishedLetters(batchId2);
+       assertEquals(2l, letters.size());
+       for (LetterReceiverLetter letter: letters) {
+           letterReceiverLetterDAO.markAsPublished(letter.getId());
+       }
 
        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(2, listItems.size());
