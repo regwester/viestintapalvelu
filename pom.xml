@@ -64,7 +64,6 @@
         <generic.version>9.4-SNAPSHOT</generic.version>
         <guava.version>13.0.1</guava.version>
         <ehcache-core.version>2.5.0</ehcache-core.version>
-        <ehcache-jgroupsreplication.version>1.5</ehcache-jgroupsreplication.version>
         <flying-saucer.version>9.0.2</flying-saucer.version>
         <flyway.version>2.1.1</flyway.version>
         <hibernate.version>4.1.0.Final</hibernate.version>
@@ -447,11 +446,6 @@
                 <groupId>net.sf.ehcache</groupId>
                 <artifactId>ehcache-core</artifactId>
                 <version>${ehcache-core.version}</version>
-            </dependency>
-            <dependency>
-                <groupId>net.sf.ehcache</groupId>
-                <artifactId>ehcache-jgroupsreplication</artifactId>
-                <version>${ehcache-jgroupsreplication.version}</version>
             </dependency>
 
             <!-- Apache Camel -->
