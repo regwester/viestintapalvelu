@@ -102,7 +102,6 @@ public class OrganizationResourceTest {
         final ArrayList<String> strings = new ArrayList<String>();
         strings.add("child1");
         details.setOrganisaatioOids(strings);
-        details.setHakukohdeOids(strings);
         details.setTarjoajaOids(strings);
         final HakuRDTO<HakuDetailsDto> rdto = new HakuRDTO<HakuDetailsDto>();
         rdto.setResult(details);

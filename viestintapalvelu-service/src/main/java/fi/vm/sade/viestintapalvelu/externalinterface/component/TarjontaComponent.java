@@ -43,7 +43,6 @@ public class TarjontaComponent {
 
     private static final Logger log = org.slf4j.LoggerFactory.getLogger(TarjontaComponent.class);
     private static final String DELETED_STATE = "POISTETTU";
-    private static final Integer MAX_COUNT = 10000;
     private static final Comparator<? super HakuDetailsDto> HAKUS_IN_FINNISH_ORDER = new Comparator<HakuDetailsDto>() {
         public int compare(HakuDetailsDto o1, HakuDetailsDto o2) {
             return Optional.fromNullable(o1.getNimi().get("kieli_fi")).or("").compareTo(Optional.fromNullable(o2.getNimi().get("kieli_fi")).or(""));
@@ -53,9 +52,9 @@ public class TarjontaComponent {
     @Resource
     private TarjontaHakuResource tarjontaHakuResourceClient;
 
-    public List<HakuDetailsDto> findPublished(Integer countLimit) {
+    public List<HakuDetailsDto> findPublished() {
         try {
-            final HakuRDTO<List<HakuDetailsDto>> hakus1 = tarjontaHakuResourceClient.hakus(Optional.fromNullable(countLimit).or(MAX_COUNT));
+            final HakuRDTO<List<HakuDetailsDto>> hakus1 = tarjontaHakuResourceClient.hakus(false);
             List<HakuDetailsDto> hakus = hakus1.getResult();
             List<HakuDetailsDto> hakuDetails = new ArrayList<>();
             for (HakuDetailsDto haku : hakus) {

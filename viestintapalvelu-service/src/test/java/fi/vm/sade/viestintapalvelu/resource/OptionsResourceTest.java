@@ -56,7 +56,7 @@ public class OptionsResourceTest {
 
     @Test
     public void testCache() {
-        when(tarjontaComponent.findPublished(any(Integer.class))).thenAnswer(atFirstReturn(testAnswer("1234"))
+        when(tarjontaComponent.findPublished()).thenAnswer(atFirstReturn(testAnswer("1234"))
                 .thenThrow(new IllegalStateException("Should not be called twice!")));
 
         List<HakuDetailsDto> results = optionsResource.listHakus(null);
@@ -78,7 +78,7 @@ public class OptionsResourceTest {
 
     @Test
     public void testForceCacheRefresh() {
-        when(tarjontaComponent.findPublished(any(Integer.class))).thenAnswer(atFirstReturn(testAnswer("1234"))
+        when(tarjontaComponent.findPublished()).thenAnswer(atFirstReturn(testAnswer("1234"))
                 .thenReturn(testAnswer("5432"))
                 .thenThrow(new IllegalStateException("Should not be called third time!")));
         List<HakuDetailsDto> results = optionsResource.listHakus(null);
