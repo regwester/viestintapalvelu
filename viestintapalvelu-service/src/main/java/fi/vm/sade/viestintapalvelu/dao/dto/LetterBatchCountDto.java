@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.dao.dto;
 
 public class LetterBatchCountDto {
+    public final Long letterBatchId;
     public final long letterTotalCount;
     public final long letterReadyCount;
     public final long letterErrorCount;
@@ -8,6 +9,7 @@ public class LetterBatchCountDto {
     public final boolean readyForEPosti;
 
     public LetterBatchCountDto() {
+        this.letterBatchId = null;
         this.letterTotalCount = 0l;
         this.letterReadyCount = 0l;
         this.letterErrorCount = 0l;
@@ -15,7 +17,8 @@ public class LetterBatchCountDto {
         this.readyForEPosti = false;
     }
 
-    public LetterBatchCountDto(long letterTotalCount, long letterReadyCount, long letterErrorCount, boolean readyForPublish, boolean readyForEPosti) {
+    public LetterBatchCountDto(Long letterBatchId, long letterTotalCount, long letterReadyCount, long letterErrorCount, boolean readyForPublish, boolean readyForEPosti) {
+        this.letterBatchId = letterBatchId;
         this.letterTotalCount = letterTotalCount;
         this.letterReadyCount = letterReadyCount;
         this.letterErrorCount = letterErrorCount;

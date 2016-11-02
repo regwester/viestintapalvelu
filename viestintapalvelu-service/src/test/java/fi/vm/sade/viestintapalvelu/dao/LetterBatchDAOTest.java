@@ -377,6 +377,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto.letterTotalCount);
        assertEquals(2, letterBatchCountDto.letterReadyCount);
        assertEquals(0, letterBatchCountDto.letterErrorCount);
+       assertNotNull(letterBatchCountDto.letterBatchId);
+       assertEquals(Status.processing, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto.letterBatchId).getStatus());
        assertFalse(letterBatchCountDto.readyForPublish);
        assertFalse(letterBatchCountDto.readyForEPosti);
 
@@ -384,6 +386,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto2.letterTotalCount);
        assertEquals(3, letterBatchCountDto2.letterReadyCount);
        assertEquals(0, letterBatchCountDto2.letterErrorCount);
+       assertNotNull(letterBatchCountDto2.letterBatchId);
+       assertEquals(Status.ready, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto2.letterBatchId).getStatus());
        assertTrue(letterBatchCountDto2.readyForPublish);
        assertFalse(letterBatchCountDto2.readyForEPosti);
 
@@ -391,6 +395,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto3.letterTotalCount);
        assertEquals(3, letterBatchCountDto3.letterReadyCount);
        assertEquals(0, letterBatchCountDto3.letterErrorCount);
+       assertNotNull(letterBatchCountDto3.letterBatchId);
+       assertEquals(Status.ready, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto3.letterBatchId).getStatus());
        assertFalse(letterBatchCountDto3.readyForPublish);
        assertTrue(letterBatchCountDto3.readyForEPosti);
 
@@ -398,6 +404,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto4.letterTotalCount);
        assertEquals(0, letterBatchCountDto4.letterReadyCount);
        assertEquals(3, letterBatchCountDto4.letterErrorCount);
+       assertNotNull(letterBatchCountDto4.letterBatchId);
+       assertEquals(Status.error, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto4.letterBatchId).getStatus());
        assertFalse(letterBatchCountDto4.readyForPublish);
        assertFalse(letterBatchCountDto4.readyForEPosti);
 
@@ -405,6 +413,7 @@ public class LetterBatchDAOTest {
        assertEquals(0, letterBatchCountDto5.letterTotalCount);
        assertEquals(0, letterBatchCountDto5.letterReadyCount);
        assertEquals(0, letterBatchCountDto5.letterErrorCount);
+       assertNull(letterBatchCountDto5.letterBatchId);
        assertFalse(letterBatchCountDto5.readyForPublish);
        assertFalse(letterBatchCountDto5.readyForEPosti);
    }

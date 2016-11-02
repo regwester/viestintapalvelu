@@ -431,11 +431,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
         if(LetterBatch.Status.ready.equals(batchStatus)) {
             boolean readyForPublish = readyForPublishCount == 0l;
             boolean readyForEPosti = readyForPublishCount == totalCount;
-            return new LetterBatchCountDto(totalCount, totalCount, 0l, readyForPublish, readyForEPosti);
+            return new LetterBatchCountDto(batchId, totalCount, totalCount, 0l, readyForPublish, readyForEPosti);
         } else if(LetterBatch.Status.error.equals(batchStatus)) {
-            return new LetterBatchCountDto(totalCount, 0l, totalCount, false, false);
+            return new LetterBatchCountDto(batchId, totalCount, 0l, totalCount, false, false);
         } else {
-            return new LetterBatchCountDto(totalCount, (totalCount - notReadyCount), 0l, false, false);
+            return new LetterBatchCountDto(batchId, totalCount, (totalCount - notReadyCount), 0l, false, false);
         }
     }
 
