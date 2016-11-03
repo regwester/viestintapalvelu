@@ -146,6 +146,12 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
+    public Response getPreviewBehindFirewall(EmailData emailData) throws Exception {
+        log.info("Preview email behind firewall!");
+        return getPreview(emailData);
+    }
+
+    @Override
     public Response getResult(String sendId) {
         log.debug("getResult called with ID: {}", sendId);
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(Long.valueOf(sendId));

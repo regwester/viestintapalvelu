@@ -159,4 +159,11 @@ public interface EmailResource {
     @Path("/preview")
     Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
+    @POST
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
+    @PreAuthorize(SecurityConstants.ALLOW_ALL)
+    @Path("/firewall/preview")
+    Response getPreviewBehindFirewall(EmailData emailData) throws Exception;
+
 }
