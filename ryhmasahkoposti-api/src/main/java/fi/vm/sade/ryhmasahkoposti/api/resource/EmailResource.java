@@ -155,6 +155,7 @@ public interface EmailResource {
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @Consumes(MediaType.APPLICATION_JSON)
     @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
+    @ApiOperation(value = "Sähköpostien esikatselu")
     @Path("/preview")
     Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
