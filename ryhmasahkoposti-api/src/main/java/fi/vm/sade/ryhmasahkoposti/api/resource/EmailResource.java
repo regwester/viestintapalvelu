@@ -163,7 +163,7 @@ public interface EmailResource {
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
-    @Path("/firewall/preview")
+    @Path("/preview/firewall")
     Response getPreviewBehindFirewall(EmailData emailData) throws Exception;
 
 }
