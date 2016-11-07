@@ -1,14 +1,15 @@
 {
-  "name": "viestintapalvelu",
+  "name": "viestintapalvelu-service",
 
   "Makefile": "no",
 
   "csrf": "viestintapalvelu-ui-front: ok, backend: ?",
 
+  "spring": {
+    "xml": "viestintapalvelu-service/src/main/resources/spring/application-context.xml",
+    "properties" : "src/main/resources/oph-configuration/viestintapalvelu.properties.template"},
+
   "projects": [
-    {"name": "viestintapalvelu-service", "spring-urls": {
-      "xml": "viestintapalvelu-service/src/main/resources/spring/application-context.xml",
-      "properties" : "src/main/resources/oph-configuration/viestintapalvelu.properties.template"}},
     {"name": "ryhmasahkoposti-service", "spring-urls": {
       "xml": "ryhmasahkoposti-service/src/main/resources/spring/service-context.xml",
       "properties" : "src/main/resources/oph-configuration/viestintapalvelu.properties.template"}}
