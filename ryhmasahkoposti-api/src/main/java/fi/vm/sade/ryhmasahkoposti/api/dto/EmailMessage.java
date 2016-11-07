@@ -37,7 +37,7 @@ public class EmailMessage implements AttachmentContainer {
     private String subject;
     private String body;
 
-    private boolean isHtml = false;
+    private boolean html = false;
     private String charset = EmailConstants.UTF8;
     private List<EmailAttachment> attachments = new LinkedList<>();
     private List<AttachmentResponse> attachInfo = new LinkedList<>();
@@ -128,11 +128,11 @@ public class EmailMessage implements AttachmentContainer {
     }
 
     public boolean isHtml() {
-        return isHtml;
+        return html;
     }
 
-    public void setHtml(boolean isHtml) {
-        this.isHtml = isHtml;
+    public void setHtml(boolean html) {
+        this.html = html;
     }
 
     public String getCharset() {
@@ -244,7 +244,7 @@ public class EmailMessage implements AttachmentContainer {
     @Override
     public String toString() {
         return "EmailMessage [callingProcess=" + callingProcess + ", from=" + from + ", sender=" + sender + ", replyTo=" + replyTo + ", senderOid=" + senderOid
-                + ", organizationOid=" + organizationOid + ", subject=" + subject + ", body=" + body + ", isHtml=" + isHtml + ", charset=" + charset
+                + ", organizationOid=" + organizationOid + ", subject=" + subject + ", body=" + body + ", html=" + html + ", charset=" + charset
                 + ", attachments=" + attachments + ", attachInfo=" + attachInfo + ", isValid=" + isValid + ", templateName=" + templateName + ", templateId="
                 + templateId + ", languageCode=" + languageCode + ", sourceRegister=" + sourceRegister + ", hakuOid=" + hakuOid + "]";
     }
