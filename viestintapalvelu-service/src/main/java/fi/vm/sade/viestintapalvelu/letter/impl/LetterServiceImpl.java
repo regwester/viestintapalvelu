@@ -893,12 +893,15 @@ public class LetterServiceImpl implements LetterService {
     public int publishLetterBatch(long letterBatchId) throws IOException {
         List<LetterReceiverLetter> letters = letterBatchDAO.getUnpublishedLetters(letterBatchId);
         if(letters.size() > 0) {
-            logger.info("Publishing {} letters from letter batch {} to dir {} for publish", letters.size(), letterBatchId, letterPublishDir);
-            letterPublishDir.mkdirs();
+            LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
+            String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
+            File letterBatchPublishDir = new File(letterPublishDir, subFolderName);
+            logger.info("Publishing {} letters from letter batch {} to dir {} for publish", letters.size(), letterBatchId, letterBatchPublishDir);
+            letterBatchPublishDir.mkdirs();
             int count = 0;
             for (LetterReceiverLetter letter: letters) {
-                File tempPdfFile = new File(letterPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
-                File finalPdfFile = new File(letterPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
+                File tempPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
+                File finalPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
                 try {
                     FileOutputStream out = new FileOutputStream(tempPdfFile);
                     out.write(letter.getLetter());
@@ -912,10 +915,10 @@ public class LetterServiceImpl implements LetterService {
                 }
                 count++;
                 if (count % 100 == 0) {
-                    logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letters.size(), letterBatchId, letterPublishDir);
+                    logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letters.size(), letterBatchId, letterBatchPublishDir);
                 }
             }
-            logger.info("Published successfully {} letters from letter batch {} to dir {} for publish", count, letterBatchId, letterPublishDir);
+            logger.info("Published successfully {} letters from letter batch {} to dir {} for publish", count, letterBatchId, letterBatchPublishDir);
             return count;
         } else {
             return 0;
