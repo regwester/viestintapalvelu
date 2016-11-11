@@ -19,6 +19,7 @@ import java.util.List;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Rajapinta vastaanottajien kirjeiden tietokantakäsittelyä varten
@@ -36,5 +37,6 @@ public interface LetterReceiverLetterDAO extends JpaDAO<LetterReceiverLetter, Lo
      */
     List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverIds(List<Long> letterReceiverIDs);
 
+    @Transactional
     int markAsPublished(Long id);
 }
