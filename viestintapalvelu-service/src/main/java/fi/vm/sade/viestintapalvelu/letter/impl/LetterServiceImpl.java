@@ -892,7 +892,7 @@ public class LetterServiceImpl implements LetterService {
     @Override
     @Transactional (propagation = Propagation.NOT_SUPPORTED)
     public int publishLetterBatch(long letterBatchId) throws IOException {
-        List<LetterReceiverLetter> letters = letterBatchDAO.getUnpublishedLetters(letterBatchId);
+        List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
         if(letters.size() > 0) {
             LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
             String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
@@ -900,8 +900,8 @@ public class LetterServiceImpl implements LetterService {
             logger.info("Publishing {} letters from letter batch {} to dir {} for publish", letters.size(), letterBatchId, letterBatchPublishDir);
             letterBatchPublishDir.mkdirs();
             int count = 0;
-            for (LetterReceiverLetter letter: letters) {
-                publishLetter(letter, letterBatchPublishDir, letterBatchId, count, letters.size());
+            for (Long letterId: letters) {
+                publishLetter(letterId, letterBatchPublishDir, letterBatchId, count, letters.size());
                 count++;
                 if (count % 100 == 0) {
                     logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letters.size(), letterBatchId, letterBatchPublishDir);
@@ -914,18 +914,23 @@ public class LetterServiceImpl implements LetterService {
         }
     }
 
-    private void publishLetter(LetterReceiverLetter letter, File letterBatchPublishDir, long letterBatchId, int count, int totalCount) throws IOException {
-        File tempPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
-        File finalPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
+    private void publishLetter(long letterId, File letterBatchPublishDir, long letterBatchId, int count, int totalCount) throws IOException {
+        File tempPdfFile = null;
+        File finalPdfFile = null;
         try {
+            LetterReceiverLetter letter = letterReceiverLetterDAO.read(letterId);
+            tempPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
+            finalPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
             FileOutputStream out = new FileOutputStream(tempPdfFile);
             out.write(letter.getLetter());
             out.close();
             letterReceiverLetterDAO.markAsPublished(letter.getId());
             tempPdfFile.renameTo(finalPdfFile);
         } catch (Exception e) {
-            logger.error("Error publishing letter " + finalPdfFile + " of batch " + letterBatchId + ". Published " + count + "/" + totalCount + " documents succesfully.", e);
-            tempPdfFile.delete();
+            logger.error("Error publishing letter " + (finalPdfFile == null ? letterId : finalPdfFile) + " of batch " + letterBatchId + ". Published " + count + "/" + totalCount + " documents succesfully.", e);
+            if(tempPdfFile != null) {
+                tempPdfFile.delete();
+            }
             throw e;
         }
     }

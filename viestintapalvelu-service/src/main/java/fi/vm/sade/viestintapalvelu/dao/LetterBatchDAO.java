@@ -165,7 +165,7 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 
     List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid);
 
-    List<LetterReceiverLetter> getUnpublishedLetters(long letterBatchId);
+    List<Long> getUnpublishedLetterIds(long letterBatchId);
 
     Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
 

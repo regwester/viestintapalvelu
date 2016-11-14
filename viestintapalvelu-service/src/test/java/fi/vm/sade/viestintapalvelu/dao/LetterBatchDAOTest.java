@@ -316,10 +316,10 @@ public class LetterBatchDAOTest {
        List<LetterListItem> listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(0, listItems.size());
 
-       List<LetterReceiverLetter> letters = letterBatchDAO.getUnpublishedLetters(batchId1);
+       List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(batchId1);
        assertEquals(3l, letters.size());
-       for (LetterReceiverLetter letter: letters) {
-           letterReceiverLetterDAO.markAsPublished(letter.getId());
+       for (Long letterId: letters) {
+           letterReceiverLetterDAO.markAsPublished(letterId);
        }
 
        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
@@ -327,10 +327,10 @@ public class LetterBatchDAOTest {
        logger.info(listItems.get(0).toString());
        assertTrue(listItemEquals(listItems.get(0), "test-haku-oid-1", "hyvaksymiskirje"));
 
-       letters = letterBatchDAO.getUnpublishedLetters(batchId2);
+       letters = letterBatchDAO.getUnpublishedLetterIds(batchId2);
        assertEquals(2l, letters.size());
-       for (LetterReceiverLetter letter: letters) {
-           letterReceiverLetterDAO.markAsPublished(letter.getId());
+       for (Long letterId: letters) {
+           letterReceiverLetterDAO.markAsPublished(letterId);
        }
 
        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");

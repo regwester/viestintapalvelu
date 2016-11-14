@@ -350,14 +350,13 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public List<LetterReceiverLetter> getUnpublishedLetters(long letterBatchId) {
-        return getEntityManager().createQuery("SELECT l FROM LetterReceiverLetter l"
+    public List<Long> getUnpublishedLetterIds(long letterBatchId) {
+        return getEntityManager().createQuery("SELECT l.id FROM LetterReceiverLetter l"
                 + " WHERE l.id IN ("
                 + " SELECT lrl.id FROM LetterBatch lb"
                 + " INNER JOIN lb.letterReceivers lr"
                 + " INNER JOIN lr.letterReceiverLetter lrl"
-                + " WHERE lrl.readyForPublish = :readyForPublish AND lb.id = :letterBatchId AND lb.batchStatus = :status)",
-                LetterReceiverLetter.class
+                + " WHERE lrl.readyForPublish = :readyForPublish AND lb.id = :letterBatchId AND lb.batchStatus = :status)"
                 ).setParameter("readyForPublish", false)
                 .setParameter("letterBatchId", letterBatchId)
                 .setParameter("status", LetterBatch.Status.ready).getResultList();
