@@ -109,7 +109,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
         } else {
             try {
                 int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
-                LOG.info("Published {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
+                LOG.info("Publishing {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
                 return Response.ok(numberOfPublishedLetters).build();
             } catch (Exception e) {
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();

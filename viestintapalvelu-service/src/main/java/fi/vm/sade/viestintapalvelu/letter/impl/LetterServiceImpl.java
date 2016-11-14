@@ -893,27 +893,8 @@ public class LetterServiceImpl implements LetterService {
     public int publishLetterBatch(long letterBatchId) throws Exception {
         List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
         if(letters.size() > 0) {
-            LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
-            String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
-            File letterBatchPublishDir = new File(letterPublishDir, subFolderName);
-            logger.info("Publishing {} letters from letter batch {} to dir {}", letters.size(), letterBatchId, letterBatchPublishDir);
-            letterBatchPublishDir.mkdirs();
-            int count = 0;
-            try {
-                for (Long letterId : letters) {
-                    publishLetter(letterId, letterBatchPublishDir);
-                    count++;
-                    if (count % 100 == 0) {
-                        logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letters.size(), letterBatchId, letterBatchPublishDir);
-                    }
-                }
-            }
-            catch (Exception e) {
-                logger.error("Letter batch " + letterBatchId + " publish failed. Published " + count + "/" + letters.size(), e);
-                throw e;
-            }
-            logger.info("Published successfully {} letters from letter batch {} to dir {}", count, letterBatchId, letterBatchPublishDir);
-            return count;
+            new Thread(new LetterPublisher(letterBatchId, letters)).start();
+            return letters.size();
         } else {
             return 0;
         }
@@ -959,5 +940,41 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public Map<String, String> getEPostiEmailAddresses(long letterBatchId) {
         return letterBatchDAO.getEPostiEmailAddressesByBatchId(letterBatchId);
+    }
+
+    private class LetterPublisher implements Runnable {
+
+        private final long letterBatchId;
+        private final List<Long> letterIds;
+
+        protected LetterPublisher(long letterBatchId, List<Long> letterIds) {
+            this.letterBatchId = letterBatchId;
+            this.letterIds = letterIds;
+        }
+
+        @Override
+        public void run() {
+            LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
+            String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
+            File letterBatchPublishDir = new File(letterPublishDir, subFolderName);
+            logger.info("Publishing {} letters from letter batch {} to dir {}", letterIds.size(), letterBatchId, letterBatchPublishDir);
+            letterBatchPublishDir.mkdirs();
+            int count = 0;
+            try {
+                for (Long letterId : letterIds) {
+                    publishLetter(letterId, letterBatchPublishDir);
+                    count++;
+                    if (count % 100 == 0) {
+                        logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letterIds.size(), letterBatchId, letterBatchPublishDir);
+                    }
+                }
+            }
+            catch (Exception e) {
+                logger.error("Letter batch " + letterBatchId + " publish failed. Published " + count + "/" + letterIds.size(), e);
+                throw e;
+            }
+            logger.info("Published successfully {} letters from letter batch {} to dir {}", count, letterBatchId, letterBatchPublishDir);
+
+        }
     }
 }
