@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.zip.DataFormatException;
@@ -30,6 +31,8 @@ import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
 import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import org.springframework.transaction.annotation.Transactional;
+
 import java.util.Map;
 
 /**
@@ -183,7 +186,9 @@ public interface LetterService {
      */
     LetterReceiverLetterDTO getLetterReceiverLetter(Long id) throws IOException, DataFormatException;
 
-    int publishLetterBatch(long letterBatchId) throws IOException;
+    int publishLetterBatch(long letterBatchId) throws Exception;
+
+    void publishLetter(long letterId, File letterBatchPublishDir);
 
     Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
 
