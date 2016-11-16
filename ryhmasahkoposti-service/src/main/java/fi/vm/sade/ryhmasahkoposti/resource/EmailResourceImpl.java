@@ -124,7 +124,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
 
     @Override
     public Response sendEmailBehindFirewall(EmailData emailData) throws Exception {
-        log.info("Sending email behind firewall!");
+        log.info("Sending {} emails behind firewall!", emailData.getRecipient().size());
         return sendEmail(emailData);
     }
     

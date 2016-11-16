@@ -289,7 +289,7 @@ public class EmailServiceImpl implements EmailService {
     private boolean handleRecipient(EmailRecipientDTO emailRecipient, EmailSendQueState emailSendQueState) {
         long vStart = System.currentTimeMillis();
         final String s = emailRecipient + ",id=" + emailRecipient.getRecipientID() + ",hash=" + emailRecipient.getLetterHash();
-        log.info("Handling recipient " + s);
+        log.debug("Handling recipient " + s);
         boolean success = false;
         if (rrService.startSending(emailRecipient)) {
             log.info("Started sending for recipient " + s);
@@ -316,7 +316,7 @@ public class EmailServiceImpl implements EmailService {
             }
         }
         long took = System.currentTimeMillis() - vStart;
-        log.info("Message handling took {} for recipient {}", took, s);
+        log.debug("Message handling took {} for recipient {}", took, s);
         return success;
     }
 

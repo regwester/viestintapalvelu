@@ -208,8 +208,8 @@ public class TemplateBuilder {
 
             StringWriter writer = createStringWriter(content, dataContext);
             message.setBody(writer.toString());
-        } else {
-            LOGGER.warn("No template used for message with templateId={}", message.getTemplateId());
+        } else if(message.getTemplateId() != null || message.getTemplateName() != null){
+            LOGGER.warn("No template used for message with templateId={} & templateName={}", message.getTemplateId(), message.getTemplateName());
         }
         return message;
     }
