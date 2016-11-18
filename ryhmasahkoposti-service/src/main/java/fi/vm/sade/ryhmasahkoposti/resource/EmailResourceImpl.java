@@ -25,6 +25,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import org.apache.commons.fileupload.FileItem;
 import org.apache.commons.fileupload.FileItemFactory;
 import org.apache.commons.fileupload.disk.DiskFileItemFactory;
@@ -96,30 +97,32 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         return Response.ok("ok").build();
     }
 
-    // TODO: Validate the values we get from the client (are empty subject/body/recipients ok?)
     @Override
     public Response sendEmail(EmailData emailData) throws Exception {
-        /*
-         *  Select source address
-         */
+        prepareSendEmail(emailData);
+        String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
+        emailService.checkEmailQueues();
+        log.debug("DB index is {}", sendId);
+        return Response.ok(new EmailSendId(sendId)).build();
+    }
+
+    private void prepareSendEmail(EmailData emailData) {
+    /*
+     *  Select source address
+     */
         overrideFromAddress(emailData);
         /*
          *  Select source address and template
          */
         chooseTemplate(emailData);
         /*
-         * Check if request includes attachment 
+         * Check if request includes attachment
          * validate it and add to database
          */
         attachIncludedAttachments(emailData);
 
         /* Sanitize body content */
         sanitizeInput(emailData);
-
-        String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
-        emailService.checkEmailQueues();
-        log.debug("DB index is {}", sendId);
-        return Response.ok(new EmailSendId(sendId)).build();
     }
 
     @Override
@@ -127,7 +130,22 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         log.info("Sending {} emails behind firewall!", emailData.getRecipient().size());
         return sendEmail(emailData);
     }
-    
+
+    @Override
+    public Response sendEmailAsync(EmailData emailData) throws Exception {
+        prepareSendEmail(emailData);
+        ReportedMessage message =  groupEmailReportingService.createSendingGroupEmail(emailData);
+        Thread recipientProcessor = new Thread(new AsyncRecipientProcessor(message, emailData.getRecipient()));
+        recipientProcessor.start();
+        return Response.ok(new EmailSendId(Long.toString(message.getId()))).build();
+    }
+
+    @Override
+    public Response sendEmailAsyncBehindFirewall(EmailData emailData) throws Exception {
+        log.info("Sending {} emails asynchroniosly behind firewall!", emailData.getRecipient().size());
+        return sendEmailAsync(emailData);
+    }
+
     @Override
     public Response getStatus(String sendId) {
         log.debug("getStatus called with ID: {}", sendId);
@@ -242,6 +260,26 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
             // Calling service hasn't given template language. Use default language.        
             if (emailData.getEmail().getLanguageCode() == null || emailData.getEmail().getLanguageCode().isEmpty()) {
                 emailData.getEmail().setLanguageCode(defaultTemplateLanguage);
+            }
+        }
+    }
+    private class AsyncRecipientProcessor implements Runnable {
+
+        private final ReportedMessage message;
+        private final List<EmailRecipient> recipients;
+
+        protected AsyncRecipientProcessor(ReportedMessage message, List<EmailRecipient> recipients) {
+            this.message = message;
+            this.recipients = recipients;
+        }
+
+        @Override
+        public void run() {
+            try {
+                groupEmailReportingService.processRecipients(message, recipients);
+                emailService.checkEmailQueues();
+            } catch (Exception e) {
+                log.error("Recipient processing failed", e);
             }
         }
     }

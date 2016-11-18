@@ -104,13 +104,28 @@ public interface EmailResource {
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
     Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
 
-
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
     @Path("/firewall")
     Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
+
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @PreAuthorize(SecurityConstants.SEND)
+    @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille asynkronisesti", notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
+    @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
+    Response sendEmailAsync(EmailData emailData) throws Exception;
+
+    @POST
+    @Consumes("application/json")
+    @Produces("application/json")
+    @PreAuthorize(SecurityConstants.ALLOW_ALL)
+    @Path("/async/firewall")
+    Response sendEmailAsyncBehindFirewall(EmailData emailData) throws Exception;
 
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot

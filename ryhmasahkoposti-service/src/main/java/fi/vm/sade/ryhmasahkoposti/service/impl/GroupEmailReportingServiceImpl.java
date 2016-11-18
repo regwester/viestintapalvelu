@@ -102,9 +102,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
 
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
-    public Long addSendingGroupEmail(EmailData emailData) throws IOException {
-        log.debug("addSendingGroupEmail called");
-
+    public ReportedMessage createSendingGroupEmail(EmailData emailData) throws IOException {
         // Check email template is used
         TemplateDTO templateDTO = null;
 
@@ -137,9 +135,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         if (templateDTO != null) {
             reportedMessage.setTemplateId(templateDTO.getId());
         }
-        log.debug("Saving message to db");
         ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
-
         if (templateDTO != null) {
             // Get template replacements from email data
             List<ReplacementDTO> emailReplacements = emailData.getReplacements();
@@ -152,18 +148,30 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 reportedMessageReplacementService.saveReportedMessageReplacement(replacement);
             }
         }
+        log.info("Saved reported message to db with id {}" , savedReportedMessage.getId());
 
         List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailData.getEmail().getAttachInfo());
         log.debug("Saving reportedMessageAttachments");
         reportedMessageAttachmentService.saveReportedMessageAttachments(savedReportedMessage, reportedAttachments);
+
+        return savedReportedMessage;
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Long addSendingGroupEmail(EmailData emailData) throws IOException {
+        log.debug("addSendingGroupEmail called");
+        ReportedMessage savedReportedMessage = createSendingGroupEmail(emailData);
 
         processRecipients(savedReportedMessage, emailData.getRecipient());
 
         return savedReportedMessage.getId();
     }
 
-    private void processRecipients(ReportedMessage savedReportedMessage, List<EmailRecipient> emailRecipients) throws IOException {
-        log.info("Processing {} emailRecipients", emailRecipients.size());
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public void processRecipients(ReportedMessage savedReportedMessage, List<EmailRecipient> emailRecipients) throws IOException {
+        log.info("Processing {} emailRecipients for message {}", emailRecipients.size(), savedReportedMessage.getId());
         List<ReportedRecipient> recipients = new ArrayList<>();
         int count = 0;
         for (EmailRecipient emailRecipient : emailRecipients) {
@@ -190,10 +198,10 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
             count++;
             if(count % 1000 == 0) {
-                log.info("Processed {}/{} emailRecipients", count, emailRecipients.size());
+                log.info("Processed {}/{} emailRecipients of message {}", count, emailRecipients.size(), savedReportedMessage.getId());
             }
         }
-        log.info("Prosecced all {} emailRecipients.", emailRecipients.size());
+        log.info("Prosecced all {} emailRecipients of message {}.", emailRecipients.size(), savedReportedMessage.getId());
         createSendQueues(recipients);
     }
 
