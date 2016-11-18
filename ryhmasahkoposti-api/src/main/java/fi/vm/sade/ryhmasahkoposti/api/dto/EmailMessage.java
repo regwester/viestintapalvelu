@@ -44,6 +44,7 @@ public class EmailMessage implements AttachmentContainer {
     private boolean isValid = true;
     private String templateName;
     private String templateId;
+    private Long letterId;
     private String languageCode;
     private List<SourceRegister> sourceRegister;
     private String hakuOid; 
@@ -193,6 +194,14 @@ public class EmailMessage implements AttachmentContainer {
 
     public void setTemplateId(String templateId) {
         this.templateId = templateId;
+    }
+
+    public Long getLetterId() {
+        return letterId;
+    }
+
+    public void setLetterId(Long letterId) {
+        this.letterId = letterId;
     }
 
     /**
