@@ -276,6 +276,18 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     }
 
     @Override
+    public Optional<Long> getReportedMessageIdByLetter(Long letterID) {
+        log.debug("getReportedMessageByLetter(" + letterID + ") called");
+
+        Optional<ReportedMessage> optionalReportedMessage = reportedMessageService.getReportedMessageByLetter(letterID);
+
+        if(!optionalReportedMessage.isPresent()) {
+            return Optional.empty();
+        }
+        return Optional.of(optionalReportedMessage.get().getId());
+    }
+
+    @Override
     public ReportedMessageDTO getReportedMessageAndRecipients(Long messageID, PagingAndSortingDTO pagingAndSorting) {
         log.debug("getReportedMessageAndRecipients(" + messageID + ") called");
 

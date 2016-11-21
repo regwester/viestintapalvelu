@@ -69,6 +69,13 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     }
 
     @Override
+    public Optional<ReportedMessage> findByLetter(Long letterID) {
+        JPAQuery query = new JPAQuery(getEntityManager());
+        List<ReportedMessage> messageList = query.from(reportedMessage).where(reportedMessage.letterId.eq(letterID)).list(reportedMessage);
+        return messageList.size() == 0 ? Optional.<ReportedMessage>empty() : Optional.of(messageList.get(0));
+    }
+
+    @Override
     public List<ReportedMessage> findBySenderOidAndProcess(String senderOid, String process, PagingAndSortingDTO pagingAndSorting) {
         JPAQuery query = new JPAQuery(getEntityManager());
         return query.from(reportedMessage).where(reportedMessage.senderOid.eq(senderOid).and(reportedMessage.process.equalsIgnoreCase(process)))

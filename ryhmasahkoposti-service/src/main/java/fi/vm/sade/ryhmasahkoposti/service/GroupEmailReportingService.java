@@ -17,6 +17,7 @@ package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -74,6 +75,14 @@ public interface GroupEmailReportingService {
      * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
      */
     ReportedMessageDTO getReportedMessage(Long messageID);
+
+    /**
+     * Hakee kirjelähetykseeen liittyvän raportoitavan ryhmäsähköpostiviestin
+     *
+     * @param letterID kirjelähetyksen tunnis
+     * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
+     */
+    Optional<Long> getReportedMessageIdByLetter(Long letterID);
 
     /**
      * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   
