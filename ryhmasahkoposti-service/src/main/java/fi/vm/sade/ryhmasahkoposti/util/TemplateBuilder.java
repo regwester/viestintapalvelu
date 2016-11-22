@@ -94,7 +94,7 @@ public class TemplateBuilder {
         TemplateDTO templateDTO = null;
         try {
             templateDTO = templateService.getTemplate(id);
-            LOGGER.debug("Loaded template with id: {}", id);
+            LOGGER.info("Loaded template with id {}: {}", id, templateDTO);
         } catch (Exception e) {
             LOGGER.error("Failed to load template for with id : {}", id, e);
         }
@@ -107,8 +107,8 @@ public class TemplateBuilder {
     private TemplateDTO getTemplate(String templateName, String languageCode, String type, String hakuOid) {
         TemplateDTO templateDTO = null;
         try {
-            templateDTO = templateService.getTemplate(templateName, languageCode, TemplateDTO.TYPE_EMAIL, hakuOid);
-            LOGGER.debug("Loaded template: {} for {}", templateDTO, templateName);
+            templateDTO = templateService.getTemplate(templateName, languageCode, type, hakuOid);
+            LOGGER.info("Loaded {} {} template for language {} in haku {}: {}", type, templateName, languageCode, hakuOid, templateDTO);
         } catch (Exception e) {
             LOGGER.error("Failed to load template for templateName: {}, languageCode={}", templateName, languageCode, e);
         }
