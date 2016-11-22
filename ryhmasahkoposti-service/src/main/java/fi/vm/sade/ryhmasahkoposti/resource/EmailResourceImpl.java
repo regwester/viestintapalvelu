@@ -158,6 +158,7 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         log.debug("getPreview called with EmailData: {}", emailData);
         overrideFromAddress(emailData);
         chooseTemplate(emailData);
+        sanitizeInput(emailData);
         log.debug("getPreview called with EmailData: after template choosing {}", emailData);
         String email = emailService.getEML(emailData, "vastaanottaja@example.com");
         return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
