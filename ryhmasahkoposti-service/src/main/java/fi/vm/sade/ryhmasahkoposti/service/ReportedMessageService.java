@@ -16,6 +16,7 @@
 package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.util.List;
+import java.util.Optional;
 
 import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
@@ -45,6 +46,14 @@ public interface ReportedMessageService {
      * @return Raportoitavan viestin tiedot {@link ReportedMessage}
      */
     ReportedMessage getReportedMessage(Long id);
+
+    /**
+     * Hakee raportoitavan viestin kirjeen avaimella
+     *
+     * @param id Raportoitavaan viestiin liittyvän kirjeen avain
+     * @return Raportoitavan viestin tiedot {@link ReportedMessage}
+     */
+    Optional<ReportedMessage> getReportedMessageByLetter(Long id);
 
     /**
      * Hakee annettujen parametrien mukaiset raportoitavat viestit

@@ -24,6 +24,7 @@ import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.query.LetterReportQueryDTO;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 
 import java.util.List;
 import java.util.Map;
@@ -164,7 +165,7 @@ public interface LetterBatchDAO extends JpaDAO<LetterBatch, Long> {
 
     List<LetterListItem> findLettersReadyForPublishByPersonOid(String personOid);
 
-    int publishLetterBatch(long batchId);
+    List<Long> getUnpublishedLetterIds(long letterBatchId);
 
     Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
 

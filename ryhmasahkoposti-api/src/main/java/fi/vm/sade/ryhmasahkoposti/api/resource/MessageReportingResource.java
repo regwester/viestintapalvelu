@@ -133,7 +133,7 @@ public interface MessageReportingResource {
     /**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot
      *
-     * @param Ryhmäsähköpostiviestin tunnus
+     * @param messageID Ryhmäsähköpostiviestin tunnus
      * @return Raportoitavan ryhmäsähköpostin tiedot {@link ReportedMessageDTO}}
      */
     @PreAuthorize(SecurityConstants.READ)
@@ -145,6 +145,22 @@ public interface MessageReportingResource {
     @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal service error")})
     Response getReportedMessage(@ApiParam(value = "Ryhmäsähköpostiviestin avain", required = true)
                                 @PathParam(RestConstants.PARAM_MESSAGE_ID) Long messageID) throws Exception;
+
+    /**
+     * Hakee yksittäisen ryhmäsähköpostiviestin tunnuksen siihen liittyvän kirjelähetyksen avulla
+     *
+     * @param letterID Kirjelähetyksen tunnus
+     * @return Raportoitavan ryhmäsähköpostin tunnus
+     */
+    @PreAuthorize(SecurityConstants.READ)
+    @Produces(MediaType.TEXT_PLAIN)
+    @Path(RestConstants.PATH_REPORT_MESSAGE_BY_LETTER_VIEW)
+    @GET
+    @ApiOperation(value = "Hakee halutun ryhmäsähköpostiviestin tiedot",
+            notes = "Hakee kirjeavainta vastaavaa ryhmäsähköpostiviestin tiedot.", response = ReportedMessageDTO.class)
+    @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal service error")})
+    Response getReportedMessageByLetter(@ApiParam(value = "Kirjelähetyksen avain", required = true)
+                                        @PathParam(RestConstants.PARAM_LETTER_ID) Long letterID) throws Exception;
 
     /**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa tietyn määrän vastaanottajien tietoja

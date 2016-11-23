@@ -15,9 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
+import java.io.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -43,6 +41,7 @@ import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
@@ -125,6 +124,9 @@ public class LetterServiceImpl implements LetterService {
     private DokumenttiResource dokumenttipalveluRestClient;
     @Autowired
     private ApplicationContext applicationContext;
+
+    @Value("${viestintapalvelu.letter.publish.dir}")
+    private File letterPublishDir;
 
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO, CurrentUserComponent currentUserComponent,
@@ -888,8 +890,36 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public int publishLetterBatch(long letterBatchId) {
-        return letterBatchDAO.publishLetterBatch(letterBatchId);
+    public int publishLetterBatch(long letterBatchId) throws Exception {
+        List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
+        if(letters.size() > 0) {
+            new Thread(new LetterPublisher(letterBatchId, letters)).start();
+            return letters.size();
+        } else {
+            return 0;
+        }
+    }
+
+    @Override
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    public void publishLetter(long letterId, File letterBatchPublishDir) {
+        File tempPdfFile = null;
+        File finalPdfFile = null;
+        try {
+            LetterReceiverLetter letter = letterReceiverLetterDAO.read(letterId);
+            tempPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
+            finalPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
+            FileOutputStream out = new FileOutputStream(tempPdfFile);
+            out.write(letter.getLetter());
+            out.close();
+            letterReceiverLetterDAO.markAsPublished(letter.getId());
+            tempPdfFile.renameTo(finalPdfFile);
+        } catch (Exception e) {
+            if(tempPdfFile != null) {
+                tempPdfFile.delete();
+            }
+            throw new RuntimeException("Error publishing letter id " + letterId + (finalPdfFile == null ? "" : " to " + finalPdfFile), e);
+        }
     }
 
     @Override
@@ -910,5 +940,41 @@ public class LetterServiceImpl implements LetterService {
     @Override
     public Map<String, String> getEPostiEmailAddresses(long letterBatchId) {
         return letterBatchDAO.getEPostiEmailAddressesByBatchId(letterBatchId);
+    }
+
+    private class LetterPublisher implements Runnable {
+
+        private final long letterBatchId;
+        private final List<Long> letterIds;
+
+        protected LetterPublisher(long letterBatchId, List<Long> letterIds) {
+            this.letterBatchId = letterBatchId;
+            this.letterIds = letterIds;
+        }
+
+        @Override
+        public void run() {
+            LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
+            String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
+            File letterBatchPublishDir = new File(letterPublishDir, subFolderName);
+            logger.info("Publishing {} letters from letter batch {} to dir {}", letterIds.size(), letterBatchId, letterBatchPublishDir);
+            letterBatchPublishDir.mkdirs();
+            int count = 0;
+            try {
+                for (Long letterId : letterIds) {
+                    publishLetter(letterId, letterBatchPublishDir);
+                    count++;
+                    if (count % 100 == 0) {
+                        logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letterIds.size(), letterBatchId, letterBatchPublishDir);
+                    }
+                }
+            }
+            catch (Exception e) {
+                logger.error("Letter batch " + letterBatchId + " publish failed. Published " + count + "/" + letterIds.size(), e);
+                throw e;
+            }
+            logger.info("Published successfully {} letters from letter batch {} to dir {}", count, letterBatchId, letterBatchPublishDir);
+
+        }
     }
 }

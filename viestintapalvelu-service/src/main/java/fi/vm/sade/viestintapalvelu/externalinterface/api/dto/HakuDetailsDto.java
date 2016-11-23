@@ -48,14 +48,6 @@ public class HakuDetailsDto implements Serializable {
     @ApiModelProperty("Tarjoaja organisatio oidit.")
     private List<String> organisaatioOids;
 
-    public List<String> getHakukohdeOids() {
-        return hakukohdeOids;
-    }
-
-    public void setHakukohdeOids(List<String> hakukohdeOids) {
-        this.hakukohdeOids = hakukohdeOids;
-    }
-
     public String getOid() {
         return oid;
     }
@@ -95,9 +87,5 @@ public class HakuDetailsDto implements Serializable {
     public void setOrganisaatioOids(List<String> organisaatioOids) {
         this.organisaatioOids = organisaatioOids;
     }
-
-    @ApiModelProperty("Hakukohteiden oidit")
-
-    private List<String> hakukohdeOids;
 
 }

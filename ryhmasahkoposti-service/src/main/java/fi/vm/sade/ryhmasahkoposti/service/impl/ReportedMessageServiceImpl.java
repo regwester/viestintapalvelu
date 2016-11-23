@@ -16,6 +16,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -93,6 +94,11 @@ public class ReportedMessageServiceImpl implements ReportedMessageService {
     @Override
     public ReportedMessage getReportedMessage(Long id) {
         return reportedMessageDAO.read(id);
+    }
+
+    @Override
+    public Optional<ReportedMessage> getReportedMessageByLetter(Long id) {
+        return reportedMessageDAO.findByLetter(id);
     }
 
     @Override

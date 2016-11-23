@@ -32,6 +32,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationCompon
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.PersonComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
+import org.springframework.util.StringUtils;
 
 @Service
 public class RecipientService {
@@ -106,7 +107,9 @@ public class RecipientService {
 
     private void updateRecipientWithoutOid(ReportedRecipient recipient) {
         try {
-            log.info("Unrecognizable OID: {}, in recipient: {}", recipient.getRecipientOid(), recipient.getRecipientEmail());
+            if(!StringUtils.isEmpty(recipient.getRecipientOid())) {
+                log.warn("Unrecognizable OID: {}, in recipient: {}. Can not retrieve details.", recipient.getRecipientOid(), recipient.getRecipientEmail());
+            }
             recipient.setDetailsRetrieved(true);
             updateRecipient(recipient);
         } catch (Exception e) {

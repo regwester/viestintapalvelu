@@ -35,8 +35,8 @@ public interface TarjontaHakuResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @Path("/haku/findAll")
-    HakuRDTO<List<HakuDetailsDto>> hakus(@QueryParam(value = "count") Integer count) throws Exception;
+    @Path("/haku/find")
+    HakuRDTO<List<HakuDetailsDto>> hakus(@QueryParam(value = "addHakukohdes") Boolean addHakukohdes) throws Exception;
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)

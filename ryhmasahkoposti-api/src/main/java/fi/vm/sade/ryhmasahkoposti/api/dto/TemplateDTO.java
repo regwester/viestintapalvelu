@@ -233,7 +233,7 @@ public class TemplateDTO extends BaseDTO {
 
     @Override
     public String toString() {
-	return "TemplateDTO [name=" + name + ", timestamp=" + timestamp
+	return "TemplateDTO [id=" + getId() + ", name=" + name + ", timestamp=" + timestamp
 		+ ", language=" + language + ", versionro=" + versionro
 		+ ", styles=" + styles + ", type=" + type + ", storingOid="
 		+ storingOid + ", organizationOid=" + organizationOid

@@ -16,6 +16,7 @@
 package fi.vm.sade.ryhmasahkoposti.dao;
 
 import java.util.List;
+import java.util.Optional;
 
 import fi.vm.sade.generic.dao.JpaDAO;
 import fi.vm.sade.dto.PagingAndSortingDTO;
@@ -47,7 +48,9 @@ public interface ReportedMessageDAO extends JpaDAO<ReportedMessage, Long> {
      */
 	List<ReportedMessage> findBySenderOid(String senderOid, PagingAndSortingDTO pagingAndSorting);
 
-    /**
+	Optional<ReportedMessage> findByLetter(Long letterID);
+
+	/**
      * Hakee halutun käyttäjän lähettämiä raportoitavia viestejä halutussa järjestyksessä
      *  
      * @param senderOid Lähettäjän oid-tunnus

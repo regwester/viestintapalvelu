@@ -107,9 +107,13 @@ public class LetterResourceTrusted extends AbstractLetterResource {
             LOG.info("Batch with id {} is not ready for publish. ", letterBatchId);
             return Response.status(Response.Status.FORBIDDEN).entity("Batch is not ready for publish.").build();
         } else {
-            int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
-            LOG.info("Published {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
-            return Response.ok(numberOfPublishedLetters).build();
+            try {
+                int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
+                LOG.info("Publishing {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
+                return Response.ok(numberOfPublishedLetters).build();
+            } catch (Exception e) {
+                return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
+            }
         }
     }
 

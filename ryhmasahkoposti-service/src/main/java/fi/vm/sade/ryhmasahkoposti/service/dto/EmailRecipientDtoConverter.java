@@ -46,6 +46,7 @@ public class EmailRecipientDtoConverter {
         to.setSubject(original.getSubject());
         to.setTemplateName(original.getTemplateName());
         to.setTemplateId(original.getTemplateId());
+        to.setHakuOid(original.getHakuOid());
         to.setType(original.getType());
         to.setVirusChecked(original.isVirusChecked());
         to.setRecipient(from);
@@ -72,6 +73,7 @@ public class EmailRecipientDtoConverter {
         to.setSubject(original.getSubject());
         to.setTemplateName(original.getTemplateName());
         to.setTemplateId(original.getTemplateId());
+        to.setHakuOid(original.getHakuOid());
         to.setType((original.getTemplateName() != null || original.getTemplateId() != null) ? "T" : "E");
         to.setVirusChecked(false);
         EmailRecipientDTO recipient = new EmailRecipientDTO();

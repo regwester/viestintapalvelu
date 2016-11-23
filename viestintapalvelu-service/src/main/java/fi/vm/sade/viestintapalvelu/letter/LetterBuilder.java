@@ -181,8 +181,8 @@ public class LetterBuilder {
         Map<String, Object> dataContext = createDataContext(XhtmlCleaner.INSTANCE,
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
-        if (xhtml != null) {
-            LOG.warn("CreatePagePdf using xhtml:\n" + new String(xhtml));
+        if (xhtml != null && LOG.isDebugEnabled()) {
+            LOG.debug("CreatePagePdf using xhtml:\n" + new String(xhtml));
         }
         return documentBuilder.xhtmlToPDF(xhtml);
     }

@@ -45,6 +45,9 @@ public class ReportedMessage extends BaseEntity {
     @Column(name = "viestipohja_id")
     private Long templateId;
 
+    @Column(name = "kirjelahetys_id")
+    private Long letterId;
+
     @Column(name = "lahettajan_organisaatio_oid", nullable = true)
     private String senderOrganizationOid;
 
@@ -216,6 +219,14 @@ public class ReportedMessage extends BaseEntity {
 
     public void setTemplateId(Long templateId) {
         this.templateId = templateId;
+    }
+
+    public Long getLetterId() {
+        return letterId;
+    }
+
+    public void setLetterId(Long letterId) {
+        this.letterId = letterId;
     }
 
     /**

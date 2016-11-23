@@ -17,23 +17,18 @@ package fi.vm.sade.ryhmasahkoposti.service;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Optional;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.*;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import org.apache.commons.fileupload.FileItem;
 
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
 import fi.vm.sade.dto.PagingAndSortingDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedRecipientReplacementDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Rajapinta lähetettävän ryhmäsähköpostiviestin raportointia varten
@@ -42,6 +37,9 @@ import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
  *
  */
 public interface GroupEmailReportingService {
+    @Transactional(propagation = Propagation.REQUIRED)
+    ReportedMessage createSendingGroupEmail(EmailData emailData) throws IOException;
+
     /**
      * Lisää lähetettävän ryhmäsähköpostin tiedot odottamaan lähetystä
      *  
@@ -59,6 +57,9 @@ public interface GroupEmailReportingService {
      */
     EmailMessageDTO getMessage(Long messageID);
 
+    @Transactional(propagation = Propagation.REQUIRED)
+    void processRecipients(ReportedMessage savedReportedMessage, List<EmailRecipient> emailRecipients) throws IOException;
+
     /**
      * Get recipient replacements
      * 
@@ -74,6 +75,14 @@ public interface GroupEmailReportingService {
      * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
      */
     ReportedMessageDTO getReportedMessage(Long messageID);
+
+    /**
+     * Hakee kirjelähetykseeen liittyvän raportoitavan ryhmäsähköpostiviestin
+     *
+     * @param letterID kirjelähetyksen tunnis
+     * @return Raporetoitavan ryhmäsähköpostiviestin tiedot
+     */
+    Optional<Long> getReportedMessageIdByLetter(Long letterID);
 
     /**
      * Hakee viestintunnuksella raportoitavan ryhmäsähköpostiviestin ja sen lähetysraportin   

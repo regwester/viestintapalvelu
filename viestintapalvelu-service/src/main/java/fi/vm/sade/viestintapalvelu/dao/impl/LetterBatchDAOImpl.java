@@ -350,17 +350,16 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
     }
 
     @Override
-    public int publishLetterBatch(long letterBatchId) {
-        return getEntityManager().createQuery( "UPDATE LetterReceiverLetter l"
-                + " SET l.readyForPublish = :readyForPublish"
+    public List<Long> getUnpublishedLetterIds(long letterBatchId) {
+        return getEntityManager().createQuery("SELECT l.id FROM LetterReceiverLetter l"
                 + " WHERE l.id IN ("
                 + " SELECT lrl.id FROM LetterBatch lb"
                 + " INNER JOIN lb.letterReceivers lr"
                 + " INNER JOIN lr.letterReceiverLetter lrl"
-                + " WHERE lb.id = :letterBatchId AND lb.batchStatus = :status)"
-        ).setParameter("readyForPublish", true)
-         .setParameter("letterBatchId", letterBatchId)
-         .setParameter("status", LetterBatch.Status.ready).executeUpdate();
+                + " WHERE lrl.readyForPublish = :readyForPublish AND lb.id = :letterBatchId AND lb.batchStatus = :status)"
+                ).setParameter("readyForPublish", false)
+                .setParameter("letterBatchId", letterBatchId)
+                .setParameter("status", LetterBatch.Status.ready).getResultList();
     }
 
     @Override
@@ -425,17 +424,17 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
             .getResultList().get(0);
 
         long totalCount = (Long)result2[0];
-        long readyForPublishCount = (Long)result2[1];
+        long publishedCount = (Long)result2[1];
         long notReadyCount = (Long)result2[2];
 
         if(LetterBatch.Status.ready.equals(batchStatus)) {
-            boolean readyForPublish = readyForPublishCount == 0l;
-            boolean readyForEPosti = readyForPublishCount == totalCount;
-            return new LetterBatchCountDto(totalCount, totalCount, 0l, readyForPublish, readyForEPosti);
+            boolean readyForPublish = publishedCount < totalCount;
+            boolean readyForEPosti = totalCount > 0 && publishedCount == totalCount;
+            return new LetterBatchCountDto(batchId, totalCount, totalCount, 0l, publishedCount, readyForPublish, readyForEPosti);
         } else if(LetterBatch.Status.error.equals(batchStatus)) {
-            return new LetterBatchCountDto(totalCount, 0l, totalCount, false, false);
+            return new LetterBatchCountDto(batchId, totalCount, 0l, totalCount, 0l, false, false);
         } else {
-            return new LetterBatchCountDto(totalCount, (totalCount - notReadyCount), 0l, false, false);
+            return new LetterBatchCountDto(batchId, totalCount, (totalCount - notReadyCount), 0l, 0l, false, false);
         }
     }
 

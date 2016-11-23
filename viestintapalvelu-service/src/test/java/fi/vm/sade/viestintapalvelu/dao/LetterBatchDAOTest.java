@@ -24,6 +24,7 @@ import javax.persistence.PersistenceException;
 import com.google.common.collect.ImmutableMap;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
+import fi.vm.sade.viestintapalvelu.model.*;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -39,13 +40,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.google.common.base.Optional;
 
-import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchGeneralProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchIPostProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterBatchProcessingError;
-import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 
 import static org.junit.Assert.*;
@@ -62,6 +57,8 @@ public class LetterBatchDAOTest {
     private EntityManager entityManager;
     @Autowired
     private LetterBatchDAO letterBatchDAO;
+    @Autowired
+    private LetterReceiverLetterDAO letterReceiverLetterDAO;
 
     @Test
     public void testFindLetterBatchByNameOrgTag() {
@@ -319,14 +316,22 @@ public class LetterBatchDAOTest {
        List<LetterListItem> listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(0, listItems.size());
 
-       assertEquals(3l, letterBatchDAO.publishLetterBatch(batchId1));
+       List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(batchId1);
+       assertEquals(3l, letters.size());
+       for (Long letterId: letters) {
+           letterReceiverLetterDAO.markAsPublished(letterId);
+       }
 
        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(1, listItems.size());
        logger.info(listItems.get(0).toString());
        assertTrue(listItemEquals(listItems.get(0), "test-haku-oid-1", "hyvaksymiskirje"));
 
-       assertEquals(2l, letterBatchDAO.publishLetterBatch(batchId2));
+       letters = letterBatchDAO.getUnpublishedLetterIds(batchId2);
+       assertEquals(2l, letters.size());
+       for (Long letterId: letters) {
+           letterReceiverLetterDAO.markAsPublished(letterId);
+       }
 
        listItems = letterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid-1");
        assertEquals(2, listItems.size());
@@ -372,6 +377,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto.letterTotalCount);
        assertEquals(2, letterBatchCountDto.letterReadyCount);
        assertEquals(0, letterBatchCountDto.letterErrorCount);
+       assertNotNull(letterBatchCountDto.letterBatchId);
+       assertEquals(Status.processing, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto.letterBatchId).getStatus());
        assertFalse(letterBatchCountDto.readyForPublish);
        assertFalse(letterBatchCountDto.readyForEPosti);
 
@@ -379,6 +386,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto2.letterTotalCount);
        assertEquals(3, letterBatchCountDto2.letterReadyCount);
        assertEquals(0, letterBatchCountDto2.letterErrorCount);
+       assertNotNull(letterBatchCountDto2.letterBatchId);
+       assertEquals(Status.ready, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto2.letterBatchId).getStatus());
        assertTrue(letterBatchCountDto2.readyForPublish);
        assertFalse(letterBatchCountDto2.readyForEPosti);
 
@@ -386,6 +395,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto3.letterTotalCount);
        assertEquals(3, letterBatchCountDto3.letterReadyCount);
        assertEquals(0, letterBatchCountDto3.letterErrorCount);
+       assertNotNull(letterBatchCountDto3.letterBatchId);
+       assertEquals(Status.ready, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto3.letterBatchId).getStatus());
        assertFalse(letterBatchCountDto3.readyForPublish);
        assertTrue(letterBatchCountDto3.readyForEPosti);
 
@@ -393,6 +404,8 @@ public class LetterBatchDAOTest {
        assertEquals(3, letterBatchCountDto4.letterTotalCount);
        assertEquals(0, letterBatchCountDto4.letterReadyCount);
        assertEquals(3, letterBatchCountDto4.letterErrorCount);
+       assertNotNull(letterBatchCountDto4.letterBatchId);
+       assertEquals(Status.error, letterBatchDAO.getLetterBatchStatus(letterBatchCountDto4.letterBatchId).getStatus());
        assertFalse(letterBatchCountDto4.readyForPublish);
        assertFalse(letterBatchCountDto4.readyForEPosti);
 
@@ -400,6 +413,7 @@ public class LetterBatchDAOTest {
        assertEquals(0, letterBatchCountDto5.letterTotalCount);
        assertEquals(0, letterBatchCountDto5.letterReadyCount);
        assertEquals(0, letterBatchCountDto5.letterErrorCount);
+       assertNull(letterBatchCountDto5.letterBatchId);
        assertFalse(letterBatchCountDto5.readyForPublish);
        assertFalse(letterBatchCountDto5.readyForEPosti);
    }

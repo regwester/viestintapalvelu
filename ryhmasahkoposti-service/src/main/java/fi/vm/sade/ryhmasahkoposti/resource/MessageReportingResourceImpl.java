@@ -16,7 +16,9 @@
 package fi.vm.sade.ryhmasahkoposti.resource;
 
 import java.util.List;
+import java.util.Optional;
 
+import javax.ws.rs.NotFoundException;
 import javax.ws.rs.core.Response;
 
 import org.slf4j.Logger;
@@ -103,6 +105,15 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     public Response getReportedMessage(Long messageID) throws Exception {
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(messageID);
         return Response.ok(reportedMessageDTO).build();
+    }
+
+    @Override
+    public Response getReportedMessageByLetter(Long letterID) throws Exception {
+        Optional<Long> reportedMessageDTO = groupEmailReportingService.getReportedMessageIdByLetter(letterID);
+        if(reportedMessageDTO.isPresent()) {
+            return Response.ok(reportedMessageDTO.get()).build();
+        }
+        throw new NotFoundException("Reported message could not be found with letter id: " + letterID);
     }
 
     @Override
