@@ -73,6 +73,13 @@
         "description": "Kirjeen otsikko",
         "contentType": "html",
         "numberOfRows": 1
+      },
+      {
+        "key": "sivu_2_otsikko",
+        "name": "sivu_2_otsikko",
+        "description": "Sivun 2 otsikko",
+        "contentType": "html",
+        "numberOfRows": 1
       }
     ]
   },
@@ -85,22 +92,28 @@
       "mandatory": false
     },
     {
-      "id": 0,
+      "id": 1,
       "name": "sis2",
       "defaultValue": "{{sisalto_2.html}}",
       "timestamp": null,
       "mandatory": false
     },
     {
-      "id": 1,
+      "id": 2,
       "name": "subject",
       "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
       "mandatory": false
     },
     {
-      "id": 2,
+      "id": 3,
       "name": "kirjeotsikko",
       "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa",
+      "mandatory": false
+    },
+    {
+      "id": 4,
+      "name": "sivu_2_otsikko",
+      "defaultValue": "TILANTEESI KEVÄÄN 2016 KORKEAKOULUJEN YHTEISHAUSSA",
       "mandatory": false
     }
   ]

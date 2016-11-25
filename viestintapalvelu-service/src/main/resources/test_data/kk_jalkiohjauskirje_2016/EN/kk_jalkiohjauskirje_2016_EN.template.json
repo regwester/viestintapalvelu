@@ -73,6 +73,13 @@
         "description": "Kirjeen otsikko",
         "contentType": "html",
         "numberOfRows": 1
+      },
+      {
+        "key": "sivu_2_otsikko",
+        "name": "sivu_2_otsikko",
+        "description": "Sivun 2 otsikko",
+        "contentType": "html",
+        "numberOfRows": 1
       }
     ]
   },
@@ -101,6 +108,12 @@
       "id": 2,
       "name": "kirjeotsikko",
       "defaultValue": "Notification of the student selection results in joint application to higher education",
+      "mandatory": false
+    },
+    {
+      "id": 4,
+      "name": "sivu_2_otsikko",
+      "defaultValue": "YOUR CURRENT SITUATION IN JOINT APPLICATION TO HIGHER EDUCATION SPRING 2016",
       "mandatory": false
     }
   ]
