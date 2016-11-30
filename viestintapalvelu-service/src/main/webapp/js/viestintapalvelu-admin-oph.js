@@ -1,4 +1,4 @@
-window.urls.properties = {
+window.urls.addProperties ( {
     "viestintapalvelu.generator": "/viestintapalvelu/generator/$1",
     "viestintapalvelu.iposti.unSentItems": "/viestintapalvelu/api/v1/iposti/unSentItems",
     "viestintapalvelu.iposti.sendBatch": "/viestintapalvelu/api/v1/iposti/sendBatch/:id",
@@ -23,4 +23,4 @@ window.urls.properties = {
     "viestintapalvelu.letterEmailLetterBatch": "/viestintapalvelu/api/v1/letter/emailLetterBatch/$1",
     "viestintapalvelu.letterPreviewLetterBatchEmail": "/viestintapalvelu/api/v1/letter/previewLetterBatchEmail/$1",
     "dokumenttipalvelu-service.lataa": "/dokumenttipalvelu-service/resources/dokumentit/lataa/$1"
-}
+})

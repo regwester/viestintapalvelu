@@ -1,4 +1,4 @@
-window.urls.properties = {
+window.urls.addProperties ( {
     "ryhmasahkoposti-service.draft.resource": "/ryhmasahkoposti-service/drafts/:draftId/:id",
     "ryhmasahkoposti-service.draft.count": "/ryhmasahkoposti-service/drafts/count",
     "ryhmasahkoposti-service.resource": "/ryhmasahkoposti-service/email/$1",
@@ -41,4 +41,4 @@ window.urls.properties = {
     "viestintapalvelu.reporting.contents": "/viestintapalvelu/api/v1/reporting/contents",
     "viestintapalvelu.download": "/viestintapalvelu/api/v1/download/",
     "viestintapalvelu.iposti.sendMail": "/viestintapalvelu/api/v1/iposti/sendMail/$1"
-}
+})
