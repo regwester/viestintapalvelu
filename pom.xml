@@ -367,6 +367,11 @@
                 <version>${velocity.version}</version>
             </dependency>
             <dependency>
+                <groupId>commons-collections</groupId>
+                <artifactId>commons-collections</artifactId>
+                <version>3.2.2</version>
+            </dependency>
+            <dependency>
                 <groupId>jtidy</groupId>
                 <artifactId>jtidy</artifactId>
                 <version>${jtidy.version}</version>
