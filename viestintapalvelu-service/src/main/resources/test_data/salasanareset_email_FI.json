@@ -28,7 +28,7 @@
     },
     {
       "name": "subject",
-      "defaultValue": "Oletusotsikko",
+      "defaultValue": "Salasanan nollaus",
       "mandatory": false,
       "timestamp": null,
       "id": 0
