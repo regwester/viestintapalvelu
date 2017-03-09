@@ -3,7 +3,7 @@
 
   "Makefile": "no",
 
-  "csrf": "viestintapalvelu-ui-front: ok, backend: ?",
+  "csrf": "viestintapalvelu-ui-front: ok (develop ok, ajastus???), backend: ?",
 
   "spring": {
     "xml": "viestintapalvelu-service/src/main/resources/spring/application-context.xml",
