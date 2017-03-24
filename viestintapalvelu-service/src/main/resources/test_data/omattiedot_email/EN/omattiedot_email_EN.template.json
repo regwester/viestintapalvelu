@@ -1,6 +1,6 @@
 {
     "name":"omattiedot_email",
-    "language":"FI",
+    "language":"EN",
     "type":"email",
     "storingOid":null,
     "organizationOid":null,
@@ -28,7 +28,7 @@
         },
         {
             "name":"subject",
-            "defaultValue":"Opiskelupaikka vastaanotettavissa Opintopolussa",
+            "defaultValue":"The study place can be confirmed in Studyinfo",
             "mandatory":false,
             "timestamp":null,
             "id":0
@@ -37,8 +37,8 @@
     "templateVersio":null,
     "structure":{
         "name":"omattiedot_email",
-        "language":"FI",
-        "description":"Opiskelupaikka vastaanotettavissa Opintopolussa sähköposti",
+        "language":"EN",
+        "description":"The study place can be confirmed in Studyinfo",
         "contentStructures":[
             {
                 "type":"email",
