@@ -23,27 +23,43 @@
     </p>
     <p>
         Haun nimi: $haunNimi
-        <br>
-        #if($hakukohde)
-        Hakukohde: $hakukohde
-        #elseif ($hakukohteet)
-        Hakukohteet: $hakukohteet
-        #end
     </p>
+    <p>
+        Hakukohteet:
+    </p>
+    #foreach( $hakukohde in $hakukohteet )
+    <p>
+        $hakukohde.nimi $hakukohde.tarjoaja
+    </p>
+    #end
     <p>Älä vastaa tähän viestiin - viesti on lähetetty automaattisesti.</p>
 #else
     <p>
         Hei $etunimi
     </p>
     <p>
-        Olet hakenut opiskelupaikkaa Opintopolku-verkkopalvelussa.
-        Sinulle on nyt myönnetty opiskelupaikka! Käy
-        hyväksymässä opiskelupaikka Opintopolussa
-        viimeistään $deadline
+        Sinulle on myönnetty opiskelupaikka, onneksi olkoon.
+        Voit katsoa lisätietoja ja ottaa opiskelupaikan vastaan
+        <a href="https://opintopolku.fi/omatsivut/login">Oma
+            Opintopolku-palvelussa</a>. Lisäohjeita opiskelupaikan
+        vastaanottamisesta saat <a
+            href="https://opintopolku.fi/wp/valintojen-tuki/yhteishaku/korkeakoulujen-yhteishaku/nain-otat-paikan-vastaan">
+        Opintopolku-palvelusta</a> tai hakemastasi korkeakoulusta.
     </p>
     <p>
-        <a href="https://opintopolku.fi/omatsivut/login">Kirjaudu
-            opintopolkuun</a>
+        Haun nimi: $haunNimi
+    </p>
+    <p>
+        Hakukohteet:
+    </p>
+    #foreach( $hakukohde in $hakukohteet )
+    <p>
+        $hakukohde.nimi $hakukohde.tarjoaja
+    </p>
+    #end
+    <p>
+        Älä vastaa tähän viestiin - viesti on
+        lähetetty automaattisesti.
     </p>
 #end
 </body>
