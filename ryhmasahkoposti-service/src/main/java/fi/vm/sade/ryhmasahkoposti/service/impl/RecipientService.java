@@ -88,7 +88,8 @@ public class RecipientService {
             recipient.setDetailsRetrieved(true);
             updateRecipient(recipient);
         } catch (Exception e) {
-            log.error("Updating organization recipient with oid {} failed", recipient.getRecipientOid(), e);
+            log.warn("Updating organization recipient with oid {} failed: {}", recipient.getRecipientOid(), e.getMessage());
+            log.debug("Updating organization recipient with oid {} failed", recipient.getRecipientOid(), e);
         }
     }
 
@@ -101,7 +102,8 @@ public class RecipientService {
             recipient.setDetailsRetrieved(true);
             updateRecipient(recipient);
         } catch (Exception e) {
-            log.error("Updating person recipient with oid {} failed", recipient.getRecipientOid(), e);
+            log.warn("Updating person recipient with oid {} failed: {}", recipient.getRecipientOid(), e.getMessage());
+            log.debug("Updating person recipient with oid {} failed", recipient.getRecipientOid(), e);
         }
     }
 
@@ -113,7 +115,8 @@ public class RecipientService {
             recipient.setDetailsRetrieved(true);
             updateRecipient(recipient);
         } catch (Exception e) {
-            log.error("Updating recipient without oid failed. Recipient id is {}", recipient.getId(), e);
+            log.warn("Updating recipient without oid failed. Recipient id is {}: {}", recipient.getId(), e.getMessage());
+            log.debug("Updating recipient without oid failed. Recipient id is {}", recipient.getId(), e);
         }
 
     }
