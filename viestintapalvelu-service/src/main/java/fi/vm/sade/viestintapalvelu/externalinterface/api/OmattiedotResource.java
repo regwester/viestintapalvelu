@@ -43,7 +43,7 @@ public interface OmattiedotResource {
      * 
      * @return Henkilön tiedot
      */
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     @JsonView(JsonViews.Basic.class)
     @GET
     Henkilo currentHenkiloTiedot();
@@ -53,7 +53,7 @@ public interface OmattiedotResource {
      * 
      * @return Lista henkilön organisaatiotietoja
      */
-    @Produces(MediaType.APPLICATION_JSON + ";charset=utf-8")
+    @Produces(MediaType.APPLICATION_JSON)
     @JsonView(JsonViews.Basic.class)
     @Path("/organisaatiohenkilo")
     @GET
