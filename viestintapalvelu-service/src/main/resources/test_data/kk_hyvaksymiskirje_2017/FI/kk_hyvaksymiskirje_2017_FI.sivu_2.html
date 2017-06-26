@@ -33,8 +33,12 @@
     #set($even = "#if($foreach.count % 2 == 0)even#{else}#end")
     #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
     <tr class="$hyvaksytty $even">
-      <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
-      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>#if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end</td>
+      <td rowspan="$jonojenmaara">$tulos.valinnanTulos
+        #if($tulos.ehdollinenSyy)<br/><span class="ehdollinensyy">(Ehdollinen): $tulos.ehdollinenSyy</span>#end
+      </td>
+      <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>
+        #if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end
+        #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Peruuntumisen syy: $tulos.peruuntumisenSyy</span>#end</td>
     </tr>
     #foreach( $sijoitus in $tulos.sijoitukset )
 

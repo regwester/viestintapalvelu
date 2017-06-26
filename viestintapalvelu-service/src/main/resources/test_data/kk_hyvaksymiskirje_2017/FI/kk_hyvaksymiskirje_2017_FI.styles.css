@@ -178,7 +178,13 @@ td.numeerinen {
 .hylkayssyy, em {
   font-family: OpenSans-Italic;
 }
-.hyvaksytty .hylkayssyy {
+.peruuntumisensyy, em {
+  font-family: OpenSans-Italic;
+}
+.ehdollinensyy, em {
+  font-family: OpenSans-Italic;
+}
+.hyvaksytty .hylkayssyy .peruuntumisensyy .ehdollinensyy {
   font-family: OpenSans-BoldItalic;
 }
 .hyvaksytty>td {

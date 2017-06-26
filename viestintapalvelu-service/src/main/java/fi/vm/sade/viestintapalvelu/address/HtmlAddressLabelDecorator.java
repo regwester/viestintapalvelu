@@ -30,8 +30,9 @@ public class HtmlAddressLabelDecorator extends AddressLabelDecorator {
     }
 
     public String getAddress() {
-        return decorateAddressline(decoratedLabel.getFirstName() + " " + decoratedLabel.getLastName()) + decorateAddressline(decoratedLabel.getAddressline())
-                + decorateAddressline(decoratedLabel.getAddressline2()) + decorateAddressline(decoratedLabel.getAddressline3())
+        return decorateAddressline(decoratedLabel.getFirstName() + " <b>" + decoratedLabel.getLastName() + "</b>")
+                + decorateAddressline(decoratedLabel.getAddressline()) + decorateAddressline(decoratedLabel.getAddressline2())
+                + decorateAddressline(decoratedLabel.getAddressline3())
                 + decorateAddressline(decoratedLabel.getPostalCode() + " " + decoratedLabel.getCity()) + decorateAddressline(decoratedLabel.getRegion())
                 + decorateCountry(decoratedLabel.getCountry());
     }
