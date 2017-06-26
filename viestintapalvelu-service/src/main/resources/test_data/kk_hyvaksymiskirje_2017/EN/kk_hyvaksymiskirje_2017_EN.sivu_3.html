@@ -8,45 +8,12 @@
   <style type="text/css">
     $tyylit
   </style>
-  <title>Opiskelupaikan vastaanottaminen</title>
+  <title>Opiskelupaikan vastaanottaminen sekä ilmoittautuminen opiskelemaan</title>
 </head>
 
 <body>
-<div class="liitteet">
+<div class="liiteSisalto">
   $sis3
-
-  <h2>Instructions for new students</h2>
-  <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
-</div>
-
-<div class="cuthere"></div>
-
-<div class="liitteet">
-  <p><div class="pull-left"><b>NOTIFICATION OF CONFIRMATION OF A STUDY PLACE</b></div><div class="pull-right"><b>$addressLabel.firstName $addressLabel.lastName</b></div></p>
-  <div class="clear"></div>
-  <p><b>$koulu</b><br/><b>$koulutus</b></p>
-  $vastaanotto_1
-  <p class="selection">$vastaanotto_vaihtoehto_1</p>
-  <p class="selection">$vastaanotto_vaihtoehto_2</p>
-  <p class="selection">$vastaanotto_vaihtoehto_3</p>
-
-  <p>Place and date: _________________________ ____.____.$vastaanotto_allekirjoitus_vuosi ______________________________<br/><div class="signature">Signature</div></p>
-
-
-</div>
-<div class="footer">
-  #if($hakijapalveluidenOsoite)
-  <div class="pull-left hakijapalveluidenosoite">
-    $hakijapalveluidenOsoite.organisaationimi,<br/>
-    $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-    $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
-  </div>
-  #end
-  <div class="pull-right">
-    <br/>
-    Application number:<br/>
-    $hakemusOid
-  </div>
 </div>
 </body>
 

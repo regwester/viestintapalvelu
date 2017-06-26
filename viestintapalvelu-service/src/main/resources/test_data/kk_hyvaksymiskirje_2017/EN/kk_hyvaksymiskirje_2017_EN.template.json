@@ -29,6 +29,12 @@
             "name": "sivu_3",
             "contentType": "html",
             "content": "{{sivu_3.html}}"
+          },
+          {
+            "role": "body",
+            "name": "sivu_4",
+            "contentType": "html",
+            "content": "{{sivu_4.html}}"
           }
         ]
       },
