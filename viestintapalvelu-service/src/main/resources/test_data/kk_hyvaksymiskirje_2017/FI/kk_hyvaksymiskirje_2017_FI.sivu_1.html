@@ -13,22 +13,30 @@
 
 <body>
 <div class='header'>
-  <div class="organisaatio">
-    #if($hakijapalveluidenOsoite)
-    <p>
-      Lähettäjä:<br/>
-      $hakijapalveluidenOsoite.organisaationimi,<br/>
-      $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
-    </p>
-    #end
+  <div class="row">
+    <div class="organisaatio">
+      #if($hakijapalveluidenOsoite)
+      <p>
+        Lähettäjä:<br/>
+        $hakijapalveluidenOsoite.organisaationimi,<br/>
+        $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
+        $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
+      </p>
+      #end
+    </div>
+    <div class="letterdate">
+      <div class="date">$letterDate</div>
+    </div>
   </div>
-  <div class='osoitetarra'>
-    <div>$osoite</div>
-    <div class="pull-right"><div class="date">$syntymaaika</div></div>
+  <div class="row">
+    <div class='osoitetarra'>
+      <div>$osoite</div>
+    </div>
+    <div class="syntymaaika">
+      <div class="date">$syntymaaika</div>
+    </div>
   </div>
 </div>
-<div class="pull-right"><div class="date">$letterDate</div></div>
 <div class="clear"></div>
 <div>
   <p>$kirjeotsikko</p>

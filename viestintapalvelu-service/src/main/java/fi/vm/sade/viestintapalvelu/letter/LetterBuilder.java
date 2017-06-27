@@ -32,6 +32,7 @@ import javax.inject.Singleton;
 import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.util.DateUtil;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -217,6 +218,7 @@ public class LetterBuilder {
             data.put("palautusTimestampSv", palautusTimestampSv);
         }
         data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
+        data.put("syntymaaika", new SimpleDateFormat("d.M.yyyy").format(new LocalDate().minusYears(15)));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
