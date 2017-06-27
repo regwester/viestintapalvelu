@@ -15,36 +15,11 @@
  */
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import javax.inject.Inject;
-import javax.inject.Singleton;
-
-import com.google.common.base.Supplier;
-import fi.vm.sade.viestintapalvelu.util.DateUtil;
-import org.apache.commons.lang.StringEscapeUtils;
-import org.joda.time.LocalDate;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.beans.factory.annotation.Required;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Service;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
+import com.google.common.base.Supplier;
 import com.lowagie.text.DocumentException;
-
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.address.HtmlAddressLabelDecorator;
 import fi.vm.sade.viestintapalvelu.address.XmlAddressLabelDecorator;
@@ -57,8 +32,6 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
-import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.EmailComponent;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.html.Cleaner;
 import fi.vm.sade.viestintapalvelu.letter.html.XhtmlCleaner;
@@ -67,11 +40,19 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.template.Contents;
-import fi.vm.sade.viestintapalvelu.template.Replacement;
-import fi.vm.sade.viestintapalvelu.template.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplateContent;
-import fi.vm.sade.viestintapalvelu.template.TemplateService;
+import fi.vm.sade.viestintapalvelu.template.*;
+import org.apache.commons.lang.StringEscapeUtils;
+import org.joda.time.LocalDate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Service;
+
+import javax.inject.Singleton;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 import static fi.vm.sade.viestintapalvelu.util.DateUtil.*;
 
@@ -218,7 +199,7 @@ public class LetterBuilder {
             data.put("palautusTimestampSv", palautusTimestampSv);
         }
         data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
-        data.put("syntymaaika", new SimpleDateFormat("d.M.yyyy").format(new LocalDate().minusYears(15)));
+        data.put("syntymaaika", new SimpleDateFormat("d.M.yyyy").format(new LocalDate().minusYears(15).toDate()));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
