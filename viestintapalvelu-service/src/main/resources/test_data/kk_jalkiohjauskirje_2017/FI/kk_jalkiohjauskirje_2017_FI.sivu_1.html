@@ -13,14 +13,13 @@
 <div class='header'>
     <div class="row">
         <div class="organisaatio">
-            #if($hakijapalveluidenOsoite)
             <p>
                 Lähettäjä:<br/>
-                $hakijapalveluidenOsoite.organisaationimi,<br/>
-                $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-                $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
+                Opetushallitus<br/>
+                Hakaniemenranta 6,<br/>
+                PL 380,<br/>
+                00531 Helsinki
             </p>
-            #end
         </div>
         <div class="letterdate">
             <div class="date">$letterDate</div>
