@@ -17,17 +17,17 @@
     <div class="pull-left">$addressLabel.firstName <b>$addressLabel.lastName</b></div>
     <div class="pull-right">$sivu_2_otsikko</div>
     <br/>
-    <p>Näet tässä hakukohteesi asettamassasi järjestyksessä</p>
+    <p>Here you can see all your study options in the order stated on your application</p>
     <br/>
     <table>
         <thead>
         <tr>
-            <th>Valinnan tulos</th>
-            <th>Hakukohde</th>
-            <th>Valintatapa</th>
-            <th>Pisteesi</th>
-            <th>Alin hyv.</th>
-            <th>Varasijasi</th>
+            <th>Admission result</th>
+            <th>Study option</th>
+            <th>Selection method</th>
+            <th>Your score</th>
+            <th>The lowest accepted score</th>
+            <th>Your reserve place status</th>
         </tr>
         </thead>
         <tbody> #foreach( $tulos in $tulokset )
@@ -36,11 +36,11 @@
         #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
         <tr class="$hyvaksytty $even">
             <td rowspan="$jonojenmaara">$tulos.valinnanTulos
-                #if($tulos.ehdollinenSyy)<br/><span class="ehdollinensyy">(Ehdollinen): $tulos.ehdollinenSyy</span>#end
+                #if($tulos.ehdollinenSyy)<br/><span class="ehdollinensyy">$tulos.ehdollinenSyy</span>#end
             </td>
             <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>
-                #if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end
-                #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Peruuntumisen syy: $tulos.peruuntumisenSyy</span>#end
+                #if($tulos.hylkaysperuste)<span class="hylkayssyy">Grounds for rejection: $tulos.hylkaysperuste</span>#end
+                #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Grounds for cancellation: $tulos.peruuntumisenSyy</span>#end
             </td>
         </tr>
         #foreach( $sijoitus in $tulos.sijoitukset )

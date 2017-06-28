@@ -17,17 +17,17 @@
     <div class="pull-left">$addressLabel.firstName <b>$addressLabel.lastName</b></div>
     <div class="pull-right">$sivu_2_otsikko</div>
     <br/>
-    <p>Näet tässä hakukohteesi asettamassasi järjestyksessä</p>
+    <p>Du ser här dina ansökningsmål i den ordning du satt dem i</p>
     <br/>
     <table>
         <thead>
         <tr>
-            <th>Valinnan tulos</th>
-            <th>Hakukohde</th>
-            <th>Valintatapa</th>
-            <th>Pisteesi</th>
-            <th>Alin hyv.</th>
-            <th>Varasijasi</th>
+            <th>Antagningsresultat</th>
+            <th>Ansökningsmål</th>
+            <th>Antagningssätt</th>
+            <th>Dina poäng</th>
+            <th>Lägsta godk.</th>
+            <th>Reservpl.</th>
         </tr>
         </thead>
         <tbody> #foreach( $tulos in $tulokset )
@@ -36,11 +36,11 @@
         #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
         <tr class="$hyvaksytty $even">
             <td rowspan="$jonojenmaara">$tulos.valinnanTulos
-                #if($tulos.ehdollinenSyy)<br/><span class="ehdollinensyy">(Ehdollinen): $tulos.ehdollinenSyy</span>#end
+                #if($tulos.ehdollinenSyy)<br/><span class="ehdollinensyy">$tulos.ehdollinenSyy</span>#end
             </td>
             <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>
-                #if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end
-                #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Peruuntumisen syy: $tulos.peruuntumisenSyy</span>#end
+                #if($tulos.hylkaysperuste)<span class="hylkayssyy">Avslagsgrund: $tulos.hylkaysperuste</span>#end
+                #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Annuleringsgrund: $tulos.peruuntumisenSyy</span>#end
             </td>
         </tr>
         #foreach( $sijoitus in $tulos.sijoitukset )
