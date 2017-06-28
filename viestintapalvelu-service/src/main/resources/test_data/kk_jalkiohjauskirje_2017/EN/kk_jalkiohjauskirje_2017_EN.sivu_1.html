@@ -3,41 +3,46 @@
 <html xmlns="http://www.w3.org/1999/xhtml">
 
 <head>
-  <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-  <meta http-equiv="Content-Style-Type" content="text/css" />
-  <style type="text/css">
-    $tyylit
-  </style>
-  <title>Jälkiohjauskirje</title>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+    <meta http-equiv="Content-Style-Type" content="text/css"/>
+    <style type="text/css">$tyylit</style>
+    <title>Jälkiohjauskirje</title>
 </head>
 
 <body>
 <div class='header'>
-  <div class="organisaatio">
-    #if($hakijapalveluidenOsoite)
-    <p>
-    Sender:<br/>
-    $hakijapalveluidenOsoite.organisaationimi,<br/>
-    $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-    $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
-    </p>
-    #end
-  </div>
-  <div class='osoitetarra'>
-    <div>$osoite</div>
-    <div class="pull-right"><div class="date">$syntymaaika</div></div>
-  </div>
+    <div class="row">
+        <div class="organisaatio">
+            <p>
+                Lähettäjä:<br/>
+                Opetushallitus<br/>
+                Hakaniemenranta 6,<br/>
+                PL 380,<br/>
+                00531 Helsinki
+            </p>
+        </div>
+        <div class="letterdate">
+            <div class="date">$letterDate</div>
+        </div>
+    </div>
+    <div class="row">
+        <div class='osoitetarra'>
+            <div>$osoite</div>
+        </div>
+        <div class="syntymaaika">
+            <div class="date">$syntymaaika</div>
+        </div>
+    </div>
 </div>
-<div class="pull-right"><div class="date">$letterDate</div></div>
 <div class="clear"></div>
 <div>
-  <p>$kirjeotsikko</p>
-  <p><b>$koulu<br/>$koulutus</b></p>
+    <p>$kirjeotsikko</p>
+    <p><b>$koulu<br/>$koulutus</b></p>
 
-  $sisalto
-  <h2>Instructions for new students</h2>
-  <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
-  <h2>Welcome to study!</h2>
+    $sisalto
+    <h2>Ohjeet uusille opiskelijoille</h2>
+    <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
+    <h2>Tervetuloa opiskelemaan!</h2>
 
 </div>
 </body>

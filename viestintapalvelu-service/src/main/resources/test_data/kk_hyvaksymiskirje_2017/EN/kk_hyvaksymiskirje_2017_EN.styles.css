@@ -77,10 +77,14 @@ blockquote {
 .header {
   margin: 4mm 0 0 11mm;
   height: 80mm;
-  width: 100mm;
+  width: 200mm;
   float: left;
 }
+.row {
+  display: table-row;
+}
 .organisaatio {
+  display: table-cell;
   width: 100mm;
   height: 26mm;
   font-family: OpenSans-Semibold;
@@ -88,8 +92,27 @@ blockquote {
   margin: 0;
   padding: 0;
 }
+.letterdate {
+  display: table-cell;
+  width: 10mm;
+  height: 26mm;
+  font-family: OpenSans-Semibold;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+}
 .osoitetarra {
+  display: table-cell;
   width: 70mm;
+  height: 37mm;
+  font-family: OpenSans-Semibold;
+  font-size: 12px;
+  margin: 0;
+  padding: 0;
+}
+.syntymaaika {
+  display: table-cell;
+  width: 10mm;
   height: 37mm;
   font-family: OpenSans-Semibold;
   font-size: 12px;
@@ -105,7 +128,7 @@ blockquote {
 }
 .pull-right {
   float: right;
-  text-align: right;
+  text-align: left;
 }
 .signature {
   font-size: 8px;
@@ -178,7 +201,13 @@ td.numeerinen {
 .hylkayssyy, em {
   font-family: OpenSans-Italic;
 }
-.hyvaksytty .hylkayssyy {
+.peruuntumisensyy, em {
+  font-family: OpenSans-Italic;
+}
+.ehdollinensyy, em {
+  font-family: OpenSans-Italic;
+}
+.hyvaksytty .hylkayssyy .peruuntumisensyy .ehdollinensyy {
   font-family: OpenSans-BoldItalic;
 }
 .hyvaksytty>td {

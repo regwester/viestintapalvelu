@@ -23,18 +23,6 @@
             "name": "sivu_2",
             "contentType": "html",
             "content": "{{sivu_2.html}}"
-          },
-          {
-            "role": "body",
-            "name": "sivu_3",
-            "contentType": "html",
-            "content": "{{sivu_3.html}}"
-          },
-          {
-            "role": "body",
-            "name": "sivu_4",
-            "contentType": "html",
-            "content": "{{sivu_4.html}}"
           }
         ]
       },
@@ -68,7 +56,7 @@
       {
         "key": "sisalto",
         "name": "sisalto",
-        "description": "Kirjeen ja sähköpostin varsinainen sisältö",
+        "description": "Kirjeen ensimmäisen sivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
       },
@@ -198,7 +186,7 @@
     {
       "id": 8,
       "name": "vastaanotto_allekirjoitus_vuosi",
-      "defaultValue": "2016",
+      "defaultValue": "2017",
       "mandatory": false
     },
     {
