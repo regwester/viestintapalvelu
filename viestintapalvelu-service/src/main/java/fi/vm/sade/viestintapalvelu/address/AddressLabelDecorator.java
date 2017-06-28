@@ -29,7 +29,9 @@ public abstract class AddressLabelDecorator {
 
     protected String decorateAddressField(String textString) {
         return textString != null && !"".equals(textString.trim()) ? escape(
-                textString).replace("\n", "<br/>") : "";
+                textString).replace("\n", "<br/>").
+                    replace("&lt;strong&gt;","<strong>").
+                    replace("&lt;/strong&gt;","</strong>") : "";
     }
 
     protected String decorateCountry(String country) {
