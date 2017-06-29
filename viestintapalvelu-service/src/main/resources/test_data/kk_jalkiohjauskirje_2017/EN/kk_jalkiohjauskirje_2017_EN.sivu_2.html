@@ -36,7 +36,7 @@
         #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
         <tr class="$hyvaksytty $even">
             <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
-            <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.oppilaitoksenNimi, $tulos.hakukohteenNimi<br/>
+            <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.hakukohteenNimi<br/>
                 #if($tulos.hylkaysperuste)<span class="hylkayssyy">Grounds for rejection: $tulos.hylkaysperuste</span>#end
                 #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Grounds for cancellation: $tulos.peruuntumisenSyy</span>#end
             </td>
