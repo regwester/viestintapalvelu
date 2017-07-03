@@ -143,7 +143,7 @@ public class EmailSender {
                 multipart.addBodyPart(attachmentPart);
 
             } else {
-                LOGGER.error("Failed to insert attachment - it is not valid " + attachment.getName());
+                LOGGER.error("Failed to insertAndFlush attachment - it is not valid " + attachment.getName());
                 return false;
             }
         }

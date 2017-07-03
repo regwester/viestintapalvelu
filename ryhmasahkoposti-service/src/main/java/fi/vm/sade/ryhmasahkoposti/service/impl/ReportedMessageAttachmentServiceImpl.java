@@ -81,7 +81,7 @@ public class ReportedMessageAttachmentServiceImpl implements ReportedMessageAtta
         ReportedMessageRecipientAttachment recipientAttachment = new ReportedMessageRecipientAttachment();
         recipientAttachment.setAttachment(attachment);
         recipientAttachment.setRecipient(reportedRecipientDAO.read(attachmentSaveDto.getReportedRecipientId()));
-        reportedAttachmentDAO.insert(recipientAttachment);
+        reportedAttachmentDAO.insertAndFlush(recipientAttachment);
         return recipientAttachment.getId();
     }
 
