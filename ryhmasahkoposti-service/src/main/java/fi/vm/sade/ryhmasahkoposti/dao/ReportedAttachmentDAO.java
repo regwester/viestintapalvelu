@@ -38,5 +38,7 @@ public interface ReportedAttachmentDAO extends JpaDAO<ReportedAttachment, Long> 
      */
     List<Long> saveReportedAttachments(List<ReportedAttachment> liitteet);
 
+    void insertAndFlush(ReportedMessageRecipientAttachment recipientAttachment);
+
     void insert(ReportedMessageRecipientAttachment recipientAttachment);
 }
