@@ -3,18 +3,18 @@
   "language": "SV",
   "description": null,
   "structure": {
-    "name": "kk_varasijakirje_rakenne",
+    "name": "kk_hyvaksymiskirje_rakenne",
     "language": "SV",
     "description": null,
     "contentStructures": [
       {
         "type": "letter",
-        "styleName": "kk_varasijakirje_tyyli",
+        "styleName": "kk_hyvaksymiskirje_tyyli",
         "style": "{{styles.css}}",
         "contents": [
           {
             "role": "body",
-            "name": "varasijakirje_sivu_1",
+            "name": "hyvaksymiskirje_sivu_1",
             "contentType": "html",
             "content": "{{sivu_1.html}}"
           },
@@ -40,7 +40,7 @@
       },
       {
         "type": "email",
-        "styleName": "kk_varasijakirje_tyyli",
+        "styleName": "kk_hyvaksymiskirje_tyyli",
         "contents": [
           {
             "role": "header",
@@ -192,7 +192,7 @@
     {
       "id": 8,
       "name": "vastaanotto_vaihtoehto_3",
-      "defaultValue": "□	Jag tar inte emot studieplatsen.",
+      "defaultValue": "Jag tar inte emot studieplatsen.",
       "mandatory": false
     },
     {
