@@ -40,8 +40,13 @@ public class ReportedAttachmentDAOImpl extends AbstractJpaDAOImpl<ReportedAttach
     }
 
     @Override
-    public void insert(ReportedMessageRecipientAttachment recipientAttachment) {
+    public void insertAndFlush(ReportedMessageRecipientAttachment recipientAttachment) {
         getEntityManager().persist(recipientAttachment);
         getEntityManager().flush();
+    }
+
+    @Override
+    public void insert(ReportedMessageRecipientAttachment recipientAttachment) {
+        getEntityManager().persist(recipientAttachment);
     }
 }

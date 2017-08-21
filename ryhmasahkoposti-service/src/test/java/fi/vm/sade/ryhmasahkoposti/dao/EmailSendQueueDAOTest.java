@@ -194,10 +194,10 @@ public class EmailSendQueueDAOTest {
         // Not found yet:
         assertEquals(0, sendQueueDAO.findRecipientAttachments(Arrays.asList(recipient1.getId())).size());
 
-        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient1, attachment1));
-        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient1, attachment2));
-        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient2, attachment1));
-        reportedAttachmentDAO.insert(new ReportedMessageRecipientAttachment(recipient4, attachment1));
+        reportedAttachmentDAO.insertAndFlush(new ReportedMessageRecipientAttachment(recipient1, attachment1));
+        reportedAttachmentDAO.insertAndFlush(new ReportedMessageRecipientAttachment(recipient1, attachment2));
+        reportedAttachmentDAO.insertAndFlush(new ReportedMessageRecipientAttachment(recipient2, attachment1));
+        reportedAttachmentDAO.insertAndFlush(new ReportedMessageRecipientAttachment(recipient4, attachment1));
 
         List<RecipientReportedAttachmentQueryResult> results = sendQueueDAO.findRecipientAttachments(Arrays.asList(recipient1.getId(), recipient2.getId(),
                 recipient3.getId()));
