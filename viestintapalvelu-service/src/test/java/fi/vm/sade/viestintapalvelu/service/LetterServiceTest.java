@@ -105,7 +105,7 @@ public class LetterServiceTest {
     public void testCreateLetter() {
         fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch();
         
-        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
+        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo().getOidHenkilo());
         when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenAnswer(new Answer<LetterBatch>() {
             @Override
             public LetterBatch answer(InvocationOnMock invocation) throws Throwable {

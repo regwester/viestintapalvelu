@@ -91,8 +91,8 @@ public class TemplateResourceTest {
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
         CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
             @Override
-            public Henkilo getCurrentUser() {
-                return testHenkilo;
+            public String getCurrentUser() {
+                return testHenkilo.getOidHenkilo();
             }
         };
         Field currentUserComponentField = TemplateServiceImpl.class.getDeclaredField("currentUserComponent");

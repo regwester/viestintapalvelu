@@ -21,6 +21,7 @@ import javax.annotation.Resource;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
@@ -47,9 +48,9 @@ public class CurrentUserComponent {
      * 
      * @return Henkilon tiedot
      */
-    public Henkilo getCurrentUser() {
+    public String getCurrentUser() {
         try {
-            return omattiedotResourceClient.currentHenkiloTiedot();
+            return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
         } catch (Exception e) {
             logger.error("Error getting current user: " + e.getMessage(), e);
             throw new ExternalInterfaceException("error.msg.gettingCurrentUserFailed", e);

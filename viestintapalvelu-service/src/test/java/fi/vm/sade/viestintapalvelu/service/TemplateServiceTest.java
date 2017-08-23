@@ -99,7 +99,7 @@ public class TemplateServiceTest {
 
     @Test
     public void testStoreTemplateDTO() {
-        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo());
+        when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo().getOidHenkilo());
 
         mockStructureCreation();
         mockTemplateDao();

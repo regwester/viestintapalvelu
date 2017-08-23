@@ -119,8 +119,8 @@ public class TemplateServiceImpl implements TemplateService {
     }
 
     protected long storeTemplate(Template template) {
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        template.setStoringOid(henkilo.getOidHenkilo());
+        String henkiloOid = currentUserComponent.getCurrentUser();
+        template.setStoringOid(henkiloOid);
         long templateId = templateDAO.insert(template).getId();
         ensureNoOtherDefaults(template);
         return templateId;
@@ -288,7 +288,7 @@ public class TemplateServiceImpl implements TemplateService {
         model.setTemplateName(draft.getTemplateName());
         model.setTemplateLanguage(draft.getLanguageCode());
 
-        model.setStoringOid(currentUserComponent.getCurrentUser().getOidHenkilo());
+        model.setStoringOid(currentUserComponent.getCurrentUser());
 
         model.setOrganizationOid((draft.getOrganizationOid() == null) ? "" : draft.getOrganizationOid());
         model.setApplicationPeriod((draft.getApplicationPeriod() == null) ? "" : draft.getApplicationPeriod()); // Haku

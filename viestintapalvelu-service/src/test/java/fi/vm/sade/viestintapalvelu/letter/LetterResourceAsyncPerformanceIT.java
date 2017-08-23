@@ -97,12 +97,7 @@ public class LetterResourceAsyncPerformanceIT {
     @Before
     public void before() throws Exception {
         final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
-        CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
-            @Override
-            public Henkilo getCurrentUser() {
-                return testHenkilo;
-            }
-        };
+        CurrentUserComponent currentUserComponent = new CurrentUserComponent();
         Field currentUserComponentField = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);
         currentUserComponentField.set(((Advised)letterService).getTargetSource().getTarget(), currentUserComponent);

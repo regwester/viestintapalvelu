@@ -164,7 +164,7 @@ public class LetterServiceImpl implements LetterService {
 
         model.setTimestamp(new Date());
         if (!anonymous) {
-            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+            model.setStoringOid(getCurrentHenkilo());
         }
         model.setBatchStatus(LetterBatch.Status.created);
 
@@ -198,7 +198,7 @@ public class LetterServiceImpl implements LetterService {
         model.setTimestamp(new Date());
         model.setBatchStatus(LetterBatch.Status.created);
         if (!anonymous) {
-            model.setStoringOid(getCurrentHenkilo().getOidHenkilo());
+            model.setStoringOid(getCurrentHenkilo());
         }
         // kirjeet.vastaanottaja
         try {
@@ -212,11 +212,11 @@ public class LetterServiceImpl implements LetterService {
         return storeLetterBatch(model);
     }
 
-    private Henkilo getCurrentHenkilo() {
+    private String getCurrentHenkilo() {
         logger.debug("getting current user!!! ");
-        Henkilo henkilo = currentUserComponent.getCurrentUser();
-        logger.debug("getting current user!!!  got " + henkilo);
-        return henkilo;
+        String henkiloOid = currentUserComponent.getCurrentUser();
+        logger.debug("getting current user!!!  got " + henkiloOid);
+        return henkiloOid;
     }
 
     private void addIpostData(LetterBatchDetails letterBatch, LetterBatch model) {
