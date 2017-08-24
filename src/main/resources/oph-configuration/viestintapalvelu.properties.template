@@ -52,9 +52,6 @@ viestintapalvelu.asiointitili.viranomainen.sanoma.varmenne = {{viestintapalvelu_
 
 
 # Oletusarvoja
-accessRight.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/accessRightService
-accessRightAdmin.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/accessRightAdminService
-accessRightHistory.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/accessRightHistoryService
 activemq.queue.name.log.error=Sade.Log_Error
 activemq.queue.name.log=Sade.Log
 activemq.queue.name.mail=Sade.Email
@@ -78,7 +75,6 @@ cas.user-search-filter=(|(mail\={0})(uid\={0}))
 cas.service.ryhmasahkoposti=https\://${host.virkailija}/ryhmasahkoposti-service
 cas.service.viestintapalvelu=https\://${host.virkailija}/viestintapalvelu
 cas.service.ajastuspalvelu=https\://${host.virkailija}/ajastuspalvelu
-customAttribute.webservice.url.backend=https://${host.virkailija}/authentication-service/services/customAttributeService
 flyway.initOnMigrate=true
 koodi.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodiService
 koodisto.public.webservice.url.backend=https://${host.virkailija}/koodisto-service/services/koodistoService
@@ -113,7 +109,6 @@ ryhmasahkoposti.bounces.host={{ryhmasahkoposti_bounces_host}}
 ryhmasahkoposti.bounces.path={{ryhmasahkoposti_bounces_path}}
 
 user.home.conf=${user.home}/oph-configuration
-user.webservice.url.backend=https\://${host.virkailija}/authentication-service/services/userService
 viestintapalvelu.options.cache.valid.millis=86400000
 # kuinka monta LetterBatch-käsittelyä sallitaan rinnakkain:
 viestintapalvelu.letter.batch.jobs.pool.size=3
