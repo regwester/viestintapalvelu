@@ -135,7 +135,6 @@ viestintapalvelu.dev.session-required=true
 
 # URL properties
 
-authentication-service.resources.url=https://${host.virkailija}/authentication-service/resources
 oppijanumerorekisteri-service.base=https://${host.virkailija}/oppijanumerorekisteri-service
 kayttooikeus-service.base=https://${host.virkailija}/kayttooikeus-service
 dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-service/resources
