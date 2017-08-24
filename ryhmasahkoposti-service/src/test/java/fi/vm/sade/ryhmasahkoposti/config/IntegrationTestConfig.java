@@ -39,7 +39,6 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.*;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
 import fi.vm.sade.ryhmasahkoposti.service.DailyTaskRunner;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import mockit.Mock;
 import mockit.MockClass;
 import mockit.Mockit;
@@ -104,15 +103,10 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    OmattiedotResource omatTiedotStub() {
-        return new OmattiedotResource() {
+    KayttooikeusHenkiloResource kayttooikeusHenkiloResourceStub() {
+        return new KayttooikeusHenkiloResource() {
             @Override
-            public Henkilo currentHenkiloTiedot() {
-                return RaportointipalveluTestData.getHenkilo();
-            }
-
-            @Override
-            public List<OrganisaatioHenkilo> currentHenkiloOrganisaatioHenkiloTiedot() {
+            public List<OrganisaatioHenkilo> getOrganisaatioHenkiloTiedot(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };
@@ -149,8 +143,8 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    HenkiloResource henkiloResource() {
-        return new HenkiloResource() {
+    OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource() {
+        return new OppijanumerorekisteriHenkiloResource() {
             @Override
             public Henkilo findByOid(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");

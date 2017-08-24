@@ -25,8 +25,10 @@ import org.springframework.stereotype.Component;
 
 import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OmattiedotResource;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource;
+import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
 /**
  * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service-context.xml}
@@ -38,7 +40,9 @@ import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 public class CurrentUserComponent {
     private static Logger LOGGER = LoggerFactory.getLogger(CurrentUserComponent.class);
     @Resource
-    private OmattiedotResource omattiedotResourceClient;
+    private OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource;
+    @Resource
+    private KayttooikeusHenkiloResource kayttooikeusHenkiloResource;
     
     /**
      * Hakee kirjaantuneen käyttäjän tiedot
@@ -47,7 +51,8 @@ public class CurrentUserComponent {
      */
     public Henkilo getCurrentUser() {
         try {
-            return omattiedotResourceClient.currentHenkiloTiedot();
+            String oid = SecurityUtil.getOid();
+            return oppijanumerorekisteriHenkiloResource.findByOid(oid);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingCurrentUserFailed", e);
@@ -55,13 +60,14 @@ public class CurrentUserComponent {
     }
 
     /**
-     * Hakee kirjaantuneen käyttäjän organisaattioiden tiedot
+     * Hakee kirjautuneen käyttäjän organisaatioiden tiedot
      * 
-     * @return Lista henkilön organisaattiotietoja
+     * @return Lista henkilön organisaatiotietoja
      */
     public List<OrganisaatioHenkilo> getCurrentUserOrganizations() {
         try {
-            return omattiedotResourceClient.currentHenkiloOrganisaatioHenkiloTiedot();
+            String oid = SecurityUtil.getOid();
+            return kayttooikeusHenkiloResource.getOrganisaatioHenkiloTiedot(oid);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingCurrentUserOrganizationFailed", e);
