@@ -16,7 +16,7 @@
 package fi.vm.sade.viestintapalvelu.organization;
 
 import com.wordnik.swagger.annotations.ApiParam;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakukohdeTuloksetRDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.OrganisaatioHierarchyDto;
@@ -78,9 +78,9 @@ public class OrganizationResource extends AsynchronousResource {
         // the given application period
         Set<String> providerOrgIds = tarjontaComponent.getProviderOrgOids(applicationPeriod);
         List<OrganisaatioHierarchyDto> userRootOrganizations = new ArrayList<>();
-        List<OrganisaatioHenkilo> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
+        List<OrganisaatioHenkiloDto> currentUserOrganizations = currentUserComponent.getCurrentUserOrganizations();
 
-        for (OrganisaatioHenkilo orgHenkilo : currentUserOrganizations) {
+        for (OrganisaatioHenkiloDto orgHenkilo : currentUserOrganizations) {
             String organisaatioOid = orgHenkilo.getOrganisaatioOid();
             OrganisaatioHierarchyDto root = organisaatioService.getOrganizationHierarchy(organisaatioOid);
 

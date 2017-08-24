@@ -15,8 +15,8 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.testdata;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.HenkiloDto;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
@@ -143,8 +143,8 @@ public class RaportointipalveluTestData {
         return recipient;
     }
 
-    public static Henkilo getHenkilo() {
-        Henkilo henkilo = new Henkilo();
+    public static HenkiloDto getHenkilo() {
+        HenkiloDto henkilo = new HenkiloDto();
 
         henkilo.setOidHenkilo("1.2.246.562.24.34397748041");
         henkilo.setHetu("081181-9984");
@@ -155,8 +155,8 @@ public class RaportointipalveluTestData {
         return henkilo;
     }
 
-    public static Henkilo getSender() {
-        Henkilo sender = new Henkilo();
+    public static HenkiloDto getSender() {
+        HenkiloDto sender = new HenkiloDto();
 
         sender.setOidHenkilo("1.2.246.562.24.42645159413"); // matches sender
                                                             // oid
@@ -324,10 +324,10 @@ public class RaportointipalveluTestData {
         return sendingStatusDTO;
     }
 
-    public static List<OrganisaatioHenkilo> getHenkilonOrganisaatiot() {
-        List<OrganisaatioHenkilo> henkilonOrganisaatiot = new ArrayList<OrganisaatioHenkilo>();
+    public static List<OrganisaatioHenkiloDto> getHenkilonOrganisaatiot() {
+        List<OrganisaatioHenkiloDto> henkilonOrganisaatiot = new ArrayList<OrganisaatioHenkiloDto>();
 
-        OrganisaatioHenkilo organisaatioHenkilo = new OrganisaatioHenkilo();
+        OrganisaatioHenkiloDto organisaatioHenkilo = new OrganisaatioHenkiloDto();
         organisaatioHenkilo.setOrganisaatioOid("1.2.246.562.10.00000000001");
         henkilonOrganisaatiot.add(organisaatioHenkilo);
 

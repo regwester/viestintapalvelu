@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.service;
 
+import fi.vm.sade.dto.HenkiloDto;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -33,7 +34,6 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
@@ -113,7 +113,7 @@ public class LetterReportServiceTest {
         when(mockedIPostiDAO.findMailById(any(Long.class))).thenReturn(mockedIPostis);
         when(mockedIPostiDAO.findByLetterBatchId(any(Long.class))).thenReturn(mockedIPostis);
         
-        when(mockedHenkiloComponent.getHenkilo(any(String.class))).thenReturn(new Henkilo());
+        when(mockedHenkiloComponent.getHenkilo(any(String.class))).thenReturn(new HenkiloDto());
         PagingAndSortingDTO pagingAndSorting = DocumentProviderTestData.getPagingAndSortingDTO();
         
         LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(new Long(1), pagingAndSorting, null);

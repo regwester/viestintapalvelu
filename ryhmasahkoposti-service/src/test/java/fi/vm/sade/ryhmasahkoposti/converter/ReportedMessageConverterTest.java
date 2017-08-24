@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
+import fi.vm.sade.dto.HenkiloDto;
 import java.io.IOException;
 
 import org.junit.Before;
@@ -24,13 +25,11 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -65,7 +64,7 @@ public class ReportedMessageConverterTest {
     @Test
     public void testReportedMessageConversion() throws IOException {
         EmailMessage emailMessage = RaportointipalveluTestData.getEmailMessage();
-        Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
+        HenkiloDto henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(emailMessage.getSenderOid());
 
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);

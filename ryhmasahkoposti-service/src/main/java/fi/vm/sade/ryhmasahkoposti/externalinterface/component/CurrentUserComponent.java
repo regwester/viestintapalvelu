@@ -23,8 +23,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.HenkiloDto;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource;
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
@@ -49,7 +49,7 @@ public class CurrentUserComponent {
      * 
      * @return Henkilon tiedot
      */
-    public Henkilo getCurrentUser() {
+    public HenkiloDto getCurrentUser() {
         try {
             String oid = SecurityUtil.getOid();
             return oppijanumerorekisteriHenkiloResource.findByOid(oid);
@@ -64,7 +64,7 @@ public class CurrentUserComponent {
      * 
      * @return Lista henkilön organisaatiotietoja
      */
-    public List<OrganisaatioHenkilo> getCurrentUserOrganizations() {
+    public List<OrganisaatioHenkiloDto> getCurrentUserOrganizations() {
         try {
             String oid = SecurityUtil.getOid();
             return kayttooikeusHenkiloResource.getOrganisaatioHenkiloTiedot(oid);

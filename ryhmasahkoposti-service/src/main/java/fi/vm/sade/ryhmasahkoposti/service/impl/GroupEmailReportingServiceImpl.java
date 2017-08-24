@@ -29,7 +29,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
@@ -413,9 +413,9 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     @Override
     public List<OrganizationDTO> getUserOrganizations() {
         List<OrganizationDTO> organizations = new ArrayList<>();
-        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        List<OrganisaatioHenkiloDto> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
-        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+        for (OrganisaatioHenkiloDto organisaatioHenkilo : organisaatioHenkiloList) {
             if (organisaatioHenkilo.isPassivoitu()) {
                 continue;
             }

@@ -62,20 +62,6 @@
             <version>1.7.2</version>
         </dependency>
 
-
-        <!-- Henkilöpalvelu -->
-        <dependency>
-            <groupId>fi.vm.sade.authentication</groupId>
-            <artifactId>authentication-domain</artifactId>
-            <version>${authentication-domain.version}</version>
-            <exclusions>
-                <exclusion>
-                    <groupId>org.codehaus.jackson</groupId>
-                    <artifactId>jackson-jaxrs</artifactId>
-                </exclusion>
-            </exclusions>
-        </dependency>
-
         <!-- Organisaatiopalvelu -->
         <dependency>
             <groupId>fi.vm.sade.organisaatio</groupId>

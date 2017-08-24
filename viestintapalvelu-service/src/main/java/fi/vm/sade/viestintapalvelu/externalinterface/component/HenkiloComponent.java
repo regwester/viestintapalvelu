@@ -19,7 +19,7 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
 /**
@@ -39,7 +39,7 @@ public class HenkiloComponent {
      * 
      * @return Henkilon tiedot
      */
-    public Henkilo getHenkilo(String oid) {
+    public HenkiloDto getHenkilo(String oid) {
         return oppijanumerorekisteriHenkiloResource.getHenkiloByOid(oid);
     }
 }

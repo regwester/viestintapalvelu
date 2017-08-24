@@ -15,6 +15,8 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
+import fi.vm.sade.dto.HenkiloDto;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,8 +26,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
@@ -113,7 +113,7 @@ public class LetterReportServiceImpl implements LetterReportService {
         letterBatchReport.setiPostis(iPostiDTOs);
 
         if (letterBatch.getStoringOid() != null) {
-            Henkilo henkilo = henkiloComponent.getHenkilo(letterBatch.getStoringOid());
+            HenkiloDto henkilo = henkiloComponent.getHenkilo(letterBatch.getStoringOid());
             letterBatchReport.setCreatorName(henkilo.getSukunimi() + ", " + henkilo.getEtunimet());
         } else {
             letterBatchReport.setCreatorName("" + ", " + "");
@@ -154,9 +154,9 @@ public class LetterReportServiceImpl implements LetterReportService {
     @Override
     public List<OrganizationDTO> getUserOrganizations() {
         List<OrganizationDTO> organizations = new ArrayList<>();
-        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        List<OrganisaatioHenkiloDto> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
-        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+        for (OrganisaatioHenkiloDto organisaatioHenkilo : organisaatioHenkiloList) {
             if (organisaatioHenkilo.isPassivoitu()) {
                 continue;
             }

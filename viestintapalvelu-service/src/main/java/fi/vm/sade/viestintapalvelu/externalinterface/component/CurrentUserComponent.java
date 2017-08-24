@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.List;
 
 import javax.annotation.Resource;
@@ -24,7 +25,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.KayttooikeusHenkiloResource;
 
@@ -61,7 +61,7 @@ public class CurrentUserComponent {
      * 
      * @return Lista henkilön organisaatiotietoja
      */
-    public List<OrganisaatioHenkilo> getCurrentUserOrganizations() {
+    public List<OrganisaatioHenkiloDto> getCurrentUserOrganizations() {
         try {
             return kayttooikeusHenkiloResource.getOrganisaatioHenkiloTiedot(getCurrentUser());
         } catch (Exception e) {

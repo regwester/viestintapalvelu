@@ -46,8 +46,8 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.transaction.annotation.Transactional;
 
 import com.lowagie.text.DocumentException;
+import fi.vm.sade.dto.HenkiloDto;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.dao.StructureDAO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.model.Structure;
@@ -88,7 +88,7 @@ public class TemplateResourceTest {
     
     @Before
     public void before() throws Exception {
-        final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
+        final HenkiloDto testHenkilo = DocumentProviderTestData.getHenkilo();
         CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
             @Override
             public String getCurrentUser() {

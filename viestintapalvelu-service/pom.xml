@@ -17,7 +17,6 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <authentication-domain.version>1.0-SNAPSHOT</authentication-domain.version>
         <dokumenttipalvelu.version>1.0-SNAPSHOT</dokumenttipalvelu.version>
         <dtoconverter.version>2.0.3-RELEASE</dtoconverter.version>
     </properties>
@@ -62,19 +61,6 @@
           <groupId>fi.vm.sade.viestintapalvelu</groupId>
           <artifactId>viestintapalvelu-api</artifactId>
           <version>${project.version}</version>
-        </dependency>
-
-        <!-- Henkilöpalvelu -->
-        <dependency>
-            <groupId>fi.vm.sade.authentication</groupId>
-            <artifactId>authentication-domain</artifactId>
-            <version>${authentication-domain.version}</version>
-            <exclusions>
-                <exclusion>
-                    <artifactId>jackson-jaxrs</artifactId>
-                    <groupId>org.codehaus.jackson</groupId>
-                </exclusion>
-            </exclusions>
         </dependency>
 
         <!-- Ryhmäsähköposti API -->

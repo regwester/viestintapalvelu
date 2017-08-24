@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.organization;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Matchers.eq;
 import static org.powermock.api.mockito.PowerMockito.mock;
@@ -41,7 +42,6 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.TarjontaHakuResource;
 import fi.vm.sade.viestintapalvelu.externalinterface.api.dto.HakuDetailsDto;
@@ -139,8 +139,8 @@ public class OrganizationResourceTest {
         @Bean
         CurrentUserComponent currentUserComponent() {
             CurrentUserComponent mock = mock(CurrentUserComponent.class);
-            List<OrganisaatioHenkilo> orgList = new ArrayList<OrganisaatioHenkilo>();
-            OrganisaatioHenkilo org = mock(OrganisaatioHenkilo.class);
+            List<OrganisaatioHenkiloDto> orgList = new ArrayList<OrganisaatioHenkiloDto>();
+            OrganisaatioHenkiloDto org = mock(OrganisaatioHenkiloDto.class);
             when(org.getOrganisaatioOid()).thenReturn(organisaatioOid);
             orgList.add(org);
             when(mock.getCurrentUserOrganizations()).thenReturn(orgList);

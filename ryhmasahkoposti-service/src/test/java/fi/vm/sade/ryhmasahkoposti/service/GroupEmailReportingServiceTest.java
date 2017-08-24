@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.service;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.io.IOException;
 import java.util.*;
 
@@ -35,7 +36,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.*;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
@@ -482,7 +482,7 @@ public class GroupEmailReportingServiceTest {
 
     @Test
     public void testGetUserOrganization() {
-        List<OrganisaatioHenkilo> henkilonOrganisaatiot = RaportointipalveluTestData.getHenkilonOrganisaatiot();
+        List<OrganisaatioHenkiloDto> henkilonOrganisaatiot = RaportointipalveluTestData.getHenkilonOrganisaatiot();
         when(mockedCurrentUserComponent.getCurrentUserOrganizations()).thenReturn(henkilonOrganisaatiot);
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(RaportointipalveluTestData.getOrganisaatioRDTO());
         when(mockedOrganizationComponent.getNameOfOrganisation(any(OrganisaatioRDTO.class))).thenReturn("OPH");

@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
+import fi.vm.sade.dto.HenkiloDto;
 import java.util.List;
 
 import org.slf4j.Logger;
@@ -25,7 +26,6 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.dao.ReportedRecipientDAO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
@@ -96,7 +96,7 @@ public class RecipientService {
     private void updatePerson(ReportedRecipient recipient) {
         log.debug("Updating person recipient with oid {} ", recipient.getRecipientOid());
         try {
-            Henkilo henkilo = personComponent.getPerson(recipient.getRecipientOid());
+            HenkiloDto henkilo = personComponent.getPerson(recipient.getRecipientOid());
             recipient.setSearchName(henkilo.getSukunimi() + "," + henkilo.getEtunimet());
             recipient.setSocialSecurityID(henkilo.getHetu());
             recipient.setDetailsRetrieved(true);

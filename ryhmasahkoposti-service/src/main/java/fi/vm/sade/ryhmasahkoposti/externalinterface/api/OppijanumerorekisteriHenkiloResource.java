@@ -23,10 +23,7 @@ import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.JsonViews;
+import fi.vm.sade.dto.HenkiloDto;
 
 /**
  * Rajapinta oppijanumerorekisterin henkilötietoihin.
@@ -42,9 +39,8 @@ public interface OppijanumerorekisteriHenkiloResource {
      * @return Henkilön tiedot
      */
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
     @Path("{oid}")
     @GET
-    Henkilo findByOid(@PathParam("oid") String oid);
+    HenkiloDto findByOid(@PathParam("oid") String oid);
 
 }

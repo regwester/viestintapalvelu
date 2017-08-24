@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.api;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.List;
 
 import javax.ws.rs.GET;
@@ -22,9 +23,6 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
-import com.fasterxml.jackson.annotation.JsonView;
-import fi.vm.sade.authentication.model.JsonViews;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import javax.ws.rs.PathParam;
 import org.springframework.stereotype.Component;
 
@@ -36,9 +34,8 @@ import org.springframework.stereotype.Component;
 public interface KayttooikeusHenkiloResource {
 
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
     @Path("/{oid}/organisaatiohenkilo")
     @GET
-    List<OrganisaatioHenkilo> getOrganisaatioHenkiloTiedot(@PathParam("oid") String oid);
+    List<OrganisaatioHenkiloDto> getOrganisaatioHenkiloTiedot(@PathParam("oid") String oid);
 
 }

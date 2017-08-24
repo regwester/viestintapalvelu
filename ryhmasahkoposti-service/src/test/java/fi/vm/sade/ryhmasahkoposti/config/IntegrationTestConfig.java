@@ -15,6 +15,8 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.config;
 
+import fi.vm.sade.dto.HenkiloDto;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,8 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
@@ -106,7 +106,7 @@ public class IntegrationTestConfig {
     KayttooikeusHenkiloResource kayttooikeusHenkiloResourceStub() {
         return new KayttooikeusHenkiloResource() {
             @Override
-            public List<OrganisaatioHenkilo> getOrganisaatioHenkiloTiedot(String oid) {
+            public List<OrganisaatioHenkiloDto> getOrganisaatioHenkiloTiedot(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };
@@ -146,7 +146,7 @@ public class IntegrationTestConfig {
     OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource() {
         return new OppijanumerorekisteriHenkiloResource() {
             @Override
-            public Henkilo findByOid(String oid) {
+            public HenkiloDto findByOid(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };

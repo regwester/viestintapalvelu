@@ -21,7 +21,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
+import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
@@ -43,7 +43,7 @@ public class PersonComponent {
      * @param oid Henkilön oid-tunnus
      * @return Henkilön tiedot
      */
-    public Henkilo getPerson(String oid) {
+    public HenkiloDto getPerson(String oid) {
         try {
             return oppijanumerorekisteriHenkiloResource.findByOid(oid);
         } catch (Exception e) {

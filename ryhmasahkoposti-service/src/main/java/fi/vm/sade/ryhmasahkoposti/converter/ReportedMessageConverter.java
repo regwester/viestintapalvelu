@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
+import fi.vm.sade.dto.HenkiloDto;
 import java.util.Date;
 
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
@@ -23,7 +24,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.constants.GroupEmailConstants;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
@@ -41,7 +41,7 @@ public class ReportedMessageConverter {
     public ReportedMessage convert(EmailMessage emailMessage) {
         ReportedMessage reportedMessage = new ReportedMessage();
         if(SecurityUtil.isAuthenticated()) {
-            Henkilo henkilo = currentUserComponent.getCurrentUser();
+            HenkiloDto henkilo = currentUserComponent.getCurrentUser();
             String senderName = getPersonName(henkilo);
             reportedMessage.setSenderOid(henkilo.getOidHenkilo());
             reportedMessage.setSenderName(senderName);
@@ -69,7 +69,7 @@ public class ReportedMessageConverter {
         return reportedMessage;
     }
 
-    private String getPersonName(Henkilo henkilo) {
+    private String getPersonName(HenkiloDto henkilo) {
         return henkilo.getSukunimi().trim() + " " + henkilo.getKutsumanimi().trim();
     }
 }
