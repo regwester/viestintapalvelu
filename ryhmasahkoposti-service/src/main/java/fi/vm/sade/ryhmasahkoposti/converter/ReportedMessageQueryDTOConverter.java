@@ -15,35 +15,16 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
-import fi.vm.sade.dto.HenkiloDto;
-import java.util.ArrayList;
-import java.util.List;
-
-import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.generic.common.HetuUtils;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.validation.EmailAddressValidator;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
 @Component
 public class ReportedMessageQueryDTOConverter {
-    private CurrentUserComponent currentUserComponent;
-
-    @Autowired
-    public ReportedMessageQueryDTOConverter(CurrentUserComponent currentUserComponent) {
-        this.currentUserComponent = currentUserComponent;
-    }
-
-    public ReportedMessageQueryDTO convert() {
-        ReportedMessageQueryDTO reportedMessageQueryDTO = new ReportedMessageQueryDTO();
-        getSenderOidList();
-        return reportedMessageQueryDTO;
-    }
 
     public ReportedMessageQueryDTO convert(String organizationOid, String searchArgument) {
         ReportedMessageQueryDTO reportedMessageQueryDTO = new ReportedMessageQueryDTO();
@@ -77,14 +58,5 @@ public class ReportedMessageQueryDTOConverter {
         reportedMessageQueryDTO.setSearchArgument(searchArgument);
 
         return reportedMessageQueryDTO;
-    }
-
-    private List<String> getSenderOidList() {
-        List<String> senderOidList = new ArrayList<>();
-        if(SecurityUtil.isAuthenticated()) {
-            HenkiloDto henkilo = currentUserComponent.getCurrentUser();
-            senderOidList.add(henkilo.getOidHenkilo());
-        }
-        return senderOidList;
     }
 }

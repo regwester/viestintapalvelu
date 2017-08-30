@@ -406,11 +406,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
     }
 
     @Override
-    public String getCurrentUserOid() {
-        return currentUserComponent.getCurrentUser().getOidHenkilo();
-    }
-
-    @Override
     public List<OrganizationDTO> getUserOrganizations() {
         List<OrganizationDTO> organizations = new ArrayList<>();
         List<OrganisaatioHenkiloDto> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
