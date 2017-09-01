@@ -21,9 +21,7 @@ import javax.ws.rs.core.Response;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonView;
 
-import fi.vm.sade.authentication.model.JsonViews;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
 
 @Component
@@ -32,7 +30,6 @@ public interface EmailResource {
 
     @GET
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
     @Consumes("application/json")
     @Path("ok")
     Response ok();
@@ -47,7 +44,6 @@ public interface EmailResource {
 
     @POST
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
     @Consumes("application/json")
     Response sendEmail(EmailData emailData);
 

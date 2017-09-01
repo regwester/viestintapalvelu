@@ -15,49 +15,32 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
 
-import java.util.List;
-
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Component;
 
-import com.fasterxml.jackson.annotation.JsonView;
-
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.JsonViews;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
+import fi.vm.sade.dto.HenkiloDto;
 
 /**
- * Rajapinta käyttäjän omiin tietoihin
- * 
- * @author vehei1
- *
+ * Rajapinta oppijanumerorekisterin henkilötietoihin.
  */
 @Component
-@Path("omattiedot")
-public interface OmattiedotResource {
+@Path("henkilo")
+public interface OppijanumerorekisteriHenkiloResource {
 
     /**
-     * Hakee käyttäjän omat tiedot
-     * 
+     * Hakee henkilön tiedot OID:lla
+     *
+     * @param oid Henkilön OID-tunnus
      * @return Henkilön tiedot
      */
     @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
+    @Path("{oid}")
     @GET
-    Henkilo currentHenkiloTiedot();
+    HenkiloDto findByOid(@PathParam("oid") String oid);
 
-    /**
-     * Hakee käyttäjän organisaatiotiedot
-     * 
-     * @return Lista henkilön organisaatiotietoja
-     */
-    @Produces(MediaType.APPLICATION_JSON)
-    @JsonView(JsonViews.Basic.class)
-    @Path("/organisaatiohenkilo")
-    @GET
-    List<OrganisaatioHenkilo> currentHenkiloOrganisaatioHenkiloTiedot();
 }

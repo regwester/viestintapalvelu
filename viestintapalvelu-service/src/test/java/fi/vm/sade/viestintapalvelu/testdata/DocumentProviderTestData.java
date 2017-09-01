@@ -15,9 +15,9 @@
  **/
 package fi.vm.sade.viestintapalvelu.testdata;
 
+import fi.vm.sade.dto.HenkiloDto;
 import java.util.*;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.dto.PagingAndSortingDTO;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
@@ -44,8 +44,8 @@ public class DocumentProviderTestData {
         return addressLabel;
     }
     
-    public static Henkilo getHenkilo() {
-        Henkilo henkilo = new Henkilo();
+    public static HenkiloDto getHenkilo() {
+        HenkiloDto henkilo = new HenkiloDto();
         
         henkilo.setOidHenkilo("1.2.246.562.24.34397748041");
         henkilo.setHetu("081181-9984");

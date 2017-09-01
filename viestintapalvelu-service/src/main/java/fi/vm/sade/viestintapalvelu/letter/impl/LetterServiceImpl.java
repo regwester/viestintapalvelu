@@ -52,7 +52,6 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;

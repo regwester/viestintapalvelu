@@ -21,25 +21,21 @@ import static org.junit.Assert.assertNotNull;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
 
 import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ReportedMessageQueryDTOConverterTest.class)
 @ContextConfiguration("/test-bundle-context.xml")
 public class ReportedMessageQueryDTOConverterTest {
     private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
-    @Mock
-    CurrentUserComponent mockedCurrentUserComponent;
 
     @Before
     public void setup() {
-        this.reportedMessageQueryDTOConverter = new ReportedMessageQueryDTOConverter(mockedCurrentUserComponent);
+        this.reportedMessageQueryDTOConverter = new ReportedMessageQueryDTOConverter();
     }
 
     @Test

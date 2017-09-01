@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
+import fi.vm.sade.dto.HenkiloDto;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.when;
@@ -31,7 +32,6 @@ import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.test.context.ContextConfiguration;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.ryhmasahkoposti.api.dto.ReplacementDTO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
@@ -59,7 +59,7 @@ public class ReportedMessageReplacementConverterTest {
 
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 
-        Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
+        HenkiloDto henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(reportedMessage.getSenderOid());
 
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
@@ -98,7 +98,7 @@ public class ReportedMessageReplacementConverterTest {
 
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 
-        Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
+        HenkiloDto henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(reportedMessage.getSenderOid());
 
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
@@ -137,7 +137,7 @@ public class ReportedMessageReplacementConverterTest {
 
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 
-        Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
+        HenkiloDto henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(reportedMessage.getSenderOid());
 
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);
@@ -176,7 +176,7 @@ public class ReportedMessageReplacementConverterTest {
 
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
 
-        Henkilo henkilo = RaportointipalveluTestData.getHenkilo();
+        HenkiloDto henkilo = RaportointipalveluTestData.getHenkilo();
         henkilo.setOidHenkilo(reportedMessage.getSenderOid());
 
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(henkilo);

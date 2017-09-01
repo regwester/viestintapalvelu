@@ -42,7 +42,6 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 import fi.vm.sade.viestintapalvelu.category.PerformanceTest;
 import fi.vm.sade.viestintapalvelu.common.util.FilenameHelper;
@@ -96,7 +95,6 @@ public class LetterResourceAsyncPerformanceIT {
 
     @Before
     public void before() throws Exception {
-        final Henkilo testHenkilo = DocumentProviderTestData.getHenkilo();
         CurrentUserComponent currentUserComponent = new CurrentUserComponent();
         Field currentUserComponentField = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);

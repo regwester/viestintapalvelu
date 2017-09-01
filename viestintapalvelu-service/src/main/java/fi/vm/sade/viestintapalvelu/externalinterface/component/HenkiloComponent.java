@@ -19,8 +19,8 @@ import javax.annotation.Resource;
 
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource;
+import fi.vm.sade.dto.HenkiloDto;
+import fi.vm.sade.viestintapalvelu.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
 /**
  * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service
@@ -32,14 +32,14 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.HenkiloResource;
 @Component
 public class HenkiloComponent {
     @Resource
-    private HenkiloResource henkiloResourceClient;
+    private OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource;
 
     /**
      * Hakee henkilön tiedot oid:n perusteella
      * 
      * @return Henkilon tiedot
      */
-    public Henkilo getHenkilo(String oid) {
-        return henkiloResourceClient.getHenkiloByOid(oid);
+    public HenkiloDto getHenkilo(String oid) {
+        return oppijanumerorekisteriHenkiloResource.getHenkiloByOid(oid);
     }
 }

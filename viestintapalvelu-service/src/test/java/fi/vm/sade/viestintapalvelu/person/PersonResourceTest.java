@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.person;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.Arrays;
 
 import javax.servlet.http.HttpServletRequest;
@@ -26,7 +27,6 @@ import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
@@ -69,8 +69,8 @@ public class PersonResourceTest {
         return req;
     }
 
-    private OrganisaatioHenkilo givenOrganisaatioHenkiloWithOid(String orgOid) {
-        OrganisaatioHenkilo orgHen = new OrganisaatioHenkilo();
+    private OrganisaatioHenkiloDto givenOrganisaatioHenkiloWithOid(String orgOid) {
+        OrganisaatioHenkiloDto orgHen = new OrganisaatioHenkiloDto();
         orgHen.setOrganisaatioOid(orgOid);
         return orgHen;
     }

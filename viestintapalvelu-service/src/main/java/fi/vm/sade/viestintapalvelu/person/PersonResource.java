@@ -36,8 +36,8 @@ import com.google.common.collect.Lists;
 import com.wordnik.swagger.annotations.Api;
 import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiParam;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
@@ -77,11 +77,11 @@ public class PersonResource {
         return buildRights(request, userComponent.getCurrentUserOrganizations());
     }
 
-    private Rights buildRights(HttpServletRequest request, List<OrganisaatioHenkilo> currentUserOrganizations) {
-        List<String> organizations = ImmutableList.copyOf(Lists.transform(currentUserOrganizations, new Function<OrganisaatioHenkilo, String>() {
+    private Rights buildRights(HttpServletRequest request, List<OrganisaatioHenkiloDto> currentUserOrganizations) {
+        List<String> organizations = ImmutableList.copyOf(Lists.transform(currentUserOrganizations, new Function<OrganisaatioHenkiloDto, String>() {
             
             @Override
-            public String apply(@Nonnull OrganisaatioHenkilo input) {
+            public String apply(@Nonnull OrganisaatioHenkiloDto input) {
                 return input.getOrganisaatioOid();
             }
             

@@ -15,9 +15,8 @@
  */
 package fi.vm.sade.viestintapalvelu.person;
 
+import fi.vm.sade.dto.HenkiloDto;
 import java.io.Serializable;
-
-import fi.vm.sade.authentication.model.Henkilo;
 
 /**
  * @author risal1
@@ -39,7 +38,7 @@ public class Person implements Serializable {
         this.oid = oid;
     }
     
-    public Person(Henkilo henkilo) {
+    public Person(HenkiloDto henkilo) {
         this(henkilo.getEtunimet(), henkilo.getSukunimi(), henkilo.getOidHenkilo());
     }
 

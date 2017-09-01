@@ -45,7 +45,6 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Iterables;
 import com.lowagie.text.DocumentException;
 
-import fi.vm.sade.authentication.model.Henkilo;
 import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.common.util.OptionalHelper;
 import fi.vm.sade.viestintapalvelu.common.util.impl.BeanValidatorImpl;

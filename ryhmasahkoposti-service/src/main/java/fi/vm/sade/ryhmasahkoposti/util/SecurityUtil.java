@@ -11,4 +11,12 @@ public class SecurityUtil {
         return auth != null && auth.isAuthenticated() && !(auth instanceof AnonymousAuthenticationToken);
     }
 
+    public static String getOid() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            throw new IllegalArgumentException("Not authorized");
+        }
+        return authentication.getName();
+    }
+
 }

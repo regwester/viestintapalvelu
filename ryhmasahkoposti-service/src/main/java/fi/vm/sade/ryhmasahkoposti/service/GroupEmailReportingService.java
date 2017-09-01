@@ -156,13 +156,6 @@ public interface GroupEmailReportingService {
      * @return Lista raportoitavan viestin vastaanottajien tietoja {@link ReportedRecipient}
      */
     List<EmailRecipientDTO> getUnhandledMessageRecipients(int listSize);
-    
-    /**
-     * Palauttaa käyttäjän oid:n
-     * 
-     * @return Käyttäjän oid
-     */
-    String getCurrentUserOid();
 
     /**
      * Palauttaa käyttäjän organisaatiotiedot

@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.viestintapalvelu.validator;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -23,7 +24,6 @@ import javax.ws.rs.core.Response.Status;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.OrganizationComponent;
 
@@ -58,9 +58,9 @@ public class UserRightsValidator {
         }
 
         List<String> organizationParents = organizationComponent.getOrganizationParents(oid);
-        List<OrganisaatioHenkilo> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
+        List<OrganisaatioHenkiloDto> organisaatioHenkiloList = currentUserComponent.getCurrentUserOrganizations();
 
-        for (OrganisaatioHenkilo organisaatioHenkilo : organisaatioHenkiloList) {
+        for (OrganisaatioHenkiloDto organisaatioHenkilo : organisaatioHenkiloList) {
             if (organizationParents.contains(organisaatioHenkilo.getOrganisaatioOid())) {
                 return Response.status(Status.OK).build();
             }

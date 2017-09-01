@@ -15,6 +15,8 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.config;
 
+import fi.vm.sade.dto.HenkiloDto;
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -31,15 +33,12 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
-import fi.vm.sade.authentication.model.Henkilo;
-import fi.vm.sade.authentication.model.OrganisaatioHenkilo;
 import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.*;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.dto.OrganisaatioHierarchyResultsDto;
 import fi.vm.sade.ryhmasahkoposti.service.DailyTaskRunner;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import mockit.Mock;
 import mockit.MockClass;
 import mockit.Mockit;
@@ -104,15 +103,10 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    OmattiedotResource omatTiedotStub() {
-        return new OmattiedotResource() {
+    KayttooikeusHenkiloResource kayttooikeusHenkiloResourceStub() {
+        return new KayttooikeusHenkiloResource() {
             @Override
-            public Henkilo currentHenkiloTiedot() {
-                return RaportointipalveluTestData.getHenkilo();
-            }
-
-            @Override
-            public List<OrganisaatioHenkilo> currentHenkiloOrganisaatioHenkiloTiedot() {
+            public List<OrganisaatioHenkiloDto> getOrganisaatioHenkiloTiedot(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };
@@ -149,10 +143,10 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    HenkiloResource henkiloResource() {
-        return new HenkiloResource() {
+    OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource() {
+        return new OppijanumerorekisteriHenkiloResource() {
             @Override
-            public Henkilo findByOid(String oid) {
+            public HenkiloDto findByOid(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };
