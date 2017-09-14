@@ -143,12 +143,12 @@
 
         <jaxrs-client:client id="organisaatioResourceClient" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource" address="${organisaatio-service.rest.url}" inheritHeaders="true">
             <jaxrs-client:outInterceptors>
-                <ref bean="ticketInterceptorRest"/>
+                <!--<ref bean="ticketInterceptorRest"/>-->
                 <ref bean="ophRequestHeaders"/>
             </jaxrs-client:outInterceptors>
-            <jaxrs-client:inInterceptors>
-                <ref bean="ticketInterceptorRest"/>
-            </jaxrs-client:inInterceptors>
+            <!--<jaxrs-client:inInterceptors>-->
+                <!--<ref bean="ticketInterceptorRest"/>-->
+            <!--</jaxrs-client:inInterceptors>-->
             <jaxrs-client:providers>
                 <ref bean="customJsonProvider"/>
             </jaxrs-client:providers>
