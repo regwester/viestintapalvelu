@@ -1,11 +1,11 @@
 {
-    "name": "kayttooikeusanomuskasitelty_email",
+    "name": "kayttooikeus_kutsu",
     "language": "FI",
     "type": "email",
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Virkailijan opintopolku: käyttöoikeusanomus käsitelty",
+            "defaultValue": "Virkailijan opintopolku: kutsu palvelun käyttäjäksi",
             "mandatory": false
         },
         {
@@ -13,16 +13,24 @@
             "mandatory": true
         },
         {
-            "name": "roolit",
+            "name": "organisaatiot",
             "mandatory": true
         },
         {
             "name": "linkki",
             "mandatory": true
+        },
+        {
+            "name": "kutsuja",
+            "mandatory": true
+        },
+        {
+            "name": "voimassa",
+            "mandatory": true
         }
     ],
     "structure": {
-        "name": "kayttooikeusanomuskasitelty_email",
+        "name": "kayttooikeus_kutsu",
         "language": "FI",
         "contentStructures": [
             {

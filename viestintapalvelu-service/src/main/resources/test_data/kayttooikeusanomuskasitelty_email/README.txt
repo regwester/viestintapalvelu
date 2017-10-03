@@ -1,5 +1,4 @@
 FI/kayttooikeusanomuskasitelty_email_FI.json
-EN/kayttooikeusanomuskasitelty_email_EN.json
 SV/kayttooikeusanomuskasitelty_email_SV.json
 
 ^^ generoituja tiedostoja. generointi/päivitys testiluokalla TemplateTestDataGenerator

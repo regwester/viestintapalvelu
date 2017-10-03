@@ -1,19 +1,15 @@
 {
-    "name": "kayttooikeusanomuskasitelty_email",
+    "name": "kayttooikeushakemusilmoitus_email",
     "language": "FI",
     "type": "email",
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Virkailijan opintopolku: käyttöoikeusanomus käsitelty",
+            "defaultValue": "Virkailijan opintopolku: käyttöoikeusanomuksia saapunut",
             "mandatory": false
         },
         {
             "name": "vastaanottaja",
-            "mandatory": true
-        },
-        {
-            "name": "roolit",
             "mandatory": true
         },
         {
@@ -22,7 +18,7 @@
         }
     ],
     "structure": {
-        "name": "kayttooikeusanomuskasitelty_email",
+        "name": "kayttooikeushakemusilmoitus_email",
         "language": "FI",
         "contentStructures": [
             {
