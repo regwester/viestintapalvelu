@@ -1,29 +1,29 @@
 {
-    "name": "kayttooikeusanomuskasitelty_email",
-    "language": "EN",
+    "name": "salasanareset_email",
+    "language": "FI",
     "type": "email",
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Studyinfo.fi user rights application processed",
+            "defaultValue": "Virkailijan opintopolku: salasanan vaihto",
             "mandatory": false
         },
         {
-            "name": "anomuksenTila",
+            "name": "vastaanottaja",
             "mandatory": true
         },
         {
-            "name": "hylkaamisperuste",
-            "mandatory": false
+            "name": "linkki",
+            "mandatory": true
         },
         {
-            "name": "roolit",
-            "mandatory": false
+            "name": "voimassa_tunteina",
+            "mandatory": true
         }
     ],
     "structure": {
-        "name": "kayttooikeusanomuskasitelty_email",
-        "language": "EN",
+        "name": "salasanareset_email",
+        "language": "FI",
         "contentStructures": [
             {
                 "type": "email",

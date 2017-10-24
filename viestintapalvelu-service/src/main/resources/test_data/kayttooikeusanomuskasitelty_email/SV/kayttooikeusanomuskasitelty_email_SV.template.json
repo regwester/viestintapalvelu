@@ -1,28 +1,28 @@
 {
-    "name": "kayttooikeusanomuskasitelty_email",
+    "name": "kayttooikeusanomuskasitelty_email_v2",
     "language": "SV",
     "type": "email",
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Anhållan om användarrättigheter till Studieinfo.fi behandlad",
+            "defaultValue": "Virkailijan opintopolku: käyttöoikeusanomus käsitelty",
             "mandatory": false
         },
         {
-            "name": "anomuksenTila",
+            "name": "vastaanottaja",
             "mandatory": true
         },
         {
-            "name": "hylkaamisperuste",
-            "mandatory": false
+            "name": "roolit",
+            "mandatory": true
         },
         {
-            "name": "roolit",
-            "mandatory": false
+            "name": "linkki",
+            "mandatory": true
         }
     ],
     "structure": {
-        "name": "kayttooikeusanomuskasitelty_email",
+        "name": "kayttooikeusanomuskasitelty_email_v2",
         "language": "SV",
         "contentStructures": [
             {

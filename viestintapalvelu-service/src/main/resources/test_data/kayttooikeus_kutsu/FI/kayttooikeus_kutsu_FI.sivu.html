@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="fi">
+    <head>
+        <meta charset="utf-8">
+        <title>$subject</title>
+    </head>
+    <body>
+        <p>
+            Hei $vastaanottaja.kutsumanimi $vastaanottaja.sukunimi,
+        </p>
+        <p>
+            sinut on kutsuttu virkailijaksi Opetushallinnon
+            palvelukokonaisuuteen. Sinulle on annettu käyttöoikeudet alla olevan
+            mukaisesti.
+        </p>
+        <p>
+            #if ($organisaatiot and $organisaatiot.size() > 0)
+                #foreach($org in $organisaatiot)
+                    #if ($org.name)
+                        <strong>$org.name</strong>
+                    #end
+                    #if ($org.permissions and $org.permissions.size() > 0)
+                        <p>
+                            #foreach($permission in $org.permissions)
+                                $permission<br/>
+                            #end
+                        </p>
+                    #end
+                #end
+            #end
+        </p>
+        <p>
+            Päästäksesi käyttämään palvelua, sinun tulee rekisteröityä alla
+            olevan linkin kautta ja tunnistautua vahvasti mobiilivarmenteen,
+            pankkitunnusten tai varmennekortin avulla.
+        </p>
+        <p>
+            <a href="$linkki">$linkki</a>
+        </p>
+        <p>
+            Kutsun lähetti $kutsuja.kutsumanimi $kutsuja.sukunimi
+        </p>
+        <p>
+            Kutsu on voimassa $voimassa asti
+        </p>
+        <p>
+            Yhdellä tunnuksella kirjaudut kaikkiin opetushallinnon palveluihin<br/>
+            AIPAL AITU Arvo ePerusteet Koski Oikeustulkkirekisteri Oiva Opintopolku Valtionavustukset
+        </p>
+    </body>
+</html>
