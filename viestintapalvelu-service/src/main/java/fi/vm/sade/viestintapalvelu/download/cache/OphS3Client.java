@@ -5,6 +5,7 @@ import fi.vm.sade.viestintapalvelu.download.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.async.AsyncRequestProvider;
@@ -41,26 +42,6 @@ class OphS3Client {
     private static final String METADATA_FILE_NAME = "filename";
     private static final String METADATA_UUID = "uuid";
 
-    public OphS3Client() {
-        try(S3AsyncClient client = S3AsyncClient.builder().region(region).build()) {
-            HeadBucketRequest req = HeadBucketRequest.builder()
-                    .bucket(bucket)
-                    .build();
-            client.headBucket(req).whenComplete((headBucketResponse, throwable) -> {
-                if (throwable != null) {
-                    if (throwable instanceof NoSuchBucketException) {
-                        log.error("S3 bucket for saving viestintäpalvelu files does not exist", throwable);
-                    } else if (throwable instanceof S3Exception) {
-                        log.error("S3 exception", throwable);
-                    } else if (throwable instanceof SdkClientException) {
-                        log.error("OphS3Client exception", throwable);
-                    } else {
-                        log.error("Unknown exception while initializing OphS3Client", throwable);
-                    }
-                }
-            });
-        }
-    }
     AddObjectResponse<PutObjectResponse> addFileObject(Download download) {
         UUID uuid = UUID.randomUUID();
         return addFileObject(download, new DocumentId(uuid.toString()));
