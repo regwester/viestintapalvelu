@@ -36,7 +36,7 @@ class OphS3Client {
     private String bucket;
 
     @Value("${viestintapalvelu.downloadfiles.s3.region}")
-    private Region region;
+    private String region;
 
     private static final String METADATA_TIMESTAMP = "timestamp";
     private static final String METADATA_FILE_NAME = "filename";
@@ -166,7 +166,7 @@ class OphS3Client {
     private static final AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private S3AsyncClient getClient() {
         return S3AsyncClient.builder()
-                .region(region)
+                .region(Region.of(region))
                 .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
                 .build();
     }

@@ -143,7 +143,7 @@ class S3LetterPublisher implements LetterPublisher {
     private String bucket;
 
     @Value("${viestintapalvelu.downloadfiles.s3.region}")
-    private Region region;
+    private String region;
 
     @Autowired
     S3LetterPublisher(LetterBatchDAO letterBatchDAO,
@@ -216,7 +216,7 @@ class S3LetterPublisher implements LetterPublisher {
     private static final AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private S3AsyncClient getClient() {
         return S3AsyncClient.builder()
-                .region(region)
+                .region(Region.of(region))
                 .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
                 .build();
     }
