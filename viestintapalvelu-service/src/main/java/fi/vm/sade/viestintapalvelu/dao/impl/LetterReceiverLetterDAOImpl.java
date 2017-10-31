@@ -44,13 +44,26 @@ public class LetterReceiverLetterDAOImpl extends AbstractJpaDAOImpl<LetterReceiv
             return new ArrayList<>();
         }
         QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
-
         BooleanExpression whereExpression = letterReceiverLetter.letterReceivers.id.in(letterReceiverIDs);
         JPAQuery findLetterReceiverLetter = from(letterReceiverLetter)
                 .where(whereExpression);
         
         return findLetterReceiverLetter.list(letterReceiverLetter);
     }
+
+    @Override
+    public List<LetterReceiverLetter> findByIds(List<Long> ids) {
+        if (ids.isEmpty()) {
+            return new ArrayList<>();
+        }
+        QLetterReceiverLetter letterReceiverLetter = QLetterReceiverLetter.letterReceiverLetter;
+        BooleanExpression whereExpression = letterReceiverLetter.id.in(ids);
+        JPAQuery findLetterReceiverLetter = from(letterReceiverLetter)
+                .where(whereExpression);
+
+        return findLetterReceiverLetter.list(letterReceiverLetter);
+    }
+
 
     @Override
     public int markAsPublished(Long id) {

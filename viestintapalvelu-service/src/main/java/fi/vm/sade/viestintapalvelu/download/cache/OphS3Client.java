@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.async.AsyncResponseHandler;
+import software.amazon.awssdk.auth.AwsCredentialsProvider;
+import software.amazon.awssdk.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.*;
@@ -92,8 +95,14 @@ class OphS3Client {
                 .key(documentId.getDocumentId())
                 .build();
         AsyncRequestProvider asyncRequestProvider = AsyncRequestProvider.fromFile(tempFile);
-        try(S3AsyncClient client = S3AsyncClient.builder().region(region).build()) {
-            CompletableFuture<PutObjectResponse> completableFuture = client.putObject(request, asyncRequestProvider);
+        try(S3AsyncClient client = getClient()) {
+            CompletableFuture<PutObjectResponse> completableFuture = client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
+                try {
+                    Files.delete(tempFile);
+                } catch (IOException e) {
+                    log.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
+                }
+            });
             return new AddObjectResponse<>(new DocumentId(documentId.getDocumentId()), completableFuture);
         }
     }
@@ -107,11 +116,10 @@ class OphS3Client {
 
     /**
      * Returns a list of objects without content
-     * @return
      */
     CompletableFuture<List<Header>> listObjects() {
         ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucket).build();
-        try (S3AsyncClient client = S3AsyncClient.builder().region(region).build()) {
+        try (S3AsyncClient client = getClient()) {
             CompletableFuture<ListObjectsV2Response> listResponse = client.listObjectsV2(request);
             CompletableFuture<List<S3Object>> objects = listResponse.thenApply(ListObjectsV2Response::contents);
             return objects.thenApplyAsync(s3Objects -> s3Objects.stream().map(this::headObject).collect(Collectors.toList()));
@@ -125,11 +133,10 @@ class OphS3Client {
     private Header headObject(DocumentId id) {
         HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
 
-        try (S3AsyncClient client = S3AsyncClient.builder().region(region).build()) {
+        try (S3AsyncClient client = getClient()) {
             HeadObjectResponse res = client.headObject(headObjectRequest).join();
 
             String s = res.metadata().get(METADATA_TIMESTAMP);
-
             Date timestamp = null;
             try {
                 timestamp = DateFormat.getInstance().parse(s);
@@ -151,7 +158,7 @@ class OphS3Client {
 
     private CompletableFuture<byte[]> getObjectContents(DocumentId id, AsyncResponseHandler<GetObjectResponse, byte[]> asyncResponseHandler) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
-        try (S3AsyncClient client = S3AsyncClient.builder().region(region).build()) {
+        try (S3AsyncClient client = getClient()) {
             return client.getObject(getObjectRequest, asyncResponseHandler);
         }
     }
@@ -173,6 +180,14 @@ class OphS3Client {
             return future;
         }
 
+    }
+
+    private static final AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
+    private S3AsyncClient getClient() {
+        return S3AsyncClient.builder()
+                .region(region)
+                .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
+                .build();
     }
 
 }

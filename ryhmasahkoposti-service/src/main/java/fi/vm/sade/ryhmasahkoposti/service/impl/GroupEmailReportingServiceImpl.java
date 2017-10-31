@@ -178,7 +178,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             log.debug("Converting emailRecipient to reportedRecipient");
             ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage, emailRecipient);
             log.debug("Saving reportedRecipient");
-            reportedRecipientService.saveReportedRecipient(reportedRecipient);
+            reportedRecipientService.saveReportedRecipient(reportedRecipient); //EM FLUSH
             recipients.add(reportedRecipient);
 
             log.debug("Processing recipient specific replacements");
@@ -187,14 +187,14 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementConverter.convert(reportedRecipient,
                         emailRecipientReplacements);
                 log.debug("Saving reportedRecipientReplacements");
-                reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
+                reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements); //EM FLUS * n
             }
 
             log.debug("Processing recipient specific attachments");
             if (emailRecipient.getAttachments() != null) {
-                List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailRecipient.getAttachInfo());
+                List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailRecipient.getAttachInfo()); //n READ
                 log.debug("Saving ReportedMessageRecipientAttachments");
-                reportedMessageAttachmentService.saveReportedRecipientAttachments(reportedRecipient, reportedAttachments);
+                reportedMessageAttachmentService.saveReportedRecipientAttachments(reportedRecipient, reportedAttachments); //EM FLUSH * n
             }
             count++;
             if(count % 1000 == 0) {
@@ -202,7 +202,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
         }
         log.info("Prosecced all {} emailRecipients of message {}.", emailRecipients.size(), savedReportedMessage.getId());
-        createSendQueues(recipients);
+        //createSendQueues(recipients);
     }
 
     private List<SendQueue> createSendQueues(Collection<ReportedRecipient> recipients) {

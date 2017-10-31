@@ -13,8 +13,10 @@
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * European Union Public Licence for more details.
  **/
-package fi.vm.sade.viestintapalvelu.download;
+package fi.vm.sade.viestintapalvelu.download.cache;
 
+import java.time.Duration;
+import java.time.temporal.TemporalUnit;
 import java.util.Collection;
 import java.util.Map.Entry;
 import java.util.UUID;
@@ -22,6 +24,9 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.Header;
+import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 
 import com.google.common.base.Function;
@@ -31,32 +36,34 @@ import com.google.common.collect.Collections2;
 
 @Service
 @Singleton
-public class DownloadCache {
-    public static final int DURATION = 24;
-    private Cache<String, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(DURATION, TimeUnit.HOURS).build();
+@Profile("!aws")
+class DownloadCacheLocal implements DownloadCache {
+    private Cache<DocumentId, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(DURATION.getSeconds(), TimeUnit.SECONDS).build();
 
+    @Override
     @SuppressWarnings("deprecation")
     public Collection<Header> getListOfAvailableDocuments() {
-        return Collections2.transform(downloads.asMap().entrySet(), new Function<Entry<String, Download>, Header>() {
-            public Header apply(Entry<String, Download> o) {
-                return new Header(o.getValue().getContentType(), o.getValue().getFilename(), o.getKey(), o.getValue().toByteArray().length, o.getValue()
-                        .getTimestamp());
-            }
-        });
+        return Collections2.transform(downloads.asMap().entrySet(), o ->
+                new Header(o.getValue().getContentType(), o.getValue().getFilename(), o.getKey().getDocumentId(), o.getValue().toByteArray().length, o.getValue()
+                .getTimestamp()));
     }
 
-    public String addDocument(Download download) {
-        String documentId = UUID.randomUUID().toString();
+    @Override
+    public DocumentId addDocument(Download download) {
+        String documentIdStr = UUID.randomUUID().toString();
+        DocumentId documentId = new DocumentId(documentIdStr);
         downloads.put(documentId, download);
         return documentId;
     }
 
-    public String addDocument(Download download, String documentId) {
+    @Override
+    public DocumentId addDocument(Download download, DocumentId documentId) {
         downloads.put(documentId, download);
         return documentId;
     }
 
-    public Download get(String documentId) {
+    @Override
+    public Download get(DocumentId documentId) {
         Download download = downloads.getIfPresent(documentId);
         if (download != null) {
             downloads.invalidate(download);

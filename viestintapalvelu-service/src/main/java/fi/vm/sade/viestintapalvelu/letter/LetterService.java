@@ -15,25 +15,20 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.List;
-import java.util.zip.DataFormatException;
-
 import com.google.common.base.Optional;
-
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
-import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import org.springframework.transaction.annotation.Transactional;
 
+import java.io.IOException;
+import java.util.List;
 import java.util.Map;
+import java.util.zip.DataFormatException;
 
 /**
  * Rajapinta kirjeiden liiketoimtakäsittelyä varten
@@ -44,6 +39,8 @@ import java.util.Map;
 public interface LetterService {
     String DOKUMENTTI_ID_PREFIX_PDF = "VIES-1-";
     String DOKUMENTTI_ID_PREFIX_ZIP = "VIES-2-";
+
+
 
     enum LetterBatchProcess {
         EMAIL, LETTER, IPOSTI
@@ -188,7 +185,7 @@ public interface LetterService {
 
     int publishLetterBatch(long letterBatchId) throws Exception;
 
-    void publishLetter(long letterId, File letterBatchPublishDir);
+//    void publishLetter(long letterId, File letterBatchPublishDir);
 
     Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
 

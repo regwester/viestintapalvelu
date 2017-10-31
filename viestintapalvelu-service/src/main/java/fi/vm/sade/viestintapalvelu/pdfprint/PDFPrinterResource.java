@@ -22,7 +22,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 
-import javax.annotation.Resource;
 import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
@@ -52,7 +51,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
 import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.download.cache.DownloadCache;
 import fi.vm.sade.viestintapalvelu.letter.LetterResource;
 import org.springframework.stereotype.Component;
 
@@ -108,7 +107,7 @@ public class PDFPrinterResource extends AsynchronousResource {
             byte[] pdf = buildDocument(input);
             String documentName = input.getDocumentName() == null ? "document.pdf" : input.getDocumentName() + ".pdf";
             documentId = downloadCache.addDocument(new Download(
-                    "application/pdf;charset=utf-8", documentName, pdf));
+                    "application/pdf;charset=utf-8", documentName, pdf)).getDocumentId();
         } catch (Exception e) {
             LOG.error("Sync PDF failed: " + e.getMessage(), e);
             return createFailureResponse(request);

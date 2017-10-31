@@ -35,7 +35,7 @@ import com.google.common.base.Supplier;
 import fi.vm.sade.viestintapalvelu.LetterZipUtil;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
-import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.letter.*;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
@@ -65,10 +65,6 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
-import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
-import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
-import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
@@ -119,6 +115,8 @@ public class LetterServiceImpl implements LetterService {
     private LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker;
     private DocumentBuilder documentBuilder;
     private DokumenttiIdProvider dokumenttiIdProvider;
+    private final LetterPublisher letterPublisher;
+
     @Resource
     private DokumenttiResource dokumenttipalveluRestClient;
     @Autowired
@@ -127,11 +125,12 @@ public class LetterServiceImpl implements LetterService {
     @Value("${viestintapalvelu.letter.publish.dir}")
     private File letterPublishDir;
 
+
     @Autowired
     public LetterServiceImpl(LetterBatchDAO letterBatchDAO, LetterReceiverLetterDAO letterReceiverLetterDAO, CurrentUserComponent currentUserComponent,
-            TemplateDAO templateDAO, LetterBatchDtoConverter letterBatchDtoConverter, LetterReceiversDAO letterReceiversDAO,
-            ObjectMapperProvider objectMapperProvider, IPostiDAO iPostiDAO, LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker,
-            DocumentBuilder documentBuilder, DokumenttiIdProvider dokumenttiIdProvider) {
+                             TemplateDAO templateDAO, LetterBatchDtoConverter letterBatchDtoConverter, LetterReceiversDAO letterReceiversDAO,
+                             ObjectMapperProvider objectMapperProvider, IPostiDAO iPostiDAO, LetterBatchStatusLegalityChecker letterBatchStatusLegalityChecker,
+                             DocumentBuilder documentBuilder, DokumenttiIdProvider dokumenttiIdProvider, LetterPublisher letterPublisher) {
         this.letterBatchDAO = letterBatchDAO;
         this.currentUserComponent = currentUserComponent;
         this.templateDAO = templateDAO;
@@ -143,6 +142,13 @@ public class LetterServiceImpl implements LetterService {
         this.letterBatchStatusLegalityChecker = letterBatchStatusLegalityChecker;
         this.documentBuilder = documentBuilder;
         this.dokumenttiIdProvider = dokumenttiIdProvider;
+        this.applicationContext = applicationContext;
+        this.letterPublisher = letterPublisher;
+    }
+
+    @Override
+    public int publishLetterBatch(long letterBatchId) throws Exception {
+        return letterPublisher.publishLetterBatch(letterBatchId);
     }
 
     /* ---------------------- */
@@ -889,39 +895,6 @@ public class LetterServiceImpl implements LetterService {
     }
 
     @Override
-    public int publishLetterBatch(long letterBatchId) throws Exception {
-        List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
-        if(letters.size() > 0) {
-            new Thread(new LetterPublisher(letterBatchId, letters)).start();
-            return letters.size();
-        } else {
-            return 0;
-        }
-    }
-
-    @Override
-    @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void publishLetter(long letterId, File letterBatchPublishDir) {
-        File tempPdfFile = null;
-        File finalPdfFile = null;
-        try {
-            LetterReceiverLetter letter = letterReceiverLetterDAO.read(letterId);
-            tempPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + "_partial_" + System.currentTimeMillis() + ".pdf");
-            finalPdfFile = new File(letterBatchPublishDir, letter.getLetterReceivers().getOidApplication() + ".pdf");
-            FileOutputStream out = new FileOutputStream(tempPdfFile);
-            out.write(letter.getLetter());
-            out.close();
-            letterReceiverLetterDAO.markAsPublished(letter.getId());
-            tempPdfFile.renameTo(finalPdfFile);
-        } catch (Exception e) {
-            if(tempPdfFile != null) {
-                tempPdfFile.delete();
-            }
-            throw new RuntimeException("Error publishing letter id " + letterId + (finalPdfFile == null ? "" : " to " + finalPdfFile), e);
-        }
-    }
-
-    @Override
     public Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language) {
         return letterBatchDAO.getLetterBatchIdReadyForPublish(hakuOid, type, language);
     }
@@ -941,39 +914,5 @@ public class LetterServiceImpl implements LetterService {
         return letterBatchDAO.getEPostiEmailAddressesByBatchId(letterBatchId);
     }
 
-    private class LetterPublisher implements Runnable {
 
-        private final long letterBatchId;
-        private final List<Long> letterIds;
-
-        protected LetterPublisher(long letterBatchId, List<Long> letterIds) {
-            this.letterBatchId = letterBatchId;
-            this.letterIds = letterIds;
-        }
-
-        @Override
-        public void run() {
-            LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
-            String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
-            File letterBatchPublishDir = new File(letterPublishDir, subFolderName);
-            logger.info("Publishing {} letters from letter batch {} to dir {}", letterIds.size(), letterBatchId, letterBatchPublishDir);
-            letterBatchPublishDir.mkdirs();
-            int count = 0;
-            try {
-                for (Long letterId : letterIds) {
-                    publishLetter(letterId, letterBatchPublishDir);
-                    count++;
-                    if (count % 100 == 0) {
-                        logger.info("Published {}/{} letters from letter batch {} to dir {}", count, letterIds.size(), letterBatchId, letterBatchPublishDir);
-                    }
-                }
-            }
-            catch (Exception e) {
-                logger.error("Letter batch " + letterBatchId + " publish failed. Published " + count + "/" + letterIds.size(), e);
-                throw e;
-            }
-            logger.info("Published successfully {} letters from letter batch {} to dir {}", count, letterBatchId, letterBatchPublishDir);
-
-        }
-    }
 }
