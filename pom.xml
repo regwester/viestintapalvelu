@@ -87,13 +87,13 @@
         <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
         <mail.version>1.4.7</mail.version>
-        <mockito.version>1.9.5</mockito.version>
+        <mockito.version>1.10.19</mockito.version>
         <organisaatio.version>11.6</organisaatio.version>
         <phantomjs.version>1.9.2</phantomjs.version>
         <phantomjs-maven-plugin.version>0.3</phantomjs-maven-plugin.version>
         <!-- jdbc4 is for JDK1.6 and jdbc41 is for JDK1.7 -->
         <postgresql.version>9.4.1209</postgresql.version>
-        <powermock.version>1.6.0</powermock.version>
+        <powermock.version>1.7.3</powermock.version>
         <pdfbox.version>1.8.1</pdfbox.version>
         <querydsl.version>3.4.3</querydsl.version>
         <sade-generic.version>${generic.version}</sade-generic.version>
