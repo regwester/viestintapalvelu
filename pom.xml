@@ -95,7 +95,7 @@
         <postgresql.version>9.4.1209</postgresql.version>
         <powermock.version>1.6.0</powermock.version>
         <pdfbox.version>1.8.1</pdfbox.version>
-        <querydsl.version>3.3.4</querydsl.version>
+        <querydsl.version>3.4.3</querydsl.version>
         <sade-generic.version>${generic.version}</sade-generic.version>
         <servlet.version>3.0.1</servlet.version>
         <springockito.version>1.0.9</springockito.version>
@@ -1638,6 +1638,7 @@
             </activation>
             <build>
                 <plugins>
+                    <!--
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
@@ -1660,7 +1661,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>
+                    </plugin>-->
                 </plugins>
             </build>
         </profile>
@@ -1673,7 +1674,8 @@
         </profile>
 
         <!-- Generate db diagram on Bamboo master branch builds -->
-        <profile>
+
+        <!--profile>
             <id>generate-db-diagram</id>
             <activation>
                 <property>
@@ -1708,20 +1710,20 @@
                                                 <echo>Generate DB Diagrams fom file '${schema.file}'.</echo>
                                                 <mkdir dir="${dbdiagram.output}" />
 
-                                                <!-- generate diagrams -->
+                                                &lt;!&ndash; generate diagrams &ndash;&gt;
                                                 <exec executable="${dbdiagram.generator}">
                                                     <arg value="${schema.file}" />
                                                     <arg value="${dbdiagram.output}/${dbdiagram.filename}" />
                                                 </exec>
 
-                                                <!-- copy diagrams with name *-LATEST.* -->
+                                                &lt;!&ndash; copy diagrams with name *-LATEST.* &ndash;&gt;
                                                 <copy file="${dbdiagram.output}/${dbdiagram.filename}.html"
                                                       tofile="${dbdiagram.output}/${project.artifactId}-LATEST.html"/>
 
                                                 <copy file="${dbdiagram.output}/${dbdiagram.filename}.png"
                                                       tofile="${dbdiagram.output}/${project.artifactId}-LATEST.png"/>
 
-                                                <!-- SCP files to pulpetti apache -->
+                                                &lt;!&ndash; SCP files to pulpetti apache &ndash;&gt;
                                                 <scp todir="bamboo@pulpetti:/var/www/html/db/" trust="true"
                                                      keyfile="${user.home}/.ssh/id_rsa" passphrase="">
                                                     <fileset dir="${dbdiagram.output}">
@@ -1763,7 +1765,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>
+        </profile>-->
 
         <profile>
             <id>performance-tests</id>

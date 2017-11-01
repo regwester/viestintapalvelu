@@ -747,6 +747,8 @@
                     </execution>
                 </executions>
             </plugin>
+
+            <!-- This generates various Q-prefixed classes under generated-sources -->
             <plugin>
                 <groupId>com.mysema.maven</groupId>
                 <artifactId>apt-maven-plugin</artifactId>
@@ -801,6 +803,8 @@
             </properties>
             <build>
                 <plugins>
+
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
