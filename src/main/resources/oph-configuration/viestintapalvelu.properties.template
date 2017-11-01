@@ -163,3 +163,6 @@ viestintapalvelu-service.postgresql.password={{host_postgresql_viestinta_passwor
 viestintapalvelu-service.postgresql.maxactive={{host_postgresql_viestinta_max_active}}
 viestintapalvelu-service.postgresql.maxwait={{host_postgresql_viestinta_max_wait}}
 viestintapalvelu-service.postgresql.maxlifetimemillis=60000
+
+viestintapalvelu.downloadfiles.s3.region={{viestintapalvelu_downloadfiles_s3_region}}
+viestintapalvelu.downloadfiles.s3.bucket={{viestintapalvelu_downloadfiles_s3_bucket}}
