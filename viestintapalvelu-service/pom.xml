@@ -556,6 +556,10 @@
                     <groupId>com.googlecode.lambdaj</groupId>
                     <artifactId>lambdaj</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
