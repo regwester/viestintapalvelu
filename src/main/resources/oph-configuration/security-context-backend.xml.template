@@ -38,28 +38,34 @@
 
     <!-- /buildversion.txt?auth forced to require authentication (needed for auth health checking purposes) -->
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex" pattern="/buildversion.txt.auth|/healthcheck.auth|/healthcheck.userinfo">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="isAuthenticated()"/>
         <custom-filter position="CAS_FILTER" ref="casFilter" />
     </http>
 
     <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="/buildversion.txt|/healthcheck">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="permitAll"/>
     </http>
     <!-- wsdl/xsd resources must be public -->
     <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="[\w/]*[.?]wsdl">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="permitAll"/>
     </http>
     <http entry-point-ref="forbiddenEntryPoint" use-expressions="true" request-matcher="regex" pattern="[\w/]*\?xsd=[\w/]*\.xsd">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="permitAll"/>
     </http>
 
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex" pattern="/user/postLogin.*">
+        <csrf disabled="true"/>
         <intercept-url pattern="/user/postLogin.*" access="isAuthenticated()"/> <!-- todo: -->
         <custom-filter position="CAS_FILTER" ref="casFilter" />
     </http>
 
     <!-- own config for single logout, because: xTODO: singleLogoutFilter aiheuttaa POSTeissa formin tyhjenemisen, consuumaa formin mystisesti, ilmeni haku-projektin yhteydessa -->
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex" pattern="/j_spring_cas_security_check.*">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="${spring_security_default_access}"/>
         <!-- tata ei tarvita, kun logout tehdaan suoraan casin kautta, ja singleLogoutFilter on paalla -->
         <!--<custom-filter ref="requestSingleLogoutFilter" before="LOGOUT_FILTER" />-->
@@ -71,10 +77,12 @@
         Workaround viestintapalvelun suojaamiseksi kunnes Guice-konteksti vaihdetaan Springiin ja tietoturva voidaan hoitaa samoin kuin muissa palveluissa!
     -->
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex" pattern="/api/v1/download">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="hasAnyRole('ROLE_APP_VALINTAPERUSTEET_CRUD_1.2.246.562.10.00000000001')"/>
         <custom-filter ref="casFilter" position="CAS_FILTER"/>
     </http>
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex" pattern="/api/v1/download/">
+        <csrf disabled="true"/>
         <intercept-url pattern="/**" access="hasAnyRole('ROLE_APP_VALINTAPERUSTEET_CRUD_1.2.246.562.10.00000000001')"/>
         <custom-filter ref="casFilter" position="CAS_FILTER"/>
     </http>
@@ -89,6 +97,7 @@
     ..default app resources with ${spring_security_default_access} access ::: /[APP]/ALLTHERESTPATHS
     -->
     <http entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex">
+        <csrf disabled="true"/>
         <intercept-url pattern="(/.*)?/secured(/.*)?" access="isAuthenticated()"/>
         <intercept-url pattern="/public(/.*)?" access="permitAll"/>
         <intercept-url pattern="(/.*)?/firewall" access="permitAll"/>
@@ -210,7 +219,7 @@
                        group-search-filter="${cas.group-search-filter}"
                        group-role-attribute="${cas.group-role-attribute}"
                        user-context-mapper-ref="customUserContextMapper"
-            />
+    />
     <!--user-details-class="fi.vm.sade.security.CustomUserDetails"-->
     <beans:bean id="customUserContextMapper" class="fi.vm.sade.security.CustomUserDetailsMapper"/>
 
