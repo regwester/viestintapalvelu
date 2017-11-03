@@ -106,6 +106,7 @@
     -->
     <http disable-url-rewriting="false" entry-point-ref="casEntryPoint" use-expressions="true" request-matcher="regex">
         <csrf disabled="true"/>
+        <headers disabled="true"/>
         <intercept-url pattern="(/.*)?/secured(/.*)?" access="isAuthenticated()"/>
         <intercept-url pattern="/public(/.*)?" access="permitAll"/>
         <intercept-url pattern="(/.*)?/firewall" access="permitAll"/>
@@ -126,6 +127,7 @@
         <beans:property name="serviceProperties" ref="casServiceProperties"/>
         <beans:property name="proxyGrantingTicketStorage" ref="pgtStorage"/>
         <beans:property name="proxyReceptorUrl" value="/j_spring_cas_security_proxyreceptor"/>
+        <beans:property name="filterProcessesUrl" value="/j_spring_cas_security_check"/>
     </beans:bean>
 
     <!-- This filter handles a Single Logout Request from the CAS Server -->
