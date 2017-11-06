@@ -202,7 +202,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             }
         }
         log.info("Prosecced all {} emailRecipients of message {}.", emailRecipients.size(), savedReportedMessage.getId());
-        //createSendQueues(recipients);
+        createSendQueues(recipients);
     }
 
     private List<SendQueue> createSendQueues(Collection<ReportedRecipient> recipients) {

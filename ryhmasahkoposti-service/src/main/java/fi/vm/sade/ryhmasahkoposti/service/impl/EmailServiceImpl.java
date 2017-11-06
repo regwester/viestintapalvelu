@@ -149,11 +149,7 @@ public class EmailServiceImpl implements EmailService {
             log.info("Found {} unhandled queues. Starting {} new handleEmailQueue processes.",
                     numberOfQueues, numberOfProcessesToStart);
             for (int i = 0; i < numberOfProcessesToStart; ++i) {
-                emailExecutor.submit(new Runnable() {
-                    public void run() {
-                        handleEmailQueue();
-                    }
-                });
+                emailExecutor.submit(this::handleEmailQueue);
             }
             log.info("Processes scheduled to emailExecutor.");
         } else {
