@@ -56,6 +56,9 @@ public class ReportedAttachmentServiceImpl implements ReportedAttachmentService 
 
     @Override
     public List<ReportedAttachment> getReportedAttachments(List<AttachmentResponse> attachmentResponses) {
+        if(attachmentResponses == null) {
+            return new ArrayList<>();
+        }
         List<ReportedAttachment> reportedAttachments = new ArrayList<>();
 
         for (AttachmentResponse attachmentResponse : attachmentResponses) {
