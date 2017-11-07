@@ -166,3 +166,4 @@ viestintapalvelu-service.postgresql.maxlifetimemillis=60000
 
 viestintapalvelu.downloadfiles.s3.region={{viestintapalvelu_downloadfiles_s3_region}}
 viestintapalvelu.downloadfiles.s3.bucket={{viestintapalvelu_downloadfiles_s3_bucket}}
+spring.profiles.active={{viestintapalvelu_spring_profiles_active}}
