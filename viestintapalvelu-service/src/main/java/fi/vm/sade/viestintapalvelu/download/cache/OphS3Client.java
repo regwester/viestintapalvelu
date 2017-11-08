@@ -5,14 +5,11 @@ import fi.vm.sade.viestintapalvelu.download.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.SdkClientException;
 import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.async.AsyncResponseHandler;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.*;
@@ -52,6 +49,7 @@ class OphS3Client {
         }
         awsRegion = Region.of(region);
         log.info("Region {}", Objects.toString(region));
+        log.info("Bucket {}", bucket);
         try {
             S3AsyncClient client = getClient();
             if (client == null) {
