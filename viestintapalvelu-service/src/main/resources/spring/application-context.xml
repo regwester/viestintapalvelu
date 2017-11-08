@@ -77,7 +77,7 @@
 
     <beans profile="dev">
         <context:annotation-config />
-        <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>>
+        <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
         <context:property-placeholder
                 location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="true" properties-ref="devProps"/>
