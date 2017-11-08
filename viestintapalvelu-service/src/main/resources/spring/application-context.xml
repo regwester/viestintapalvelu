@@ -26,6 +26,8 @@
                                   ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <beans profile="default, aws">
+        <context:annotation-config />
+        <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
         <context:property-placeholder
                 location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="true" properties-ref="defaultProps"/>
@@ -74,6 +76,8 @@
     </beans>
 
     <beans profile="dev">
+        <context:annotation-config />
+        <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>>
         <context:property-placeholder
                 location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="true" properties-ref="devProps"/>
@@ -107,7 +111,8 @@
 
         <context:annotation-config />
         <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
-
+        <context:property-placeholder location="file:///${user.home:''}/oph-configuration/common.properties,file:///${user.home:''}/oph-configuration/viestintapalvelu.properties,file:///${user.home:''}/oph-configuration/override.properties"
+                                      ignore-resource-not-found="true" ignore-unresolvable="true" />
 
         <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
             <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
