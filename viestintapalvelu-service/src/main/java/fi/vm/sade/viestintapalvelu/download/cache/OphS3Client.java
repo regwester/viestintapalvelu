@@ -41,6 +41,7 @@ class OphS3Client {
     private static final String METADATA_TIMESTAMP = "timestamp";
     private static final String METADATA_FILE_NAME = "filename";
     private static final String METADATA_UUID = "uuid";
+    private final Region awsRegion;
 
     public OphS3Client() {
         if(region == null || region.isEmpty()) {
@@ -49,6 +50,8 @@ class OphS3Client {
             log.info("AWS region not defined, using eu-west-1");
             region = "eu-west-1";
         }
+        awsRegion = Region.of(region);
+        log.info("Region {}", Objects.toString(region));
         try {
             S3AsyncClient client = getClient();
             if (client == null) {
@@ -190,7 +193,7 @@ class OphS3Client {
     private static final AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private S3AsyncClient getClient() {
         return S3AsyncClient.builder()
-                .region(Region.of(region))
+                .region(awsRegion)
                 .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
                 .build();
     }
