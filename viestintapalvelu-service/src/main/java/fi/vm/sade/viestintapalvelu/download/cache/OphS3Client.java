@@ -29,10 +29,10 @@ class OphS3Client {
 
     private static final Logger log = LoggerFactory.getLogger(OphS3Client.class);
 
-    @Value("${viestintapalvelu.downloadfiles.s3.bucket:}")
+    @Value("${viestintapalvelu.downloadfiles.s3.bucket}")
     private String bucket;
 
-    @Value("${viestintapalvelu.downloadfiles.s3.region:eu-west-1}")
+    @Value("${viestintapalvelu.downloadfiles.s3.region}")
     private String region;
 
     private static final String METADATA_TIMESTAMP = "timestamp";
