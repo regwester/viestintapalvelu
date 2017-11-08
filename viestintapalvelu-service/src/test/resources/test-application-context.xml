@@ -14,7 +14,8 @@
             
 	<context:annotation-config />
     <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
-
+    <context:property-placeholder location="file:///${user.home:''}/oph-configuration/common.properties,file:///${user.home:''}/oph-configuration/viestintapalvelu.properties,file:///${user.home:''}/oph-configuration/override.properties"
+                                  ignore-resource-not-found="true" ignore-unresolvable="true" />/>
     <util:map id="poolSizes" key-type="java.lang.String" value-type="java.lang.String">
         <entry key="batchJobs" value="3"/>
         <entry key="threadsPerBatchJob" value="4"/>
