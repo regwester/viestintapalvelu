@@ -42,6 +42,16 @@ class OphS3Client {
     private static final String METADATA_FILE_NAME = "filename";
     private static final String METADATA_UUID = "uuid";
 
+    public OphS3Client() {
+        S3AsyncClient client = getClient();
+        CompletableFuture<HeadBucketResponse> resFut = client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+        resFut.whenCompleteAsync((headBucketResponse, throwable) -> {
+            if(throwable != null) {
+                log.error("Error connecting to S3 bucket {} in region {}", bucket, region, throwable);
+            }
+        });
+    }
+
     AddObjectResponse<PutObjectResponse> addFileObject(Download download) {
         UUID uuid = UUID.randomUUID();
         return addFileObject(download, new DocumentId(uuid.toString()));

@@ -25,6 +25,7 @@ class DownloadCacheS3 implements DownloadCache {
 
     @Autowired
     public DownloadCacheS3(OphS3Client ophS3Client) {
+        log.info("Using S3 download cache");
         this.ophS3Client = ophS3Client;
     }
 
