@@ -35,7 +35,7 @@ class OphS3Client {
     @Value("${viestintapalvelu.downloadfiles.s3.bucket:}")
     private String bucket;
 
-    @Value("${viestintapalvelu.downloadfiles.s3.region:}")
+    @Value("${viestintapalvelu.downloadfiles.s3.region:eu-west-1}")
     private String region;
 
     private static final String METADATA_TIMESTAMP = "timestamp";
@@ -43,13 +43,27 @@ class OphS3Client {
     private static final String METADATA_UUID = "uuid";
 
     public OphS3Client() {
-        S3AsyncClient client = getClient();
-        CompletableFuture<HeadBucketResponse> resFut = client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
-        resFut.whenCompleteAsync((headBucketResponse, throwable) -> {
-            if(throwable != null) {
-                log.error("Error connecting to S3 bucket {} in region {}", bucket, region, throwable);
+        if(region == null || region.isEmpty()) {
+            //even though we have provided a default above for the @Value it might be set to empty in a property file
+            //resulting in a null region, so we have to set it here
+            log.info("AWS region not defined, using eu-west-1");
+            region = "eu-west-1";
+        }
+        try {
+            S3AsyncClient client = getClient();
+            if (client == null) {
+                log.error("Error occurred while initializing s3 client, client is null");
+                return;
             }
-        });
+            CompletableFuture<HeadBucketResponse> resFut = client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+            resFut.whenCompleteAsync((headBucketResponse, throwable) -> {
+                if (throwable != null) {
+                    log.error("Error connecting to S3 bucket {} in region {}", bucket, region, throwable);
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error occurred while initializing s3 client", e);
+        }
     }
 
     AddObjectResponse<PutObjectResponse> addFileObject(Download download) {
