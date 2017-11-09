@@ -47,18 +47,34 @@ public class EmailSender {
     private static final String FIVE_MINUTES = "300000";
 
     @Value("${ryhmasahkoposti.smtp.host}")
-    String smtpHost;
+    private String smtpHost;
     @Value("${ryhmasahkoposti.smtp.port}")
-    String smtpPort;
+    private String smtpPort;
+    @Value("${ryhmasahkoposti.smtp.use_tls:false}")
+    private boolean smtpUseTLS;
+    @Value("${ryhmasahkoposti.smtp.authenticate:false}")
+    private boolean smtpAuthenticate;
+    @Value("${ryhmasahkoposti.smtp.username:#{null}}")
+    private String smtpUsername;
+    @Value("${ryhmasahkoposti.smtp.password:#{null}}")
+    private String smtpPassword;
     
     public void handleMail(EmailMessage emailMessage, String emailAddress,
                            String letterHash, Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
+        Transport tr = null;
         try {
-            MimeMessage message = createMail(emailMessage, emailAddress, letterHash, additionalAttachments);
+            Session session = createSession();
+            MimeMessage message = createMail(session, emailMessage, emailAddress, letterHash, additionalAttachments);
             if (EmailConstants.TEST_MODE.equals("NO")) {
                 LOGGER.debug("Sending message: " + message.toString());
                 long start = System.currentTimeMillis();
-                Transport.send(message);
+                tr = session.getTransport();
+                if (smtpAuthenticate) {
+                    tr.connect(smtpUsername, smtpPassword);
+                } else {
+                    tr.connect();
+                }
+                tr.send(message);
                 long took = System.currentTimeMillis() -start;
                 LOGGER.debug("Message sent took: " + took);
             } else {
@@ -68,13 +84,22 @@ public class EmailSender {
         } catch (Exception e) {
             LOGGER.error("Failed to send message to " + emailAddress + ": " + emailMessage.getBody(), e);
             throw e;
+        } finally {
+            if (tr != null) {
+                tr.close();
+            }
         }
     }
 
     public MimeMessage createMail(EmailMessage emailMessage, String emailAddress,
                                   String letterHash, Optional<? extends AttachmentContainer> additionalAttachments)
             throws MessagingException, UnsupportedEncodingException {
-        Session session = createSession();
+        return createMail(createSession(), emailMessage, emailAddress, letterHash, additionalAttachments);
+    }
+
+    public MimeMessage createMail(Session session, EmailMessage emailMessage, String emailAddress,
+                                  String letterHash, Optional<? extends AttachmentContainer> additionalAttachments)
+            throws MessagingException, UnsupportedEncodingException {
         MimeMessage msg = new MimeMessage(session);
 
         msg.setRecipients(MimeMessage.RecipientType.TO, InternetAddress.parse(emailAddress, false));
@@ -157,6 +182,9 @@ public class EmailSender {
         mailProps.put("mail.smtp.connectiontimeout", FIVE_MINUTES);
         mailProps.put("mail.smtp.timeout", FIVE_MINUTES);
         mailProps.put("mail.smtp.writetimeout", FIVE_MINUTES);
+        mailProps.put("mail.smtp.auth", smtpAuthenticate);
+        mailProps.put("mail.starttls.enable", smtpUseTLS);
+        mailProps.put("mail.starttls.required", smtpUseTLS);
         return Session.getInstance(mailProps);
     }
 
