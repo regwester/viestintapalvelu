@@ -4,7 +4,9 @@ import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.Header;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.async.AsyncResponseHandler;
@@ -30,6 +32,9 @@ class OphS3Client {
 
     private static final Logger log = LoggerFactory.getLogger(OphS3Client.class);
 
+    @Autowired
+    private Environment env;
+
     @Value("${viestintapalvelu.downloadfiles.s3.bucket}")
     private String bucket;
 
@@ -43,6 +48,7 @@ class OphS3Client {
 
     @PostConstruct
     public void init() {
+        log.info("Active spring profiles={}", Arrays.toString(env.getActiveProfiles()));
         awsRegion = Region.of(region);
         log.info("Region {}", region);
         log.info("Bucket {}", bucket);

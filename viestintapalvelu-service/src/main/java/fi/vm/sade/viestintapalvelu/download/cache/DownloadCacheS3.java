@@ -16,7 +16,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
 @Service
-@Profile("aws")
 class DownloadCacheS3 implements DownloadCache {
 
     private final OphS3Client ophS3Client;

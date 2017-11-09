@@ -36,7 +36,6 @@ import com.google.common.collect.Collections2;
 
 @Service
 @Singleton
-@Profile("!aws")
 class DownloadCacheLocal implements DownloadCache {
     private Cache<DocumentId, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(DURATION.getSeconds(), TimeUnit.SECONDS).build();
 
