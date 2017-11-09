@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import javax.inject.Singleton;
 
+import cucumber.api.java.eo.Se;
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.Header;
 import org.springframework.context.annotation.Profile;
@@ -34,8 +35,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
 
-@Service
-@Singleton
+
 class DownloadCacheLocal implements DownloadCache {
     private Cache<DocumentId, Download> downloads = CacheBuilder.newBuilder().expireAfterWrite(DURATION.getSeconds(), TimeUnit.SECONDS).build();
 

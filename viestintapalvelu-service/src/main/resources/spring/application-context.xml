@@ -21,10 +21,6 @@
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
 
-    <beans profile="aws">
-        <bean primary="true" name="DownloadCache" class="fi.vm.sade.viestintapalvelu.download.cache.DownloadCacheS3"/>
-    </beans>
-
     <beans profile="default">
     <!-- Needed so that @Value annotations will resolve correctly -->
     <context:property-placeholder location="file:///${user.home:''}/oph-configuration/common.properties,file:///${user.home:''}/oph-configuration/viestintapalvelu.properties,file:///${user.home:''}/oph-configuration/override.properties"
@@ -48,7 +44,6 @@
                 </util:properties>
             </property>
         </bean>
-        <bean primary="false" name="DownloadCache" class="fi.vm.sade.viestintapalvelu.download.cache.DownloadCacheLocal"/>
         <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
 
         <!-- Flyway definitions for creating the database -->
