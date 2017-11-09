@@ -29,7 +29,7 @@
         <context:annotation-config />
         <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
         <context:property-placeholder
-                location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
+                location="file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="false" properties-ref="defaultProps" ignore-unresolvable="false"/>
 
         <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
