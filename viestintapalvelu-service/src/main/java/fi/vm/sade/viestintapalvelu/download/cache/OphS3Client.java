@@ -14,6 +14,7 @@ import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.*;
 
+import javax.annotation.PostConstruct;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -38,17 +39,12 @@ class OphS3Client {
     private static final String METADATA_TIMESTAMP = "timestamp";
     private static final String METADATA_FILE_NAME = "filename";
     private static final String METADATA_UUID = "uuid";
-    private final Region awsRegion;
+    private Region awsRegion;
 
-    public OphS3Client() {
-        if(region == null || region.isEmpty()) {
-            //even though we have provided a default above for the @Value it might be set to empty in a property file
-            //resulting in a null region, so we have to set it here
-            log.info("AWS region not defined, using eu-west-1");
-            region = "eu-west-1";
-        }
+    @PostConstruct
+    public void init() {
         awsRegion = Region.of(region);
-        log.info("Region {}", Objects.toString(region));
+        log.info("Region {}", region);
         log.info("Bucket {}", bucket);
         try {
             S3AsyncClient client = getClient();

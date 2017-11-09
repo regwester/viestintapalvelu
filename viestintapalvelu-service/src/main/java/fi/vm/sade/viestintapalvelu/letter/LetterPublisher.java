@@ -20,9 +20,12 @@ import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
+import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -33,6 +36,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public interface LetterPublisher {
@@ -132,6 +136,8 @@ class LocalLetterPublisher implements LetterPublisher {
 @Profile("aws")
 class S3LetterPublisher implements LetterPublisher {
 
+    private static final Logger log = LoggerFactory.getLogger(S3LetterPublisher.class);
+
     private final LetterBatchDAO letterBatchDAO;
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
     public static final Logger logger = LoggerFactory.getLogger(S3LetterPublisher.class);
@@ -152,6 +158,26 @@ class S3LetterPublisher implements LetterPublisher {
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
     }
 
+    @PostConstruct
+    public void init() {
+        log.info("Region {}", region);
+        log.info("Bucket {}", bucket);
+        try {
+            S3AsyncClient client = getClient();
+            if (client == null) {
+                log.error("Error occurred while initializing s3 client, client is null");
+                return;
+            }
+            CompletableFuture<HeadBucketResponse> resFut = client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
+            resFut.whenCompleteAsync((headBucketResponse, throwable) -> {
+                if (throwable != null) {
+                    log.error("Error connecting to S3 bucket {} in region {}", bucket, region, throwable);
+                }
+            });
+        } catch (Exception e) {
+            log.error("Error occurred while initializing s3 client", e);
+        }
+    }
 
     @Override
     public int publishLetterBatch(long letterBatchId) throws Exception {
