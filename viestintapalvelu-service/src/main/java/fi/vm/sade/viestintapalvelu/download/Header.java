@@ -15,9 +15,9 @@
  **/
 package fi.vm.sade.viestintapalvelu.download;
 
-import java.util.Date;
-
 import org.apache.commons.lang.time.FastDateFormat;
+
+import java.time.ZonedDateTime;
 
 /**
  * 
@@ -34,13 +34,13 @@ public class Header implements Comparable<Header> {
     private final String filename;
     private final String documentId;
     private final long size;
-    private final Date createdAt;
+    private final ZonedDateTime createdAt;
 
     public int compareTo(Header o) {
         return o.createdAt.compareTo(createdAt);
     }
 
-    public Header(String contentType, String filename, String documentId, long size, Date createdAt) {
+    public Header(String contentType, String filename, String documentId, long size, ZonedDateTime createdAt) {
         this.contentType = contentType;
         this.filename = filename;
         this.documentId = documentId;

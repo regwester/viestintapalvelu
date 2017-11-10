@@ -23,6 +23,10 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.text.DateFormat;
 import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
@@ -31,6 +35,7 @@ import java.util.stream.Collectors;
 class OphS3Client {
 
     private static final Logger log = LoggerFactory.getLogger(OphS3Client.class);
+    private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
     @Autowired
     private Environment env;
@@ -69,6 +74,16 @@ class OphS3Client {
         }
     }
 
+    public static void main(String[] args) throws ParseException {
+        String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
+        DateFormat sdf = new SimpleDateFormat(pattern);
+
+        ZonedDateTime now = ZonedDateTime.now();
+        ZonedDateTime zdt = ZonedDateTime.ofInstant(now.toInstant(), ZoneId.of("UTC"));
+        System.out.println(zdt.format(DateTimeFormatter.ofPattern(pattern)));
+
+    }
+
     AddObjectResponse<PutObjectResponse> addFileObject(Download download) {
         UUID uuid = UUID.randomUUID();
         return addFileObject(download, new DocumentId(uuid.toString()));
@@ -91,7 +106,8 @@ class OphS3Client {
         Long length = (long) download.toByteArray().length;
 
         Map<String, String> metadata = new HashMap<>();
-        metadata.put(METADATA_TIMESTAMP, download.getTimestamp().toString());
+        ZonedDateTime zdt = ZonedDateTime.ofInstant(download.getTimestamp().toInstant(), ZoneId.of("UTC"));
+        metadata.put(METADATA_TIMESTAMP, zdt.format(dateFormat));
         metadata.put(METADATA_FILE_NAME, download.getFilename());
         metadata.put(METADATA_UUID, documentId.getDocumentId());
 
@@ -145,12 +161,7 @@ class OphS3Client {
             HeadObjectResponse res = client.headObject(headObjectRequest).join();
 
             String s = res.metadata().get(METADATA_TIMESTAMP);
-            Date timestamp = null;
-            try {
-                timestamp = DateFormat.getInstance().parse(s);
-            } catch (ParseException e) {
-                log.error("Failed to parse {} into Date", s, e);
-            }
+            ZonedDateTime timestamp = ZonedDateTime.parse(s, dateFormat);
             return new Header(res.contentType(),
                     res.metadata().get(METADATA_FILE_NAME),
                     id.getDocumentId(),
