@@ -52,7 +52,6 @@
             </property>
         </bean>
         <import resource="file:///${user.home:''}/oph-configuration/security-context-backend.xml"/>
-
         <!-- Flyway definitions for creating the database -->
 
         <bean id="hikariConfig" class="com.zaxxer.hikari.HikariConfig">
@@ -72,11 +71,20 @@
                 </props>
             </property>
         </bean>
+
+        <!-- HikariCP configuration -->
+        <bean id="dbDataSource" class="com.zaxxer.hikari.HikariDataSource" destroy-method="close">
+            <constructor-arg ref="hikariConfig" />
+        </bean>
+
+        <bean id="flyway" class="com.googlecode.flyway.core.Flyway" init-method="migrate">
+            <property name="initOnMigrate" value="${flyway.initOnMigrate}"/>
+            <property name="schemas" value="kirjeet" />
+            <property name="dataSource" ref="dbDataSource" />
+        </bean>
     </beans>
 
     <beans profile="dev">
-        <context:annotation-config />
-        <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
         <context:property-placeholder
                 location="classpath:viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties, file:///${user.home:''}/oph-configuration/override.properties"
                 ignore-resource-not-found="true" properties-ref="devProps"/>
@@ -107,12 +115,11 @@
             <entry key="recoveryJobs" value="${viestintapalvelu.recovery.handler.jobs.pool.size}"/>
         </util:map>
         <import resource="classpath:spring/executors-config.xml"/>
-<!--
+
         <context:annotation-config />
         <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
-        <context:property-placeholder location="file:///${user.home:''}/oph-configuration/common.properties,file:///${user.home:''}/oph-configuration/viestintapalvelu.properties,file:///${user.home:''}/oph-configuration/override.properties"
-                                      ignore-resource-not-found="true" ignore-unresolvable="true" />
--->
+
+
         <util:map id="optionsCacheConfig" key-type="java.lang.String" value-type="java.lang.Long">
             <entry key="timeoutMillis" value="${viestintapalvelu.options.cache.valid.millis}"/>
         </util:map>
