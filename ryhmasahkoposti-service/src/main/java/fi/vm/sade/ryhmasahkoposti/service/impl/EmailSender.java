@@ -184,7 +184,7 @@ public class EmailSender {
         mailProps.put("mail.smtp.writetimeout", FIVE_MINUTES);
         mailProps.put("mail.smtp.auth", smtpAuthenticate);
         mailProps.put("mail.starttls.enable", smtpUseTLS);
-        mailProps.put("mail.transport.protocol", smtpUseTLS ? "smtps" : "smtp");
+        mailProps.put("mail.transport.protocol", "smtp");
         return Session.getInstance(mailProps);
     }
 
