@@ -19,6 +19,7 @@ package fi.vm.sade.viestintapalvelu.common.feature;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
 import com.fasterxml.jackson.datatype.joda.JodaModule;
 import com.fasterxml.jackson.jaxrs.json.JacksonJaxbJsonProvider;
 
@@ -28,6 +29,7 @@ public class JacksonFeature extends JacksonJaxbJsonProvider {
         super();
         setMapper(new ObjectMapper() {{
             registerModule(new JodaModule());
+            registerModule(new Jdk8Module());
             disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
             disable(DeserializationFeature.FAIL_ON_IGNORED_PROPERTIES);
             disable(DeserializationFeature.ADJUST_DATES_TO_CONTEXT_TIME_ZONE);
