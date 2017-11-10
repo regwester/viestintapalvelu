@@ -12,16 +12,9 @@
             Käyttöoikeusanomuksesi on käsitelty.
         </p>
         #set( $tilat = {"HYLATTY" : "Hylätty", "MYONNETTY" : "Myönnetty"} )
-        <table>
-            <tbody>
-                #foreach( $rooli in $roolit )
-                <tr>
-                    <td>$rooli.nimi</td>
-                    <td>$tilat.get($rooli.tila)</td>
-                </tr>
-                #end
-            </tbody>
-        </table>
+        <p>
+            $rooli.nimi $tilat.get($rooli.tila) #if($rooli.hylkaysperuste) - $rooli.hylkaysperuste #end
+        </p>
         <p>
             Voit jatkaa palveluun tästä linkistä: <a href="$linkki">$linkki</a>.
         </p>
