@@ -26,15 +26,7 @@ class DownloadCacheS3 implements DownloadCache {
 
     @Override
     public Collection<Header> getListOfAvailableDocuments() {
-        CompletableFuture<List<Header>> listCompletableFuture = ophS3Client.listObjects();
-        try {
-            return listCompletableFuture.get();
-        } catch (InterruptedException e) {
-            log.error("Interrupted while getting list of documents", e);
-        } catch (ExecutionException e) {
-            log.error("Error getting list of documents", e);
-        }
-        return Collections.EMPTY_LIST;
+        return ophS3Client.listObjects();
     }
 
     @Override

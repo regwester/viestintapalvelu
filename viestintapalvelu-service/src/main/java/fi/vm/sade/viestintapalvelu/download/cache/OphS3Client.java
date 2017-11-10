@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.async.AsyncRequestProvider;
@@ -26,7 +27,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Component
 class OphS3Client {
@@ -125,22 +128,6 @@ class OphS3Client {
         return new Download(header.getContentType(), header.getFilename(), fullObject.join());
     }
 
-    /**
-     * Returns a list of objects without content
-     */
-    CompletableFuture<List<Header>> listObjects() {
-        ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucket).build();
-        try (S3AsyncClient client = getClient()) {
-            CompletableFuture<ListObjectsV2Response> listResponse = client.listObjectsV2(request);
-            CompletableFuture<List<S3Object>> objects = listResponse.thenApply(ListObjectsV2Response::contents);
-            return objects.thenApplyAsync(s3Objects -> s3Objects.stream().map(this::headObject).collect(Collectors.toList()));
-        }
-    }
-
-    private Header headObject(S3Object obj) {
-        return headObject(new DocumentId(obj.key()));
-    }
-
     private Header headObject(DocumentId id) {
         HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
 
@@ -155,6 +142,43 @@ class OphS3Client {
                     res.contentLength(),
                     timestamp);
         }
+    }
+
+    /**
+     * Returns a list of objects without content
+     */
+    List<Header> listObjects() {
+        ListObjectsV2Request request = ListObjectsV2Request.builder().bucket(bucket).build();
+        try (final S3AsyncClient client = getClient()) {
+            CompletableFuture<ListObjectsV2Response> listResponse = client.listObjectsV2(request);
+            CompletableFuture<List<S3Object>> objects = listResponse.thenApply(ListObjectsV2Response::contents);
+            try {
+                List<CompletableFuture<Header>> list = objects.thenApply(s3Objects -> s3Objects.stream().map(s3Object -> this.headObject(s3Object, client)).collect(Collectors.toList())).get();
+                CompletableFuture.allOf(list.toArray(new CompletableFuture[list.size()]));
+                return list.stream().map(CompletableFuture::join).collect(Collectors.toList());
+            } catch (InterruptedException | ExecutionException e) {
+                log.error("Error getting list of objects", e);
+                return new ArrayList<>();
+            }
+        }
+    }
+
+    private CompletableFuture<Header> headObject(S3Object obj, S3AsyncClient client) {
+        return headObject(new DocumentId(obj.key()), client);
+    }
+
+    private CompletableFuture<Header> headObject(DocumentId id, S3AsyncClient client) {
+        HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
+        CompletableFuture<Header> headerCompletableFuture = client.headObject(headObjectRequest).thenApply(res -> {
+            String s = res.metadata().get(METADATA_TIMESTAMP);
+            ZonedDateTime timestamp = ZonedDateTime.parse(s);
+            return new Header(res.contentType(),
+                    res.metadata().get(METADATA_FILE_NAME),
+                    id.getDocumentId(),
+                    res.contentLength(),
+                    timestamp);
+        });
+        return headerCompletableFuture;
     }
 
 
