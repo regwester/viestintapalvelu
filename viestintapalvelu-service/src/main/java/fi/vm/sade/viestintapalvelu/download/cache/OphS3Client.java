@@ -21,9 +21,6 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -72,16 +69,6 @@ class OphS3Client {
         } catch (Exception e) {
             log.error("Error occurred while initializing s3 client", e);
         }
-    }
-
-    public static void main(String[] args) throws ParseException {
-        String pattern = "yyyy-MM-dd'T'HH:mm:ss'Z'";
-        DateFormat sdf = new SimpleDateFormat(pattern);
-
-        ZonedDateTime now = ZonedDateTime.now();
-        ZonedDateTime zdt = ZonedDateTime.ofInstant(now.toInstant(), ZoneId.of("UTC"));
-        System.out.println(zdt.format(DateTimeFormatter.ofPattern(pattern)));
-
     }
 
     AddObjectResponse<PutObjectResponse> addFileObject(Download download) {
@@ -161,7 +148,7 @@ class OphS3Client {
             HeadObjectResponse res = client.headObject(headObjectRequest).join();
 
             String s = res.metadata().get(METADATA_TIMESTAMP);
-            ZonedDateTime timestamp = ZonedDateTime.parse(s, dateFormat);
+            ZonedDateTime timestamp = ZonedDateTime.parse(s);
             return new Header(res.contentType(),
                     res.metadata().get(METADATA_FILE_NAME),
                     id.getDocumentId(),
