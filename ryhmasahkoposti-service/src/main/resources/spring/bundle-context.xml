@@ -3,7 +3,7 @@
        xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
 
     <!-- Spring service and persistence configuration -->
-    <beans profile="default">
+    <beans profile="default, aws">
         <import resource="classpath:/spring/service-context.xml"/>
         <import resource="classpath:/spring/dao-context.xml"/>
     </beans>
