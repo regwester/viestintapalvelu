@@ -1,5 +1,5 @@
 {
-  "name": "salasanareset_email",
+  "name": "salasanareset_v2_email",
   "language": "SV",
   "type": "email",
   "replacements": [
@@ -22,8 +22,8 @@
     }
   ],
   "structure": {
-    "name": "salasanareset_email",
-    "language": "FI",
+    "name": "salasanareset_v2_email",
+    "language": "SV",
     "contentStructures": [
       {
         "type": "email",
