@@ -22,7 +22,7 @@
         }
     ],
     "structure": {
-        "name": "kayttooikeusanomuskasitelty_email",
+        "name": "kayttooikeusanomuskasitelty_email_v2",
         "language": "FI",
         "contentStructures": [
             {
