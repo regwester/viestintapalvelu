@@ -27,6 +27,7 @@ ryhmasahkoposti.smtp.use_tls={{ryhmasahkoposti_smtp_use_tls}}
 ryhmasahkoposti.smtp.authenticate={{ryhmasahkoposti_smtp_authenticate}}
 ryhmasahkoposti.smtp.username={{ryhmasahkoposti_smtp_username}}
 ryhmasahkoposti.smtp.password={{ryhmasahkoposti_smtp_password}}
+ryhmasahkoposti.smtp.return_path={{ryhmasahkoposti_smtp_return_path}}
 ryhmasahkoposti.antivirus.host={{ryhmasahkoposti_antivirus_host}}
 ryhmasahkoposti.antivirus.port={{ryhmasahkoposti_antivirus_port}}
 ryhmasahkoposti.antivirus.timeout={{ryhmasahkoposti_antivirus_timeout}}
@@ -99,7 +100,7 @@ ryhmasahkoposti.queue.handle.size=250
 ryhmasahkoposti.max.sendqueue.tasks.to.add=42
 ryhmasahkoposti.sender.cron=0 * * * * *
 ryhmasahkoposti.max.email.recipient.handle.time.millis = 180000
-ryhmasahkoposti.from=noreply@opintopolku.fi
+ryhmasahkoposti.from={{ryhmasahkoposti_smtp_sender}}
 # Ryhmäsähköpostin oletuspohja ja oletuspohjan kieli
 ryhmasahkoposti.default.template.name=osoitepalvelu_email
 ryhmasahkoposti.default.template.language=FI

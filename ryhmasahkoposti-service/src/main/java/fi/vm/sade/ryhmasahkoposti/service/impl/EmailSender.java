@@ -59,6 +59,8 @@ public class EmailSender {
     private String smtpUsername;
     @Value("${ryhmasahkoposti.smtp.password}")
     private String smtpPassword;
+    @Value("${ryhmasahkoposti.smtp.return_path}")
+    private String smtpReturnPath;
 
     public void handleMail(EmailMessage emailMessage, String emailAddress,
                            String letterHash, Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
@@ -101,7 +103,9 @@ public class EmailSender {
         }
         msg.addHeader("X-Batch-ID", "Opetushallitus");
         msg.addHeader("X-Message-ID", letterHash + ".posti@hard.ware.fi");
-        msg.addHeader("Return-Path", "shredder@shredder.ware.fi");
+        if (smtpReturnPath != null && smtpReturnPath.length() > 0) {
+            msg.addHeader("Return-Path", smtpReturnPath);
+        }
 
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();
