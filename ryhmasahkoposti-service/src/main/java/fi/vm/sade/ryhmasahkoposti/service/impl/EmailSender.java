@@ -20,6 +20,7 @@ import java.util.Properties;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
@@ -58,23 +59,18 @@ public class EmailSender {
     private String smtpUsername;
     @Value("${ryhmasahkoposti.smtp.password}")
     private String smtpPassword;
+    @Value("${ryhmasahkoposti.smtp.return_path}")
+    private String smtpReturnPath;
 
     public void handleMail(EmailMessage emailMessage, String emailAddress,
                            String letterHash, Optional<? extends AttachmentContainer> additionalAttachments) throws Exception {
-        Transport tr = null;
         try {
             Session session = createSession();
             MimeMessage message = createMail(session, emailMessage, emailAddress, letterHash, additionalAttachments);
             if (EmailConstants.TEST_MODE.equals("NO")) {
                 LOGGER.debug("Sending message: " + message.toString());
                 long start = System.currentTimeMillis();
-                tr = session.getTransport();
-                if (smtpAuthenticate) {
-                    tr.connect(smtpUsername, smtpPassword);
-                } else {
-                    tr.connect();
-                }
-                tr.send(message);
+                Transport.send(message);
                 long took = System.currentTimeMillis() -start;
                 LOGGER.debug("Message sent took: " + took);
             } else {
@@ -84,10 +80,6 @@ public class EmailSender {
         } catch (Exception e) {
             LOGGER.error("Failed to send message to " + emailAddress + ": " + emailMessage.getBody(), e);
             throw e;
-        } finally {
-            if (tr != null) {
-                tr.close();
-            }
         }
     }
 
@@ -111,7 +103,9 @@ public class EmailSender {
         }
         msg.addHeader("X-Batch-ID", "Opetushallitus");
         msg.addHeader("X-Message-ID", letterHash + ".posti@hard.ware.fi");
-        msg.addHeader("Return-Path", "shredder@shredder.ware.fi");
+        if (smtpReturnPath != null && smtpReturnPath.length() > 0) {
+            msg.addHeader("Return-Path", smtpReturnPath);
+        }
 
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();
@@ -185,7 +179,16 @@ public class EmailSender {
         mailProps.put("mail.smtp.auth", smtpAuthenticate);
         mailProps.put("mail.starttls.enable", smtpUseTLS);
         mailProps.put("mail.transport.protocol", "smtp");
-        return Session.getInstance(mailProps);
+
+        if (smtpAuthenticate) {
+            return Session.getInstance(mailProps, new javax.mail.Authenticator() {
+                protected PasswordAuthentication getPasswordAuthentication() {
+                    return new PasswordAuthentication(smtpUsername, smtpPassword);
+                }
+            });
+        } else {
+            return Session.getInstance(mailProps);
+        }
     }
 
     private void mockSendMail(EmailMessage emailMessage, String emailAddress,
