@@ -20,10 +20,6 @@
            http://cxf.apache.org/configuration/security http://cxf.apache.org/schemas/configuration/security.xsd
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
            http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx.xsd">
-    <beans profile="default">
-        <!-- Needed so that @Value annotations will resolve correctly -->
-        <context:property-placeholder location="file:///${user.home:''}/oph-configuration/common.properties,file:///${user.home:''}/oph-configuration/viestintapalvelu.properties,file:///${user.home:''}/oph-configuration/override.properties"
-                                      ignore-resource-not-found="true" ignore-unresolvable="true" />
 
     <beans profile="aws">
         <bean id="downloadCache" class="fi.vm.sade.viestintapalvelu.download.cache.DownloadCacheS3"/>
