@@ -178,7 +178,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             log.debug("Converting emailRecipient to reportedRecipient");
             ReportedRecipient reportedRecipient = reportedRecipientConverter.convert(savedReportedMessage, emailRecipient);
             log.debug("Saving reportedRecipient");
-            reportedRecipientService.saveReportedRecipient(reportedRecipient); //EM FLUSH
+            reportedRecipientService.saveReportedRecipient(reportedRecipient);
             recipients.add(reportedRecipient);
 
             log.debug("Processing recipient specific replacements");
@@ -187,14 +187,14 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 List<ReportedRecipientReplacement> reportedRecipientReplacements = reportedRecipientReplacementConverter.convert(reportedRecipient,
                         emailRecipientReplacements);
                 log.debug("Saving reportedRecipientReplacements");
-                reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements); //EM FLUS * n
+                reportedRecipientReplacementService.saveReportedRecipientReplacements(reportedRecipientReplacements);
             }
 
             log.debug("Processing recipient specific attachments");
             if (emailRecipient.getAttachments() != null) {
-                List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailRecipient.getAttachInfo()); //n READ
+                List<ReportedAttachment> reportedAttachments = reportedAttachmentService.getReportedAttachments(emailRecipient.getAttachInfo());
                 log.debug("Saving ReportedMessageRecipientAttachments");
-                reportedMessageAttachmentService.saveReportedRecipientAttachments(reportedRecipient, reportedAttachments); //EM FLUSH * n
+                reportedMessageAttachmentService.saveReportedRecipientAttachments(reportedRecipient, reportedAttachments);
             }
             count++;
             if(count % 1000 == 0) {
