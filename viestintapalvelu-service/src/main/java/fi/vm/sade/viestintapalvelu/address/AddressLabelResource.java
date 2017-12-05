@@ -86,17 +86,14 @@ public class AddressLabelResource extends AsynchronousResource {
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public Response pdf(@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input, @Context HttpServletRequest request) {
-        String documentId;
         try {
             byte[] pdf = labelBuilder.printPDF(input); // TODO: add validation?
             DocumentId docId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
-            documentId = docId.getDocumentId();
+            return createResponse(request, docId.getDocumentId() + ".pdf");
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("AddressLabel PDF failed: {}", e.getMessage());
+            LOG.error("AddressLabel PDF failed: {}", e);
             return createFailureResponse(request);
         }
-        return createResponse(request, documentId + ".pdf");
     }
 
     @POST
