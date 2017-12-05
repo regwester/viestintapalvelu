@@ -845,6 +845,13 @@
                         <user>oph</user>
                         <password>oph</password>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
+                            <version>${postgresql.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.tomcat.maven</groupId>
@@ -855,36 +862,26 @@
                         <path>/viestintapalvelu</path>
                     </configuration>
                 </plugin>
+
                 <plugin>
-                    <groupId>de.smartics.maven.plugin</groupId>
+                    <groupId>de.juplo</groupId>
                     <artifactId>hibernate4-maven-plugin</artifactId>
-                    <version>0.2.0</version>
+                    <version>1.1.1</version>
                     <executions>
                         <execution>
-                            <id>export</id>
+                            <id>export-schema</id>
                             <phase>compile</phase>
                             <goals>
-                                <goal>hbm2ddl</goal>
+                                <goal>export</goal>
                             </goals>
                         </execution>
                     </executions>
                     <configuration>
-                        <unitName>viestinta</unitName>
-                        <createOutputFile>${project.build.directory}/hibernate3/sql/schema.ddl</createOutputFile>
-                        <dropOutputFile>${project.build.directory}/hibernate3/sql/drop.ddl</dropOutputFile>
+                        <hibernateDialect>org.hibernate.dialect.PostgreSQL82Dialect</hibernateDialect>
+                        <target>NONE</target>
+                        <type>CREATE</type>
+                        <outputFile>${project.build.directory}/hibernate4/sql/schema.ddl</outputFile>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-core</artifactId>
-                            <version>${hibernate.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-ehcache</artifactId>
-                            <version>${hibernate.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <!-- Plugins taken from build-parent -->
                 <plugin>
@@ -1027,7 +1024,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.17</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -1638,7 +1634,6 @@
             </activation>
             <build>
                 <plugins>
-                    <!--
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
@@ -1653,7 +1648,7 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>target/hibernate3/sql/schema.ddl</file>
+                                            <file>target/hibernate4/sql/schema.ddl</file>
                                             <type>ddl</type>
                                             <classifier>schema</classifier>
                                         </artifact>
@@ -1661,7 +1656,7 @@
                                 </configuration>
                             </execution>
                         </executions>
-                    </plugin>-->
+                    </plugin>
                 </plugins>
             </build>
         </profile>
@@ -1674,8 +1669,7 @@
         </profile>
 
         <!-- Generate db diagram on Bamboo master branch builds -->
-
-        <!--profile>
+        <profile>
             <id>generate-db-diagram</id>
             <activation>
                 <property>
@@ -1684,7 +1678,7 @@
                 </property>
             </activation>
             <properties>
-                <schema.file>${project.basedir}/target/hibernate3/sql/schema.ddl</schema.file>
+                <schema.file>${project.basedir}/target/hibernate4/sql/schema.ddl</schema.file>
                 <dbdiagram.generator>/usr/sbin/sql2diagram</dbdiagram.generator>
                 <dbdiagram.output>${project.basedir}/target/sql2diagram/</dbdiagram.output>
                 <dbdiagram.filename>${project.artifactId}-${project.version}</dbdiagram.filename>
@@ -1765,7 +1759,7 @@
                     </plugin>
                 </plugins>
             </build>
-        </profile>-->
+        </profile>
 
         <profile>
             <id>performance-tests</id>
