@@ -1,5 +1,5 @@
 {
-    "name": "kayttooikeusanomuskasitelty_email_v2",
+    "name": "kayttooikeusanomuskasitelty_email_v3",
     "language": "SV",
     "type": "email",
     "replacements": [
@@ -22,7 +22,7 @@
         }
     ],
     "structure": {
-        "name": "kayttooikeusanomuskasitelty_email_v2",
+        "name": "kayttooikeusanomuskasitelty_email_v3",
         "language": "SV",
         "contentStructures": [
             {
