@@ -1,11 +1,11 @@
 {
     "name": "kayttooikeus_kutsu_v2",
-    "language": "FI",
+    "language": "SV",
     "type": "email",
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Virkailijan opintopolku: kutsu palvelun käyttäjäksi",
+            "defaultValue": "Studieinfo för administratörer: inbjudan till användare av tjänsten",
             "mandatory": false
         },
         {
@@ -31,7 +31,7 @@
     ],
     "structure": {
         "name": "kayttooikeus_kutsu",
-        "language": "FI",
+        "language": "SV",
         "contentStructures": [
             {
                 "type": "email",

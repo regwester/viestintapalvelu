@@ -5,7 +5,7 @@
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Virkailijan opintopolku: käyttöoikeusanomus käsitelty",
+            "defaultValue": "Studieinfo för administratörer: behandling av anhållan om användarrätt",
             "mandatory": false
         },
         {

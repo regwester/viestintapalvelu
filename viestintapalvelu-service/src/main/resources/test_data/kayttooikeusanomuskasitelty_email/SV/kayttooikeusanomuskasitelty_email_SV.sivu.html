@@ -6,21 +6,17 @@
     </head>
     <body>
         <p>
-            Hei $vastaanottaja.kutsumanimi $vastaanottaja.sukunimi
+            Hej $vastaanottaja.kutsumanimi $vastaanottaja.sukunimi
         </p>
         <p>
-            Käyttöoikeusanomuksesi on käsitelty.
+            Din anhållan om användarrättigheter har behandlats.
         </p>
         #set( $tilat = {"HYLATTY" : "Hylätty", "MYONNETTY" : "Myönnetty"} )
         <p>
             $rooli.nimi $tilat.get($rooli.tila) #if($rooli.hylkaysperuste) - $rooli.hylkaysperuste #end
         </p>
         <p>
-            Voit jatkaa palveluun tästä linkistä: <a href="$linkki">$linkki</a>.
-        </p>
-        <p>
-            Yhdellä tunnuksella kirjaudut kaikkiin opetushallinnon palveluihin<br/>
-            AIPAL AITU Arvo ePerusteet Koski Oikeustulkkirekisteri Oiva Opintopolku Valtionavustukset
+            Du kan fortsätta till tjänsten: <a href="$linkki">$linkki</a>.
         </p>
     </body>
 </html>

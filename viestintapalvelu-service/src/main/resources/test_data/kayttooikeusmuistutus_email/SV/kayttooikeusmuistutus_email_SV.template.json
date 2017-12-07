@@ -1,11 +1,11 @@
 {
-    "name": "kayttooikeus_kutsu_v2",
-    "language": "FI",
+    "name": "kayttooikeusmuistutus_email_v2",
+    "language": "SV",
     "type": "email",
     "replacements": [
         {
             "name": "subject",
-            "defaultValue": "Virkailijan opintopolku: kutsu palvelun käyttäjäksi",
+            "defaultValue": "Studieinfo för administratörer: användarrättigheter utgår inom kort",
             "mandatory": false
         },
         {
@@ -13,25 +13,17 @@
             "mandatory": true
         },
         {
-            "name": "organisaatiot",
+            "name": "kayttooikeusryhmat",
             "mandatory": true
         },
         {
             "name": "linkki",
             "mandatory": true
-        },
-        {
-            "name": "kutsuja",
-            "mandatory": true
-        },
-        {
-            "name": "voimassa",
-            "mandatory": true
         }
     ],
     "structure": {
-        "name": "kayttooikeus_kutsu",
-        "language": "FI",
+        "name": "kayttooikeusmuistutus_email",
+        "language": "SV",
         "contentStructures": [
             {
                 "type": "email",
