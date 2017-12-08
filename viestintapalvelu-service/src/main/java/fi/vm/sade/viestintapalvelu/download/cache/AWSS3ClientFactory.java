@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.download.cache;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
@@ -12,6 +13,7 @@ import software.amazon.awssdk.services.s3.S3AsyncClient;
  * that context
  */
 @Component
+@Primary
 public interface AWSS3ClientFactory {
     AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     default S3AsyncClient getClient(Region awsRegion) {
