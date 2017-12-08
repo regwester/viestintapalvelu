@@ -12,6 +12,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import software.amazon.awssdk.async.AsyncRequestProvider;
+import software.amazon.awssdk.async.AsyncResponseHandler;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.*;
@@ -62,7 +63,7 @@ public class OphS3ClientTest {
     @Test(expected = NoSuchKeyException.class)
     public void getObjectThatDoesNotExist() {
         DocumentId documentId = new DocumentId("mock_id");
-        Download object = client.getObject(documentId, false);
+        Download object = client.getObject(documentId);
     }
 
     @Test()
@@ -71,7 +72,7 @@ public class OphS3ClientTest {
         String idStr = UUID.randomUUID().toString();
         DocumentId id = new DocumentId(idStr);
         client.addFileObject(download, id);
-        Download object = client.getObject(id, false);
+        Download object = client.getObject(id);
     }
 
     @Test
@@ -124,7 +125,6 @@ class TestClientFactory implements AWSS3ClientFactory {
             return CompletableFuture.completedFuture(res);
         });
 
-
         //list objects mock
         when(mock.listObjectsV2(any())).thenAnswer((call) -> {
            call.getArgumentAt(0, ListObjectsV2Request.class);
@@ -133,6 +133,11 @@ class TestClientFactory implements AWSS3ClientFactory {
                     .key(entry.getKey())
                     .build()).collect(Collectors.toList());
             return CompletableFuture.completedFuture(ListObjectsV2Response.builder().contents(collect).build());
+        });
+
+        //get object mock
+        when(mock.getObject(any(), any(AsyncResponseHandler.class))).thenAnswer(ans -> {
+            return CompletableFuture.completedFuture(new byte[0]);
         });
         return mock;
     }

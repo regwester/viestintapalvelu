@@ -43,6 +43,6 @@ class DownloadCacheS3 implements DownloadCache {
 
     @Override
     public Download get(DocumentId documentId) {
-        return ophS3Client.getObject(documentId, true);
+        return ophS3Client.getObject(documentId);
     }
 }

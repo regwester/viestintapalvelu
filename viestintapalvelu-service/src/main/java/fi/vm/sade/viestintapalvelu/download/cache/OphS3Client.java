@@ -121,26 +121,13 @@ class OphS3Client {
         }
     }
 
-    Download getObject(DocumentId documentId, boolean includeContent) {
+    Download getObject(DocumentId documentId) {
+
         AsyncResponseHandler<GetObjectResponse, byte[]> handler = AsyncResponseHandler.toByteArray();
-        CompletableFuture<byte[]> fullObject = includeContent ? getObjectContents(documentId, handler) : CompletableFuture.completedFuture(new byte[0]);
-        Header header = headObject(documentId);
-        return new Download(header.getContentType(), header.getFilename(), fullObject.join());
-    }
-
-    private Header headObject(DocumentId id) {
-        HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
-
-        try (S3AsyncClient client = getClient()) {
-            HeadObjectResponse res = client.headObject(headObjectRequest).join();
-
-            String s = res.metadata().get(METADATA_TIMESTAMP);
-            ZonedDateTime timestamp = ZonedDateTime.parse(s);
-            return new Header(res.contentType(),
-                    res.metadata().get(METADATA_FILE_NAME),
-                    id.getDocumentId(),
-                    res.contentLength(),
-                    timestamp);
+        try(S3AsyncClient client = getClient()) {
+            CompletableFuture<byte[]> fullObject = getObjectContents(client, documentId, handler);
+            Header header = headObject(client, documentId).join();
+            return new Download(header.getContentType(), header.getFilename(), fullObject.join());
         }
     }
 
@@ -153,7 +140,8 @@ class OphS3Client {
             CompletableFuture<ListObjectsV2Response> listResponse = client.listObjectsV2(request);
             CompletableFuture<List<S3Object>> objects = listResponse.thenApply(ListObjectsV2Response::contents);
             try {
-                List<CompletableFuture<Header>> list = objects.thenApply(s3Objects -> s3Objects.stream().map(s3Object -> this.headObject(s3Object, client)).collect(Collectors.toList())).get();
+                List<CompletableFuture<Header>> list = objects.thenApply(s3Objects -> s3Objects.stream()
+                        .map(s3Object -> this.headObject(client, s3Object)).collect(Collectors.toList())).get();
                 CompletableFuture.allOf(list.toArray(new CompletableFuture[list.size()]));
                 return list.stream().map(CompletableFuture::join).collect(Collectors.toList());
             } catch (InterruptedException | ExecutionException e) {
@@ -163,11 +151,11 @@ class OphS3Client {
         }
     }
 
-    private CompletableFuture<Header> headObject(S3Object obj, S3AsyncClient client) {
-        return headObject(new DocumentId(obj.key()), client);
+    private CompletableFuture<Header> headObject(S3AsyncClient client, S3Object obj) {
+        return headObject(client, new DocumentId(obj.key()));
     }
 
-    private CompletableFuture<Header> headObject(DocumentId id, S3AsyncClient client) {
+    private CompletableFuture<Header> headObject(S3AsyncClient client, DocumentId id) {
         HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
         return client.headObject(headObjectRequest).thenApply(res -> {
             String s = res.metadata().get(METADATA_TIMESTAMP);
@@ -181,11 +169,10 @@ class OphS3Client {
     }
 
 
-    private CompletableFuture<byte[]> getObjectContents(DocumentId id, AsyncResponseHandler<GetObjectResponse, byte[]> asyncResponseHandler) {
+    private CompletableFuture<byte[]> getObjectContents(S3AsyncClient client, DocumentId id, AsyncResponseHandler<GetObjectResponse, byte[]> asyncResponseHandler) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
-        try (S3AsyncClient client = getClient()) {
-            return client.getObject(getObjectRequest, asyncResponseHandler);
-        }
+        return client.getObject(getObjectRequest, asyncResponseHandler);
+
     }
 
     public static class AddObjectResponse<T> {
