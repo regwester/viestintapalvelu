@@ -32,6 +32,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -171,34 +172,36 @@ class S3LetterPublisher implements LetterPublisher {
     }
 
     @Override
+    @Transactional(propagation = Propagation.NESTED)
     public int publishLetterBatch(long letterBatchId) throws Exception {
         List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
         if(letters.size() > 0) {
-            publishLettersS3(letterBatchId, letters);
+            List<CompletableFuture<PutObjectResponse>> completableFutures = publishLettersS3(letterBatchId, letters);
+            CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[completableFutures.size()])).get();
             return letters.size();
         } else {
             return 0;
         }
     }
 
-
-    private void publishLettersS3(long letterBatchId, List<Long> letterIds) {
+    private List<CompletableFuture<PutObjectResponse>> publishLettersS3(long letterBatchId, List<Long> letterIds) {
         List<List<Long>> partition = Lists.partition(letterIds, 20);
 
         final LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
 
         String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
-
+        List<CompletableFuture<PutObjectResponse>> responses = new ArrayList<>();
         partition.forEach(ids -> {
             List<LetterReceiverLetter> byIds = letterReceiverLetterDAO.findByIds(ids);
             for (LetterReceiverLetter letter : byIds) {
                 try {
-                    addFileObject(letter, subFolderName);
+                    responses.add(addFileObject(letter, subFolderName));
                 } catch (IOException e) {
                     logger.error("Error saving LetterReceiverLetter {} to S3", e);
                 }
             }
         });
+        return responses;
     }
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String foldername) throws IOException {
