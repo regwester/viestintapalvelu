@@ -6,7 +6,6 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.annotation.Scope;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
 import software.amazon.awssdk.async.AsyncRequestProvider;
@@ -29,7 +28,6 @@ import java.util.*;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 @Component
 class OphS3Client {
@@ -37,8 +35,8 @@ class OphS3Client {
     private static final Logger log = LoggerFactory.getLogger(OphS3Client.class);
     private static final DateTimeFormatter dateFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss'Z'");
 
-    @Autowired
-    private Environment env;
+    private final Environment env;
+    private final AWSS3ClientFactory clientFactory;
 
     @Value("${viestintapalvelu.downloadfiles.s3.bucket}")
     private String bucket;
@@ -51,9 +49,21 @@ class OphS3Client {
     private static final String METADATA_UUID = "uuid";
     private Region awsRegion;
 
+    @Autowired
+    public OphS3Client(Environment env,
+                       AWSS3ClientFactory awss3ClientFactory) {
+        this.env = env;
+        this.clientFactory = awss3ClientFactory;
+    }
+
     @PostConstruct
     public void init() {
-        log.info("Active spring profiles={}", Arrays.toString(env.getActiveProfiles()));
+        if(env != null) {
+            log.info("Active spring profiles={}", Arrays.toString(env.getActiveProfiles()));
+        } else {
+            log.info("Spring profiles were null, this should not happen");
+        }
+
         awsRegion = Region.of(region);
         log.info("Region {}", region);
         log.info("Bucket {}", bucket);
@@ -169,7 +179,7 @@ class OphS3Client {
 
     private CompletableFuture<Header> headObject(DocumentId id, S3AsyncClient client) {
         HeadObjectRequest headObjectRequest = HeadObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
-        CompletableFuture<Header> headerCompletableFuture = client.headObject(headObjectRequest).thenApply(res -> {
+        return client.headObject(headObjectRequest).thenApply(res -> {
             String s = res.metadata().get(METADATA_TIMESTAMP);
             ZonedDateTime timestamp = ZonedDateTime.parse(s);
             return new Header(res.contentType(),
@@ -178,13 +188,8 @@ class OphS3Client {
                     res.contentLength(),
                     timestamp);
         });
-        return headerCompletableFuture;
     }
 
-
-    private CompletableFuture<byte[]> getObjectContents(S3Object obj, AsyncResponseHandler<GetObjectResponse, byte[]> asyncResponseHandler) {
-        return getObjectContents(new DocumentId(obj.key()), asyncResponseHandler);
-    }
 
     private CompletableFuture<byte[]> getObjectContents(DocumentId id, AsyncResponseHandler<GetObjectResponse, byte[]> asyncResponseHandler) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
@@ -212,12 +217,8 @@ class OphS3Client {
 
     }
 
-    private static final AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private S3AsyncClient getClient() {
-        return S3AsyncClient.builder()
-                .region(awsRegion)
-                .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
-                .build();
+        return clientFactory.getClient(awsRegion);
     }
 
 }

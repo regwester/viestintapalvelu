@@ -185,8 +185,6 @@ public interface LetterService {
 
     int publishLetterBatch(long letterBatchId) throws Exception;
 
-//    void publishLetter(long letterId, File letterBatchPublishDir);
-
     Optional<Long> getLetterBatchIdReadyForPublish(String hakuOid, String type, String language);
 
     Optional<Long> getLetterBatchIdReadyForEPosti(String hakuOid, String type, String language);
