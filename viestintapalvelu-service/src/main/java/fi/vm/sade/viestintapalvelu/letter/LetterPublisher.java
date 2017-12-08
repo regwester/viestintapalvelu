@@ -3,6 +3,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 import com.google.common.collect.Lists;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.util.S3Utils;
@@ -18,11 +19,8 @@ import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.async.AsyncRequestProvider;
 import software.amazon.awssdk.auth.AwsCredentialsProvider;
 import software.amazon.awssdk.auth.DefaultCredentialsProvider;
-import software.amazon.awssdk.auth.EnvironmentVariableCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
-import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectResponse;
 
@@ -37,7 +35,6 @@ import java.nio.file.StandardOpenOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 
 public interface LetterPublisher {
@@ -152,11 +149,15 @@ class S3LetterPublisher implements LetterPublisher {
     @Value("${viestintapalvelu.downloadfiles.s3.region}")
     private String region;
 
+    private final AWSS3ClientFactory clientFactory;
+
     @Autowired
     S3LetterPublisher(LetterBatchDAO letterBatchDAO,
-                      LetterReceiverLetterDAO letterReceiverLetterDAO) {
+                      LetterReceiverLetterDAO letterReceiverLetterDAO,
+                      AWSS3ClientFactory clientFactory) {
         this.letterBatchDAO = letterBatchDAO;
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
+        this.clientFactory = clientFactory;
     }
 
     @PostConstruct
@@ -229,11 +230,7 @@ class S3LetterPublisher implements LetterPublisher {
         }
     }
 
-    private static final AwsCredentialsProvider AWS_CREDENTIALS_PROVIDER = new DefaultCredentialsProvider();
     private S3AsyncClient getClient() {
-        return S3AsyncClient.builder()
-                .region(Region.of(region))
-                .credentialsProvider(AWS_CREDENTIALS_PROVIDER)
-                .build();
+        return clientFactory.getClient(Region.of(region));
     }
 }
