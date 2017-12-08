@@ -1704,20 +1704,20 @@
                                                 <echo>Generate DB Diagrams fom file '${schema.file}'.</echo>
                                                 <mkdir dir="${dbdiagram.output}" />
 
-                                                &lt;!&ndash; generate diagrams &ndash;&gt;
+                                                <!--generate diagrams-->
                                                 <exec executable="${dbdiagram.generator}">
                                                     <arg value="${schema.file}" />
                                                     <arg value="${dbdiagram.output}/${dbdiagram.filename}" />
                                                 </exec>
 
-                                                &lt;!&ndash; copy diagrams with name *-LATEST.* &ndash;&gt;
+                                                <!--copy diagrams with name *-LATEST.*-->
                                                 <copy file="${dbdiagram.output}/${dbdiagram.filename}.html"
                                                       tofile="${dbdiagram.output}/${project.artifactId}-LATEST.html"/>
 
                                                 <copy file="${dbdiagram.output}/${dbdiagram.filename}.png"
                                                       tofile="${dbdiagram.output}/${project.artifactId}-LATEST.png"/>
 
-                                                &lt;!&ndash; SCP files to pulpetti apache &ndash;&gt;
+                                                <!--SCP files to pulpetti apache-->
                                                 <scp todir="bamboo@pulpetti:/var/www/html/db/" trust="true"
                                                      keyfile="${user.home}/.ssh/id_rsa" passphrase="">
                                                     <fileset dir="${dbdiagram.output}">
