@@ -33,7 +33,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration(classes = LetterPublishTestConfig.class)
+@ContextConfiguration(classes = S3LetterPublisherTest.LetterPublishTestConfig.class)
 @TestPropertySource("classpath:test.properties")
 public class S3LetterPublisherTest {
 
@@ -49,71 +49,73 @@ public class S3LetterPublisherTest {
     public void publishLetterBatch() throws Exception {
         s3LetterPublisher.publishLetterBatch(1l);
     }
+
+    @Configuration
+    static class LetterPublishTestConfig {
+
+        @Autowired
+        Environment environment;
+
+        //@Bean
+        LetterReceiverLetterDAO getLetterReceiverLetterDAO() {
+            LetterReceiverLetterDAO letterReceiverLetterDAO = mock(LetterReceiverLetterDAO.class);
+
+
+            List<LetterReceiverLetter> letterReceiverLetters = new ArrayList<>();
+            LetterReceiverLetter letterReceiverLetter = new LetterReceiverLetter();
+            LetterReceivers letterReceivers = new LetterReceivers();
+            letterReceivers.setOidApplication("1.2.3.4");
+            letterReceiverLetter.setLetterReceivers(letterReceivers);
+            letterReceiverLetter.setLetter("letter".getBytes());
+            letterReceiverLetters.add(letterReceiverLetter);
+
+            when(letterReceiverLetterDAO.findByIds(any())).thenReturn(letterReceiverLetters);
+
+
+            return letterReceiverLetterDAO;
+        }
+
+
+        //@Bean
+        LetterBatchDAO getletterBatchDAO() {
+            LetterBatchDAO letterBatchDAO = mock(LetterBatchDAO.class);
+            List<Long> ids = LongStream.range(0, 2).boxed().collect(Collectors.toList());
+            when(letterBatchDAO.getUnpublishedLetterIds(anyLong())).thenReturn(ids);
+
+
+            final fi.vm.sade.viestintapalvelu.model.LetterBatch batch1 = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
+            batch1.setId(0l);
+
+            final fi.vm.sade.viestintapalvelu.model.LetterBatch batch2 = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
+            batch2.setId(1l);
+
+            final fi.vm.sade.viestintapalvelu.model.LetterBatch batch3 = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
+            batch3.setId(2l);
+
+            final Map<Long, fi.vm.sade.viestintapalvelu.model.LetterBatch> batches = new HashMap<>();
+            batches.put(0l, batch1);
+            batches.put(1l, batch1);
+            batches.put(2l, batch3);
+
+            when(letterBatchDAO.read(anyLong())).then(answer -> {
+                long id = answer.getArgumentAt(0, Long.class);
+
+                return batches.get(id);
+            });
+
+            return letterBatchDAO;
+        }
+
+        @Bean
+        S3LetterPublisher getS3LetterPublisher() {
+            return new S3LetterPublisher(getletterBatchDAO(), getLetterReceiverLetterDAO(), new PublisherTestClientFactory());
+        }
+
+
+    }
 }
 
-@Configuration
-class LetterPublishTestConfig {
 
-    @Autowired
-    Environment environment;
-
-    @Bean
-    LetterReceiverLetterDAO getLetterReceiverLetterDAO() {
-        LetterReceiverLetterDAO letterReceiverLetterDAO = mock(LetterReceiverLetterDAO.class);
-
-
-        List<LetterReceiverLetter> letterReceiverLetters = new ArrayList<>();
-        LetterReceiverLetter letterReceiverLetter = new LetterReceiverLetter();
-        LetterReceivers letterReceivers = new LetterReceivers();
-        letterReceivers.setOidApplication("1.2.3.4");
-        letterReceiverLetter.setLetterReceivers(letterReceivers);
-        letterReceiverLetter.setLetter("letter".getBytes());
-        letterReceiverLetters.add(letterReceiverLetter);
-
-        when(letterReceiverLetterDAO.findByIds(any())).thenReturn(letterReceiverLetters);
-
-
-        return letterReceiverLetterDAO;
-    }
-
-
-    @Bean
-    LetterBatchDAO getletterBatchDAO() {
-        LetterBatchDAO letterBatchDAO = mock(LetterBatchDAO.class);
-        List<Long> ids = LongStream.range(0, 2).boxed().collect(Collectors.toList());
-        when(letterBatchDAO.getUnpublishedLetterIds(anyLong())).thenReturn(ids);
-
-
-        final fi.vm.sade.viestintapalvelu.model.LetterBatch batch1 = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
-        batch1.setId(0l);
-
-        final fi.vm.sade.viestintapalvelu.model.LetterBatch batch2 = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
-        batch2.setId(1l);
-
-        final fi.vm.sade.viestintapalvelu.model.LetterBatch batch3 = new fi.vm.sade.viestintapalvelu.model.LetterBatch();
-        batch3.setId(2l);
-
-        final Map<Long, fi.vm.sade.viestintapalvelu.model.LetterBatch> batches = new HashMap<>();
-        batches.put(0l, batch1);
-        batches.put(1l, batch1);
-        batches.put(2l, batch3);
-
-        when(letterBatchDAO.read(anyLong())).then(answer -> {
-            long id = answer.getArgumentAt(0, Long.class);
-
-            return batches.get(id);
-        });
-
-        return letterBatchDAO;
-    }
-
-    @Bean
-    S3LetterPublisher getS3LetterPublisher() {
-        return new S3LetterPublisher(getletterBatchDAO(), getLetterReceiverLetterDAO(), new PublisherTestClientFactory());
-    }
-
-
-}
 
 class PublisherTestClientFactory implements AWSS3ClientFactory {
 

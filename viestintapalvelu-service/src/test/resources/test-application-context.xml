@@ -39,6 +39,11 @@
     </util:list>
     <bean id="customJsonProvider" class="fi.vm.sade.viestintapalvelu.feature.CustomJsonProvider"/>
     -->
+
+    <bean id="downloadCache" class="fi.vm.sade.viestintapalvelu.download.cache.DownloadCacheLocal"/>
+    <bean id="awsS3ClientFactory" class="fi.vm.sade.viestintapalvelu.download.cache.TestClientFactory"/>
+    <bean id="letterPublisher" class="fi.vm.sade.viestintapalvelu.letter.LocalLetterPublisher"/>
+
     <bean id="mapper" class="fi.vm.sade.viestintapalvelu.feature.mapper.Mapper"/>
     <bean id="pagingAndSortingDTOConverter" class="fi.vm.sade.converter.PagingAndSortingDTOConverter"/>
     <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" />
