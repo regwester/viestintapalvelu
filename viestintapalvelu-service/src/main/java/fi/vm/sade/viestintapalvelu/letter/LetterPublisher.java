@@ -5,6 +5,7 @@ import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.util.S3Utils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -162,20 +163,9 @@ class S3LetterPublisher implements LetterPublisher {
     public void init() {
         log.info("Region {}", region);
         log.info("Bucket {}", bucket);
-        try {
-            S3AsyncClient client = getClient();
-            if (client == null) {
-                log.error("Error occurred while initializing s3 client, client is null");
-                return;
-            }
-            CompletableFuture<HeadBucketResponse> resFut = client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
-            resFut.whenCompleteAsync((headBucketResponse, throwable) -> {
-                if (throwable != null) {
-                    log.error("Error connecting to S3 bucket {} in region {}", bucket, region, throwable);
-                }
-            });
-        } catch (Exception e) {
-            log.error("Error occurred while initializing s3 client", e);
+        boolean success = S3Utils.canConnectToBucket(getClient(), bucket);
+        if(!success) {
+            log.error("LetterPublisher S3 client could not connect to S3 bucket {} in region {}", bucket, region);
         }
     }
 
@@ -214,7 +204,7 @@ class S3LetterPublisher implements LetterPublisher {
         final Path tempFile = Files.createTempFile(letter.getLetterReceivers().getOidApplication(), ".pdf");
         Long length = (long) letter.getLetter().length;
         Map<String, String> metadata = new HashMap<>();
-        String id = Paths.get(foldername,tempFile.toString()).toString();
+        String id = Paths.get(letterPublishDir.getAbsolutePath(),foldername,tempFile.toString()).toString();
         final PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucket)
                 .contentType(letter.getContentType())

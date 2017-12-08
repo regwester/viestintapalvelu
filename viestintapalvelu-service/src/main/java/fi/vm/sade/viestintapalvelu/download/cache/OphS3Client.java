@@ -2,6 +2,7 @@ package fi.vm.sade.viestintapalvelu.download.cache;
 
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.Header;
+import fi.vm.sade.viestintapalvelu.util.S3Utils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,20 +68,9 @@ class OphS3Client {
         awsRegion = Region.of(region);
         log.info("Region {}", region);
         log.info("Bucket {}", bucket);
-        try {
-            S3AsyncClient client = getClient();
-            if (client == null) {
-                log.error("Error occurred while initializing s3 client, client is null");
-                return;
-            }
-            CompletableFuture<HeadBucketResponse> resFut = client.headBucket(HeadBucketRequest.builder().bucket(bucket).build());
-            resFut.whenCompleteAsync((headBucketResponse, throwable) -> {
-                if (throwable != null) {
-                    log.error("Error connecting to S3 bucket {} in region {}", bucket, region, throwable);
-                }
-            });
-        } catch (Exception e) {
-            log.error("Error occurred while initializing s3 client", e);
+        boolean isSuccessful = S3Utils.canConnectToBucket(getClient(), bucket);
+        if(!isSuccessful) {
+            log.error("OphS3Client could not connect to S3 bucket {} in region {}", bucket, region);
         }
     }
 
