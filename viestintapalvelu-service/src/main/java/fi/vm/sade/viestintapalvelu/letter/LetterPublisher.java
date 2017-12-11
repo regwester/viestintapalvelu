@@ -135,11 +135,9 @@ class LocalLetterPublisher implements LetterPublisher {
 @Profile("aws")
 class S3LetterPublisher implements LetterPublisher {
 
-    private static final Logger log = LoggerFactory.getLogger(S3LetterPublisher.class);
-
     private final LetterBatchDAO letterBatchDAO;
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
-    public static final Logger logger = LoggerFactory.getLogger(S3LetterPublisher.class);
+    private static final Logger logger = LoggerFactory.getLogger(S3LetterPublisher.class);
 
     @Value("${viestintapalvelu.letter.publish.dir}")
     private File letterPublishDir;
@@ -163,11 +161,11 @@ class S3LetterPublisher implements LetterPublisher {
 
     @PostConstruct
     public void init() {
-        log.info("Region {}", region);
-        log.info("Bucket {}", bucket);
+        logger.info("Region {}", region);
+        logger.info("Bucket {}", bucket);
         boolean success = S3Utils.canConnectToBucket(getClient(), bucket);
         if(!success) {
-            log.error("LetterPublisher S3 client could not connect to S3 bucket {} in region {}", bucket, region);
+            logger.error("LetterPublisher S3 client could not connect to S3 bucket {} in region {}", bucket, region);
         }
     }
 
