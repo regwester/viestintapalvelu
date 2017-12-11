@@ -98,6 +98,7 @@ Tsekkaa spring/application-context.xml:t
 # AWS-juttuja
 
 Palvelu voi käyttää amazonin S3 palvelua tallentamaan pdf-tiedostoja. 
-Toiminto otetaan käyttöön suorittamalla palvelu "aws"-spring profiililla.
+Ominaisuus otetaan käyttöön suorittamalla palvelu "aws"-spring profiililla. 
+Profiili annetaan komentoriviparametrina tyyliin `-Dspring.profiles.active=aws`.
 Palvelu tallentaa tiedostot palvelimelle jos profiilia ei käytetä. AWS-profiili vaatii toimiakseen toimivat
 AWS tunnarit. [Dokumentaatio](http://docs.aws.amazon.com/sdk-for-java/v2/developer-guide/credentials.html)
