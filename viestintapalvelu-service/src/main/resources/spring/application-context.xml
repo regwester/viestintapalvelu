@@ -34,7 +34,7 @@
         <context:component-scan base-package="fi.vm.sade.viestintapalvelu"/>
         <context:property-placeholder
                 location="file:///${user.home:''}/oph-configuration/common.properties, file:///${user.home:''}/oph-configuration/viestintapalvelu.properties"
-                ignore-resource-not-found="false" properties-ref="defaultProps" ignore-unresolvable="false"/>
+                ignore-resource-not-found="true" properties-ref="defaultProps" ignore-unresolvable="false"/>
 
         <bean id="defaultProps" class="org.springframework.beans.factory.config.PropertiesFactoryBean">
             <property name="properties">
