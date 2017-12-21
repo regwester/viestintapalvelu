@@ -170,7 +170,7 @@ class S3LetterPublisher implements LetterPublisher {
     }
 
     @Override
-    @Transactional(propagation = Propagation.NESTED)
+    @Transactional
     public int publishLetterBatch(long letterBatchId) throws Exception {
         List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
         if(letters.size() > 0) {
