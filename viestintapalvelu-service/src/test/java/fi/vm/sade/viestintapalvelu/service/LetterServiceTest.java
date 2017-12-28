@@ -90,13 +90,15 @@ public class LetterServiceTest {
     private IPostiDAO iPostiDAO;
     @Mock
     private DokumenttiResource dokumenttipalveluRestClient;
+    @Mock
+    private LetterPublisher letterPublisher;
 
     @Before
     public void setup() {
         this.letterService = new LetterServiceImpl(mockedLetterBatchDAO, mockedLetterReceiverLetterDAO,
             mockedCurrentUserComponent, templateDAO, new LetterBatchDtoConverter(),
             mockedLetterReceiversDao, new ObjectMapperProvider(), iPostiDAO, new LetterBatchStatusLegalityChecker(),
-            new DocumentBuilder(), new DummyDokumenttiIdProvder());
+            new DocumentBuilder(), new DummyDokumenttiIdProvder(), letterPublisher);
         this.letterService.setLetterBuilder(letterBuilder);
         this.letterService.setDokumenttipalveluRestClient(dokumenttipalveluRestClient);
     }

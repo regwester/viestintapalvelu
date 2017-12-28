@@ -31,6 +31,8 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.viestintapalvelu.download.cache.DocumentId;
+import fi.vm.sade.viestintapalvelu.download.cache.DownloadCache;
 import org.springframework.stereotype.Service;
 
 import com.wordnik.swagger.annotations.Api;
@@ -74,7 +76,7 @@ public class DownloadResource {
     @ApiResponses(@ApiResponse(code = 400, message = "BAD_REQUEST; annetulla ID:llä ei löydy ladattavaa dokumenttia"))
     public Response download(@ApiParam(value = "Ladattavan dokumentin ID", required = true) @PathParam("documentId") String input,
             @Context HttpServletResponse response) {
-        Download download = downloadCache.get(FilenameHelper.withoutExtension(input));
+        Download download = downloadCache.get(new DocumentId(FilenameHelper.withoutExtension(input)));
         if (download == null) {
             return Response.status(Status.BAD_REQUEST).build();
         }

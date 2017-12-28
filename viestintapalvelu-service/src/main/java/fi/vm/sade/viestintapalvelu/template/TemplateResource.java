@@ -595,7 +595,14 @@ public class TemplateResource extends AsynchronousResource {
     @Transactional
     @ApiOperation(value = TemplateByID, notes = TemplateByID, response = Template.class)
     public Template getTemplateByID(@PathParam("templateId") String templateId, @Context HttpServletRequest request) {
-        Long id = Long.parseLong(templateId);
+        final Long id;
+        try {
+            id = Long.parseLong(templateId);
+        } catch (NumberFormatException e) {
+            log.error("Error parsing template id {} into Long type", templateId, e);
+            return null;
+        }
+
         ContentStructureType type = parseStructureType(request.getParameter("type"));
         return templateService.findById(id, type);
     }

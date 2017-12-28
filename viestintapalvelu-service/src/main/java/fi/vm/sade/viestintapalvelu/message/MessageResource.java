@@ -28,7 +28,7 @@ import org.springframework.stereotype.Service;
 
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.download.cache.DownloadCache;
 
 /**
  * 

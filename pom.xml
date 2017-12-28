@@ -70,9 +70,9 @@
         <http.client.version>4.2.5</http.client.version>
         <icu4j.version>3.4.4</icu4j.version>
         <itext.version>2.1.7</itext.version>
-        <jackson.version>2.4.1</jackson.version>
+        <jackson.version>2.8.5</jackson.version>
         <jasmine-maven-plugin.version>1.3.1.3</jasmine-maven-plugin.version>
-        <javassist.version>3.18.1-GA</javassist.version>
+        <javassist.version>3.22.0-GA</javassist.version>
         <javax.inject.version>1</javax.inject.version>
         <javax.persistence>2.0.0</javax.persistence>
         <jaxb.version>2.1.14</jaxb.version>
@@ -84,23 +84,23 @@
         <jsch.version>0.1.50</jsch.version>
         <jsoup.version>1.7.2</jsoup.version>
         <jtidy.version>4aug2000r7-dev</jtidy.version>
-        <junit.version>4.11</junit.version>
+        <junit.version>4.12</junit.version>
         <log4j.version>1.2.17</log4j.version>
         <mail.version>1.4.7</mail.version>
-        <mockito.version>1.9.5</mockito.version>
+        <mockito.version>1.10.19</mockito.version>
         <organisaatio.version>11.6</organisaatio.version>
         <phantomjs.version>1.9.2</phantomjs.version>
         <phantomjs-maven-plugin.version>0.3</phantomjs-maven-plugin.version>
         <!-- jdbc4 is for JDK1.6 and jdbc41 is for JDK1.7 -->
         <postgresql.version>9.4.1209</postgresql.version>
-        <powermock.version>1.6.0</powermock.version>
+        <powermock.version>1.7.3</powermock.version>
         <pdfbox.version>1.8.1</pdfbox.version>
-        <querydsl.version>3.3.4</querydsl.version>
+        <querydsl.version>3.4.3</querydsl.version>
         <sade-generic.version>${generic.version}</sade-generic.version>
         <servlet.version>3.0.1</servlet.version>
         <springockito.version>1.0.9</springockito.version>
-        <spring.version>3.2.10.RELEASE</spring.version>
-        <spring-security.version>3.1.3.RELEASE</spring-security.version>
+        <spring.version>4.3.12.RELEASE</spring.version>
+        <spring-security.version>4.2.3.RELEASE</spring-security.version>
         <slf4j.version>1.7.7</slf4j.version>
         <surefire.plugin.version>2.12</surefire.plugin.version>
         <swagger.version>1.3.7</swagger.version>
@@ -745,8 +745,8 @@
                     <artifactId>maven-compiler-plugin</artifactId>
                     <version>3.1</version>
                     <configuration>
-                        <source>1.7</source>
-                        <target>1.7</target>
+                        <source>1.8</source>
+                        <target>1.8</target>
                         <encoding>UTF-8</encoding>
                         <debug>true</debug>
                         <debuglevel>lines,vars,source</debuglevel>
@@ -796,7 +796,7 @@
                 <plugin>
                     <groupId>org.codehaus.mojo</groupId>
                     <artifactId>build-helper-maven-plugin</artifactId>
-                    <version>1.8</version>
+                    <version>3.0.0</version>
                     <executions>
                         <execution>
                             <id>add-generated-sources</id>
@@ -816,7 +816,7 @@
                 <plugin>
                     <groupId>com.mysema.maven</groupId>
                     <artifactId>apt-maven-plugin</artifactId>
-                    <version>1.1.1</version>
+                    <version>1.1.3</version>
                     <executions>
                         <execution>
                             <phase>generate-sources</phase>
@@ -845,6 +845,13 @@
                         <user>oph</user>
                         <password>oph</password>
                     </configuration>
+                    <dependencies>
+                        <dependency>
+                            <groupId>org.postgresql</groupId>
+                            <artifactId>postgresql</artifactId>
+                            <version>${postgresql.version}</version>
+                        </dependency>
+                    </dependencies>
                 </plugin>
                 <plugin>
                     <groupId>org.apache.tomcat.maven</groupId>
@@ -855,36 +862,26 @@
                         <path>/viestintapalvelu</path>
                     </configuration>
                 </plugin>
+
                 <plugin>
-                    <groupId>de.smartics.maven.plugin</groupId>
+                    <groupId>de.juplo</groupId>
                     <artifactId>hibernate4-maven-plugin</artifactId>
-                    <version>0.2.0</version>
+                    <version>1.1.1</version>
                     <executions>
                         <execution>
-                            <id>export</id>
+                            <id>export-schema</id>
                             <phase>compile</phase>
                             <goals>
-                                <goal>hbm2ddl</goal>
+                                <goal>export</goal>
                             </goals>
                         </execution>
                     </executions>
                     <configuration>
-                        <unitName>viestinta</unitName>
-                        <createOutputFile>${project.build.directory}/hibernate3/sql/schema.ddl</createOutputFile>
-                        <dropOutputFile>${project.build.directory}/hibernate3/sql/drop.ddl</dropOutputFile>
+                        <hibernateDialect>org.hibernate.dialect.PostgreSQL82Dialect</hibernateDialect>
+                        <target>NONE</target>
+                        <type>CREATE</type>
+                        <outputFile>${project.build.directory}/hibernate4/sql/schema.ddl</outputFile>
                     </configuration>
-                    <dependencies>
-                        <dependency>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-core</artifactId>
-                            <version>${hibernate.version}</version>
-                        </dependency>
-                        <dependency>
-                            <groupId>org.hibernate</groupId>
-                            <artifactId>hibernate-ehcache</artifactId>
-                            <version>${hibernate.version}</version>
-                        </dependency>
-                    </dependencies>
                 </plugin>
                 <!-- Plugins taken from build-parent -->
                 <plugin>
@@ -1027,7 +1024,6 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>2.17</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -1652,7 +1648,7 @@
                                 <configuration>
                                     <artifacts>
                                         <artifact>
-                                            <file>target/hibernate3/sql/schema.ddl</file>
+                                            <file>target/hibernate4/sql/schema.ddl</file>
                                             <type>ddl</type>
                                             <classifier>schema</classifier>
                                         </artifact>
@@ -1682,7 +1678,7 @@
                 </property>
             </activation>
             <properties>
-                <schema.file>${project.basedir}/target/hibernate3/sql/schema.ddl</schema.file>
+                <schema.file>${project.basedir}/target/hibernate4/sql/schema.ddl</schema.file>
                 <dbdiagram.generator>/usr/sbin/sql2diagram</dbdiagram.generator>
                 <dbdiagram.output>${project.basedir}/target/sql2diagram/</dbdiagram.output>
                 <dbdiagram.filename>${project.artifactId}-${project.version}</dbdiagram.filename>
@@ -1708,20 +1704,20 @@
                                                 <echo>Generate DB Diagrams fom file '${schema.file}'.</echo>
                                                 <mkdir dir="${dbdiagram.output}" />
 
-                                                <!-- generate diagrams -->
+                                                <!--generate diagrams-->
                                                 <exec executable="${dbdiagram.generator}">
                                                     <arg value="${schema.file}" />
                                                     <arg value="${dbdiagram.output}/${dbdiagram.filename}" />
                                                 </exec>
 
-                                                <!-- copy diagrams with name *-LATEST.* -->
+                                                <!--copy diagrams with name *-LATEST.*-->
                                                 <copy file="${dbdiagram.output}/${dbdiagram.filename}.html"
                                                       tofile="${dbdiagram.output}/${project.artifactId}-LATEST.html"/>
 
                                                 <copy file="${dbdiagram.output}/${dbdiagram.filename}.png"
                                                       tofile="${dbdiagram.output}/${project.artifactId}-LATEST.png"/>
 
-                                                <!-- SCP files to pulpetti apache -->
+                                                <!--SCP files to pulpetti apache-->
                                                 <scp todir="bamboo@pulpetti:/var/www/html/db/" trust="true"
                                                      keyfile="${user.home}/.ssh/id_rsa" passphrase="">
                                                     <fileset dir="${dbdiagram.output}">

@@ -15,22 +15,22 @@
  **/
 package fi.vm.sade.viestintapalvelu.download;
 
-import java.util.Date;
+import java.time.ZonedDateTime;
 
 public class Download {
     private final String contentType;
     private final String filename;
     private final byte[] binaryDocument;
-    private final Date timestamp;
+    private final ZonedDateTime timestamp;
 
     public Download(String contentType, String filename, byte[] binaryDocument) {
         this.contentType = contentType;
         this.filename = filename;
         this.binaryDocument = binaryDocument;
-        this.timestamp = new Date();
+        this.timestamp = ZonedDateTime.now();
     }
 
-    public Date getTimestamp() {
+    public ZonedDateTime getTimestamp() {
         return timestamp;
     }
 

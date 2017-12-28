@@ -37,6 +37,8 @@ public interface LetterReceiverLetterDAO extends JpaDAO<LetterReceiverLetter, Lo
      */
     List<LetterReceiverLetter> getLetterReceiverLettersByLetterReceiverIds(List<Long> letterReceiverIDs);
 
+    List<LetterReceiverLetter> findByIds(List<Long> ids);
+
     @Transactional
     int markAsPublished(Long id);
 }

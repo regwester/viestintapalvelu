@@ -112,6 +112,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
                 LOG.info("Publishing {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
                 return Response.ok(numberOfPublishedLetters).build();
             } catch (Exception e) {
+                LOG.error("Exception while publishing letter batch id {}", letterBatchId, e);
                 return Response.status(Response.Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
             }
         }

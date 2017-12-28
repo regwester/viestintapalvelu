@@ -228,10 +228,17 @@
         <dependency>
             <groupId>com.fasterxml.jackson.jaxrs</groupId>
             <artifactId>jackson-jaxrs-json-provider</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.datatype</groupId>
             <artifactId>jackson-datatype-joda</artifactId>
+            <version>${jackson.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.fasterxml.jackson.datatype</groupId>
+            <artifactId>jackson-datatype-jdk8</artifactId>
+            <version>${jackson.version}</version>
         </dependency>
         <dependency>
             <groupId>com.google.code.gson</groupId>
@@ -242,11 +249,13 @@
         <dependency>
             <groupId>cglib</groupId>
             <artifactId>cglib</artifactId>
+            <version>3.2.5</version>
         </dependency>
 
         <dependency>
             <groupId>com.jcraft</groupId>
             <artifactId>jsch</artifactId>
+            <version>0.1.54</version>
         </dependency>
 
         <!-- Apache Commons Upload -->
@@ -554,6 +563,10 @@
                     <groupId>com.googlecode.lambdaj</groupId>
                     <artifactId>lambdaj</artifactId>
                 </exclusion>
+                <exclusion>
+                    <groupId>javassist</groupId>
+                    <artifactId>javassist</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
 
@@ -568,6 +581,12 @@
                 </exclusion>
             </exclusions>
 
+        </dependency>
+
+        <dependency>
+            <groupId>software.amazon.awssdk</groupId>
+            <artifactId>s3</artifactId>
+            <version>2.0.0-preview-4</version>
         </dependency>
 
         <!-- Apache PDFBox API library for PDF document handling -->
@@ -663,7 +682,7 @@
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
-                <version>1.4</version>
+                <version>3.0.0</version>
                 <executions>
                     <execution>
                         <id>test</id>
@@ -682,6 +701,10 @@
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <configuration>
+                    <source>1.8</source>
+                    <target>1.8</target>
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
@@ -708,9 +731,16 @@
                     </schemas>
                 </configuration>
             </plugin>
+
             <plugin>
-                <groupId>de.smartics.maven.plugin</groupId>
+                <groupId>de.juplo</groupId>
                 <artifactId>hibernate4-maven-plugin</artifactId>
+            </plugin>
+
+            <!-- This generates various Q-prefixed classes under generated-sources -->
+            <plugin>
+                <groupId>com.mysema.maven</groupId>
+                <artifactId>apt-maven-plugin</artifactId>
             </plugin>
 
             <plugin>
@@ -739,10 +769,8 @@
                     </execution>
                 </executions>
             </plugin>
-            <plugin>
-                <groupId>com.mysema.maven</groupId>
-                <artifactId>apt-maven-plugin</artifactId>
-            </plugin>
+
+
         </plugins>
         <pluginManagement>
             <plugins>
@@ -792,6 +820,8 @@
             </properties>
             <build>
                 <plugins>
+
+
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-dependency-plugin</artifactId>
@@ -826,10 +856,10 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-compiler-plugin</artifactId>
-                        <version>2.3.2</version>
+                        <version>3.7.0</version>
                         <configuration>
-                            <source>1.7</source>
-                            <target>1.7</target>
+                            <source>1.8</source>
+                            <target>1.8</target>
                             <compilerArguments>
                                 <!-- tell compiler to use endorsed dir -->
                                 <endorseddirs>${endorsed.dir}</endorseddirs>

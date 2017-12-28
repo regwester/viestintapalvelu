@@ -46,7 +46,7 @@ import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.download.cache.DownloadCache;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
@@ -94,7 +94,9 @@ public class KoekutsukirjeResource extends AsynchronousResource {
         String documentId;
         try {
             byte[] pdf = koekutsukirjeBuilder.printPDF(input);
-            documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "koekutsukirje.pdf", pdf));
+            documentId = downloadCache
+                    .addDocument(new Download("application/pdf;charset=utf-8", "koekutsukirje.pdf", pdf))
+                    .getDocumentId();
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("Koekutsukirje PDF failed: {}", e.getMessage());

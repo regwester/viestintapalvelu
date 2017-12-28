@@ -313,7 +313,7 @@ public class TemplateResourceTest {
     @ComponentScan(value = { "fi.vm.sade.converter", "fi.vm.sade.externalinterface" })
     public static class Config {
         @Bean
-        TransactionalActions transactionlActions() {
+        public TransactionalActions transactionalActions() {
             return new TransactionalActions();
         }
     }

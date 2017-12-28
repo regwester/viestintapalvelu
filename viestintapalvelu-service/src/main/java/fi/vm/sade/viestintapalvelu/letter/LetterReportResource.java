@@ -49,7 +49,7 @@ import com.wordnik.swagger.annotations.ApiParam;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Constants;
 import fi.vm.sade.viestintapalvelu.Urls;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.download.cache.DownloadCache;
 import fi.vm.sade.viestintapalvelu.dto.OrganizationDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchReportDTO;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterBatchesReportDTO;

@@ -15,16 +15,13 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao;
 
-import java.util.*;
-
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.persistence.PersistenceException;
-
+import com.google.common.base.Optional;
 import com.google.common.collect.ImmutableMap;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.model.*;
+import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -38,10 +35,10 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Optional;
-
-import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.PersistenceException;
+import java.util.*;
 
 import static org.junit.Assert.*;
 
@@ -75,7 +72,7 @@ public class LetterBatchDAOTest {
         assertTrue(foundLetterBatch.getLetterReceivers().size() > 0);
         assertNotNull(foundLetterBatch.getLetterReplacements());
         assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
-        assertEquals("Status is 'processing' by default in the test data generator", LetterBatch.Status.processing, foundLetterBatch.getBatchStatus());
+        assertEquals("Status is 'processing' by default in the test data generator", Status.processing, foundLetterBatch.getBatchStatus());
     }
 
     @Test
@@ -202,13 +199,13 @@ public class LetterBatchDAOTest {
         assertNotNull(foundLetterBatch.getLetterReplacements());
         assertTrue(foundLetterBatch.getLetterReplacements().size() > 0);
         assertEquals("Status is 'processing' by default in the test data generator",
-                LetterBatch.Status.processing, foundLetterBatch.getBatchStatus());
+                Status.processing, foundLetterBatch.getBatchStatus());
     }
 
     @Test(expected = PersistenceException.class)
     public void insertNullError() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
-        letterBatch.setBatchStatus(LetterBatch.Status.error);
+        letterBatch.setBatchStatus(Status.error);
         LetterBatchProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
@@ -219,15 +216,15 @@ public class LetterBatchDAOTest {
     @Test
     public void getBatchStatus() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
-        letterBatch.setBatchStatus(LetterBatch.Status.processing);
+        letterBatch.setBatchStatus(Status.processing);
         long idA = letterBatchDAO.insert(letterBatch).getId();
 
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
-        letterBatch.setBatchStatus(LetterBatch.Status.ready);
+        letterBatch.setBatchStatus(Status.ready);
         long idB = letterBatchDAO.insert(letterBatch).getId();
 
         letterBatch = DocumentProviderTestData.getLetterBatch(null);
-        letterBatch.setBatchStatus(LetterBatch.Status.error);
+        letterBatch.setBatchStatus(Status.error);
         LetterBatchLetterProcessingError error = new LetterBatchLetterProcessingError();
         error.setErrorCause("Testing failure case");
         error.setLetterBatch(letterBatch);
@@ -479,7 +476,7 @@ public class LetterBatchDAOTest {
         return insertLetterBatchForPersonOids(hakuOid, personOids, templateName, readyForPublish, Status.ready);
     }
 
-    private long insertLetterBatchForPersonOids(String hakuOid, List<String> personOids, String templateName, boolean readyForPublish, LetterBatch.Status status) {
+    private long insertLetterBatchForPersonOids(String hakuOid, List<String> personOids, String templateName, boolean readyForPublish, Status status) {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null, personOids.size());
         letterBatch.setApplicationPeriod(hakuOid);
         letterBatch.setTag(hakuOid);

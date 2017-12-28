@@ -31,6 +31,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.download.cache.DocumentId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -47,7 +48,7 @@ import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
 import fi.vm.sade.viestintapalvelu.AsynchronousResource;
 import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.DownloadCache;
+import fi.vm.sade.viestintapalvelu.download.cache.DownloadCache;
 
 import static fi.vm.sade.viestintapalvelu.Utils.filenamePrefixWithUsernameAndTimestamp;
 import static fi.vm.sade.viestintapalvelu.Utils.globalRandomId;
@@ -85,16 +86,14 @@ public class AddressLabelResource extends AsynchronousResource {
     @ApiOperation(value = ApiPDFSync, notes = ApiPDFSync)
     @ApiResponses(@ApiResponse(code = 400, message = PDFResponse400))
     public Response pdf(@ApiParam(value = "Osoitetiedot", required = true) final AddressLabelBatch input, @Context HttpServletRequest request) {
-        String documentId;
         try {
             byte[] pdf = labelBuilder.printPDF(input); // TODO: add validation?
-            documentId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
+            DocumentId docId = downloadCache.addDocument(new Download("application/pdf;charset=utf-8", "addresslabels.pdf", pdf));
+            return createResponse(request, docId.getDocumentId() + ".pdf");
         } catch (Exception e) {
-            e.printStackTrace();
-            LOG.error("AddressLabel PDF failed: {}", e.getMessage());
+            LOG.error("AddressLabel PDF failed: {}", e);
             return createFailureResponse(request);
         }
-        return createResponse(request, documentId + ".pdf");
     }
 
     @POST
@@ -107,7 +106,9 @@ public class AddressLabelResource extends AsynchronousResource {
         String documentId;
         try {
             byte[] csv = labelBuilder.printCSV(input);
-            documentId = downloadCache.addDocument(new Download("application/vnd.ms-excel", "addresslabels.xls", csv));
+            documentId = downloadCache
+                    .addDocument(new Download("application/vnd.ms-excel", "addresslabels.xls", csv))
+                    .getDocumentId();
         } catch (Exception e) {
             e.printStackTrace();
             LOG.error("AddressLabel Excel failed: {}", e.getMessage());
