@@ -98,15 +98,15 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
-    public Response sendEmail(EmailData emailData) throws Exception {
-        prepareSendEmail(emailData);
+    public Response sendEmail(EmailData emailData, boolean sanitize) throws Exception {
+        prepareSendEmail(emailData, sanitize);
         String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
         emailService.checkEmailQueues();
         log.debug("DB index is {}", sendId);
         return Response.ok(new EmailSendId(sendId)).build();
     }
 
-    private void prepareSendEmail(EmailData emailData) {
+    private void prepareSendEmail(EmailData emailData, boolean sanitize) {
     /*
      *  Select source address
      */
@@ -122,18 +122,20 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
         attachIncludedAttachments(emailData);
 
         /* Sanitize body content */
-        sanitizeInput(emailData);
+        if (sanitize) {
+            sanitizeInput(emailData);
+        }
     }
 
     @Override
-    public Response sendEmailBehindFirewall(EmailData emailData) throws Exception {
+    public Response sendEmailBehindFirewall(EmailData emailData, boolean sanitize) throws Exception {
         log.info("Sending {} emails behind firewall!", emailData.getRecipient().size());
-        return sendEmail(emailData);
+        return sendEmail(emailData, sanitize);
     }
 
     @Override
-    public Response sendEmailAsync(EmailData emailData) throws Exception {
-        prepareSendEmail(emailData);
+    public Response sendEmailAsync(EmailData emailData, boolean sanitize) throws Exception {
+        prepareSendEmail(emailData, sanitize);
         ReportedMessage message =  groupEmailReportingService.createSendingGroupEmail(emailData);
         Thread recipientProcessor = new Thread(new AsyncRecipientProcessor(message, emailData.getRecipient()));
         recipientProcessor.start();
@@ -141,9 +143,9 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
-    public Response sendEmailAsyncBehindFirewall(EmailData emailData) throws Exception {
+    public Response sendEmailAsyncBehindFirewall(EmailData emailData, boolean sanitize) throws Exception {
         log.info("Sending {} emails asynchroniosly behind firewall!", emailData.getRecipient().size());
-        return sendEmailAsync(emailData);
+        return sendEmailAsync(emailData, sanitize);
     }
 
     @Override
@@ -154,20 +156,22 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     }
 
     @Override
-    public Response getPreview(EmailData emailData) throws Exception {
+    public Response getPreview(EmailData emailData, boolean sanitize) throws Exception {
         log.debug("getPreview called with EmailData: {}", emailData);
         overrideFromAddress(emailData);
         chooseTemplate(emailData);
-        sanitizeInput(emailData);
+        if (sanitize) {
+            sanitizeInput(emailData);
+        }
         log.debug("getPreview called with EmailData: after template choosing {}", emailData);
         String email = emailService.getEML(emailData, "vastaanottaja@example.com");
         return Response.ok(email).header("Content-Disposition", "attachment; filename=\"preview.eml\"").build();
     }
 
     @Override
-    public Response getPreviewBehindFirewall(EmailData emailData) throws Exception {
+    public Response getPreviewBehindFirewall(EmailData emailData, boolean sanitize) throws Exception {
         log.info("Preview email behind firewall!");
-        return getPreview(emailData);
+        return getPreview(emailData, sanitize);
     }
 
     @Override

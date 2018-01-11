@@ -165,7 +165,7 @@ public class EmailResourceIT {
         doAnswer(answersForAttachmentDeletions).when(attachmentResource).deleteByUris(any(UrisContainerDto.class));
 
         long start = System.currentTimeMillis();
-        Response response = emailResource.sendEmail(emailData);
+        Response response = emailResource.sendEmail(emailData, true);
         assertNotNull(response);
         assertNotNull(response.getEntity());
         assertTrue(response.getEntity() instanceof EmailSendId);
