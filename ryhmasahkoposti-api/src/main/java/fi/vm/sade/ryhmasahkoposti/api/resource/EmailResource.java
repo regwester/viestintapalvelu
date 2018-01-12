@@ -22,10 +22,12 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.DefaultValue;
 import javax.ws.rs.GET;
 import javax.ws.rs.POST;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
+import javax.ws.rs.QueryParam;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -102,14 +104,16 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille", notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
-    Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
+    Response sendEmail(@ApiParam(value = "Lähettetävän sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData,
+                       @DefaultValue("true") @QueryParam("sanitize") boolean sanitize) throws Exception;
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
     @Path("/firewall")
-    Response sendEmailBehindFirewall(EmailData emailData) throws Exception;
+    Response sendEmailBehindFirewall(EmailData emailData,
+                                     @DefaultValue("true") @QueryParam("sanitize") boolean sanitize) throws Exception;
 
 
     @POST
@@ -118,14 +122,16 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.SEND)
     @ApiOperation(value = "Lähettää ryhmäsähköpostin vastaanottajille asynkronisesti", notes = "Lähetettävä sähköposti ei sisällä alaviitettä", response = EmailSendId.class)
     @ApiResponses({ @ApiResponse(code = 500, message = "Internal service error tai liittymävirheen, jos yhteys henkilo- tai organisaatiopalveluun ei toimi") })
-    Response sendEmailAsync(EmailData emailData) throws Exception;
+    Response sendEmailAsync(EmailData emailData,
+                            @DefaultValue("true") @QueryParam("sanitize") boolean sanitize) throws Exception;
 
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
     @Path("/async/firewall")
-    Response sendEmailAsyncBehindFirewall(EmailData emailData) throws Exception;
+    Response sendEmailAsyncBehindFirewall(EmailData emailData,
+                                          @DefaultValue("true") @QueryParam("sanitize") boolean sanitize) throws Exception;
 
     /**
      * Pyytää lähetettävän ryhmäsähköpostin tilannetiedot
@@ -172,13 +178,15 @@ public interface EmailResource {
     @PreAuthorize(SecurityConstants.USER_IS_AUTHENTICATED)
     @ApiOperation(value = "Sähköpostien esikatselu")
     @Path("/preview")
-    Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData) throws Exception;
+    Response getPreview(@ApiParam(value = "Sähköpostin ja vastaanottajien tiedot", required = true) EmailData emailData,
+                        @DefaultValue("true") @QueryParam("sanitize") boolean sanitize) throws Exception;
 
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
     @PreAuthorize(SecurityConstants.ALLOW_ALL)
     @Path("/preview/firewall")
-    Response getPreviewBehindFirewall(EmailData emailData) throws Exception;
+    Response getPreviewBehindFirewall(EmailData emailData,
+                                      @DefaultValue("true") @QueryParam("sanitize") boolean sanitize) throws Exception;
 
 }
