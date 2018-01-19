@@ -139,9 +139,6 @@ class S3LetterPublisher implements LetterPublisher {
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
     private static final Logger logger = LoggerFactory.getLogger(S3LetterPublisher.class);
 
-    @Value("${viestintapalvelu.letter.publish.dir}")
-    private File letterPublishDir;
-
     @Value("${viestintapalvelu.downloadfiles.s3.bucket}")
     private String bucket;
 
@@ -202,11 +199,14 @@ class S3LetterPublisher implements LetterPublisher {
         return responses;
     }
 
-    private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String foldername) throws IOException {
-        final Path tempFile = Files.createTempFile(letter.getLetterReceivers().getOidApplication(), ".pdf");
+    private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
+        final String oidApplication = letter.getLetterReceivers().getOidApplication();
+        final Path tempFile = Files.createTempFile(oidApplication, ".pdf");
+        Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
+
         Long length = (long) letter.getLetter().length;
         Map<String, String> metadata = new HashMap<>();
-        String id = Paths.get(letterPublishDir.getAbsolutePath(),foldername,tempFile.toString()).toString();
+        String id = folderName + File.separator + oidApplication + ".pdf";
         final PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucket)
                 .contentType(letter.getContentType())
@@ -214,7 +214,7 @@ class S3LetterPublisher implements LetterPublisher {
                 .metadata(metadata)
                 .key(id)
                 .build();
-        Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
+
         AsyncRequestProvider asyncRequestProvider = AsyncRequestProvider.fromFile(tempFile);
         try(S3AsyncClient client = getClient()) {
             return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
