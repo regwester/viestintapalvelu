@@ -102,7 +102,7 @@ public class EmailSender {
             msg.setReplyTo(replyToAddrs);
         }
         msg.addHeader("X-Batch-ID", "Opetushallitus");
-        msg.addHeader("X-Message-ID", letterHash + ".posti@hard.ware.fi");
+        msg.addHeader("X-Message-ID", letterHash + ".posti@opintopolku.fi");
         if (smtpReturnPath != null && smtpReturnPath.length() > 0) {
             msg.addHeader("Return-Path", smtpReturnPath);
         }

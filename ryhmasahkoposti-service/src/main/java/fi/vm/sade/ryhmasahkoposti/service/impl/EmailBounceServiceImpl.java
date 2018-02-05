@@ -63,7 +63,7 @@ public class EmailBounceServiceImpl implements EmailBounceService {
     }
 
     private String convertToLetterHash(String messageId) {
-        return messageId.replace(".posti@hard.ware.fi", "");
+        return messageId.replace(".posti@opintopolku.fi", "");
     }
 
     public boolean isRun() {
