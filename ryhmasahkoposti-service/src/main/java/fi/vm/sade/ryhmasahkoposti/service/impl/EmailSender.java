@@ -16,6 +16,7 @@
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
 import com.google.common.base.Optional;
+import com.google.common.base.Splitter;
 import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
@@ -140,7 +141,8 @@ public class EmailSender {
             return new ArrayList<>();
         }
         String[] split = content.split("\\s+");
-        final int rowLimit = 78;
+        final int softRowLimit = emailMessage.isHtml() ? 77 : 79;
+        final int hardRowLimit = 990;
         Deque<String> lines = new ArrayDeque<>();
         lines.push("");
         for(String str : split) {
@@ -148,11 +150,20 @@ public class EmailSender {
             if(currentLine.isEmpty()) {
                 lines.push(str);
             }
-            else if(currentLine.length() + 1 + str.length() <= rowLimit) {
+            else if(currentLine.length() + 1 + str.length() <= softRowLimit) {
                 lines.push(currentLine.concat(" ").concat(str));
-            } else {
+            }
+            else {
                 lines.push(currentLine);
-                lines.push(str);
+                if(str.length() > hardRowLimit) {
+                    Splitter splitter = Splitter.fixedLength(hardRowLimit);
+                    Iterable<String> splitted = splitter.split(str);
+                    for(String splitstr : splitted) {
+                        lines.push(splitstr);
+                    }
+                } else {
+                    lines.push(str);
+                }
             }
         }
         Iterator<String> stringIterator = lines.descendingIterator();
