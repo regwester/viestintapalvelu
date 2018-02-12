@@ -136,7 +136,9 @@ public class EmailSender {
      */
     private List<String> getContent(EmailMessage emailMessage) {
         String content = emailMessage.getBody();
-
+        if(content == null || content.isEmpty()) {
+            return new ArrayList<>();
+        }
         String[] split = content.split("\\s+");
         final int rowLimit = 78;
         Deque<String> lines = new ArrayDeque<>();
