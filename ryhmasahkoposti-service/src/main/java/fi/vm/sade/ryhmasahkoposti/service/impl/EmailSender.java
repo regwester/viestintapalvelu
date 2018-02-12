@@ -15,8 +15,15 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.service.impl;
 
-import java.io.UnsupportedEncodingException;
-import java.util.Properties;
+import com.google.common.base.Optional;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
 
 import javax.activation.DataHandler;
 import javax.mail.MessagingException;
@@ -28,18 +35,11 @@ import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.util.ByteArrayDataSource;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-
-import com.google.common.base.Optional;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentContainer;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailConstants;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import java.io.UnsupportedEncodingException;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+import java.util.stream.StreamSupport;
 
 @Service
 public class EmailSender {
@@ -89,7 +89,7 @@ public class EmailSender {
         return createMail(createSession(), emailMessage, emailAddress, letterHash, additionalAttachments);
     }
 
-    public MimeMessage createMail(Session session, EmailMessage emailMessage, String emailAddress,
+    private MimeMessage createMail(Session session, EmailMessage emailMessage, String emailAddress,
                                   String letterHash, Optional<? extends AttachmentContainer> additionalAttachments)
             throws MessagingException, UnsupportedEncodingException {
         MimeMessage msg = new MimeMessage(session);
@@ -109,10 +109,10 @@ public class EmailSender {
 
         MimeMultipart msgContent = new MimeMultipart("mixed");
         MimeBodyPart bodyPart = new MimeBodyPart();
-        bodyPart.setContent(getContent(emailMessage), getContentType(emailMessage) + ";charset=" + emailMessage.getCharset());
+        String content = getContent(emailMessage).stream().reduce(String::concat).orElse("");
+        bodyPart.setContent(content, getContentType(emailMessage) + ";charset=" + emailMessage.getCharset());
         bodyPart.setHeader("Content-Transfer-Encoding", getContentTransferEncoding());
         msgContent.addBodyPart(bodyPart);
-
         boolean valid = emailMessage.isValid();
         if (valid && emailMessage.getAttachments() != null) {
             valid = insertAttachments(emailMessage, msgContent);
@@ -130,13 +130,39 @@ public class EmailSender {
         return null;
     }
 
-    private String getContent(EmailMessage emailMessage) {
+    /**
+     * Splits the message into lines of approximately 80 characters. Does not split words so the line length will wary
+     * if there are long words in the message (such as links for example).
+     */
+    private List<String> getContent(EmailMessage emailMessage) {
+        String content = emailMessage.getBody();
+
+        String[] split = content.split("\\s+");
+        final int rowLimit = 78;
+        Deque<String> lines = new ArrayDeque<>();
+        lines.push("");
+        for(String str : split) {
+            String currentLine = lines.pop();
+            if(currentLine.isEmpty()) {
+                lines.push(str);
+            }
+            else if(currentLine.length() + 1 + str.length() <= rowLimit) {
+                lines.push(currentLine.concat(" ").concat(str));
+            } else {
+                lines.push(currentLine);
+                lines.push(str);
+            }
+        }
+        Iterator<String> stringIterator = lines.descendingIterator();
+        Stream<String> stringStream = StreamSupport.stream(
+                Spliterators.spliteratorUnknownSize(stringIterator, Spliterator.ORDERED), false)
+                .map(str -> str.concat("\n"));
         if(!emailMessage.isHtml()) {
             //Change LF to CRLF (SMTP standard)
             //The extra space at the end is a "temporary" bug fix to plaintext LF issue
-            return emailMessage.getBody().replaceAll("\n", "\r\n") + " ";
+            stringStream = stringStream.map(str -> str.replaceAll("\n", "\r\n") + " ");
         }
-        return emailMessage.getBody();
+        return stringStream.collect(Collectors.toList());
     }
 
     /*
