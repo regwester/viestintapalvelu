@@ -527,12 +527,15 @@ public class TemplateResource extends AsynchronousResource {
 
         // OPH default template
         ContentStructureType type = parseStructureType(request.getParameter("type"));
-        Template template = templateService.getTemplateByName(
-                new TemplateCriteriaImpl(templateName, languageCode, type).withApplicationPeriod(applicationPeriod), true);
+        TemplateCriteria criteria = new TemplateCriteriaImpl(templateName, languageCode, type).withApplicationPeriod(applicationPeriod);
+        Template template = templateService.getTemplateByName(criteria, true);
 
         Map<String, Object> templateRepl = new HashMap<>();
         templateRepl.put("name", "default");
-        templateRepl.put("templateReplacements", template.getReplacements());
+        if (template != null) {
+            log.warn("template was null for criteria {}", criteria);
+            templateRepl.put("templateReplacements", template.getReplacements());
+        }
         history.add(templateRepl);
 
         if ((oid != null) && !("".equals(oid))) {

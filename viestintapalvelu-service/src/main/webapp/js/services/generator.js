@@ -49,11 +49,14 @@ angular.module('app').factory('Generator', ['$http', '_',
         return function () {
             function any(propertyName) {
                 var data = generatedData[propertyName];
+                if (data == null) {
+                    return "";
+                }
                 var item = data[Math.round(Math.random() * (data.length - 1))];
                 if (item instanceof Array) {
                     return item;
                 }
-                return item.toString()
+                return item.toString();
             }
 
             /**
