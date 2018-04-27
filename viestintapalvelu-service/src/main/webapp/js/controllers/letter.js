@@ -182,11 +182,7 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     };
 
     $scope.generateAsyncPdf = function() {
-      Printer.asyncPdf($scope.letters,replacements(),
-          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
-          .success(function(id) {
-              startBatchMonitor(id, Printer.doDownload(id));
-        });
+      generateAsyncDocument("pdf", false);
     };
 
     $scope.download = function() {
@@ -196,23 +192,23 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
     };
 
     $scope.generateAsyncZip = function() {
-      Printer.asyncZip($scope.letters,replacements(),
-          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag)
-          .success(function(id) {
-              startBatchMonitor(id, Printer.doDownload(id));
-          });
+      generateAsyncDocument("zip", false);
     };
 
     $scope.generateAsyncLetter = function() {
-      Printer.asyncLetter($scope.letters,replacements(),
-          $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag,
-                $scope.iposti)
-          .success(function(id) {
-              startBatchMonitor(id);
-          });
+      generateAsyncDocument("letter", $scope.iposti);
     };
 
-    $scope.fillEmails = function() {
+    function generateAsyncDocument(docType, iposti) {
+      Printer.asyncDocument(docType, $scope.letters,replacements(),
+        $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag, iposti)
+        .then(function(response) {
+          startBatchMonitor(response);
+        });
+    }
+
+
+      $scope.fillEmails = function() {
        angular.forEach($scope.letters, function(letter) {
           letter.emailAddress = $scope.generalEmail;
        });
