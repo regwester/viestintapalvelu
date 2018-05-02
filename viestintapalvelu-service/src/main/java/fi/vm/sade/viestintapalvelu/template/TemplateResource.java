@@ -533,8 +533,11 @@ public class TemplateResource extends AsynchronousResource {
         Map<String, Object> templateRepl = new HashMap<>();
         templateRepl.put("name", "default");
         if (template != null) {
-            log.warn("template was null for criteria {}", criteria);
             templateRepl.put("templateReplacements", template.getReplacements());
+        } else {
+            String msg = String.format("No template found %s", criteria);
+            log.error(msg);
+            throw new NullPointerException(msg);
         }
         history.add(templateRepl);
 
