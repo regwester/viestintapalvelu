@@ -203,7 +203,8 @@ angular.module('app').controller('LetterController', ['$scope', 'Generator', 'Pr
       Printer.asyncDocument(docType, $scope.letters,replacements(),
         $scope.template.name, $scope.template.lang, $scope.oid, $scope.applicationPeriod, $scope.tag, iposti)
         .then(function(response) {
-          startBatchMonitor(response);
+          var whenDone = iposti ? null : Printer.doDownload(response);
+          startBatchMonitor(response, whenDone);
         });
     }
 
