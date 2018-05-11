@@ -39,12 +39,12 @@ angular.module('app').factory('Printer', ['$http', '$window', '$q', function ($h
             var deferred = $q.defer();
 
             $http.post(window.url("viestintapalvelu.letterAsync", docType), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti))
-              .success(function(response) {
-                  if (response.status !== 'success') {
-                      $window.alert("Async " + docType + " vastasi: " + JSON.stringify(response));
-                      deferred.reject(response.errors);
+              .success(function(responseBody) {
+                  if (responseBody.status !== 'success') {
+                      $window.alert("Async " + docType + " vastasi: " + JSON.stringify(responseBody));
+                      deferred.reject(responseBody.errors);
                   } else {
-                      deferred.resolve(response);
+                      deferred.resolve(responseBody);
                   }
               }).error(function(data) {
                   $window.alert("Async " + docType + " -kutsu epäonnistui: " + JSON.stringify(data));

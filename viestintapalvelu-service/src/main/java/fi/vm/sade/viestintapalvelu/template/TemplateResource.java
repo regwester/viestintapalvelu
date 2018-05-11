@@ -535,9 +535,9 @@ public class TemplateResource extends AsynchronousResource {
         if (template != null) {
             templateRepl.put("templateReplacements", template.getReplacements());
         } else {
-            String msg = String.format("No template found %s", criteria);
+            String msg = String.format("No template found for criteria %s", criteria);
             log.error(msg);
-            throw new NullPointerException(msg);
+            return Response.status(Status.NOT_FOUND).entity(msg).build();
         }
         history.add(templateRepl);
 
