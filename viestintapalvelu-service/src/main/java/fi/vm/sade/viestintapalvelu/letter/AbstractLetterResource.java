@@ -105,7 +105,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
             return Response.ok(response).build();
         } catch (Exception e) {
             LOG.error("Letter async failed. " + input.toStringForLogging(), e);
-            return Response.status(Status.INTERNAL_SERVER_ERROR).entity(e).build();
+            return Response.status(Status.INTERNAL_SERVER_ERROR).build();
         }
     }
 
