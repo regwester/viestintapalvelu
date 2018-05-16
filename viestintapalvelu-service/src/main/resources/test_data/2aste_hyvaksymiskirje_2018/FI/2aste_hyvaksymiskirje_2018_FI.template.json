@@ -1,5 +1,5 @@
 {
-  "name": "jalkiohjauskirje",
+  "name": "hyvaksymiskirje",
   "language": "FI",
   "description": null,
   "structure": {
@@ -86,28 +86,28 @@
   "replacements": [
     {
       "id": 0,
+      "name": "kirjeotsikko",
+      "defaultValue": "PÄÄTÖS OPISKELIJAKSI OTTAMISESTA",
+      "mandatory": false
+    },
+    {
+      "id": 1,
       "name": "sisalto",
       "defaultValue": "{{sisalto_1.html}}",
       "timestamp": null,
       "mandatory": false
     },
     {
-      "id": 1,
-      "name": "sis2",
-      "defaultValue": "{{sisalto_2.html}}",
-      "timestamp": null,
-      "mandatory": false
-    },
-    {
       "id": 2,
-      "name": "kirjeotsikko",
-      "defaultValue": "ILMOITUS AMMATILLISEN KOULUTUKSEN JA LUKIOKOULUTUKSEN YHTEISHAUN TULOKSISTA KEVÄÄLLÄ 2016",
+      "name": "liiteotsikko",
+      "defaultValue": "TILANTEESI KEVÄÄN 2016 YHTEISHAUSSA",
       "mandatory": false
     },
     {
       "id": 3,
-      "name": "liiteotsikko",
-      "defaultValue": "TILANTEESI KEVÄÄN 2016 YHTEISHAUSSA",
+      "name": "sis2",
+      "defaultValue": "{{sisalto_2.html}}",
+      "timestamp": null,
       "mandatory": false
     },
     {
