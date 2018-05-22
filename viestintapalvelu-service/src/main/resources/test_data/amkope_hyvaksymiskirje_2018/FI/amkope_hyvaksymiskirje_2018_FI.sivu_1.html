@@ -13,6 +13,16 @@
 
 <body>
 <div class='header'>
+  <div class="organisaatio">
+    #if($hakijapalveluidenOsoite)
+    <p>
+      Lähettäjä:<br/>
+      $hakijapalveluidenOsoite.organisaationimi,<br/>
+      $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
+      $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
+    </p>
+    #end
+  </div>
   <div class='osoitetarra'>
     <div>$osoite</div>
     <div>
@@ -27,6 +37,8 @@
   <p><b>$koulu<br/>$koulutus</b></p>
 
   $sisalto
+
+  <h2>Tervetuloa opiskelemaan!</h2>
 
 </div>
 </body>
