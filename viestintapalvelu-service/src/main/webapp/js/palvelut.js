@@ -1,6 +1,6 @@
 'use strict';
 
-angular.module('app').factory('Printer', ['$http', '$window', function ($http, $window) {
+angular.module('app').factory('Printer', ['$http', '$window', '$q', function ($http, $window, $q) {
     var letter = 'api/v1/letter/';
     var printurl = 'api/v1/printer/';
     var download = 'api/v1/download/';
@@ -35,37 +35,32 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             return letter;
         }
 
-        function asyncPdf(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(window.url("viestintapalvelu.letterAsync", "pdf"), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
-                .error(function (data) {
-                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
-                    $window.alert("Async PDF -kutsu epäonnistui: " + data);
-                });
+        function asyncDocument(docType, letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
+            var deferred = $q.defer();
+
+            $http.post(window.url("viestintapalvelu.letterAsync", docType), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti))
+              .success(function(responseBody) {
+                  if (responseBody.status !== 'success') {
+                      $window.alert("Async " + docType + " vastasi: " + JSON.stringify(responseBody));
+                      deferred.reject(responseBody.errors);
+                  } else {
+                      deferred.resolve(responseBody);
+                  }
+              }).error(function(data) {
+                  $window.alert("Async " + docType + " -kutsu epäonnistui: " + JSON.stringify(data));
+                  deferred.reject();
+              });
+
+            return deferred.promise
         }
 
-        function doDownload(id) {
-            return function () {
-                $window.location.href = window.url("dokumenttipalvelu-service.lataa", id.batchId);
-            }
+      function doDownload(id) {
+        return function () {
+          $window.location.href = window.url("dokumenttipalvelu-service.lataa", id.batchId);
         }
+      }
 
-        function asyncZip(letters, replacements, tName, tLang, oid, applicationPeriod, tag) {
-            return $http.post(window.url("viestintapalvelu.letterAsync", "zip"), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag))
-                .error(function (data) {
-                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
-                    $window.alert("Async zip -kutsu epäonnistui: " + data);
-                });
-        }
-
-        function asyncLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti) {
-            return $http.post(window.url("viestintapalvelu.letterAsync", "letter"), buildLetter(letters, replacements, tName, tLang, oid, applicationPeriod, tag, iposti)).
-                error(function (data) {
-                    // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
-                    $window.alert("Async letter -kutsu epäonnistui: " + data);
-                });
-        }
-
-        function asyncStatus(id) {
+      function asyncStatus(id) {
             return $http.get(window.url("viestintapalvelu.letterAsyncStatus", id.batchId)).
                 error(function (data) {
                     // This is test-ui so we use a popup for failure-indication against guidelines (for production code)
@@ -135,9 +130,7 @@ angular.module('app').factory('Printer', ['$http', '$window', function ($http, $
             letterPDF: letterPDF,
             letterZIP: letterZIP,
             printPDF: printPDF,
-            asyncLetter: asyncLetter,
-            asyncPdf: asyncPdf,
-            asyncZip: asyncZip,
+            asyncDocument: asyncDocument,
             asyncStatus: asyncStatus,
             doDownload: doDownload,
             sendEmail: sendEmail,
