@@ -1,20 +1,20 @@
 {
-  "name": "hyvaksymiskirje",
-  "language": "SV",
+  "name": "jalkiohjauskirje",
+  "language": "FI",
   "description": null,
   "structure": {
-    "name": "nivel_hyvaksymiskirje_rakenne",
-    "language": "SV",
+    "name": "nivel_jalkiohjauskirje_rakenne",
+    "language": "FI",
     "description": null,
     "contentStructures": [
       {
         "type": "letter",
-        "styleName": "nivel_hyvaksymiskirje_tyyli",
+        "styleName": "nivel_jalkiohjauskirje_tyyli",
         "style": "{{styles.css}}",
         "contents": [
           {
             "role": "body",
-            "name": "hyvaksymiskirje_sivu_1",
+            "name": "jalkiohjauskirje_sivu_1",
             "contentType": "html",
             "content": "{{sivu_1.html}}"
           },
@@ -101,19 +101,19 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "BESLUT OM ANTAGNING",
+      "defaultValue": "ILMOITUS ERITYISOPETUKSENA JÄRJESTETTÄVÄN AMMATILLISEN KOULUTUKSEN HAUN TULOKSISTA KEVÄÄLLÄ 2016",
       "mandatory": false
     },
     {
       "id": 3,
       "name": "liiteotsikko",
-      "defaultValue": "DIN SITUATION I ANSÖKAN TILL YRKESINRIKTAD SPECIALUNDERVISNING",
+      "defaultValue": "TILANTEESI KEVÄÄN 2016 ERITYISOPETUKSENA JÄRJESTETTÄVÄN AMMATILLISEN KOULUTUKSEN HAUSSA",
       "mandatory": false
     },
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Beslut om antagning",
+      "defaultValue": "Ilmoitus ammatillisen koulutuksen ja lukiokoulutuksen yhteishaun tuloksista.",
       "mandatory": false
     }
   ]

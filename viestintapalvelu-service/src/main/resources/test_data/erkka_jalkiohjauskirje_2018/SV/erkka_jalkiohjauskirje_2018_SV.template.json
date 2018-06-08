@@ -1,20 +1,20 @@
 {
-  "name": "hyvaksymiskirje",
+  "name": "jalkiohjauskirje",
   "language": "SV",
   "description": null,
   "structure": {
-    "name": "nivel_hyvaksymiskirje_rakenne",
+    "name": "nivel_jalkiohjauskirje_rakenne",
     "language": "SV",
     "description": null,
     "contentStructures": [
       {
         "type": "letter",
-        "styleName": "nivel_hyvaksymiskirje_tyyli",
+        "styleName": "nivel_jalkiohjauskirje_tyyli",
         "style": "{{styles.css}}",
         "contents": [
           {
             "role": "body",
-            "name": "hyvaksymiskirje_sivu_1",
+            "name": "jalkiohjauskirje_sivu_1",
             "contentType": "html",
             "content": "{{sivu_1.html}}"
           },
@@ -101,19 +101,19 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "BESLUT OM ANTAGNING",
+      "defaultValue": "MEDDELANDE OM RESULTATEN I ANSÖKAN TILL YRKESINRIKTAD SPECIALUNDERVISNING VÅREN 2016",
       "mandatory": false
     },
     {
       "id": 3,
       "name": "liiteotsikko",
-      "defaultValue": "DIN SITUATION I ANSÖKAN TILL YRKESINRIKTAD SPECIALUNDERVISNING",
+      "defaultValue": "DIN SITUATION I ANSÖKAN TILL YRKESINRIKTAD SPECIALUNDERVISNING VÅREN 2016",
       "mandatory": false
     },
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Beslut om antagning",
+      "defaultValue": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna",
       "mandatory": false
     }
   ]
