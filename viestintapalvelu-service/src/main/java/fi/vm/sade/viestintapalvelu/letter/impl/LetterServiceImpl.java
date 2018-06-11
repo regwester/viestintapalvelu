@@ -95,7 +95,7 @@ import static org.joda.time.DateTime.now;
 @Transactional
 @ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterServiceImpl implements LetterService {
-    public static final int STORE_DOKUMENTTIS_DAYS = 1;
+    public static final int STORE_DOKUMENTTIS_DAYS = 2;
     private static final int MAX_IPOST_CHUNK_SIZE = 500;
     public static final String DOCUMENT_TYPE_APPLICATION_ZIP = "application/zip";
     public static final String DOCUMENT_TYPE_APPLICATION_PDF = "application/pdf";

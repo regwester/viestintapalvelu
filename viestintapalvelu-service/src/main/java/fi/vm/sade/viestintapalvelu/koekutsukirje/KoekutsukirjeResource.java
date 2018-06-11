@@ -155,7 +155,7 @@ public class KoekutsukirjeResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] pdf = koekutsukirjeBuilder.printPDF(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("koekutsukirje.pdf"), now().plusDays(1).toDate().getTime(),
+                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("koekutsukirje.pdf"), now().plusDays(2).toDate().getTime(),
                             Arrays.asList("viestintapalvelu", "koekutsukirje", "pdf"), "application/pdf;charset=utf-8", new ByteArrayInputStream(pdf));
                 } catch (Exception e) {
                     e.printStackTrace();

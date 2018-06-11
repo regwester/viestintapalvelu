@@ -143,7 +143,7 @@ public class AddressLabelResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] pdf = labelBuilder.printPDF(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("addresslabels.pdf"), now().plusDays(1).toDate().getTime(),
+                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("addresslabels.pdf"), now().plusDays(2).toDate().getTime(),
                             Arrays.asList("viestintapalvelu", "addresslabels", "pdf"), "application/pdf;charset=utf-8", new ByteArrayInputStream(pdf));
                 } catch (Exception e) {
                     e.printStackTrace();
@@ -168,7 +168,7 @@ public class AddressLabelResource extends AsynchronousResource {
                 SecurityContextHolder.getContext().setAuthentication(auth);
                 try {
                     byte[] csv = labelBuilder.printCSV(input);
-                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("addresslabels.xls"), now().plusDays(1).toDate().getTime(),
+                    dokumenttiResource.tallenna(null, filenamePrefixWithUsernameAndTimestamp("addresslabels.xls"), now().plusDays(2).toDate().getTime(),
                             Arrays.asList("viestintapalvelu", "addresslabels", "xls"), "application/vnd.ms-excel", new ByteArrayInputStream(csv));
                 } catch (Exception e) {
                     e.printStackTrace();

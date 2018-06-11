@@ -275,7 +275,7 @@ public class LetterResource extends AbstractLetterResource {
                 
                 
                 dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
-                        now().plusDays(1).toDate().getTime(),
+                        now().plusDays(2).toDate().getTime(),
                         tags,
                         "application/pdf",
                         new ByteArrayInputStream(bytes));

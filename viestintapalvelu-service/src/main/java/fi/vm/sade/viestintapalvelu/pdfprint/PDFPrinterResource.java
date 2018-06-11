@@ -184,7 +184,7 @@ public class PDFPrinterResource extends AsynchronousResource {
                             .tallenna(
                                     null,
                                     filenamePrefixWithUsernameAndTimestamp(documentName),
-                                    now().plusDays(1).toDate().getTime(),
+                                    now().plusDays(2).toDate().getTime(),
                                     Arrays.asList("viestintapalvelu",
                                             documentName, "pdf"),
                                     "application/pdf;charset=utf-8",
