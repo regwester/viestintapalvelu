@@ -640,7 +640,7 @@ public class LetterServiceImpl implements LetterService {
             logger.info("IPOSTI processing finished for  letter batch {}", id);
             batch.setIpostHandlingFinished(new Date());
             if(!batch.getSkipDokumenttipalvelu() ) {
-                saveZipDocument(batch);
+                //saveZipDocument(batch);
             } else {
                 logger.info("NOT saving zip document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
             }
