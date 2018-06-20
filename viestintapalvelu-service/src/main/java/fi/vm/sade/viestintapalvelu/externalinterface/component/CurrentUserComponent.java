@@ -49,7 +49,7 @@ public class CurrentUserComponent {
      */
     public String getCurrentUser() {
         try {
-            return SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+            return SecurityContextHolder.getContext().getAuthentication().getName();
         } catch (Exception e) {
             logger.error("Error getting current user: " + e.getMessage(), e);
             throw new ExternalInterfaceException("error.msg.gettingCurrentUserFailed", e);
