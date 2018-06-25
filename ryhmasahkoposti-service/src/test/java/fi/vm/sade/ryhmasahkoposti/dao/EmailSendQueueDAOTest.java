@@ -129,10 +129,10 @@ public class EmailSendQueueDAOTest {
         recipient2.setSendingStarted(null);
         recipient3.setSendingStarted(null);
         recipient4.setSendingStarted(new Date());
-        reportedRecipientDAO.insert(recipient1);
-        reportedRecipientDAO.insert(recipient2);
-        reportedRecipientDAO.insert(recipient3);
-        reportedRecipientDAO.insert(recipient4);
+        reportedRecipientDAO.insertAndFlush(recipient1);
+        reportedRecipientDAO.insertAndFlush(recipient2);
+        reportedRecipientDAO.insertAndFlush(recipient3);
+        reportedRecipientDAO.insertAndFlush(recipient4);
         SendQueue queue = RaportointipalveluTestData.sendQueue(null, SendQueueState.PROCESSING);
         sendQueueDAO.insert(queue);
         recipient1.setQueue(queue);
@@ -186,10 +186,10 @@ public class EmailSendQueueDAOTest {
         ReportedRecipient recipient1 = RaportointipalveluTestData.getReportedRecipient(message), recipient2 = RaportointipalveluTestData
                 .getReportedRecipient(message), recipient3 = RaportointipalveluTestData.getReportedRecipient(message), recipient4 = RaportointipalveluTestData
                 .getReportedRecipient(message);
-        reportedRecipientDAO.insert(recipient1);
-        reportedRecipientDAO.insert(recipient2);
-        reportedRecipientDAO.insert(recipient3);
-        reportedRecipientDAO.insert(recipient4);
+        reportedRecipientDAO.insertAndFlush(recipient1);
+        reportedRecipientDAO.insertAndFlush(recipient2);
+        reportedRecipientDAO.insertAndFlush(recipient3);
+        reportedRecipientDAO.insertAndFlush(recipient4);
 
         // Not found yet:
         assertEquals(0, sendQueueDAO.findRecipientAttachments(Arrays.asList(recipient1.getId())).size());

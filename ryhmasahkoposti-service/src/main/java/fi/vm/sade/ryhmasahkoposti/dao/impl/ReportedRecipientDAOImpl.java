@@ -167,4 +167,18 @@ public class ReportedRecipientDAOImpl extends AbstractJpaDAOImpl<ReportedRecipie
         return reportedRecipient.searchName.asc();
     }
 
+    @Override
+    public
+    ReportedRecipient insertAndFlush(ReportedRecipient reportedRecipient) {
+        getEntityManager().persist(reportedRecipient);
+        getEntityManager().flush();
+        return reportedRecipient;
+    }
+
+    @Override
+    public
+    ReportedRecipient insert(ReportedRecipient reportedRecipient) {
+        getEntityManager().persist(reportedRecipient);
+        return reportedRecipient;
+    }
 }
