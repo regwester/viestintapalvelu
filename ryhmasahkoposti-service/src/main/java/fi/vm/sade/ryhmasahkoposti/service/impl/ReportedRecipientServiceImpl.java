@@ -134,7 +134,7 @@ public class ReportedRecipientServiceImpl implements ReportedRecipientService {
 
     @Override
     public void saveReportedRecipient(ReportedRecipient reportedRecipient) {
-        reportedRecipientDAO.insert(reportedRecipient);
+        reportedRecipientDAO.insertAndFlush(reportedRecipient);
     }
 
     @Override

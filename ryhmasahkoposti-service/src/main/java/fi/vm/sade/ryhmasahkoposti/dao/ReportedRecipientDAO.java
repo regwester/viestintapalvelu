@@ -130,4 +130,6 @@ public interface ReportedRecipientDAO extends JpaDAO<ReportedRecipient, Long> {
      */
     List<Long> findRecipientIdsWithIncompleteInformation();
 
+    ReportedRecipient insertAndFlush(ReportedRecipient reportedRecipient);
+
 }

@@ -200,7 +200,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
         ReportedRecipient recipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
-        reportedRecipientDAO.insert(recipient);
+        reportedRecipientDAO.insertAndFlush(recipient);
 
         ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
         replacementDTO.setName("testi");
@@ -233,7 +233,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
         ReportedRecipient recipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
-        reportedRecipientDAO.insert(recipient);
+        reportedRecipientDAO.insertAndFlush(recipient);
 
         ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
         replacementDTO.setName("testi");
@@ -267,7 +267,7 @@ public class ReportedRecipientReplacementDAOTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedMessage savedReportedMessage = reportedMessageDAO.insert(reportedMessage);
         ReportedRecipient recipient = RaportointipalveluTestData.getReportedRecipient(savedReportedMessage);
-        reportedRecipientDAO.insert(recipient);
+        reportedRecipientDAO.insertAndFlush(recipient);
 
         ReportedRecipientReplacementDTO replacementDTO = new ReportedRecipientReplacementDTO();
         replacementDTO.setName("test");
