@@ -181,7 +181,11 @@ public class LetterServiceImpl implements LetterService {
         }
         model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
 
-        addIpostData(letterBatch, model);
+        if (letterBatch.isIposti()) {
+            addIpostData(letterBatch, model);
+        } else {
+            logger.info("Jätetään IPost-luonti väliin kirjeiden muodostuksessa haulle " + letterBatch.getApplicationPeriod());
+        }
         return storeLetterBatch(model);
     }
 
@@ -213,7 +217,11 @@ public class LetterServiceImpl implements LetterService {
         }
         model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
 
-        addIpostData(letterBatch, model);
+        if (letterBatch.isIposti()) {
+            addIpostData(letterBatch, model);
+        } else {
+            logger.info("Jätetään IPost-luonti väliin kirjeiden muodostuksessa haulle " + letterBatch.getApplicationPeriod());
+        }
         return storeLetterBatch(model);
     }
 
