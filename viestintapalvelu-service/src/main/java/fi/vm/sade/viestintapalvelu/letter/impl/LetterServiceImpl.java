@@ -16,14 +16,7 @@
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.zip.DataFormatException;
 
 import javax.annotation.Resource;
@@ -92,6 +85,7 @@ import static org.joda.time.DateTime.now;
 @Transactional
 @ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterServiceImpl implements LetterService {
+    private static final int STORE_DOKUMENTTIS_DAYS = 2;
     private static final int MAX_IPOST_CHUNK_SIZE = 500;
     public static final String DOCUMENT_TYPE_APPLICATION_ZIP = "application/zip";
     public static final String DOCUMENT_TYPE_APPLICATION_PDF = "application/pdf";
@@ -632,7 +626,11 @@ public class LetterServiceImpl implements LetterService {
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
                 logger.info("LETTER processing finished for  letter batch {}", id);
-                logger.info("NOT saving pdf document to Dokumenttipalvelu for LetterBatch={} or ANY letter batch temporarily (OY-224)...", batch.getId());
+                if(!batch.getSkipDokumenttipalvelu() ) {
+                    savePdfDocument(batch);
+                } else {
+                    logger.info("NOT saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+                }
                 newStatus = LetterBatch.Status.ready;
             }
             break;
@@ -651,6 +649,19 @@ public class LetterServiceImpl implements LetterService {
         }
         return Optional.fromNullable(nextProcess);
     }
+
+    private void savePdfDocument(LetterBatch batch) throws Exception {
+        logger.info("Saving pdf document to Dokumenttipalvelu for LetterBatch={}...", batch.getId());
+        String documentId = dokumenttiIdProvider.generateDocumentIdForLetterBatchId(batch.getId(), LetterService.DOKUMENTTI_ID_PREFIX_PDF);
+        String fileName = Optional.fromNullable(batch.getTemplateName()).or("mergedletters") + "_" + Optional.fromNullable(batch.getLanguage()).or("FI")
+                + ".pdf";
+        List<String> tags = Arrays.asList("viestintapalvelu", fileName, "pdf", documentId);
+        byte[] bytes = getLetterContentsByLetterBatchID(batch.getId());
+        logger.info("Stroring PDF with documentId={}", documentId);
+        dokumenttipalveluRestClient.tallenna(documentId, fileName, now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(), tags,
+                DOCUMENT_TYPE_APPLICATION_PDF, new ByteArrayInputStream(bytes));
+        logger.info("Done saving pdf document to Dokumenttipalvelu for LetterBatch={}", batch.getId());
+        }
 
     @Override
     @Transactional(readOnly = true)
