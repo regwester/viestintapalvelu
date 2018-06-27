@@ -15,19 +15,53 @@
  **/
 package fi.vm.sade.viestintapalvelu.service;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.*;
-import java.util.zip.DataFormatException;
-
+import static fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers.catchAllParameters;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
+
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
+import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
+import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
+import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
-import fi.vm.sade.viestintapalvelu.letter.*;
+import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
+import fi.vm.sade.viestintapalvelu.letter.LetterContent;
+import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.letter.LetterPublisher;
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
+import fi.vm.sade.viestintapalvelu.model.IPosti;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchGeneralProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchIPostProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
+import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
+import fi.vm.sade.viestintapalvelu.util.DummyDokumenttiIdProvder;
 import org.apache.cxf.helpers.IOUtils;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.util.PDFTextStripper;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -42,30 +76,16 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.google.common.base.Optional;
-
-import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
-import fi.vm.sade.viestintapalvelu.dao.*;
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteria;
-import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
-import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
-import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
-import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
-import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
-import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
-import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
-import fi.vm.sade.viestintapalvelu.model.*;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
-import fi.vm.sade.viestintapalvelu.util.DummyDokumenttiIdProvder;
-
-import static fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers.catchAllParameters;
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.*;
+import java.io.IOException;
+import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.DataFormatException;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-application-context.xml")
@@ -225,14 +245,6 @@ public class LetterServiceTest {
 
         assertEquals(LetterBatch.Status.ready, batch.getBatchStatus());
         assertNotNull(batch.getHandlingFinished());
-        assertEquals(1, catchParameter.getInvocationCount());
-        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_PDF+batch.getId()+"-dummy", catchParameter.getArguments().get(0).get(0).toString());
-        assertEquals("application/pdf", catchParameter.getArguments().get(0).get(4).toString());
-        assertTrue(catchParameter.getArguments().get(0).get(5) instanceof InputStream);
-        PDDocument doc = PDDocument.load((InputStream) catchParameter.getArguments().get(0).get(5));
-        String contents = new PDFTextStripper().getText(doc);
-        assertTrue(contents.contains("Testitiedosto test.pdf"));
-        assertTrue(contents.contains("Testitiedosto test2.pdf"));
     }
 
     @Test
@@ -280,10 +292,6 @@ public class LetterServiceTest {
 
         assertEquals(LetterBatch.Status.ready, batch.getBatchStatus());
         assertNotNull(batch.getIpostHandlingFinished());
-        assertEquals(1, catchParameter.getInvocationCount());
-        assertEquals(LetterService.DOKUMENTTI_ID_PREFIX_ZIP+batch.getId()+"-dummy", catchParameter.getArguments().get(0).get(0).toString());
-        assertEquals("application/zip", catchParameter.getArguments().get(0).get(4).toString());
-        assertTrue(catchParameter.getArguments().get(0).get(5) instanceof InputStream);
     }
 
     @Test
