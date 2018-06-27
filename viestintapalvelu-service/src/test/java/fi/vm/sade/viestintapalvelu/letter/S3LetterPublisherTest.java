@@ -79,7 +79,7 @@ public class S3LetterPublisherTest {
         //@Bean
         LetterBatchDAO getletterBatchDAO() {
             LetterBatchDAO letterBatchDAO = mock(LetterBatchDAO.class);
-            List<Long> ids = LongStream.range(0, 2).boxed().collect(Collectors.toList());
+            List<Long> ids = LongStream.range(0, 125).boxed().collect(Collectors.toList());
             when(letterBatchDAO.getUnpublishedLetterIds(anyLong())).thenReturn(ids);
 
 
