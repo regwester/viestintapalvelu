@@ -156,13 +156,13 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "MEDDELANDE OM ANTAGNINGEN AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2017",
+      "defaultValue": "MEDDELANDE OM ANTAGNINGEN AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2018",
       "mandatory": false
     },
     {
       "id": 5,
       "name": "vastaanotto_1",
-      "defaultValue": "<p>XXX Du har godkänts till ovan nämnda studieplats i gemensam ansökan till högskolor våren 2017.</p><p>Om du inte använder Min Studieinfo-tjänsten, ska du skicka denna blankett ifylld och undertecknad till nedan nämnda adress. Se till att blanketten är framme före fredag 14.7.2017 kl. 15.00. Om du har tagit emot studieplatsen elektroniskt behöver du inte skicka meddelandet om mottagande av studieplats per post.</p><p><em>Jag meddelar att jag tar emot den ovan nämnda studieplatsen bindande (kryssa för en ruta):</em></p>",
+      "defaultValue": "<p>XXX Du har godkänts till ovan nämnda studieplats i gemensam ansökan till högskolor våren 2018.</p><p>Om du inte använder Min Studieinfo-tjänsten, ska du skicka denna blankett ifylld och undertecknad till nedan nämnda adress. Se till att blanketten är framme före fredag 14.7.2017 kl. 15.00. Om du har tagit emot studieplatsen elektroniskt behöver du inte skicka meddelandet om mottagande av studieplats per post.</p><p><em>Jag meddelar att jag tar emot den ovan nämnda studieplatsen bindande (kryssa för en ruta):</em></p>",
       "mandatory": false
     },
     {
@@ -186,13 +186,13 @@
     {
       "id": 8,
       "name": "vastaanotto_allekirjoitus_vuosi",
-      "defaultValue": "2017",
+      "defaultValue": "2018",
       "mandatory": false
     },
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2017",
+      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2018",
       "mandatory": false
     }
   ]
