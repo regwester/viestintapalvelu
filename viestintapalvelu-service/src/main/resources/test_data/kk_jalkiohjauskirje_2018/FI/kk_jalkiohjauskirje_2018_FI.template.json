@@ -156,7 +156,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "ILMOITUS OPISKELIJAVALINNAN TULOKSESTA KORKEAKOULUJEN YHTEISHAUSSA KEVÄÄLLÄ 2017",
+      "defaultValue": "ILMOITUS OPISKELIJAVALINNAN TULOKSESTA KORKEAKOULUJEN YHTEISHAUSSA KEVÄÄLLÄ 2018",
       "mandatory": false
     },
     {
@@ -192,7 +192,7 @@
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "TILANTEESI KEVÄÄN 2017 KORKEAKOULUJEN YHTEISHAUSSA",
+      "defaultValue": "TILANTEESI KEVÄÄN 2018 KORKEAKOULUJEN YHTEISHAUSSA",
       "mandatory": false
     }
   ]
