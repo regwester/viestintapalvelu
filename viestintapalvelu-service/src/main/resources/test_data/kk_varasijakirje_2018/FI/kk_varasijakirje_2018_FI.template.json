@@ -174,7 +174,7 @@
     {
       "id": 5,
       "name": "vastaanotto_1",
-      "defaultValue": "<p>Sinut on hyväksytty kevään 2018 korkeakoulujen yhteishaussa yllä mainittuun opiskelupaikkaan</p><p>Jos et käytä Oma Opintopolku -palvelua, toimita tämä ilmoitus täytettynä ja allekirjoitettuna alla annettuun osoitteeseen siten, että se on perillä korkeakoulun hakijapalveluissa 10 päivän sisällä hyväksymisestä (<b>$palautusTimestampFi</b>).  Jos olet ottanut opiskelupaikan sähköisesti vastaan, sinun ei tarvitse lähettää opiskelupaikan vastaanottoilmoitusta postitse.</p><p><em>Ilmoitan yllä mainitun opiskelupaikan vastaanottamisesta sitovasti seuraavaa (rastita yksi ruutu):</em></p>",
+      "defaultValue": "<p>Sinut on hyväksytty kevään 2018 korkeakoulujen yhteishaussa yllä mainittuun opiskelupaikkaan</p><p>Jos et käytä Oma Opintopolku -palvelua, toimita tämä ilmoitus täytettynä ja allekirjoitettuna alla annettuun osoitteeseen siten, että se on perillä korkeakoulun hakijapalveluissa 10 päivän sisällä hyväksymisestä (katso määräaika sivun alaosasta).  Jos olet ottanut opiskelupaikan sähköisesti vastaan, sinun ei tarvitse lähettää opiskelupaikan vastaanottoilmoitusta postitse.</p><p><em>Ilmoitan yllä mainitun opiskelupaikan vastaanottamisesta sitovasti seuraavaa (rastita yksi ruutu):</em></p>",
       "mandatory": false
     },
     {
