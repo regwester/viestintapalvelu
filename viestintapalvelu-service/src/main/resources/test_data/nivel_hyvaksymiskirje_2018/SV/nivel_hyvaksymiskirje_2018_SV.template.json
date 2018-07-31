@@ -25,6 +25,24 @@
             "content": "{{sivu_2.html}}"
           }
         ]
+      },
+      {
+        "type": "email",
+        "styleName": "nivel_hyvaksymiskirje_tyyli",
+        "contents": [
+          {
+            "role": "header",
+            "name": "email_subject",
+            "contentType": "plain",
+            "content": "$subject"
+          },
+          {
+            "role": "body",
+            "name": "email_body",
+            "contentType": "html",
+            "content": "{{email.html}}"
+          }
+        ]
       }
     ],
     "replacements": [
@@ -55,6 +73,13 @@
         "description": "Kirjeen tilanteet sivun sisältö",
         "contentType": "html",
         "numberOfRows": 20
+      },
+      {
+        "key": "subject",
+        "name": "Otsikko",
+        "description": "Sähköpostiviestin otsikko",
+        "contentType": "plain",
+        "numberOfRows": 1
       }
     ]
   },
@@ -83,6 +108,12 @@
       "id": 3,
       "name": "liiteotsikko",
       "defaultValue": "DIN SITUATION I ANSÖKAN TILL FÖRBEREDANDE UTBILDNINGAR EFTER GRUNDSKOLAN 2017",
+      "mandatory": false
+    },
+    {
+      "id": 4,
+      "name": "subject",
+      "defaultValue": "Beslut om antagning",
       "mandatory": false
     }
   ]
