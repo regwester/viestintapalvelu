@@ -65,6 +65,14 @@
         <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
     </bean>
 
+    <bean id="casTicketInterceptorAsAUser" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
+        <property name="webCasUrl" value="${web.url.cas}" />
+        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
+        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+    </bean>
+
+
 
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
                          accessDecisionManager="accessDecisionManager"
@@ -97,7 +105,7 @@
                          address="${oppijanumerorekisteri-service.base}"
                          inheritHeaders="true">
         <jaxrs-client:outInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
+            <ref bean="casTicketInterceptorAsAUser"/>
             <ref bean="ophRequestHeaders"/>
         </jaxrs-client:outInterceptors>
         <jaxrs-client:inInterceptors>
