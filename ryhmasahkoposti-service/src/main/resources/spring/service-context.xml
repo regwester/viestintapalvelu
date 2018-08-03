@@ -67,6 +67,7 @@
 
     <bean id="casTicketInterceptorAsAUser" class="fi.vm.sade.authentication.cas.CasApplicationAsAUserInterceptor">
         <property name="webCasUrl" value="${web.url.cas}" />
+        <property name="targetService" value="${cas.service.viestintapalvelu}" />
         <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
         <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
     </bean>
