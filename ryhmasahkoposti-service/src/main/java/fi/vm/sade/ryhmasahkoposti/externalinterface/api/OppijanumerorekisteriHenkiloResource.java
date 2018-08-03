@@ -15,10 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
 import org.springframework.stereotype.Component;
@@ -38,6 +35,7 @@ public interface OppijanumerorekisteriHenkiloResource {
      * @param oid Henkilön OID-tunnus
      * @return Henkilön tiedot
      */
+    @Consumes(MediaType.APPLICATION_JSON)
     @Produces(MediaType.APPLICATION_JSON)
     @Path("{oid}")
     @GET

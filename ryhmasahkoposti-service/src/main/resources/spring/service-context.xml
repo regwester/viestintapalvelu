@@ -107,6 +107,9 @@
             <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
             <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
         </jaxrs-client:providers>
+        <jaxrs-client:headers>
+            <entry key="Content-Type" value="application/json"/>
+        </jaxrs-client:headers>
     </jaxrs-client:client>
 
     <!-- External interface HenkiloResource of Käyttöoikeus -->
