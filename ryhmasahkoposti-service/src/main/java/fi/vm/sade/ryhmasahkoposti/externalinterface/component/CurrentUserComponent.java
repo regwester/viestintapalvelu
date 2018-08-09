@@ -19,8 +19,10 @@ import java.util.List;
 
 import javax.annotation.Resource;
 
+import fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.dto.HenkiloDto;
@@ -43,7 +45,14 @@ public class CurrentUserComponent {
     private OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource;
     @Resource
     private KayttooikeusHenkiloResource kayttooikeusHenkiloResource;
-    
+    private final OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient;
+
+    @Autowired
+    public CurrentUserComponent(OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient) {
+        this.oppijanumeroRekisteriRestClient = oppijanumeroRekisteriRestClient;
+    }
+
+
     /**
      * Hakee kirjaantuneen käyttäjän tiedot
      * 
@@ -52,7 +61,7 @@ public class CurrentUserComponent {
     public HenkiloDto getCurrentUser() {
         try {
             String oid = SecurityUtil.getOid();
-            return oppijanumerorekisteriHenkiloResource.findByOid(oid);
+            return oppijanumeroRekisteriRestClient.getHenkilo(oid);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingCurrentUserFailed", e);

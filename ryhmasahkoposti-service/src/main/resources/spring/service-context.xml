@@ -109,6 +109,11 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
+    <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient">
+        <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>
+        <property name="casUrl" value="${web.url.cas}"/>
+    </bean>
+
     <!-- External interface HenkiloResource of Käyttöoikeus -->
     <jaxrs-client:client id="kayttooikeusHenkiloResource"
                          serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource"
