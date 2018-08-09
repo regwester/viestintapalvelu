@@ -11,7 +11,15 @@ public class OppijanumeroRekisteriRestClient extends CachingRestClient {
     private String baseUrl;
 
     public HenkiloDto getHenkilo(String henkiloOid) throws IOException {
-        String url = baseUrl + "/henkilo/henkiloOid";
+        String url = baseUrl + "/henkilo/" + henkiloOid;
         return this.get(url, HenkiloDto.class);
+    }
+
+    public String getBaseUrl() {
+        return baseUrl;
+    }
+
+    public void setBaseUrl(String baseUrl) {
+        this.baseUrl = baseUrl;
     }
 }
