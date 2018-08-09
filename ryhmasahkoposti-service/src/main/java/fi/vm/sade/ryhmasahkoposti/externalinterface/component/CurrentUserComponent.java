@@ -30,7 +30,6 @@ import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource;
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
 /**
  * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service-context.xml}
@@ -41,8 +40,6 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHen
 @Component
 public class CurrentUserComponent {
     private static Logger LOGGER = LoggerFactory.getLogger(CurrentUserComponent.class);
-    @Resource
-    private OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource;
     @Resource
     private KayttooikeusHenkiloResource kayttooikeusHenkiloResource;
     private final OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient;

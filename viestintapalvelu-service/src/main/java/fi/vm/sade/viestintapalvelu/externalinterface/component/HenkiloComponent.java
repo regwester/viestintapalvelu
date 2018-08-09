@@ -15,12 +15,12 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
-import javax.annotation.Resource;
-
+import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
+import fi.vm.sade.viestintapalvelu.externalinterface.client.OppijanumeroRekisteriRestClient;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.dto.HenkiloDto;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
 /**
  * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service
@@ -31,8 +31,13 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.OppijanumerorekisteriHe
  */
 @Component
 public class HenkiloComponent {
-    @Resource
-    private OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource;
+
+    private final OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient;
+
+    @Autowired
+    public HenkiloComponent(OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient) {
+        this.oppijanumeroRekisteriRestClient = oppijanumeroRekisteriRestClient;
+    }
 
     /**
      * Hakee henkilön tiedot oid:n perusteella
@@ -40,6 +45,10 @@ public class HenkiloComponent {
      * @return Henkilon tiedot
      */
     public HenkiloDto getHenkilo(String oid) {
-        return oppijanumerorekisteriHenkiloResource.getHenkiloByOid(oid);
+        try {
+            return oppijanumeroRekisteriRestClient.getHenkilo(oid);
+        } catch (Exception e) {
+            throw new ExternalInterfaceException("error.msg.gettingPersonDataFailed", e);
+        }
     }
 }

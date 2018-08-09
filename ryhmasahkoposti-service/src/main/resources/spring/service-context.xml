@@ -91,24 +91,7 @@
         </jaxrs-client:providers>
     </jaxrs-client:client>
 
-    <!-- External interface HenkiloResource of Oppijanumerorekisteri -->
-    <jaxrs-client:client id="oppijanumerorekisteriHenkiloResource"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHenkiloResource"
-                         address="${oppijanumerorekisteri-service.base}"
-                         inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
-
+    <!-- Oppijanumerorekisteri -->
     <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient">
         <property name="webCasUrl" value="${web.url.cas}"/>
         <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>

@@ -143,16 +143,6 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource() {
-        return new OppijanumerorekisteriHenkiloResource() {
-            @Override
-            public HenkiloDto findByOid(String oid) {
-                throw new IllegalStateException("Please mock me when needed!");
-            }
-        };
-    }
-
-    @Bean
     TemplateResource templateResourceStub() {
         return new TemplateResource() {
             @Override

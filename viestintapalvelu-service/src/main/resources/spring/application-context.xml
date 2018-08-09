@@ -174,18 +174,16 @@
             </jaxrs-client:providers>
         </jaxrs-client:client>
 
-        <jaxrs-client:client id="oppijanumerorekisteriHenkiloResource" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.OppijanumerorekisteriHenkiloResource" address="${oppijanumerorekisteri-service.base}" inheritHeaders="true">
-            <jaxrs-client:outInterceptors>
-                <ref bean="ticketInterceptorRest"/>
-                <ref bean="ophRequestHeaders"/>
-            </jaxrs-client:outInterceptors>
-          <jaxrs-client:inInterceptors>
-                <ref bean="ticketInterceptorRest"/>
-            </jaxrs-client:inInterceptors>
-            <jaxrs-client:providers>
-                <ref bean="customJsonProvider"/>
-            </jaxrs-client:providers>
-        </jaxrs-client:client>
+
+        <!-- Oppijanumerorekisteri -->
+        <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient">
+            <property name="webCasUrl" value="${web.url.cas}"/>
+            <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>
+            <property name="baseUrl" value="${oppijanumerorekisteri-service.base}"/>
+            <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+            <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+        </bean>
+
 
         <jaxrs-client:client id="kayttooikeusHenkiloResource" serviceClass="fi.vm.sade.viestintapalvelu.externalinterface.api.KayttooikeusHenkiloResource" address="${kayttooikeus-service.base}" inheritHeaders="true">
             <jaxrs-client:outInterceptors>
