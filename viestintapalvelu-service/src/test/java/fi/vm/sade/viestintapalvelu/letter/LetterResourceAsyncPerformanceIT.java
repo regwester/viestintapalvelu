@@ -23,6 +23,7 @@ import java.util.concurrent.*;
 
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.externalinterface.client.KayttooikeusRestClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;
@@ -93,9 +94,12 @@ public class LetterResourceAsyncPerformanceIT {
     @Autowired
     private DokumenttiIdProviderImpl dokumenttiIdProvider;
 
+    @Autowired
+    private KayttooikeusRestClient kayttooikeusRestClient;
+
     @Before
     public void before() throws Exception {
-        CurrentUserComponent currentUserComponent = new CurrentUserComponent();
+        CurrentUserComponent currentUserComponent = new CurrentUserComponent(kayttooikeusRestClient);
         Field currentUserComponentField = LetterServiceImpl.class.getDeclaredField("currentUserComponent");
         currentUserComponentField.setAccessible(true);
         currentUserComponentField.set(((Advised)letterService).getTargetSource().getTarget(), currentUserComponent);

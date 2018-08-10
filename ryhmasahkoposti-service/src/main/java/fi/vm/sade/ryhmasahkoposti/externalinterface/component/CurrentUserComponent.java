@@ -27,8 +27,8 @@ import org.springframework.stereotype.Component;
 
 import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.dto.OrganisaatioHenkiloDto;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource;
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.client.KayttooikeusRestClient;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**
@@ -40,13 +40,13 @@ import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 @Component
 public class CurrentUserComponent {
     private static Logger LOGGER = LoggerFactory.getLogger(CurrentUserComponent.class);
-    @Resource
-    private KayttooikeusHenkiloResource kayttooikeusHenkiloResource;
+    private final KayttooikeusRestClient kayttooikeusRestClient;
     private final OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient;
 
     @Autowired
-    public CurrentUserComponent(OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient) {
+    public CurrentUserComponent(KayttooikeusRestClient kayttooikeusRestClient, OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient) {
         this.oppijanumeroRekisteriRestClient = oppijanumeroRekisteriRestClient;
+        this.kayttooikeusRestClient = kayttooikeusRestClient;
     }
 
 
@@ -73,7 +73,7 @@ public class CurrentUserComponent {
     public List<OrganisaatioHenkiloDto> getCurrentUserOrganizations() {
         try {
             String oid = SecurityUtil.getOid();
-            return kayttooikeusHenkiloResource.getOrganisaatioHenkiloTiedot(oid);
+            return kayttooikeusRestClient.getOrganisaatioHenkilo(oid);
         } catch (Exception e) {
             LOGGER.error(e.getMessage());
             throw new ExternalInterfaceException("error.msg.gettingCurrentUserOrganizationFailed", e);
