@@ -18,7 +18,7 @@ public class KayttooikeusRestClient extends CachingRestClient {
 
     public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilo(String henkiloOid) throws IOException {
         Type listType = new TypeToken<ArrayList<OrganisaatioHenkiloDto>>(){}.getType();
-        String url = baseUrl + "/" + henkiloOid + "/organisaatiohenkilo";
+        String url = baseUrl + "/henkilo/" + henkiloOid + "/organisaatiohenkilo";
         String resultJsonString = this.getAsString(url);
         return new Gson().fromJson(resultJsonString, listType);
     }
