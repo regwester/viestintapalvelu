@@ -157,7 +157,7 @@
 
 
         <!-- Oppijanumerorekisteri -->
-        <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient">
+        <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.viestintapalvelu.externalinterface.client.OppijanumeroRekisteriRestClient">
             <property name="webCasUrl" value="${web.url.cas}"/>
             <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>
             <property name="baseUrl" value="${oppijanumerorekisteri-service.base}"/>
