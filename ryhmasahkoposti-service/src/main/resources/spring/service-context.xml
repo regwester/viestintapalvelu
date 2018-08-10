@@ -79,18 +79,13 @@
     </bean>
 
     <!-- External interface HenkiloResource of Käyttöoikeus -->
-    <jaxrs-client:client id="kayttooikeusHenkiloResource"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource"
-                         address="${kayttooikeus-service.base}"
-                         inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+    <bean id="kayttooikeusRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.KayttooikeusRestClient">
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="casService" value="${kayttooikeus-service.base}/j_spring_cas_security_check"/>
+        <property name="baseUrl" value="${kayttooikeus-service.base}"/>
+        <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+    </bean>
 
     <!-- External interface OrganisaatioResource of OrganisaatioPalvelu -->
     <jaxrs-client:client id="organisaatioResourceClient"

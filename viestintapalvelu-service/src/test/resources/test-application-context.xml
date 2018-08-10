@@ -51,7 +51,8 @@
     </util:map>
 
     <mockito:mock id="dokumenttipalvelu" class="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource" />
-    <mockito:mock id="kayttooikeusHenkiloResource" class="fi.vm.sade.viestintapalvelu.externalinterface.api.KayttooikeusHenkiloResource" />
+    <mockito:mock id="kayttooikeusRestClient" class="fi.vm.sade.viestintapalvelu.externalinterface.client.KayttooikeusRestClient" />
+    <mockito:mock id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.viestintapalvelu.externalinterface.client.OppijanumeroRekisteriRestClient"/>
     <mockito:mock id="organisaatioResourceClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResource"/>
     <mockito:mock id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.viestintapalvelu.externalinterface.client.OppijanumeroRekisteriRestClient"/>
     <mockito:mock id="organisaatioResourceWithoutAuthenticationClient" class="fi.vm.sade.viestintapalvelu.externalinterface.api.OrganisaatioResourceWithoutAuthentication"/>

@@ -103,16 +103,6 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    KayttooikeusHenkiloResource kayttooikeusHenkiloResourceStub() {
-        return new KayttooikeusHenkiloResource() {
-            @Override
-            public List<OrganisaatioHenkiloDto> getOrganisaatioHenkiloTiedot(String oid) {
-                throw new IllegalStateException("Please mock me when needed!");
-            }
-        };
-    }
-
-    @Bean
     OrganisaatioResource organisaatioResourceStub() {
         return new OrganisaatioResource() {
             @Override
