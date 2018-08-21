@@ -12,8 +12,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KayttooikeusRestClient extends CachingRestClient {
-    private String webCasUrl;
-    private String targetService;
     private String baseUrl;
 
     public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilo(String henkiloOid) throws IOException {
@@ -21,10 +19,6 @@ public class KayttooikeusRestClient extends CachingRestClient {
         String url = baseUrl + "/henkilo/" + henkiloOid + "/organisaatiohenkilo";
         String resultJsonString = this.getAsString(url);
         return new Gson().fromJson(resultJsonString, listType);
-    }
-
-    public String getBaseUrl() {
-        return baseUrl;
     }
 
     public void setBaseUrl(String baseUrl) {
