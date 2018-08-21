@@ -12,16 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class KayttooikeusRestClient extends CachingRestClient {
-    private String baseUrl;
+    private final String baseUrl;
+
+    public KayttooikeusRestClient(String baseUrl) {
+        this.baseUrl = baseUrl;
+    }
 
     public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilo(String henkiloOid) throws IOException {
         Type listType = new TypeToken<ArrayList<OrganisaatioHenkiloDto>>(){}.getType();
         String url = baseUrl + "/henkilo/" + henkiloOid + "/organisaatiohenkilo";
         String resultJsonString = this.getAsString(url);
         return new Gson().fromJson(resultJsonString, listType);
-    }
-
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
     }
 }
