@@ -152,7 +152,7 @@ public class GroupEmailReportingServiceTest {
         savedReportedMessage.setVersion(0L);
         when(mockedReportedMessageService.saveReportedMessage(any(ReportedMessage.class))).thenReturn(savedReportedMessage);
 
-        List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+        List<ReportedAttachment> reportedAttachments = new ArrayList<>();
         ReportedAttachment reportedAttachment = RaportointipalveluTestData.getReportedAttachment();
         reportedAttachment.setId(3L);
         reportedAttachments.add(reportedAttachment);
@@ -174,23 +174,23 @@ public class GroupEmailReportingServiceTest {
             }
         }).when(mockedReportedRecipientService).saveReportedRecipients(any(Set.class));
 
-        when(mockedReportedRecipientConverter.convert(any(ReportedMessage.class), eq(new ArrayList<EmailRecipient>()))).thenReturn(
-                new HashSet<ReportedRecipient>());
+        when(mockedReportedRecipientConverter.convert(any(ReportedMessage.class), eq(new ArrayList<>()))).thenReturn(
+            new HashSet<>());
 
         EmailData emailData = RaportointipalveluTestData.getEmailData();
 
         EmailMessage emailMessage = RaportointipalveluTestData.getEmailMessage();
 
-        List<EmailRecipient> emailRecipients = new ArrayList<EmailRecipient>();
+        List<EmailRecipient> emailRecipients = new ArrayList<>();
         EmailRecipient emailRecipient = RaportointipalveluTestData.getEmailRecipient();
         emailRecipient.setEmail("testLahetyksenTulosVastaaRaportoitujatietoja@sposti.fi");
         emailRecipients.add(emailRecipient);
 
-        List<EmailAttachment> emailAttachments = new ArrayList<EmailAttachment>();
+        List<EmailAttachment> emailAttachments = new ArrayList<>();
         EmailAttachment emailAttachment = RaportointipalveluTestData.getEmailAttachment();
         emailAttachments.add(emailAttachment);
 
-        List<AttachmentResponse> attachmentResponses = new ArrayList<AttachmentResponse>();
+        List<AttachmentResponse> attachmentResponses = new ArrayList<>();
         AttachmentResponse attachmentResponse = RaportointipalveluTestData.getAttachmentResponse(1L, mockedFileItem);
         attachmentResponses.add(attachmentResponse);
 
@@ -263,12 +263,12 @@ public class GroupEmailReportingServiceTest {
         reportedMessage.setId(1L);
         reportedMessage.setVersion(0L);
 
-        List<ReportedRecipient> reportedRecipients = new ArrayList<ReportedRecipient>();
+        List<ReportedRecipient> reportedRecipients = new ArrayList<>();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         reportedRecipient.setReportedMessage(reportedMessage);
         reportedRecipients.add(reportedRecipient);
 
-        List<EmailRecipientDTO> mockedEmailRecipientDTOs = new ArrayList<EmailRecipientDTO>();
+        List<EmailRecipientDTO> mockedEmailRecipientDTOs = new ArrayList<>();
         mockedEmailRecipientDTOs.add(RaportointipalveluTestData.getEmailRecipientDTO());
 
         when(mockedReportedRecipientService.getUnhandledReportedRecipients(1)).thenReturn(reportedRecipients);
@@ -287,14 +287,14 @@ public class GroupEmailReportingServiceTest {
         reportedMessage.setId(1L);
         reportedMessage.setVersion(0L);
 
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         reportedRecipient.setReportedMessage(reportedMessage);
         reportedRecipients.add(reportedRecipient);
 
         reportedMessage.setReportedRecipients(reportedRecipients);
 
-        List<ReportedAttachment> reportedAttachments = new ArrayList<ReportedAttachment>();
+        List<ReportedAttachment> reportedAttachments = new ArrayList<>();
         reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
 
         EmailMessageDTO mockedEmailMessageDTO = RaportointipalveluTestData.getEmailMessageDTO();
@@ -363,14 +363,14 @@ public class GroupEmailReportingServiceTest {
     @Test
     public void testGetReportedMessagesByOrganizationOid() {
         PowerMockito.mockStatic(MessageUtil.class);
-        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", new Object[] {2L})).thenReturn("Lahetyksiä epäonnistui");
+        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", 2L)).thenReturn("Lahetyksiä epäonnistui");
 
-        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<>();
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         reportedMessage.setId(1L);
         reportedMessage.setVersion(0L);
 
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         reportedRecipient.setReportedMessage(reportedMessage);
         reportedRecipients.add(reportedRecipient);
@@ -386,7 +386,7 @@ public class GroupEmailReportingServiceTest {
         SendingStatusDTO sendingStatus = RaportointipalveluTestData.getSendingStatusDTO();
         when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatus);
 
-        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<>();
         mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
         when(mockedReportedMessageDTOConverter.convert(any(List.class), any(Map.class))).thenReturn(mockedReportedMessageDTOs);
 
@@ -402,12 +402,12 @@ public class GroupEmailReportingServiceTest {
     @SuppressWarnings("unchecked")
     @Test
     public void testGetReportedMessagesBySenderOid() {
-        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<>();
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         reportedMessage.setId(1L);
         reportedMessage.setVersion(0L);
 
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         reportedRecipient.setReportedMessage(reportedMessage);
         reportedRecipients.add(reportedRecipient);
@@ -419,7 +419,7 @@ public class GroupEmailReportingServiceTest {
 
         when(mockedReportedMessageService.getUserMessages("1.2.246.562.24.42645159413", pagingAndSorting)).thenReturn(mockedReportedMessages);
 
-        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<>();
         mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
         when(mockedReportedMessageDTOConverter.convert(mockedReportedMessages)).thenReturn(mockedReportedMessageDTOs);
 
@@ -438,12 +438,12 @@ public class GroupEmailReportingServiceTest {
         PowerMockito.mockStatic(MessageUtil.class);
         when(MessageUtil.getMessage(any(String.class))).thenReturn("lahetys kesken");
 
-        List<ReportedMessage> mockedReportedMessages = new ArrayList<ReportedMessage>();
+        List<ReportedMessage> mockedReportedMessages = new ArrayList<>();
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         reportedMessage.setId(1L);
         reportedMessage.setVersion(0L);
 
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         reportedRecipient.setReportedMessage(reportedMessage);
         reportedRecipients.add(reportedRecipient);
@@ -460,7 +460,7 @@ public class GroupEmailReportingServiceTest {
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
 
-        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<ReportedMessageDTO>();
+        List<ReportedMessageDTO> mockedReportedMessageDTOs = new ArrayList<>();
         mockedReportedMessageDTOs.add(RaportointipalveluTestData.getReportedMessageDTO());
         when(mockedReportedMessageDTOConverter.convert(any(List.class), any(Map.class))).thenReturn(mockedReportedMessageDTOs);
 
@@ -477,7 +477,7 @@ public class GroupEmailReportingServiceTest {
         reportedMessage.setId(1L);
         reportedMessage.setVersion(0L);
 
-        Set<ReportedRecipient> reportedRecipients = new HashSet<ReportedRecipient>();
+        Set<ReportedRecipient> reportedRecipients = new HashSet<>();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         reportedRecipient.setReportedMessage(reportedMessage);
         reportedRecipients.add(reportedRecipient);
@@ -490,9 +490,9 @@ public class GroupEmailReportingServiceTest {
         when(mockedReportedRecipientService.getSendingStatusOfRecipients(any(Long.class))).thenReturn(sendingStatusDTO);
 
         PowerMockito.mockStatic(MessageUtil.class);
-        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", new Object[] {5L, 2L})).thenReturn(
+        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_raportti", 5L, 2L)).thenReturn(
                 "2 lahetystä epäonnistui");
-        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", new Object[] {2L})).thenReturn("Lahetyksiä epäonnistui");
+        PowerMockito.when(MessageUtil.getMessage("ryhmasahkoposti.lahetys_epaonnistui", 2L)).thenReturn("Lahetyksiä epäonnistui");
 
         when(mockedReportedAttachmentService.getReportedAttachments(any(Set.class))).thenReturn(new ArrayList<ReportedAttachment>());
 
