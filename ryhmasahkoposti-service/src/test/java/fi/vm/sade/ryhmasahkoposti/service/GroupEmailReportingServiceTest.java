@@ -277,7 +277,7 @@ public class GroupEmailReportingServiceTest {
         List<EmailRecipientDTO> emailRecipientDTOs = groupEmailReportingService.getUnhandledMessageRecipients(1);
 
         assertNotNull(emailRecipientDTOs);
-        assertTrue(emailRecipientDTOs.size() == 1);
+        assertEquals(1, emailRecipientDTOs.size());
     }
 
     @Test
@@ -306,7 +306,7 @@ public class GroupEmailReportingServiceTest {
 
         assertNotNull(emailMessageDTO);
         assertNotNull(emailMessageDTO.getMessageID());
-        assertTrue(emailMessageDTO.getMessageID().equals(new Long(1)));
+        assertEquals(emailMessageDTO.getMessageID(), new Long(1));
     }
 
     @Test
@@ -324,12 +324,12 @@ public class GroupEmailReportingServiceTest {
         assertNotNull(sendingStatus);
         assertNotNull(sendingStatus.getMessageID());
         assertNotNull(sendingStatus.getNumberOfRecipients());
-        assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
+        assertEquals(sendingStatus.getNumberOfRecipients(), new Long(10));
         assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
-        assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(5)));
-        assertTrue(sendingStatus.getNumberOfBouncedSendings().equals(new Long(6)));
+        assertEquals(sendingStatus.getNumberOfSuccessfulSendings(), new Long(5));
+        assertEquals(sendingStatus.getNumberOfBouncedSendings(), new Long(6));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
-        assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
+        assertEquals(sendingStatus.getNumberOfFailedSendings(), new Long(2));
         assertNull(sendingStatus.getSendingEnded());
     }
 
@@ -351,11 +351,11 @@ public class GroupEmailReportingServiceTest {
         assertNotNull(sendingStatus);
         assertNotNull(sendingStatus.getMessageID());
         assertNotNull(sendingStatus.getNumberOfRecipients());
-        assertTrue(sendingStatus.getNumberOfRecipients().equals(new Long(10)));
+        assertEquals(sendingStatus.getNumberOfRecipients(), new Long(10));
         assertNotNull(sendingStatus.getNumberOfSuccessfulSendings());
-        assertTrue(sendingStatus.getNumberOfSuccessfulSendings().equals(new Long(8)));
+        assertEquals(sendingStatus.getNumberOfSuccessfulSendings(), new Long(8));
         assertNotNull(sendingStatus.getNumberOfFailedSendings());
-        assertTrue(sendingStatus.getNumberOfFailedSendings().equals(new Long(2)));
+        assertEquals(sendingStatus.getNumberOfFailedSendings(), new Long(2));
         assertNotNull(sendingStatus.getSendingEnded());
     }
 
@@ -394,7 +394,7 @@ public class GroupEmailReportingServiceTest {
                 pagingAndSorting);
 
         assertNotNull(reportedMessagesDTO);
-        assertTrue(reportedMessagesDTO.getReportedMessages().size() == 1);
+        assertEquals(1, reportedMessagesDTO.getReportedMessages().size());
         assertNotNull(reportedMessagesDTO.getReportedMessages().get(0).getStatusReport());
         assertTrue(reportedMessagesDTO.getReportedMessages().get(0).getStatusReport().equalsIgnoreCase("Lahetyksiä epäonnistui"));
     }
@@ -467,7 +467,7 @@ public class GroupEmailReportingServiceTest {
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessages(query, pagingAndSorting);
 
         assertNotNull(reportedMessagesDTO);
-        assertTrue(reportedMessagesDTO.getReportedMessages().size() == 1);
+        assertEquals(1, reportedMessagesDTO.getReportedMessages().size());
     }
 
     @SuppressWarnings("unchecked")
@@ -503,7 +503,7 @@ public class GroupEmailReportingServiceTest {
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessage(new Long(1));
 
         assertNotNull(reportedMessageDTO);
-        assertTrue(reportedMessageDTO.getMessageID().equals(new Long(1)));
+        assertEquals(reportedMessageDTO.getMessageID(), new Long(1));
         assertNotNull(reportedMessageDTO.getStatusReport());
         assertNotNull(reportedMessageDTO.getSendingReport());
     }
@@ -518,8 +518,8 @@ public class GroupEmailReportingServiceTest {
         List<OrganizationDTO> organizationDTOs = groupEmailReportingService.getUserOrganizations();
 
         assertNotNull(organizationDTOs);
-        assertTrue(organizationDTOs.size() == 1);
-        assertTrue(organizationDTOs.get(0).getOid().equals("1.2.246.562.10.00000000001"));
+        assertEquals(1, organizationDTOs.size());
+        assertEquals("1.2.246.562.10.00000000001", organizationDTOs.get(0).getOid());
         assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
     }
 
