@@ -687,6 +687,12 @@
                 <version>${http.client.version}</version>
                 <scope>test</scope>
             </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.9</version>
+                <scope>test</scope>
+            </dependency>
 
             <dependency>
                 <groupId>org.jretrofit</groupId>
