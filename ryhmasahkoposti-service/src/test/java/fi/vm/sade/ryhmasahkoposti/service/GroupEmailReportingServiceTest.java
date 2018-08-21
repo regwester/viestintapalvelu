@@ -15,16 +15,55 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.service;
 
-import fi.vm.sade.dto.OrganisaatioHenkiloDto;
-import java.io.IOException;
-import java.util.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.when;
 
+import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.dto.PagingAndSortingDTO;
+import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.AttachmentResponse;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessage;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipient;
+import fi.vm.sade.ryhmasahkoposti.api.dto.EmailRecipientDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.OrganizationDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessageDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.ReportedMessagesDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.SendingStatusDTO;
+import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
+import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
+import fi.vm.sade.ryhmasahkoposti.converter.AttachmentResponseConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.EmailRecipientDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedAttachmentConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageDTOConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedMessageReplacementConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientConverter;
+import fi.vm.sade.ryhmasahkoposti.converter.ReportedRecipientReplacementConverter;
+import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
+import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
+import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import org.apache.commons.fileupload.FileItem;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.stubbing.Answer;
 import org.powermock.api.mockito.PowerMockito;
@@ -36,25 +75,14 @@ import org.springframework.test.context.support.DependencyInjectionTestExecution
 import org.springframework.test.context.support.DirtiesContextTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 
-import fi.vm.sade.organisaatio.resource.dto.OrganisaatioRDTO;
-import fi.vm.sade.ryhmasahkoposti.api.dto.*;
-import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedMessageQueryDTO;
-import fi.vm.sade.ryhmasahkoposti.common.util.MessageUtil;
-import fi.vm.sade.ryhmasahkoposti.converter.*;
-import fi.vm.sade.ryhmasahkoposti.dao.SendQueueDAO;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.CurrentUserComponent;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.component.OrganizationComponent;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedAttachment;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
-import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
-import fi.vm.sade.ryhmasahkoposti.service.impl.GroupEmailReportingServiceImpl;
-import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
-
-import static org.junit.Assert.*;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.when;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 @RunWith(PowerMockRunner.class)
 @ContextConfiguration("/test-bundle-context.xml")
@@ -495,4 +523,27 @@ public class GroupEmailReportingServiceTest {
         assertTrue(organizationDTOs.get(0).getName().equalsIgnoreCase("OPH"));
     }
 
+    @Test
+    public void exceptionInTemplateLoadingCausesCreationOfSendingGroupEmailToCrash() throws IOException {
+        EmailMessage emailMessage = new EmailMessage("testProcess",
+            "testSender",
+            "noreply@example.com",
+            "Hello from test",
+            "testtemplate",
+            "FI",
+            Collections.emptyList());
+        RuntimeException expectedException = new RuntimeException("Boom-kah!");
+        when(mockedTemplateComponent.getTemplate("testtemplate", "FI", "email", null)).thenThrow(expectedException);
+
+        try {
+            groupEmailReportingService.createSendingGroupEmail(new EmailData(Collections.emptyList(), emailMessage));
+            fail("Should have exited with exception, because template loading failed.");
+        } catch (RuntimeException e) {
+            assertEquals(expectedException, e);
+        }
+
+        Mockito.verifyZeroInteractions(mockedReportedMessageService);
+        Mockito.verify(mockedTemplateComponent).getTemplate("testtemplate", "FI", "email", null);
+        Mockito.verifyNoMoreInteractions(mockedTemplateComponent);
+    }
 }
