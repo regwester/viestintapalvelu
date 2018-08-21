@@ -158,20 +158,16 @@ public class GroupEmailReportingServiceTest {
         reportedAttachments.add(reportedAttachment);
         when(mockedReportedAttachmentService.getReportedAttachments(any(List.class))).thenReturn(reportedAttachments);
 
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                @SuppressWarnings("unused")
-                Object[] args = invocation.getArguments();
-                return null;
-            }
+        doAnswer((Answer<Object>) invocation -> {
+            @SuppressWarnings("unused")
+            Object[] args = invocation.getArguments();
+            return null;
         }).when(mockedReportedMessageAttachmentService).saveReportedMessageAttachments(any(ReportedMessage.class), any(List.class));
 
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                @SuppressWarnings("unused")
-                Object[] args = invocation.getArguments();
-                return null;
-            }
+        doAnswer((Answer<Object>) invocation -> {
+            @SuppressWarnings("unused")
+            Object[] args = invocation.getArguments();
+            return null;
         }).when(mockedReportedRecipientService).saveReportedRecipients(any(Set.class));
 
         when(mockedReportedRecipientConverter.convert(any(ReportedMessage.class), eq(new ArrayList<>()))).thenReturn(
@@ -226,12 +222,10 @@ public class GroupEmailReportingServiceTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         when(mockedReportedRecipientService.getReportedRecipient(any(Long.class))).thenReturn(reportedRecipient);
 
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                @SuppressWarnings("unused")
-                Object[] args = invocation.getArguments();
-                return null;
-            }
+        doAnswer((Answer<Object>) invocation -> {
+            @SuppressWarnings("unused")
+            Object[] args = invocation.getArguments();
+            return null;
         }).when(mockedReportedRecipientService).updateReportedRecipient(any(ReportedRecipient.class));
 
         EmailRecipientDTO recipient = RaportointipalveluTestData.getEmailRecipientDTO();
@@ -245,12 +239,10 @@ public class GroupEmailReportingServiceTest {
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient();
         when(mockedReportedRecipientService.getReportedRecipient(any(Long.class))).thenReturn(reportedRecipient);
 
-        doAnswer(new Answer<Object>() {
-            public Object answer(InvocationOnMock invocation) {
-                @SuppressWarnings("unused")
-                Object[] args = invocation.getArguments();
-                return null;
-            }
+        doAnswer((Answer<Object>) invocation -> {
+            @SuppressWarnings("unused")
+            Object[] args = invocation.getArguments();
+            return null;
         }).when(mockedReportedRecipientService).updateReportedRecipient(any(ReportedRecipient.class));
 
         EmailRecipientDTO emailRecipientDTO = RaportointipalveluTestData.getEmailRecipientDTO();
