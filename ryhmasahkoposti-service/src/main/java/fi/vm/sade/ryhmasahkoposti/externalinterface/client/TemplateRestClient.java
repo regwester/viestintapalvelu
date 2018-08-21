@@ -1,27 +1,19 @@
-package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
+package fi.vm.sade.ryhmasahkoposti.externalinterface.client;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-
-import fi.vm.sade.dto.OrganisaatioHenkiloDto;
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.generic.rest.CachingRestClient;
 import fi.vm.sade.properties.OphProperties;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
-import org.apache.xml.resolver.apps.resolver;
-import org.dom4j.DocumentException;
+import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
 
 import java.io.IOException;
-import java.lang.reflect.Type;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Properties;
 
 public class TemplateRestClient extends CachingRestClient implements TemplateResource {
-    private final String viestintaPalveluUrl;
     private final OphProperties.UrlResolver urlResolver;
+    private final ObjectMapperProvider objectMapperProvider;
 
-    public TemplateRestClient(String viestintaPalveluUrl) {
-        this.viestintaPalveluUrl = viestintaPalveluUrl;
+    public TemplateRestClient(String viestintaPalveluUrl, ObjectMapperProvider objectMapperProvider) {
         this.urlResolver = new OphProperties() {
             UrlResolver createUrlResolver() {
                 Properties urlsConfig = new Properties();
@@ -32,48 +24,29 @@ public class TemplateRestClient extends CachingRestClient implements TemplateRes
                 return new UrlResolver(urlsConfig);
             }
         }.createUrlResolver();
+        this.objectMapperProvider = objectMapperProvider;
     }
 
-    public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilo(String henkiloOid) throws IOException {
-        Type listType = new TypeToken<ArrayList<OrganisaatioHenkiloDto>>(){}.getType();
-        String url = viestintaPalveluUrl + "/henkilo/" + henkiloOid + "/organisaatiohenkilo";
-        String resultJsonString = this.getAsString(url);
-        return new Gson().fromJson(resultJsonString, listType);
-    }
-
-/*
-    @GET
-    @Produces("application/json")
-    @Path("/{templateName}/{languageCode}/{type}/{applicationPeriod}/getTemplateContent")
-    TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
-                                   @PathParam("type") String type, @PathParam("applicationPeriod") String applicationPeriod) throws IOException, DocumentException;
-
-    @GET
-    @Produces("application/json")
-    @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
-    TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
-                                   @PathParam("type") String type) throws IOException, DocumentException;
-
-    @GET
-    @Path("/{templateId}/{type}/getTemplateContent")
-    @Produces("application/json")
-    TemplateDTO getTemplateByID(@PathParam("templateId") String templateId, @PathParam("type") String type);
-* */
     @Override
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type, String applicationPeriod) throws IOException {
-        String url = this.urlResolver.url("viestintapalvelu.templatecontent.by.name.with.applicationperiod", templateName, languageCode, type, applicationPeriod);
-        return this.get(url, TemplateDTO.class);
+        String url = this.urlResolver.url("viestintapalvelu.templatecontent.by.name.with.applicationperiod",
+            templateName, languageCode, type, applicationPeriod);
+        return fetchTemplate(url);
     }
 
     @Override
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type) throws IOException {
-        String url = this.urlResolver.url("viestintapalvelu.templatecontent.by.name", templateName, languageCode, type);
-        return this.get(url, TemplateDTO.class);
+        return fetchTemplate(this.urlResolver.url("viestintapalvelu.templatecontent.by.name",
+            templateName, languageCode, type));
     }
 
     @Override
     public TemplateDTO getTemplateByID(String templateId, String type) throws IOException {
-        String url = this.urlResolver.url("viestintapalvelu.templatecontent.by.id", templateId, type);
-        return this.get(url, TemplateDTO.class);
+        return fetchTemplate(this.urlResolver.url("viestintapalvelu.templatecontent.by.id", templateId, type));
+    }
+
+    private TemplateDTO fetchTemplate(String url) throws IOException {
+        String jsonString = this.getAsString(url);
+        return objectMapperProvider.getContext(TemplateDTO.class).readValue(jsonString, TemplateDTO.class);
     }
 }
