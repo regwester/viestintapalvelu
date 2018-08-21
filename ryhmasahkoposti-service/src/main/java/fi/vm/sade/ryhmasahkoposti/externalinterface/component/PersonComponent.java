@@ -15,7 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
-import fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient;
+import fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

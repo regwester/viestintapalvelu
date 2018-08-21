@@ -15,8 +15,8 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
+import fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.viestintapalvelu.externalinterface.client.OppijanumeroRekisteriRestClient;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 

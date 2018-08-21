@@ -1,7 +1,8 @@
-package fi.vm.sade.ryhmasahkoposti.externalinterface.client;
+package fi.vm.sade.externalinterface;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+
 import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.generic.rest.CachingRestClient;
 

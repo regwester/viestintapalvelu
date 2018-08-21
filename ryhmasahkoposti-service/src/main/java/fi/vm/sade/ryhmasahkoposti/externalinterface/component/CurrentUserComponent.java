@@ -17,9 +17,7 @@ package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
 import java.util.List;
 
-import javax.annotation.Resource;
-
-import fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient;
+import fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,7 +26,7 @@ import org.springframework.stereotype.Component;
 import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.ryhmasahkoposti.util.SecurityUtil;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.client.KayttooikeusRestClient;
+import fi.vm.sade.externalinterface.KayttooikeusRestClient;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 
 /**

@@ -15,10 +15,10 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.client.KayttooikeusRestClient;
 import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.List;
 
+import fi.vm.sade.externalinterface.KayttooikeusRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;

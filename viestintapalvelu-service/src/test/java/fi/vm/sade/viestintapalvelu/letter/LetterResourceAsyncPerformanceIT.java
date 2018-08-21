@@ -23,7 +23,7 @@ import java.util.concurrent.*;
 
 import javax.ws.rs.core.Response;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.client.KayttooikeusRestClient;
+import fi.vm.sade.externalinterface.KayttooikeusRestClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.experimental.categories.Category;

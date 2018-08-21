@@ -70,7 +70,7 @@
     </jaxrs-client:client>
 
     <!-- Oppijanumerorekisteri -->
-    <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.OppijanumeroRekisteriRestClient">
+    <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient">
         <property name="webCasUrl" value="${web.url.cas}"/>
         <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>
         <property name="baseUrl" value="${oppijanumerorekisteri-service.base}"/>
@@ -79,7 +79,7 @@
     </bean>
 
     <!-- External interface HenkiloResource of Käyttöoikeus -->
-    <bean id="kayttooikeusRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.KayttooikeusRestClient">
+    <bean id="kayttooikeusRestClient" class="fi.vm.sade.externalinterface.KayttooikeusRestClient">
         <property name="webCasUrl" value="${web.url.cas}"/>
         <property name="casService" value="${kayttooikeus-service.base}/j_spring_cas_security_check"/>
         <property name="baseUrl" value="${kayttooikeus-service.base}"/>

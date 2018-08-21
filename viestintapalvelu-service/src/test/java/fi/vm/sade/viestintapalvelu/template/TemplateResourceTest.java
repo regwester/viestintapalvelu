@@ -25,7 +25,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import fi.vm.sade.viestintapalvelu.externalinterface.client.KayttooikeusRestClient;
+import fi.vm.sade.externalinterface.KayttooikeusRestClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;

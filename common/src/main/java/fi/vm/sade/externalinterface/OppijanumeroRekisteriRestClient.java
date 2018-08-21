@@ -1,4 +1,4 @@
-package fi.vm.sade.viestintapalvelu.externalinterface.client;
+package fi.vm.sade.externalinterface;
 
 import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.generic.rest.CachingRestClient;
