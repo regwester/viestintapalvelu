@@ -285,9 +285,6 @@ public class GroupEmailReportingServiceTest {
 
         reportedMessage.setReportedRecipients(reportedRecipients);
 
-        List<ReportedAttachment> reportedAttachments = new ArrayList<>();
-        reportedAttachments.add(RaportointipalveluTestData.getReportedAttachment());
-
         EmailMessageDTO mockedEmailMessageDTO = RaportointipalveluTestData.getEmailMessageDTO();
 
         when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
