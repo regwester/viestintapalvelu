@@ -48,6 +48,7 @@ public class EmailComponent {
 
     public String getPreview(EmailData data) {
         try {
+            LOGGER.warn("Calling external interface EmailResource.getPreview");
             InputStream stream = (InputStream) emailResourceClient.getPreview(data).getEntity();
             return IOUtils.toString(stream);
         } catch (Exception e) {
