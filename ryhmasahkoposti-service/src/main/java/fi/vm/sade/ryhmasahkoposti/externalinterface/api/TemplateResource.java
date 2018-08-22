@@ -15,42 +15,13 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.externalinterface.api;
 
+import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
+import org.dom4j.DocumentException;
+
 import java.io.IOException;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.PathParam;
-import javax.ws.rs.Produces;
-
-import org.dom4j.DocumentException;
-import org.springframework.stereotype.Component;
-
-import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
-
-/**
- * Interface to template service
- * 
- * @author ovmol1
- *
- */
-@Component
-@Path("/template")
 public interface TemplateResource {
-
-    @GET
-    @Produces("application/json")
-    @Path("/{templateName}/{languageCode}/{type}/{applicationPeriod}/getTemplateContent")
-    TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
-                                   @PathParam("type") String type, @PathParam("applicationPeriod") String applicationPeriod) throws IOException, DocumentException;
-
-    @GET
-    @Produces("application/json")
-    @Path("/{templateName}/{languageCode}/{type}/getTemplateContent")
-    TemplateDTO getTemplateContent(@PathParam("templateName") String templateName, @PathParam("languageCode") String languageCode,
-                                   @PathParam("type") String type) throws IOException, DocumentException;
-
-    @GET
-    @Path("/{templateId}/{type}/getTemplateContent")
-    @Produces("application/json")
-    TemplateDTO getTemplateByID(@PathParam("templateId") String templateId, @PathParam("type") String type);
+    TemplateDTO getTemplateContent(String templateName, String languageCode, String type, String applicationPeriod) throws IOException, DocumentException;
+    TemplateDTO getTemplateContent(String templateName, String languageCode, String type) throws IOException, DocumentException;
+    TemplateDTO getTemplateByID(String templateId, String type) throws IOException;
 }

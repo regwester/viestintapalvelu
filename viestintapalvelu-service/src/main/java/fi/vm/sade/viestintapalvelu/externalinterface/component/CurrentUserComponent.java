@@ -18,15 +18,14 @@ package fi.vm.sade.viestintapalvelu.externalinterface.component;
 import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import java.util.List;
 
-import javax.annotation.Resource;
-
+import fi.vm.sade.externalinterface.KayttooikeusRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.viestintapalvelu.externalinterface.api.KayttooikeusHenkiloResource;
 
 /**
  * Komponenttiluokka omien tietojen hakemiseksi käyttäen CXF:ää {@link service
@@ -39,8 +38,12 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.KayttooikeusHenkiloReso
 public class CurrentUserComponent {
     private static final Logger logger = LoggerFactory.getLogger(CurrentUserComponent.class);
 
-    @Resource
-    private KayttooikeusHenkiloResource kayttooikeusHenkiloResource;
+    private final KayttooikeusRestClient kayttooikeusRestClient;
+
+    @Autowired
+    public CurrentUserComponent(KayttooikeusRestClient kayttooikeusRestClient) {
+        this.kayttooikeusRestClient = kayttooikeusRestClient;
+    }
 
     /**
      * Hakee kirjaantuneen käyttäjän tiedot
@@ -63,7 +66,7 @@ public class CurrentUserComponent {
      */
     public List<OrganisaatioHenkiloDto> getCurrentUserOrganizations() {
         try {
-            return kayttooikeusHenkiloResource.getOrganisaatioHenkiloTiedot(getCurrentUser());
+            return kayttooikeusRestClient.getOrganisaatioHenkilo(getCurrentUser());
         } catch (Exception e) {
             logger.error("Error getting current user's organizations: " + e.getMessage(), e);
             throw new ExternalInterfaceException(e);

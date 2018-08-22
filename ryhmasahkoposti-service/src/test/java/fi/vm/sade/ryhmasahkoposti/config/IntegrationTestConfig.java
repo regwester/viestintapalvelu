@@ -103,16 +103,6 @@ public class IntegrationTestConfig {
     }
 
     @Bean
-    KayttooikeusHenkiloResource kayttooikeusHenkiloResourceStub() {
-        return new KayttooikeusHenkiloResource() {
-            @Override
-            public List<OrganisaatioHenkiloDto> getOrganisaatioHenkiloTiedot(String oid) {
-                throw new IllegalStateException("Please mock me when needed!");
-            }
-        };
-    }
-
-    @Bean
     OrganisaatioResource organisaatioResourceStub() {
         return new OrganisaatioResource() {
             @Override
@@ -137,16 +127,6 @@ public class IntegrationTestConfig {
 
             @Override
             public Response deleteByUris(UrisContainerDto urisContainerDto) {
-                throw new IllegalStateException("Please mock me when needed!");
-            }
-        };
-    }
-
-    @Bean
-    OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource() {
-        return new OppijanumerorekisteriHenkiloResource() {
-            @Override
-            public HenkiloDto findByOid(String oid) {
                 throw new IllegalStateException("Please mock me when needed!");
             }
         };

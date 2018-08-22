@@ -15,15 +15,14 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.externalinterface.component;
 
-import javax.annotation.Resource;
-
+import fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
-import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHenkiloResource;
 
 /**
  * Komponenttiluokka henkilon tietojen hakemiseksi CXF:n avulla {@link service-context.xml}
@@ -34,9 +33,13 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHen
 @Component
 public class PersonComponent {
     private static Logger LOGGER = LoggerFactory.getLogger(PersonComponent.class);
-    @Resource
-    private OppijanumerorekisteriHenkiloResource oppijanumerorekisteriHenkiloResource;
-    
+    private final OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient;
+
+    @Autowired
+    public PersonComponent(OppijanumeroRekisteriRestClient oppijanumeroRekisteriRestClient) {
+        this.oppijanumeroRekisteriRestClient = oppijanumeroRekisteriRestClient;
+    }
+
     /**
      * Hakee henkilön tiedot oid-tunnuksella
      * 
@@ -45,7 +48,7 @@ public class PersonComponent {
      */
     public HenkiloDto getPerson(String oid) {
         try {
-            return oppijanumerorekisteriHenkiloResource.findByOid(oid);
+            return oppijanumeroRekisteriRestClient.getHenkilo(oid);
         } catch (Exception e) {
             LOGGER.debug(e.getMessage(), e);
             throw new ExternalInterfaceException("error.msg.gettingPersonDataFailed", e);

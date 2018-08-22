@@ -135,7 +135,8 @@ dokumenttipalvelu-service.rest.url=https://${host.virkailija}/dokumenttipalvelu-
 organisaatio-service.rest.url=https://${host.virkailija}/organisaatio-service/rest
 ryhmasahkoposti-service.email.rest.url=https://${host.virkailija}/ryhmasahkoposti-service/email
 tarjonta-service.rest.url=https://${host.virkailija}/tarjonta-service/rest/v1
-viestintapalvelu.rest.url=https://${host.virkailija}/viestintapalvelu/api/v1
+viestintapalvelu.base=https://${host.virkailija}/viestintapalvelu
+viestintapalvelu.rest.url=${viestintapalvelu.base}/api/v1
 
 ##############################################################################
 #
