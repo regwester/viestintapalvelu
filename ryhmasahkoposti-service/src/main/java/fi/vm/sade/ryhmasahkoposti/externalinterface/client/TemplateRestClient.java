@@ -25,6 +25,7 @@ public class TemplateRestClient extends CachingRestClient implements TemplateRes
             }
         }.createUrlResolver();
         this.objectMapperProvider = objectMapperProvider;
+        setClientSubSystemCode("fi.vm.sade.ryhmasahkoposti");
     }
 
     @Override
