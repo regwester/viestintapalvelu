@@ -30,6 +30,7 @@ public class TemplateRestClient extends CachingRestClient implements TemplateRes
 
     @Override
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type, String applicationPeriod) throws IOException {
+        logger.warn("Calling url viestintapalvelu.templatecontent.by.name.with.applicationperiod");
         String url = this.urlResolver.url("viestintapalvelu.templatecontent.by.name.with.applicationperiod",
             templateName, languageCode, type, applicationPeriod);
         return fetchTemplate(url);
@@ -37,12 +38,14 @@ public class TemplateRestClient extends CachingRestClient implements TemplateRes
 
     @Override
     public TemplateDTO getTemplateContent(String templateName, String languageCode, String type) throws IOException {
+        logger.warn("Calling url viestintapalvelu.templatecontent.by.name");
         return fetchTemplate(this.urlResolver.url("viestintapalvelu.templatecontent.by.name",
             templateName, languageCode, type));
     }
 
     @Override
     public TemplateDTO getTemplateByID(String templateId, String type) throws IOException {
+        logger.warn("Calling url viestintapalvelu.templatecontent.by.id");
         return fetchTemplate(this.urlResolver.url("viestintapalvelu.templatecontent.by.id", templateId, type));
     }
 
