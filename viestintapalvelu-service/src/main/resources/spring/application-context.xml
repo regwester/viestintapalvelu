@@ -175,7 +175,7 @@
         </bean>
 
         <bean id="ryhmasahkopostiRestClient" class="fi.vm.sade.viestintapalvelu.externalinterface.RyhmasahkopostiRestClient">
-            <constructor-arg index="0" value="${ryhmasahkoposti-service.base}"/>
+            <constructor-arg index="0" value="${ryhmasahkoposti.base}"/>
             <constructor-arg index="1">
                 <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
             </constructor-arg>
