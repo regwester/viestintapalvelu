@@ -15,12 +15,24 @@
  **/
 package fi.vm.sade.viestintapalvelu.externalinterface.api;
 
+import javax.ws.rs.*;
+import javax.ws.rs.core.MediaType;
+import javax.ws.rs.core.Response;
+
+import org.springframework.stereotype.Component;
+
+
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailData;
-import org.apache.http.HttpResponse;
 
-import java.io.IOException;
-
+@Component
+@Path("/")
 public interface EmailResource {
+
+    @GET
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes("application/json")
+    @Path("ok")
+    Response ok();
 
     /**
      * Lähettää ryhmäsähköpostin vastaanottajille ilman alaviitettä
@@ -30,7 +42,14 @@ public interface EmailResource {
      * @return Lähetettävän ryhmäsähköpostiviestin tunnus
      */
 
-    HttpResponse sendEmail(EmailData emailData) throws IOException;
+    @POST
+    @Produces(MediaType.APPLICATION_JSON)
+    @Consumes("application/json")
+    Response sendEmail(EmailData emailData);
 
-    HttpResponse getPreview(EmailData emailData) throws Exception;
+    @POST
+    @Produces(MediaType.TEXT_PLAIN + ";charset=utf-8")
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("preview")
+    Response getPreview(EmailData emailData) throws Exception;
 }
