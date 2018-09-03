@@ -39,7 +39,7 @@ public class EmailComponent {
     @Autowired
     private EmailBuilder emailBuilder;
 
-   // @Autowired
+    @Autowired
     public EmailComponent(RyhmasahkopostiRestClient ryhmasahkopostiRestClient) {
         this.ryhmasahkopostiRestClient = ryhmasahkopostiRestClient;
     }
