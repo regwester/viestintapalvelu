@@ -20,6 +20,7 @@ import java.io.InputStream;
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
 import fi.vm.sade.viestintapalvelu.externalinterface.RyhmasahkopostiRestClient;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -57,7 +58,8 @@ public class EmailComponent {
     public String getPreview(EmailData data) {
         try {
             LOGGER.warn("Calling external interface EmailResource.getPreview");
-            InputStream stream = (InputStream) ryhmasahkopostiRestClient.getPreview(data).getEntity();
+            HttpResponse response = ryhmasahkopostiRestClient.getPreview(data);
+            InputStream stream = response.getEntity().getContent();
             return IOUtils.toString(stream);
         } catch (Exception e) {
             LOGGER.error("Could not make preview for email " + data + ". Reason: " + e.getMessage(), e);
