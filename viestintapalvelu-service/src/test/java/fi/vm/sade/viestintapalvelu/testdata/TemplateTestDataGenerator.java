@@ -44,6 +44,7 @@ public class TemplateTestDataGenerator {
         //String templateKeys = "omattiedot_email";
         //String templateKeys = "kk_hyvaksymiskirje_2018,kk_jalkiohjauskirje_2018";
         //String templateKeys = "kk_varasijakirje_2018";
+//        String templateKeys = "tuontivirhe_email";
         if(templateKeys != null) {
             for(String templateKey : templateKeys.split(",")) {
                 for (String language : asList("FI", "EN", "SV")) {
