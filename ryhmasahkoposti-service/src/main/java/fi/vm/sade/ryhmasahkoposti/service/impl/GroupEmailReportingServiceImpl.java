@@ -113,6 +113,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 log.debug("Loaded template: {} by id {}", templateDTO, emailData.getEmail().getTemplateId());
             } catch (Exception e) {
                 log.error("Failed to load template for id: " + emailData.getEmail().getTemplateId(), e);
+                throw e;
             }
         } else if (!StringUtils.isEmpty(emailData.getEmail().getTemplateName())) {
             String languageCode = TemplateDTO.DEFAULT_LANG_CODE;
@@ -127,6 +128,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
             } catch (Exception e) {
                 log.error("Failed to load template for templateName: " + emailData.getEmail().getTemplateName() + ", languageCode="
                         + emailData.getEmail().getLanguageCode(), e);
+                throw e;
             }
         }
 

@@ -67,7 +67,7 @@
         <flyway.version>2.1.1</flyway.version>
         <hibernate.version>4.1.0.Final</hibernate.version>
         <hsqldb.version>2.0.0</hsqldb.version>
-        <http.client.version>4.2.5</http.client.version>
+        <http.client.version>4.5.2</http.client.version>
         <icu4j.version>3.4.4</icu4j.version>
         <itext.version>2.1.7</itext.version>
         <jackson.version>2.8.5</jackson.version>
@@ -680,12 +680,21 @@
                 <scope>test</scope>
             </dependency>
 
-            <!-- HTTP client for testing -->
+            <!-- HTTP client -->
             <dependency>
                 <groupId>org.apache.httpcomponents</groupId>
                 <artifactId>httpclient</artifactId>
                 <version>${http.client.version}</version>
-                <scope>test</scope>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpclient-cache</artifactId>
+                <version>${http.client.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.apache.httpcomponents</groupId>
+                <artifactId>httpcore</artifactId>
+                <version>4.4.10</version>
             </dependency>
 
             <dependency>

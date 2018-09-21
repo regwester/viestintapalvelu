@@ -47,24 +47,6 @@
 
 	<bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache">
     </bean>
-    
-    <bean id="casTicketInterceptor" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
-        <property name="useBasicAuthentication" value="${ryhmasahkoposti.dev.use-basic-authentication:false}"/>
-        <property name="useSessionPerUser" value="${ryhmasahkoposti.use-session-per-user:true}"/>
-        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
-        <property name="appClientUsername" value=""/>
-        <property name="appClientPassword" value=""/>
-    </bean>
-
-    <!-- Application as a user -->
-    <bean id="casTicketInterceptorAAU" class="fi.vm.sade.authentication.cas.CasFriendlyCxfInterceptor">
-        <property name="useBasicAuthentication" value="${viestintapalvelu.dev.use-basic-authentication:false}"/>
-        <property name="useSessionPerUser" value="${ryhmasahkoposti.use-session-per-user:true}"/>
-        <property name="sessionRequired" value="${ryhmasahkoposti.session-required:true}"/>
-        <property name="appClientUsername" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-        <property name="appClientPassword" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-    </bean>
-
 
     <authorizationPolicy id="admin" access="isAuthenticated()" authenticationManager="authenticationManager"
                          accessDecisionManager="accessDecisionManager"
@@ -74,58 +56,23 @@
       <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
     </bean>
 
-    <!-- External interface AttachmentResource  -->
-    <jaxrs-client:client id="attachmentResourceClient"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource"
-                         address="${viestintapalvelu.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
-
-    <!-- External interface HenkiloResource of Oppijanumerorekisteri -->
-    <jaxrs-client:client id="oppijanumerorekisteriHenkiloResource"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.OppijanumerorekisteriHenkiloResource"
-                         address="${oppijanumerorekisteri-service.base}"
-                         inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+    <!-- Oppijanumerorekisteri -->
+    <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient">
+        <constructor-arg  value="${oppijanumerorekisteri-service.base}"/>
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>
+        <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+    </bean>
 
     <!-- External interface HenkiloResource of Käyttöoikeus -->
-    <jaxrs-client:client id="kayttooikeusHenkiloResource"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.KayttooikeusHenkiloResource"
-                         address="${kayttooikeus-service.base}"
-                         inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
-            <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+    <bean id="kayttooikeusRestClient" class="fi.vm.sade.externalinterface.KayttooikeusRestClient">
+        <constructor-arg  value="${kayttooikeus-service.base}"/>
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="casService" value="${kayttooikeus-service.base}/j_spring_cas_security_check"/>
+        <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+    </bean>
 
     <!-- External interface OrganisaatioResource of OrganisaatioPalvelu -->
     <jaxrs-client:client id="organisaatioResourceClient"
@@ -155,21 +102,16 @@
     </jaxrs-client:client>
 
     <!-- External interface LetterResource  -->
-    <jaxrs-client:client id="templateResourceClient"
-                         serviceClass="fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource"
-                         address="${viestintapalvelu.rest.url}" inheritHeaders="true">
-        <jaxrs-client:outInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-            <ref bean="ophRequestHeaders"/>
-        </jaxrs-client:outInterceptors>
-        <jaxrs-client:inInterceptors>
-            <ref bean="casTicketInterceptorAAU"/>
-        </jaxrs-client:inInterceptors>
-        <jaxrs-client:providers>
-            <bean class="com.fasterxml.jackson.jaxrs.json.JacksonJsonProvider"/>
+    <bean id="viestintapalveluRestClient" class="fi.vm.sade.ryhmasahkoposti.externalinterface.client.ViestintapalveluRestClient">
+        <constructor-arg index="0" value="${viestintapalvelu.base}"/>
+        <constructor-arg index="1">
             <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
-        </jaxrs-client:providers>
-    </jaxrs-client:client>
+        </constructor-arg>
+        <property name="webCasUrl" value="${web.url.cas}"/>
+        <property name="casService" value="${viestintapalvelu.base}"/>
+        <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
+        <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
+    </bean>
 
     <!-- Apache Camel route scanner -->
     <camelContext xmlns="http://camel.apache.org/schema/spring">

@@ -25,6 +25,7 @@ import javax.ws.rs.BadRequestException;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.externalinterface.KayttooikeusRestClient;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -85,11 +86,14 @@ public class TemplateResourceTest {
     
     @Autowired
     private TransactionalActions actions;
+
+    @Autowired
+    private KayttooikeusRestClient kayttooikeusRestClient;
     
     @Before
     public void before() throws Exception {
         final HenkiloDto testHenkilo = DocumentProviderTestData.getHenkilo();
-        CurrentUserComponent currentUserComponent = new CurrentUserComponent() {
+        CurrentUserComponent currentUserComponent = new CurrentUserComponent(kayttooikeusRestClient) {
             @Override
             public String getCurrentUser() {
                 return testHenkilo.getOidHenkilo();

@@ -36,7 +36,7 @@ public class AsynchronousResourceTest {
 
             public StringBuffer getRequestURL() {
                 StringBuffer buffer = new StringBuffer();
-                buffer.append("https://itest-virkailija.oph.ware.fi/viestintapalvelu/api/v1/download/1a6c5852-52c3-46d3-a649-861c8e887300");
+                buffer.append("https://virkailija.hahtuvaopintopolku.fi/viestintapalvelu/api/v1/download/1a6c5852-52c3-46d3-a649-861c8e887300");
                 return buffer;
             }
 
@@ -47,7 +47,7 @@ public class AsynchronousResourceTest {
         HttpServletRequest request = Retrofit.partial(target,
                 HttpServletRequest.class);
         assertEquals(
-                "https://itest-virkailija.oph.ware.fi/viestintapalvelu/api/v1/download",
+                "https://virkailija.hahtuvaopintopolku.fi/viestintapalvelu/api/v1/download",
                 resource.urlTo(request, DownloadResource.class));
     }
 }
