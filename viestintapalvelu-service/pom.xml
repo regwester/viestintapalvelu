@@ -302,7 +302,6 @@
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
         </dependency>
-<<<<<<< HEAD
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
@@ -313,9 +312,6 @@
                 </exclusion>
             </exclusions>
         </dependency>
-=======
-
->>>>>>> Dependency updates
         <dependency>
             <groupId>joda-time</groupId>
             <artifactId>joda-time</artifactId>
