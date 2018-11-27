@@ -47,8 +47,8 @@
                             <goal>install-node-and-npm</goal>
                         </goals>
                         <configuration>
-                            <nodeVersion>v0.10.28</nodeVersion>
-                            <npmVersion>1.4.9</npmVersion>
+                            <nodeVersion>v6.11.0</nodeVersion>
+                            <npmVersion>6.4.1</npmVersion>
                             <!-- optional: where to download node and npm from. Defaults to http://nodejs.org/dist/ -->
                             <!-- <downloadRoot>http://myproxy.example.org/nodejs/dist/</downloadRoot> -->
                         </configuration>
