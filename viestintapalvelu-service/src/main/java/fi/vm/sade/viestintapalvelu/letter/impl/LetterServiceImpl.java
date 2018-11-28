@@ -620,14 +620,17 @@ public class LetterServiceImpl implements LetterService {
             break;
         case LETTER:
             batch.setHandlingFinished(new Date());
-            if (batch.isIposti()) {
-                logger.info("LETTER processing finished for IPosti letter batch {}", id);
-                newStatus = LetterBatch.Status.waiting_for_ipost_processing;
-                nextProcess = LetterBatchProcess.IPOSTI;
-            // BUG-1825
-            } else if (batch.isIposti() && !batch.getSkipDokumenttipalvelu()) {
+            Boolean saveIpostiAsPdf = false;
+            if (batch.isIposti() && !batch.getSkipDokumenttipalvelu()) {
+                saveIpostiAsPdf = true;
+            }
+            if (saveIpostiAsPdf) {
                 logger.info("LETTER processing and saving pdf to Dokumenttipalvelu finished for IPosti letter batch {}", id);
                 savePdfDocument(batch);
+                newStatus = LetterBatch.Status.waiting_for_ipost_processing;
+                nextProcess = LetterBatchProcess.IPOSTI;
+            } else if (batch.isIposti()) {
+                logger.info("LETTER processing finished for IPosti letter batch {}", id);
                 newStatus = LetterBatch.Status.waiting_for_ipost_processing;
                 nextProcess = LetterBatchProcess.IPOSTI;
             } else {
