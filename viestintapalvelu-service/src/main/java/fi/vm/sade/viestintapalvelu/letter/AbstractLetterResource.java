@@ -101,7 +101,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
             letterPDFProcessor.processLetterBatch(id);
             LOG.info("Letter batch with batchID={} is scheduled.", letter.getId());
             response.setStatus(LetterResponse.STATUS_SUCCESS);
-            response.setBatchId(getPrefixedLetterBatchID(id, input.isIposti()));
+            response.setBatchId(getPrefixedLetterBatchID(id, (input.isIposti() && input.isSkipDokumenttipalvelu())));
             return Response.ok(response).build();
         } catch (Exception e) {
             LOG.error("Letter async failed. " + input.toStringForLogging(), e);
