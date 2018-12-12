@@ -186,7 +186,7 @@
     {
       "id": 7,
       "name": "vastaanotto_vaihtoehto_2",
-      "defaultValue": "Otan opiskelupaikan vastaan, mutta jään odottamaan hakukohdejärjestyksessäni ylemmällä sijalla olevaa opiskelupaikkaa, johon olen varasijalla. Jos minut hyväksytään ylemmälle hakukohteelleni 18.12.2018 kello 15.00 mennessä, nyt tarjottu opiskelupaikka peruuntuu automaattisesti. Jos en tule hyväksytyksi ylemmälle hakukohteelleni 18.12.20187 kello 15.00 mennessä, tässä lomakkeessa mainitun opiskelupaikan vastaanotto jää voimaan.",
+      "defaultValue": "Otan opiskelupaikan vastaan, mutta jään odottamaan hakukohdejärjestyksessäni ylemmällä sijalla olevaa opiskelupaikkaa, johon olen varasijalla. Jos minut hyväksytään ylemmälle hakukohteelleni 18.12.2018 kello 15.00 mennessä, nyt tarjottu opiskelupaikka peruuntuu automaattisesti. Jos en tule hyväksytyksi ylemmälle hakukohteelleni 18.12.2018 kello 15.00 mennessä, tässä lomakkeessa mainitun opiskelupaikan vastaanotto jää voimaan.",
       "mandatory": false
     },
     {
