@@ -27,6 +27,11 @@
         {
             "name": "voimassa",
             "mandatory": true
+        },
+        {
+            "name": "saate",
+            "mandatory": false,
+            "defaultValue": ""
         }
     ],
     "structure": {
