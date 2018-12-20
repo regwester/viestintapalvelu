@@ -144,6 +144,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-orm</artifactId>
         </dependency>
+        <dependency>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>opintopolku-user-details-service</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
 
         <!-- Spring security -->
         <dependency>
@@ -174,10 +180,7 @@
                 </exclusion>
             </exclusions>
         </dependency>
-        <dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-ldap</artifactId>
-        </dependency>
+
         <dependency>
             <groupId>commons-httpclient</groupId>
             <artifactId>commons-httpclient</artifactId>
@@ -185,13 +188,16 @@
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
-            <scope>compile</scope>
             <exclusions>
                 <exclusion>
                     <artifactId>commons-logging</artifactId>
                     <groupId>commons-logging</groupId>
                 </exclusion>
             </exclusions>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpcore</artifactId>
         </dependency>
 
         <dependency>
@@ -451,6 +457,11 @@
             </exclusions>
         </dependency>
 
+        <dependency>
+            <groupId>org.apache.httpcomponents</groupId>
+            <artifactId>httpclient-cache</artifactId>
+        </dependency>
+
         <!-- Swagger -->
         <dependency>
             <groupId>com.wordnik</groupId>
@@ -484,6 +495,12 @@
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
             <artifactId>java-cxf</artifactId>
+            <version>0.1.0-SNAPSHOT</version>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>java-properties</artifactId>
             <version>0.1.0-SNAPSHOT</version>
         </dependency>
 

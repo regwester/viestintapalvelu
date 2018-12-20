@@ -17,11 +17,10 @@ package fi.vm.sade.viestintapalvelu.externalinterface.component;
 
 import java.io.InputStream;
 
-import javax.annotation.Resource;
-import javax.ws.rs.core.Response;
-
 import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
+import fi.vm.sade.viestintapalvelu.externalinterface.RyhmasahkopostiRestClient;
 import org.apache.commons.io.IOUtils;
+import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,19 +35,31 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource;
 public class EmailComponent {
     private static Logger LOGGER = LoggerFactory.getLogger(EmailComponent.class);
 
-    @Resource
-    private EmailResource emailResourceClient;
+    private final EmailResource ryhmasahkopostiRestClient;
 
     @Autowired
     private EmailBuilder emailBuilder;
 
+    @Autowired
+    public EmailComponent(RyhmasahkopostiRestClient ryhmasahkopostiRestClient) {
+        this.ryhmasahkopostiRestClient = ryhmasahkopostiRestClient;
+    }
+
     public boolean sendEmail(EmailData data) {
-        return checkResponse(emailResourceClient.sendEmail(data));
+        try {
+            ryhmasahkopostiRestClient.sendEmail(data);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Email sending request failed for data " + data + ", reason: " + e.getMessage(), e);
+            return false;
+        }
     }
 
     public String getPreview(EmailData data) {
         try {
-            InputStream stream = (InputStream) emailResourceClient.getPreview(data).getEntity();
+            LOGGER.warn("Calling external interface EmailResource.getPreview");
+            HttpResponse response = ryhmasahkopostiRestClient.getPreview(data);
+            InputStream stream = response.getEntity().getContent();
             return IOUtils.toString(stream);
         } catch (Exception e) {
             LOGGER.error("Could not make preview for email " + data + ". Reason: " + e.getMessage(), e);
@@ -66,11 +77,13 @@ public class EmailComponent {
             LOGGER.error("Could not make email data for letter " + source + " reason " + e.getMessage(), e);
             return false;
         }
-        return checkResponse(emailResourceClient.sendEmail(emailData));
-    }
 
-    private boolean checkResponse(Response response) {
-        LOGGER.debug("Got email response: " + response.toString() + " " + response.getStatus());
-        return true;
+        try {
+            ryhmasahkopostiRestClient.sendEmail(emailData);
+            return true;
+        } catch (Exception e) {
+            LOGGER.error("Email sending request failed for letter " + source + ", reason: " + e.getMessage(), e);
+            return false;
+        }
     }
 }

@@ -35,12 +35,12 @@ import fi.vm.sade.ryhmasahkoposti.service.EmailAttachmentDownloader;
  */
 @Component
 public class ViestintapalveluEmailAttachmentDownloaderImpl implements EmailAttachmentDownloader {
-    private static Logger logger = LoggerFactory.getLogger(TemplateComponent.class);
+    private static Logger logger = LoggerFactory.getLogger(ViestintapalveluEmailAttachmentDownloaderImpl.class);
 
     private static final String URI_PREFIX = "viestinta://";
 
     @Autowired
-    private AttachmentComponent attachmentComponent;
+    private AttachmentComponent viestintapalveluRestClient;
 
     @Override
     public boolean isApplicableForUri(String uri) {
@@ -52,13 +52,13 @@ public class ViestintapalveluEmailAttachmentDownloaderImpl implements EmailAttac
         if (!isApplicableForUri(uri)) {
             throw new IllegalArgumentException("ViestintapalveluEmailAttachmentDownloaderImpl can't handle URI=" + uri);
         }
-        return attachmentComponent.getEmailAttachmentByUri(uri);
+        return viestintapalveluRestClient.getEmailAttachmentByUri(uri);
     }
 
     @Override
     public void reportDownloaded(List<String> uris) {
         try {
-            attachmentComponent.markDownloaded(uris);
+            viestintapalveluRestClient.markDownloaded(uris);
         } catch (Exception e) {
             logger.error("Failed to reportDownloaded URIs in ViestintapalveluEmailAttachmentDownloaderImpl.", e);
             // no-throw

@@ -35,7 +35,7 @@ import fi.vm.sade.viestintapalvelu.common.exception.ExternalInterfaceException;
  */
 @Component
 public class AttachmentComponent {
-    private static Logger logger = LoggerFactory.getLogger(TemplateComponent.class);
+    private static Logger logger = LoggerFactory.getLogger(AttachmentComponent.class);
 
     @Resource
     private AttachmentResource attachmentResourceClient;
@@ -46,6 +46,7 @@ public class AttachmentComponent {
      */
     public EmailAttachment getEmailAttachmentByUri(String uri) {
         try {
+            logger.warn("Calling external interface AttachmentResource.downloadByUri");
             return attachmentResourceClient.downloadByUri(uri);
         } catch (Exception e) {
             logger.error(e.getMessage());
