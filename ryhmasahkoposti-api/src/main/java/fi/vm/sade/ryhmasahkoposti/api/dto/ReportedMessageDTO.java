@@ -15,11 +15,14 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.api.dto;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 public class ReportedMessageDTO extends EmailMessageDTO {
-    private static final List<String> regexps = Collections.singletonList("(https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/(token|emailregister)/)[A-Za-z0-9]+");
+    private static final List<String> regexps = Arrays.asList(
+            "(https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/(token|emailregister)/)[A-Za-z0-9]+",
+            "(https?://[-a-zA-Z0-9+&@#/%?=~_|!:,.;]*[-a-zA-Z0-9+&@#/%=~_|]/hakemus\\?modify=)[^\"\\s]+"
+    );
     private static final String substitute = "$1[RETRACTED]";
 
     private String senderName;
