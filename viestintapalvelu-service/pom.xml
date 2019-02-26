@@ -17,7 +17,7 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <dokumenttipalvelu.version>1.0-SNAPSHOT</dokumenttipalvelu.version>
+        <dokumenttipalvelu.version>5.3-SNAPSHOT</dokumenttipalvelu.version>
         <dtoconverter.version>2.0.3-RELEASE</dtoconverter.version>
     </properties>
 
