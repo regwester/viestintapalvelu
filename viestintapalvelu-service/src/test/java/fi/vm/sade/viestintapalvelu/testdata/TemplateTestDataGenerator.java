@@ -42,9 +42,10 @@ public class TemplateTestDataGenerator {
         //String templateKeys = "amkope_hyvaksymiskirje_2017,amkope_jalkiohjauskirje_2017";
         //String templateKeys = "kk_varasijakirje_2016";
         //String templateKeys = "omattiedot_email";
-        String templateKeys = "kk_hyvaksymiskirje_syksy_2018,kk_jalkiohjauskirje_syksy_2018";
+        //String templateKeys = "kk_hyvaksymiskirje_syksy_2018,kk_jalkiohjauskirje_syksy_2018";
         //String templateKeys = "kk_varasijakirje_2018";
-//        String templateKeys = "tuontivirhe_email";
+        //String templateKeys = "tuontivirhe_email";
+        String templateKeys = "2aste_koekutsukirje_2019";
         if(templateKeys != null) {
             for(String templateKey : templateKeys.split(",")) {
                 for (String language : asList("FI", "EN", "SV")) {
