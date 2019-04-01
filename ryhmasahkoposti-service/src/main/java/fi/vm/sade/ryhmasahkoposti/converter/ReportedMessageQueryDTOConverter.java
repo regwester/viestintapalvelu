@@ -15,6 +15,8 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.converter;
 
+import org.joda.time.DateTime;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import fi.vm.sade.generic.common.HetuUtils;
@@ -23,8 +25,12 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.validation.EmailAddressValidator;
 import fi.vm.sade.ryhmasahkoposti.validation.OidValidator;
 
+import java.util.Date;
+
 @Component
 public class ReportedMessageQueryDTOConverter {
+    @Value("${ryhmasahkoposti.reportedmessage.fetch.maxage.days:5}")
+    private int reportedMessageFetchMaxAgeDays;
 
     public ReportedMessageQueryDTO convert(String organizationOid, String searchArgument) {
         ReportedMessageQueryDTO reportedMessageQueryDTO = new ReportedMessageQueryDTO();
@@ -56,6 +62,9 @@ public class ReportedMessageQueryDTOConverter {
         reportedRecipientQueryDTO.setRecipientName(searchArgument);
         reportedMessageQueryDTO.setReportedRecipientQueryDTO(reportedRecipientQueryDTO);
         reportedMessageQueryDTO.setSearchArgument(searchArgument);
+
+        Date dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays).toDate();
+        reportedMessageQueryDTO.setDateLimit(dateLimit);
 
         return reportedMessageQueryDTO;
     }

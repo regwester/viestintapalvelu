@@ -195,6 +195,8 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
                     reportedMessage.message.containsIgnoreCase(query.getSearchArgument()));
         }
 
+        booleanBuilder.and(reportedMessage.timestamp.gt(query.getDateLimit()));
+
         return booleanBuilder;
     }
 }
