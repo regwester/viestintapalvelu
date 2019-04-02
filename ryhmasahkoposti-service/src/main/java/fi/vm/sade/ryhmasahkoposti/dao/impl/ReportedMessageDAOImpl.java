@@ -19,6 +19,8 @@ import java.util.*;
 
 import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
@@ -108,10 +110,14 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
             return 0L;
         }
 
+        DateTime dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays);
+        DateTimeFormatter dft = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        String dateString = dft.print(dateLimit);
+
         Map<String, Object> params = new HashMap<>();
-        String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a ";
+        String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a WHERE a.timestamp > '" + dateString + "'";
         if (organizationOids != null) {
-            findNumberOfReportedMessages += " WHERE " + DAOUtil.splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
+            findNumberOfReportedMessages += " AND " + DAOUtil.splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
         }
         return DAOUtil.querySingleLong(getEntityManager(), params, findNumberOfReportedMessages);
     }
