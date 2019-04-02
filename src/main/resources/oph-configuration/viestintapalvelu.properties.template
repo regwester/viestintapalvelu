@@ -99,7 +99,7 @@ ryhmasahkoposti.bounces.cron={{ryhmasahkoposti_bounces_cron}}
 ryhmasahkoposti.bounces.host={{ryhmasahkoposti_bounces_host}}
 ryhmasahkoposti.bounces.path={{ryhmasahkoposti_bounces_path}}
 # Ryhmäsähköpostin lähetysraporttien haun aikarajaus
-ryhmasahkoposti.reportedmessage.fetch.maxage.days={{ryhmasahkoposti_reportedmessage_fetch_maxage_days}}
+ryhmasahkoposti.reportedmessage.fetch.maxage.days={{ryhmasahkoposti_reportedmessage_fetch_maxage_days | default(5) }}
 
 user.home.conf=${user.home}/oph-configuration
 viestintapalvelu.options.cache.valid.millis=86400000
