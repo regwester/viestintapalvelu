@@ -1,0 +1,1 @@
+create index raportoitavaviesti_aikaleima_index on raportoitavaviesti(aikaleima);
