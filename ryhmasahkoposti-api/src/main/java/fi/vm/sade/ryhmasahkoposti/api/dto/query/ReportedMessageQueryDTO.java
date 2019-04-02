@@ -15,7 +15,6 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.api.dto.query;
 
-import java.util.Date;
 import java.util.List;
 
 public class ReportedMessageQueryDTO {
@@ -23,7 +22,6 @@ public class ReportedMessageQueryDTO {
     private String organizationOid;
     private List<String> organizationOids;
     private ReportedRecipientQueryDTO reportedRecipientQuery;
-    private Date dateLimit;
 
     public String getSearchArgument() {
         return searchArgument;
@@ -57,11 +55,4 @@ public class ReportedMessageQueryDTO {
         this.organizationOids = organizationOids;
     }
 
-    public Date getDateLimit() {
-        return dateLimit;
-    }
-
-    public void setDateLimit(Date dateLimit) {
-        this.dateLimit = dateLimit;
-    }
 }
