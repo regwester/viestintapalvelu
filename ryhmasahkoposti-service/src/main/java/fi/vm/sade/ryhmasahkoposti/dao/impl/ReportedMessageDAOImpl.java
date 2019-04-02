@@ -47,7 +47,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     private QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
     private QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 
-    @Value("${ryhmasahkoposti.reportedmessage.fetch.maxage.days:5}")
+    @Value("${ryhmasahkoposti.reportedmessage.fetch.maxage.days:365}")
     private int reportedMessageFetchMaxAgeDays;
 
     @Override
