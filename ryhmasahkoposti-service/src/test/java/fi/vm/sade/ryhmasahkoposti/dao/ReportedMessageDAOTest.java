@@ -23,7 +23,6 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.*;
 
-import org.joda.time.DateTime;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -57,9 +56,6 @@ public class ReportedMessageDAOTest {
     private ReportedMessageDAO reportedMessageDAO;
     @Autowired
     private ReportedRecipientDAO reportedRecipientDAO;
-
-
-    private Date dateLimit = DateTime.now().minusDays(5).toDate();
 
     @Test
     public void testReportedMessageInsertWasSuccessful() {
@@ -108,7 +104,6 @@ public class ReportedMessageDAOTest {
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedRecipientQuery.setRecipientOid("1.2.246.562.24.34397748041");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
-        reportedMessageQuery.setDateLimit(dateLimit);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
@@ -134,7 +129,6 @@ public class ReportedMessageDAOTest {
         reportedMessageQuery.setSearchArgument("Testi Oppilas");
         reportedRecipientQuery.setRecipientName("Testi Oppilas");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
-        reportedMessageQuery.setDateLimit(dateLimit);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
@@ -160,7 +154,6 @@ public class ReportedMessageDAOTest {
         reportedMessageQuery.setSearchArgument("Koekutsu");
         reportedRecipientQuery.setRecipientName("Koekutsu");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
-        reportedMessageQuery.setDateLimit(dateLimit);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
@@ -185,7 +178,6 @@ public class ReportedMessageDAOTest {
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
         reportedRecipientQuery.setRecipientEmail("ei.loydy@sposti.fi");
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
-        reportedMessageQuery.setDateLimit(dateLimit);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");
@@ -315,8 +307,6 @@ public class ReportedMessageDAOTest {
         query.setReportedRecipientQueryDTO(reportedRecipientQuery);
         query.setSearchArgument("Koekutsu");
         query.setOrganizationOid("1.2.246.562.10.00000000001");
-        query.setDateLimit(dateLimit);
-
 
         Long lkm = reportedMessageDAO.findNumberOfReportedMessage(query);
 
