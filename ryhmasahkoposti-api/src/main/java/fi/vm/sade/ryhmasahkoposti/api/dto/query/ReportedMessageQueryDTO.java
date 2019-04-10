@@ -54,4 +54,5 @@ public class ReportedMessageQueryDTO {
     public void setOrganizationOids(List<String> organizationOids) {
         this.organizationOids = organizationOids;
     }
+
 }

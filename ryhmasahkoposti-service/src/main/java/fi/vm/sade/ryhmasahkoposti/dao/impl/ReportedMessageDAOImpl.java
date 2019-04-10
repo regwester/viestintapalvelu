@@ -18,6 +18,10 @@ package fi.vm.sade.ryhmasahkoposti.dao.impl;
 import java.util.*;
 
 import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
+import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.BooleanBuilder;
@@ -43,13 +47,18 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     private QReportedMessage reportedMessage = QReportedMessage.reportedMessage;
     private QReportedRecipient reportedRecipient = QReportedRecipient.reportedRecipient;
 
+    @Value("${ryhmasahkoposti.reportedmessage.fetch.maxage.days:365}")
+    private int reportedMessageFetchMaxAgeDays;
+
     @Override
     public List<ReportedMessage> findByOrganizationOids(List<String> organizationOids, PagingAndSortingDTO pagingAndSorting) {
         if (organizationOids != null && organizationOids.isEmpty()) {
             return new ArrayList<>();
         }
 
-        JPAQuery findAllReportedMessagesQuery = from(reportedMessage).orderBy(orderBy(pagingAndSorting));
+        Date dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays).toDate();
+
+        JPAQuery findAllReportedMessagesQuery = from(reportedMessage).where(reportedMessage.timestamp.gt(dateLimit)).orderBy(orderBy(pagingAndSorting));
         if (organizationOids != null) {
             findAllReportedMessagesQuery = findAllReportedMessagesQuery.where(anyOf(DAOUtil.splittedInExpression(organizationOids,
                     reportedMessage.senderOrganizationOid)));
@@ -101,10 +110,14 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
             return 0L;
         }
 
+        DateTime dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays);
+        DateTimeFormatter dft = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        String dateString = dft.print(dateLimit);
+
         Map<String, Object> params = new HashMap<>();
-        String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a ";
+        String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a WHERE a.timestamp > '" + dateString + "'";
         if (organizationOids != null) {
-            findNumberOfReportedMessages += " WHERE " + DAOUtil.splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
+            findNumberOfReportedMessages += " AND " + DAOUtil.splittedInExpression(organizationOids, "a.senderOrganizationOid", params, "_oids");
         }
         return DAOUtil.querySingleLong(getEntityManager(), params, findNumberOfReportedMessages);
     }
@@ -194,6 +207,9 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
                     reportedMessage.subject.containsIgnoreCase(query.getSearchArgument()),
                     reportedMessage.message.containsIgnoreCase(query.getSearchArgument()));
         }
+
+        Date dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays).toDate();
+        booleanBuilder.and(reportedMessage.timestamp.gt(dateLimit));
 
         return booleanBuilder;
     }
