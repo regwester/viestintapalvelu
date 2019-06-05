@@ -45,7 +45,7 @@ import fi.vm.sade.ryhmasahkoposti.service.GroupEmailReportingService;
 import fi.vm.sade.ryhmasahkoposti.util.CallingProcess;
 
 @Component("EmailResourceImpl")
-public class ssh-sade-bastion -L27018:mongocluster-1.opintopolku.fi:27017EmailResourceImpl extends GenericResourceImpl implements EmailResource {
+public class EmailResourceImpl extends GenericResourceImpl implements EmailResource {
     private final static Logger log = LoggerFactory.getLogger(fi.vm.sade.ryhmasahkoposti.resource.EmailResourceImpl.class);
 
     @Value("${ryhmasahkoposti.from}")
