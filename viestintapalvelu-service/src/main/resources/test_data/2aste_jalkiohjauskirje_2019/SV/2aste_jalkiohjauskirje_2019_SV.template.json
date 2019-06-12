@@ -82,7 +82,7 @@
         "numberOfRows": 1
       },
       {
-        "key": "email_sisalto",
+        "key": "email_content",
         "name": "Sähköpostiviestinn sisältö",
         "description": "Sähköpostiviestinn sisältö",
         "contentType": "html",
@@ -108,24 +108,24 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "MEDDELANDE OM RESULTATEN I GEMENSAM ANSÖKAN TILL YRKES- OCH GYMNASIEUTBILDNING VÅREN 2016",
+      "defaultValue": "MEDDELANDE OM ANTAGNINGSRESULTATEN I GEMENSAM ANSÖKAN TILL YRKESUTBILDNING OCH GYMNASIEUTBILDNING",
       "mandatory": false
     },
     {
       "id": 3,
       "name": "liiteotsikko",
-      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN VÅREN 2016",
+      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN VÅREN 2019",
       "mandatory": false
     },
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna",
+      "defaultValue": "Meddelande om resultaten i gemensam ansökan till yrkesutbildning och gymnasieutbildning",
       "mandatory": false
     },
     {
       "id": 5,
-      "name": "email_sisalto",
+      "name": "email_content",
       "defaultValue": "{{sisalto_email.html}}",
       "timestamp": null,
       "mandatory": false

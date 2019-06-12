@@ -82,7 +82,7 @@
         "numberOfRows": 1
       },
       {
-        "key": "email_sisalto",
+        "key": "email_content",
         "name": "Sähköpostiviestin sisältö",
         "description": "Sähköpostiviestin sisältö",
         "contentType": "html",
@@ -99,7 +99,7 @@
     },
     {
       "id": 1,
-      "name": "sisalto",
+      "name": "kirje_sisalto",
       "defaultValue": "{{sisalto_1.html}}",
       "timestamp": null,
       "mandatory": false
@@ -125,7 +125,7 @@
     },
     {
       "id": 5,
-      "name": "email_sisalto",
+      "name": "email_content",
       "defaultValue": "{{sisalto_email.html}}",
       "timestamp": null,
       "mandatory": false

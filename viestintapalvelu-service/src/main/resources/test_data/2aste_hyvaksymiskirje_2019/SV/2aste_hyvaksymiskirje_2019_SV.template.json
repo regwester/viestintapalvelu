@@ -82,7 +82,7 @@
         "numberOfRows": 1
       },
       {
-        "key": "email_sisalto",
+        "key": "email_content",
         "name": "Sähköpostiviestinn sisältö",
         "description": "Sähköpostiviestinn sisältö",
         "contentType": "html",
@@ -94,7 +94,7 @@
     {
       "id": 0,
       "name": "kirjeotsikko",
-      "defaultValue": "BESLUT OM ANTAGNING",
+      "defaultValue": "MEDDELANDE OM ANTAGNING",
       "mandatory": false
     },
     {
@@ -120,12 +120,12 @@
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Beslut om antagning",
+      "defaultValue": "Meddelande om resultaten i gemensam ansökan till yrkesutbildning och gymnasieutbildning",
       "mandatory": false
     },
     {
       "id": 5,
-      "name": "email_sisalto",
+      "name": "email_content",
       "defaultValue": "{{sisalto_email.html}}",
       "timestamp": null,
       "mandatory": false
