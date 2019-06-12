@@ -386,10 +386,11 @@ public class LetterBatchDAOImpl extends AbstractJpaDAOImpl<LetterBatch, Long> im
                     + " FROM LetterBatch lb"
                     + " WHERE lb.tag = lb.applicationPeriod AND lb.applicationPeriod = :applicationPeriod"
                     + " AND lb.templateName = :templateName AND lb.language = :language"
-                + ")")
+                + ") AND l.skipDokumenttipalvelu = :skipDokumenttipalvelu")
                 .setParameter("applicationPeriod", hakuOid)
                 .setParameter("templateName", type)
                 .setParameter("language", language.toUpperCase())
+                .setParameter("skipDokumenttipalvelu", true)
                 .setParameter("readyForPublish", !published).getResultList();
         return 0 == batchIds.size() ? Optional.<Long>absent() : Optional.of(batchIds.get(0));
     }

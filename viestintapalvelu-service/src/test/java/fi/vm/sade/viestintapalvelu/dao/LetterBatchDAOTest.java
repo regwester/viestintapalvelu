@@ -482,6 +482,7 @@ public class LetterBatchDAOTest {
         letterBatch.setTag(hakuOid);
         letterBatch.setTemplateName(templateName);
         letterBatch.setBatchStatus(status);
+        letterBatch.setSkipDokumenttipalvelu(true);
         Iterator<LetterReceivers> receiversIterator = letterBatch.getLetterReceivers().iterator();
         int i = 0;
         while(receiversIterator.hasNext()) {
