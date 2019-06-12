@@ -94,12 +94,12 @@
     {
       "id": 0,
       "name": "kirjeotsikko",
-      "defaultValue": "PÄÄTÖS OPISKELIJAKSI OTTAMISESTA",
+      "defaultValue": "ILMOITUS OPISKELIJAVALINNASTA",
       "mandatory": false
     },
     {
       "id": 1,
-      "name": "kirje_sisalto",
+      "name": "sisalto",
       "defaultValue": "{{sisalto_1.html}}",
       "timestamp": null,
       "mandatory": false
@@ -107,7 +107,7 @@
     {
       "id": 2,
       "name": "liiteotsikko",
-      "defaultValue": "",
+      "defaultValue": "TILANTEESI KEVÄÄN 2019 YHTEISHAUSSA",
       "mandatory": false
     },
     {
@@ -120,7 +120,7 @@
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Ilmoitus ammatillisen koulutuksen ja lukiokoulutuksen yhteishaun tuloksista.",
+      "defaultValue": "Ilmoitus ammatillisen koulutuksen ja lukiokoulutuksen yhteishaun tuloksista",
       "mandatory": false
     },
     {
