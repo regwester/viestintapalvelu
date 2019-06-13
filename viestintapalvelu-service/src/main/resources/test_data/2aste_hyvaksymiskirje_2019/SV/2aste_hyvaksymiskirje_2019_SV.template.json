@@ -87,6 +87,13 @@
         "description": "Sähköpostiviestinn sisältö",
         "contentType": "html",
         "numberOfRows": 20
+      },
+      {
+        "key": "email_content2",
+        "name": "Sähköpostiviestinn sisältö (loppu)",
+        "description": "Sähköpostiviestinn sisältö",
+        "contentType": "html",
+        "numberOfRows": 20
       }
     ]
   },
@@ -127,6 +134,13 @@
       "id": 5,
       "name": "email_content",
       "defaultValue": "{{sisalto_email.html}}",
+      "timestamp": null,
+      "mandatory": false
+    },
+    {
+      "id": 6,
+      "name": "email_content2",
+      "defaultValue": "{{sisalto_email_2.html}}",
       "timestamp": null,
       "mandatory": false
     }
