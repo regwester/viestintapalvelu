@@ -23,8 +23,6 @@
         <module>viestintapalvelu-ui</module>
         <module>ryhmasahkoposti-api</module>
         <module>ryhmasahkoposti-service</module>
-        <!--module>ajastuspalvelu-api</module>
-        <module>ajastuspalvelu-service</module-->
         <module>viestintapalvelu-api</module>
     </modules>
 
