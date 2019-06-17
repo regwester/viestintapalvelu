@@ -82,9 +82,16 @@
         "numberOfRows": 1
       },
       {
-        "key": "email_sisalto",
+        "key": "email_content",
         "name": "Sähköpostiviestin sisältö",
         "description": "Sähköpostiviestin sisältö",
+        "contentType": "html",
+        "numberOfRows": 20
+      },
+      {
+        "key": "email_content2",
+        "name": "Sähköpostiviestinn sisältö (loppu)",
+        "description": "Sähköpostiviestinn sisältö",
         "contentType": "html",
         "numberOfRows": 20
       }
@@ -108,25 +115,32 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "ILMOITUS ERITYISOPETUKSENA JÄRJESTETTÄVÄN AMMATILLISEN KOULUTUKSEN HAUN TULOKSISTA KEVÄÄLLÄ 2016",
+      "defaultValue": "ILMOITUS VAATIVAN ERITYISEN TUEN PERUSTEELLA JÄRJESTETTÄVÄN AMMATILLISEN KOULUTUKSEN HAUN TULOKSISTA KEVÄÄLLÄ 2019",
       "mandatory": false
     },
     {
       "id": 3,
       "name": "liiteotsikko",
-      "defaultValue": "TILANTEESI KEVÄÄN 2016 ERITYISOPETUKSENA JÄRJESTETTÄVÄN AMMATILLISEN KOULUTUKSEN HAUSSA",
+      "defaultValue": "TILANTEESI VAATIVAN ERITYISEN TUEN PERUSTEELLA JÄRJESTETTÄVÄN AMMATILLISEN KOULUTUKSEN KEVÄÄN 2019 HAUSSA",
       "mandatory": false
     },
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Ilmoitus ammatillisen koulutuksen ja lukiokoulutuksen yhteishaun tuloksista.",
+      "defaultValue": "Ilmoitus vaativan erityisen tuen perusteella järjestettävän ammatillisen koulutuksen haun tuloksista",
       "mandatory": false
     },
     {
       "id": 5,
-      "name": "email_sisalto",
+      "name": "email_content",
       "defaultValue": "{{sisalto_email.html}}",
+      "timestamp": null,
+      "mandatory": false
+    },
+    {
+      "id": 6,
+      "name": "email_content2",
+      "defaultValue": "{{sisalto_email_2.html}}",
       "timestamp": null,
       "mandatory": false
     }

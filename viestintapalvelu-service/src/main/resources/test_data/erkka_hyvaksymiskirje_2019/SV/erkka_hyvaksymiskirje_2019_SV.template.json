@@ -82,9 +82,16 @@
         "numberOfRows": 1
       },
       {
-        "key": "email_sisalto",
+        "key": "email_content",
         "name": "Sähköpostiviestin sisältö",
         "description": "Sähköpostiviestin sisältö",
+        "contentType": "html",
+        "numberOfRows": 20
+      },
+      {
+        "key": "email_content2",
+        "name": "Sähköpostiviestinn sisältö (loppu)",
+        "description": "Sähköpostiviestinn sisältö",
         "contentType": "html",
         "numberOfRows": 20
       }
@@ -108,25 +115,32 @@
     {
       "id": 2,
       "name": "kirjeotsikko",
-      "defaultValue": "BESLUT OM ANTAGNING",
+      "defaultValue": "MEDDELANDE OM ANTAGNING",
       "mandatory": false
     },
     {
       "id": 3,
       "name": "liiteotsikko",
-      "defaultValue": "DIN SITUATION I ANSÖKAN TILL YRKESINRIKTAD SPECIALUNDERVISNING",
+      "defaultValue": "DIN SITUATION I ANSÖKAN TILL YRKESUTBILDNING MED KRÄVANDE SÄRSKILT STÖD",
       "mandatory": false
     },
     {
       "id": 4,
       "name": "subject",
-      "defaultValue": "Beslut om antagning",
+      "defaultValue": "Meddelande om antagningarna i ansökan till yrkesutbildning med krävande särskilt stöd",
       "mandatory": false
     },
     {
       "id": 5,
-      "name": "email_sisalto",
+      "name": "email_content",
       "defaultValue": "{{sisalto_email.html}}",
+      "timestamp": null,
+      "mandatory": false
+    },
+    {
+      "id": 6,
+      "name": "email_content2",
+      "defaultValue": "{{sisalto_email_2.html}}",
       "timestamp": null,
       "mandatory": false
     }
