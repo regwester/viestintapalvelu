@@ -1,1 +1,0 @@
-ALTER TABLE public.ajastettu_tehtava ALTER COLUMN muokkausaika SET DEFAULT now();
