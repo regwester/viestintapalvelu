@@ -1,0 +1,1 @@
+create index if not exists raportoitavavastaanottaja_lahetettyviesti_id_idx on raportoitavavastaanottaja(lahetettyviesti_id);
