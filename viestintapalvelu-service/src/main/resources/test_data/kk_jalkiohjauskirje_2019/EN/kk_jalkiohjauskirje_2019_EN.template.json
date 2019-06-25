@@ -156,7 +156,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "NOTIFICATION OF THE STUDENT SELECTION RESULTS IN JOINT APPLICATION TO HIGHER EDUCATION SPRING 2018",
+      "defaultValue": "NOTIFICATION OF THE STUDENT SELECTION RESULTS IN JOINT APPLICATION TO HIGHER EDUCATION SPRING 2019",
       "mandatory": false
     },
     {
@@ -186,13 +186,13 @@
     {
       "id": 8,
       "name": "vastaanotto_allekirjoitus_vuosi",
-      "defaultValue": "2018",
+      "defaultValue": "2019",
       "mandatory": false
     },
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "YOUR CURRENT SITUATION IN JOINT APPLICATION TO HIGHER EDUCATION SPRING 2018",
+      "defaultValue": "YOUR CURRENT SITUATION IN JOINT APPLICATION TO HIGHER EDUCATION SPRING 2019",
       "mandatory": false
     }
   ]
