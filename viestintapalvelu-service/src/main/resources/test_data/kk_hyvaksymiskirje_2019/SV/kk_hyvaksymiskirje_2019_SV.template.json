@@ -168,25 +168,25 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "MEDDELANDE OM ANTAGNING AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLORNA VÅREN 2018",
+      "defaultValue": "MEDDELANDE OM ANTAGNING AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLORNA VÅREN 2019",
       "mandatory": false
     },
     {
       "id": 5,
       "name": "vastaanotto_1",
-      "defaultValue": "<p>Du har godkänts till ovan nämnda studieplats i gemensam ansökan till högskolor våren 2018.</p><p>Om du inte använder Min Studieinfo-tjänsten, ska du skicka denna blankett ifylld och undertecknad till nedan nämnda adress. Se till att blanketten är framme före fredag 10.7.2018 kl. 15.00. Om du har tagit emot studieplatsen elektroniskt behöver du inte skicka meddelandet om mottagande av studieplats per post.</p><p><em>Jag meddelar att jag tar emot den ovan nämnda studieplatsen bindande (kryssa för en ruta):</em></p>",
+      "defaultValue": "<p>Du har godkänts till ovan nämnda studieplats i gemensam ansökan till högskolor våren 2019.</p><p>Om du inte använder Min Studieinfo-tjänsten, ska du skicka denna blankett ifylld och undertecknad till nedan nämnda adress. Se till att blanketten är framme före fredag 8.7.2019 kl. 15.00. Om du har tagit emot studieplatsen elektroniskt behöver du inte skicka meddelandet om mottagande av studieplats per post.</p><p><em>Jag meddelar att jag tar emot den ovan nämnda studieplatsen bindande (kryssa för en ruta):</em></p>",
       "mandatory": false
     },
     {
       "id": 6,
       "name": "vastaanotto_vaihtoehto_1",
-      "defaultValue": "Jag tar emot studieplatsen. Jag har inte tidigare tagit emot en studieplats som leder till högskoleexamen, där utbildningen inleds under höstterminen 2018. Efter att jag tagit emot denna studieplats kan jag inte ta emot en annan studieplats inom utbildning som startar under höstterminen 2018.",
+      "defaultValue": "Jag tar emot studieplatsen. Jag har inte tidigare tagit emot en studieplats som leder till högskoleexamen, där utbildningen inleds under höstterminen 2019. Efter att jag tagit emot denna studieplats kan jag inte ta emot en annan studieplats inom utbildning som startar under höstterminen 2019.",
       "mandatory": false
     },
     {
       "id": 7,
       "name": "vastaanotto_vaihtoehto_2",
-      "defaultValue": "Jag tar emot studieplatsen, men fortsätter köa för en studieplats högre upp i min ansökningsmålsordning, för vilken jag är på reservplats. Om jag godkänns till ett högre ansökningsmål före 31.7.2018 kl. 15.00, annulleras den erbjudna studieplatsen automatiskt. Om jag inte antas till mitt högre ansökningsmålmål före 31.7.2018 kl. 15.00, blir emottagandet av den studieplats som nämns i denna blankett i kraft.",
+      "defaultValue": "Jag tar emot studieplatsen, men fortsätter köa för en studieplats högre upp i min ansökningsmålsordning, för vilken jag är på reservplats. Om jag godkänns till ett högre ansökningsmål före 31.7.2019 kl. 15.00, annulleras den erbjudna studieplatsen automatiskt. Om jag inte antas till mitt högre ansökningsmålmål före 31.7.2019 kl. 15.00, blir emottagandet av den studieplats som nämns i denna blankett i kraft.",
       "mandatory": false
     },
     {
@@ -198,13 +198,13 @@
     {
       "id": 8,
       "name": "vastaanotto_allekirjoitus_vuosi",
-      "defaultValue": "2018",
+      "defaultValue": "2019",
       "mandatory": false
     },
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2018",
+      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2019",
       "mandatory": false
     }
   ]
