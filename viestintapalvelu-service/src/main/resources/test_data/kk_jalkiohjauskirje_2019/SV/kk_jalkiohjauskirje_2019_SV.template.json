@@ -156,7 +156,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "MEDDELANDE OM ANTAGNINGEN AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2018",
+      "defaultValue": "MEDDELANDE OM ANTAGNINGEN AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2019",
       "mandatory": false
     },
     {
@@ -186,13 +186,13 @@
     {
       "id": 8,
       "name": "vastaanotto_allekirjoitus_vuosi",
-      "defaultValue": "2018",
+      "defaultValue": "2019",
       "mandatory": false
     },
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2018",
+      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR VÅREN 2019",
       "mandatory": false
     }
   ]
