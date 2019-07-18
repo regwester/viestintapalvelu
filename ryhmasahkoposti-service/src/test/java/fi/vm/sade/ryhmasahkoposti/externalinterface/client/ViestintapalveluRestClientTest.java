@@ -63,7 +63,7 @@ public class ViestintapalveluRestClientTest {
     }
 
     @Test
-    public void templateRequestSetsClientSubSystemCode() throws IOException {
+    public void templateRequestSetsCallerId() throws IOException {
         when(mockHttpClient.execute(any(HttpUriRequest.class), any(HttpContext.class)))
             .then((Answer<HttpResponse>) invocation -> {
                 HttpUriRequest request = invocation.getArgumentAt(0, HttpUriRequest.class);

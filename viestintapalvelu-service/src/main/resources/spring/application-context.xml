@@ -123,7 +123,7 @@
         <bean id="sessionCache" class="fi.vm.sade.authentication.cas.CasFriendlyCache"/>
 
         <bean id="ophRequestHeaders" class="fi.vm.sade.javautils.cxf.OphRequestHeadersCxfInterceptor">
-            <property name="clientSubSystemCode" value="viestintapalvelu.ryhmasahkoposti-service.backend"/>
+            <constructor-arg index="0"  name="callerId" value="1.2.246.562.10.00000000001.sijoittelu.sijoittelu-service"/>
         </bean>
 
         <jaxrs-client:client id="dokumenttipalveluRestClient" serviceClass="fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource"
