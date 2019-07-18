@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -44,7 +45,8 @@ public class ViestintapalveluRestClientTest {
 
     @Before
     public void setupMocks() throws IOException {
-        ReflectionTestUtils.setField(viestintapalveluRestClient, "cachingClient", mockHttpClient);
+        Object innerRestClient = ReflectionTestUtils.getField(viestintapalveluRestClient, "restClient");
+        ReflectionTestUtils.setField(innerRestClient, "cachingClient", mockHttpClient);
         response.setEntity(new StringEntity(readFileFromClasspath("test_email_template.json")));
     }
 
@@ -65,9 +67,9 @@ public class ViestintapalveluRestClientTest {
         when(mockHttpClient.execute(any(HttpUriRequest.class), any(HttpContext.class)))
             .then((Answer<HttpResponse>) invocation -> {
                 HttpUriRequest request = invocation.getArgumentAt(0, HttpUriRequest.class);
-                Header clientSubsystemCodeHeader = request.getLastHeader("clientSubSystemCode");
-                assertNotNull(clientSubsystemCodeHeader);
-                assertThat(clientSubsystemCodeHeader.getValue(), containsString("ryhmasahkoposti"));
+                Header callerIdHeader = request.getLastHeader("Caller-Id");
+                assertNotNull(callerIdHeader);
+                assertThat(callerIdHeader.getValue(), containsString("ryhmasahkoposti"));
                 return response;
         });
 
