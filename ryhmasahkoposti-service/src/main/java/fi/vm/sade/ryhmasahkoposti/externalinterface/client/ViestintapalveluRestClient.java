@@ -11,7 +11,6 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.UrisContainerDto;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -21,24 +20,16 @@ public class ViestintapalveluRestClient implements TemplateResource, AttachmentR
     protected static Logger logger = LoggerFactory.getLogger(ViestintapalveluRestClient.class);
     private final CachingRestClient restClient;
 
-    @Value("${web.url.cas}")
-    private String webCasUrl;
-
-    @Value("${viestintapalvelu.base}")
-    private String casService;
-
-    @Value("${ryhmasahkoposti.app.username.to.viestintapalvelu}")
-    private String username;
-
-    @Value("${ryhmasahkoposti.app.password.to.viestintapalvelu}")
-    private String password;
-
     private final OphProperties.UrlResolver urlResolver;
     private final ObjectMapperProvider objectMapperProvider;
 
 
-    @Autowired
-    public ViestintapalveluRestClient(@Value("${viestintapalvelu.base}") String viestintaPalveluUrl,  ObjectMapperProvider objectMapperProvider) {
+    public ViestintapalveluRestClient(@Value("${viestintapalvelu.base}") String viestintaPalveluUrl,
+                                      ObjectMapperProvider objectMapperProvider,
+                                      @Value("${web.url.cas}") String webCasUrl,
+                                      @Value("${viestintapalvelu.base}") String casService,
+                                      @Value("${ryhmasahkoposti.app.username.to.viestintapalvelu}") String username,
+                                      @Value("${ryhmasahkoposti.app.password.to.viestintapalvelu}") String password) {
         this.urlResolver = new OphProperties() {
             UrlResolver createUrlResolver() {
                 Properties urlsConfig = new Properties();

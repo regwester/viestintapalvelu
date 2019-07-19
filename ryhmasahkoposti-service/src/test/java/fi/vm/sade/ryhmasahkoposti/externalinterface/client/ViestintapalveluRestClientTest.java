@@ -39,7 +39,13 @@ import java.util.Date;
 
 @RunWith(JUnit4.class)
 public class ViestintapalveluRestClientTest {
-    private final ViestintapalveluRestClient viestintapalveluRestClient = new ViestintapalveluRestClient("http://localhost/viestintapalvelu", new ObjectMapperProvider());
+    private final ViestintapalveluRestClient viestintapalveluRestClient = new ViestintapalveluRestClient(
+            "http://localhost/viestintapalvelu",
+            new ObjectMapperProvider(),
+            null,
+            null,
+            null,
+            null);
     private final HttpClient mockHttpClient = Mockito.mock(HttpClient.class);
     private final BasicHttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "lol"));
 
