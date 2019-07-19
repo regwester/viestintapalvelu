@@ -7,24 +7,33 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 
 public class RyhmasahkopostiRestClient implements EmailResource {
     protected static Logger logger = LoggerFactory.getLogger(RyhmasahkopostiRestClient.class);
     private final CachingRestClient restClient;
-    private final String baseUrl;
 
+    @Value("${ryhmasahkoposti.base}")
+    private String baseUrl;
+
+    @Value("${web.url.cas}")
     private String webCasUrl;
-    private String username;
-    private String password;
+
+    @Value("${ryhmasahkoposti.base}")
     private String casService;
+
+    @Value("${ryhmasahkoposti.app.username.to.viestintapalvelu}")
+    private String username;
+
+    @Value("${ryhmasahkoposti.app.password.to.viestintapalvelu}")
+    private String password;
 
     private final ObjectMapperProvider objectMapperProvider;
 
 
-    public RyhmasahkopostiRestClient(String baseUrl, ObjectMapperProvider objectMapperProvider) {
-        this.baseUrl = baseUrl;
+    public RyhmasahkopostiRestClient(ObjectMapperProvider objectMapperProvider) {
         this.objectMapperProvider = objectMapperProvider;
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.common";
         this.restClient = new CachingRestClient(callerId);

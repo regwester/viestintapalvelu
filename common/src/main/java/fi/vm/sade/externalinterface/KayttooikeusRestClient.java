@@ -7,6 +7,7 @@ import fi.vm.sade.dto.OrganisaatioHenkiloDto;
 import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.lang.reflect.Type;
@@ -16,15 +17,23 @@ import java.util.List;
 public class KayttooikeusRestClient {
     protected static Logger logger = LoggerFactory.getLogger(KayttooikeusRestClient.class);
     private final CachingRestClient restClient;
-    private final String baseUrl;
 
+    @Value("${kayttooikeus-service.base}")
+    private String baseUrl;
+
+    @Value("${web.url.cas}")
     private String webCasUrl;
-    private String username;
-    private String password;
+
+    @Value("${kayttooikeus-service.base}/j_spring_cas_security_check")
     private String casService;
 
-    public KayttooikeusRestClient(String baseUrl) {
-        this.baseUrl = baseUrl;
+    @Value("${ryhmasahkoposti.app.username.to.viestintapalvelu}")
+    private String username;
+
+    @Value("${ryhmasahkoposti.app.password.to.viestintapalvelu}")
+    private String password;
+
+    public KayttooikeusRestClient() {
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.common";
         this.restClient = new CachingRestClient(callerId);
         this.restClient.setWebCasUrl(webCasUrl);

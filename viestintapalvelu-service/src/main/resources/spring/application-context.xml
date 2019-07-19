@@ -157,32 +157,15 @@
 
 
         <!-- Oppijanumerorekisteri -->
-        <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient">
-            <constructor-arg value="${oppijanumerorekisteri-service.base}"/>
-            <property name="webCasUrl" value="${web.url.cas}"/>
-            <property name="casService" value="${oppijanumerorekisteri-service.base}/j_spring_cas_security_check"/>
-            <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-            <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-        </bean>
+        <bean id="oppijanumeroRekisteriRestClient" class="fi.vm.sade.externalinterface.OppijanumeroRekisteriRestClient"/>
 
 
-        <bean id="kayttooikeusRestClient" class="fi.vm.sade.externalinterface.KayttooikeusRestClient">
-            <constructor-arg value="${kayttooikeus-service.base}"/>
-            <property name="webCasUrl" value="${web.url.cas}"/>
-            <property name="casService" value="${kayttooikeus-service.base}/j_spring_cas_security_check"/>
-            <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-            <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
-        </bean>
+        <bean id="kayttooikeusRestClient" class="fi.vm.sade.externalinterface.KayttooikeusRestClient"/>
 
         <bean id="ryhmasahkopostiRestClient" class="fi.vm.sade.viestintapalvelu.externalinterface.RyhmasahkopostiRestClient">
-            <constructor-arg index="0" value="${ryhmasahkoposti.base}"/>
-            <constructor-arg index="1">
+            <constructor-arg index="0">
                 <bean class="fi.vm.sade.externalinterface.common.ObjectMapperProvider"/>
             </constructor-arg>
-            <property name="webCasUrl" value="${web.url.cas}"/>
-            <property name="casService" value="${ryhmasahkoposti.base}"/>
-            <property name="username" value="${ryhmasahkoposti.app.username.to.viestintapalvelu}" />
-            <property name="password" value="${ryhmasahkoposti.app.password.to.viestintapalvelu}" />
         </bean>
 
         <jaxrs-client:client id="tarjontaHakuResourceClient"
