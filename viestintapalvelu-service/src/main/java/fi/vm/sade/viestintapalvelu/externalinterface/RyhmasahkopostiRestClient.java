@@ -14,6 +14,12 @@ public class RyhmasahkopostiRestClient implements EmailResource {
     protected static Logger logger = LoggerFactory.getLogger(RyhmasahkopostiRestClient.class);
     private final CachingRestClient restClient;
     private final String baseUrl;
+
+    private String webCasUrl;
+    private String username;
+    private String password;
+    private String casService;
+
     private final ObjectMapperProvider objectMapperProvider;
 
 
@@ -22,6 +28,10 @@ public class RyhmasahkopostiRestClient implements EmailResource {
         this.objectMapperProvider = objectMapperProvider;
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.common";
         this.restClient = new CachingRestClient(callerId);
+        this.restClient.setWebCasUrl(webCasUrl);
+        this.restClient.setUsername(username);
+        this.restClient.setPassword(password);
+        this.restClient.setCasService(casService);
     }
 
     @Override

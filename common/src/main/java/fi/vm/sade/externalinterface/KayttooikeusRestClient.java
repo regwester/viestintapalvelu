@@ -18,10 +18,19 @@ public class KayttooikeusRestClient {
     private final CachingRestClient restClient;
     private final String baseUrl;
 
+    private String webCasUrl;
+    private String username;
+    private String password;
+    private String casService;
+
     public KayttooikeusRestClient(String baseUrl) {
         this.baseUrl = baseUrl;
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.common";
         this.restClient = new CachingRestClient(callerId);
+        this.restClient.setWebCasUrl(webCasUrl);
+        this.restClient.setUsername(username);
+        this.restClient.setPassword(password);
+        this.restClient.setCasService(casService);
     }
 
     public List<OrganisaatioHenkiloDto> getOrganisaatioHenkilo(String henkiloOid) throws IOException {

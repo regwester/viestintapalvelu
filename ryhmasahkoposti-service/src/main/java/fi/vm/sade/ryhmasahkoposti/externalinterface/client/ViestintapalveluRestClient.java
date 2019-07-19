@@ -18,6 +18,12 @@ import java.util.Properties;
 public class ViestintapalveluRestClient implements TemplateResource, AttachmentResource {
     protected static Logger logger = LoggerFactory.getLogger(ViestintapalveluRestClient.class);
     private final CachingRestClient restClient;
+
+    private String webCasUrl;
+    private String username;
+    private String password;
+    private String casService;
+
     private final OphProperties.UrlResolver urlResolver;
     private final ObjectMapperProvider objectMapperProvider;
 
@@ -38,6 +44,10 @@ public class ViestintapalveluRestClient implements TemplateResource, AttachmentR
 
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.ryhmasahkoposti-service";
         this.restClient = new CachingRestClient(callerId);
+        this.restClient.setWebCasUrl(webCasUrl);
+        this.restClient.setUsername(username);
+        this.restClient.setPassword(password);
+        this.restClient.setCasService(casService);
     }
 
     @Override
