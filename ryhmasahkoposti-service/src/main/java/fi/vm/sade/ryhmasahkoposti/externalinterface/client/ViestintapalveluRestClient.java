@@ -11,6 +11,7 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.UrisContainerDto;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -35,6 +36,8 @@ public class ViestintapalveluRestClient implements TemplateResource, AttachmentR
     private final OphProperties.UrlResolver urlResolver;
     private final ObjectMapperProvider objectMapperProvider;
 
+
+    @Autowired
     public ViestintapalveluRestClient(@Value("${viestintapalvelu.base}") String viestintaPalveluUrl,  ObjectMapperProvider objectMapperProvider) {
         this.urlResolver = new OphProperties() {
             UrlResolver createUrlResolver() {

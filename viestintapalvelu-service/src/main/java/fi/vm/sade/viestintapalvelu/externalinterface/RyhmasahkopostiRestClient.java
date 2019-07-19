@@ -7,6 +7,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.api.EmailResource;
 import org.apache.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -33,6 +34,7 @@ public class RyhmasahkopostiRestClient implements EmailResource {
     private final ObjectMapperProvider objectMapperProvider;
 
 
+    @Autowired
     public RyhmasahkopostiRestClient(ObjectMapperProvider objectMapperProvider) {
         this.objectMapperProvider = objectMapperProvider;
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.common";

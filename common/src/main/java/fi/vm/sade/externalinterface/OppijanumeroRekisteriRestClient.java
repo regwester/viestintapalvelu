@@ -4,6 +4,7 @@ import fi.vm.sade.dto.HenkiloDto;
 import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
@@ -27,6 +28,7 @@ public class OppijanumeroRekisteriRestClient {
     @Value("${ryhmasahkoposti.app.password.to.viestintapalvelu}")
     private String password;
 
+    @Autowired
     public OppijanumeroRekisteriRestClient() {
         String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.common";
         this.restClient = new CachingRestClient(callerId);
