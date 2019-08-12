@@ -30,7 +30,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 
-import fi.vm.sade.authentication.cas.CasClient;
+import fi.vm.sade.javautils.cas.CasClient;
 
 /**
  * User: ratamaa
