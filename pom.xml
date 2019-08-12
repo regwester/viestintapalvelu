@@ -12,7 +12,7 @@
     -->
     <groupId>fi.vm.sade.viestintapalvelu</groupId>
     <artifactId>viestintapalvelu</artifactId>
-    <version>14.8-SNAPSHOT</version>
+    <version>14.9-SNAPSHOT</version>
     <packaging>pom</packaging>
 
     <name>Viestintapalvelu</name>
