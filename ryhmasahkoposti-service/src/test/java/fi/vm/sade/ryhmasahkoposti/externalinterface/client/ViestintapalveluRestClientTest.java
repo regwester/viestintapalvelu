@@ -10,6 +10,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -38,13 +39,20 @@ import java.util.Date;
 
 @RunWith(JUnit4.class)
 public class ViestintapalveluRestClientTest {
-    private final ViestintapalveluRestClient viestintapalveluRestClient = new ViestintapalveluRestClient("http://localhost/viestintapalvelu", new ObjectMapperProvider());
+    private final ViestintapalveluRestClient viestintapalveluRestClient = new ViestintapalveluRestClient(
+            "http://localhost/viestintapalvelu",
+            new ObjectMapperProvider(),
+            null,
+            null,
+            null,
+            null);
     private final HttpClient mockHttpClient = Mockito.mock(HttpClient.class);
     private final BasicHttpResponse response = new BasicHttpResponse(new BasicStatusLine(new ProtocolVersion("HTTP", 1, 1), 200, "lol"));
 
     @Before
     public void setupMocks() throws IOException {
-        ReflectionTestUtils.setField(viestintapalveluRestClient, "cachingClient", mockHttpClient);
+        Object innerRestClient = ReflectionTestUtils.getField(viestintapalveluRestClient, "restClient");
+        ReflectionTestUtils.setField(innerRestClient, "cachingClient", mockHttpClient);
         response.setEntity(new StringEntity(readFileFromClasspath("test_email_template.json")));
     }
 
@@ -61,13 +69,13 @@ public class ViestintapalveluRestClientTest {
     }
 
     @Test
-    public void templateRequestSetsClientSubSystemCode() throws IOException {
+    public void templateRequestSetsCallerId() throws IOException {
         when(mockHttpClient.execute(any(HttpUriRequest.class), any(HttpContext.class)))
             .then((Answer<HttpResponse>) invocation -> {
                 HttpUriRequest request = invocation.getArgumentAt(0, HttpUriRequest.class);
-                Header clientSubsystemCodeHeader = request.getLastHeader("clientSubSystemCode");
-                assertNotNull(clientSubsystemCodeHeader);
-                assertThat(clientSubsystemCodeHeader.getValue(), containsString("ryhmasahkoposti"));
+                Header callerIdHeader = request.getLastHeader("Caller-Id");
+                assertNotNull(callerIdHeader);
+                assertThat(callerIdHeader.getValue(), containsString("ryhmasahkoposti"));
                 return response;
         });
 

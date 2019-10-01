@@ -1,7 +1,7 @@
 package fi.vm.sade.ryhmasahkoposti.externalinterface.client;
 
 import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
-import fi.vm.sade.generic.rest.CachingRestClient;
+import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import fi.vm.sade.properties.OphProperties;
 import fi.vm.sade.ryhmasahkoposti.api.dto.EmailAttachment;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
@@ -9,15 +9,27 @@ import fi.vm.sade.ryhmasahkoposti.externalinterface.api.AttachmentResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.TemplateResource;
 import fi.vm.sade.ryhmasahkoposti.externalinterface.api.UrisContainerDto;
 import org.apache.http.HttpResponse;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.Properties;
 
-public class ViestintapalveluRestClient extends CachingRestClient implements TemplateResource, AttachmentResource {
+public class ViestintapalveluRestClient implements TemplateResource, AttachmentResource {
+    protected static Logger logger = LoggerFactory.getLogger(ViestintapalveluRestClient.class);
+    private final CachingRestClient restClient;
+
     private final OphProperties.UrlResolver urlResolver;
     private final ObjectMapperProvider objectMapperProvider;
 
-    public ViestintapalveluRestClient(String viestintaPalveluUrl, ObjectMapperProvider objectMapperProvider) {
+
+    public ViestintapalveluRestClient(@Value("${viestintapalvelu.base}") String viestintaPalveluUrl,
+                                      ObjectMapperProvider objectMapperProvider,
+                                      @Value("${web.url.cas}") String webCasUrl,
+                                      @Value("${viestintapalvelu.base}") String casService,
+                                      @Value("${ryhmasahkoposti.app.username.to.viestintapalvelu}") String username,
+                                      @Value("${ryhmasahkoposti.app.password.to.viestintapalvelu}") String password) {
         this.urlResolver = new OphProperties() {
             UrlResolver createUrlResolver() {
                 Properties urlsConfig = new Properties();
@@ -31,7 +43,13 @@ public class ViestintapalveluRestClient extends CachingRestClient implements Tem
             }
         }.createUrlResolver();
         this.objectMapperProvider = objectMapperProvider;
-        setClientSubSystemCode("fi.vm.sade.ryhmasahkoposti");
+
+        String callerId = "1.2.246.562.10.00000000001.viestintapalvelu.ryhmasahkoposti-service";
+        this.restClient = new CachingRestClient(callerId);
+        this.restClient.setWebCasUrl(webCasUrl);
+        this.restClient.setUsername(username);
+        this.restClient.setPassword(password);
+        this.restClient.setCasService(casService);
     }
 
     @Override
@@ -56,7 +74,7 @@ public class ViestintapalveluRestClient extends CachingRestClient implements Tem
     }
 
     private TemplateDTO fetchTemplate(String url) throws IOException {
-        String jsonString = this.getAsString(url);
+        String jsonString = this.restClient.getAsString(url);
         return objectMapperProvider.getContext(TemplateDTO.class).readValue(jsonString, TemplateDTO.class);
     }
 
@@ -65,7 +83,7 @@ public class ViestintapalveluRestClient extends CachingRestClient implements Tem
     public EmailAttachment downloadByUri(String uri) throws IOException {
         logger.warn("Calling url viestintapalvelu.attachment.getByUri");
         String url = this.urlResolver.url("viestintapalvelu.attachment.getByUri", uri);
-        String jsonString = this.getAsString(url);
+        String jsonString = this.restClient.getAsString(url);
         return objectMapperProvider.getContext(EmailAttachment.class).readValue(jsonString, EmailAttachment.class);
     }
 
@@ -75,6 +93,6 @@ public class ViestintapalveluRestClient extends CachingRestClient implements Tem
         String url = this.urlResolver.url("viestintapalvelu.attachment.urisDownloaded");
         String body = objectMapperProvider.getContext(UrisContainerDto.class).writeValueAsString(urisContainerDto);
         String contentType = "application/json;charset=utf-8";
-        return this.post(url, contentType, body);
+        return this.restClient.post(url, contentType, body);
     }
 }

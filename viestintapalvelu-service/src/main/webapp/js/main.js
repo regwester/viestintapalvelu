@@ -31,7 +31,7 @@ app.config(function($sceProvider) {
 }]);
 
 app.run(function($http, $cookies) {
-    $http.defaults.headers.common['clientSubSystemCode'] = "viestintapalvelu.viestintapalvelu-service.frontend";
+    $http.defaults.headers.common['Caller-Id'] = "viestintapalvelu.viestintapalvelu-service.frontend";
     if($cookies['CSRF']) {
         $http.defaults.headers.common['CSRF'] = $cookies['CSRF'];
     }
