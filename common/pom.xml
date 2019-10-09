@@ -93,6 +93,24 @@
             <artifactId>legacy-caching-rest-client</artifactId>
         </dependency>
 
+
+        <!-- Audit logging -->
+        <dependency>
+            <groupId>fi.vm.sade</groupId>
+            <artifactId>auditlogger</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>fi.vm.sade.java-utils</groupId>
+            <artifactId>java-http</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>javax.servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
+
         <!-- Used by CasClient: -->
         <dependency>
             <groupId>commons-httpclient</groupId>

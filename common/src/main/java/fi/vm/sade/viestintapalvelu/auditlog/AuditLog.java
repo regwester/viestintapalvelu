@@ -1,8 +1,11 @@
-package fi.vm.sade.ryhmasahkoposti.auditlog;
+package fi.vm.sade.viestintapalvelu.auditlog;
 
 import com.google.common.collect.Maps;
-import fi.vm.sade.auditlog.*;
-import fi.vm.sade.ryhmasahkoposti.api.dto.EmailMessageDTO;
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.auditlog.Changes;
+import fi.vm.sade.auditlog.Operation;
+import fi.vm.sade.auditlog.Target;
+import fi.vm.sade.auditlog.User;
 import fi.vm.sade.javautils.http.HttpServletRequestUtils;
 import org.ietf.jgss.GSSException;
 import org.ietf.jgss.Oid;
@@ -22,8 +25,8 @@ public class AuditLog {
     private static final Logger LOG = LoggerFactory.getLogger(AuditLog.class);
     private static final String TARGET_EPASELVA = "Tuntematon tai muutosten implikoima kohde";
 
-    public static <T> void log(Audit audit, User user, Operation operation, EmailMessageDTO emailMessageDTO, String targetOid, Changes changes, @NotNull Map<String, String> additionalInfo) {
-        Target.Builder target = getTarget(emailMessageDTO, targetOid);
+    public static <T> void log(Audit audit, User user, Operation operation, String targetType, String targetOid, Changes changes, @NotNull Map<String, String> additionalInfo) {
+        Target.Builder target = getTarget(targetType, targetOid);
         if (additionalInfo != null && !additionalInfo.isEmpty()) {
             additionalInfo.forEach(target::setField);
         }
@@ -31,8 +34,8 @@ public class AuditLog {
         audit.log(user, operation, target.build(), changes);
     }
 
-    public static <T> void log(Audit audit, User user, Operation operation, EmailMessageDTO emailMessageDTO, String targetOid, Changes changes) {
-        log(audit, user, operation, emailMessageDTO, targetOid, changes, Maps.newHashMap());
+    public static <T> void log(Audit audit, User user, Operation operation, String targetType, String targetOid, Changes changes) {
+        log(audit, user, operation, targetType, targetOid, changes, Maps.newHashMap());
     }
 
     public static User getUser(HttpServletRequest request) {
@@ -81,12 +84,12 @@ public class AuditLog {
         }
     }
 
-    private static Target.Builder getTarget(EmailMessageDTO emailMessageDTO, String targetOid) {
+    private static Target.Builder getTarget(String targetType, String targetOid) {
         if (targetOid == null) {
             targetOid = TARGET_EPASELVA;
         }
         return new Target.Builder()
-                .setField("type", emailMessageDTO.getType())
+                .setField("type", targetType)
                 .setField("oid", targetOid);
     }
 }

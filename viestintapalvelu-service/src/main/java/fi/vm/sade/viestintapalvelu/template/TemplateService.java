@@ -36,6 +36,8 @@ public interface TemplateService {
 
     Template saveAttachedApplicationPeriods(ApplicationPeriodsAttachDto dto);
 
+    String getDraftContent(long id);
+
     void storeDraftDTO(Draft draft);
 
     Draft findDraftByNameOrgTag(String templateName, String templateLanguage, String organizationOid, String applicationPeriod, String fetchTarget, String tag);

@@ -115,12 +115,12 @@ public class TemplateResourceTest {
     
     @Test
     public void insertsTemplate() throws Exception {
-        assertNotNull(resource.insert(givenTemplateWithStructure()));
+        assertNotNull(resource.insert(givenTemplateWithStructure(), null));
     }
     
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
-        resource.insert(givenTemplateWithStructure());
+        resource.insert(givenTemplateWithStructure(), null);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -130,7 +130,7 @@ public class TemplateResourceTest {
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(structure.getName());
-        resource.insert(template);
+        resource.insert(template, null);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -150,7 +150,7 @@ public class TemplateResourceTest {
         structureDto.getContentStructures().add(contentStructure);
         template.setStructure(structureDto);
 
-        resource.insert(template);
+        resource.insert(template, null);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -160,26 +160,26 @@ public class TemplateResourceTest {
         template.setStructureId(null);
         template.setStructureName(null);
         template.setStructure(new StructureSaveDto());
-        resource.insert(template);
+        resource.insert(template, null);
     }
 
     @Test
     public void returnsTemplateNamesThatAreInDraftState() throws Exception {
-        resource.insert(givenTemplateWithStructure());
+        resource.insert(givenTemplateWithStructure(), null);
         assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
     
     @Test
     public void doesNotReturnTemplatesThatAreNotPublished() throws Exception {
         Template template = givenTemplateWithStructure();
-        resource.insert(template);
+        resource.insert(template, null);
         assertTrue(resource.listVersionsByName(constructRequest(template)).isEmpty());
     }
     
     @Test
     public void returnsTemplatesThatAreInDraftState() throws Exception {
         Template template = givenTemplateWithStructure();
-        resource.insert(template);
+        resource.insert(template, null);
         assertEquals(1, resource.listVersionsByNameUsingState(constructRequest(template), State.luonnos).size());
     }
     
@@ -188,7 +188,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertTrue(resource.templateNames().isEmpty());
         template.setState(State.julkaistu);
-        assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
+        assertEquals(Status.OK.getStatusCode(), resource.update(template, null).getStatus());
         assertEquals(1, resource.templateNames().size());
     }
     
@@ -197,7 +197,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertTrue(resource.templateNamesByState(State.suljettu).isEmpty());
         template.setState(State.suljettu);
-        assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
+        assertEquals(Status.OK.getStatusCode(), resource.update(template, null).getStatus());
         assertEquals(1, resource.templateNamesByState(State.suljettu).size());
     }
     
@@ -206,7 +206,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertNull(resource.templateByName(constructRequest(template)));
         template.setState(State.julkaistu);
-        resource.update(template);
+        resource.update(template, null);
         assertNotNull(resource.templateByName(constructRequest(template)));
     }
     
@@ -215,7 +215,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
         template.setState(State.suljettu);
-        resource.update(template);
+        resource.update(template, null);
         assertNotNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
     }
     
@@ -274,7 +274,7 @@ public class TemplateResourceTest {
         Template template = givenTemplateWithStructure();
         template.setUsedAsDefault(usedAsDefault);
         template.setState(state);
-        Long id = (Long) resource.insert(template).getEntity();
+        Long id = (Long) resource.insert(template, null).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);
     }
     
@@ -282,7 +282,7 @@ public class TemplateResourceTest {
         Template template = givenTemplateWithStructure();
         template.setApplicationPeriods(Arrays.asList(applicationPeriod));
         template.setState(state);
-        Long id = (Long) resource.insert(template).getEntity();
+        Long id = (Long) resource.insert(template, null).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);
     }
     
@@ -308,7 +308,7 @@ public class TemplateResourceTest {
         Template template = givenTemplateWithStructure();
         template.setApplicationPeriods(Arrays.asList(hakuOid));
         template.setState(state);
-        Long id = (Long) resource.insert(template).getEntity();
+        Long id = (Long) resource.insert(template, null).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);
     }
     
