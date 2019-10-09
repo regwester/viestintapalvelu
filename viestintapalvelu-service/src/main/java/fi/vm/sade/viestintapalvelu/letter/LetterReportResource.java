@@ -29,12 +29,15 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.auditlog.ApplicationType;
 import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.auditlog.User;
 import fi.vm.sade.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.dto.PagingAndSortingDTO;
+import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.auditlog.AuditLog;
+import fi.vm.sade.viestintapalvelu.auditlog.AuditLogger;
 import fi.vm.sade.viestintapalvelu.auditlog.Target;
 import fi.vm.sade.viestintapalvelu.auditlog.ViestintapalveluOperation;
 import org.slf4j.Logger;
@@ -89,7 +92,7 @@ public class LetterReportResource extends AsynchronousResource {
     @Autowired
     private OrganisaatioService organisaatioService;
 
-    private Audit audit;
+    public static final Audit AUDIT = Utils.ViestintaPalveluAudit;
 
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
@@ -169,7 +172,7 @@ public class LetterReportResource extends AsynchronousResource {
         logger.info("Audit logging getLetterBatchReport (kirjeen lähetysraportin katselu)");
         User user = AuditLog.getUser(request);
         Changes changes = Changes.EMPTY;
-        AuditLog.log(audit, user, ViestintapalveluOperation.KIRJELAHETYS_LUKU, Target.KIRJELAHETYS, id.toString(), changes);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJELAHETYS_LUKU, Target.KIRJELAHETYS, id.toString(), changes);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(id, pagingAndSorting, query);
@@ -197,7 +200,7 @@ public class LetterReportResource extends AsynchronousResource {
             logger.info("audit logging getReceiversLetter (muodostetun kirjeen katselu)");
             User user = AuditLog.getUser(request);
             Changes changes = Changes.EMPTY;
-            AuditLog.log(audit, user, ViestintapalveluOperation.KIRJE_LUKU, Target.KIRJE, id.toString(), changes);
+            AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJE_LUKU, Target.KIRJE, id.toString(), changes);
 
 
             LetterReceiverLetterDTO letterReceiverLetter = letterService.getLetterReceiverLetter(id);
@@ -230,7 +233,7 @@ public class LetterReportResource extends AsynchronousResource {
             logger.info("audit logging getLetterContents (kirjekoosteen katselu)");
             User user = AuditLog.getUser(request);
             Changes changes = Changes.EMPTY;
-            AuditLog.log(audit, user, ViestintapalveluOperation.KIRJE_KOOSTE_LUKU, Target.KIRJE_KOOSTE, id.toString(), changes);
+            AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJE_KOOSTE_LUKU, Target.KIRJE_KOOSTE, id.toString(), changes);
 
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
             String type = letterService.getLetterTypeByLetterBatchID(id);

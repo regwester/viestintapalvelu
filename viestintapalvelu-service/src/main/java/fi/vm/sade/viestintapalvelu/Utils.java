@@ -20,6 +20,9 @@ import java.io.InputStream;
 import java.util.Date;
 import java.util.UUID;
 
+import fi.vm.sade.auditlog.ApplicationType;
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.viestintapalvelu.auditlog.AuditLogger;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang.time.FastDateFormat;
 import org.slf4j.Logger;
@@ -33,6 +36,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 public final class Utils {
     private static Logger log = LoggerFactory.getLogger(Utils.class);
     private static final FastDateFormat THREAD_SAFE_DATE_FORMATTER = FastDateFormat.getInstance("dd.MM.yyyy_HH.mm");
+    public static final Audit ViestintaPalveluAudit = new Audit(new AuditLogger(), "viestintapalvelu-service", ApplicationType.VIRKAILIJA); ;
 
     /**
      * Resolve template by name and language code

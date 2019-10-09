@@ -33,10 +33,12 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.auditlog.ApplicationType;
 import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.auditlog.User;
 import fi.vm.sade.viestintapalvelu.auditlog.AuditLog;
+import fi.vm.sade.viestintapalvelu.auditlog.AuditLogger;
 import fi.vm.sade.viestintapalvelu.auditlog.Target;
 import fi.vm.sade.viestintapalvelu.auditlog.ViestintapalveluOperation;
 import org.slf4j.Logger;
@@ -122,7 +124,8 @@ public class TemplateResource extends AsynchronousResource {
     private final static String GetTemplateContent400 = "Kirjepohjan palautus epäonnistui.";
     private static final String DEFAULT_TEMPLATES = "Palauttaa oletus kirjepohjat annetun tilan mukaan";
     private static final String TEMPLATES_BY_HAKU = "Hakee kirjepohjat hakutunnisteen ja tilan perusteella";
-    private Audit audit;
+
+    public static final Audit AUDIT = Utils.ViestintaPalveluAudit;
 
     @GET
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_READ)
@@ -332,7 +335,7 @@ public class TemplateResource extends AsynchronousResource {
         log.info("audit logging insert template");
         User user = AuditLog.getUser(request);
         Changes changes = Changes.addedDto(template);
-        AuditLog.log(audit, user, ViestintapalveluOperation.KIRJEPOHJA_LUONTI, Target.KIRJEPOHJA, String.valueOf(template.getId()), changes);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_LUONTI, Target.KIRJEPOHJA, String.valueOf(template.getId()), changes);
 
         Response response = userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
         if (Status.OK.getStatusCode() != response.getStatus()) {
@@ -354,7 +357,7 @@ public class TemplateResource extends AsynchronousResource {
         User user = AuditLog.getUser(request);
         Template old = templateService.findByIdForEditing(template.getId(), State.luonnos);
         Changes changes = Changes.updatedDto(template, old);
-        AuditLog.log(audit, user, ViestintapalveluOperation.KIRJEPOHJA_MUOKKAUS, Target.KIRJEPOHJA, String.valueOf(template.getId()), changes);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_MUOKKAUS, Target.KIRJEPOHJA, String.valueOf(template.getId()), changes);
 
         Response response = userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
         if (Status.OK.getStatusCode() != response.getStatus()) {
@@ -375,7 +378,7 @@ public class TemplateResource extends AsynchronousResource {
         log.info("audit logging saveAttachedApplicationPeriods");
         User user = AuditLog.getUser(request);
         Changes changes = Changes.addedDto(dto);
-        AuditLog.log(audit, user, ViestintapalveluOperation.KIRJEPOHJA_LIITTAMINEN_HAKUUN, Target.KIRJEPOHJA, dto.getTemplateId().toString(), changes);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_LIITTAMINEN_HAKUUN, Target.KIRJEPOHJA, dto.getTemplateId().toString(), changes);
         return templateService.saveAttachedApplicationPeriods(dto);
     }
 
@@ -389,7 +392,7 @@ public class TemplateResource extends AsynchronousResource {
         log.info("audit logging storeDraft");
         User user = AuditLog.getUser(request);
         Changes changes = Changes.addedDto(draft);
-        AuditLog.log(audit, user, ViestintapalveluOperation.KIRJEPOHJA_LUONNOS_TALLENNUS, Target.KIRJEPOHJA_LUONNOS, draft.getDraftId().toString(), changes);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_LUONNOS_TALLENNUS, Target.KIRJEPOHJA_LUONNOS, draft.getDraftId().toString(), changes);
 
         Response response = userRightsValidator.checkUserRightsToOrganization(draft.getOrganizationOid());
         if (Status.OK.getStatusCode() != response.getStatus()) {
@@ -410,7 +413,7 @@ public class TemplateResource extends AsynchronousResource {
         User user = AuditLog.getUser(request);
         String oldContent = templateService.getDraftContent(draft.id);
         Changes changes = Changes.updatedDto(draft.content, oldContent);
-        AuditLog.log(audit, user, ViestintapalveluOperation.KIRJEPOHJA_LUONNOS_MUOKKAUS, Target.KIRJEPOHJA_LUONNOS, String.valueOf(draft.id), changes);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_LUONNOS_MUOKKAUS, Target.KIRJEPOHJA_LUONNOS, String.valueOf(draft.id), changes);
 
         Response response = userRightsValidator.checkUserRightsToOrganization(draft.orgoid);
         if (Status.OK.getStatusCode() != response.getStatus()) {
