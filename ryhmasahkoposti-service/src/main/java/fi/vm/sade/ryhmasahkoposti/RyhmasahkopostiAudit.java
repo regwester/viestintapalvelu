@@ -5,5 +5,5 @@ import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.viestintapalvelu.auditlog.AuditLogger;
 
 public class RyhmasahkopostiAudit {
-    public static final Audit AUDIT = new Audit(new AuditLogger(), "ryhmasahkoposti-service", ApplicationType.VIRKAILIJA);;
+    public static final Audit AUDIT = new Audit(new AuditLogger(), "ryhmasahkoposti-service", ApplicationType.VIRKAILIJA);
 }

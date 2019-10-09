@@ -33,12 +33,10 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
-import fi.vm.sade.auditlog.ApplicationType;
 import fi.vm.sade.auditlog.Audit;
 import fi.vm.sade.auditlog.Changes;
 import fi.vm.sade.auditlog.User;
 import fi.vm.sade.viestintapalvelu.auditlog.AuditLog;
-import fi.vm.sade.viestintapalvelu.auditlog.AuditLogger;
 import fi.vm.sade.viestintapalvelu.auditlog.Target;
 import fi.vm.sade.viestintapalvelu.auditlog.ViestintapalveluOperation;
 import org.slf4j.Logger;
