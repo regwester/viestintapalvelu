@@ -79,7 +79,7 @@ public class MessageReportingResourceTest {
         when(mockedGroupEmailReportingService.getReportedMessagesByOrganizationOid("1.2.246.562.10.00000000001", mockedPagingAndSortingDTO)).thenReturn(
                 mockedReportedMessagesDTO);
 
-        Response response = messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc");
+        Response response = messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc", null);
         ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
 
         assertNotNull(searchedReportedMessagesDTO);
@@ -108,7 +108,7 @@ public class MessageReportingResourceTest {
                 mockedReportedMessagesDTO);
 
         Response response = messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", "testi.vastaanottaja@sposti.fi", 10, 1,
-                "sendingStarted", "asc");
+                "sendingStarted", "asc", null);
         ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
 
         assertNotNull(searchedReportedMessagesDTO);
