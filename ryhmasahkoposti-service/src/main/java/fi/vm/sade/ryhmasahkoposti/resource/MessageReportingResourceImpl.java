@@ -75,7 +75,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
 
         logger.info("audit logging getReportedMessages for organization");
         User user = AuditLog.getUser(request);
-        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJE_LUKU, Target.LAHETYSRAPORTTI, organizationOid, Changes.EMPTY);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_HAKU, Target.ORGANISAATIO, organizationOid, Changes.EMPTY);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(organizationOid, pagingAndSorting);
@@ -92,7 +92,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
 
         logger.info("audit logging getReportedMessages for searchArgument");
         User user = AuditLog.getUser(request);
-        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJE_LUKU, Target.LAHETYSRAPORTTI, searchArgument, Changes.EMPTY);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_HAKU, Target.SEARCH_ARGUMENT, searchArgument, Changes.EMPTY);
 
         ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(organizationOid, searchArgument);
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);

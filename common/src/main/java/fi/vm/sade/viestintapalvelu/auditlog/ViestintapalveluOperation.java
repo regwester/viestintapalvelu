@@ -7,6 +7,7 @@ public enum ViestintapalveluOperation implements Operation {
     KIRJE_LUKU,
     KIRJELAHETYS_LUKU,
     KIRJELAHETYS_KOOSTE_LUKU,
+    SAHKOPOSTILAHETYS_HAKU,
     SAHKOPOSTILAHETYS_LUKU,
     KIRJEPOHJA_LUONTI,
     KIRJEPOHJA_LUKU,
