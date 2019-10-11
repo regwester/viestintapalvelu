@@ -39,10 +39,6 @@ public class AuditLog {
     }
 
     public static User getUser(HttpServletRequest request) {
-        if (request == null) {
-            // yksikkötesteissä
-            return new User(InetAddress.getLoopbackAddress(), "aaa", "bbb");
-        }
         String userOid = loggedInUserOid();
         String userAgent = getUserAgentHeader(request);
         String session = getSession(request);

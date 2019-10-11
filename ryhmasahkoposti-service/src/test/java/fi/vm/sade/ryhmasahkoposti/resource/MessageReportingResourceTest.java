@@ -18,13 +18,19 @@ package fi.vm.sade.ryhmasahkoposti.resource;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.core.Response;
 
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
@@ -44,6 +50,7 @@ import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -59,10 +66,24 @@ public class MessageReportingResourceTest {
     private PagingAndSortingDTOConverter mockedPagingAndSortingDTOConverter;
     private MessageReportingResource messageReportingResource;
 
+    @Mock
+    private HttpServletRequest mockedRequest;
+
     @Before
     public void setup() {
         this.messageReportingResource = new MessageReportingResourceImpl(mockedGroupEmailReportingService, mockedReportedMessageQueryDTOConverter,
                 mockedPagingAndSortingDTOConverter);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext context = Mockito.mock(SecurityContext.class);
+        Mockito.when(context.getAuthentication()).thenReturn(authentication);
+        Mockito.when(authentication.isAuthenticated()).thenReturn(true);
+        Mockito.when(authentication.getName()).thenReturn("1.7.8.9.0");
+        SecurityContextHolder.setContext(context);
+
+        mockedRequest = mock(HttpServletRequest.class);
+        when(mockedRequest.getHeader("User-Agent")).thenReturn("mock_user_agent");
+        when(mockedRequest.getSession(false)).thenReturn(new MockHttpSession());
     }
 
     @Test
@@ -79,7 +100,7 @@ public class MessageReportingResourceTest {
         when(mockedGroupEmailReportingService.getReportedMessagesByOrganizationOid("1.2.246.562.10.00000000001", mockedPagingAndSortingDTO)).thenReturn(
                 mockedReportedMessagesDTO);
 
-        Response response = messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc", null);
+        Response response = messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", 10, 1, "sendingStarted", "asc", mockedRequest);
         ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
 
         assertNotNull(searchedReportedMessagesDTO);
@@ -108,7 +129,7 @@ public class MessageReportingResourceTest {
                 mockedReportedMessagesDTO);
 
         Response response = messageReportingResource.getReportedMessages("1.2.246.562.10.00000000001", "testi.vastaanottaja@sposti.fi", 10, 1,
-                "sendingStarted", "asc", null);
+                "sendingStarted", "asc", mockedRequest);
         ReportedMessagesDTO searchedReportedMessagesDTO = (ReportedMessagesDTO) response.getEntity();
 
         assertNotNull(searchedReportedMessagesDTO);
