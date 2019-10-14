@@ -30,7 +30,6 @@ public class AuditLog {
         if (additionalInfo != null && !additionalInfo.isEmpty()) {
             additionalInfo.forEach(target::setField);
         }
-        additionalInfo.forEach(target::setField);
         audit.log(user, operation, target.build(), changes);
     }
 
