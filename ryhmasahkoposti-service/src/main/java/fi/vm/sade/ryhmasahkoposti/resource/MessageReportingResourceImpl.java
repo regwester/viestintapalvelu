@@ -70,19 +70,25 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
 
     @Override
     public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy, String order, @Context HttpServletRequest request) throws Exception {
-        List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
-        organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
+        try {
+            logger.info("getReportedMessages called");
+            List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
+            organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
-        logger.info("audit logging getReportedMessages for organization");
-        User user = AuditLog.getUser(request);
-        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_HAKU, Target.ORGANISAATIO, organizationOid, Changes.EMPTY);
+            logger.info("audit logging getReportedMessages for organization");
+            User user = AuditLog.getUser(request);
+            AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_HAKU, Target.ORGANISAATIO, organizationOid, Changes.EMPTY);
 
-        PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
-        ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(organizationOid, pagingAndSorting);
+            PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
+            ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(organizationOid, pagingAndSorting);
 
-        setOrganizations(organizationOid, organizations, reportedMessagesDTO);
+            setOrganizations(organizationOid, organizations, reportedMessagesDTO);
 
-        return Response.ok(reportedMessagesDTO).build();
+            return Response.ok(reportedMessagesDTO).build();
+        } catch (Exception e) {
+            logger.error("error in getReportedMessages", e);
+            throw e;
+        }
     }
 
     @Override
