@@ -121,7 +121,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessagesSentByCurrentUser(String process, @Context HttpServletRequest request) throws Exception {
+    public Response getReportedMessagesSentByCurrentUser(String process) throws Exception {
         ReportedMessagesDTO reportedMessages = groupEmailReportingService.getReportedMessagesBySenderOid(getCurrentUserOid(), process, PagingAndSortingDTO.getDefault());
         return Response.ok(reportedMessages).build();
     }
