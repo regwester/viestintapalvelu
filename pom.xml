@@ -164,12 +164,6 @@
                 <version>${mail.version}</version>
             </dependency>
 
-            <!-- Java Servlet API -->
-            <dependency>
-                <groupId>javax.servlet</groupId>
-                <artifactId>javax.servlet-api</artifactId>
-                <version>${servlet.version}</version>
-            </dependency>
 
             <!-- Spring -->
             <dependency>
