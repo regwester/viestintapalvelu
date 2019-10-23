@@ -132,7 +132,8 @@ public interface MessageReportingResource {
     @ApiResponses(value={@ApiResponse(code=500, message = "Internal service error tai ilmoitus liittymävirheestä")})
     Response getReportedMessagesSentByCurrentUser(
             @ApiParam(value = "Viestin lähettänyt prosessi, esim. Osoitepalvelujarjestelma", required = false)
-            @QueryParam(RestConstants.PARAM_PROCESS) String process) throws Exception;
+            @QueryParam(RestConstants.PARAM_PROCESS) String process,
+            @Context HttpServletRequest request) throws Exception;
 
     /**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot
