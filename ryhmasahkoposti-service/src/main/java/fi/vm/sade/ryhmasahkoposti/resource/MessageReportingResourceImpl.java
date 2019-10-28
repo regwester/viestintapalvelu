@@ -69,7 +69,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy, String order, @Context HttpServletRequest request) throws Exception {
+    public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request) throws Exception {
         try {
             logger.info("getReportedMessages called");
             List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
@@ -92,7 +92,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows, Integer page, String sortedBy, String order, @Context HttpServletRequest request) throws Exception {
+    public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request) throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
 
@@ -133,7 +133,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageByLetter(Long letterID, @Context HttpServletRequest request) throws Exception {
+    public Response getReportedMessageByLetter(Long letterID, HttpServletRequest request) throws Exception {
         logger.info("audit logging getReportedMessageByLetter");
         User user = AuditLog.getUser(request);
         AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_LUKU, Target.LAHETYSRAPORTTI, letterID.toString(), Changes.EMPTY);
@@ -146,7 +146,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, @Context HttpServletRequest request) throws Exception {
+    public Response getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request) throws Exception {
         logger.info("audit logging getReportedMessageAndRecipients");
         User user = AuditLog.getUser(request);
         AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_LUKU, Target.LAHETYSRAPORTTI, messageID.toString(), Changes.EMPTY);
@@ -157,7 +157,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, @Context HttpServletRequest request)
+    public Response getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request)
             throws Exception {
         logger.info("audit logging getReportedMessageAndRecipientsSendingUnsuccessful");
         User user = AuditLog.getUser(request);
@@ -169,7 +169,7 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageAndRecipientsSendingBounced(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, @Context HttpServletRequest request)
+    public Response getReportedMessageAndRecipientsSendingBounced(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request)
             throws Exception {
         logger.info("audit logging getReportedMessageAndRecipientsSendingBounced");
         User user = AuditLog.getUser(request);
