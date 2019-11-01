@@ -32,6 +32,8 @@ import java.util.Optional;
 import java.util.stream.IntStream;
 
 public class MergedPdfDocument {
+    public static final String FALLBACK_PDF_LANGUAGE = "fi";
+
     private List<DocumentMetadata> documentMetadata;
     private ByteArrayOutputStream output;
 
@@ -61,6 +63,9 @@ public class MergedPdfDocument {
             document = PDDocument.load(is);
 
             final PDDocumentCatalog documentCatalog = document.getDocumentCatalog();
+            documentCatalog.setLanguage(
+                    Optional.ofNullable(pdfDocument.getLanguage()).orElse(FALLBACK_PDF_LANGUAGE).toLowerCase()
+            );
             documentCatalog.setViewerPreferences(new PDViewerPreferences(new COSDictionary()));
             documentCatalog.getViewerPreferences().setDisplayDocTitle(true);
 

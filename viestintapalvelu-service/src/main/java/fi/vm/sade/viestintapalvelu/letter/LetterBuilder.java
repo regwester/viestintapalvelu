@@ -116,7 +116,7 @@ public class LetterBuilder {
             for (LetterReceiverLetter l : receivers) {
                 LetterReceivers letterReceiver = l.getLetterReceivers();
                 AddressLabel address = AddressLabelConverter.convert(letterReceiver.getLetterReceiverAddress());
-                PdfDocument document = new PdfDocument(address, l.getLetter());
+                PdfDocument document = new PdfDocument(address, null, null, l.getLetter());
                 result.write(document);
             }
         } catch (Exception e) {

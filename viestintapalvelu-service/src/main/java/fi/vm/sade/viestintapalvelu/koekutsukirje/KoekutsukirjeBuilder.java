@@ -22,10 +22,12 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.jsoup.Jsoup;
@@ -68,7 +70,16 @@ public class KoekutsukirjeBuilder {
             String kirjeTemplateName = Utils.resolveTemplateName(Constants.KOEKUTSUKIRJE_TEMPLATE, kirje.getLanguageCode());
             String tarjoaja = Strings.nullToEmpty(kirje.getTarjoaja());
             byte[] frontPage = createFirstPagePDF(kirjeTemplateName, kirje.getAddressLabel(), kirje.getHakukohde(), tarjoaja, kirje.getLetterBodyText());
-            source.add(new PdfDocument(kirje.getAddressLabel(), frontPage, null));
+            final Optional<String> language = batch.getLetters()
+                    .stream()
+                    .findAny()
+                    .map(Koekutsukirje::getLanguageCode);
+            source.add(new PdfDocument(
+                    kirje.getAddressLabel(),
+                    language.orElse(MergedPdfDocument.FALLBACK_PDF_LANGUAGE),
+                    frontPage,
+                    null)
+            );
         }
         return documentBuilder.merge(source).toByteArray();
     }

@@ -17,6 +17,7 @@ package fi.vm.sade.viestintapalvelu.pdfprint;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -29,6 +30,7 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
 import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -221,10 +223,35 @@ public class PDFPrinterResource extends AsynchronousResource {
             jsoupDoc.outputSettings(new OutputSettings().escapeMode(EscapeMode.xhtml));
             String parsedSource = jsoupDoc.toString();
             byte[] pdf = documentBuilder.xhtmlToPDF(parsedSource.getBytes());
-            PdfDocument doc = new PdfDocument(null, pdf, null);
+            PdfDocument doc = new PdfDocument(null, getLanguage(pdf), pdf, null);
             pdfs.add(doc);
         }
         MergedPdfDocument mPdf = documentBuilder.merge(pdfs);
         return mPdf.toByteArray();
+    }
+
+    private String getLanguage(byte[] pdf) throws IOException {
+        InputStream inputStream = null;
+        PDDocument document = null;
+        try {
+            inputStream = new ByteArrayInputStream(pdf);
+            document = PDDocument.load(inputStream);
+            return document.getDocumentCatalog().getLanguage();
+        } finally {
+            close(inputStream);
+            close(document);
+        }
+    }
+
+    private void close(PDDocument document) throws IOException {
+        if (document != null) {
+            document.close();
+        }
+    }
+
+    private void close(InputStream inputStream) {
+        if (inputStream != null) {
+            close(inputStream);
+        }
     }
 }

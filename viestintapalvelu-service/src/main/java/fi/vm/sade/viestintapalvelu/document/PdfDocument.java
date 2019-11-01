@@ -19,28 +19,34 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
 
 import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 
 public class PdfDocument {
+    private final String language;
     private AddressLabel addressLabel;
     private byte[] frontPage;
     private byte[] attachment;
-    private ArrayList<byte[]> contents = new ArrayList<>();
-
-    public PdfDocument(AddressLabel addressLabel, byte[]... contents) {
-        this(addressLabel);
-        Collections.addAll(this.contents, contents);
-    }
+    private final List<byte[]> contents;
 
     public PdfDocument(AddressLabel addressLabel) {
-        this(addressLabel, null, null);
+        this(addressLabel, null, null, null);
     }
 
-    public PdfDocument(AddressLabel addressLabel, byte[] frontPage, byte[] attachment) {
+    public PdfDocument(
+            AddressLabel addressLabel,
+            String language,
+            byte[] frontPage,
+            byte[] attachment,
+            byte[]... contents) {
         this.addressLabel = addressLabel;
+        this.language = language;
         this.frontPage = frontPage;
         this.attachment = attachment;
+        this.contents = new ArrayList<>();
+        Collections.addAll(this.contents, Optional.ofNullable(contents).orElse(new byte[][] {}));
     }
 
     public AddressLabel getAddressLabel() {
@@ -73,5 +79,9 @@ public class PdfDocument {
         }
         return null;
 
+    }
+
+    public String getLanguage() {
+        return language;
     }
 }
