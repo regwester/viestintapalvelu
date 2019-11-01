@@ -32,6 +32,7 @@ import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.joda.time.DateTime;
 import org.opensaml.util.resource.ClasspathResource;
 import org.opensaml.util.resource.ResourceException;
@@ -226,7 +227,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
     @Override
     @Transactional(readOnly = true)
     // ensure we don't save anything to database
-    public byte[] getPreviewPdf(Template template, String applicationPeriod, String letterContents) throws IOException, DocumentException {
+    public byte[] getPreviewPdf(Template template, String applicationPeriod, String letterContents) throws IOException, DocumentException, COSVisitorException {
 
         final LetterReceivers letterReceivers = getLetterReceivers(template, applicationPeriod);
         Map<String, Object> batchreplacements = new HashMap<>();

@@ -15,63 +15,78 @@
  **/
 package fi.vm.sade.viestintapalvelu.document;
 
-import com.lowagie.text.Document;
-import com.lowagie.text.DocumentException;
-import com.lowagie.text.pdf.PdfContentByte;
-import com.lowagie.text.pdf.PdfImportedPage;
-import com.lowagie.text.pdf.PdfReader;
-import com.lowagie.text.pdf.PdfWriter;
+import org.apache.pdfbox.cos.COSDictionary;
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.pdmodel.PDDocumentCatalog;
+import org.apache.pdfbox.pdmodel.interactive.viewerpreferences.PDViewerPreferences;
+import org.apache.pdfbox.util.PDFMergerUtility;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.IntStream;
 
 public class MergedPdfDocument {
     private List<DocumentMetadata> documentMetadata;
-    private Document document = new Document();
-    private PdfWriter writer;
     private ByteArrayOutputStream output;
-    private PdfContentByte pdfContentByte;
-    private int currentPageNumber;
 
-    public MergedPdfDocument() throws DocumentException {
+    public MergedPdfDocument() {
         this.documentMetadata = new ArrayList<>();
-        this.document = new Document();
         this.output = new ByteArrayOutputStream();
-        this.writer = PdfWriter.getInstance(document, output);
-        this.document.open();
-        this.pdfContentByte = writer.getDirectContent();
-        this.currentPageNumber = 0;
     }
 
-    public void write(PdfDocument pdfDocument) throws IOException {
-        int startPage = currentPageNumber + 1;
-        int pages = 0;
-        if (pdfDocument.getFrontPage() != null) {
-            pages += write(pdfDocument.getFrontPage());
+    public void write(PdfDocument pdfDocument) throws IOException, COSVisitorException {
+        final ByteArrayOutputStream intermediaryOutput = new ByteArrayOutputStream();
+
+        try {
+            final PDFMergerUtility pdfMerger = new PDFMergerUtility();
+            pdfMerger.setDestinationStream(intermediaryOutput);
+            IntStream.range(0, pdfDocument.getContentSize())
+                    .mapToObj(pdfDocument::getContentStream)
+                    .forEachOrdered(pdfMerger::addSource);
+            pdfMerger.mergeDocuments();
+        } finally {
+            intermediaryOutput.flush();
         }
-        if (pdfDocument.getAttachment() != null) {
-            pages += write(pdfDocument.getAttachment());
+
+        InputStream is = null;
+        PDDocument document = null;
+        try {
+            is = new ByteArrayInputStream(intermediaryOutput.toByteArray());
+            document = PDDocument.load(is);
+
+            final PDDocumentCatalog documentCatalog = document.getDocumentCatalog();
+            documentCatalog.setViewerPreferences(new PDViewerPreferences(new COSDictionary()));
+            documentCatalog.getViewerPreferences().setDisplayDocTitle(true);
+
+            documentMetadata.add(new DocumentMetadata(
+                    pdfDocument.getAddressLabel(),
+                    1,
+                    document.getNumberOfPages()
+            ));
+
+            document.save(output);
+        } finally {
+            close(is);
+            close(document);
         }
-        if (pdfDocument.getContentSize() > 0) {
-            for (int i = 0; i < pdfDocument.getContentSize(); i++) {
-                pages += write(pdfDocument.getContentStream(i));
-            }
-        }
-        documentMetadata.add(new DocumentMetadata(pdfDocument.getAddressLabel(), startPage, pages));
     }
 
-    private int write(InputStream in) throws IOException {
-        PdfReader reader = new PdfReader(in);
-        for (int i = 1; i <= reader.getNumberOfPages(); i++) {
-            document.newPage();
-            currentPageNumber++;
-            PdfImportedPage page = writer.getImportedPage(reader, i);
-            pdfContentByte.addTemplate(page, 0, 0);
+    private void close(PDDocument pdDocument) throws IOException {
+        if (pdDocument != null) {
+            pdDocument.close();
         }
-        return reader.getNumberOfPages();
+    }
+
+    private void close(InputStream is) throws IOException {
+        if (is != null) {
+            is.close();
+        }
     }
 
     public List<DocumentMetadata> getDocumentMetadata() {
@@ -80,11 +95,5 @@ public class MergedPdfDocument {
 
     public byte[] toByteArray() {
         return output.toByteArray();
-    }
-
-    public void flush() throws IOException {
-        output.flush();
-        document.close();
-        output.close();
     }
 }

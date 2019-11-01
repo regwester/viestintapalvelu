@@ -42,6 +42,7 @@ import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.*;
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.joda.time.LocalDate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -93,7 +94,6 @@ public class LetterBuilder {
         context.put("filename", templateName + ".pdf");
         final byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
         Map<String, Supplier<byte[]>> documents = new HashMap<>();
-        pdf.flush();
         documents.put(templateName + ".pdf", new Supplier<byte[]>() {
             @Override
             public byte[] get() {
@@ -314,13 +314,13 @@ public class LetterBuilder {
     }
 
     public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
-            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
         Template template = determineTemplate(receiver, batch);
         return constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
     }
 
     public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, Template template,
-            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());

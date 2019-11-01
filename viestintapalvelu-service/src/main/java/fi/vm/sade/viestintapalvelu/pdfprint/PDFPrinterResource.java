@@ -28,6 +28,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -212,7 +213,7 @@ public class PDFPrinterResource extends AsynchronousResource {
     }
 
     private byte[] buildDocument(DocumentSource input)
-            throws DocumentException, IOException {
+            throws DocumentException, IOException, COSVisitorException {
         List<PdfDocument> pdfs = new ArrayList<>();
 
         for (String source : input.getSources()) {

@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.commons.lang.StringEscapeUtils;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Whitelist;
 import org.springframework.stereotype.Service;
@@ -61,7 +62,7 @@ public class KoekutsukirjeBuilder {
         this.documentBuilder = documentBuilder;
     }
 
-    public byte[] printPDF(KoekutsukirjeBatch batch) throws IOException, DocumentException {
+    public byte[] printPDF(KoekutsukirjeBatch batch) throws IOException, DocumentException, COSVisitorException {
         List<PdfDocument> source = new ArrayList<>();
         for (Koekutsukirje kirje : batch.getLetters()) {
             String kirjeTemplateName = Utils.resolveTemplateName(Constants.KOEKUTSUKIRJE_TEMPLATE, kirje.getLanguageCode());

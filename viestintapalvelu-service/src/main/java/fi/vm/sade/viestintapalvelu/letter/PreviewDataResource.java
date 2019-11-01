@@ -23,6 +23,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -65,7 +66,7 @@ public PreviewDataResource() {
     @Consumes("application/json")
     @Produces("application/pdf")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    public byte[] dummyBatchPdf(PreviewRequest request) throws IOException, DocumentException {
+    public byte[] dummyBatchPdf(PreviewRequest request) throws IOException, DocumentException, COSVisitorException {
         try {
             final Template template = templateService.findByIdAndState(request.getTemplateId(), ContentStructureType.letter, request.getTemplateState());
             return previewDataService.getPreviewPdf(template, testApplicationId, request.getLetterContent());

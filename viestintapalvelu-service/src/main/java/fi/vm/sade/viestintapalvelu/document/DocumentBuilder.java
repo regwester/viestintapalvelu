@@ -25,6 +25,7 @@ import javax.inject.Singleton;
 
 import com.google.common.base.Supplier;
 import org.apache.commons.io.IOUtils;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
 import org.springframework.stereotype.Service;
@@ -66,19 +67,17 @@ public class DocumentBuilder {
         return applyTextTemplate(template, data);
     }
 
-    public MergedPdfDocument merge(PdfDocument pdfDocument) throws DocumentException, IOException {
+    public MergedPdfDocument merge(PdfDocument pdfDocument) throws IOException, COSVisitorException {
         MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
         mergedPDFDocument.write(pdfDocument);
-        mergedPDFDocument.flush();
         return mergedPDFDocument;
     }
 
-    public MergedPdfDocument merge(List<PdfDocument> input) throws DocumentException, IOException {
+    public MergedPdfDocument merge(List<PdfDocument> input) throws IOException, COSVisitorException {
         MergedPdfDocument mergedPDFDocument = new MergedPdfDocument();
         for (PdfDocument pdfDocument : input) {
             mergedPDFDocument.write(pdfDocument);
         }
-        mergedPDFDocument.flush();
         return mergedPDFDocument;
     }
 
