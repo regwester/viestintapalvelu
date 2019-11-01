@@ -18,8 +18,18 @@ package fi.vm.sade.ryhmasahkoposti.resource;
 import java.util.List;
 import java.util.Optional;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.NotFoundException;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
+
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.auditlog.Changes;
+import fi.vm.sade.auditlog.User;
+import fi.vm.sade.ryhmasahkoposti.RyhmasahkopostiAudit;
+import fi.vm.sade.viestintapalvelu.auditlog.AuditLog;
+import fi.vm.sade.viestintapalvelu.auditlog.Target;
+import fi.vm.sade.viestintapalvelu.auditlog.ViestintapalveluOperation;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -47,19 +57,25 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     private GroupEmailReportingService groupEmailReportingService;
     private ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter;
     private PagingAndSortingDTOConverter pagingAndSortingDTOConverter;
+    public static final Audit AUDIT = RyhmasahkopostiAudit.AUDIT;
 
     @Autowired
     public MessageReportingResourceImpl(GroupEmailReportingService groupEmailReportingService,
-            ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter, PagingAndSortingDTOConverter pagingAndSortingDTOConverter) {
+                                        ReportedMessageQueryDTOConverter reportedMessageQueryDTOConverter,
+                                        PagingAndSortingDTOConverter pagingAndSortingDTOConverter) {
         this.groupEmailReportingService = groupEmailReportingService;
         this.reportedMessageQueryDTOConverter = reportedMessageQueryDTOConverter;
         this.pagingAndSortingDTOConverter = pagingAndSortingDTOConverter;
     }
 
     @Override
-    public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy, String order) throws Exception {
+    public Response getReportedMessages(String organizationOid, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request) throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
+
+        logger.info("audit logging getReportedMessages for organization");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_HAKU, Target.ORGANISAATIO, organizationOid, Changes.EMPTY);
 
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessagesDTO reportedMessagesDTO = groupEmailReportingService.getReportedMessagesByOrganizationOid(organizationOid, pagingAndSorting);
@@ -70,10 +86,13 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows, Integer page, String sortedBy, String order)
-            throws Exception {
+    public Response getReportedMessages(String organizationOid, String searchArgument, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request) throws Exception {
         List<OrganizationDTO> organizations = groupEmailReportingService.getUserOrganizations();
         organizationOid = resolveAllowedOrganizationOid(organizationOid, organizations);
+
+        logger.info("audit logging getReportedMessages for searchArgument");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_HAKU, Target.SEARCH_ARGUMENT, searchArgument, Changes.EMPTY);
 
         ReportedMessageQueryDTO query = reportedMessageQueryDTOConverter.convert(organizationOid, searchArgument);
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
@@ -108,7 +127,11 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageByLetter(Long letterID) throws Exception {
+    public Response getReportedMessageByLetter(Long letterID, HttpServletRequest request) throws Exception {
+        logger.info("audit logging getReportedMessageByLetter");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_LUKU, Target.LAHETYSRAPORTTI, letterID.toString(), Changes.EMPTY);
+
         Optional<Long> reportedMessageDTO = groupEmailReportingService.getReportedMessageIdByLetter(letterID);
         if(reportedMessageDTO.isPresent()) {
             return Response.ok(reportedMessageDTO.get()).build();
@@ -117,23 +140,35 @@ public class MessageReportingResourceImpl extends GenericResourceImpl implements
     }
 
     @Override
-    public Response getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order) throws Exception {
+    public Response getReportedMessageAndRecipients(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request) throws Exception {
+        logger.info("audit logging getReportedMessageAndRecipients");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_LUKU, Target.LAHETYSRAPORTTI, messageID.toString(), Changes.EMPTY);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipients(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();
     }
 
     @Override
-    public Response getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order)
+    public Response getReportedMessageAndRecipientsSendingUnsuccessful(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request)
             throws Exception {
+        logger.info("audit logging getReportedMessageAndRecipientsSendingUnsuccessful");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_LUKU, Target.LAHETYSRAPORTTI, messageID.toString(), Changes.EMPTY);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipientsSendingUnsuccessful(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();
     }
 
     @Override
-    public Response getReportedMessageAndRecipientsSendingBounced(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order)
+    public Response getReportedMessageAndRecipientsSendingBounced(Long messageID, Integer nbrOfRows, Integer page, String sortedBy, String order, HttpServletRequest request)
             throws Exception {
+        logger.info("audit logging getReportedMessageAndRecipientsSendingBounced");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.SAHKOPOSTILAHETYS_LUKU, Target.LAHETYSRAPORTTI, messageID.toString(), Changes.EMPTY);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         ReportedMessageDTO reportedMessageDTO = groupEmailReportingService.getReportedMessageAndRecipientsSendingBounced(messageID, pagingAndSorting);
         return Response.ok(reportedMessageDTO).build();

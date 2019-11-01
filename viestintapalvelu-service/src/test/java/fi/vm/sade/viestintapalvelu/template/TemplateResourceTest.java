@@ -30,6 +30,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.jvnet.hk2.annotations.Service;
+import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.springframework.aop.framework.Advised;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,6 +38,10 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.ImportResource;
+import org.springframework.mock.web.MockHttpSession;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.annotation.DirtiesContext.ClassMode;
 import org.springframework.test.context.ContextConfiguration;
@@ -69,6 +74,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
@@ -89,7 +95,10 @@ public class TemplateResourceTest {
 
     @Autowired
     private KayttooikeusRestClient kayttooikeusRestClient;
-    
+
+    @Mock
+    private HttpServletRequest mockedRequest;
+
     @Before
     public void before() throws Exception {
         final HenkiloDto testHenkilo = DocumentProviderTestData.getHenkilo();
@@ -111,16 +120,28 @@ public class TemplateResourceTest {
         Field validatorField = TemplateResource.class.getDeclaredField("userRightsValidator");
         validatorField.setAccessible(true);
         validatorField.set(((Advised)resource).getTargetSource().getTarget(), validator);
+
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext context = Mockito.mock(SecurityContext.class);
+        Mockito.when(context.getAuthentication()).thenReturn(authentication);
+        Mockito.when(authentication.isAuthenticated()).thenReturn(true);
+        Mockito.when(authentication.getName()).thenReturn("1.7.8.9.0");
+        SecurityContextHolder.setContext(context);
+
+        mockedRequest = mock(HttpServletRequest.class);
+        when(mockedRequest.getHeader("User-Agent")).thenReturn("mock_user_agent");
+        when(mockedRequest.getSession(false)).thenReturn(new MockHttpSession());
     }
     
     @Test
     public void insertsTemplate() throws Exception {
-        assertNotNull(resource.insert(givenTemplateWithStructure()));
+        assertNotNull(resource.insert(givenTemplateWithStructure(), mockedRequest));
     }
     
     @Test
     public void doesNotReturnTemplateNamesThatAreNotPublished() throws Exception {
-        resource.insert(givenTemplateWithStructure());
+        HttpServletRequest request = mockedRequest;
+        resource.insert(givenTemplateWithStructure(), request);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -130,7 +151,7 @@ public class TemplateResourceTest {
         Template template = DocumentProviderTestData.getTemplate();
         template.setStructureId(null);
         template.setStructureName(structure.getName());
-        resource.insert(template);
+        resource.insert(template, mockedRequest);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -150,7 +171,7 @@ public class TemplateResourceTest {
         structureDto.getContentStructures().add(contentStructure);
         template.setStructure(structureDto);
 
-        resource.insert(template);
+        resource.insert(template, mockedRequest);
         assertEquals(0, resource.templateNames().size());
     }
 
@@ -160,26 +181,26 @@ public class TemplateResourceTest {
         template.setStructureId(null);
         template.setStructureName(null);
         template.setStructure(new StructureSaveDto());
-        resource.insert(template);
+        resource.insert(template, mockedRequest);
     }
 
     @Test
     public void returnsTemplateNamesThatAreInDraftState() throws Exception {
-        resource.insert(givenTemplateWithStructure());
+        resource.insert(givenTemplateWithStructure(), mockedRequest);
         assertEquals(1, resource.templateNamesByState(State.luonnos).size());
     }
     
     @Test
     public void doesNotReturnTemplatesThatAreNotPublished() throws Exception {
         Template template = givenTemplateWithStructure();
-        resource.insert(template);
+        resource.insert(template, mockedRequest);
         assertTrue(resource.listVersionsByName(constructRequest(template)).isEmpty());
     }
     
     @Test
     public void returnsTemplatesThatAreInDraftState() throws Exception {
         Template template = givenTemplateWithStructure();
-        resource.insert(template);
+        resource.insert(template, mockedRequest);
         assertEquals(1, resource.listVersionsByNameUsingState(constructRequest(template), State.luonnos).size());
     }
     
@@ -188,7 +209,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertTrue(resource.templateNames().isEmpty());
         template.setState(State.julkaistu);
-        assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
+        assertEquals(Status.OK.getStatusCode(), resource.update(template, mockedRequest).getStatus());
         assertEquals(1, resource.templateNames().size());
     }
     
@@ -197,7 +218,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertTrue(resource.templateNamesByState(State.suljettu).isEmpty());
         template.setState(State.suljettu);
-        assertEquals(Status.OK.getStatusCode(), resource.update(template).getStatus());
+        assertEquals(Status.OK.getStatusCode(), resource.update(template, mockedRequest).getStatus());
         assertEquals(1, resource.templateNamesByState(State.suljettu).size());
     }
     
@@ -206,7 +227,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertNull(resource.templateByName(constructRequest(template)));
         template.setState(State.julkaistu);
-        resource.update(template);
+        resource.update(template, mockedRequest);
         assertNotNull(resource.templateByName(constructRequest(template)));
     }
     
@@ -215,7 +236,7 @@ public class TemplateResourceTest {
         Template template = givenSavedTemplateInDraftStatus();
         assertNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
         template.setState(State.suljettu);
-        resource.update(template);
+        resource.update(template, mockedRequest);
         assertNotNull(resource.templateByNameAndState(constructRequest(template), State.suljettu));
     }
     
@@ -274,7 +295,7 @@ public class TemplateResourceTest {
         Template template = givenTemplateWithStructure();
         template.setUsedAsDefault(usedAsDefault);
         template.setState(state);
-        Long id = (Long) resource.insert(template).getEntity();
+        Long id = (Long) resource.insert(template, mockedRequest).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);
     }
     
@@ -282,7 +303,7 @@ public class TemplateResourceTest {
         Template template = givenTemplateWithStructure();
         template.setApplicationPeriods(Arrays.asList(applicationPeriod));
         template.setState(state);
-        Long id = (Long) resource.insert(template).getEntity();
+        Long id = (Long) resource.insert(template, mockedRequest).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);
     }
     
@@ -308,7 +329,7 @@ public class TemplateResourceTest {
         Template template = givenTemplateWithStructure();
         template.setApplicationPeriods(Arrays.asList(hakuOid));
         template.setState(state);
-        Long id = (Long) resource.insert(template).getEntity();
+        Long id = (Long) resource.insert(template, mockedRequest).getEntity();
         return resource.getTemplateByIDAndState(id, state, null);
     }
     

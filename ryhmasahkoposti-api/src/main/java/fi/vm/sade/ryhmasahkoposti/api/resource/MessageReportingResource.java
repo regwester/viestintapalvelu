@@ -15,11 +15,13 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.api.resource;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.QueryParam;
+import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
@@ -76,7 +78,8 @@ public interface MessageReportingResource {
                                  @ApiParam(value = "Taulun sarake, minkä mukaan tiedot lajitellaan", required = false)
                                  @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy,
                                  @ApiParam(value = "Lajittelujärjestys", allowableValues = "asc, desc", required = false)
-                                 @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
+                                 @QueryParam(RestConstants.PARAM_ORDER) String order,
+                                 @Context HttpServletRequest request) throws Exception;
 
     /**
      * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen organisaationsa lähettämistä ryhmäshköpostiviesteistä
@@ -110,7 +113,8 @@ public interface MessageReportingResource {
                                  @ApiParam(value = "Taulun sarake, minkä mukaan tiedot lajitellaan", required = false)
                                  @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy,
                                  @ApiParam(value = "Lajittelujärjestys", allowableValues = "asc, desc", required = false)
-                                 @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
+                                 @QueryParam(RestConstants.PARAM_ORDER) String order,
+                                 @Context HttpServletRequest request) throws Exception;
 
     /**
      * Hakee hakuparametrin mukaiset viestit käyttäjän ja hänen organisaationsa lähettämistä ryhmäshköpostiviesteistä
@@ -160,7 +164,8 @@ public interface MessageReportingResource {
             notes = "Hakee kirjeavainta vastaavaa ryhmäsähköpostiviestin tiedot.", response = ReportedMessageDTO.class)
     @ApiResponses(value = {@ApiResponse(code = 500, message = "Internal service error")})
     Response getReportedMessageByLetter(@ApiParam(value = "Kirjelähetyksen avain", required = true)
-                                        @PathParam(RestConstants.PARAM_LETTER_ID) Long letterID) throws Exception;
+                                        @PathParam(RestConstants.PARAM_LETTER_ID) Long letterID,
+                                        @Context HttpServletRequest request) throws Exception;
 
     /**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa tietyn määrän vastaanottajien tietoja
@@ -170,6 +175,7 @@ public interface MessageReportingResource {
      * @param page Sivu, jolle halutaan siirtyä katselemaan vastaanottajia
      * @param sortedBy Kenttä, minkä mukaan lajitellaan
      * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
+     * @param request
      * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot
      */
     @PreAuthorize(SecurityConstants.READ)
@@ -189,7 +195,7 @@ public interface MessageReportingResource {
                                              @ApiParam(value = "Taulun sarake, minkä mukaan tiedot lajitellaan", required = false)
                                              @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy,
                                              @ApiParam(value = "Lajittelujärjestys", allowableValues = "asc, desc", required = false)
-                                             @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
+                                             @QueryParam(RestConstants.PARAM_ORDER) String order, @Context HttpServletRequest request) throws Exception;
 
     /**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui
@@ -199,6 +205,7 @@ public interface MessageReportingResource {
      * @param page Sivu, jolle halutaan siirtyä katselemaan vastaanottajia
      * @param sortedBy Kenttä, minkä mukaan lajitellaan
      * @param order Nouseva (=asc) vai laskeva (= desc) lajittelujärjestys
+     * @param request
      * @return Yksittäisen ryhmäsähköpostiviestin tiedot ja vastaanottajien tiedot, joille lähetys epäonnistui
      */
     @PreAuthorize(SecurityConstants.READ)
@@ -220,7 +227,8 @@ public interface MessageReportingResource {
             @ApiParam(value = "Taulun sarake, minkä mukaan tiedot lajitellaan", required = false)
             @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy,
             @ApiParam(value = "Lajittelujärjestys", allowableValues = "asc, desc", required = false)
-            @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
+            @QueryParam(RestConstants.PARAM_ORDER) String order,
+            @Context HttpServletRequest request) throws Exception;
 
     /**
      * Hakee yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys palautuis
@@ -251,7 +259,8 @@ public interface MessageReportingResource {
             @ApiParam(value = "Taulun sarake, minkä mukaan tiedot lajitellaan", required = false)
             @QueryParam(RestConstants.PARAM_SORTED_BY) String sortedBy,
             @ApiParam(value = "Lajittelujärjestys", allowableValues = "asc, desc", required = false)
-            @QueryParam(RestConstants.PARAM_ORDER) String order) throws Exception;
+            @QueryParam(RestConstants.PARAM_ORDER) String order,
+            @Context HttpServletRequest request) throws Exception;
 
     /**
      * Palauttaa yksittäisen ryhmäsähköpostiviestin tiedot. Palauttaa vastaanottajien tiedot, joille lähetys epäonnistui

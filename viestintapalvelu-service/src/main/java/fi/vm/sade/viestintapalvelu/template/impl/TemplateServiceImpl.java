@@ -301,21 +301,32 @@ public class TemplateServiceImpl implements TemplateService {
 
         draftDAO.insert(model);
     }
-    
+
+    @Override
+    public String getDraftContent(long id) {
+        Draft model = draftDAO.read(id);
+        DraftReplacement repl = getContent(model);
+        return repl.getDefaultValue();
+    }
+
     @Override
     public void updateDraft(DraftUpdateDTO draft) {
         Draft model = draftDAO.read(draft.id);
-        DraftReplacement repl = Iterables.tryFind(model.getReplacements(), new Predicate<DraftReplacement>() {
-            @Override
-            public boolean apply(DraftReplacement input) {
-                return input.getName().equals("sisalto"); 
-            }
-        }).or(new DraftReplacement());
+        DraftReplacement repl = getContent(model);
         repl.setDraft(model);
         repl.setName("sisalto");
         repl.setDefaultValue(draft.content);
         model.setReplacements(new HashSet<>(Collections.singletonList(repl)));
-        draftDAO.update(model);        
+        draftDAO.update(model);
+    }
+
+    private DraftReplacement getContent(Draft draft) {
+        return Iterables.tryFind(draft.getReplacements(), new Predicate<DraftReplacement>() {
+            @Override
+            public boolean apply(DraftReplacement input) {
+                return input.getName().equals("sisalto");
+            }
+        }).or(new DraftReplacement());
     }
 
     /*

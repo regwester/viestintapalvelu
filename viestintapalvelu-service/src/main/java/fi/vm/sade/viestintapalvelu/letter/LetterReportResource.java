@@ -29,8 +29,17 @@ import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.auditlog.Audit;
+import fi.vm.sade.auditlog.Changes;
+import fi.vm.sade.auditlog.User;
 import fi.vm.sade.converter.PagingAndSortingDTOConverter;
 import fi.vm.sade.dto.PagingAndSortingDTO;
+import fi.vm.sade.viestintapalvelu.Utils;
+import fi.vm.sade.viestintapalvelu.auditlog.AuditLog;
+import fi.vm.sade.viestintapalvelu.auditlog.Target;
+import fi.vm.sade.viestintapalvelu.auditlog.ViestintapalveluOperation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -69,6 +78,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
 @Path(Urls.REPORTING_PATH)
 @Api(value = "/reporting", description = "Kirjel&auml;hetysten raportointi")
 public class LetterReportResource extends AsynchronousResource {
+    private static Logger logger = LoggerFactory.getLogger(LetterReportResource.class);
     @Autowired
     private LetterReportService letterReportService;
     @Autowired
@@ -79,6 +89,8 @@ public class LetterReportResource extends AsynchronousResource {
     private DownloadCache downloadCache;
     @Autowired
     private OrganisaatioService organisaatioService;
+
+    public static final Audit AUDIT = Utils.ViestintaPalveluAudit;
 
     @Value("${viestintapalvelu.rekisterinpitajaOID}")
     private String rekisterinpitajaOID;
@@ -153,7 +165,12 @@ public class LetterReportResource extends AsynchronousResource {
             @ApiParam(value = "Sivu, mistä kohdasta haluttu määrä rivejä haetaan", required = true) @QueryParam(Constants.PARAM_PAGE) Integer page,
             @ApiParam(value = "Taulun sarake, minkä mukaan tiedot lajitellaan", required = false) @QueryParam(Constants.PARAM_SORTED_BY) String sortedBy,
             @ApiParam(value = "Lajittelujärjestys", allowableValues = "asc, desc", required = false) @QueryParam(Constants.PARAM_ORDER) String order,
-            @ApiParam(value = "Hakusanat", required = false) @QueryParam(Constants.PARAM_QUERY) String query) {
+            @ApiParam(value = "Hakusanat", required = false) @QueryParam(Constants.PARAM_QUERY) String query,
+            @Context HttpServletRequest request) {
+        logger.info("Audit logging getLetterBatchReport (kirjeen lähetysraportin katselu)");
+        User user = AuditLog.getUser(request);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJELAHETYS_LUKU, Target.KIRJELAHETYS, id.toString(), Changes.EMPTY);
+
         PagingAndSortingDTO pagingAndSorting = pagingAndSortingDTOConverter.convert(nbrOfRows, page, sortedBy, order);
         LetterBatchReportDTO letterBatchReport = letterReportService.getLetterBatchReport(id, pagingAndSorting, query);
         return Response.ok(letterBatchReport).build();
@@ -174,8 +191,14 @@ public class LetterReportResource extends AsynchronousResource {
     @ApiOperation(value = "Hakee vastaanottajan kirjeen ja palauttaa linkin ko. kirjeeseen", notes = "Hakee "
             + "vastaanottajan kirjeen. Kirjeelle tehdään unzipo ja sisältö laitetaan talteen cacheen. Palautetaan linkin" + " ko. kirjeeseen", response = String.class)
     public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @QueryParam(Constants.PARAM_ID) Long id,
-            @Context HttpServletRequest request, @Context HttpServletResponse response) {
+                                       @Context HttpServletRequest request,
+                                       @Context HttpServletResponse response) {
         try {
+            logger.info("audit logging getReceiversLetter (muodostetun kirjeen katselu)");
+            User user = AuditLog.getUser(request);
+            AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJE_LUKU, Target.KIRJE, id.toString(), Changes.EMPTY);
+
+
             LetterReceiverLetterDTO letterReceiverLetter = letterService.getLetterReceiverLetter(id);
             byte[] letterContents = letterReceiverLetter.getLetter();
             return LetterDownloadHelper.downloadPdfResponse(letterReceiverLetter.getTemplateName() +
@@ -201,9 +224,12 @@ public class LetterReportResource extends AsynchronousResource {
     @ApiOperation(value = "Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä", notes = "Hakee kirjelähetyksen"
             + "vastaanottajien kirjeet. Kirjeille tehdään unzip ja ne yhdistetään yhdeksi PDF:ksi. "
             + "Sisältö laitetaan talteen cacheen. Palautetaan linkin ko. PDF-dokumenteihin", response = String.class)
-    public Response getLetterContents(@ApiParam(value = "Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request,
-            @Context HttpServletResponse response) {
+    public Response getLetterContents(@ApiParam(value = "Kirjelähetyksen avain") @QueryParam(Constants.PARAM_ID) Long id, @Context HttpServletRequest request, @Context HttpServletResponse response) {
         try {
+            logger.info("audit logging getLetterContents (kirjekoosteen katselu)");
+            User user = AuditLog.getUser(request);
+            AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJELAHETYS_KOOSTE_LUKU, Target.KIRJELAHETYS, id.toString(), Changes.EMPTY);
+
             byte[] letterContents = letterService.getLetterContentsByLetterBatchID(id);
             String type = letterService.getLetterTypeByLetterBatchID(id);
             return LetterDownloadHelper.downloadPdfResponse(type + ".pdf", response, letterContents);
