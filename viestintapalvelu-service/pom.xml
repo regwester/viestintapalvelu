@@ -660,7 +660,7 @@
         <dependency>
             <groupId>org.jasig.cas.client</groupId>
             <artifactId>cas-client-core</artifactId>
-            <version>3.1.12</version>
+            <version>3.6.0</version>
         </dependency>
         <dependency>
             <groupId>fi.vm.sade.java-utils</groupId>
@@ -789,7 +789,7 @@
                                         </goals>
                                     </pluginExecutionFilter>
                                     <action>
-                                        <ignore></ignore>
+                                        <ignore/>
                                     </action>
                                 </pluginExecution>
                             </pluginExecutions>
