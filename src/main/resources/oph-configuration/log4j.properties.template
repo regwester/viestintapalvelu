@@ -1,6 +1,8 @@
 # Loggers
 log4j.logger.fi.vm.sade.viestintapalvelu={{env_loglevel}}, viestintapalvelu
 log4j.logger.fi.vm.sade.ryhmasahkoposti={{env_loglevel}}, ryhmasahkoposti
+log4j.logger.fi.vm.sade.viestintapalvelu.auditlog.AuditLogger=INFO, viestintapalveluaudit
+log4j.logger.fi.vm.sade.ryhmasahkoposti.auditlog.AuditLogger=INFO, ryhmasahkopostiaudit
 {# raw-endraw -välillä template engine ei tee mitään! #}
 {% raw %}
 # Console output
@@ -26,17 +28,26 @@ log4j.appender.ryhmasahkoposti.layout=org.apache.log4j.PatternLayout
 log4j.appender.ryhmasahkoposti.layout.ConversionPattern=%d{yyyy-MM-dd'T'HH:mm:ss.SSSX} %-5p {%X{user}} [%t] %-5p %c: %m%n
 log4j.appender.ryhmasahkoposti.MaxFileSize=10MB
 log4j.appender.ryhmasahkoposti.MaxBackupIndex=20
-# Audit log
+# Audit log for viestintapalvelu
 log4j.additivity.fi.vm.sade.viestintapalvelu.auditlog.AuditLogger=false
-log4j.logger.fi.vm.sade.viestintapalvelu.auditlog.AuditLogger=INFO, AUDIT
-log4j.appender.AUDIT=org.apache.log4j.RollingFileAppender
-log4j.appender.AUDIT.File=${user.home}/logs/auditlog_viestintapalvelu-service.log
-log4j.appender.AUDIT.Append=true
-log4j.appender.AUDIT.MaxFileSize=20MB
-log4j.appender.AUDIT.MaxBackupIndex=20
-log4j.appender.AUDIT.layout=org.apache.log4j.PatternLayout
-log4j.appender.AUDIT.layout.ConversionPattern=%m%n
-log4j.appender.AUDIT.encoding=UTF-8
+log4j.appender.viestintapalveluaudit=org.apache.log4j.RollingFileAppender
+log4j.appender.viestintapalveluaudit.File=${user.home}/logs/auditlog_viestintapalvelu-service.log
+log4j.appender.viestintapalveluaudit.Append=true
+log4j.appender.viestintapalveluaudit.MaxFileSize=20MB
+log4j.appender.viestintapalveluaudit.MaxBackupIndex=20
+log4j.appender.viestintapalveluaudit.layout=org.apache.log4j.PatternLayout
+log4j.appender.viestintapalveluaudit.layout.ConversionPattern=%m%n
+log4j.appender.viestintapalveluaudit.encoding=UTF-8
+# Audit log for ryhmasahkoposti
+log4j.additivity.fi.vm.sade.ryhmasahkoposti.auditlog.AuditLogger=false
+log4j.appender.ryhmasahkopostiaudit=org.apache.log4j.RollingFileAppender
+log4j.appender.ryhmasahkopostiaudit.File=${user.home}/logs/auditlog_ryhmasahkoposti-service.log
+log4j.appender.ryhmasahkopostiaudit.Append=true
+log4j.appender.ryhmasahkopostiaudit.MaxFileSize=20MB
+log4j.appender.ryhmasahkopostiaudit.MaxBackupIndex=20
+log4j.appender.ryhmasahkopostiaudit.layout=org.apache.log4j.PatternLayout
+log4j.appender.ryhmasahkopostiaudit.layout.ConversionPattern=%m%n
+log4j.appender.ryhmasahkopostiaudit.encoding=UTF-8
 
 {% endraw %}
 # By default hide these spammers by default
