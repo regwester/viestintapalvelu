@@ -313,10 +313,10 @@ public class LetterBuilder {
         return data;
     }
 
-    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
             Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
         Template template = determineTemplate(receiver, batch);
-        return constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
+        constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
     }
 
     public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, Template template,
