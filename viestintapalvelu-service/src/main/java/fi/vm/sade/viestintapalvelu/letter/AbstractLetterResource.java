@@ -24,6 +24,7 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
 import com.google.gson.GsonBuilder;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -94,7 +95,7 @@ public abstract class AbstractLetterResource extends AsynchronousResource {
         try {
             LOG.info("Letter batch is valid. Starting to fetch template. {}", input.toStringForLogging());
             letterBuilder.initTemplateId(input);
-            LOG.info("Fetching template is ready. Saving letter batch for further processing. {}", input.toStringForLogging());
+            LOG.info("Fetching template is ready. Saving letter batch of type {} for further processing. {}", ContentStructureType.letter, input.toStringForLogging());
             fi.vm.sade.viestintapalvelu.model.LetterBatch letter = letterService.createLetter(input, anonymousRequest);
             LOG.info("Letter batch is saved with batchID={}. Scheduling async processing for it. {}", letter.getId(), input.toStringForLogging());
             Long id = letter.getId();

@@ -71,7 +71,7 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
 
     @ApiModelProperty(value = "Ohitetaanko tuotetun dokumentin tallennus dokumenttipalveluun. Oletuksena ei.", required = false)
     private boolean skipDokumenttipalvelu = false;
-    
+
     private Map<String, byte[]> iPostiData = new LinkedHashMap<>();
 
 

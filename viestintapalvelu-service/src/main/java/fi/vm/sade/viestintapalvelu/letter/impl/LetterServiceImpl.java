@@ -99,12 +99,17 @@ import static org.joda.time.DateTime.now;
 @Transactional
 @ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterServiceImpl implements LetterService {
-    private static final int STORE_DOKUMENTTIS_DAYS = 2;
-    private static final int MAX_IPOST_CHUNK_SIZE = 500;
     public static final String DOCUMENT_TYPE_APPLICATION_ZIP = "application/zip";
     public static final String DOCUMENT_TYPE_APPLICATION_PDF = "application/pdf";
-    private static final Logger logger = LoggerFactory.getLogger(LetterServiceImpl.class);
 
+    private static final Map<ContentStructureType, String> CONTENT_STRUCTURE_TYPE_STRING_MAPPING = new HashMap<>();
+    static {
+        CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.letter,DOCUMENT_TYPE_APPLICATION_PDF);
+    }
+
+    private static final int STORE_DOKUMENTTIS_DAYS = 2;
+    private static final int MAX_IPOST_CHUNK_SIZE = 500;
+    private static final Logger logger = LoggerFactory.getLogger(LetterServiceImpl.class);
     private LetterBatchDAO letterBatchDAO;
     private LetterReceiverLetterDAO letterReceiverLetterDAO;
     private LetterReceiversDAO letterReceiversDAO;
@@ -179,11 +184,11 @@ public class LetterServiceImpl implements LetterService {
 
         // kirjeet.vastaanottaja
         try {
-            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
+            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper, ContentStructureType.letter));
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
         }
-        model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
+        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, ContentStructureType.letter));
 
         if (letterBatch.isIposti()) {
             addIpostData(letterBatch, model);
@@ -219,7 +224,7 @@ public class LetterServiceImpl implements LetterService {
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
         }
-        model.setUsedTemplates(parseUsedTemplates(letterBatch, model));
+        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, ContentStructureType.letter));
 
         if (letterBatch.isIposti()) {
             addIpostData(letterBatch, model);
@@ -245,17 +250,17 @@ public class LetterServiceImpl implements LetterService {
         }
     }
 
-    private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB) {
+    private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB, final ContentStructureType contentStructureType) {
         Set<UsedTemplate> templates = new HashSet<>();
         Set<String> languageCodes = new HashSet<>();
-        String templateName = getTemplateNameFromBatch(letterBatch);
+        String templateName = getTemplateNameFromBatch(letterBatch, contentStructureType);
         for (LetterDetails letter : letterBatch.getLetters()) {
             languageCodes.add(letter.getLanguageCode());
         }
         languageCodes.add(letterBatch.getLanguageCode());
         for (String languageCode : languageCodes) {
             fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(new TemplateCriteriaImpl(templateName, languageCode,
-                    ContentStructureType.letter));
+                    contentStructureType));
             if (template != null) {
                 UsedTemplate usedTemplate = new UsedTemplate();
                 usedTemplate.setLetterBatch(letterB);
@@ -266,9 +271,9 @@ public class LetterServiceImpl implements LetterService {
         return templates;
     }
 
-    private String getTemplateNameFromBatch(LetterBatchDetails letterBatch) {
+    private String getTemplateNameFromBatch(LetterBatchDetails letterBatch, final ContentStructureType contentStructureType) {
         fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch
-                .getLanguageCode(), ContentStructureType.letter));
+                .getLanguageCode(), contentStructureType));
         return template != null ? template.getName() : templateDAO.findByIdAndState(letterBatch.getTemplateId(), State.julkaistu).getName();
     }
 
@@ -459,7 +464,8 @@ public class LetterServiceImpl implements LetterService {
     private Set<LetterReceivers> parseLetterReceiversModels(
             AsyncLetterBatchDto letterBatch,
             LetterBatch letterB,
-            ObjectMapper mapper
+            ObjectMapper mapper,
+            ContentStructureType contentStructureType
     ) throws JsonProcessingException {
         Set<LetterReceivers> receivers = new HashSet<>();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
@@ -467,12 +473,17 @@ public class LetterServiceImpl implements LetterService {
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
             rec.setLetterBatch(letterB);
 
+            final String contentType = CONTENT_STRUCTURE_TYPE_STRING_MAPPING.get(contentStructureType);
+            if (contentType == null) {
+                throw new NullPointerException("Failed to determine content type for ContentStructureType " + contentStructureType);
+            }
+
             // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
             LetterReceiverLetter lrl = new LetterReceiverLetter();
             lrl.setTimestamp(new Date());
             lrl.setLetterReceivers(rec);
-            lrl.setContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
-            lrl.setOriginalContentType(DOCUMENT_TYPE_APPLICATION_PDF); // application/pdf
+            lrl.setContentType(contentType);
+            lrl.setOriginalContentType(contentType);
             lrl.setReadyForPublish(false);
             rec.setLetterReceiverLetter(lrl);
 
