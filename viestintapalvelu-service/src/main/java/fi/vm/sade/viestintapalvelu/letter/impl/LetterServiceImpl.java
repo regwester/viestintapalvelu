@@ -15,34 +15,12 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter.impl;
 
-import java.io.*;
-import java.util.*;
-import java.util.zip.DataFormatException;
-
-import javax.annotation.Resource;
-import javax.ws.rs.NotFoundException;
-
-import fi.vm.sade.viestintapalvelu.LetterZipUtil;
-import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
-import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
-import fi.vm.sade.viestintapalvelu.letter.*;
-import org.apache.commons.lang.StringUtils;
-import org.apache.pdfbox.util.PDFMergerUtility;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
-
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
-
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.valinta.dokumenttipalvelu.resource.DokumenttiResource;
+import fi.vm.sade.viestintapalvelu.LetterZipUtil;
 import fi.vm.sade.viestintapalvelu.common.util.CollectionHelper;
 import fi.vm.sade.viestintapalvelu.dao.IPostiDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
@@ -50,11 +28,18 @@ import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
 import fi.vm.sade.viestintapalvelu.dao.TemplateDAO;
 import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusErrorDto;
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
-import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
+import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.externalinterface.component.CurrentUserComponent;
+import fi.vm.sade.viestintapalvelu.letter.DokumenttiIdProvider;
+import fi.vm.sade.viestintapalvelu.letter.LetterBatchStatusLegalityChecker;
+import fi.vm.sade.viestintapalvelu.letter.LetterBuilder;
+import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
+import fi.vm.sade.viestintapalvelu.letter.LetterPublisher;
+import fi.vm.sade.viestintapalvelu.letter.LetterService;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchLetterDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
@@ -75,6 +60,35 @@ import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import org.apache.commons.lang.StringUtils;
+import org.apache.pdfbox.util.PDFMergerUtility;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+
+import javax.annotation.Resource;
+import javax.ws.rs.NotFoundException;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.zip.DataFormatException;
+
 import static org.joda.time.DateTime.now;
 
 /**
