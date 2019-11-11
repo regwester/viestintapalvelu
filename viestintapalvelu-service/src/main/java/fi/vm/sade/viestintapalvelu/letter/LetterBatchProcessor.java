@@ -73,8 +73,13 @@ public class LetterBatchProcessor {
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
-        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<>(new JobDescription<>(job,
-                LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)), letterBatchJobThreadCount));
+        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<>(
+                new JobDescription<>(
+                        job,
+                        LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
+                        letterBatchJobThreadCount
+                )
+        );
         return batchJobExecutorService.submit(batchJob);
     }
 

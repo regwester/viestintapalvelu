@@ -324,14 +324,27 @@ public class LetterBuilder {
         return data;
     }
 
-    public void constructPagesForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
-                                                      Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
+    public void constructPagesForLetterReceiverLetter(
+            LetterReceivers receiver,
+            fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+            Map<String, Object> batchReplacements,
+            Map<String, Object> letterReplacements
+    ) throws IOException, DocumentException, COSVisitorException {
         Template template = determineTemplate(receiver, batch);
-        constructPagesForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
+        constructPagesForLetterReceiverLetter(
+                receiver,
+                template,
+                batchReplacements,
+                letterReplacements
+        );
     }
 
-    public LetterReceiverLetter constructPagesForLetterReceiverLetter(LetterReceivers receiver, Template template,
-                                                                      Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
+    public LetterReceiverLetter constructPagesForLetterReceiverLetter(
+            LetterReceivers receiver,
+            Template template,
+            Map<String, Object> batchReplacements,
+            Map<String, Object> letterReplacements
+    ) throws IOException, DocumentException, COSVisitorException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
@@ -368,7 +381,10 @@ public class LetterBuilder {
         return attachmentService.saveReceiverAttachment(attachment);
     }
 
-    public Template determineTemplate(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
+    public Template determineTemplate(
+            LetterReceivers receiver,
+            fi.vm.sade.viestintapalvelu.model.LetterBatch batch
+    ) {
         if (receiver.getWantedLanguage() != null) {
             for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
                 if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {

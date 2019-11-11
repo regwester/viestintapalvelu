@@ -456,8 +456,11 @@ public class LetterServiceImpl implements LetterService {
         return receivers;
     }
 
-    private Set<LetterReceivers> parseLetterReceiversModels(AsyncLetterBatchDto letterBatch, LetterBatch letterB, ObjectMapper mapper)
-            throws JsonProcessingException {
+    private Set<LetterReceivers> parseLetterReceiversModels(
+            AsyncLetterBatchDto letterBatch,
+            LetterBatch letterB,
+            ObjectMapper mapper
+    ) throws JsonProcessingException {
         Set<LetterReceivers> receivers = new HashSet<>();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
