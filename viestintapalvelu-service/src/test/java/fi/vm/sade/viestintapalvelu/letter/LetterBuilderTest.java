@@ -79,7 +79,7 @@ public class LetterBuilderTest {
         when(templateService.findById(any(Long.class), any(ContentStructureType.class)))
                 .thenReturn(DocumentProviderTestData.getTemplate());
         when(docBuilder.merge(any(PdfDocument.class))).thenReturn(new MergedPdfDocument());
-        builder.constructPDFForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
+        builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertNotNull(receiver.getLetterReceiverLetter().getLetter());
     }
 

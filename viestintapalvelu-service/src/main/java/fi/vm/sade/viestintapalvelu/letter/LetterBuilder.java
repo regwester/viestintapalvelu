@@ -324,14 +324,14 @@ public class LetterBuilder {
         return data;
     }
 
-    public void constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
-            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
+    public void constructPagesForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+                                                      Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
         Template template = determineTemplate(receiver, batch);
-        constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
+        constructPagesForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
     }
 
-    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, Template template,
-            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
+    public LetterReceiverLetter constructPagesForLetterReceiverLetter(LetterReceivers receiver, Template template,
+                                                                      Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());

@@ -580,7 +580,7 @@ public class LetterServiceImpl implements LetterService {
         LetterReceivers receiver = letterReceiversDAO.read(receiverId);
         LetterBatch batch = receiver.getLetterBatch();
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
-        getLetterBuilder().constructPDFForLetterReceiverLetter(receiver, batch, formReplacementMap(batch, mapper), formReplacementMap(receiver, mapper));
+        getLetterBuilder().constructPagesForLetterReceiverLetter(receiver, batch, formReplacementMap(batch, mapper), formReplacementMap(receiver, mapper));
         letterReceiverLetterDAO.update(receiver.getLetterReceiverLetter());
     }
 

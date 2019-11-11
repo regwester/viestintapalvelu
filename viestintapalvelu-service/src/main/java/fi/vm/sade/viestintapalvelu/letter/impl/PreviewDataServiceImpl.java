@@ -256,7 +256,7 @@ public class PreviewDataServiceImpl implements PreviewDataService {
         }
 
         batchreplacements.put("sisalto", letterContents);
-        return letterBuilder.constructPDFForLetterReceiverLetter(letterReceivers, template, batchreplacements, letterreplacements).getLetter();
+        return letterBuilder.constructPagesForLetterReceiverLetter(letterReceivers, template, batchreplacements, letterreplacements).getLetter();
     }
 
     private Map<String, Object> getLetterReplacements() throws IOException {

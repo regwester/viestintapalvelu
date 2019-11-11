@@ -107,7 +107,7 @@ public class LetterBatchProcessorTest {
                 .thenReturn(Optional.<LetterBatchProcess>absent());
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
         assertTrue(state.get());
-        verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
+        verify(builder, timeout(100).times(amountOfReceivers)).constructPagesForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
         verify(letterReceiverLetterDAO, timeout(100).times(amountOfReceivers)).update(any(LetterReceiverLetter.class));
     }
 
@@ -124,7 +124,7 @@ public class LetterBatchProcessorTest {
         AnswerChain<Void> processCalls = atFirstDoNothing().times(okCount).thenThrow(new IllegalStateException("Something went wrong.")),
                 updateCalls = atFirstDoNothing();
         doAnswer(processCalls)
-                .when(builder).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class),
+                .when(builder).constructPagesForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class),
                 any(Map.class), any(Map.class));
         doAnswer(updateCalls).when(letterReceiverLetterDAO).update(any(LetterReceiverLetter.class));
 
