@@ -80,13 +80,16 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 import java.util.zip.DataFormatException;
 
 import static org.joda.time.DateTime.now;
@@ -184,11 +187,11 @@ public class LetterServiceImpl implements LetterService {
 
         // kirjeet.vastaanottaja
         try {
-            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper, ContentStructureType.letter));
+            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
         }
-        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, ContentStructureType.letter));
+        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, letterBatch.getContentStructureTypes()));
 
         if (letterBatch.isIposti()) {
             addIpostData(letterBatch, model);
@@ -224,7 +227,7 @@ public class LetterServiceImpl implements LetterService {
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
         }
-        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, ContentStructureType.letter));
+        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, Collections.singletonList(ContentStructureType.letter)));
 
         if (letterBatch.isIposti()) {
             addIpostData(letterBatch, model);
@@ -250,25 +253,32 @@ public class LetterServiceImpl implements LetterService {
         }
     }
 
-    private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB, final ContentStructureType contentStructureType) {
-        Set<UsedTemplate> templates = new HashSet<>();
-        Set<String> languageCodes = new HashSet<>();
-        String templateName = getTemplateNameFromBatch(letterBatch, contentStructureType);
-        for (LetterDetails letter : letterBatch.getLetters()) {
-            languageCodes.add(letter.getLanguageCode());
-        }
-        languageCodes.add(letterBatch.getLanguageCode());
-        for (String languageCode : languageCodes) {
-            fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(new TemplateCriteriaImpl(templateName, languageCode,
-                    contentStructureType));
-            if (template != null) {
-                UsedTemplate usedTemplate = new UsedTemplate();
-                usedTemplate.setLetterBatch(letterB);
-                usedTemplate.setTemplate(template);
-                templates.add(usedTemplate);
-            }
-        }
-        return templates;
+    private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB, final List<ContentStructureType> contentStructureTypes) {
+        return contentStructureTypes
+                .stream()
+                .flatMap(contentStructureType -> {
+                    final String templateName = getTemplateNameFromBatch(letterBatch, contentStructureType);
+                    return letterBatch
+                            .getLetters()
+                            .stream()
+                            .map(LetterDetails::getLanguageCode)
+                            .distinct()
+                            .map(languageCode -> templateDAO.findTemplate(
+                                    new TemplateCriteriaImpl(
+                                            templateName,
+                                            languageCode,
+                                            contentStructureType
+                                    )
+                            ))
+                            .filter(Objects::nonNull)
+                            .map(template -> {
+                                final UsedTemplate usedTemplate = new UsedTemplate();
+                                usedTemplate.setLetterBatch(letterB);
+                                usedTemplate.setTemplate(template);
+                                return usedTemplate;
+                            });
+                })
+                .collect(Collectors.toSet());
     }
 
     private String getTemplateNameFromBatch(LetterBatchDetails letterBatch, final ContentStructureType contentStructureType) {
@@ -464,28 +474,32 @@ public class LetterServiceImpl implements LetterService {
     private Set<LetterReceivers> parseLetterReceiversModels(
             AsyncLetterBatchDto letterBatch,
             LetterBatch letterB,
-            ObjectMapper mapper,
-            ContentStructureType contentStructureType
+            ObjectMapper mapper
     ) throws JsonProcessingException {
+        final List<String> contentTypes = letterBatch
+                .getContentStructureTypes()
+                .stream()
+                .map(CONTENT_STRUCTURE_TYPE_STRING_MAPPING::get)
+                .map(java.util.Optional::of)
+                .map(java.util.Optional::get)
+                .collect(Collectors.toList());
         Set<LetterReceivers> receivers = new HashSet<>();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
             rec.setLetterBatch(letterB);
 
-            final String contentType = CONTENT_STRUCTURE_TYPE_STRING_MAPPING.get(contentStructureType);
-            if (contentType == null) {
-                throw new NullPointerException("Failed to determine content type for ContentStructureType " + contentStructureType);
+            final Date now = new Date();
+            for (final String contentType : contentTypes) {
+                // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
+                LetterReceiverLetter lrl = new LetterReceiverLetter();
+                lrl.setTimestamp(now);
+                lrl.setLetterReceivers(rec);
+                lrl.setContentType(contentType);
+                lrl.setOriginalContentType(contentType);
+                lrl.setReadyForPublish(false);
+                rec.setLetterReceiverLetter(lrl);
             }
-
-            // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
-            LetterReceiverLetter lrl = new LetterReceiverLetter();
-            lrl.setTimestamp(new Date());
-            lrl.setLetterReceivers(rec);
-            lrl.setContentType(contentType);
-            lrl.setOriginalContentType(contentType);
-            lrl.setReadyForPublish(false);
-            rec.setLetterReceiverLetter(lrl);
 
             receivers.add(rec);
         }
