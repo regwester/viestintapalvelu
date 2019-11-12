@@ -15,28 +15,12 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Iterator;
 
-import com.google.gson.Gson;
-import com.lowagie.text.DocumentException;
-import fi.vm.sade.viestintapalvelu.letter.impl.PreviewDataServiceImpl;
-import fi.vm.sade.viestintapalvelu.model.Template.State;
-import fi.vm.sade.viestintapalvelu.template.Replacement;
-import fi.vm.sade.viestintapalvelu.template.Template;
-import fi.vm.sade.viestintapalvelu.template.TemplateContent;
-import org.apache.commons.io.IOUtils;
-import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
 
 import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
@@ -48,12 +32,13 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.core.io.DefaultResourceLoader;
 
+import static org.junit.Assert.assertArrayEquals;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
 
+import static org.mockito.Matchers.anyMapOf;
 import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -62,25 +47,39 @@ public class LetterBuilderTest {
     private LetterBuilder builder;
     
     @Mock
-    private DocumentBuilder docBuilder;
+    private DocumentBuilder documentBuilder;
     
     @Mock
     private TemplateService templateService;
     
     @Before
     public void init() throws Exception {
-        builder = new LetterBuilder(docBuilder, templateService, null, new ObjectMapperProvider());
+        builder = new LetterBuilder(documentBuilder, templateService, null, new ObjectMapperProvider());
     }
     
+    @Test
+    public void storesHtmlAsBytesIntoLetterReceiverLetter() throws Exception {
+        LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+        LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
+        when(templateService.findById(any(Long.class), any(ContentStructureType.class)))
+                .thenReturn(DocumentProviderTestData.getTemplateWithType(ContentStructureType.accessibleHtml));
+        byte[] htmlLetter = "html-sivun teksti".getBytes();
+        when(documentBuilder.applyTextTemplate(any(byte[].class), anyMapOf(String.class, Object.class))).thenReturn(htmlLetter);
+
+        builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
+
+        assertArrayEquals(htmlLetter, receiver.getLetterReceiverLetter().getLetter());
+        assertEquals("text/html", receiver.getLetterReceiverLetter().getContentType());
+    }
+
     @Test
     public void storesPDFAsBytesIntoLetterReceiverLetter() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
         LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
         when(templateService.findById(any(Long.class), any(ContentStructureType.class)))
-                .thenReturn(DocumentProviderTestData.getTemplate());
-        when(docBuilder.merge(any(PdfDocument.class))).thenReturn(new MergedPdfDocument());
+                .thenReturn(DocumentProviderTestData.getTemplateWithType(ContentStructureType.letter));
+        when(documentBuilder.merge(any(PdfDocument.class))).thenReturn(new MergedPdfDocument());
         builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
         assertNotNull(receiver.getLetterReceiverLetter().getLetter());
     }
-
 }

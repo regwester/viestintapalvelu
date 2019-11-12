@@ -15,6 +15,10 @@
  */
 package fi.vm.sade.viestintapalvelu.letter;
 
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampEn;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampFi;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampSv;
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
@@ -52,23 +56,20 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
-
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampEn;
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampFi;
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampSv;
 
 @Service
 @Singleton
@@ -172,16 +173,19 @@ public class LetterBuilder {
 
     public byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
             Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
-        @SuppressWarnings("unchecked")
+        return documentBuilder.xhtmlToPDF(createPageHtml(template, pageContent, addressLabel, templReplacements, letterBatchReplacements, letterReplacements));
+    }
+
+    public byte[] createPageHtml(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         Map<String, Object> dataContext = createDataContext(XhtmlCleaner.INSTANCE,
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         if (xhtml != null && LOG.isDebugEnabled()) {
-            LOG.debug("CreatePagePdf using xhtml:\n" + new String(xhtml));
+            LOG.debug("CreatePageHtml using xhtml:\n" + new String(xhtml));
         }
-        return documentBuilder.xhtmlToPDF(xhtml);
+        return xhtml;
     }
-
 
 
     public Map<String, Object> createDataContext(Cleaner cleaner,
@@ -377,6 +381,16 @@ public class LetterBuilder {
                         letterReplacements
                 );
                 break;
+            case accessibleHtml:
+                addHtmlDataToLetterReceiverLetter(
+                        letter,
+                        template,
+                        address,
+                        templReplacements,
+                        batchReplacements,
+                        letterReplacements
+                );
+                break;
         }
 
         return letter;
@@ -415,6 +429,36 @@ public class LetterBuilder {
         }
         letterReceiverLetter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
         letterReceiverLetter.setContentType("application/pdf");
+    }
+
+    public LetterReceiverLetter addHtmlDataToLetterReceiverLetter(
+            final LetterReceiverLetter letterReceiverLetter,
+            final Template template,
+            final AddressLabel addressLabel,
+            final Map<String, Object> templateReplacements,
+            final Map<String, Object> batchReplacements,
+            final Map<String, Object> letterReplacements) throws IOException, DocumentException {
+
+        byte[] currentDocument = new byte[] {};
+        final List<TemplateContent> templateContents = template
+                .getContents()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+        Iterator<TemplateContent> it = Contents.letterContents().filter(templateContents).iterator();
+        if (it.hasNext()) {
+            currentDocument = createPageHtml(
+                    template,
+                    it.next().getContent().getBytes(),
+                    addressLabel,
+                    templateReplacements,
+                    batchReplacements,
+                    letterReplacements
+            );
+        }
+        letterReceiverLetter.setLetter(currentDocument);
+        letterReceiverLetter.setContentType("text/html");
+        return letterReceiverLetter;
     }
 
     private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {

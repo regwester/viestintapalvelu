@@ -402,6 +402,10 @@ public class DocumentProviderTestData {
     }
 
     public static fi.vm.sade.viestintapalvelu.template.Template getTemplate() {
+        return getTemplateWithType(ContentStructureType.letter);
+    }
+
+    public static fi.vm.sade.viestintapalvelu.template.Template getTemplateWithType(ContentStructureType type) {
         fi.vm.sade.viestintapalvelu.template.Template template = new fi.vm.sade.viestintapalvelu.template.Template();
         
         template.setLanguage("FI");
@@ -421,7 +425,7 @@ public class DocumentProviderTestData {
         template.setTimestamp(new Date());
         template.setContents(getTemplateContents());
         template.setReplacements(getReplacements());
-        template.setType("letter");
+        template.setType(type.name());
         template.setState(State.luonnos);
 
         return template;
