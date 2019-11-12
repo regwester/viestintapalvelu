@@ -55,14 +55,16 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampEn;
 import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampFi;
@@ -88,7 +90,7 @@ public class LetterBuilder {
     }
     public LetterBuilder() {
     }
-    
+
     public byte[] printZIP(List<LetterReceiverLetter> receivers, String templateName, String zipName) {
         MergedPdfDocument pdf = getMergedPDFDocument(receivers);
         try {
@@ -329,15 +331,24 @@ public class LetterBuilder {
             fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
             Map<String, Object> batchReplacements,
             Map<String, Object> letterReplacements
-    ) throws IOException, DocumentException, COSVisitorException {
-        Template template = determineTemplate(receiver, batch);
-        constructPagesForLetterReceiverLetter(
-                receiver,
-                template,
-                batchReplacements,
-                letterReplacements
-        );
+    ) {
+        determineTemplate(receiver, batch)
+                .forEach(template -> {
+                    try {
+                        constructPagesForLetterReceiverLetter(
+                                receiver,
+                                template,
+                                batchReplacements,
+                                letterReplacements
+                        );
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    } catch (DocumentException | COSVisitorException e) {
+                        throw new RuntimeException(e);
+                    }
+                });
     }
+
 
     public LetterReceiverLetter constructPagesForLetterReceiverLetter(
             LetterReceivers receiver,
@@ -352,24 +363,58 @@ public class LetterBuilder {
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         templReplacements.putAll(formReplacementMap(letter.getLetterReceivers().getLetterReceiverReplacement(), mapper));
 
-        List<TemplateContent> contents = template.getContents();
         AddressLabel address = AddressLabelConverter.convert(letter.getLetterReceivers().getLetterReceiverAddress());
-        PdfDocument currentDocument = new PdfDocument(address);
-        Collections.sort(contents);
 
-        for (TemplateContent tc : Contents.letterContents().filter(contents)) {
-            byte[] page = createPagePdf(template, tc.getContent().getBytes(), address, templReplacements, batchReplacements, letterReplacements);
-            if (letter.getLetterReceivers().getEmailAddress() != null
-                    && !letter.getLetterReceivers().getEmailAddress().isEmpty()
+        switch (ContentStructureType.valueOf(template.getType())) {
+            case letter:
+                addFullPdfDataToLetterReceiverLetter(
+                        letter,
+                        receiver,
+                        template,
+                        address,
+                        templReplacements,
+                        batchReplacements,
+                        letterReplacements
+                );
+                break;
+        }
+
+        return letter;
+    }
+
+    private void addFullPdfDataToLetterReceiverLetter(
+            final LetterReceiverLetter letterReceiverLetter,
+            final LetterReceivers letterReceivers,
+            final Template template,
+            final AddressLabel addressLabel,
+            final Map<String, Object> templateReplacements,
+            final Map<String, Object> batchReplacements,
+            final Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
+        final PdfDocument currentDocument = new PdfDocument(addressLabel);
+        final List<TemplateContent> templateContents = template
+                .getContents()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+        for (TemplateContent tc : Contents.letterContents().filter(templateContents)) {
+            byte[] page = createPagePdf(
+                    template,
+                    tc.getContent().getBytes(),
+                    addressLabel,
+                    templateReplacements,
+                    batchReplacements,
+                    letterReplacements
+            );
+            if (letterReceiverLetter.getLetterReceivers().getEmailAddress() != null
+                    && !letterReceiverLetter.getLetterReceivers().getEmailAddress().isEmpty()
                     && Contents.ATTACHMENT.equals(tc.getName())
-                    && receiver.getLetterReceiverEmail() == null) {
-                saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
+                    && letterReceivers.getLetterReceiverEmail() == null) {
+                saveLetterReceiverAttachment(tc.getName(), page, letterReceivers.getLetterReceiverLetter().getId());
             }
             currentDocument.addContent(page);
         }
-        letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
-        letter.setContentType("application/pdf");
-        return letter;
+        letterReceiverLetter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
+        letterReceiverLetter.setContentType("application/pdf");
     }
 
     private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
@@ -381,18 +426,29 @@ public class LetterBuilder {
         return attachmentService.saveReceiverAttachment(attachment);
     }
 
-    public Template determineTemplate(
+    public Stream<Template> determineTemplate(
             LetterReceivers receiver,
             fi.vm.sade.viestintapalvelu.model.LetterBatch batch
     ) {
-        if (receiver.getWantedLanguage() != null) {
-            for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
-                if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {
-                    return templateService.findById(usedTemplate.getTemplate().getId(), ContentStructureType.letter);
-                }
-            }
+        if (receiver.getWantedLanguage() == null) {
+            return streamOfNullable(templateService.findById(batch.getTemplateId(), ContentStructureType.letter));
         }
-        return templateService.findById(batch.getTemplateId(), ContentStructureType.letter);
+        return batch
+                .getUsedTemplates()
+                .stream()
+                .map(UsedTemplate::getTemplate)
+                .filter(template -> template.getLanguage().equals(receiver.getWantedLanguage()))
+                .flatMap(template -> Stream.concat(
+                        streamOfNullable(templateService.findById(template.getId(), ContentStructureType.letter)),
+                        streamOfNullable(templateService.findById(template.getId(), ContentStructureType.accessibleHtml))
+                ));
+    }
+
+    private static <T> Stream<T> streamOfNullable(T nullable) {
+        return java.util.Optional
+                .ofNullable(nullable)
+                .map(Stream::of)
+                .orElseGet(Stream::empty);
     }
 
     public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
