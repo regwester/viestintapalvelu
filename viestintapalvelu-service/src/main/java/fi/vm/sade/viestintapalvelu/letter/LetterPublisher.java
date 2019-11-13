@@ -30,6 +30,7 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -40,6 +41,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public interface LetterPublisher {
     int publishLetterBatch(long letterBatchId) throws Exception;
@@ -188,15 +190,27 @@ class S3LetterPublisher implements LetterPublisher {
         String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
         List<CompletableFuture<PutObjectResponse>> responses = new ArrayList<>();
 
-        List<LetterReceiverLetter> byIds = letterReceiverLetterDAO.findByIds(letterIds);
-        for (LetterReceiverLetter letter : byIds) {
-            try {
-                responses.add(addFileObject(letter, subFolderName));
-            } catch (IOException e) {
-                logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), e);
-            }
+        return letterReceiverLetterDAO
+                .findByIds(letterIds)
+                .stream()
+                .peek(S3LetterPublisher::validateFileSuffix)
+                .map(letterReceiverLetter -> {
+                    try {
+                        return addFileObject(letterReceiverLetter, subFolderName);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static void validateFileSuffix(final LetterReceiverLetter letterReceiverLetter) {
+        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(
+                ContentStructureType.valueOf(letterReceiverLetter.getContentType())
+        );
+        if (!fileSuffix.isPresent()) {
+            throw new NullPointerException("Vastaanottajakirjeellä " + letterReceiverLetter.getId() + " oli tuntematon sisältötyyppi: " + letterReceiverLetter.getContentType());
         }
-        return responses;
     }
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
@@ -204,9 +218,6 @@ class S3LetterPublisher implements LetterPublisher {
         final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(
                 ContentStructureType.valueOf(letter.getContentType())
         );
-        if (!fileSuffix.isPresent()) {
-            throw new NullPointerException("Vastaanottajakirjeellä " + letter.getId() + " oli tuntematon sisältötyyppi: " + letter.getContentType());
-        }
         final Path tempFile = Files.createTempFile(oidApplication, fileSuffix.get());
         Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
 
