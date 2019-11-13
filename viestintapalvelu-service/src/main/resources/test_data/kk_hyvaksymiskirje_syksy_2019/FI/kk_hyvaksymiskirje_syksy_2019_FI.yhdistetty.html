@@ -105,34 +105,36 @@
             <th>Varasijasi</th>
           </tr>
         </thead>
-        <tbody> #foreach( $tulos in $tulokset )
-          #set($hyvaksytty = "#if($tulos.hyvaksytty=='true')hyvaksytty#{else}#end")
-          #set($even = "#if($foreach.count % 2 == 0)even#{else}#end")
-          #set($jonojenmaara = $tulos.sijoitukset.size() + 1)
+
+        #foreach( $tulos in $tulokset )
+        #set($hyvaksytty = "#if($tulos.hyvaksytty=='true')hyvaksytty#{else}#end")
+        #set($even = "#if($foreach.count % 2 == 0)even#{else}#end")
+        #set($jonojenmaara = $tulos.sijoitukset.size())
+        <tbody>
+          #foreach( $sijoitus in $tulos.sijoitukset )
           <tr class="$hyvaksytty $even">
+            #if($foreach.count == 1)
             <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
             <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.hakukohteenNimi<br/>
               #if($tulos.hylkaysperuste)<span class="hylkayssyy">Hylkäyksen syy: $tulos.hylkaysperuste</span>#end
               #if($tulos.peruuntumisenSyy)<span class="peruuntumisensyy">Peruuntumisen syy: $tulos.peruuntumisenSyy</span>#end
             </td>
-          </tr>
-          #foreach( $sijoitus in $tulos.sijoitukset )
-
-          <tr class="$hyvaksytty $even">
+            #end
             <td>$sijoitus.nimi<br/></td>
             <td>#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end<br/></td>
             <td>#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end<br/></td>
             <td>#if($sijoitus.varasija)${sijoitus.varasija}#{else} - #end<br/></td>
           </tr>
           #end
-          #end
         </tbody>
+        #end
         <tfoot>
           <tr>
-            <td colspan="7"></td>
+            <td colspan="6"></td>
           </tr>
         </tfoot>
       </table>
+
       <p><b>Valinnan tulos</b> voi olla hyväksytty, hyväksytty (ehdollinen), varalla, hylätty tai peruuntunut. Valinnan tulos
         on peruuntunut, jos sinut on hyväksytty johonkin ylempään hakukohteeseesi. Valinnan tulos on peruuntunut myös, jos
         hakukohteen kaikki aloituspaikat ja varasijat ovat täyttyneet, eikä pistemääräsi ole riittänyt opiskelupaikan
