@@ -6,6 +6,8 @@ import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypeMapper;
 import fi.vm.sade.viestintapalvelu.util.S3Utils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -36,6 +38,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
 public interface LetterPublisher {
@@ -198,12 +201,18 @@ class S3LetterPublisher implements LetterPublisher {
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
         final String oidApplication = letter.getLetterReceivers().getOidApplication();
-        final Path tempFile = Files.createTempFile(oidApplication, ".pdf");
+        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(
+                ContentStructureType.valueOf(letter.getContentType())
+        );
+        if (!fileSuffix.isPresent()) {
+            throw new NullPointerException("Vastaanottajakirjeellä " + letter.getId() + " oli tuntematon sisältötyyppi: " + letter.getContentType());
+        }
+        final Path tempFile = Files.createTempFile(oidApplication, fileSuffix.get());
         Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
 
         Long length = (long) letter.getLetter().length;
         Map<String, String> metadata = new HashMap<>();
-        String id = folderName + File.separator + oidApplication + ".pdf";
+        String id = folderName + File.separator + oidApplication + fileSuffix.get();
         final PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucket)
                 .contentType(letter.getContentType())

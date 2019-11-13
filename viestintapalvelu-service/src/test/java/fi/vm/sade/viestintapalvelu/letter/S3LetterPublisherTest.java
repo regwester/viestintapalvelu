@@ -5,6 +5,7 @@ import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,6 +68,7 @@ public class S3LetterPublisherTest {
             letterReceivers.setOidApplication("1.2.3.4");
             letterReceiverLetter.setLetterReceivers(letterReceivers);
             letterReceiverLetter.setLetter("letter".getBytes());
+            letterReceiverLetter.setContentType(ContentStructureType.letter.toString());
             letterReceiverLetters.add(letterReceiverLetter);
 
             when(letterReceiverLetterDAO.findByIds(any())).thenReturn(letterReceiverLetters);
