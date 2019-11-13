@@ -104,10 +104,12 @@ import static org.joda.time.DateTime.now;
 public class LetterServiceImpl implements LetterService {
     public static final String DOCUMENT_TYPE_APPLICATION_ZIP = "application/zip";
     public static final String DOCUMENT_TYPE_APPLICATION_PDF = "application/pdf";
+    private static final String DOCUMENT_TYPE_HTML = "text/html";
 
     private static final Map<ContentStructureType, String> CONTENT_STRUCTURE_TYPE_STRING_MAPPING = new HashMap<>();
     static {
         CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.letter,DOCUMENT_TYPE_APPLICATION_PDF);
+        CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.accessibleHtml, DOCUMENT_TYPE_HTML);
     }
 
     private static final int STORE_DOKUMENTTIS_DAYS = 2;
