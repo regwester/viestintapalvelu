@@ -35,6 +35,7 @@ import fi.vm.sade.viestintapalvelu.model.types.ContentType;
 import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureContentSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.ContentStructureSaveDto;
 import fi.vm.sade.viestintapalvelu.structure.dto.StructureSaveDto;
+import fi.vm.sade.viestintapalvelu.template.Contents;
 
 public class DocumentProviderTestData {
     public static AddressLabel getAddressLabel() {
@@ -479,7 +480,7 @@ public class DocumentProviderTestData {
         fi.vm.sade.viestintapalvelu.template.TemplateContent templateContent = 
             new fi.vm.sade.viestintapalvelu.template.TemplateContent();
         templateContent.setContent("test_content");
-        templateContent.setName("test_template_content");
+        templateContent.setName(Contents.ACCESSIBLE_HTML_CONTENT);
         templateContent.setOrder(1);
         templateContent.setTimestamp(new Date());
         

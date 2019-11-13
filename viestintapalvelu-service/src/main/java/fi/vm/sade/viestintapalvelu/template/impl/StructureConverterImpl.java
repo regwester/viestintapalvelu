@@ -37,6 +37,7 @@ import fi.vm.sade.viestintapalvelu.template.TemplateContent;
 @Component
 public class StructureConverterImpl implements StructureConverter {
     public static final String LETTER_CONTENT_CONTENT_NAME = "letter_content";
+
     private ContentStructureValidator validator = new ContentStructureValidator();
 
     @Override
@@ -67,6 +68,9 @@ public class StructureConverterImpl implements StructureConverter {
             break;
         case letter:
             add(results, convert(LETTER_CONTENT_CONTENT_NAME, predicate, contents(structure, where(predicate).type(ContentType.html))));
+            break;
+        case accessibleHtml:
+            add(results, convert(Contents.ACCESSIBLE_HTML_CONTENT, predicate, contents(structure, where(predicate).type(ContentType.html))));
             break;
         default:
             throw new IllegalStateException("Unimplemented ContentStructureType=" + structure.getType());

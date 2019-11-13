@@ -410,7 +410,7 @@ public class LetterBuilder {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
-        for (TemplateContent tc : Contents.letterContents().filter(templateContents)) {
+        for (TemplateContent tc : Contents.pdfLetterContents().filter(templateContents)) {
             byte[] page = createPagePdf(
                     template,
                     tc.getContent().getBytes(),
@@ -445,7 +445,7 @@ public class LetterBuilder {
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
-        Iterator<TemplateContent> it = Contents.letterContents().filter(templateContents).iterator();
+        Iterator<TemplateContent> it = Contents.accessibleHtmlContents().filter(templateContents).iterator();
         if (it.hasNext()) {
             currentDocument = createPageHtml(
                     template,
