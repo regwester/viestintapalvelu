@@ -108,7 +108,7 @@ public class LetterServiceImpl implements LetterService {
 
     private static final Map<ContentStructureType, String> CONTENT_STRUCTURE_TYPE_STRING_MAPPING = new HashMap<>();
     static {
-        CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.letter,DOCUMENT_TYPE_APPLICATION_PDF);
+        CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.letter, DOCUMENT_TYPE_APPLICATION_PDF);
         CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.accessibleHtml, DOCUMENT_TYPE_HTML);
     }
 
