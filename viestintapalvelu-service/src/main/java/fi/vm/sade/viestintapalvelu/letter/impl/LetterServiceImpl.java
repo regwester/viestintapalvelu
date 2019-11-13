@@ -486,13 +486,14 @@ public class LetterServiceImpl implements LetterService {
                 .map(java.util.Optional::get)
                 .collect(Collectors.toList());
         Set<LetterReceivers> receivers = new HashSet<>();
+        final Date now = new Date();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
+            for (final String contentType : contentTypes) {
             fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
                     new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
+                receivers.add(rec);
             rec.setLetterBatch(letterB);
 
-            final Date now = new Date();
-            for (final String contentType : contentTypes) {
                 // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
                 LetterReceiverLetter lrl = new LetterReceiverLetter();
                 lrl.setTimestamp(now);
@@ -502,8 +503,6 @@ public class LetterServiceImpl implements LetterService {
                 lrl.setReadyForPublish(false);
                 rec.setLetterReceiverLetter(lrl);
             }
-
-            receivers.add(rec);
         }
         return receivers;
     }
