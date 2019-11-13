@@ -489,10 +489,10 @@ public class LetterServiceImpl implements LetterService {
         final Date now = new Date();
         for (AsyncLetterBatchLetterDto letter : letterBatch.getLetters()) {
             for (final String contentType : contentTypes) {
-            fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
-                    new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
+                fi.vm.sade.viestintapalvelu.model.LetterReceivers rec = letterBatchDtoConverter.convert(letter,
+                        new fi.vm.sade.viestintapalvelu.model.LetterReceivers(), mapper);
                 receivers.add(rec);
-            rec.setLetterBatch(letterB);
+                rec.setLetterBatch(letterB);
 
                 // kirjeet.vastaanottajakirje, luodaan aina tyhjänä:
                 LetterReceiverLetter lrl = new LetterReceiverLetter();
