@@ -190,7 +190,7 @@ class S3LetterPublisher implements LetterPublisher {
             try {
                 responses.add(addFileObject(letter, subFolderName));
             } catch (IOException e) {
-                logger.error("Error saving LetterReceiverLetter {} to S3", e);
+                logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), e);
             }
         }
         return responses;
@@ -216,7 +216,7 @@ class S3LetterPublisher implements LetterPublisher {
         try(S3AsyncClient client = getClient()) {
             return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
                 if(putObjectResponse == null) {
-                    logger.error("Error saving LetterReceiverLetter to S3", throwable);
+                    logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), throwable);
                 }
                 letterReceiverLetterDAO.markAsPublished(letter.getId());
                 try {
