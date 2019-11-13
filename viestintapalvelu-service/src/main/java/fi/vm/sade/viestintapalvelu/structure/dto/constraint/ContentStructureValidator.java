@@ -44,7 +44,9 @@ public class ContentStructureValidator implements ConstraintValidator<ValidConte
     @Override
     public boolean isValid(TypedContentStructure value, ConstraintValidatorContext context) {
         switch (value.getType()) {
-            case letter:        return allow(value.getType(), value.getContents(),
+            case letter:
+            case accessibleHtml:
+                return allow(value.getType(), value.getContents(),
                     where(ContentRole.body).type(ContentType.html).min(1)
             );
             case email:         return allow(value.getType(), value.getContents(),
