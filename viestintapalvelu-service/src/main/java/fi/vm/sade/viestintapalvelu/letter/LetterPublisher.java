@@ -195,6 +195,9 @@ class S3LetterPublisher implements LetterPublisher {
                         return addFileObject(letterReceiverLetter, subFolderName);
                     } catch (IOException e) {
                         throw new UncheckedIOException(e);
+                    } catch (Exception e) {
+                        logger.error("Ei voitu lähettää S3:een tiedostoa vastaanottajakirjeestä {}", letterReceiverLetter.getId(), e);
+                        throw e;
                     }
                 })
                 .collect(Collectors.toList());
