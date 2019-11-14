@@ -6,8 +6,7 @@ import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.model.types.ContentTypeMapper;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import fi.vm.sade.viestintapalvelu.util.S3Utils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -19,8 +18,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.async.AsyncRequestProvider;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultCredentialsProvider;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -33,7 +30,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -205,7 +201,7 @@ class S3LetterPublisher implements LetterPublisher {
     }
 
     private static void validateFileSuffix(final LetterReceiverLetter letterReceiverLetter) {
-        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(letterReceiverLetter.getContentType());
+        final Optional<String> fileSuffix = ContentTypes.getFileSuffix(letterReceiverLetter.getContentType());
         if (!fileSuffix.isPresent()) {
             throw new NullPointerException("Vastaanottajakirjeellä " + letterReceiverLetter.getId() + " oli tuntematon sisältötyyppi: " + letterReceiverLetter.getContentType());
         }
@@ -213,7 +209,7 @@ class S3LetterPublisher implements LetterPublisher {
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
         final String oidApplication = letter.getLetterReceivers().getOidApplication();
-        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(letter.getContentType());
+        final Optional<String> fileSuffix = ContentTypes.getFileSuffix(letter.getContentType());
         final Path tempFile = Files.createTempFile(oidApplication, fileSuffix.get());
         Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
 

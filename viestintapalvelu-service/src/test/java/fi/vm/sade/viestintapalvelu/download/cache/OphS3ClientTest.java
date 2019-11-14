@@ -2,6 +2,7 @@ package fi.vm.sade.viestintapalvelu.download.cache;
 
 import fi.vm.sade.viestintapalvelu.download.Download;
 import fi.vm.sade.viestintapalvelu.download.Header;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,13 +49,13 @@ public class OphS3ClientTest {
 
     @Test
     public void addFileObject() {
-        Download download = new Download("application/pdf", "testfilename.pdf", "binary".getBytes());
+        Download download = new Download(ContentTypes.CONTENT_TYPE_PDF, "testfilename.pdf", "binary".getBytes());
         OphS3Client.AddObjectResponse<PutObjectResponse> res = client.addFileObject(download);
     }
 
     @Test
     public void addFileObjectWithDocumentId() {
-        Download download = new Download("application/pdf", "testfilename.pdf", "binary".getBytes());
+        Download download = new Download(ContentTypes.CONTENT_TYPE_PDF, "testfilename.pdf", "binary".getBytes());
         UUID uuid = UUID.randomUUID();
         DocumentId id = new DocumentId(uuid.toString());
         OphS3Client.AddObjectResponse<PutObjectResponse> res = client.addFileObject(download, id);
@@ -68,7 +69,7 @@ public class OphS3ClientTest {
 
     @Test()
     public void getObject() {
-        Download download = new Download("application/pdf", "testfilename.pdf", "binary".getBytes());
+        Download download = new Download(ContentTypes.CONTENT_TYPE_PDF, "testfilename.pdf", "binary".getBytes());
         String idStr = UUID.randomUUID().toString();
         DocumentId id = new DocumentId(idStr);
         client.addFileObject(download, id);
@@ -77,9 +78,9 @@ public class OphS3ClientTest {
 
     @Test
     public void listObjects() {
-        Download download = new Download("application/pdf", "testfilename.pdf", "binary".getBytes());
+        Download download = new Download(ContentTypes.CONTENT_TYPE_PDF, "testfilename.pdf", "binary".getBytes());
         client.addFileObject(download);
-        Download download2 = new Download("application/pdf", "testfilename2.pdf", "binary".getBytes());
+        Download download2 = new Download(ContentTypes.CONTENT_TYPE_PDF, "testfilename2.pdf", "binary".getBytes());
         client.addFileObject(download2);
 
         List<Header> headers = client.listObjects();

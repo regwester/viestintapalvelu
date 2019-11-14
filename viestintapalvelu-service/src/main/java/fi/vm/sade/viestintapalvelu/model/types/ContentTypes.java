@@ -2,9 +2,9 @@ package fi.vm.sade.viestintapalvelu.model.types;
 
 import java.util.Optional;
 
-public class ContentTypeMapper {
+public class ContentTypes {
     public static final String CONTENT_TYPE_PDF = "application/pdf";
-    private static final String CONTENT_TYPE_HTML = "text/html";
+    public static final String CONTENT_TYPE_HTML = "text/html";
     private static final String FILE_SUFFIX_PDF = ".pdf";
     private static final String FILE_SUFFIX_HTML = ".html";
 

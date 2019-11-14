@@ -17,6 +17,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.HashMap;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,20 +44,20 @@ import static org.mockito.Mockito.when;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LetterBuilderTest {
-    
+
     private LetterBuilder builder;
-    
+
     @Mock
     private DocumentBuilder documentBuilder;
-    
+
     @Mock
     private TemplateService templateService;
-    
+
     @Before
     public void init() throws Exception {
         builder = new LetterBuilder(documentBuilder, templateService, null, new ObjectMapperProvider());
     }
-    
+
     @Test
     public void storesHtmlAsBytesIntoLetterReceiverLetter() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
@@ -69,7 +70,7 @@ public class LetterBuilderTest {
         builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
 
         assertArrayEquals(htmlLetter, receiver.getLetterReceiverLetter().getLetter());
-        assertEquals("text/html", receiver.getLetterReceiverLetter().getContentType());
+        assertEquals(ContentTypes.CONTENT_TYPE_HTML, receiver.getLetterReceiverLetter().getContentType());
     }
 
     @Test

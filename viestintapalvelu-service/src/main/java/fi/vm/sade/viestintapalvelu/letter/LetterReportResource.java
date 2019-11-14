@@ -38,6 +38,7 @@ import fi.vm.sade.viestintapalvelu.Utils;
 import fi.vm.sade.viestintapalvelu.auditlog.AuditLog;
 import fi.vm.sade.viestintapalvelu.auditlog.Target;
 import fi.vm.sade.viestintapalvelu.auditlog.ViestintapalveluOperation;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -68,7 +69,7 @@ import fi.vm.sade.viestintapalvelu.externalinterface.organisaatio.OrganisaatioSe
 
 /**
  * Kirjelähetysten raportoinnin REST-toteutus
- * 
+ *
  * @author vehei1
  *
  */
@@ -103,7 +104,7 @@ public class LetterReportResource extends AsynchronousResource {
 
     /**
      * Hakee käyttäjän organisaation kirjelähetysten tiedot
-     * 
+     *
      * @param organizationOid
      *            Organisaation OID
      * @param nbrOfRows
@@ -142,7 +143,7 @@ public class LetterReportResource extends AsynchronousResource {
 
     /**
      * Hakee yksittäisen kirjelähetyksen tiedot
-     * 
+     *
      * @param id
      *            Kirjelähetyksen ID
      * @param nbrOfRows
@@ -178,7 +179,7 @@ public class LetterReportResource extends AsynchronousResource {
 
     /**
      * Hakee vastaanottajan kirjeen ja palauttaa linkin ko. kirjeeseen
-     * 
+     *
      * @param id
      *            Vastaanottajan kirjeen avain
      * @param request
@@ -187,7 +188,7 @@ public class LetterReportResource extends AsynchronousResource {
      */
     @GET
     @Path(Urls.REPORTING_LETTER_PATH)
-    @Produces({ "application/pdf", "application/zip" })
+    @Produces({ ContentTypes.CONTENT_TYPE_PDF, "application/zip" })
     @ApiOperation(value = "Hakee vastaanottajan kirjeen ja palauttaa linkin ko. kirjeeseen", notes = "Hakee "
             + "vastaanottajan kirjeen. Kirjeelle tehdään unzipo ja sisältö laitetaan talteen cacheen. Palautetaan linkin" + " ko. kirjeeseen", response = String.class)
     public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @QueryParam(Constants.PARAM_ID) Long id,
@@ -211,7 +212,7 @@ public class LetterReportResource extends AsynchronousResource {
 
     /**
      * Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä
-     * 
+     *
      * @param id
      *            Kirjelähetyksen avain
      * @param request
@@ -220,7 +221,7 @@ public class LetterReportResource extends AsynchronousResource {
      */
     @GET
     @Path(Urls.REPORTING_CONTENTS_PATH)
-    @Produces({ "application/pdf", "application/zip" })
+    @Produces({ ContentTypes.CONTENT_TYPE_PDF, "application/zip" })
     @ApiOperation(value = "Hakee kirjelähetyksen kirjeiden sisällöt yhdessä PDF:ssä", notes = "Hakee kirjelähetyksen"
             + "vastaanottajien kirjeet. Kirjeille tehdään unzip ja ne yhdistetään yhdeksi PDF:ksi. "
             + "Sisältö laitetaan talteen cacheen. Palautetaan linkin ko. PDF-dokumenteihin", response = String.class)
@@ -240,7 +241,7 @@ public class LetterReportResource extends AsynchronousResource {
 
     /**
      * Hakee hakuparametrien mukaiset kirjelähetysten tiedot
-     * 
+     *
      * @param organizationOid
      *            Organisaation OID
      * @param searchArgument

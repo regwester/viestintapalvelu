@@ -44,6 +44,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import fi.vm.sade.viestintapalvelu.template.Contents;
 import fi.vm.sade.viestintapalvelu.template.Replacement;
 import fi.vm.sade.viestintapalvelu.template.Template;
@@ -61,7 +62,6 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -428,7 +428,7 @@ public class LetterBuilder {
             currentDocument.addContent(page);
         }
         letterReceiverLetter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
-        letterReceiverLetter.setContentType("application/pdf");
+        letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_PDF);
     }
 
     public LetterReceiverLetter addHtmlDataToLetterReceiverLetter(
@@ -464,7 +464,7 @@ public class LetterBuilder {
     private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
         LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
         attachment.setName(Optional.fromNullable(name).or("liite") + ".pdf");
-        attachment.setContentType("application/pdf");
+        attachment.setContentType(ContentTypes.CONTENT_TYPE_PDF);
         attachment.setContents(page);
         attachment.setLetterReceiverLetterId(letterReceiverLetterId);
         return attachmentService.saveReceiverAttachment(attachment);

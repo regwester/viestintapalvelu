@@ -11,6 +11,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.Response.Status;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -191,34 +192,34 @@ public class LetterResource extends AbstractLetterResource {
     @Produces("application/json")
     @Path("/async/pdf")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
+    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.",
         notes = "")
     public Response asyncPdf(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
-        
+
         input.setIposti(false);
         return asyncLetter(input);
     }
-    
+
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/async/zip")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
+    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.",
         notes = "")
     public Response asyncZip(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
         input.setIposti(true);
         return asyncLetter(input);
     }
-    
+
     @POST
     @Consumes("application/json")
     @Produces("application/json")
     @Path("/async/letter")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
-    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.", 
+    @ApiOperation(value = "Tallentaa kirjeet asynkronisesti. Palauttaa kirjelähetyksen id:n.",
         notes = "")
     public Response asyncLetter(@ApiParam(value = "Muodostettavien kirjeiden tiedot (1-n)", required = true)
                                      final AsyncLetterBatchDto input) {
@@ -249,10 +250,10 @@ public class LetterResource extends AbstractLetterResource {
     public Response letterBatchStatus(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id")  String prefixedLetterBatchId) {
         return getLetterBatchStatus(prefixedLetterBatchId);
     }
-    
+
     @GET
     @Consumes("application/json")
-    @Produces("application/pdf")
+    @Produces(ContentTypes.CONTENT_TYPE_PDF)
     @Path("/async/letter/pdf/{letterBatchId}")
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_LETTER)
     @ApiOperation(value = "Palauttaa kirjelähetyksestä generoidun PDF-dokumentin")
@@ -271,13 +272,13 @@ public class LetterResource extends AbstractLetterResource {
             Collection<MetaData> documents = dokumenttipalveluRestClient.hae(tags);
             if(documents.isEmpty()) {
                 byte[] bytes = letterService.getLetterContentsByLetterBatchID(letterBatchId);
-                
-                
-                
+
+
+
                 dokumenttipalveluRestClient.tallenna(documentId, "mergedletters.pdf",
                         now().plusDays(2).toDate().getTime(),
                         tags,
-                        "application/pdf",
+                        ContentTypes.CONTENT_TYPE_PDF,
                         new ByteArrayInputStream(bytes));
             }
             return dokumenttipalveluRestClient.lataa(documentId);

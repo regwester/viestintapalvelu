@@ -29,6 +29,7 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jsoup.Jsoup;
@@ -88,7 +89,7 @@ public class PDFPrinterResource extends AsynchronousResource {
 
     /**
      * PDF sync
-     * 
+     *
      * @param input
      * @param request
      * @return
@@ -120,7 +121,7 @@ public class PDFPrinterResource extends AsynchronousResource {
 
     /**
      * Get PDF content
-     * 
+     *
      * @param input
      * @param request
      * @return
@@ -129,7 +130,7 @@ public class PDFPrinterResource extends AsynchronousResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces("application/pdf")
+    @Produces(ContentTypes.CONTENT_TYPE_PDF)
     @Path("/pdf/content")
     // @ApiOperation(value = "Muodostaa HTML-pohjaisesta asiakirja PDF-dokumentin ja palauttaa sen", notes = "")
     // @ApiResponses(@ApiResponse(code = 400, message = "Document creation failed"))
@@ -144,10 +145,10 @@ public class PDFPrinterResource extends AsynchronousResource {
             return createFailureResponse(request);
         }
     }
-    
+
     /**
      * PDF async
-     * 
+     *
      * @param input
      * @param request
      * @return
@@ -199,18 +200,18 @@ public class PDFPrinterResource extends AsynchronousResource {
         });
         return createResponse(request, documentId+".pdf");
     }
-    
+
     @GET
     @Path("/getDocumentSource")
     @Produces("application/json")
     public Response getDocumentSource() {
         DocumentSource ds = new DocumentSource();
-        
+
         List<String> sources = new ArrayList<>();
         sources.add("documentsource text");
         ds.setDocumentName("documentName");
         ds.setSources(sources);
-        
+
         return Response.ok(ds).build();
     }
 

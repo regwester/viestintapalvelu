@@ -15,11 +15,11 @@
  **/
 package fi.vm.sade.viestintapalvelu.asiontitili.impl;
 
-import java.io.IOException;
 import java.util.*;
 
 import javax.ws.rs.NotFoundException;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.apache.commons.codec.binary.Base64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,7 +64,6 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
     public static final int SINGLE_MESSAGE_SMS_LENGTH = 160;
     public static final String URL_CONTENT_TYPE = "text/url";
     public static final int URL_LENGTH = 10;
-    public static final String APPLICATION_PDF_CONTENT_TYPE = "application/pdf";
     public static final int BYTES_IN_KILOBYTE = 1024;
 
     private static final Supplier<? extends AddressLabel> EMPTY_ADDRESS_LABEL = new Supplier<AddressLabel>() {
@@ -262,7 +261,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
             }
         };
     }
-    
+
     private String evaluateTemplateContent(TemplateContent content, Map<String, Object> dataContext,
                                            Template template) {
         String contentStr = content.getContent();
@@ -289,7 +288,7 @@ public class AsiointitiliServiceImpl implements AsiointitiliService {
             pdfAttachment.setDescription(attachmentContent.getName());
             pdfAttachment.setSize(contentPdf.length / BYTES_IN_KILOBYTE);
             pdfAttachment.setContent(new String(Base64.encodeBase64(contentPdf)));
-            pdfAttachment.setContentType(APPLICATION_PDF_CONTENT_TYPE);
+            pdfAttachment.setContentType(ContentTypes.CONTENT_TYPE_PDF);
             messageDto.getAttachments().add(pdfAttachment);
         }
     }

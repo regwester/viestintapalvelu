@@ -60,6 +60,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.apache.commons.lang.StringUtils;
 import org.apache.pdfbox.util.PDFMergerUtility;
 import org.slf4j.Logger;
@@ -96,19 +97,18 @@ import static org.joda.time.DateTime.now;
 
 /**
  * @author migar1
- * 
+ *
  */
 @Service
 @Transactional
 @ComponentScan(value = { "fi.vm.sade.externalinterface" })
 public class LetterServiceImpl implements LetterService {
     public static final String DOCUMENT_TYPE_APPLICATION_ZIP = "application/zip";
-    public static final String DOCUMENT_TYPE_APPLICATION_PDF = "application/pdf";
     private static final String DOCUMENT_TYPE_HTML = "text/html";
 
     private static final Map<ContentStructureType, String> CONTENT_STRUCTURE_TYPE_STRING_MAPPING = new HashMap<>();
     static {
-        CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.letter, DOCUMENT_TYPE_APPLICATION_PDF);
+        CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.letter, ContentTypes.CONTENT_TYPE_PDF);
         CONTENT_STRUCTURE_TYPE_STRING_MAPPING.put(ContentStructureType.accessibleHtml, DOCUMENT_TYPE_HTML);
     }
 
@@ -711,7 +711,7 @@ public class LetterServiceImpl implements LetterService {
         byte[] bytes = getLetterContentsByLetterBatchID(batch.getId());
         logger.info("Stroring PDF with documentId={}", documentId);
         dokumenttipalveluRestClient.tallenna(documentId, fileName, now().plusDays(STORE_DOKUMENTTIS_DAYS).toDate().getTime(), tags,
-                DOCUMENT_TYPE_APPLICATION_PDF, new ByteArrayInputStream(bytes));
+                ContentTypes.CONTENT_TYPE_PDF, new ByteArrayInputStream(bytes));
         logger.info("Done saving pdf document to Dokumenttipalvelu for LetterBatch={}", batch.getId());
         }
 
