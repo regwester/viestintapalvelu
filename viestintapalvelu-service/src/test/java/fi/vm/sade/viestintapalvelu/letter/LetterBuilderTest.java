@@ -15,8 +15,11 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
+import java.util.Collections;
 import java.util.HashMap;
 
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.junit.Before;
 import org.junit.Test;
@@ -61,6 +64,14 @@ public class LetterBuilderTest {
     @Test
     public void storesHtmlAsBytesIntoLetterReceiverLetter() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
+
+        final UsedTemplate usedTemplate = new UsedTemplate();
+        batch.setUsedTemplates(Collections.singleton(usedTemplate));
+        final Template template = new Template();
+        usedTemplate.setTemplate(template);
+        template.setId(1234L);
+        template.setLanguage("FI");
+
         LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
         when(templateService.findById(any(Long.class), any(ContentStructureType.class)))
                 .thenReturn(DocumentProviderTestData.getTemplateWithType(ContentStructureType.accessibleHtml));
@@ -69,7 +80,7 @@ public class LetterBuilderTest {
 
         builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
 
-        assertArrayEquals(htmlLetter, receiver.getLetterReceiverLetter().getLetter());
+        assertEquals(new String(htmlLetter), new String(receiver.getLetterReceiverLetter().getLetter()));
         assertEquals(ContentTypes.CONTENT_TYPE_HTML, receiver.getLetterReceiverLetter().getContentType());
     }
 

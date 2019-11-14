@@ -474,14 +474,14 @@ public class LetterBuilder {
             LetterReceivers receiver,
             fi.vm.sade.viestintapalvelu.model.LetterBatch batch
     ) {
-        if (receiver.getWantedLanguage() == null) {
-            return streamOfNullable(templateService.findById(batch.getTemplateId(), ContentStructureType.letter));
-        }
         return batch
                 .getUsedTemplates()
                 .stream()
                 .map(UsedTemplate::getTemplate)
-                .filter(template -> template.getLanguage().equals(receiver.getWantedLanguage()))
+                .filter(template ->
+                        (receiver.getWantedLanguage() == null && template.getLanguage().equals("FI"))
+                                || template.getLanguage().equals(receiver.getWantedLanguage())
+                )
                 .flatMap(template -> Stream.concat(
                         streamOfNullable(templateService.findById(template.getId(), ContentStructureType.letter)),
                         streamOfNullable(templateService.findById(template.getId(), ContentStructureType.accessibleHtml))
