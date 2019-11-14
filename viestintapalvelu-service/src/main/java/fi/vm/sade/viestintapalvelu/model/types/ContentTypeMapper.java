@@ -3,14 +3,16 @@ package fi.vm.sade.viestintapalvelu.model.types;
 import java.util.Optional;
 
 public class ContentTypeMapper {
+    public static final String CONTENT_TYPE_PDF = "application/pdf";
+    private static final String CONTENT_TYPE_HTML = "text/html";
     private static final String FILE_SUFFIX_PDF = ".pdf";
     private static final String FILE_SUFFIX_HTML = ".html";
 
-    public static Optional<String> getFileSuffix(ContentStructureType contentStructureType) {
-        switch (contentStructureType) {
-            case letter:
+    public static Optional<String> getFileSuffix(String contentType) {
+        switch (contentType) {
+            case CONTENT_TYPE_PDF:
                 return Optional.of(FILE_SUFFIX_PDF);
-            case accessibleHtml:
+            case CONTENT_TYPE_HTML:
                 return Optional.of(FILE_SUFFIX_HTML);
         }
         return Optional.empty();

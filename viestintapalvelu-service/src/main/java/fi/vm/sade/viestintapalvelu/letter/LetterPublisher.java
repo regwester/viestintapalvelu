@@ -205,9 +205,7 @@ class S3LetterPublisher implements LetterPublisher {
     }
 
     private static void validateFileSuffix(final LetterReceiverLetter letterReceiverLetter) {
-        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(
-                ContentStructureType.valueOf(letterReceiverLetter.getContentType())
-        );
+        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(letterReceiverLetter.getContentType());
         if (!fileSuffix.isPresent()) {
             throw new NullPointerException("Vastaanottajakirjeellä " + letterReceiverLetter.getId() + " oli tuntematon sisältötyyppi: " + letterReceiverLetter.getContentType());
         }
@@ -215,9 +213,7 @@ class S3LetterPublisher implements LetterPublisher {
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
         final String oidApplication = letter.getLetterReceivers().getOidApplication();
-        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(
-                ContentStructureType.valueOf(letter.getContentType())
-        );
+        final Optional<String> fileSuffix = ContentTypeMapper.getFileSuffix(letter.getContentType());
         final Path tempFile = Files.createTempFile(oidApplication, fileSuffix.get());
         Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
 
