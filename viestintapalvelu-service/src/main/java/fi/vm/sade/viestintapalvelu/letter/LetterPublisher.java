@@ -222,6 +222,7 @@ class S3LetterPublisher implements LetterPublisher {
         final PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucket)
                 .contentType(letter.getContentType())
+                .contentEncoding("UTF-8")
                 .contentLength(length)
                 .metadata(metadata)
                 .key(id)
