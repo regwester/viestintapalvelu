@@ -213,7 +213,7 @@ public class DocumentProviderTestData {
 
         byte[] letter = {'l','e','t','t','e','r'};
 
-        letterReceiverLetter.setContentType("application/msword");
+        letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_PDF);
 
         if (id != null) {
             letterReceiverLetter.setId(id);
@@ -221,7 +221,7 @@ public class DocumentProviderTestData {
 
         letterReceiverLetter.setLetter(letter);
         letterReceiverLetter.setLetterReceivers(letterReceivers);
-        letterReceiverLetter.setOriginalContentType("application/msword");
+        letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_PDF);
         letterReceiverLetter.setTimestamp(new Date());
         letterReceiverLetter.setVersion(new Long(0));
 

@@ -213,7 +213,7 @@ public class LetterServiceTest {
         LetterContent letterContent = letterService.getLetter(new Long(1));
 
         assertNotNull(letterContent);
-        assertTrue(letterContent.getContentType().equalsIgnoreCase("application/msword"));
+        assertTrue(letterContent.getContentType().equalsIgnoreCase(ContentTypes.CONTENT_TYPE_PDF));
         assertNotNull(letterContent.getContent());
         assertTrue(new String(letterContent.getContent()).equalsIgnoreCase("letter"));
     }

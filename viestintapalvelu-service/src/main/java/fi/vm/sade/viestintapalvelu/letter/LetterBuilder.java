@@ -335,22 +335,15 @@ public class LetterBuilder {
             fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
             Map<String, Object> batchReplacements,
             Map<String, Object> letterReplacements
-    ) {
-        determineTemplate(receiver, batch)
-                .forEach(template -> {
-                    try {
-                        constructPagesForLetterReceiverLetter(
-                                receiver,
-                                template,
-                                batchReplacements,
-                                letterReplacements
-                        );
-                    } catch (IOException e) {
-                        throw new UncheckedIOException(e);
-                    } catch (DocumentException | COSVisitorException e) {
-                        throw new RuntimeException(e);
-                    }
-                });
+    ) throws DocumentException, COSVisitorException, IOException {
+        final Template template = determineTemplate(receiver, batch);
+        if (ContentStructureType.valueOf(template.getType()) == ContentStructureType.accessibleHtml)
+            constructPagesForLetterReceiverLetter(
+                    receiver,
+                    template,
+                    batchReplacements,
+                    letterReplacements
+            );
     }
 
 
@@ -429,6 +422,7 @@ public class LetterBuilder {
         }
         letterReceiverLetter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
         letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_PDF);
+        letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_PDF);
     }
 
     public LetterReceiverLetter addHtmlDataToLetterReceiverLetter(
@@ -457,7 +451,8 @@ public class LetterBuilder {
             );
         }
         letterReceiverLetter.setLetter(currentDocument);
-        letterReceiverLetter.setContentType("text/html");
+        letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_HTML);
+        letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_HTML);
         return letterReceiverLetter;
     }
 
@@ -470,11 +465,25 @@ public class LetterBuilder {
         return attachmentService.saveReceiverAttachment(attachment);
     }
 
-    public Stream<Template> determineTemplate(
+    public Template determineTemplate(
             LetterReceivers receiver,
             fi.vm.sade.viestintapalvelu.model.LetterBatch batch
     ) {
-        return batch
+        ContentStructureType contentStructureType;
+        final String contentType = receiver.getLetterReceiverLetter().getContentType();
+        switch (contentType) {
+            case ContentTypes.CONTENT_TYPE_PDF:
+                contentStructureType = ContentStructureType.letter;
+                break;
+            case ContentTypes.CONTENT_TYPE_HTML:
+                contentStructureType = ContentStructureType.accessibleHtml;
+                break;
+            default:
+                final String errorMessage = "Vastaanottajalla " + receiver.getId() + " on tuntematon kirjepohjan tyyppi: " + contentType;
+                LOG.error(errorMessage);
+                throw new NullPointerException(errorMessage);
+        }
+        final java.util.Optional<Template> templateModel = batch
                 .getUsedTemplates()
                 .stream()
                 .map(UsedTemplate::getTemplate)
@@ -482,17 +491,14 @@ public class LetterBuilder {
                         (receiver.getWantedLanguage() == null && template.getLanguage().equals("FI"))
                                 || template.getLanguage().equals(receiver.getWantedLanguage())
                 )
-                .flatMap(template -> Stream.concat(
-                        streamOfNullable(templateService.findById(template.getId(), ContentStructureType.letter)),
-                        streamOfNullable(templateService.findById(template.getId(), ContentStructureType.accessibleHtml))
-                ));
-    }
-
-    private static <T> Stream<T> streamOfNullable(T nullable) {
-        return java.util.Optional
-                .ofNullable(nullable)
-                .map(Stream::of)
-                .orElseGet(Stream::empty);
+                .map(template -> templateService.findById(template.getId(), contentStructureType))
+                .findAny();
+        if (!templateModel.isPresent()) {
+            final String errorMessage = "Ei voitu konstruoida vastaanottajalle " + receiver.getId() + " kirjepohjaa sisältötyypillä " + contentType;
+            LOG.error(errorMessage);
+            throw new NullPointerException(errorMessage);
+        }
+        return templateModel.get();
     }
 
     public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {

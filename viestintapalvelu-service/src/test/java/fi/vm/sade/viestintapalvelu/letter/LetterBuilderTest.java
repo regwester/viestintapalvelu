@@ -17,11 +17,13 @@ package fi.vm.sade.viestintapalvelu.letter;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.Set;
 
 import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -73,6 +75,8 @@ public class LetterBuilderTest {
         template.setLanguage("FI");
 
         LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
+        receiver.getLetterReceiverLetter().setContentType(ContentTypes.CONTENT_TYPE_HTML);
+        receiver.getLetterReceiverLetter().setOriginalContentType(ContentTypes.CONTENT_TYPE_HTML);
         when(templateService.findById(any(Long.class), any(ContentStructureType.class)))
                 .thenReturn(DocumentProviderTestData.getTemplateWithType(ContentStructureType.accessibleHtml));
         byte[] htmlLetter = "html-sivun teksti".getBytes();
@@ -85,6 +89,7 @@ public class LetterBuilderTest {
     }
 
     @Test
+    @Ignore // Otetaan käyttöön kun PDF-generointi on taas päällä
     public void storesPDFAsBytesIntoLetterReceiverLetter() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
         LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
