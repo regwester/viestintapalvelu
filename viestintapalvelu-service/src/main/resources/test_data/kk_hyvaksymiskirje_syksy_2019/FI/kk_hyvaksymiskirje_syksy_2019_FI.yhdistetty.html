@@ -10,37 +10,74 @@
 
   <body>
     <header role="banner" class='header'>
-      <div class="row">
-        <div class="organisaatio">
+      <table>
+        <thead>
+          <tr>
+            <th>Lähettäjä:</th>
+            <th>Päiväys:</th>
+          </tr>
+        </thead>
+        <tbody>
           #if($hakijapalveluidenOsoite)
-          <p>
-            Lähettäjä:<br/>
-            $hakijapalveluidenOsoite.organisaationimi,<br/>
-            $hakijapalveluidenOsoite.addressline #if($hakijapalveluidenOsoite.postalCode != ''),<br/>
-            $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city #end
-          </p>
+          <tr>
+            <td class="organisaatio">
+              $hakijapalveluidenOsoite.organisaationimi
+            </td>
+            <td class="date">
+              $letterDate
+            </td>
+          <tr>
+            <td class="organisaatio">
+              $hakijapalveluidenOsoite.addressline
+            </td>
+          </tr>
+          <tr>
+            <td class="organisaatio">
+              #if($hakijapalveluidenOsoite.postalCode != '')
+              $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city
+              #end
+            </td>
+          </tr>
+          #else
+          <tr>
+            <td>
+            </td>
+            <td class="date">
+              $letterDate
+            </td>
+          </tr>
           #end
-        </div>
-        <div class="letterdate">
-          <div class="date">$letterDate</div>
-        </div>
-      </div>
-      <div class="row">
-        <div class='osoitetarra'>
-          <div>$osoite</div>
-          <div>
-            <br/>Oppijanumero:<br/>$hakijaOid
-          </div>
-        </div>
-        <div class="syntymaaika">
-          <div class="date">$syntymaaika</div>
-        </div>
-      </div>
+        </tbody>
+      </table>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Vastaanottaja:</th>
+            <th>Syntymäaika:</th>
+            <th>Oppijanumero:</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td rowspan="3" class="osoitetarra">
+              $osoite
+            </td>
+            <td class="syntymaaika">
+              <div class="date">$syntymaaika</div>
+            </td>
+            <td>
+              $hakijaOid
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </header>
     
     <main role="main">
       <h1 name="hyvaksymiskirje">$kirjeotsikko</h1>
-      <p><b>$koulu<br/>$koulutus</b></p>
+      <p>Oppilaitos: $koulu</p>
+      <p>Hakukohde: $koulutus</p>
       
       <p>Onneksi olkoon! Sinut on hyväksytty kevään 2019 korkeakoulujen yhteishaussa yllä mainittuun opiskelupaikkaan.</p>
 
@@ -49,7 +86,7 @@
         vielä tulla siihen valituksi, jos paikkoja vapautuu. Lisätietoa kunkin hakukohteesi valintaperusteista saat
         Opintopolku.fi -sivustolta sekä ko. korkeakoulusta.</p>
 
-      <h2>Opiskelupaikan vastaanottaminen</h2>
+      <h3>Opiskelupaikan vastaanottaminen</h3>
       <p>Vahvistaaksesi yllä mainitun opiskelupaikan sinun täytyy ottaa se vastaan <b>8.7.2019 kello 15.00</b> mennessä. Ellet ota
         paikkaa vastaan määräaikana, menetät sen. Ota opiskelupaikka vastaan ensisijaisesti sähköisesti Oma Opintopolku
         -palvelussa. Ohjeet löydät sivulta 3 sekä osoitteesta Opintopolku.fi: Koulutuksen valinta > Yhteishaku >
@@ -59,7 +96,7 @@
         suoraan sähköiseen ilmoittautumispalveluun. Korkeakoulukohtaiset ilmoittautumisohjeet ja tiedot opintojen
         aloittamisesta saat korkeakoulun verkkosivuilta: katso linkki "Ohjeet uusille opiskelijoille" sivun alaosassa.</p>
 
-      <h2>Valintapäätöksen ehdollisuus</h2>
+      <h3>Valintapäätöksen ehdollisuus</h3>
       <p>Sinua koskeva valintapäätös voi hakukohteen valintaperusteiden mukaan olla ehdollinen. Ehdollisia ovat valinnat,
         jotka on tehty sellaisen tutkinnon perusteella, josta ei vielä ole ollut saatavissa lopullista tutkintotodistusta
         tai jotka on tehty antamiesi, myöhemmin tarkistettavien tietojen perusteella (kuten ammattikorkeakoulujen
@@ -69,7 +106,7 @@
         on tehty vahvistamattomien ennakkoarvosanojen perusteella ja arvosanat laskevat. Jos ilmoittamasi tiedot
         osoittautuvat tarkistuksessa virheellisiksi, opiskelijavalintasi voidaan purkaa.</p>
 
-      <h2>Muutoksenhaku</h2>
+      <h3>Muutoksenhaku</h3>
       <p>Jos opiskelijavalinnassa ja valintaperusteiden soveltamisessa on mielestäsi tapahtunut virhe, voit vaatia siihen
         kirjallisesti oikaisua 14 vuorokauden kuluessa opiskelijavalinnan tuloksen julkistamisesta eli viimeistään <b>12.7.2019</b>
         ennen korkeakoulun aukioloajan päättymistä. Tutustu ensin kyseisen hakukohteen valintaperusteisiin sekä
@@ -81,18 +118,14 @@
       <p>Oikaisuvaatimus on osoitettava ko. hakukohteen korkeakoulun määrittelemälle toimielimelle ja toimitettava perille
         valintaperusteissa ilmoitettuun osoitteeseen edellä mainittuna määräaikana.</p>
 
-      <h2>Ohjeet uusille opiskelijoille</h2>
+      <h3>Ohjeet uusille opiskelijoille</h3>
       <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
-      <h2>Tervetuloa opiskelemaan!</h2>
 
-      <div style="text-align: center;">
-        <div class="date">$letterDate</div>
-      </div>
-      <div class="pull-left">$addressLabel.firstName <b>$addressLabel.lastName</b></div>
-      <div class="pull-right">$sivu_2_otsikko</div>
-      <br/>
+      <p>Tervetuloa opiskelemaan!</p>
+
+      <h2>$sivu_2_otsikko</h2>
+
       <p>Näet tässä hakukohteesi asettamassasi järjestyksessä</p>
-      <br/>
       <table>
         <thead>
           <tr>
@@ -159,7 +192,8 @@
       <p>Jos tarvitset apua valinnan tuloksen tulkitsemisessa tai tarkempaa tietoa hylkäysperusteistasi, ota yhteyttä ko.
         hakukohteen korkeakoulun hakijapalveluihin.</p>
 
-      <p>OPISKELUPAIKAN VASTAANOTTAMINEN SEKÄ ILMOITTAUTUMINEN OPISKELEMAAN</p>
+      <h2>OPISKELUPAIKAN VASTAANOTTAMINEN SEKÄ ILMOITTAUTUMINEN OPISKELEMAAN</h2>
+
       <blockquote>Muista sekä ottaa opiskelupaikka vastaan että ilmoittautua korkeakouluun määräaikana. Jos et toimi
         määräaikaan mennessä, menetät opiskelupaikkasi (Yliopistolaki 38 §, 43§ /Ammattikorkeakoululaki 28 c §, 32§). Ota
         opiskelupaikka vastaan ensisijaisesti sähköisesti Oma Opintopolku -palvelussa. Otettuasi paikan vastaan voit
@@ -167,7 +201,7 @@
         Opintopolku -palvelun kautta), tai muulla korkeakoulusi ilmoittamalla tavalla.
       </blockquote>
 
-      <h2>Opiskelupaikan vastaanottaminen</h2>
+      <h3>Opiskelupaikan vastaanottaminen</h3>
       <p>Vahvistaaksesi opiskelupaikan sinun täytyy ottaa se vastaan <b>8.7.2019 kello 15.00</b> mennessä. Voit tehdä
         opiskelupaikkaa koskevan vastaanottoilmoituksen vain kerran, etkä voi muuttaa tekemääsi ilmoitusta jälkikäteen. Voit
         vastaanottaa vain yhden korkeakoulupaikan samana lukukautena alkavasta koulutuksesta (1.8.-31.12.2019). Yhden
@@ -186,15 +220,15 @@
         vastaanotettuasi sinun täytyy lisäksi ilmoittautua hakukohteesi korkeakoulun asettamassa määräajassa läsnä tai
         poissa olevaksi opiskelijaksi lukuvuodeksi 2019-2020 tai menetät opiskeluoikeutesi.</p>
 
-      <h2>Korkeakouluun ilmoittautuminen</h2>
+      <h3>Korkeakouluun ilmoittautuminen</h3>
       <p>Voit ilmoittautua korkeakouluun joko sähköisesti valtakunnallisessa ilmoittautumispalvelussa opiskelupaikan
         vastaanoton
         yhteydessä tai muulla korkeakoulusi ilmoittamalla tavalla.</p>
       <p>Jos otat opiskelupaikan vastaan mutta jäät odottamaan hakukohdejärjestyksessä ylemmällä sijalla olevaa
         opiskelupaikkaa, voit
         ilmoittautua läsnä tai poissa olevaksi opiskelijaksi vasta, kun opiskelupaikkasi on vahvistunut. Tarkempia ohjeita
-        saat ilmoittautumispalvelusta sekä hakukohteesi korkeakoulusta (katso linkki "Ohjeet uusille opiskelijoille" sivun
-        alaosassa).</p>
+        saat ilmoittautumispalvelusta sekä hakukohteesi korkeakoulusta
+        (<a href="#ohjeet_uusille_opiskelijoille">katso linkki kappaleessa "Ohjeet uusille opiskelijoille"</a>).</p>
       <p>Huom! Jos olet lukuvuosimaksuvelvollinen ja haet vieraskieliseen koulutukseen, ilmoittautumisen edellytyksenä voi 
         olla lukuvuosimaksun maksaminen. Voit tarkistaa tämän korkeakoulusta</p>
       <p>Voit ilmoittautua ensimmäisenä opiskeluvuonna poissa olevaksi vain lakisääteisestä syystä. Hyväksyttyjä poissaolon
@@ -202,27 +236,42 @@
         Ilmoittautumisen tekemättä jättäminen johtaa opiskeluoikeuden menettämiseen. (Yliopistolaki 43
         §/Ammattikorkeakoululaki 32 §).</p>
 
-      <h2>Ohjeet uusille opiskelijoille</h2>
+      <h3 id="ohjeet_uusille_opiskelijoille">Ohjeet uusille opiskelijoille</h3>
       <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
 
-      <p>
-        <div class="pull-left"><b>OPISKELUPAIKAN VASTAANOTTOILMOITUS</b></div>
-        <div class="pull-right">$addressLabel.firstName <b>$addressLabel.lastName</b></div>
-      </p>
-      <div class="clear"></div>
-      <p><b>$koulu</b><br/><b>$koulutus</b></p>
+      <hr>
+
+      <h2>Opiskelupaikan vastaanottoilmoitus</h2>
+
+      <p>Opiskelija: $addressLabel.firstName <b>$addressLabel.lastName</b></p>
+      <p>Oppilaitos: $koulu</p>
+      <p>Hakukohde: $koulutus</p>
+
       $vastaanotto_1
-      <p class="selection">$vastaanotto_vaihtoehto_1</p>
-      <p class="selection">$vastaanotto_vaihtoehto_2</p>
-      <p class="selection">$vastaanotto_vaihtoehto_3</p>
+      <ul>
+        <li>
+          <span class="selection">$vastaanotto_vaihtoehto_1</span>
+        </li>
+        <li>
+          <span class="selection">$vastaanotto_vaihtoehto_2</span>
+        </li>
+        <li>
+          <span class="selection">$vastaanotto_vaihtoehto_3</span>
+        </li>
+      </ul>
       <p>Paikka ja päivämäärä: _________________________ ____.____.$vastaanotto_allekirjoitus_vuosi</p>
       <p>Allekirjoitus: ______________________________</p>
+
+      <hr>
 
     </main>
 
     <footer role="contentinfo">
       #if($hakijapalveluidenOsoite)
-      <div class="pull-left">
+      <div>
+        Hakijapalveluiden osoite:
+      </div>
+      <div>
         $hakijapalveluidenOsoite.organisaationimi,<br/>
         $hakijapalveluidenOsoite.addressline
         #if($hakijapalveluidenOsoite.postalCode != '')
@@ -231,6 +280,7 @@
         #end
       </div>
       #end
+
       <div class="pull-right">
         <br/>
         Hakemusnumero:<br/>
