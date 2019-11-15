@@ -17,6 +17,9 @@ public class LetterDownloadHelper {
         if (contentType.endsWith("/pdf")) {
             return ".pdf";
         }
+        if (contentType.equals(ContentTypes.CONTENT_TYPE_HTML)) {
+            return ".html";
+        }
         return "";
     }
 
@@ -26,5 +29,13 @@ public class LetterDownloadHelper {
         response.setHeader("Content-Length", String.valueOf(data.length));
         response.setHeader("Cache-Control", "private");
         return Response.ok(data).type(ContentTypes.CONTENT_TYPE_PDF).build();
+    }
+
+    public static Response downloadInlineResponse(final HttpServletResponse response, final byte[] letterContents) {
+        response.setHeader("Content-Type", ContentTypes.CONTENT_TYPE_HTML + "; encoding=UTF-8");
+        response.setHeader("Content-Disposition", "inline");
+        response.setHeader("Content-Length", String.valueOf(letterContents.length));
+        response.setHeader("Cache-Control", "private");
+        return Response.ok(letterContents).type(ContentTypes.CONTENT_TYPE_HTML).build();
     }
 }

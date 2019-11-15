@@ -158,8 +158,16 @@
                 <tr ng-repeat="recipient in reportedLetterDTO.letterReceivers">
                     <td>{{ recipient.name }}</td>
                     <td>{{ recipient.address1 }}, {{ recipient.postalCode }} {{ recipient.city | uppercase }}</td>
-                    <td><a ng-show="reportedLetterDTO.status != 'error'" 
-                    ng-href="/viestintapalvelu/api/v1/reporting/letter?id={{ recipient.letterReceiverLetterID }}">{{recipient.templateName}}.pdf</a>
+                    <td ng-show="reportedLetterDTO.status != 'error'">
+                        <a ng-if="recipient.contentType !== 'text/html'"
+                           ng-href="/viestintapalvelu/api/v1/reporting/letter?id={{ recipient.letterReceiverLetterID }}">
+                            {{recipient.templateName}}.pdf
+                        </a>
+                        <a ng-if="recipient.contentType === 'text/html'"
+                           ng-href="/viestintapalvelu/api/v1/reporting/letter?id={{ recipient.letterReceiverLetterID }}"
+                           target="_blank">
+                            {{recipient.templateName}}.html
+                        </a>
                     </td>
                 </tr>
                 </tbody>

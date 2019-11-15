@@ -202,9 +202,11 @@ public class LetterReportResource extends AsynchronousResource {
 
             LetterReceiverLetterDTO letterReceiverLetter = letterService.getLetterReceiverLetter(id);
             byte[] letterContents = letterReceiverLetter.getLetter();
-            return LetterDownloadHelper.downloadPdfResponse(letterReceiverLetter.getTemplateName() +
-                            LetterDownloadHelper.determineExtension(letterReceiverLetter.getContentType()), response,
-                    letterContents);
+            if (letterReceiverLetter.getContentType().equals(ContentTypes.CONTENT_TYPE_HTML)) {
+                return LetterDownloadHelper.downloadInlineResponse(response, letterContents);
+            }
+            final String filename = letterReceiverLetter.getTemplateName() + LetterDownloadHelper.determineExtension(letterReceiverLetter.getContentType());
+            return LetterDownloadHelper.downloadPdfResponse(filename, response, letterContents);
         } catch (Exception e) {
             return Response.status(Status.INTERNAL_SERVER_ERROR).entity(Constants.INTERNAL_SERVICE_ERROR).build();
         }
