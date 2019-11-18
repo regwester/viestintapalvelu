@@ -383,6 +383,8 @@ public class LetterBuilder {
                         letterReplacements
                 );
                 break;
+            default:
+                throw new NullPointerException("Ei voitu generoida kirjedataa vastaanottajalle " + receiver.getId() + " ja vastaanottajakirjeelle " + letter.getId());
         }
 
         return letter;
