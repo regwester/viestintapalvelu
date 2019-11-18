@@ -35,6 +35,7 @@ public class Contents implements Predicate<String> {
     public static final String ATTACHMENT = "liite";
     public static final String  TEST_PLEASE_IGNORE = "test_please_ignore";
     public static final String ACCESSIBLE_HTML_CONTENT = "accessible_html_content";
+    public static final String LETTER_CONTENT_CONTENT_NAME = "letter_content";
 
     protected static final String[] NON_ATTACHMENTS = new String[] { ASIOINTITILI_HEADER, ASIOINTITILI_CONTENT, ASIOINTITILI_SMS_CONTENT, EMAIL_SUBJECT,
             EMAIL_BODY };
@@ -56,11 +57,11 @@ public class Contents implements Predicate<String> {
     }
 
     public static Contents pdfLetterContents() {
-        return new Contents().exclude(NON_ATTACHMENTS);
+        return new Contents().include(LETTER_CONTENT_CONTENT_NAME);
     }
 
     public static Contents attachmentsFor(String templateNameAsMainContent) {
-        return pdfLetterContents().exclude(templateNameAsMainContent);
+        return new Contents().exclude(NON_ATTACHMENTS).exclude(templateNameAsMainContent);
     }
 
     public static Contents accessibleHtmlContents() {
