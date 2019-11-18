@@ -403,21 +403,27 @@ public class LetterBuilder {
                 .sorted()
                 .collect(Collectors.toList());
         for (TemplateContent tc : Contents.pdfLetterContents().filter(templateContents)) {
-            byte[] page = createPagePdf(
-                    template,
-                    tc.getContent().getBytes(),
-                    addressLabel,
-                    templateReplacements,
-                    batchReplacements,
-                    letterReplacements
-            );
-            if (letterReceiverLetter.getLetterReceivers().getEmailAddress() != null
-                    && !letterReceiverLetter.getLetterReceivers().getEmailAddress().isEmpty()
-                    && Contents.ATTACHMENT.equals(tc.getName())
-                    && letterReceivers.getLetterReceiverEmail() == null) {
-                saveLetterReceiverAttachment(tc.getName(), page, letterReceivers.getLetterReceiverLetter().getId());
+            try {
+                final byte[] page = createPagePdf(
+                        template,
+                        tc.getContent().getBytes(),
+                        addressLabel,
+                        templateReplacements,
+                        batchReplacements,
+                        letterReplacements
+                );
+                if (letterReceiverLetter.getLetterReceivers().getEmailAddress() != null
+                        && !letterReceiverLetter.getLetterReceivers().getEmailAddress().isEmpty()
+                        && Contents.ATTACHMENT.equals(tc.getName())
+                        && letterReceivers.getLetterReceiverEmail() == null) {
+                    saveLetterReceiverAttachment(tc.getName(), page, letterReceivers.getLetterReceiverLetter().getId());
+                }
+                currentDocument.addContent(page);
+            } catch (Exception e) {
+                final String errorMessage = "Ei voitu luoda PDF-dokumenttia vastaanottajakirjeelle " + letterReceiverLetter.getId() + " kun käytettiin kirjepohjaa " + template + " sisällöllä " + tc;
+                LOG.error(errorMessage, e);
+                throw e;
             }
-            currentDocument.addContent(page);
         }
         letterReceiverLetter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
         letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_PDF);
