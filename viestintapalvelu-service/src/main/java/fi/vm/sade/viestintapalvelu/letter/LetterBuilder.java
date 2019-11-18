@@ -337,13 +337,12 @@ public class LetterBuilder {
             Map<String, Object> letterReplacements
     ) throws DocumentException, COSVisitorException, IOException {
         final Template template = determineTemplate(receiver, batch);
-        if (ContentStructureType.valueOf(template.getType()) == ContentStructureType.accessibleHtml)
-            constructPagesForLetterReceiverLetter(
-                    receiver,
-                    template,
-                    batchReplacements,
-                    letterReplacements
-            );
+        constructPagesForLetterReceiverLetter(
+                receiver,
+                template,
+                batchReplacements,
+                letterReplacements
+        );
     }
 
 
