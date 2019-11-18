@@ -70,9 +70,6 @@ blockquote {
   padding-left: 1mm;
 }
 .header {
-  margin: 4mm 0 0 11mm;
-  height: 80mm;
-  width: 200mm;
 }
 .row {
   display: table-row;
@@ -143,17 +140,11 @@ p {
   position: absolute;
   margin-left: 0.2cm;
 }
-p.selection {
-  padding-left: 0.5cm;
+.opiskelupaikan-vastaanottoilmoitus-kaavake {
+  list-style-type: none
 }
-p.selection::before {
-  content: "";
-  border: 0.25mm solid #2C3A40;
-  width: 0.25cm;
-  height: 0.25cm;
-  margin-top: 0.8mm;
-  margin-left: 2mm;
-  position: absolute;
+.opiskelupaikan-vastaanottoilmoitus-kaavake__vaihtoehto:before {
+  content: "\2610";
 }
 .clear {
   clear: both;
