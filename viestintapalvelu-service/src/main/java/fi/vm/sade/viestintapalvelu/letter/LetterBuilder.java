@@ -32,6 +32,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.html.Cleaner;
 import fi.vm.sade.viestintapalvelu.letter.html.XhtmlCleaner;
@@ -137,21 +138,24 @@ public class LetterBuilder {
         return result;
     }
 
-    void initTemplateId(LetterBatchDetails batch) {
+    void initTemplateId(AsyncLetterBatchDto batch) {
         if (batch.getTemplateId() == null
                 && batch.getTemplateName() != null
                 && batch.getLanguageCode() != null) {
-            final Template template = templateService.getTemplateByName(
-                    new TemplateCriteriaImpl(
-                            batch.getTemplateName(),
-                            batch.getLanguageCode(),
-                            ContentStructureType.letter
-                    ).withApplicationPeriod(batch.getApplicationPeriod()),
-                    true
-            );
-            if (template != null) {
-                batch.setTemplateId(template.getId()); // Search was by name => update also to template Id
-            }
+            final Template template = batch
+                    .getContentStructureTypes()
+                    .stream()
+                    .map(contentStructureType ->
+                            new TemplateCriteriaImpl(
+                                    batch.getTemplateName(),
+                                    batch.getLanguageCode(),
+                                    contentStructureType
+                            ).withApplicationPeriod(batch.getApplicationPeriod())
+                    )
+                    .map(templateCriteria -> templateService.getTemplateByName(templateCriteria, true))
+                    .findFirst()
+                    .orElseThrow(() -> new NullPointerException("Ei voitu määrittää kirjepohjaa /async/letter -rajapintakutsulle parametreilla " + batch.toString()));
+            batch.setTemplateId(template.getId());
         }
     }
 

@@ -74,7 +74,7 @@ public class LetterResourceTest {
     @Test
     public void initializesTemplateId() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
-        verify(builder, times(1)).initTemplateId(any(LetterBatchDetails.class));
+        verify(builder, times(1)).initTemplateId(any(AsyncLetterBatchDto.class));
     }
     
     @Test
