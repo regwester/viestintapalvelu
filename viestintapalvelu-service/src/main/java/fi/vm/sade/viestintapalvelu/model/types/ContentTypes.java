@@ -1,5 +1,7 @@
 package fi.vm.sade.viestintapalvelu.model.types;
 
+import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+
 import java.util.Optional;
 
 public class ContentTypes {
@@ -16,5 +18,17 @@ public class ContentTypes {
                 return Optional.of(FILE_SUFFIX_HTML);
         }
         return Optional.empty();
+    }
+
+    public static Optional<ContentStructureType> getContentStructureType(final LetterReceiverLetter letterReceiverLetter) {
+        final String contentType = letterReceiverLetter.getContentType();
+        switch (contentType) {
+            case ContentTypes.CONTENT_TYPE_PDF:
+                return Optional.of(ContentStructureType.letter);
+            case ContentTypes.CONTENT_TYPE_HTML:
+                return Optional.of(ContentStructureType.accessibleHtml);
+            default:
+                return Optional.empty();
+        }
     }
 }
