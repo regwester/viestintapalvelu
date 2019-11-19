@@ -87,10 +87,10 @@ public class LetterBatchValidator {
         if (letters == null) {
             throw new IllegalArgumentException("Letter to be validated was null");
         }
-        if (letters.getTemplateId() == null && letters.getTemplate() == null
+        if (letters.getTemplateId() == null
+                && letters.getTemplate() == null
                 && (StringUtils.isBlank(letters.getTemplateName()) || StringUtils.isBlank(letters.getLanguageCode()))) {
-            throw new IllegalArgumentException("Invalid template parameters, name of template " + letters.getTemplateName() + ", language code: "
-                    + letters.getLanguageCode());
+            throw new IllegalArgumentException("Invalid template parameters, name of template " + letters.getTemplateName() + ", language code: " + letters.getLanguageCode());
         }
     }
 

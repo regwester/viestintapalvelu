@@ -142,14 +142,19 @@ public class LetterBuilder {
     }
 
     private void initTemplateId(LetterBatchDetails batch, Template template) {
-        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(new TemplateCriteriaImpl(batch.getTemplateName(),
-                            batch.getLanguageCode(), ContentStructureType.letter)
-                    .withApplicationPeriod(batch.getApplicationPeriod()), true);
+        if (template == null
+                && batch.getTemplateName() != null
+                && batch.getLanguageCode() != null) {
+            template = templateService.getTemplateByName(
+                    new TemplateCriteriaImpl(
+                            batch.getTemplateName(),
+                            batch.getLanguageCode(),
+                            ContentStructureType.letter
+                    ).withApplicationPeriod(batch.getApplicationPeriod()),
+                    true
+            );
             if (template != null) {
-                batch.setTemplateId(template.getId()); // Search was by name ==>
-                                                       // update also to
-                                                       // template Id
+                batch.setTemplateId(template.getId()); // Search was by name => update also to template Id
             }
         }
     }
