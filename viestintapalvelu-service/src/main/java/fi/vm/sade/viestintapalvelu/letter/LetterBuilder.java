@@ -139,11 +139,11 @@ public class LetterBuilder {
         return result;
     }
 
-    public void initTemplateId(LetterBatchDetails batch) {
+    void initTemplateId(LetterBatchDetails batch) {
         initTemplateId(batch, batch.getTemplate());
     }
 
-    public Template initTemplateId(LetterBatchDetails batch, Template template) {
+    private void initTemplateId(LetterBatchDetails batch, Template template) {
         if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
             template = templateService.getTemplateByName(new TemplateCriteriaImpl(batch.getTemplateName(),
                             batch.getLanguageCode(), ContentStructureType.letter)
@@ -154,13 +154,6 @@ public class LetterBuilder {
                                                        // template Id
             }
         }
-
-        if (template == null && batch.getTemplateId() != null) { // If not found
-                                                                 // by name
-            long templateId = batch.getTemplateId();
-            template = templateService.findById(templateId, ContentStructureType.letter);
-        }
-        return template;
     }
 
     public Map<String, Object> getTemplateReplacements(Template template) {
@@ -171,13 +164,13 @@ public class LetterBuilder {
         return replacements;
     }
 
-    public byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
-            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+    private byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                 Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         return documentBuilder.xhtmlToPDF(createPageHtml(template, pageContent, addressLabel, templReplacements, letterBatchReplacements, letterReplacements));
     }
 
-    public byte[] createPageHtml(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
-                                Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+    private byte[] createPageHtml(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                  Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         Map<String, Object> dataContext = createDataContext(XhtmlCleaner.INSTANCE,
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
@@ -432,7 +425,7 @@ public class LetterBuilder {
         letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_PDF);
     }
 
-    public LetterReceiverLetter addHtmlDataToLetterReceiverLetter(
+    private void addHtmlDataToLetterReceiverLetter(
             final LetterReceiverLetter letterReceiverLetter,
             final Template template,
             final AddressLabel addressLabel,
@@ -460,19 +453,18 @@ public class LetterBuilder {
         letterReceiverLetter.setLetter(currentDocument);
         letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_HTML);
         letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_HTML);
-        return letterReceiverLetter;
     }
 
-    private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
+    private void saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
         LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
         attachment.setName(Optional.fromNullable(name).or("liite") + ".pdf");
         attachment.setContentType(ContentTypes.CONTENT_TYPE_PDF);
         attachment.setContents(page);
         attachment.setLetterReceiverLetterId(letterReceiverLetterId);
-        return attachmentService.saveReceiverAttachment(attachment);
+        attachmentService.saveReceiverAttachment(attachment);
     }
 
-    public Template determineTemplate(
+    private Template determineTemplate(
             LetterReceivers receiver,
             fi.vm.sade.viestintapalvelu.model.LetterBatch batch
     ) {
@@ -508,7 +500,7 @@ public class LetterBuilder {
         return templateModel.get();
     }
 
-    public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
+    private Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
         Map<String, Object> templReplacements = new HashMap<>();
         for (LetterReceiverReplacement replacement : replacements) {
             templReplacements.put(replacement.getName(), replacement.getEffectiveValue(mapper));
@@ -516,7 +508,7 @@ public class LetterBuilder {
         return templReplacements;
     }
 
-    public static Map<String, Object> formReplacementMap(List<Replacement> replacements) {
+    private static Map<String, Object> formReplacementMap(List<Replacement> replacements) {
         Map<String, Object> templReplacements = new HashMap<>();
         for (Replacement templRepl : replacements) {
             templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
