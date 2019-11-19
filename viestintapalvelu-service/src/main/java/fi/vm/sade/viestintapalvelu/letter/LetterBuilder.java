@@ -292,22 +292,6 @@ public class LetterBuilder {
         return tulokset;
     }
 
-    private Map<String, Boolean> distinctColumns(List<Map<String, Object>> tulokset) {
-        Map<String, Boolean> printedColumns = new HashMap<>();
-        if (tulokset == null) {
-            return printedColumns;
-        }
-        for (Map<String, Object> haku : tulokset) {
-            if (haku == null) {
-                continue;
-            }
-            for (String column : haku.keySet()) {
-                printedColumns.put(column, true);
-            }
-        }
-        return printedColumns;
-    }
-
     private Map<String, Object> createIPostDataContext(final List<DocumentMetadata> documentMetadataList) {
         Map<String, Object> data = new HashMap<>();
         List<Map<String, Object>> metadataList = new ArrayList<>();
@@ -502,9 +486,4 @@ public class LetterBuilder {
         }
         return templReplacements;
     }
-
-    public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
-        this.objectMapperProvider = objectMapperProvider;
-    }
-
 }
