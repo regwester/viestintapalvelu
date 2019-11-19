@@ -1,230 +1,88 @@
-@page {
-  size: 210mm 297mm;
-  margin: 16mm 10mm 10mm 12mm;
-  @bottom-center {
-    vertical-align: top;
-    content: element(footer);
-  }
-}
-@font-face {
-  font-family: OpenSans;
-  font-size: 18px;
-  src: url(classpath:/fonts/Open_Sans/OpenSans-Regular.ttf);
-  -fs-pdf-font-embed: embed;
-  -fs-pdf-font-encoding: ISO-8859-15;
-}
-@font-face {
-  font-family: OpenSans-Semibold;
-  font-size: 18px;
-  src: url(classpath:/fonts/Open_Sans/OpenSans-Semibold.ttf);
-  -fs-pdf-font-embed: embed;
-  -fs-pdf-font-encoding: ISO-8859-15;
-}
-@font-face {
-  font-family: OpenSans-Bold;
-  font-size: 18px;
-  src: url(classpath:/fonts/Open_Sans/OpenSans-Bold.ttf);
-  -fs-pdf-font-embed: embed;
-  -fs-pdf-font-encoding: ISO-8859-15;
-}
-@font-face {
-  font-family: OpenSans-Italic;
-  font-size: 18px;
-  src: url(classpath:/fonts/Open_Sans/OpenSans-Italic.ttf);
-  -fs-pdf-font-embed: embed;
-  -fs-pdf-font-encoding: ISO-8859-15;
-}
-@font-face {
-  font-family: OpenSans-BoldItalic;
-  font-size: 18px;
-  src: url(classpath:/fonts/Open_Sans/OpenSans-BoldItalic.ttf);
-  -fs-pdf-font-embed: embed;
-  -fs-pdf-font-encoding: ISO-8859-15;
-}
-body {
+html {
   color: #2C3A40;
+  font-family: OpenSans, sans-serif;
   font-size: 18px;
-  font-family: OpenSans;
-  margin: 0;
+  line-height: 1.5;
+  margin-left: auto;
+  margin-right: auto;
+  max-width: 60em;
+  padding: 1em 3em;
 }
+
+dt, dd {
+  margin-bottom: 0.2em;
+}
+
+dt {
+  font-weight: 600;
+}
+
 b {
-  color: #2C3A40;
-  font-size: 18px;
-  font-family: OpenSans-Semibold;
-  font-weight: normal;
+  font-weight: 600;
 }
-a {
-  color: #2C3A40;
-}
-h2 {
-  color: #2C3A40;
-}
+
 blockquote {
   background-color: #ebebeb;
-  margin-top: 3mm;
-  margin-bottom: 0;
-  margin-left: 0;
-  margin-right: 0;
-  padding-top: 0;
-  padding-bottom: 1mm;
-  padding-left: 1mm;
-}
-.header {
-}
-.row {
-  display: table-row;
-}
-.organisaatio {
-  display: table-cell;
-  font-family: OpenSans-Semibold;
-  font-size: 18px;
   margin: 0;
-  padding: 0;
+  padding: 0.5em 1em;
 }
-.letterdate {
-  display: table-cell;
-  width: 10mm;
-  height: 26mm;
-  font-family: OpenSans-Semibold;
-  font-size: 18px;
-  margin: 0;
-  padding: 0;
-}
-.osoitetarra {
-  display: table-cell;
-  width: 70mm;
-  height: 37mm;
-  font-family: OpenSans-Semibold;
-  font-size: 18px;
-  margin: 0;
-  padding: 0;
-}
-.syntymaaika {
-  display: table-cell;
-  width: 10mm;
-  height: 37mm;
-  font-family: OpenSans-Semibold;
-  font-size: 18px;
-  margin: 0;
-  padding: 0;
-}
-.lahetysMerkinta {
-  font-size: 18px;
-}
-.pull-left {
-  float: left;
-  text-align: left;
-}
-.pull-right {
-  float: right;
-  text-align: left;
-}
-.signature {
-  font-size: 18px;
-  margin-left: 8.7cm;
-}
-.date {
-  margin-right: 2cm;
-  font-size: 18px;
-}
-p {
-  padding-bottom: 0;
-  margin-bottom: 0;
-}
-.hakijapalveluidenosoite {
-  width: 8cm;
-  padding-left: 2cm;
-}
-.hakijapalveluidenosoite::before {
-  content: "Käyntiosoite:";
-  position: absolute;
-  margin-left: 0.2cm;
-}
-.opiskelupaikan-vastaanottoilmoitus-kaavake {
-  list-style-type: none
-}
-.opiskelupaikan-vastaanottoilmoitus-kaavake__vaihtoehto:before {
-  content: "\2610";
-}
-.clear {
-  clear: both;
-}
-.sisalto {
-  clear: both;
-  line-height: 140%;
-}
+
 table {
   border-collapse: collapse;
 }
+
 th {
-  border-bottom: 0.3mm solid #2C3A40;
+  border-bottom: 0.1em solid #2C3A40;
 }
+
 tfoot tr td {
-  border-bottom: 0.3mm solid #2C3A40;
+  border-bottom: 0.1em solid #2C3A40;
 }
-.liitteet {
-  margin-left: 0.2cm;
-  margin-right: 0.2cm;
-}
-.cuthere {
-  margin-top: 0.4cm;
-  margin-bottom: 0.4cm;
-  border-bottom: 0.3mm dashed #2C3A40;
-}
+
 td, th {
-  padding: 5px;
-  font-family: OpenSans;
-  font-weight: normal;
-  color: #2C3A40;
+  font-weight: 400;
+  text-align: left;
   vertical-align: top;
+  padding: 0.5em;
 }
-td.numeerinen {
-  text-align: center;
-}
-.hylkayssyy, em {
-  font-family: OpenSans-Italic;
-}
-.peruuntumisensyy, em {
-  font-family: OpenSans-Italic;
-}
-.ehdollinensyy, em {
-  font-family: OpenSans-Italic;
-}
-.hyvaksytty .hylkayssyy .peruuntumisensyy .ehdollinensyy {
-  font-family: OpenSans-BoldItalic;
-}
-.hyvaksytty>td {
-  font-family: OpenSans-Bold;
-}
+
 tr.even {
   background: #ebebeb;
 }
+
 tbody tr, tbody td {
+  margin: 0;
+  padding: 0.5em 0.4em;
+}
+
+ul {
+  font-weight: 300;
   margin-top: 0;
-  margin-bottom: 0;
-  padding-top: 0;
-  padding-bottom: 0;
+  padding: 0 0.5em;
 }
-ol, ul {
-  padding-top: 0;
-  margin-top: 0;
-  font-weight: 100;
-  padding-left: 4mm;
-  margin-left: 2em;
+
+@media only print {
+  hr {
+    page-break-after: always;
+  }
 }
-ul.dash {
-  list-style: none;
-  margin-left: 0;
-  padding-left: 1em;
+
+.opiskelupaikan-vastaanottoilmoitus-kaavake {
+  list-style-type: none
 }
-ul.dash li:before {
-  display: inline-block;
-  content: "-";
-  width: 1em;
-  margin-left: -1em;
+
+.opiskelupaikan-vastaanottoilmoitus-kaavake__vaihtoehto::before {
+  content: "\2610";
 }
-.footer {
-  font-size: 18px;
-  position: running(footer);
-  margin-top: -1cm;
+
+.hylkayssyy, em {
+  font-style: italic;
+}
+
+.peruuntumisensyy, em {
+  font-style: italic;
+}
+
+.hyvaksytty > td {
+  font-weight: 600;
 }
