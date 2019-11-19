@@ -138,10 +138,7 @@ public class LetterBuilder {
     }
 
     void initTemplateId(LetterBatchDetails batch) {
-        initTemplateId(batch, batch.getTemplate());
-    }
-
-    private void initTemplateId(LetterBatchDetails batch, Template template) {
+        Template template = batch.getTemplate();
         if (template == null
                 && batch.getTemplateName() != null
                 && batch.getLanguageCode() != null) {
