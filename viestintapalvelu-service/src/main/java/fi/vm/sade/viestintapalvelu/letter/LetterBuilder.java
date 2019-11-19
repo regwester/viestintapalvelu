@@ -15,10 +15,6 @@
  */
 package fi.vm.sade.viestintapalvelu.letter;
 
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampEn;
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampFi;
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampSv;
-
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.common.base.Optional;
 import com.google.common.base.Supplier;
@@ -57,19 +53,21 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.stereotype.Service;
+
 import javax.inject.Singleton;
 import java.io.IOException;
-import java.io.UncheckedIOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
+
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampEn;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampFi;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampSv;
 
 @Service
 @Singleton
