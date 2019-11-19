@@ -31,9 +31,6 @@ public class LetterBatch implements LetterBatchDetails {
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
     private List<Letter> letters;
 
-    @ApiModelProperty(value = "Kirjepohja")
-    private Template template;
-
     @ApiModelProperty(value = "Kirjepohjan tunniste")
     private Long templateId;
 
@@ -95,14 +92,6 @@ public class LetterBatch implements LetterBatchDetails {
 
     public List<Letter> getLetters() {
         return letters;
-    }
-
-    public Template getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
     }
 
     public Long getTemplateId() {
@@ -191,7 +180,6 @@ public class LetterBatch implements LetterBatchDetails {
         result.setFetchTarget(fetchTarget);
         result.setOrganizationOid(organizationOid);
         result.setStoringOid(storingOid);
-        result.setTemplate(template);
         result.setTemplateId(templateId);
         result.setTemplateName(templateName);
         result.setTemplateReplacements(templateReplacements);
@@ -210,7 +198,7 @@ public class LetterBatch implements LetterBatchDetails {
 
     @Override
     public String toString() {
-        return "LetterBatch [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements=" + templateReplacements
+        return "LetterBatch [letters=" + letters + ", templateId=" + templateId + ", templateReplacements=" + templateReplacements
                 + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid + ", organizationOid=" + organizationOid
                 + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + "]";
     }

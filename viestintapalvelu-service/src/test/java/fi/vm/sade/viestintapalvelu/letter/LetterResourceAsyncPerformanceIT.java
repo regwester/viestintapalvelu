@@ -221,7 +221,6 @@ public class LetterResourceAsyncPerformanceIT {
         batch.setTemplateName("Test template");
         fi.vm.sade.viestintapalvelu.template.Template template = new fi.vm.sade.viestintapalvelu.template.Template();
         template.setId(templateId);
-        batch.setTemplate(template);
         batch.setLanguageCode("FI");
         batch.setIposti(true);
         batch.setTemplateId(templateId);

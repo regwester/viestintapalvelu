@@ -99,7 +99,6 @@ public class DocumentProviderTestData {
         letterBatch.setTag("test-tag");
         letterBatch.setTemplateId(new Long(1));
         letterBatch.setTemplateName("test-templateName");
-        letterBatch.setTemplate(getTemplate());
         letterBatch.setTemplateReplacements(getTemplateReplacements());
         letterBatch.setLetters(getLetters());
 
@@ -116,7 +115,6 @@ public class DocumentProviderTestData {
         letterBatch.setTag("test-tag");
         letterBatch.setTemplateId(new Long(1));
         letterBatch.setTemplateName("test-templateName");
-        letterBatch.setTemplate(getTemplate());
         letterBatch.setTemplateReplacements(getTemplateReplacements());
         letterBatch.setLetters(getAsyncLetterBatchLetters());
 
