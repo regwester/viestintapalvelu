@@ -432,24 +432,25 @@ public class LetterBuilder {
             final Map<String, Object> templateReplacements,
             final Map<String, Object> batchReplacements,
             final Map<String, Object> letterReplacements) throws IOException, DocumentException {
-
-        byte[] currentDocument = new byte[] {};
         final List<TemplateContent> templateContents = template
                 .getContents()
                 .stream()
                 .sorted()
                 .collect(Collectors.toList());
-        Iterator<TemplateContent> it = Contents.accessibleHtmlContents().filter(templateContents).iterator();
-        if (it.hasNext()) {
-            currentDocument = createPageHtml(
-                    template,
-                    it.next().getContent().getBytes(),
-                    addressLabel,
-                    templateReplacements,
-                    batchReplacements,
-                    letterReplacements
-            );
-        }
+        final TemplateContent templateContent = Contents
+                .accessibleHtmlContents()
+                .filter(templateContents)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new NullPointerException("Vastaanottajakirjeelle " + letterReceiverLetter.getId() + " ei voitu luoda saavutettavan HTML:n tarvitsemaa kirjepohjaa"));
+        final byte[] currentDocument = createPageHtml(
+                template,
+                templateContent.getContent().getBytes(),
+                addressLabel,
+                templateReplacements,
+                batchReplacements,
+                letterReplacements
+        );
         letterReceiverLetter.setLetter(currentDocument);
         letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_HTML);
         letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_HTML);
