@@ -62,7 +62,7 @@ ul {
 }
 
 @media only print {
-  hr {
+  article:not(:last-of-type) {
     page-break-after: always;
   }
 }
