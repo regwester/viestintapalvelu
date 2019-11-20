@@ -461,17 +461,21 @@ public class LetterBuilder {
         final ContentStructureType contentStructureType = ContentTypes
                 .getContentStructureType(letterReceiverLetter)
                 .orElseThrow(() -> new NullPointerException("Vastaanottajan " + receiver.getId() + " vastaanottajakirjeellä " + letterReceiverLetter.getId() + " on tuntematon kirjepohjan tyyppi " + contentType));
-        return batch
+        final Template template = batch
                 .getUsedTemplates()
                 .stream()
                 .map(UsedTemplate::getTemplate)
-                .filter(template ->
-                        (receiver.getWantedLanguage() == null && template.getLanguage().equals("FI"))
-                                || template.getLanguage().equals(receiver.getWantedLanguage())
+                .filter(templateModel ->
+                        (receiver.getWantedLanguage() == null && templateModel.getLanguage().equals("FI"))
+                                || templateModel.getLanguage().equals(receiver.getWantedLanguage())
                 )
-                .map(template -> templateService.findById(template.getId(), contentStructureType))
+                .map(templateModel -> templateService.findById(templateModel.getId(), contentStructureType))
                 .findAny()
-                .orElseThrow(() -> new NullPointerException("Ei voitu konstruoida vastaanottajalle " + receiver.getId() + " kirjepohjaa sisältötyypillä " + contentType));
+                .orElseGet(() -> templateService.findById(batch.getTemplateId(), contentStructureType));
+        if (template == null) {
+            throw new NullPointerException("Ei voitu konstruoida vastaanottajalle " + receiver.getId() + " kirjepohjaa sisältötyypillä " + contentType);
+        }
+        return template;
     }
 
     private Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
