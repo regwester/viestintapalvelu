@@ -286,7 +286,10 @@ public class LetterServiceImpl implements LetterService {
     private String getTemplateNameFromBatch(LetterBatchDetails letterBatch, final ContentStructureType contentStructureType) {
         fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch
                 .getLanguageCode(), contentStructureType));
-        return template != null ? template.getName() : templateDAO.findByIdAndState(letterBatch.getTemplateId(), State.julkaistu).getName();
+        if (template == null) {
+            throw new NullPointerException("Ei löydetty tietokannasta kirjepohjaa kirjelähetykselle " + letterBatch.toString());
+        }
+        return template.getName();
     }
 
     /* ------------ */
