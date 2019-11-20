@@ -9,6 +9,14 @@ html {
   padding: 1em 3em;
 }
 
+h1 {
+  font-size: 1.5em;
+}
+
+h2 {
+  font-size: 1em;
+}
+
 dt, dd {
   margin-bottom: 0.2em;
 }
