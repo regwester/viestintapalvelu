@@ -48,7 +48,7 @@ public class TemplateTestDataGenerator {
         String templateKeys = "kk_hyvaksymiskirje_syksy_2019";
         if(templateKeys != null) {
             for(String templateKey : templateKeys.split(",")) {
-                for (String language : asList("FI", "EN")) {
+                for (String language : asList("FI", "EN", "SV")) {
                     generateTemplate(templateKey, language);
                 }
             }
