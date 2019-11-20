@@ -16,15 +16,14 @@
             Lähettäjä
         </dt>
         <dd>
-            $hakijapalveluidenOsoite.organisaationimi
-        </dd>
-        <dd>
+            $hakijapalveluidenOsoite.organisaationimi <br/>
             $hakijapalveluidenOsoite.addressline
-        </dd>
-        <dd>
             #if($hakijapalveluidenOsoite.postalCode != '')
+            <br/>
             $hakijapalveluidenOsoite.postalCode $hakijapalveluidenOsoite.city
             #end
+        </dd>
+        <dd>
         </dd>
         #end
         <dt>
