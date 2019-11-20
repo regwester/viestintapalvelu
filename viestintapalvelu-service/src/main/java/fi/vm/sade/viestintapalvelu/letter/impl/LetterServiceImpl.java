@@ -57,6 +57,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
+import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
@@ -265,13 +266,21 @@ public class LetterServiceImpl implements LetterService {
                             .stream()
                             .map(LetterDetails::getLanguageCode)
                             .distinct()
-                            .map(languageCode -> templateDAO.findTemplate(
-                                    new TemplateCriteriaImpl(
-                                            templateName,
-                                            languageCode,
-                                            contentStructureType
-                                    )
-                            ))
+                            .map(languageCode -> {
+                                final Template template = templateDAO.findTemplate(
+                                        new TemplateCriteriaImpl(
+                                                templateName,
+                                                languageCode,
+                                                contentStructureType
+                                        )
+                                );
+                                if (template == null) {
+                                    logger.warn("Ei löydetty kirjepohjaa nimellä " + templateName + ", kielellä " + languageCode + " ja sisältötyypillä " + contentStructureType + " kirjelähetykselle " + letterB.getId());
+                                } else {
+                                    logger.info("Löydettiin kirjepohja " + template.getId() + " haettaessa kirjelähetykselle " + letterB.getId() + " kirjepohjaa nimellä " + templateName + ", kielellä " + languageCode + " ja sisältötyypillä " + contentStructureType);
+                                }
+                                return template;
+                            })
                             .filter(Objects::nonNull)
                             .map(template -> {
                                 final UsedTemplate usedTemplate = new UsedTemplate();
