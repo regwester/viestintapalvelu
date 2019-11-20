@@ -17,10 +17,6 @@ dt {
   font-weight: 600;
 }
 
-b {
-  font-weight: 600;
-}
-
 blockquote {
   background-color: #ebebeb;
   margin: 0;
@@ -59,6 +55,10 @@ ul {
   font-weight: 300;
   margin-top: 0;
   padding: 0 0.5em;
+}
+
+.bold {
+  font-weight: 600;
 }
 
 @media only print {
