@@ -121,11 +121,6 @@
             <p>The request for rectification must be addressed to a recipient defined by the higher education institution and must
                 be submitted to the address stated in the admission criteria by the deadline mentioned above.</p>
 
-            #if($ohjeetUudelleOpiskelijalle)
-            <h2 id="ohjeet_uusille_opiskelijoille">Instructions for new students</h2>
-            <p>${ohjeetUudelleOpiskelijalle}</p>
-            #end
-
             <p>Welcome to study!</p>
         </section>
 
@@ -270,7 +265,7 @@
             <p>If you confirm the study place but remain on the waiting list for a study place higher on your preference list, you
                 can only register as an attending or a non-attending student after your study place has been confirmed by the higher
                 education institution. More detailed instructions on how to register can be found from the registration service and
-                the higher education institution you have applied to (<a href="#ohjeet_uusille_opiskelijoille_2">see the link on chapter "Instructions for new students"</a>).</p>
+                the higher education institution you have applied to (<a href="#ohjeet_uusille_opiskelijoille">see the link on chapter "Instructions for new students"</a>).</p>
             <p>NB! If you are required to pay tuition fees, you cannot register for the academic year before you have completed
                 your payment. You can check this from the higher education institution.</p>
             <p>You can register as non-attending for the first academic year only for statutory reasons, that is military or
@@ -279,7 +274,7 @@
         </section>
 
         <section>
-            <h2 id="ohjeet_uusille_opiskelijoille_2">Instructions for new students</h2>
+            <h2 id="ohjeet_uusille_opiskelijoille">Instructions for new students</h2>
             <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
         </section>
     </article>
