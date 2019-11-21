@@ -142,7 +142,7 @@ public class LetterBuilder {
         if (batch.getTemplateId() == null
                 && batch.getTemplateName() != null
                 && batch.getLanguageCode() != null) {
-            final Template template = batch
+            batch
                     .getContentStructureTypes()
                     .stream()
                     .map(contentStructureType ->
@@ -154,8 +154,8 @@ public class LetterBuilder {
                     )
                     .map(templateCriteria -> templateService.getTemplateByName(templateCriteria, true))
                     .findFirst()
-                    .orElseThrow(() -> new NullPointerException("Ei voitu määrittää kirjepohjaa /async/letter -rajapintakutsulle parametreilla " + batch.toString()));
-            batch.setTemplateId(template.getId());
+                    .map(Template::getId)
+                    .ifPresent(batch::setTemplateId);
         }
     }
 
@@ -461,21 +461,17 @@ public class LetterBuilder {
         final ContentStructureType contentStructureType = ContentTypes
                 .getContentStructureType(letterReceiverLetter)
                 .orElseThrow(() -> new NullPointerException("Vastaanottajan " + receiver.getId() + " vastaanottajakirjeellä " + letterReceiverLetter.getId() + " on tuntematon kirjepohjan tyyppi " + contentType));
-        final Template template = batch
+        if (receiver.getWantedLanguage() == null) {
+            return templateService.findById(batch.getTemplateId(), contentStructureType);
+        }
+        return batch
                 .getUsedTemplates()
                 .stream()
                 .map(UsedTemplate::getTemplate)
-                .filter(templateModel ->
-                        (receiver.getWantedLanguage() == null && templateModel.getLanguage().equals("FI"))
-                                || templateModel.getLanguage().equals(receiver.getWantedLanguage())
-                )
-                .map(templateModel -> templateService.findById(templateModel.getId(), contentStructureType))
-                .findAny()
-                .orElseGet(() -> templateService.findById(batch.getTemplateId(), contentStructureType));
-        if (template == null) {
-            throw new NullPointerException("Ei voitu konstruoida vastaanottajalle " + receiver.getId() + " kirjepohjaa sisältötyypillä " + contentType);
-        }
-        return template;
+                .filter(template -> template.getLanguage().equals(receiver.getWantedLanguage()))
+                .map(template -> templateService.findById(template.getId(), contentStructureType))
+                .findFirst()
+                .orElseThrow(() -> new NullPointerException("Ei voitu konstruoida vastaanottajalle " + receiver.getId() + " kirjepohjaa sisältötyypillä " + contentType));
     }
 
     private Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {

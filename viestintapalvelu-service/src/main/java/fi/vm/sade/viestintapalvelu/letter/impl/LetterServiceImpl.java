@@ -92,6 +92,7 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import java.util.zip.DataFormatException;
 
 import static org.joda.time.DateTime.now;
@@ -256,31 +257,30 @@ public class LetterServiceImpl implements LetterService {
         }
     }
 
-    private Set<UsedTemplate> parseUsedTemplates(LetterBatchDetails letterBatch, LetterBatch letterB, final List<ContentStructureType> contentStructureTypes) {
+    private Set<UsedTemplate> parseUsedTemplates(
+            LetterBatchDetails letterBatch,
+            LetterBatch letterB,
+            final List<ContentStructureType> contentStructureTypes) {
+        final Set<String> languageCodes = Stream.concat(
+                letterBatch
+                        .getLetters()
+                        .stream()
+                        .map(LetterDetails::getLanguageCode),
+                Stream.of(letterBatch.getLanguageCode())
+        )
+                .collect(Collectors.toSet());
         return contentStructureTypes
                 .stream()
                 .flatMap(contentStructureType -> {
                     final String templateName = getTemplateNameFromBatch(letterBatch, contentStructureType);
-                    return letterBatch
-                            .getLetters()
+                    return languageCodes
                             .stream()
-                            .map(LetterDetails::getLanguageCode)
-                            .distinct()
-                            .map(languageCode -> {
-                                final Template template = templateDAO.findTemplate(
-                                        new TemplateCriteriaImpl(
-                                                templateName,
-                                                languageCode,
-                                                contentStructureType
-                                        )
-                                );
-                                if (template == null) {
-                                    logger.warn("Ei löydetty kirjepohjaa nimellä " + templateName + ", kielellä " + languageCode + " ja sisältötyypillä " + contentStructureType + " kirjelähetykselle " + letterB.getId());
-                                } else {
-                                    logger.info("Löydettiin kirjepohja " + template.getId() + " haettaessa kirjelähetykselle " + letterB.getId() + " kirjepohjaa nimellä " + templateName + ", kielellä " + languageCode + " ja sisältötyypillä " + contentStructureType);
-                                }
-                                return template;
-                            })
+                            .map(languageCode -> new TemplateCriteriaImpl(
+                                    templateName,
+                                    languageCode,
+                                    contentStructureType
+                            ))
+                            .map(templateCriteria -> templateDAO.findTemplate(templateCriteria))
                             .filter(Objects::nonNull)
                             .map(template -> {
                                 final UsedTemplate usedTemplate = new UsedTemplate();
@@ -293,12 +293,17 @@ public class LetterServiceImpl implements LetterService {
     }
 
     private String getTemplateNameFromBatch(LetterBatchDetails letterBatch, final ContentStructureType contentStructureType) {
-        fi.vm.sade.viestintapalvelu.model.Template template = templateDAO.findTemplate(new TemplateCriteriaImpl(letterBatch.getTemplateName(), letterBatch
-                .getLanguageCode(), contentStructureType));
-        if (template == null) {
-            throw new NullPointerException("Ei löydetty tietokannasta kirjepohjaa kirjelähetykselle " + letterBatch.toString());
-        }
-        return template.getName();
+        return java.util.Optional.of(
+                templateDAO.findTemplate(
+                        new TemplateCriteriaImpl(
+                                letterBatch.getTemplateName(),
+                                letterBatch.getLanguageCode(),
+                                contentStructureType
+                        )
+                )
+        )
+                .orElseGet(() -> templateDAO.findByIdAndState(letterBatch.getTemplateId(), State.julkaistu))
+                .getName();
     }
 
     /* ------------ */
