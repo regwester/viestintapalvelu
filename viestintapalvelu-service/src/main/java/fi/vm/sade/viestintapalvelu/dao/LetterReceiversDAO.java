@@ -63,6 +63,6 @@ public interface LetterReceiversDAO extends JpaDAO<LetterReceivers, Long> {
      */
     Long findNumberOfReciversByLetterBatchID(Long letterBatchID, String query);
 
-    
-    List<Long> findLetterRecieverIdsByLetterBatchId(long letterBatchId);
+
+    List<Long> findLetterRecieverIdsByLetterBatchIdForIpostiProcessing(long letterBatchId);
 }

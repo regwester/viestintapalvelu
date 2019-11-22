@@ -57,7 +57,6 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.LetterReplacement;
-import fi.vm.sade.viestintapalvelu.model.Template;
 import fi.vm.sade.viestintapalvelu.model.Template.State;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
@@ -796,7 +795,7 @@ public class LetterServiceImpl implements LetterService {
         logger.info("splitBatchForIpostProcessing {}", letterBatchId);
 
         LetterBatchSplitedIpostDto job = new LetterBatchSplitedIpostDto();
-        List<Long> allReceiverIds = letterReceiversDAO.findLetterRecieverIdsByLetterBatchId(letterBatchId);
+        List<Long> allReceiverIds = letterReceiversDAO.findLetterRecieverIdsByLetterBatchIdForIpostiProcessing(letterBatchId);
         List<List<Long>> splitted = CollectionHelper.split(allReceiverIds, MAX_IPOST_CHUNK_SIZE);
         int orderNumber = 1;
         for (List<Long> receiverIds : splitted) {
