@@ -224,7 +224,12 @@ public class PDFPrinterResource extends AsynchronousResource {
             jsoupDoc.outputSettings(new OutputSettings().escapeMode(EscapeMode.xhtml));
             String parsedSource = jsoupDoc.toString();
             byte[] pdf = documentBuilder.xhtmlToPDF(parsedSource.getBytes());
-            PdfDocument doc = new PdfDocument(null, getLanguage(pdf), pdf, null);
+            PdfDocument doc = new PdfDocument(
+                    null,
+                    getLanguage(pdf),
+                    new PdfDocument.FrontPageData(pdf),
+                    null
+            );
             pdfs.add(doc);
         }
         MergedPdfDocument mPdf = documentBuilder.merge(pdfs);

@@ -134,7 +134,7 @@ public class LetterBuilder {
                         null,
                         null,
                         null,
-                        l.getLetter()
+                        new PdfDocument.ContentData(l.getLetter())
                 );
                 result.write(document);
             }
@@ -406,7 +406,7 @@ public class LetterBuilder {
                         && letterReceivers.getLetterReceiverEmail() == null) {
                     saveLetterReceiverAttachment(tc.getName(), page, letterReceivers.getLetterReceiverLetter().getId());
                 }
-                currentDocument.addContent(page);
+                currentDocument.addContent(new PdfDocument.ContentData(page));
             } catch (Exception e) {
                 final String errorMessage = "Ei voitu luoda PDF-dokumenttia vastaanottajakirjeelle " + letterReceiverLetter.getId() + " kun käytettiin kirjepohjaa " + template + " sisällöllä " + tc;
                 LOG.error(errorMessage, e);

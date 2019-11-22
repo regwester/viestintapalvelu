@@ -27,26 +27,31 @@ import fi.vm.sade.viestintapalvelu.api.address.AddressLabel;
 public class PdfDocument {
     private final String language;
     private AddressLabel addressLabel;
-    private byte[] frontPage;
-    private byte[] attachment;
-    private final List<byte[]> contents;
+    private final FrontPageData frontPage;
+    private final AttachmentData attachment;
+    private final List<ContentData> contents;
 
     public PdfDocument(AddressLabel addressLabel) {
-        this(addressLabel, null, null, null);
+        this(
+                addressLabel,
+                null,
+                (FrontPageData) null,
+                (AttachmentData) null
+        );
     }
 
     public PdfDocument(
             AddressLabel addressLabel,
             String language,
-            byte[] frontPage,
-            byte[] attachment,
-            byte[]... contents) {
+            FrontPageData frontPage,
+            AttachmentData attachment,
+            ContentData... contents) {
         this.addressLabel = addressLabel;
         this.language = language;
         this.frontPage = frontPage;
         this.attachment = attachment;
         this.contents = new ArrayList<>();
-        Collections.addAll(this.contents, Optional.ofNullable(contents).orElse(new byte[][] {}));
+        Collections.addAll(this.contents, Optional.ofNullable(contents).orElse(new ContentData[] {}));
     }
 
     public AddressLabel getAddressLabel() {
@@ -58,16 +63,16 @@ public class PdfDocument {
     }
 
     public InputStream getContentStream(int index) {
-        return new ByteArrayInputStream(contents.get(index));
+        return new ByteArrayInputStream(contents.get(index).getContentData());
     }
 
-    public void addContent(byte[] content) {
+    public void addContent(ContentData content) {
         contents.add(content);
     }
 
     public InputStream getFrontPage() {
         if (frontPage != null) {
-            return new ByteArrayInputStream(frontPage);
+            return new ByteArrayInputStream(frontPage.getFrontPageData());
         }
         return null;
     }
@@ -75,7 +80,7 @@ public class PdfDocument {
     public InputStream getAttachment() {
         // There are no attachments in e.g. koekutsukirje
         if (attachment != null) {
-            return new ByteArrayInputStream(attachment);
+            return new ByteArrayInputStream(attachment.getAttachmentData());
         }
         return null;
 
@@ -83,5 +88,41 @@ public class PdfDocument {
 
     public String getLanguage() {
         return language;
+    }
+
+    public static class FrontPageData {
+        private final byte[] frontPageData;
+
+        public FrontPageData(final byte[] frontPageData) {
+            this.frontPageData = frontPageData;
+        }
+
+        private byte[] getFrontPageData() {
+            return frontPageData;
+        }
+    }
+
+    public static class AttachmentData {
+        private final byte[] attachmentData;
+
+        public AttachmentData(final byte[] attachmentData) {
+            this.attachmentData = attachmentData;
+        }
+
+        private byte[] getAttachmentData() {
+            return attachmentData;
+        }
+    }
+
+    public static class ContentData {
+        private final byte[] contentData;
+
+        public ContentData(final byte[] contentData) {
+            this.contentData = contentData;
+        }
+
+        private byte[] getContentData() {
+            return contentData;
+        }
     }
 }

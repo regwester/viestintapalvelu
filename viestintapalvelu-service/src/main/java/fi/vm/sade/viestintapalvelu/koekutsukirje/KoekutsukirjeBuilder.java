@@ -77,7 +77,7 @@ public class KoekutsukirjeBuilder {
             source.add(new PdfDocument(
                     kirje.getAddressLabel(),
                     language.orElse(MergedPdfDocument.FALLBACK_PDF_LANGUAGE),
-                    frontPage,
+                    new PdfDocument.FrontPageData(frontPage),
                     null)
             );
         }
