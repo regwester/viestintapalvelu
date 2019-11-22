@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
+import org.powermock.core.classloader.annotations.PowerMockIgnore;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
 import org.springframework.security.core.Authentication;
@@ -42,6 +43,7 @@ import static org.mockito.Mockito.when;
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(ReportedMessageConverter.class)
 @ContextConfiguration("/test-bundle-context.xml")
+@PowerMockIgnore("javax.security.*")
 public class ReportedMessageConverterTest {
     private ReportedMessageConverter reportedMessageConverter;
     @Mock

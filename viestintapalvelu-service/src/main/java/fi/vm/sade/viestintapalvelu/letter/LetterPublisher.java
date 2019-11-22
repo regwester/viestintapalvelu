@@ -1,6 +1,7 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import com.google.common.collect.Lists;
+
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
@@ -17,7 +18,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.async.AsyncRequestProvider;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -228,7 +229,7 @@ class S3LetterPublisher implements LetterPublisher {
                 .key(id)
                 .build();
 
-        AsyncRequestProvider asyncRequestProvider = AsyncRequestProvider.fromFile(tempFile);
+        AsyncRequestBody asyncRequestProvider = AsyncRequestBody.fromFile(tempFile);
         try(S3AsyncClient client = getClient()) {
             return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
                 if(putObjectResponse == null) {

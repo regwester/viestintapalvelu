@@ -20,6 +20,7 @@ import java.util.List;
 
 import javax.persistence.NoResultException;
 
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -48,6 +49,14 @@ import static org.junit.Assert.*;
 public class TemplateDAOTest {
     @Autowired
     private TemplateDAO templateDAO;
+
+    @Autowired
+    private StructureDAO structureDAO;
+
+    @Before
+    public void clearDanglingStructuresFromDb() {
+        structureDAO.findAll().forEach(structureDAO::remove);
+    }
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuFound() {

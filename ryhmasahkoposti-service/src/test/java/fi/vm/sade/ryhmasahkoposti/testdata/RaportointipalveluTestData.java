@@ -129,6 +129,7 @@ public class RaportointipalveluTestData {
     public static EmailRecipientDTO getEmailRecipientDTO() {
         EmailRecipientDTO emailRecipientDTO = new EmailRecipientDTO();
 
+        emailRecipientDTO.setRecipientID(-1L);
         emailRecipientDTO.setOid("1.2.246.562.24.34397748041");
         emailRecipientDTO.setOidType("oppilas");
         emailRecipientDTO.setEmail("vastaan.ottaja@sposti.fi");
@@ -140,6 +141,7 @@ public class RaportointipalveluTestData {
     public static EmailRecipientDTO getEmailRecipientDTO(EmailMessageDTO message) {
         EmailRecipientDTO recipient = getEmailRecipientDTO();
         recipient.setEmailMessageID(message.getMessageID());
+        recipient.setLetterHash("hasneededfortestingwithnewmockito");
         return recipient;
     }
 

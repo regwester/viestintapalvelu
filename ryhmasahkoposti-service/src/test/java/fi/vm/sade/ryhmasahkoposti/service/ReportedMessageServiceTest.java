@@ -19,6 +19,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.when;
@@ -91,7 +92,7 @@ public class ReportedMessageServiceTest {
         List<ReportedMessage> reportedMessages = new ArrayList<ReportedMessage>();
         reportedMessages.add(RaportointipalveluTestData.getReportedMessage());
 
-        when(mockedReportedMessageDAO.findByOrganizationOids(any(List.class), any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
+        when(mockedReportedMessageDAO.findByOrganizationOids(eq(null), any(PagingAndSortingDTO.class))).thenReturn(reportedMessages);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
         pagingAndSorting.setSortedBy("sendingStarted");

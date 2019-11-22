@@ -9,13 +9,18 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.async.AsyncRequestProvider;
-import software.amazon.awssdk.async.AsyncResponseHandler;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
+import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.GetObjectRequest;
+import software.amazon.awssdk.services.s3.model.GetObjectResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import javax.annotation.PostConstruct;
 import java.io.IOException;
@@ -25,7 +30,12 @@ import java.nio.file.StandardOpenOption;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
@@ -108,7 +118,7 @@ class OphS3Client {
                 .metadata(metadata)
                 .key(documentId.getDocumentId())
                 .build();
-        AsyncRequestProvider asyncRequestProvider = AsyncRequestProvider.fromFile(tempFile);
+        AsyncRequestBody asyncRequestProvider = AsyncRequestBody.fromFile(tempFile);
         try(S3AsyncClient client = getClient()) {
             CompletableFuture<PutObjectResponse> completableFuture = client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
                 try {
@@ -122,10 +132,10 @@ class OphS3Client {
     }
 
     Download getObject(DocumentId documentId) {
-
-        AsyncResponseHandler<GetObjectResponse, byte[]> handler = AsyncResponseHandler.toByteArray();
+        AsyncResponseTransformer handler = AsyncResponseTransformer.toBytes();
         try(S3AsyncClient client = getClient()) {
-            CompletableFuture<byte[]> fullObject = getObjectContents(client, documentId, handler);
+            AsyncResponseTransformer<GetObjectResponse, byte[]> castHandler = (AsyncResponseTransformer<GetObjectResponse, byte[]>) handler;
+            CompletableFuture<byte[]> fullObject = getObjectContents(client, documentId, castHandler);
             Header header = headObject(client, documentId).join();
             return new Download(header.getContentType(), header.getFilename(), fullObject.join());
         }
@@ -169,7 +179,7 @@ class OphS3Client {
     }
 
 
-    private CompletableFuture<byte[]> getObjectContents(S3AsyncClient client, DocumentId id, AsyncResponseHandler<GetObjectResponse, byte[]> asyncResponseHandler) {
+    private CompletableFuture<byte[]> getObjectContents(S3AsyncClient client, DocumentId id, AsyncResponseTransformer<GetObjectResponse, byte[]> asyncResponseHandler) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
         return client.getObject(getObjectRequest, asyncResponseHandler);
 

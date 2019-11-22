@@ -10,7 +10,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
-import fi.vm.sade.javautils.legacy_caching_rest_client.CachingRestClient;
 import fi.vm.sade.ryhmasahkoposti.api.dto.TemplateDTO;
 import org.apache.commons.io.IOUtils;
 import org.apache.http.Header;
@@ -72,7 +71,7 @@ public class ViestintapalveluRestClientTest {
     public void templateRequestSetsCallerId() throws IOException {
         when(mockHttpClient.execute(any(HttpUriRequest.class), any(HttpContext.class)))
             .then((Answer<HttpResponse>) invocation -> {
-                HttpUriRequest request = invocation.getArgumentAt(0, HttpUriRequest.class);
+                HttpUriRequest request = invocation.getArgument(0, HttpUriRequest.class);
                 Header callerIdHeader = request.getLastHeader("Caller-Id");
                 assertNotNull(callerIdHeader);
                 assertThat(callerIdHeader.getValue(), containsString("ryhmasahkoposti"));

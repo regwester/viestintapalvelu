@@ -208,7 +208,7 @@ public class GroupEmailReportingServiceTest {
         when(mockedFileItem.getContentType()).thenReturn("application/pdf");
         when(mockedFileItem.get()).thenReturn(sisalto);
 
-        when(mockedReportedAttachmentService.saveReportedAttachment(any(ReportedAttachment.class))).thenReturn(new Long(1));
+        when(mockedReportedAttachmentService.saveReportedAttachment(eq(null))).thenReturn(new Long(1));
 
         Long liiteID = groupEmailReportingService.saveAttachment(mockedFileItem);
 
@@ -288,7 +288,7 @@ public class GroupEmailReportingServiceTest {
         EmailMessageDTO mockedEmailMessageDTO = RaportointipalveluTestData.getEmailMessageDTO();
 
         when(mockedReportedMessageService.getReportedMessage(any(Long.class))).thenReturn(reportedMessage);
-        when(mockedEmailMessageDTOConverter.convert(any(ReportedMessage.class), any(List.class), any(List.class))).thenReturn(mockedEmailMessageDTO);
+        when(mockedEmailMessageDTOConverter.convert(any(ReportedMessage.class), any(List.class), eq(null))).thenReturn(mockedEmailMessageDTO);
 
         EmailMessageDTO emailMessageDTO = groupEmailReportingService.getMessage(1L);
 

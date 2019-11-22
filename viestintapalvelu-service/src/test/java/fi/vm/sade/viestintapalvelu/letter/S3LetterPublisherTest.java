@@ -1,5 +1,10 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyLong;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
+
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
@@ -15,10 +20,19 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
-import software.amazon.awssdk.async.AsyncRequestProvider;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
-import software.amazon.awssdk.services.s3.model.*;
+import software.amazon.awssdk.services.s3.model.HeadBucketRequest;
+import software.amazon.awssdk.services.s3.model.HeadBucketResponse;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Request;
+import software.amazon.awssdk.services.s3.model.ListObjectsV2Response;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectResponse;
+import software.amazon.awssdk.services.s3.model.S3Object;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -27,11 +41,6 @@ import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 import java.util.stream.LongStream;
-
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyLong;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = S3LetterPublisherTest.LetterPublishTestConfig.class)
@@ -100,7 +109,7 @@ public class S3LetterPublisherTest {
             batches.put(2l, batch3);
 
             when(letterBatchDAO.read(anyLong())).then(answer -> {
-                long id = answer.getArgumentAt(0, Long.class);
+                long id = answer.getArgument(0, Long.class);
 
                 return batches.get(id);
             });
@@ -128,18 +137,18 @@ class PublisherTestClientFactory implements AWSS3ClientFactory {
         S3AsyncClient mock = mock(S3AsyncClient.class);
 
         //head mocking
-        when(mock.headBucket(any())).thenReturn(CompletableFuture.completedFuture(mock(HeadBucketResponse.class)));
+        when(mock.headBucket(any(HeadBucketRequest.class))).thenReturn(CompletableFuture.completedFuture(mock(HeadBucketResponse.class)));
 
         //add object mocking
-        when(mock.putObject(any(), any(AsyncRequestProvider.class))).thenAnswer((call) -> {
-            PutObjectRequest putrq = call.getArgumentAt(0, PutObjectRequest.class);
+        when(mock.putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class))).thenAnswer((call) -> {
+            PutObjectRequest putrq = call.getArgument(0, PutObjectRequest.class);
             mockS3Store.put(putrq.key(), putrq);
             return CompletableFuture.completedFuture(mock(PutObjectResponse.class));
         });
 
         //head object mocking
         when(mock.headObject(any(HeadObjectRequest.class))).thenAnswer((call) -> {
-            HeadObjectRequest headrq = call.getArgumentAt(0, HeadObjectRequest.class);
+            HeadObjectRequest headrq = call.getArgument(0, HeadObjectRequest.class);
             String key = headrq.key();
             if(!mockS3Store.containsKey(key)) {
                 throw NoSuchKeyException.builder().message("NoSuchKeyException in mock store").build();
@@ -157,8 +166,8 @@ class PublisherTestClientFactory implements AWSS3ClientFactory {
 
 
         //list objects mock
-        when(mock.listObjectsV2(any())).thenAnswer((call) -> {
-            call.getArgumentAt(0, ListObjectsV2Request.class);
+        when(mock.listObjectsV2(any(ListObjectsV2Request.class))).thenAnswer((call) -> {
+            call.getArgument(0, ListObjectsV2Request.class);
             List<S3Object> collect = mockS3Store.entrySet().stream().map(entry ->
                     S3Object.builder()
                             .key(entry.getKey())
