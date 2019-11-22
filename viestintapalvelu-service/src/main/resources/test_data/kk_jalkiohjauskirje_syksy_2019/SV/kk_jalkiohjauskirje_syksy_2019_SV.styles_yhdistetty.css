@@ -70,6 +70,10 @@ ul {
 }
 
 @media only print {
+  html {
+    font-size: 14px;
+  }
+
   article:not(:last-of-type) {
     page-break-after: always;
   }
