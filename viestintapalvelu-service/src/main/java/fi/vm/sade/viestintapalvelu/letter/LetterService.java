@@ -56,15 +56,6 @@ public interface LetterService {
     LetterBatch createLetter(AsyncLetterBatchDto letterBatch, boolean anonymous);
 
     /**
-     * Luo kirjelähetyksen
-     * 
-     * @param letterBatch
-     *            Annetun kirjelähetyksen tiedot
-     * @return Luodun kirjelähetyksen tiedot
-     */
-    LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous);
-
-    /**
      * Hakee kirjelähetyksen tiedot annetun avaimen perusteella
      * 
      * @param id

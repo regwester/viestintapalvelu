@@ -48,6 +48,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.letter.LetterPublisher;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
@@ -126,7 +127,7 @@ public class LetterServiceTest {
 
     @Test
     public void testCreateLetter() {
-        fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch();
+        AsyncLetterBatchDto letterBatch = DocumentProviderTestData.getAsyncLetterBatch();
 
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo().getOidHenkilo());
         when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenAnswer(new Answer<LetterBatch>() {

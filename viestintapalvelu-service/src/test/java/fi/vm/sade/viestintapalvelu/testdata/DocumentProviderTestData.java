@@ -117,6 +117,7 @@ public class DocumentProviderTestData {
         letterBatch.setTemplateName("test-templateName");
         letterBatch.setTemplateReplacements(getTemplateReplacements());
         letterBatch.setLetters(getAsyncLetterBatchLetters());
+        letterBatch.setContentStructureTypes(Collections.singletonList(ContentStructureType.letter));
 
         return letterBatch;
     }

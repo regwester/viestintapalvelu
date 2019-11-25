@@ -204,42 +204,6 @@ public class LetterServiceImpl implements LetterService {
         return storeLetterBatch(model);
     }
 
-    /* ---------------------- */
-    /* - Create LetterBatch - */
-    /* ---------------------- */
-    @Override
-    @Transactional
-    public LetterBatch createLetter(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, boolean anonymous) {
-        // kirjeet.kirjelahetys
-        ObjectMapper mapper = objectMapperProvider.getContext(getClass());
-
-        LetterBatch model = new LetterBatch();
-        try {
-            letterBatchDtoConverter.convert(letterBatch, model, mapper);
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
-        }
-        model.setTimestamp(new Date());
-        model.setBatchStatus(LetterBatch.Status.created);
-        if (!anonymous) {
-            model.setStoringOid(getCurrentHenkilo());
-        }
-        // kirjeet.vastaanottaja
-        try {
-            model.setLetterReceivers(parseLetterReceiversModels(letterBatch, model, mapper));
-        } catch (JsonProcessingException e) {
-            throw new IllegalArgumentException("JSON parsing of letter receiver replacement failed: " + e.getMessage(), e);
-        }
-        model.setUsedTemplates(parseUsedTemplates(letterBatch, model, Collections.singletonList(ContentStructureType.letter)));
-
-        if (letterBatch.isIposti()) {
-            addIpostData(letterBatch, model);
-        } else {
-            logger.info("Jätetään IPost-luonti väliin kirjeiden muodostuksessa haulle " + letterBatch.getApplicationPeriod());
-        }
-        return storeLetterBatch(model);
-    }
-
     private String getCurrentHenkilo() {
         logger.debug("getting current user!!! ");
         String henkiloOid = currentUserComponent.getCurrentUser();
@@ -521,30 +485,6 @@ public class LetterServiceImpl implements LetterService {
             }
         }
         return receivers;
-    }
-
-    /*
-     * kirjeet.lahetyskorvauskentat
-     */
-    private Set<LetterReplacement> parseLetterReplacementsModels(fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch, LetterBatch letterB) {
-        Set<LetterReplacement> replacements = new HashSet<>();
-
-        Object replKeys[] = letterBatch.getTemplateReplacements().keySet().toArray();
-        Object replVals[] = letterBatch.getTemplateReplacements().values().toArray();
-
-        for (int i = 0; i < replVals.length; i++) {
-            fi.vm.sade.viestintapalvelu.model.LetterReplacement repl = new fi.vm.sade.viestintapalvelu.model.LetterReplacement();
-
-            repl.setName(replKeys[i].toString());
-            repl.setDefaultValue(replVals[i].toString());
-            // repl.setMandatory();
-            // TODO: tähän tietyt kentät Mandatory true esim. title body ...
-
-            repl.setTimestamp(new Date());
-            repl.setLetterBatch(letterB);
-            replacements.add(repl);
-        }
-        return replacements;
     }
 
     private Map<String, Object> parseReplDTOs(Set<LetterReplacement> letterReplacements) {
