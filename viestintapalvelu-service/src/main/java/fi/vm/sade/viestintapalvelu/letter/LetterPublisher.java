@@ -141,20 +141,21 @@ class S3LetterPublisher implements LetterPublisher {
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
     private static final Logger logger = LoggerFactory.getLogger(S3LetterPublisher.class);
 
-    @Value("${viestintapalvelu.downloadfiles.s3.bucket}")
-    private String bucket;
-
-    @Value("${viestintapalvelu.downloadfiles.s3.region}")
-    private String region;
+    private final String bucket;
+    private final String region;
 
     private final AWSS3ClientFactory clientFactory;
 
     @Autowired
     S3LetterPublisher(LetterBatchDAO letterBatchDAO,
                       LetterReceiverLetterDAO letterReceiverLetterDAO,
+                      @Value("${viestintapalvelu.downloadfiles.s3.bucket}") String bucket,
+                      @Value("${viestintapalvelu.downloadfiles.s3.region}") String region,
                       AWSS3ClientFactory clientFactory) {
         this.letterBatchDAO = letterBatchDAO;
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
+        this.bucket = bucket;
+        this.region = region;
         this.clientFactory = clientFactory;
     }
 

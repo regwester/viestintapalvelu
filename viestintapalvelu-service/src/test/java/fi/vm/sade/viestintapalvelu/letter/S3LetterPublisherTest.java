@@ -119,7 +119,7 @@ public class S3LetterPublisherTest {
 
         @Bean
         S3LetterPublisher getS3LetterPublisher() {
-            return new S3LetterPublisher(getletterBatchDAO(), getLetterReceiverLetterDAO(), new PublisherTestClientFactory());
+            return new S3LetterPublisher(getletterBatchDAO(), getLetterReceiverLetterDAO(), "mock-bucket", "mock-region", new PublisherTestClientFactory());
         }
 
 
