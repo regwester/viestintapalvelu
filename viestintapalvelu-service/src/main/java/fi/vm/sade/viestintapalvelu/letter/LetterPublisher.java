@@ -231,19 +231,25 @@ class S3LetterPublisher implements LetterPublisher {
                 .build();
 
         AsyncRequestBody asyncRequestProvider = AsyncRequestBody.fromFile(tempFile);
-        try(S3AsyncClient client = getClient()) {
-            return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
-                if(putObjectResponse == null) {
-                    logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), throwable);
-                }
-                letterReceiverLetterDAO.markAsPublished(letter.getId());
-                try {
-                    Files.deleteIfExists(tempFile);
-                } catch (IOException e) {
-                    logger.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
-                }
-            });
-        }
+
+        S3AsyncClient client = getClient();
+        return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
+            if(putObjectResponse == null) {
+                logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), throwable);
+            }
+            letterReceiverLetterDAO.markAsPublished(letter.getId());
+            try {
+                Files.deleteIfExists(tempFile);
+            } catch (IOException e) {
+                logger.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
+            }
+            try {
+                client.close();
+            } catch (Exception e) {
+                logger.error("Error closing S3 client", e);
+            }
+        });
+
     }
 
     private S3AsyncClient getClient() {
