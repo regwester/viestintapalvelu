@@ -57,6 +57,7 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -218,7 +219,7 @@ public class LetterBuilder {
             data.put("palautusTimestampSv", palautusTimestampSv);
         }
         data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
-        data.put("syntymaaika", (String) data.get("syntymaaika"));
+        data.put("syntymaaika", formatDate((String) data.get("syntymaaika")));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
@@ -229,6 +230,17 @@ public class LetterBuilder {
 
         data.put("tyylit", styles);
         return data;
+    }
+
+    private String formatDate(final String dateStr) {
+        final SimpleDateFormat sourceDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat targetDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            return targetDateFormat.format(sourceDateFormat.parse(dateStr));
+        } catch (ParseException e) {
+            LOG.warn("Ei voitu lukea java.util.Date -objektiksi merkkijonoa {}", dateStr, e);
+            return dateStr;
+        }
     }
 
     private Map<String, Object> cleanValues(Cleaner cleaner, Map<String, Object>... replacementsList) {

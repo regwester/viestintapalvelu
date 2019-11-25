@@ -82,7 +82,9 @@ public class LetterBuilderTest {
         byte[] htmlLetter = "html-sivun teksti".getBytes();
         when(documentBuilder.applyTextTemplate(any(byte[].class), anyMapOf(String.class, Object.class))).thenReturn(htmlLetter);
 
-        builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), new HashMap<String, Object>());
+        final HashMap<String, Object> letterReplacements = new HashMap<>();
+        letterReplacements.put("syntymaaika", "1998-14-12");
+        builder.constructPagesForLetterReceiverLetter(receiver, batch, new HashMap<String, Object>(), letterReplacements);
 
         assertEquals(new String(htmlLetter), new String(receiver.getLetterReceiverLetter().getLetter()));
         assertEquals(ContentTypes.CONTENT_TYPE_HTML, receiver.getLetterReceiverLetter().getContentType());
