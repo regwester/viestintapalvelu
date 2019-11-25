@@ -91,7 +91,6 @@ public class LetterBuilderTest {
     }
 
     @Test
-    @Ignore // Otetaan käyttöön kun PDF-generointi on taas päällä
     public void storesPDFAsBytesIntoLetterReceiverLetter() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
         LetterReceivers receiver = batch.getLetterReceivers().iterator().next();
