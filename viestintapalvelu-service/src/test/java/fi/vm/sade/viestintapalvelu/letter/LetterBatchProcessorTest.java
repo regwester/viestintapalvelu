@@ -168,7 +168,8 @@ public class LetterBatchProcessorTest {
     @Test
     public void updatesProcessFinishedOnLetterBatch() throws Exception {
         final int amountOfReceivers = 157;
-        when(service.fetchById(LETTERBATCH_ID)).thenReturn(givenLetterBatchWithReceivers(amountOfReceivers));
+        // TODO Miksi tätä ei kutsuta???
+        // when(service.fetchById(LETTERBATCH_ID)).thenReturn(givenLetterBatchWithReceivers(amountOfReceivers));
         processor.processLetterBatch(LETTERBATCH_ID);
         verify(service, timeout(100)).updateBatchProcessingFinished(LETTERBATCH_ID, LetterBatchProcess.LETTER);
     }
