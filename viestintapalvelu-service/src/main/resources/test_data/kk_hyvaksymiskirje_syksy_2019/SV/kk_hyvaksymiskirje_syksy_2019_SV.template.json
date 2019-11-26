@@ -181,7 +181,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "MEDDELANDE OM ANTAGNING AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLORNA HÖSTEN 2019",
+      "defaultValue": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna hösten 2019",
       "mandatory": false
     },
     {
@@ -193,7 +193,7 @@
     {
       "id": 6,
       "name": "vastaanotto_vaihtoehto_1",
-      "defaultValue": "Jag tar emot studieplatsen. Jag har inte tidigare tagit emot en studieplats som leder till högskoleexamen, där utbildningen inleds under höstterminen 2020. Efter att jag tagit emot denna studieplats kan jag inte ta emot en annan studieplats inom utbildning som startar under höstterminen 2020.",
+      "defaultValue": "Jag tar emot studieplatsen. Jag har inte tidigare tagit emot en studieplats som leder till högskoleexamen, där utbildningen inleds under vårterminen 2020. Efter att jag tagit emot denna studieplats kan jag inte ta emot en annan studieplats inom utbildning som startar under vårterminen 2020.",
       "mandatory": false
     },
     {
@@ -217,7 +217,7 @@
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR HÖSTEN 2019",
+      "defaultValue": "Din situation i gemensam ansökan till högskolor hösten 2019",
       "mandatory": false
     }
   ]
