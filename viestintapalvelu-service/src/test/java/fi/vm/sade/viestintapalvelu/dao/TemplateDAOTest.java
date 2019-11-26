@@ -15,12 +15,18 @@
  **/
 package fi.vm.sade.viestintapalvelu.dao;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
 
-import javax.persistence.NoResultException;
-
-import org.junit.Before;
+import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
+import fi.vm.sade.viestintapalvelu.model.ContentStructure;
+import fi.vm.sade.viestintapalvelu.model.Structure;
+import fi.vm.sade.viestintapalvelu.model.Template;
+import fi.vm.sade.viestintapalvelu.model.Template.State;
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
+import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -32,14 +38,9 @@ import org.springframework.test.context.support.DirtiesContextTestExecutionListe
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.transaction.annotation.Transactional;
 
-import fi.vm.sade.viestintapalvelu.dao.criteria.TemplateCriteriaImpl;
-import fi.vm.sade.viestintapalvelu.model.ContentStructure;
-import fi.vm.sade.viestintapalvelu.model.Structure;
-import fi.vm.sade.viestintapalvelu.model.Template;
-import fi.vm.sade.viestintapalvelu.model.Template.State;
-import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
-import static org.junit.Assert.*;
+import javax.persistence.NoResultException;
+import java.util.ArrayList;
+import java.util.List;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
@@ -50,17 +51,9 @@ public class TemplateDAOTest {
     @Autowired
     private TemplateDAO templateDAO;
 
-    @Autowired
-    private StructureDAO structureDAO;
-
-    @Before
-    public void clearDanglingStructuresFromDb() {
-        structureDAO.findAll().forEach(structureDAO::remove);
-    }
-
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuFound() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         String testHakuOid = "1234.56789.154875";
         DocumentProviderTestData.getTemplateHaku(storedTemplate, "1234.56789.012345");
         DocumentProviderTestData.getTemplateHaku(storedTemplate, testHakuOid);
@@ -77,7 +70,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuNotFound() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         String testHakuOid = "1234.56789.154875";
         templateDAO.insert(storedTemplate);
 
@@ -89,7 +82,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndDefaultFound() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         storedTemplate.setUsedAsDefault(true);
         templateDAO.insert(storedTemplate);
 
@@ -103,7 +96,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndDefaultNotFound() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         templateDAO.insert(storedTemplate);
 
         Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
@@ -115,7 +108,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndWithoutDefaultFound() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         templateDAO.insert(storedTemplate);
 
         Template template = templateDAO.findTemplate(new TemplateCriteriaImpl()
@@ -129,7 +122,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testFindTemplateByNameAndAndTypeAndHakuNotFound2() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         String testHakuOid = "1234.56789.154875";
         DocumentProviderTestData.getTemplateHaku(storedTemplate, "1234.56789.012345");
         templateDAO.insert(storedTemplate);
@@ -142,7 +135,7 @@ public class TemplateDAOTest {
     
     @Test
     public void findsTemplateByNameAndState() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         storedTemplate.setState(State.julkaistu);
         templateDAO.insert(storedTemplate);
 
@@ -156,7 +149,7 @@ public class TemplateDAOTest {
     
     @Test
     public void doesNotFindTemplateByNameAndState() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         storedTemplate.setState(State.suljettu);
         templateDAO.insert(storedTemplate);
 
@@ -169,7 +162,7 @@ public class TemplateDAOTest {
 
     @Test
     public void testGetAvailableTemplatesFound() {
-        Template storedTemplate = givenPublishedTemplate();
+        Template storedTemplate = givenPublishedTemplate("foo");
         templateDAO.insert(storedTemplate);
 
         List<String> availableTemplates = templateDAO.getAvailableTemplates();
@@ -183,7 +176,7 @@ public class TemplateDAOTest {
     public void returnsTemplatesUsingState() {
         String templateNamePrefix = "suljettu";
         Template closedTemplate = givenTemplateWithNameAndState(templateNamePrefix, State.suljettu);
-        templateDAO.insert(givenPublishedTemplate());
+        templateDAO.insert(givenPublishedTemplate("foo"));
         List<String> availableTemplates = templateDAO.getAvailableTemplatesByType(State.suljettu);
         assertEquals(1, availableTemplates.size());
         assertTrue(availableTemplates.get(0).contains(templateNamePrefix));
@@ -221,15 +214,15 @@ public class TemplateDAOTest {
 
     @Test
     public void findByOrganizationOID() {
-        Template template1 = givenPublishedTemplate();
+        Template template1 = givenPublishedTemplate("foo");
         template1.setOrganizationOid("org1");
         templateDAO.insert(template1);
 
-        Template template2 = givenPublishedTemplate();
+        Template template2 = givenPublishedTemplate("bar");
         template2.setOrganizationOid("org2");
         templateDAO.insert(template2);
 
-        Template template3 = givenPublishedTemplate();
+        Template template3 = givenPublishedTemplate("baz");
         template3.setOrganizationOid("org3");
         templateDAO.insert(template3);
 
@@ -267,16 +260,16 @@ public class TemplateDAOTest {
     }
     
     private Template givenPublishedTemplateWithApplicationPeriod(String hakuOid) {
-        Template template = givenPublishedTemplate();
+        Template template = givenPublishedTemplate("foo");
         DocumentProviderTestData.getTemplateApplicationPeriod(template, hakuOid);
         return templateDAO.insert(template);
     }
 
-    private Template givenPublishedTemplate() {
+    private Template givenPublishedTemplate(String structureNameSuffix) {
         Template template = DocumentProviderTestData.getTemplate(null);
         template.setState(State.julkaistu);
         Structure structure = new Structure();
-        structure.setName("test_structure");
+        structure.setName("test_structure_" + structureNameSuffix);
         structure.setLanguage(template.getLanguage());
         ContentStructure contentStructure = new ContentStructure();
         contentStructure.setStructure(structure);
