@@ -962,6 +962,27 @@
                         </webResources>
                     </configuration>
                 </plugin>
+                <plugin>
+                    <artifactId>maven-enforcer-plugin</artifactId>
+                    <version>3.0.0-M2</version>
+                    <executions>
+                      <execution>
+                        <id>enforce-versions</id>
+                        <phase>clean</phase>
+                        <goals>
+                          <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                          <rules>
+                            <requireJavaVersion>
+                              <version>8</version>
+                            </requireJavaVersion>
+                            <dependencyConvergence />
+                          </rules>
+                        </configuration>
+                      </execution>
+                    </executions>
+                </plugin>
             </plugins>
         </pluginManagement>
     </build>
