@@ -74,7 +74,7 @@ public class LetterResourceTest {
     @Test
     public void initializesTemplateId() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch());
-        verify(builder, times(1)).initTemplateId(any(LetterBatchDetails.class));
+        verify(builder, times(1)).initTemplateId(any(AsyncLetterBatchDto.class));
     }
     
     @Test
@@ -85,7 +85,7 @@ public class LetterResourceTest {
     @Test
     public void startsProcessingLetters() {
         resource.asyncLetter(DocumentProviderTestData.getAsyncLetterBatch()).getEntity();
-        verify(processor).processLetterBatch(any(Integer.class));
+        verify(processor).processLetterBatch(any(Long.class));
     }
     
     @Test

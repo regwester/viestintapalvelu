@@ -1,11 +1,13 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import com.google.common.collect.Lists;
+
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import fi.vm.sade.viestintapalvelu.util.S3Utils;
 import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
@@ -16,9 +18,7 @@ import org.springframework.context.annotation.Profile;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import software.amazon.awssdk.async.AsyncRequestProvider;
-import software.amazon.awssdk.auth.AwsCredentialsProvider;
-import software.amazon.awssdk.auth.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
@@ -28,15 +28,17 @@ import javax.annotation.PostConstruct;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.stream.Collectors;
 
 public interface LetterPublisher {
     int publishLetterBatch(long letterBatchId) throws Exception;
@@ -139,20 +141,21 @@ class S3LetterPublisher implements LetterPublisher {
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
     private static final Logger logger = LoggerFactory.getLogger(S3LetterPublisher.class);
 
-    @Value("${viestintapalvelu.downloadfiles.s3.bucket}")
-    private String bucket;
-
-    @Value("${viestintapalvelu.downloadfiles.s3.region}")
-    private String region;
+    private final String bucket;
+    private final String region;
 
     private final AWSS3ClientFactory clientFactory;
 
     @Autowired
     S3LetterPublisher(LetterBatchDAO letterBatchDAO,
                       LetterReceiverLetterDAO letterReceiverLetterDAO,
+                      @Value("${viestintapalvelu.downloadfiles.s3.bucket}") String bucket,
+                      @Value("${viestintapalvelu.downloadfiles.s3.region}") String region,
                       AWSS3ClientFactory clientFactory) {
         this.letterBatchDAO = letterBatchDAO;
         this.letterReceiverLetterDAO = letterReceiverLetterDAO;
+        this.bucket = bucket;
+        this.region = region;
         this.clientFactory = clientFactory;
     }
 
@@ -185,47 +188,68 @@ class S3LetterPublisher implements LetterPublisher {
         String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
         List<CompletableFuture<PutObjectResponse>> responses = new ArrayList<>();
 
-        List<LetterReceiverLetter> byIds = letterReceiverLetterDAO.findByIds(letterIds);
-        for (LetterReceiverLetter letter : byIds) {
-            try {
-                responses.add(addFileObject(letter, subFolderName));
-            } catch (IOException e) {
-                logger.error("Error saving LetterReceiverLetter {} to S3", e);
-            }
+        return letterReceiverLetterDAO
+                .findByIds(letterIds)
+                .stream()
+                .peek(S3LetterPublisher::validateFileSuffix)
+                .map(letterReceiverLetter -> {
+                    try {
+                        return addFileObject(letterReceiverLetter, subFolderName);
+                    } catch (IOException e) {
+                        throw new UncheckedIOException(e);
+                    } catch (Exception e) {
+                        logger.error("Ei voitu lähettää S3:een tiedostoa vastaanottajakirjeestä {}", letterReceiverLetter.getId(), e);
+                        throw e;
+                    }
+                })
+                .collect(Collectors.toList());
+    }
+
+    private static void validateFileSuffix(final LetterReceiverLetter letterReceiverLetter) {
+        final Optional<String> fileSuffix = ContentTypes.getFileSuffix(letterReceiverLetter.getContentType());
+        if (!fileSuffix.isPresent()) {
+            throw new NullPointerException("Vastaanottajakirjeellä " + letterReceiverLetter.getId() + " oli tuntematon sisältötyyppi: " + letterReceiverLetter.getContentType());
         }
-        return responses;
     }
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
         final String oidApplication = letter.getLetterReceivers().getOidApplication();
-        final Path tempFile = Files.createTempFile(oidApplication, ".pdf");
+        final Optional<String> fileSuffix = ContentTypes.getFileSuffix(letter.getContentType());
+        final Path tempFile = Files.createTempFile(oidApplication, fileSuffix.get());
         Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
 
         Long length = (long) letter.getLetter().length;
         Map<String, String> metadata = new HashMap<>();
-        String id = folderName + File.separator + oidApplication + ".pdf";
+        String id = folderName + File.separator + oidApplication + fileSuffix.get();
         final PutObjectRequest request = PutObjectRequest.builder()
                 .bucket(bucket)
                 .contentType(letter.getContentType())
+                .contentEncoding("UTF-8")
                 .contentLength(length)
                 .metadata(metadata)
                 .key(id)
                 .build();
 
-        AsyncRequestProvider asyncRequestProvider = AsyncRequestProvider.fromFile(tempFile);
-        try(S3AsyncClient client = getClient()) {
-            return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
-                if(putObjectResponse == null) {
-                    logger.error("Error saving LetterReceiverLetter to S3", throwable);
-                }
-                letterReceiverLetterDAO.markAsPublished(letter.getId());
-                try {
-                    Files.deleteIfExists(tempFile);
-                } catch (IOException e) {
-                    logger.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
-                }
-            });
-        }
+        AsyncRequestBody asyncRequestProvider = AsyncRequestBody.fromFile(tempFile);
+
+        S3AsyncClient client = getClient();
+        return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
+            if(putObjectResponse == null) {
+                logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), throwable);
+            }
+            letterReceiverLetterDAO.markAsPublished(letter.getId());
+            try {
+                Files.deleteIfExists(tempFile);
+            } catch (IOException e) {
+                logger.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
+            }
+            try {
+                client.close();
+            } catch (Exception e) {
+                logger.error("Error closing S3 client", e);
+            }
+        });
+
     }
 
     private S3AsyncClient getClient() {

@@ -21,6 +21,7 @@ import javax.persistence.EntityManager;
 import javax.persistence.TypedQuery;
 
 import fi.vm.sade.dto.PagingAndSortingDTO;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.springframework.stereotype.Repository;
 
 import com.mysema.query.BooleanBuilder;
@@ -101,14 +102,17 @@ public class LetterReceiversDAOImpl extends AbstractJpaDAOImpl<LetterReceivers, 
     }
 
     @Override
-    public List<Long> findLetterRecieverIdsByLetterBatchId(long letterBatchId) {
+    public List<Long> findLetterRecieverIdsByLetterBatchIdForIpostiProcessing(long letterBatchId) {
         return getEntityManager()
                 .createQuery( "select receiver.id from LetterReceivers receiver" +
                   "  inner join receiver.letterBatch lb with lb.id = :letterBatchId" +
+                  "  inner join receiver.letterReceiverLetter lrl" +
                   "  where receiver.skipIPost = :skipIPost" +
+                  "  and lrl.contentType = :contentType" +
                   "  order by receiver.id", Long.class)
                 .setParameter("letterBatchId", letterBatchId)
                 .setParameter("skipIPost", false)
+                .setParameter("contentType", ContentTypes.CONTENT_TYPE_PDF)
                 .getResultList();
     }
 

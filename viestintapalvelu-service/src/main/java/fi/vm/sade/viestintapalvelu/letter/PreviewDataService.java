@@ -19,6 +19,7 @@ package fi.vm.sade.viestintapalvelu.letter;
 import com.lowagie.text.DocumentException;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.template.Template;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 
 import java.io.IOException;
 
@@ -29,7 +30,7 @@ public interface PreviewDataService {
 
     LetterReceivers getLetterReceivers(Template template, String applicationPeriod);
 
-    byte[] getPreviewPdf(Template template, String applicationPeriod, String letterContents) throws IOException, DocumentException;
+    byte[] getPreviewPdf(Template template, String applicationPeriod, String letterContents) throws IOException, DocumentException, COSVisitorException;
 
     String getEmailPreview(Template template, String applicationPeriod, String letterContents);
 }

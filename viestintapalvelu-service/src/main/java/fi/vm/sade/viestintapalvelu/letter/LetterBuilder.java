@@ -32,6 +32,7 @@ import fi.vm.sade.viestintapalvelu.document.DocumentBuilder;
 import fi.vm.sade.viestintapalvelu.document.DocumentMetadata;
 import fi.vm.sade.viestintapalvelu.document.MergedPdfDocument;
 import fi.vm.sade.viestintapalvelu.document.PdfDocument;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchDetails;
 import fi.vm.sade.viestintapalvelu.letter.html.Cleaner;
 import fi.vm.sade.viestintapalvelu.letter.html.XhtmlCleaner;
@@ -40,9 +41,14 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverReplacement;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.model.UsedTemplate;
 import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
-import fi.vm.sade.viestintapalvelu.template.*;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
+import fi.vm.sade.viestintapalvelu.template.Contents;
+import fi.vm.sade.viestintapalvelu.template.Replacement;
+import fi.vm.sade.viestintapalvelu.template.Template;
+import fi.vm.sade.viestintapalvelu.template.TemplateContent;
+import fi.vm.sade.viestintapalvelu.template.TemplateService;
 import org.apache.commons.lang.StringEscapeUtils;
-import org.joda.time.LocalDate;
+import org.apache.pdfbox.exceptions.COSVisitorException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,10 +57,19 @@ import org.springframework.stereotype.Service;
 
 import javax.inject.Singleton;
 import java.io.IOException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.stream.Collectors;
 
-import static fi.vm.sade.viestintapalvelu.util.DateUtil.*;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampEn;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampFi;
+import static fi.vm.sade.viestintapalvelu.util.DateUtil.palautusTimestampSv;
 
 @Service
 @Singleton
@@ -76,7 +91,7 @@ public class LetterBuilder {
     }
     public LetterBuilder() {
     }
-    
+
     public byte[] printZIP(List<LetterReceiverLetter> receivers, String templateName, String zipName) {
         MergedPdfDocument pdf = getMergedPDFDocument(receivers);
         try {
@@ -93,7 +108,6 @@ public class LetterBuilder {
         context.put("filename", templateName + ".pdf");
         final byte[] ipostXml = documentBuilder.applyTextTemplate(Constants.LETTER_IPOST_TEMPLATE, context);
         Map<String, Supplier<byte[]>> documents = new HashMap<>();
-        pdf.flush();
         documents.put(templateName + ".pdf", new Supplier<byte[]>() {
             @Override
             public byte[] get() {
@@ -116,7 +130,13 @@ public class LetterBuilder {
             for (LetterReceiverLetter l : receivers) {
                 LetterReceivers letterReceiver = l.getLetterReceivers();
                 AddressLabel address = AddressLabelConverter.convert(letterReceiver.getLetterReceiverAddress());
-                PdfDocument document = new PdfDocument(address, l.getLetter());
+                PdfDocument document = new PdfDocument(
+                        address,
+                        null,
+                        null,
+                        null,
+                        new PdfDocument.ContentData(l.getLetter())
+                );
                 result.write(document);
             }
         } catch (Exception e) {
@@ -125,28 +145,25 @@ public class LetterBuilder {
         return result;
     }
 
-    public void initTemplateId(LetterBatchDetails batch) {
-        initTemplateId(batch, batch.getTemplate());
-    }
-
-    public Template initTemplateId(LetterBatchDetails batch, Template template) {
-        if (template == null && batch.getTemplateName() != null && batch.getLanguageCode() != null) {
-            template = templateService.getTemplateByName(new TemplateCriteriaImpl(batch.getTemplateName(),
-                            batch.getLanguageCode(), ContentStructureType.letter)
-                    .withApplicationPeriod(batch.getApplicationPeriod()), true);
-            if (template != null) {
-                batch.setTemplateId(template.getId()); // Search was by name ==>
-                                                       // update also to
-                                                       // template Id
-            }
+    void initTemplateId(AsyncLetterBatchDto batch) {
+        if (batch.getTemplateId() == null
+                && batch.getTemplateName() != null
+                && batch.getLanguageCode() != null) {
+            batch
+                    .getContentStructureTypes()
+                    .stream()
+                    .map(contentStructureType ->
+                            new TemplateCriteriaImpl(
+                                    batch.getTemplateName(),
+                                    batch.getLanguageCode(),
+                                    contentStructureType
+                            ).withApplicationPeriod(batch.getApplicationPeriod())
+                    )
+                    .map(templateCriteria -> templateService.getTemplateByName(templateCriteria, true))
+                    .findFirst()
+                    .map(Template::getId)
+                    .ifPresent(batch::setTemplateId);
         }
-
-        if (template == null && batch.getTemplateId() != null) { // If not found
-                                                                 // by name
-            long templateId = batch.getTemplateId();
-            template = templateService.findById(templateId, ContentStructureType.letter);
-        }
-        return template;
     }
 
     public Map<String, Object> getTemplateReplacements(Template template) {
@@ -157,18 +174,21 @@ public class LetterBuilder {
         return replacements;
     }
 
-    public byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
-            Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
-        @SuppressWarnings("unchecked")
+    private byte[] createPagePdf(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                 Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+        return documentBuilder.xhtmlToPDF(createPageHtml(template, pageContent, addressLabel, templReplacements, letterBatchReplacements, letterReplacements));
+    }
+
+    private byte[] createPageHtml(Template template, byte[] pageContent, AddressLabel addressLabel, Map<String, Object> templReplacements,
+                                  Map<String, Object> letterBatchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
         Map<String, Object> dataContext = createDataContext(XhtmlCleaner.INSTANCE,
                 template, addressLabel, templReplacements, letterBatchReplacements, letterReplacements);
         byte[] xhtml = documentBuilder.applyTextTemplate(pageContent, dataContext);
         if (xhtml != null && LOG.isDebugEnabled()) {
-            LOG.debug("CreatePagePdf using xhtml:\n" + new String(xhtml));
+            LOG.debug("CreatePageHtml using xhtml:\n" + new String(xhtml));
         }
-        return documentBuilder.xhtmlToPDF(xhtml);
+        return xhtml;
     }
-
 
 
     public Map<String, Object> createDataContext(Cleaner cleaner,
@@ -199,7 +219,7 @@ public class LetterBuilder {
             data.put("palautusTimestampSv", palautusTimestampSv);
         }
         data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
-        data.put("syntymaaika", (String) data.get("syntymaaika"));
+        data.put("syntymaaika", formatDate((String) data.get("syntymaaika")));
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
@@ -210,6 +230,16 @@ public class LetterBuilder {
 
         data.put("tyylit", styles);
         return data;
+    }
+
+    private String formatDate(final String dateStr) {
+        final SimpleDateFormat sourceDateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        final SimpleDateFormat targetDateFormat = new SimpleDateFormat("dd.MM.yyyy");
+        try {
+            return targetDateFormat.format(sourceDateFormat.parse(dateStr));
+        } catch (ParseException ignore) {
+            return dateStr;
+        }
     }
 
     private Map<String, Object> cleanValues(Cleaner cleaner, Map<String, Object>... replacementsList) {
@@ -282,22 +312,6 @@ public class LetterBuilder {
         return tulokset;
     }
 
-    private Map<String, Boolean> distinctColumns(List<Map<String, Object>> tulokset) {
-        Map<String, Boolean> printedColumns = new HashMap<>();
-        if (tulokset == null) {
-            return printedColumns;
-        }
-        for (Map<String, Object> haku : tulokset) {
-            if (haku == null) {
-                continue;
-            }
-            for (String column : haku.keySet()) {
-                printedColumns.put(column, true);
-            }
-        }
-        return printedColumns;
-    }
-
     private Map<String, Object> createIPostDataContext(final List<DocumentMetadata> documentMetadataList) {
         Map<String, Object> data = new HashMap<>();
         List<Map<String, Object>> metadataList = new ArrayList<>();
@@ -313,14 +327,28 @@ public class LetterBuilder {
         return data;
     }
 
-    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
-            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
-        Template template = determineTemplate(receiver, batch);
-        return constructPDFForLetterReceiverLetter(receiver, template, batchReplacements, letterReplacements);
+    public void constructPagesForLetterReceiverLetter(
+            LetterReceivers receiver,
+            fi.vm.sade.viestintapalvelu.model.LetterBatch batch,
+            Map<String, Object> batchReplacements,
+            Map<String, Object> letterReplacements
+    ) throws DocumentException, COSVisitorException, IOException {
+        final Template template = determineTemplate(receiver, batch);
+        constructPagesForLetterReceiverLetter(
+                receiver,
+                template,
+                batchReplacements,
+                letterReplacements
+        );
     }
 
-    public LetterReceiverLetter constructPDFForLetterReceiverLetter(LetterReceivers receiver, Template template,
-            Map<String, Object> batchReplacements, Map<String, Object> letterReplacements) throws IOException, DocumentException {
+
+    public LetterReceiverLetter constructPagesForLetterReceiverLetter(
+            LetterReceivers receiver,
+            Template template,
+            Map<String, Object> batchReplacements,
+            Map<String, Object> letterReplacements
+    ) throws IOException, DocumentException, COSVisitorException {
         LetterReceiverLetter letter = receiver.getLetterReceiverLetter();
 
         Map<String, Object> templReplacements = formReplacementMap(template.getReplacements());
@@ -328,47 +356,142 @@ public class LetterBuilder {
         ObjectMapper mapper = objectMapperProvider.getContext(getClass());
         templReplacements.putAll(formReplacementMap(letter.getLetterReceivers().getLetterReceiverReplacement(), mapper));
 
-        List<TemplateContent> contents = template.getContents();
         AddressLabel address = AddressLabelConverter.convert(letter.getLetterReceivers().getLetterReceiverAddress());
-        PdfDocument currentDocument = new PdfDocument(address);
-        Collections.sort(contents);
 
-        for (TemplateContent tc : Contents.letterContents().filter(contents)) {
-            byte[] page = createPagePdf(template, tc.getContent().getBytes(), address, templReplacements, batchReplacements, letterReplacements);
-            if (letter.getLetterReceivers().getEmailAddress() != null
-                    && !letter.getLetterReceivers().getEmailAddress().isEmpty()
-                    && Contents.ATTACHMENT.equals(tc.getName())
-                    && receiver.getLetterReceiverEmail() == null) {
-                saveLetterReceiverAttachment(tc.getName(), page, receiver.getLetterReceiverLetter().getId());
-            }
-            currentDocument.addContent(page);
+        switch (ContentStructureType.valueOf(template.getType())) {
+            case letter:
+                addFullPdfDataToLetterReceiverLetter(
+                        letter,
+                        receiver,
+                        template,
+                        address,
+                        templReplacements,
+                        batchReplacements,
+                        letterReplacements
+                );
+                break;
+            case accessibleHtml:
+                addHtmlDataToLetterReceiverLetter(
+                        letter,
+                        template,
+                        address,
+                        templReplacements,
+                        batchReplacements,
+                        letterReplacements
+                );
+                break;
+            default:
+                throw new NullPointerException("Ei voitu generoida kirjedataa vastaanottajalle " + receiver.getId() + " ja vastaanottajakirjeelle " + letter.getId());
         }
-        letter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
-        letter.setContentType("application/pdf");
+
         return letter;
     }
 
-    private long saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
-        LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
-        attachment.setName(Optional.fromNullable(name).or("liite") + ".pdf");
-        attachment.setContentType("application/pdf");
-        attachment.setContents(page);
-        attachment.setLetterReceiverLetterId(letterReceiverLetterId);
-        return attachmentService.saveReceiverAttachment(attachment);
-    }
-
-    public Template determineTemplate(LetterReceivers receiver, fi.vm.sade.viestintapalvelu.model.LetterBatch batch) {
-        if (receiver.getWantedLanguage() != null) {
-            for (UsedTemplate usedTemplate : batch.getUsedTemplates()) {
-                if (usedTemplate.getTemplate().getLanguage().equals(receiver.getWantedLanguage())) {
-                    return templateService.findById(usedTemplate.getTemplate().getId(), ContentStructureType.letter);
+    private void addFullPdfDataToLetterReceiverLetter(
+            final LetterReceiverLetter letterReceiverLetter,
+            final LetterReceivers letterReceivers,
+            final Template template,
+            final AddressLabel addressLabel,
+            final Map<String, Object> templateReplacements,
+            final Map<String, Object> batchReplacements,
+            final Map<String, Object> letterReplacements) throws IOException, DocumentException, COSVisitorException {
+        final PdfDocument currentDocument = new PdfDocument(addressLabel);
+        final List<TemplateContent> templateContents = template
+                .getContents()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+        for (TemplateContent tc : Contents.pdfLetterContents().filter(templateContents)) {
+            try {
+                final byte[] page = createPagePdf(
+                        template,
+                        tc.getContent().getBytes(),
+                        addressLabel,
+                        templateReplacements,
+                        batchReplacements,
+                        letterReplacements
+                );
+                if (letterReceiverLetter.getLetterReceivers().getEmailAddress() != null
+                        && !letterReceiverLetter.getLetterReceivers().getEmailAddress().isEmpty()
+                        && Contents.ATTACHMENT.equals(tc.getName())
+                        && letterReceivers.getLetterReceiverEmail() == null) {
+                    saveLetterReceiverAttachment(tc.getName(), page, letterReceivers.getLetterReceiverLetter().getId());
                 }
+                currentDocument.addContent(new PdfDocument.ContentData(page));
+            } catch (Exception e) {
+                final String errorMessage = "Ei voitu luoda PDF-dokumenttia vastaanottajakirjeelle " + letterReceiverLetter.getId() + " kun käytettiin kirjepohjaa " + template + " sisällöllä " + tc;
+                LOG.error(errorMessage, e);
+                throw e;
             }
         }
-        return templateService.findById(batch.getTemplateId(), ContentStructureType.letter);
+        letterReceiverLetter.setLetter(documentBuilder.merge(currentDocument).toByteArray());
+        letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_PDF);
+        letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_PDF);
     }
 
-    public Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
+    private void addHtmlDataToLetterReceiverLetter(
+            final LetterReceiverLetter letterReceiverLetter,
+            final Template template,
+            final AddressLabel addressLabel,
+            final Map<String, Object> templateReplacements,
+            final Map<String, Object> batchReplacements,
+            final Map<String, Object> letterReplacements) throws IOException, DocumentException {
+        final List<TemplateContent> templateContents = template
+                .getContents()
+                .stream()
+                .sorted()
+                .collect(Collectors.toList());
+        final TemplateContent templateContent = Contents
+                .accessibleHtmlContents()
+                .filter(templateContents)
+                .stream()
+                .findFirst()
+                .orElseThrow(() -> new NullPointerException("Vastaanottajakirjeelle " + letterReceiverLetter.getId() + " ei voitu luoda saavutettavan HTML:n tarvitsemaa kirjepohjaa"));
+        final byte[] currentDocument = createPageHtml(
+                template,
+                templateContent.getContent().getBytes(),
+                addressLabel,
+                templateReplacements,
+                batchReplacements,
+                letterReplacements
+        );
+        letterReceiverLetter.setLetter(currentDocument);
+        letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_HTML);
+        letterReceiverLetter.setOriginalContentType(ContentTypes.CONTENT_TYPE_HTML);
+    }
+
+    private void saveLetterReceiverAttachment(String name, byte[] page, long letterReceiverLetterId) {
+        LetterReceiverLEtterAttachmentSaveDto attachment = new LetterReceiverLEtterAttachmentSaveDto();
+        attachment.setName(Optional.fromNullable(name).or("liite") + ".pdf");
+        attachment.setContentType(ContentTypes.CONTENT_TYPE_PDF);
+        attachment.setContents(page);
+        attachment.setLetterReceiverLetterId(letterReceiverLetterId);
+        attachmentService.saveReceiverAttachment(attachment);
+    }
+
+    private Template determineTemplate(
+            LetterReceivers receiver,
+            fi.vm.sade.viestintapalvelu.model.LetterBatch batch
+    ) {
+        final LetterReceiverLetter letterReceiverLetter = receiver.getLetterReceiverLetter();
+        final String contentType = letterReceiverLetter.getContentType();
+        final ContentStructureType contentStructureType = ContentTypes
+                .getContentStructureType(letterReceiverLetter)
+                .orElseThrow(() -> new NullPointerException("Vastaanottajan " + receiver.getId() + " vastaanottajakirjeellä " + letterReceiverLetter.getId() + " on tuntematon kirjepohjan tyyppi " + contentType));
+        if (receiver.getWantedLanguage() == null) {
+            return templateService.findById(batch.getTemplateId(), contentStructureType);
+        }
+        return batch
+                .getUsedTemplates()
+                .stream()
+                .map(UsedTemplate::getTemplate)
+                .filter(template -> template.getLanguage().equals(receiver.getWantedLanguage()))
+                .map(template -> templateService.findById(template.getId(), contentStructureType))
+                .findFirst()
+                .orElseThrow(() -> new NullPointerException("Ei voitu konstruoida vastaanottajalle " + receiver.getId() + " kirjepohjaa sisältötyypillä " + contentType));
+    }
+
+    private Map<String, Object> formReplacementMap(Set<LetterReceiverReplacement> replacements, ObjectMapper mapper) throws IOException {
         Map<String, Object> templReplacements = new HashMap<>();
         for (LetterReceiverReplacement replacement : replacements) {
             templReplacements.put(replacement.getName(), replacement.getEffectiveValue(mapper));
@@ -376,16 +499,11 @@ public class LetterBuilder {
         return templReplacements;
     }
 
-    public static Map<String, Object> formReplacementMap(List<Replacement> replacements) {
+    private static Map<String, Object> formReplacementMap(List<Replacement> replacements) {
         Map<String, Object> templReplacements = new HashMap<>();
         for (Replacement templRepl : replacements) {
             templReplacements.put(templRepl.getName(), templRepl.getDefaultValue());
         }
         return templReplacements;
     }
-
-    public void setObjectMapperProvider(ObjectMapperProvider objectMapperProvider) {
-        this.objectMapperProvider = objectMapperProvider;
-    }
-
 }

@@ -23,6 +23,7 @@ import fi.vm.sade.viestintapalvelu.Urls;
 import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchStatusDto;
 import fi.vm.sade.viestintapalvelu.dto.letter.LetterReceiverLetterDTO;
 import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
@@ -32,7 +33,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.Response;
-import java.util.List;
 import java.util.Map;
 
 @Component("LetterResourceTrusted")
@@ -78,7 +78,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
 
     @GET
     @Path("/receiverLetter/{id}")
-    @Produces({ "application/pdf", "application/zip" })
+    @Produces({ ContentTypes.CONTENT_TYPE_PDF, "application/zip" })
     @ApiOperation(value = "Hakee vastaanottajan kirjeen")
     public Response getReceiversLetter(@ApiParam(value = "Vastaanottajan kirjeen avain") @PathParam(Constants.PARAM_ID) Long id,
                                        @Context HttpServletRequest request, @Context HttpServletResponse response) {

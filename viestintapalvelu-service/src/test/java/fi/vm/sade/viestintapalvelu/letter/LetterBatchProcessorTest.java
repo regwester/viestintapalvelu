@@ -15,22 +15,25 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-
-import org.junit.Before;
-import org.junit.Test;
-import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.runners.MockitoJUnitRunner;
-
+import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstDoNothing;
+import static java.util.concurrent.TimeUnit.SECONDS;
+import static junit.framework.Assert.assertEquals;
+import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertFalse;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doAnswer;
+import static org.mockito.Mockito.doCallRealMethod;
+import static org.mockito.Mockito.eq;
+import static org.mockito.Mockito.timeout;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 import com.google.common.base.Optional;
 
+import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.dao.LetterReceiversDAO;
-import fi.vm.sade.externalinterface.common.ObjectMapperProvider;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch;
@@ -38,13 +41,21 @@ import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.AnswerChain;
+import org.junit.Before;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
+import org.mockito.runners.MockitoJUnitRunner;
 
-import static fi.vm.sade.viestintapalvelu.util.AnswerChain.atFirstDoNothing;
-import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
-import static org.junit.Assert.assertFalse;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.*;
+import java.util.ArrayList;
+import java.util.ConcurrentModificationException;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeoutException;
 
 @RunWith(MockitoJUnitRunner.class)
 public class LetterBatchProcessorTest {
@@ -87,9 +98,8 @@ public class LetterBatchProcessorTest {
     }
 
     @Test
-    public void updatesProcessStartedOnLetterBatch() throws InterruptedException {
-        processor.processLetterBatch(LETTERBATCH_ID);
-        Thread.sleep(100);
+    public void updatesProcessStartedOnLetterBatch() throws Exception {
+        waitFor(processor.processLetterBatch(LETTERBATCH_ID));
         verify(service, times(1)).updateBatchProcessingStarted(1l, LetterBatchProcess.LETTER);
     }
 
@@ -106,8 +116,8 @@ public class LetterBatchProcessorTest {
         when(service.updateBatchProcessingFinished(eq(LETTERBATCH_ID), eq(LetterBatchProcess.LETTER)))
                 .thenReturn(Optional.<LetterBatchProcess>absent());
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
-        assertTrue(state.get());
-        verify(builder, timeout(100).times(amountOfReceivers)).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
+        assertTrue(state.get(10, SECONDS));
+        verify(builder, timeout(100).times(amountOfReceivers)).constructPagesForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class), any(Map.class), any(Map.class));
         verify(letterReceiverLetterDAO, timeout(100).times(amountOfReceivers)).update(any(LetterReceiverLetter.class));
     }
 
@@ -124,37 +134,39 @@ public class LetterBatchProcessorTest {
         AnswerChain<Void> processCalls = atFirstDoNothing().times(okCount).thenThrow(new IllegalStateException("Something went wrong.")),
                 updateCalls = atFirstDoNothing();
         doAnswer(processCalls)
-                .when(builder).constructPDFForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class),
+                .when(builder).constructPagesForLetterReceiverLetter(any(LetterReceivers.class), any(LetterBatch.class),
                 any(Map.class), any(Map.class));
         doAnswer(updateCalls).when(letterReceiverLetterDAO).update(any(LetterReceiverLetter.class));
 
         Future<Boolean> state = processor.processLetterBatch(LETTERBATCH_ID);
-        assertFalse(state.get());
+        assertFalse(state.get(10, SECONDS));
         assertTrue(processCalls.getTotalCallCount() > okCount); // okCount + 1 at least + possible other threads
         assertTrue(processCalls.getTotalCallCount() <= okCount + 1 + new LetterBatchProcessor().getLetterBatchJobThreadCount());
         assertEquals(okCount, updateCalls.getTotalCallCount());
     }
     
     @Test (expected = ConcurrentModificationException.class)
-    public void preventsProcessingSameBatchSimultaneously() {
+    public void preventsProcessingSameBatchSimultaneously() throws InterruptedException, ExecutionException, TimeoutException {
         long id = 5l;
-        processor.processLetterBatch(id);
-        processor.processLetterBatch(id);
+        Future<Boolean> f1 = processor.processLetterBatch(id);
+        Future<Boolean> f2 = processor.processLetterBatch(id);
+        waitFor(f2);
+        waitFor(f1);
     }
-    
+
     @Test
-    public void storesLetterBatchIdBeingProcessedIntoQueue() {
+    public void storesLetterBatchIdBeingProcessedIntoQueue() throws InterruptedException, ExecutionException, TimeoutException {
         long id = 7l;
-        processor.processLetterBatch(id);
+        Future<Boolean> f = processor.processLetterBatch(id);
         assertTrue(processor.isProcessingLetterBatch(id));
+        waitFor(f);
     }
     
-    @Test(timeout=100)
+    @Test(timeout=10000)
     public void removesLetterBatchIdFromQueueAfterProcessing() throws Exception {
         when(service.updateBatchProcessingFinished(eq(LETTERBATCH_ID), eq(LetterBatchProcess.LETTER)))
                 .thenReturn(Optional.<LetterBatchProcess>absent());
-        processor.processLetterBatch(LETTERBATCH_ID);
-        while(processor.isProcessingLetterBatch(LETTERBATCH_ID)) Thread.sleep(1);
+        waitFor(processor.processLetterBatch(LETTERBATCH_ID));
     }
 
     private List<Long> listOfLongsUpTo(int amountOfReceivers) {
@@ -168,8 +180,9 @@ public class LetterBatchProcessorTest {
     @Test
     public void updatesProcessFinishedOnLetterBatch() throws Exception {
         final int amountOfReceivers = 157;
-        when(service.fetchById(LETTERBATCH_ID)).thenReturn(givenLetterBatchWithReceivers(amountOfReceivers));
-        processor.processLetterBatch(LETTERBATCH_ID);
+        // TODO Miksi tätä ei kutsuta???
+        // when(service.fetchById(LETTERBATCH_ID)).thenReturn(givenLetterBatchWithReceivers(amountOfReceivers));
+        waitFor(processor.processLetterBatch(LETTERBATCH_ID));
         verify(service, timeout(100)).updateBatchProcessingFinished(LETTERBATCH_ID, LetterBatchProcess.LETTER);
     }
 
@@ -183,4 +196,7 @@ public class LetterBatchProcessorTest {
         return batch;
     }
 
+    private void waitFor(Future<Boolean> f) throws InterruptedException, ExecutionException, TimeoutException {
+        f.get(10, SECONDS);
+    }
 }

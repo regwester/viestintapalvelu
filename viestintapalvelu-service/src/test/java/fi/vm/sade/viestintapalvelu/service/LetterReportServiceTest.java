@@ -95,6 +95,7 @@ public class LetterReportServiceTest {
     
     @Test
     public void testGetLetterBatchReport() {
+        //         List<LetterReceivers> letterReceiverList = letterReceiversDAO.findLetterReceiversByLetterBatchID(letterBatchID, pagingAndSorting, query);
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(new Long(1));
         Set<LetterReceivers> letterReceivers = DocumentProviderTestData.getLetterReceivers(new Long(2), letterBatch);
         List<LetterReceivers> mockedLetterReceivers = new ArrayList<LetterReceivers>(letterReceivers);
@@ -102,8 +103,8 @@ public class LetterReportServiceTest {
         when(mockedLetterReceiversDAO.findLetterReceiversByLetterBatchID(
             any(Long.class), any(PagingAndSortingDTO.class))).thenReturn(mockedLetterReceivers);
         when(mockedLetterReceiversDAO.findLetterReceiversByLetterBatchID(
-                any(Long.class), any(PagingAndSortingDTO.class), any(String.class))).thenReturn(mockedLetterReceivers);
-        when(mockedLetterReceiversDAO.findNumberOfReciversByLetterBatchID(any(Long.class), any(String.class))).thenReturn(1L);
+                any(Long.class), any(PagingAndSortingDTO.class), eq(null))).thenReturn(mockedLetterReceivers);
+        when(mockedLetterReceiversDAO.findNumberOfReciversByLetterBatchID(any(Long.class), eq(null))).thenReturn(1L);
         
         OrganisaatioRDTO organisaatio = DocumentProviderTestData.getOrganisaatioRDTO();
         when(mockedOrganizationComponent.getOrganization(any(String.class))).thenReturn(organisaatio);

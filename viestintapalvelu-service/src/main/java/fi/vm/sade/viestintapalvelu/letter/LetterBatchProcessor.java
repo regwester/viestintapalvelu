@@ -15,31 +15,32 @@
  **/
 package fi.vm.sade.viestintapalvelu.letter;
 
-import java.util.ConcurrentModificationException;
-import java.util.HashSet;
-import java.util.Set;
-import java.util.concurrent.Callable;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Future;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.ConcurrentLinkedQueue;
-
-import javax.annotation.Resource;
-import javax.inject.Singleton;
-
+import com.google.common.base.Optional;
+import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
+import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
+import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
+import fi.vm.sade.viestintapalvelu.letter.processing.Job;
+import fi.vm.sade.viestintapalvelu.letter.processing.JobDescription;
+import fi.vm.sade.viestintapalvelu.letter.processing.LetterReceiverProcessable;
+import fi.vm.sade.viestintapalvelu.letter.processing.Processable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
-import com.google.common.base.Optional;
-
-import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
-import fi.vm.sade.viestintapalvelu.letter.dto.LetterBatchSplitedIpostDto;
-import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
-import fi.vm.sade.viestintapalvelu.letter.processing.*;
+import javax.annotation.Resource;
+import javax.inject.Singleton;
+import java.util.ConcurrentModificationException;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 @Component
 @Singleton
@@ -72,8 +73,13 @@ public class LetterBatchProcessor {
     public Future<Boolean> processLetterBatch(long letterBatchId) {
         LetterReceiverJob job = new LetterReceiverJob(letterBatchId);
         reserveJob(job);
-        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<>(new JobDescription<>(job,
-                LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)), letterBatchJobThreadCount));
+        BatchJob<LetterReceiverProcessable> batchJob = new BatchJob<>(
+                new JobDescription<>(
+                        job,
+                        LetterReceiverProcessable.forIds(letterService.findUnprocessedLetterReceiverIdsByBatch(letterBatchId)),
+                        letterBatchJobThreadCount
+                )
+        );
         return batchJobExecutorService.submit(batchJob);
     }
 

@@ -23,5 +23,6 @@ package fi.vm.sade.viestintapalvelu.model.types;
 public enum ContentStructureType {
     email,
     letter,
-    asiointitili
+    asiointitili,
+    accessibleHtml
 }

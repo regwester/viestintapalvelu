@@ -48,6 +48,7 @@ import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.letter.LetterListResponse;
 import fi.vm.sade.viestintapalvelu.letter.LetterPublisher;
 import fi.vm.sade.viestintapalvelu.letter.LetterService.LetterBatchProcess;
+import fi.vm.sade.viestintapalvelu.letter.dto.AsyncLetterBatchDto;
 import fi.vm.sade.viestintapalvelu.letter.dto.converter.LetterBatchDtoConverter;
 import fi.vm.sade.viestintapalvelu.letter.impl.LetterServiceImpl;
 import fi.vm.sade.viestintapalvelu.letter.processing.IPostiProcessable;
@@ -58,6 +59,7 @@ import fi.vm.sade.viestintapalvelu.model.LetterBatchIPostProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterBatchLetterProcessingError;
 import fi.vm.sade.viestintapalvelu.model.LetterReceiverLetter;
 import fi.vm.sade.viestintapalvelu.model.LetterReceivers;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import fi.vm.sade.viestintapalvelu.util.CatchParametersAnswers;
 import fi.vm.sade.viestintapalvelu.util.DummyDokumenttiIdProvder;
@@ -89,7 +91,7 @@ import java.util.zip.DataFormatException;
 
 @RunWith(MockitoJUnitRunner.class)
 @ContextConfiguration("/test-application-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
+@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
 public class LetterServiceTest {
@@ -122,11 +124,11 @@ public class LetterServiceTest {
         this.letterService.setLetterBuilder(letterBuilder);
         this.letterService.setDokumenttipalveluRestClient(dokumenttipalveluRestClient);
     }
-    
+
     @Test
     public void testCreateLetter() {
-        fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch();
-        
+        AsyncLetterBatchDto letterBatch = DocumentProviderTestData.getAsyncLetterBatch();
+
         when(mockedCurrentUserComponent.getCurrentUser()).thenReturn(DocumentProviderTestData.getHenkilo().getOidHenkilo());
         when(mockedLetterBatchDAO.insert(any(LetterBatch.class))).thenAnswer(new Answer<LetterBatch>() {
             @Override
@@ -137,7 +139,7 @@ public class LetterServiceTest {
         when(templateDAO.findTemplate(any(TemplateCriteria.class)))
             .thenReturn(DocumentProviderTestData.getTemplate(1l));
         LetterBatch createdLetterBatch = letterService.createLetter(letterBatch, false);
-        
+
         assertNotNull(createdLetterBatch);
         assertNotNull(createdLetterBatch.getLetterReceivers());
         assertTrue(createdLetterBatch.getLetterReceivers().size() > 0);
@@ -152,9 +154,9 @@ public class LetterServiceTest {
         List<LetterBatch> mockedLetterBatchList = new ArrayList<LetterBatch>();
         mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(1l));
         when(mockedLetterBatchDAO.findBy(any(String.class), any(Object.class))).thenReturn(mockedLetterBatchList);
-        
+
         fi.vm.sade.viestintapalvelu.letter.LetterBatch letterBatchFindById = letterService.findById(new Long(1));
-        
+
         assertNotNull(letterBatchFindById);
         assertNotNull(letterBatchFindById.getTemplateId());
     }
@@ -164,12 +166,12 @@ public class LetterServiceTest {
     public void testFindLetterBatchByNameOrgTag() {
         when(mockedLetterBatchDAO.findLetterBatchByNameOrgTag(any(String.class), eq("FI"), any(String.class),
                 any(Optional.class), any(Optional.class))).thenReturn(DocumentProviderTestData.getLetterBatch(1l));
-        
-        fi.vm.sade.viestintapalvelu.letter.LetterBatch foundLetterBatch = 
+
+        fi.vm.sade.viestintapalvelu.letter.LetterBatch foundLetterBatch =
             letterService.findLetterBatchByNameOrgTag("test-template", "FI", "1.2.246.562.10.00000000001",
                     Optional.of("test-tag"),
                     Optional.<String>fromNullable(null));
-        
+
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getTemplateId() == 1);
         assertTrue(foundLetterBatch.getTemplateName().equals("test-templateName"));
@@ -180,14 +182,14 @@ public class LetterServiceTest {
 
     @Test
     public void testFindReplacementByNameOrgTag() {
-        when(mockedLetterBatchDAO.findLetterBatchByNameOrg(any(String.class), eq("FI"), 
+        when(mockedLetterBatchDAO.findLetterBatchByNameOrg(any(String.class), eq("FI"),
             any(String.class))).thenReturn(DocumentProviderTestData.getLetterBatch(1l));
-        
-        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements = 
+
+        List<fi.vm.sade.viestintapalvelu.template.Replacement> replacements =
             letterService.findReplacementByNameOrgTag("test-templateName", "FI", "1.2.246.562.10.00000000001",
                     Optional.<String>absent(),
                     Optional.<String>absent());
-        
+
         assertNotNull(replacements);
         assertTrue(replacements.size() > 0);
         assertTrue(replacements.get(0).getName().equals("test-replacement-name"));
@@ -199,24 +201,24 @@ public class LetterServiceTest {
     public void testGetLetter() {
         List<LetterBatch> mockedLetterBatchList = new ArrayList<LetterBatch>();
         mockedLetterBatchList.add(DocumentProviderTestData.getLetterBatch(1l));
-        
-        List<LetterReceivers> mockedLetterReceiversList = 
+
+        List<LetterReceivers> mockedLetterReceiversList =
             new ArrayList<LetterReceivers>(mockedLetterBatchList.get(0).getLetterReceivers());
-        
+
         List<LetterReceiverLetter> mockedLetterReceiverLetterList = new ArrayList<LetterReceiverLetter>();
         mockedLetterReceiverLetterList.add(mockedLetterReceiversList.get(0).getLetterReceiverLetter());
-        
+
         when(mockedLetterReceiverLetterDAO.findBy(any(String.class), any(Object.class))).thenReturn(
             mockedLetterReceiverLetterList);
-        
+
         LetterContent letterContent = letterService.getLetter(new Long(1));
-        
+
         assertNotNull(letterContent);
-        assertTrue(letterContent.getContentType().equalsIgnoreCase("application/msword"));
+        assertTrue(letterContent.getContentType().equalsIgnoreCase(ContentTypes.CONTENT_TYPE_PDF));
         assertNotNull(letterContent.getContent());
         assertTrue(new String(letterContent.getContent()).equalsIgnoreCase("letter"));
     }
-    
+
     @Test
     public void setsHandlingStartedWhenStartingProcessIsCalled() {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
@@ -224,7 +226,7 @@ public class LetterServiceTest {
         letterService.updateBatchProcessingStarted(1l, LetterBatchProcess.LETTER);
         assertNotNull(batch.getHandlingStarted());
     }
-    
+
     @Test
     public void testHandleLetterProcessesFinished() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
@@ -301,7 +303,7 @@ public class LetterServiceTest {
         letterService.updateBatchProcessingStarted(1l, LetterBatchProcess.EMAIL);
         assertNotNull(batch.getEmailHandlingStarted());
     }
-    
+
     @Test
     public void setsEmailHandlingFinishedWhenFinishingProcessIsCalled() throws Exception {
         LetterBatch batch = DocumentProviderTestData.getLetterBatch(1l);
@@ -309,13 +311,13 @@ public class LetterServiceTest {
         letterService.updateBatchProcessingFinished(1l, LetterBatchProcess.EMAIL);
         assertNotNull(batch.getEmailHandlingFinished());
     }
-    
+
     @Test
     public void usesDAOWhenFetchingLetterBatch() {
         letterService.fetchById(1l);
         verify(mockedLetterBatchDAO).read(1l);
     }
-    
+
     @Test
     public void usesDAOWhenUpdatingLetterReceiverLetter() {
         LetterReceiverLetter letter = new LetterReceiverLetter();
@@ -415,7 +417,7 @@ public class LetterServiceTest {
         assertNotNull(batch.getProcessingErrors());
         assertEquals(1,batch.getProcessingErrors().size());
     }
-    
+
     @Test
     public void usesLetterBatchDaoForFetchingUnfinishedLetterBatches() {
         letterService.findUnfinishedLetterBatches();
@@ -471,7 +473,7 @@ public class LetterServiceTest {
 
     @Test
     public void testListLettersByUser() {
-        List<LetterListItem> list = Arrays.asList(new LetterListItem(123l, "test-haku-oid", "jalkiohjauskirje", "application/pdf", new Date()));
+        List<LetterListItem> list = Arrays.asList(new LetterListItem(123l, "test-haku-oid", "jalkiohjauskirje", ContentTypes.CONTENT_TYPE_PDF, new Date()));
 
         when(mockedLetterBatchDAO.findLettersReadyForPublishByPersonOid("test-person-oid")).thenReturn(list);
 

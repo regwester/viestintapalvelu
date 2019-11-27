@@ -20,6 +20,7 @@ import java.io.OutputStream;
 
 import javax.ws.rs.BadRequestException;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import org.apache.commons.io.IOUtils;
 import org.apache.geronimo.mail.util.StringBufferOutputStream;
 import org.bouncycastle.util.encoders.Base64Encoder;
@@ -174,7 +175,7 @@ public class AsiointitiliCommunicationServiceImplTest {
                 tiedostoWithUrl = kohdeWs.getTiedostot().getTiedosto().get(1);
         assertEquals("test.pdf", tiedostoWithSisalto.getTiedostoNimi());
         assertEquals("Hello world päätös", tiedostoWithSisalto.getTiedostonKuvaus());
-        assertEquals("application/pdf", tiedostoWithSisalto.getTiedostoMuoto());
+        assertEquals(ContentTypes.CONTENT_TYPE_PDF, tiedostoWithSisalto.getTiedostoMuoto());
         assertTrue(Integer.parseInt(tiedostoWithSisalto.getTiedostoKoko()) > 0);
         assertNotNull(tiedostoWithSisalto.getTiedostoSisalto());
         assertNull(tiedostoWithSisalto.getTiedostoURL());

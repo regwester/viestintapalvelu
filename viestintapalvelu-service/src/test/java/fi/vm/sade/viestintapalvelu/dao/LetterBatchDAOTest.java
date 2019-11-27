@@ -21,6 +21,7 @@ import fi.vm.sade.viestintapalvelu.dao.dto.LetterBatchCountDto;
 import fi.vm.sade.viestintapalvelu.letter.LetterListItem;
 import fi.vm.sade.viestintapalvelu.model.*;
 import fi.vm.sade.viestintapalvelu.model.LetterBatch.Status;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 import fi.vm.sade.viestintapalvelu.testdata.DocumentProviderTestData;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -44,7 +45,7 @@ import static org.junit.Assert.*;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration("/test-dao-context.xml")
-@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class, 
+@TestExecutionListeners(listeners = {DependencyInjectionTestExecutionListener.class,
     DirtiesContextTestExecutionListener.class, TransactionalTestExecutionListener.class})
 @Transactional(readOnly=true)
 public class LetterBatchDAOTest {
@@ -61,11 +62,11 @@ public class LetterBatchDAOTest {
     public void testFindLetterBatchByNameOrgTag() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatchDAO.insert(letterBatch);
-        
+
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrgTag(
             "test-templateName", "FI", "1.2.246.562.10.00000000001", Optional.of("test-tag"),
                 Optional.<String>absent());
-        
+
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getId() > 0);
         assertNotNull(foundLetterBatch.getLetterReceivers());
@@ -188,10 +189,10 @@ public class LetterBatchDAOTest {
     public void testFindLetterBatchByNameOrg() {
         LetterBatch letterBatch = DocumentProviderTestData.getLetterBatch(null);
         letterBatchDAO.insert(letterBatch);
-        
+
         LetterBatch foundLetterBatch = letterBatchDAO.findLetterBatchByNameOrg(
             "test-templateName", "FI", "1.2.246.562.10.00000000001");
-        
+
         assertNotNull(foundLetterBatch);
         assertTrue(foundLetterBatch.getId() > 0);
         assertNotNull(foundLetterBatch.getLetterReceivers());
@@ -244,7 +245,7 @@ public class LetterBatchDAOTest {
         System.out.println(letterBatch.getProcessingErrors().toString());
         assertEquals("Testing failure case", letterBatch.getProcessingErrors().iterator().next().getErrorCause());
     }
-    
+
     @Test
     public void returnsEmptyListWhenAllLettersAreProcessed() {
         assertTrue(letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(Status.processing, "afeaf".getBytes())).isEmpty());
@@ -254,17 +255,17 @@ public class LetterBatchDAOTest {
     public void returnsUnprocessedLetters() {
         assertEquals(1, letterBatchDAO.findUnprocessedLetterReceiverIdsByBatch(givenLetterBatchWithLetter(Status.processing, null)).size());
     }
-    
+
     @Test
     public void returnsUnfinishedBatches() {
         givenLetterBatchWithLetter(Status.processing, null);
-        assertEquals(1, letterBatchDAO.findUnfinishedLetterBatches().size());        
+        assertEquals(1, letterBatchDAO.findUnfinishedLetterBatches().size());
     }
-    
+
     @Test
     public void doesNotReturnFinishedBatches() {
         givenLetterBatchWithLetter(Status.ready, null);
-        assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());   
+        assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());
     }
 
     @Test
@@ -272,7 +273,7 @@ public class LetterBatchDAOTest {
         givenLetterBatchWithLetter(Status.error, null);
         assertEquals(0, letterBatchDAO.findUnfinishedLetterBatches().size());
     }
-    
+
     @Test
     public void ordersBatchesByModified() throws Exception {
         givenLetterBatchWithDateModified(Status.created, null, new Date());
@@ -354,7 +355,7 @@ public class LetterBatchDAOTest {
            letterReceivers.setOidPerson(personOids.get(i));
            letterReceivers.setEmailAddressEPosti(personOids.get(i) + "@testi.fi");
            letterReceivers.getLetterReceiverLetter().setReadyForPublish(false);
-           letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
+           letterReceivers.getLetterReceiverLetter().setContentType(ContentTypes.CONTENT_TYPE_PDF);
            if(1 == i) {
                letterReceivers.getLetterReceiverLetter().setLetter(null);
            }
@@ -465,7 +466,7 @@ public class LetterBatchDAOTest {
     }
 
     private boolean listItemEquals(LetterListItem actual, String hakuOid, String templateName) {
-        return hakuOid.equals(actual.getHakuOid()) && templateName.equals(actual.getTyyppi()) && "application/pdf".equals(actual.getTiedostotyyppi());
+        return hakuOid.equals(actual.getHakuOid()) && templateName.equals(actual.getTyyppi()) && ContentTypes.CONTENT_TYPE_PDF.equals(actual.getTiedostotyyppi());
     }
 
     private void insertLetterBatchForPersonOid(String hakuOid, String personOid, String templateName, boolean readyForPublish) {
@@ -490,7 +491,7 @@ public class LetterBatchDAOTest {
             letterReceivers.setOidApplication("oid" + i);
             letterReceivers.setEmailAddressEPosti(personOids.get(i) + "@testi.fi");
             letterReceivers.getLetterReceiverLetter().setReadyForPublish(readyForPublish);
-            letterReceivers.getLetterReceiverLetter().setContentType("application/pdf");
+            letterReceivers.getLetterReceiverLetter().setContentType(ContentTypes.CONTENT_TYPE_PDF);
             i++;
         }
         return letterBatchDAO.insert(letterBatch).getId();

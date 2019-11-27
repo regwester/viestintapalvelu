@@ -15,25 +15,16 @@
  **/
 package fi.vm.sade.viestintapalvelu.download.cache;
 
-import java.time.Duration;
-import java.time.temporal.TemporalUnit;
-import java.util.Collection;
-import java.util.Map.Entry;
-import java.util.UUID;
-import java.util.concurrent.TimeUnit;
-
-import javax.inject.Singleton;
-
-import cucumber.api.java.eo.Se;
-import fi.vm.sade.viestintapalvelu.download.Download;
-import fi.vm.sade.viestintapalvelu.download.Header;
-import org.springframework.context.annotation.Profile;
-import org.springframework.stereotype.Service;
-
-import com.google.common.base.Function;
 import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import com.google.common.collect.Collections2;
+
+import fi.vm.sade.viestintapalvelu.download.Download;
+import fi.vm.sade.viestintapalvelu.download.Header;
+
+import java.util.Collection;
+import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 
 
 class DownloadCacheLocal implements DownloadCache {

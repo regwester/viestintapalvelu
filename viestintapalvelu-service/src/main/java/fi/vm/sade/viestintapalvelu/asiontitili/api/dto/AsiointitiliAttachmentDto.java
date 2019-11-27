@@ -23,6 +23,7 @@ import javax.validation.constraints.Size;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.wordnik.swagger.annotations.ApiModelProperty;
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
 
 /**
  * User: ratamaa
@@ -50,7 +51,7 @@ public class AsiointitiliAttachmentDto implements Serializable {
     private Integer size = 0;
     @NotNull @Size(max=150)
     @ApiModelProperty(value= "Tiedoston formaatti. MimeTyyppi (esimerkiksi application/pdf)", required = true)
-    private String contentType = "application/pdf";
+    private String contentType = ContentTypes.CONTENT_TYPE_PDF;
 
     public String getName() {
         return name;

@@ -330,10 +330,9 @@ public class TemplateResource extends AsynchronousResource {
     @PreAuthorize(Constants.ASIAKIRJAPALVELU_CREATE_TEMPLATE)
     @ApiOperation(value = Store, notes = Store)
     public Response insert(Template template, @Context HttpServletRequest request) throws IOException, DocumentException {
-        log.info("audit logging insert template");
+        log.info("audit logging insert template: {}", template.toString());
         User user = AuditLog.getUser(request);
         Changes changes = Changes.addedDto(template);
-        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_LUONTI, Target.KIRJEPOHJA, String.valueOf(template.getId()), changes);
 
         Response response = userRightsValidator.checkUserRightsToOrganization(Constants.OPH_ORGANIZATION_OID);
         if (Status.OK.getStatusCode() != response.getStatus()) {
@@ -341,6 +340,7 @@ public class TemplateResource extends AsynchronousResource {
         }
         beanValidator.validate(template);
         Long templateId = templateService.storeTemplateDTO(template);
+        AuditLog.log(AUDIT, user, ViestintapalveluOperation.KIRJEPOHJA_LUONTI, Target.KIRJEPOHJA, String.valueOf(templateId), changes);
         return Response.status(Status.OK).entity(templateId).build();
     }
 

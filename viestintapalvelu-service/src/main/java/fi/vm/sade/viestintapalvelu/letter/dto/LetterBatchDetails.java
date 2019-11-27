@@ -27,8 +27,6 @@ public interface LetterBatchDetails {
 
     List<? extends LetterDetails> getLetters();
 
-    Template getTemplate();
-
     Long getTemplateId();
 
     Map<String, Object> getTemplateReplacements();

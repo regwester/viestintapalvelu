@@ -600,14 +600,17 @@ public class TemplateServiceImpl implements TemplateService {
             // First look-up with specified criteria with application period
             template = templateDAO.findTemplate(criteria);
             if (template == null) {
+                log.warn("Ei löydetty kirjepohjaa kirteereillä " + criteria.toString());
                 // If not found, try the default-flagged without application
                 // period
-                template = resolveTemplatePreferringDefault(criteria.withApplicationPeriod(null));
+                final TemplateCriteria defaultTemplateCriteria = criteria.withApplicationPeriod(null);
+                template = resolveTemplatePreferringDefault(defaultTemplateCriteria);
             }
         } else {
             template = resolveTemplatePreferringDefault(criteria);
         }
         if (template == null) {
+            log.warn("Ei löydetty oletuksena käytettävää kirjepohjaa kriteereillä " + criteria.toString());
             return null;
         }
         return template;

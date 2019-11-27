@@ -23,6 +23,7 @@ import java.util.Map;
 
 import com.wordnik.swagger.annotations.ApiModelProperty;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentStructureType;
 import fi.vm.sade.viestintapalvelu.template.Template;
 
 /**
@@ -35,9 +36,6 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
 
     @ApiModelProperty(value = "Kerralla muodostettavien kirjeiden joukko, (1-n)", required = true)
     private List<AsyncLetterBatchLetterDto> letters = new ArrayList<>();
-
-    @ApiModelProperty(value = "Kirjepohja")
-    private Template template;
 
     @ApiModelProperty(value = "Kirjepohjan tunniste")
     private Long templateId;
@@ -71,7 +69,10 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
 
     @ApiModelProperty(value = "Ohitetaanko tuotetun dokumentin tallennus dokumenttipalveluun. Oletuksena ei.", required = false)
     private boolean skipDokumenttipalvelu = false;
-    
+
+    @ApiModelProperty(value = "Määrittää tuotettavat sisältötyypit", required = true)
+    private List<ContentStructureType> contentStructureTypes = new ArrayList<>();
+
     private Map<String, byte[]> iPostiData = new LinkedHashMap<>();
 
 
@@ -91,15 +92,6 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
 
     public void setIposti(boolean iposti) {
         this.iposti = iposti;
-    }
-    
-    @Override
-    public Template getTemplate() {
-        return template;
-    }
-
-    public void setTemplate(Template template) {
-        this.template = template;
     }
 
     @Override
@@ -202,12 +194,21 @@ public class AsyncLetterBatchDto implements Serializable, LetterBatchDetails {
         this.skipDokumenttipalvelu = skipDokumenttipalvelu;
     }
 
+    public List<ContentStructureType> getContentStructureTypes() {
+        return contentStructureTypes;
+    }
+
+    public void setContentStructureTypes(final List<ContentStructureType> contentStructureTypes) {
+        this.contentStructureTypes = contentStructureTypes;
+    }
+
     @Override
     public String toString() {
-        return "AsyncLetterBatchDto [letters=" + letters + ", template=" + template + ", templateId=" + templateId + ", templateReplacements="
+        return "AsyncLetterBatchDto [letters=" + letters + ", templateId=" + templateId + ", templateReplacements="
                 + templateReplacements + ", templateName=" + templateName + ", languageCode=" + languageCode + ", storingOid=" + storingOid
                 + ", organizationOid=" + organizationOid + ", applicationPeriod=" + applicationPeriod + ", fetchTarget=" + fetchTarget + ", tag=" + tag
-                + ", iposti=" + iposti + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + ", iPostiData=" + iPostiData + "]";
+                + ", iposti=" + iposti + ", skipDokumenttipalvelu=" + skipDokumenttipalvelu + ", iPostiData=" + iPostiData
+                + ", contentStructureTypes=" + contentStructureTypes + "]";
     }
 
     public String toStringForLogging() {

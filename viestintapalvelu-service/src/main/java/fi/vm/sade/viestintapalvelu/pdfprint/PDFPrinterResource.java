@@ -17,6 +17,7 @@ package fi.vm.sade.viestintapalvelu.pdfprint;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -28,6 +29,9 @@ import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 
+import fi.vm.sade.viestintapalvelu.model.types.ContentTypes;
+import org.apache.pdfbox.exceptions.COSVisitorException;
+import org.apache.pdfbox.pdmodel.PDDocument;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Document.OutputSettings;
@@ -85,7 +89,7 @@ public class PDFPrinterResource extends AsynchronousResource {
 
     /**
      * PDF sync
-     * 
+     *
      * @param input
      * @param request
      * @return
@@ -117,7 +121,7 @@ public class PDFPrinterResource extends AsynchronousResource {
 
     /**
      * Get PDF content
-     * 
+     *
      * @param input
      * @param request
      * @return
@@ -126,7 +130,7 @@ public class PDFPrinterResource extends AsynchronousResource {
      */
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
-    @Produces("application/pdf")
+    @Produces(ContentTypes.CONTENT_TYPE_PDF)
     @Path("/pdf/content")
     // @ApiOperation(value = "Muodostaa HTML-pohjaisesta asiakirja PDF-dokumentin ja palauttaa sen", notes = "")
     // @ApiResponses(@ApiResponse(code = 400, message = "Document creation failed"))
@@ -141,10 +145,10 @@ public class PDFPrinterResource extends AsynchronousResource {
             return createFailureResponse(request);
         }
     }
-    
+
     /**
      * PDF async
-     * 
+     *
      * @param input
      * @param request
      * @return
@@ -196,23 +200,23 @@ public class PDFPrinterResource extends AsynchronousResource {
         });
         return createResponse(request, documentId+".pdf");
     }
-    
+
     @GET
     @Path("/getDocumentSource")
     @Produces("application/json")
     public Response getDocumentSource() {
         DocumentSource ds = new DocumentSource();
-        
+
         List<String> sources = new ArrayList<>();
         sources.add("documentsource text");
         ds.setDocumentName("documentName");
         ds.setSources(sources);
-        
+
         return Response.ok(ds).build();
     }
 
     private byte[] buildDocument(DocumentSource input)
-            throws DocumentException, IOException {
+            throws DocumentException, IOException, COSVisitorException {
         List<PdfDocument> pdfs = new ArrayList<>();
 
         for (String source : input.getSources()) {
@@ -220,10 +224,40 @@ public class PDFPrinterResource extends AsynchronousResource {
             jsoupDoc.outputSettings(new OutputSettings().escapeMode(EscapeMode.xhtml));
             String parsedSource = jsoupDoc.toString();
             byte[] pdf = documentBuilder.xhtmlToPDF(parsedSource.getBytes());
-            PdfDocument doc = new PdfDocument(null, pdf, null);
+            PdfDocument doc = new PdfDocument(
+                    null,
+                    getLanguage(pdf),
+                    new PdfDocument.FrontPageData(pdf),
+                    null
+            );
             pdfs.add(doc);
         }
         MergedPdfDocument mPdf = documentBuilder.merge(pdfs);
         return mPdf.toByteArray();
+    }
+
+    private String getLanguage(byte[] pdf) throws IOException {
+        InputStream inputStream = null;
+        PDDocument document = null;
+        try {
+            inputStream = new ByteArrayInputStream(pdf);
+            document = PDDocument.load(inputStream);
+            return document.getDocumentCatalog().getLanguage();
+        } finally {
+            close(inputStream);
+            close(document);
+        }
+    }
+
+    private void close(PDDocument document) throws IOException {
+        if (document != null) {
+            document.close();
+        }
+    }
+
+    private void close(InputStream inputStream) {
+        if (inputStream != null) {
+            close(inputStream);
+        }
     }
 }
