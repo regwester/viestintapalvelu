@@ -237,8 +237,7 @@ public class LetterBuilder {
         final SimpleDateFormat targetDateFormat = new SimpleDateFormat("dd.MM.yyyy");
         try {
             return targetDateFormat.format(sourceDateFormat.parse(dateStr));
-        } catch (ParseException e) {
-            LOG.warn("Ei voitu lukea java.util.Date -objektiksi merkkijonoa {}", dateStr, e);
+        } catch (ParseException ignore) {
             return dateStr;
         }
     }
