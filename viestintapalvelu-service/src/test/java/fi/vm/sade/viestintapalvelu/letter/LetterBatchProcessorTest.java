@@ -182,7 +182,7 @@ public class LetterBatchProcessorTest {
         final int amountOfReceivers = 157;
         // TODO Miksi tätä ei kutsuta???
         // when(service.fetchById(LETTERBATCH_ID)).thenReturn(givenLetterBatchWithReceivers(amountOfReceivers));
-        processor.processLetterBatch(LETTERBATCH_ID);
+        waitFor(processor.processLetterBatch(LETTERBATCH_ID));
         verify(service, timeout(100)).updateBatchProcessingFinished(LETTERBATCH_ID, LetterBatchProcess.LETTER);
     }
 
