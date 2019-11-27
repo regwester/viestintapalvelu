@@ -169,7 +169,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "ILMOITUS OPISKELIJAVALINNAN TULOKSESTA KORKEAKOULUJEN YHTEISHAUSSA SYKSYLLÄ 2018",
+      "defaultValue": "Ilmoitus opiskelijavalinnan tuloksesta korkeakoulujen yhteishaussa syksyllä 2019",
       "mandatory": false
     },
     {
@@ -205,7 +205,7 @@
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "TILANTEESI SYKSYN 2018 KORKEAKOULUJEN YHTEISHAUSSA",
+      "defaultValue": "Tilanteesi syksyn 2019 korkeakoulujen yhteishaussa",
       "mandatory": false
     }
   ]

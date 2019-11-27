@@ -169,7 +169,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "MEDDELANDE OM ANTAGNINGEN AV STUDERANDE I GEMENSAM ANSÖKAN TILL HÖGSKOLOR HÖSTEN 2018",
+      "defaultValue": "Meddelande om antagningen av studerande i gemensam ansökan till högskolor hösten 2019",
       "mandatory": false
     },
     {
@@ -205,7 +205,7 @@
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "DIN SITUATION I GEMENSAM ANSÖKAN TILL HÖGSKOLOR HÖSTEN 2018",
+      "defaultValue": "Din situation i gemensam ansökan till högskolor hösten 2019",
       "mandatory": false
     }
   ]
