@@ -32,7 +32,6 @@ import java.io.UncheckedIOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -64,7 +63,7 @@ class LocalLetterPublisher implements LetterPublisher {
     }
 
     @Override
-    public int publishLetterBatch(long letterBatchId) throws Exception {
+    public int publishLetterBatch(long letterBatchId) {
         List<Long> letters = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
         if(letters.size() > 0) {
             new Thread(new LetterPublishTask(letterBatchId, letters)).start();
@@ -186,7 +185,6 @@ class S3LetterPublisher implements LetterPublisher {
         final LetterBatch letterBatch = letterBatchDAO.read(letterBatchId);
 
         String subFolderName = StringUtils.isEmpty(letterBatch.getApplicationPeriod()) ? String.valueOf(letterBatchId) : letterBatch.getApplicationPeriod().trim();
-        List<CompletableFuture<PutObjectResponse>> responses = new ArrayList<>();
 
         return letterReceiverLetterDAO
                 .findByIds(letterIds)
