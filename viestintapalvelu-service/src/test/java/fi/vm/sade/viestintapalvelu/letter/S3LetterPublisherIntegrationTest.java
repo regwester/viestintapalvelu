@@ -1,6 +1,12 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import org.junit.Before;
@@ -12,12 +18,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
+import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3AsyncClient;
 import software.amazon.awssdk.services.s3.model.CreateBucketRequest;
 import software.amazon.awssdk.services.s3.model.ListObjectsRequest;
+import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.net.URI;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * To use this test, first start localstack:
@@ -44,12 +54,7 @@ public class S3LetterPublisherIntegrationTest {
        S3AsyncClient s3client = clientFactory.getClient(Region.of(REGION_NAME));
         ensureBucketExists(s3client);
 
-        s3LetterPublisher = new S3LetterPublisher(
-            letterPublishTestConfig.getletterBatchDAO(),
-            letterPublishTestConfig.getLetterReceiverLetterDAO(),
-            BUCKET_NAME,
-            REGION_NAME,
-            clientFactory);
+        s3LetterPublisher = luoS3LetterPublisher(clientFactory);
     }
 
     /**
@@ -73,6 +78,71 @@ public class S3LetterPublisherIntegrationTest {
         s3LetterPublisher.publishLetterBatch(1l);
     }
 
+    @Test
+    public void s3ClientinHeittamistaPoikkeuksistaToivutaan() throws Exception {
+        final S3AsyncClient poikkeuksenHeittavaClient = mock(S3AsyncClient.class);
+        when(poikkeuksenHeittavaClient.putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class)))
+            .thenThrow(new RuntimeException("Testiräjähdys!"));
+
+        final AtomicInteger virheitaViela = new AtomicInteger(2);
+        s3LetterPublisher = luoS3LetterPublisher(new PublisherIntegrationTestClientFactory() {
+            @Override
+            public S3AsyncClient getClient(Region awsRegion) {
+                if (virheitaViela.decrementAndGet() > 0) {
+                    return poikkeuksenHeittavaClient;
+                }
+                return super.getClient(awsRegion);
+            }
+        });
+
+        s3LetterPublisher.publishLetterBatch(1L);
+
+        verify(poikkeuksenHeittavaClient).putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class));
+        verifyNoMoreInteractions(poikkeuksenHeittavaClient);
+    }
+
+    @Test
+    public void s3ClientinPalauttamistaVirheistaToivutaan() throws Exception {
+        final S3AsyncClient virheFuturenPalauttavaClient = mock(S3AsyncClient.class);
+        when(virheFuturenPalauttavaClient.putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class)))
+            .thenReturn(failedFuture(new RuntimeException("Testiräjähdys!")));
+
+        final AtomicInteger virheitaViela = new AtomicInteger(3);
+        s3LetterPublisher = luoS3LetterPublisher(new PublisherIntegrationTestClientFactory() {
+            @Override
+            public S3AsyncClient getClient(Region awsRegion) {
+                if (virheitaViela.decrementAndGet() > 0) {
+                    return virheFuturenPalauttavaClient;
+                }
+                return super.getClient(awsRegion);
+            }
+        });
+
+        s3LetterPublisher.publishLetterBatch(1L);
+
+        verify(virheFuturenPalauttavaClient, times(2)).putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class));
+        verify(virheFuturenPalauttavaClient, times(2)).close();
+        verifyNoMoreInteractions(virheFuturenPalauttavaClient);
+    }
+
+    private S3LetterPublisher luoS3LetterPublisher(PublisherIntegrationTestClientFactory clientFactory) {
+        return new S3LetterPublisher(
+            letterPublishTestConfig.getletterBatchDAO(),
+            letterPublishTestConfig.getLetterReceiverLetterDAO(),
+            BUCKET_NAME,
+            REGION_NAME,
+            clientFactory);
+    }
+
+    /**
+     * TODO : Poista, kun saadaan käyttöön Java 9 tai uudempi
+     */
+    @Deprecated
+    private static <T> CompletableFuture<T> failedFuture(Throwable t) {
+        final CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(t);
+        return cf;
+    }
 }
 
 class PublisherIntegrationTestClientFactory implements AWSS3ClientFactory {
