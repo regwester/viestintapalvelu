@@ -99,7 +99,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
     @ApiOperation(value = "Julkaisee kirjelähetyksen")
     public Response publishLetterBatch(@PathParam("letterBatchId") @ApiParam(value = "Kirjelähetyksen id") String prefixedLetterBatchId) {
         long letterBatchId = getLetterBatchId(prefixedLetterBatchId);
-        LOG.info("Publishing letter batch with batch id {}", letterBatchId);
+        LOG.info("Publishing letter batch with batch id {} ...", letterBatchId);
         LetterBatchStatusDto status = letterService.getBatchStatus(letterBatchId);
         if(null == status) {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -109,7 +109,7 @@ public class LetterResourceTrusted extends AbstractLetterResource {
         } else {
             try {
                 int numberOfPublishedLetters = letterService.publishLetterBatch(letterBatchId);
-                LOG.info("Publishing {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
+                LOG.info("...Successfully published {} letters with batch id {}", numberOfPublishedLetters, letterBatchId);
                 return Response.ok(numberOfPublishedLetters).build();
             } catch (Exception e) {
                 LOG.error("Exception while publishing letter batch id {}", letterBatchId, e);
