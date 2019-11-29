@@ -144,6 +144,8 @@ class LocalLetterPublisher implements LetterPublisher {
 @Profile("aws")
 class S3LetterPublisher implements LetterPublisher {
     private static final int MAX_RETRIES = 5;
+    private static final int LETTER_PARTITION_SIZE = 20;
+    private static final int PUBLISH_LOGGING_FREQUENCY = 1000;
 
     private final LetterBatchDAO letterBatchDAO;
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
@@ -180,13 +182,20 @@ class S3LetterPublisher implements LetterPublisher {
     @Override
     @Transactional
     public int publishLetterBatch(long letterBatchId) throws Exception {
-        List<List<Long>> letterPartitions = Lists.partition(letterBatchDAO.getUnpublishedLetterIds(letterBatchId), 20);
+        List<Long> unpublishedLetterIds = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
+        List<List<Long>> letterPartitions = Lists.partition(unpublishedLetterIds, LETTER_PARTITION_SIZE);
+        logger.info(String.format("Publishing letter batch %d of size %d in %d partitions of up to %d each...",
+            letterBatchId, unpublishedLetterIds.size(), letterPartitions.size(), LETTER_PARTITION_SIZE));
         int counter = 0;
         for(List<Long> letters : letterPartitions) {
             List<CompletableFuture<PutObjectResponse>> completableFutures = publishLettersS3(letterBatchId, letters);
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[completableFutures.size()])).get();
             counter += letters.size();
+            if ((counter % PUBLISH_LOGGING_FREQUENCY) == 0) {
+                logger.info(String.format("...published %d/%d letters of batch %d so far...", counter, unpublishedLetterIds.size(), letterBatchId));
+            }
         }
+        logger.info(String.format("...published %d/%d letters of batch %d .", counter, unpublishedLetterIds.size(), letterBatchId));
         return counter;
     }
 
