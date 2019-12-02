@@ -293,8 +293,20 @@ class S3LetterPublisher implements LetterPublisher {
     }
 
     private static <R> CompletableFuture<R> executeWithRetry(Supplier<CompletableFuture<R>> action, String tunniste) {
-        return action
-            .get()
+        CompletableFuture<R> actionFuture;
+        try {
+            actionFuture = action.get();
+        } catch (Exception e) {
+            logger.warn(
+                String.format(
+                    "%s : Operaatiossa tapahtui virhe '%s', yritetään uudelleen korkeintaan %s kertaa pitenevin välein",
+                    tunniste,
+                    e.getMessage(),
+                    MAX_RETRIES),
+                e);
+            return retry(action, e, 0, tunniste);
+        }
+        return actionFuture
             .handleAsync((r, t) -> {
                 if (t != null) {
                     return retry(action, t, 0, tunniste);
@@ -312,8 +324,24 @@ class S3LetterPublisher implements LetterPublisher {
     private static <R> CompletableFuture<R> retry(Supplier<CompletableFuture<R>> action, Throwable throwable, int retry, String tunniste) {
         int secondsToWaitMultiplier = 10;
         if (retry >= MAX_RETRIES) return failedFuture(throwable);
-        return action
-            .get()
+        CompletableFuture<R> actionFuture;
+        try {
+            actionFuture = action.get();
+        } catch (Exception e) {
+            int secondsToWait = retry * secondsToWaitMultiplier;
+            logger.warn(
+                String.format(
+                    "%s : Operaatiossa tapahtui virhe '%s', uudelleenyritys # %s/%s , %s sekunnin päästä",
+                    tunniste,
+                    e.getMessage(),
+                    retry + 1,
+                    MAX_RETRIES,
+                    secondsToWait),
+                e);
+            return createRetryWithDelay(action, throwable, retry, tunniste, secondsToWait);
+        }
+
+        return actionFuture
             .handleAsync((r, t) -> {
                 if (t != null) {
                     throwable.addSuppressed(t);
@@ -327,14 +355,18 @@ class S3LetterPublisher implements LetterPublisher {
                             MAX_RETRIES,
                             secondsToWait),
                         t);
-                    Executor delayedExecutor = new DelayedExecutor(secondsToWait, SECONDS, ASYNC_POOL);
-                    return CompletableFuture.supplyAsync(() -> "OK", delayedExecutor)
-                        .thenComposeAsync(x -> retry(action, throwable, retry + 1, tunniste));
+                    return createRetryWithDelay(action, throwable, retry, tunniste, secondsToWait);
                 } else if (retry > 0) {
                     logger.info(String.format("%s : onnistuttiin uudelleenyrityksellä %d/%d", tunniste, retry, MAX_RETRIES));
                 }
                 return CompletableFuture.completedFuture(r);
             }).thenCompose(java.util.function.Function.identity());
+    }
+
+    private static <R> CompletableFuture<R> createRetryWithDelay(Supplier<CompletableFuture<R>> action, Throwable throwable, int retry, String tunniste, int secondsToWait) {
+        Executor delayedExecutor = new DelayedExecutor(secondsToWait, SECONDS, ASYNC_POOL);
+        return CompletableFuture.supplyAsync(() -> "OK", delayedExecutor)
+            .thenComposeAsync(x -> retry(action, throwable, retry + 1, tunniste));
     }
 
     /**
