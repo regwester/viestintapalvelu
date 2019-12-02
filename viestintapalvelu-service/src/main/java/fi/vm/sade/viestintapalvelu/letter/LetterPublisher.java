@@ -271,10 +271,11 @@ class S3LetterPublisher implements LetterPublisher {
 
         S3AsyncClient client = getClient();
         return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
-            if(putObjectResponse == null) {
+            if (putObjectResponse == null) {
                 logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), throwable);
+            } else {
+                letterReceiverLetterDAO.markAsPublished(letter.getId());
             }
-            letterReceiverLetterDAO.markAsPublished(letter.getId());
             try {
                 Files.deleteIfExists(tempFile);
             } catch (IOException e) {

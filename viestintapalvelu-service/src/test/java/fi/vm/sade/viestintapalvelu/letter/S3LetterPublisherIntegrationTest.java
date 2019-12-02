@@ -8,6 +8,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
+import fi.vm.sade.viestintapalvelu.dao.LetterReceiverLetterDAO;
 import fi.vm.sade.viestintapalvelu.download.cache.AWSS3ClientFactory;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -48,6 +50,8 @@ public class S3LetterPublisherIntegrationTest {
 
     @Autowired
     private S3LetterPublisherTest.LetterPublishTestConfig letterPublishTestConfig;
+    private LetterBatchDAO letterBatchDAO;
+    private LetterReceiverLetterDAO letterReceiverLetterDAO;
 
     @Before
     public void initialiseTestBucketEtc() throws Exception {
@@ -99,6 +103,12 @@ public class S3LetterPublisherIntegrationTest {
 
         verify(poikkeuksenHeittavaClient).putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class));
         verifyNoMoreInteractions(poikkeuksenHeittavaClient);
+
+        int numberOfBatches = (125 / 20) + 1;
+        int numberOfLetters = numberOfBatches; // in test data, there is only one letter per batch
+        verify(letterReceiverLetterDAO, times(numberOfBatches)).findByIds(any());
+        verify(letterReceiverLetterDAO, times(numberOfLetters)).markAsPublished(null);
+        verifyNoMoreInteractions(letterReceiverLetterDAO);
     }
 
     @Test
@@ -123,12 +133,20 @@ public class S3LetterPublisherIntegrationTest {
         verify(virheFuturenPalauttavaClient, times(2)).putObject(any(PutObjectRequest.class), any(AsyncRequestBody.class));
         verify(virheFuturenPalauttavaClient, times(2)).close();
         verifyNoMoreInteractions(virheFuturenPalauttavaClient);
+
+        int numberOfBatches = (125 / 20) + 1;
+        int numberOfLetters = numberOfBatches; // in test data, there is only one letter per batch
+        verify(letterReceiverLetterDAO, times(numberOfBatches)).findByIds(any());
+        verify(letterReceiverLetterDAO, times(numberOfLetters)).markAsPublished(null);
+        verifyNoMoreInteractions(letterReceiverLetterDAO);
     }
 
     private S3LetterPublisher luoS3LetterPublisher(PublisherIntegrationTestClientFactory clientFactory) {
+        letterBatchDAO = letterPublishTestConfig.getletterBatchDAO();
+        letterReceiverLetterDAO = letterPublishTestConfig.getLetterReceiverLetterDAO();
         return new S3LetterPublisher(
-            letterPublishTestConfig.getletterBatchDAO(),
-            letterPublishTestConfig.getLetterReceiverLetterDAO(),
+            letterBatchDAO,
+            letterReceiverLetterDAO,
             BUCKET_NAME,
             REGION_NAME,
             clientFactory);
