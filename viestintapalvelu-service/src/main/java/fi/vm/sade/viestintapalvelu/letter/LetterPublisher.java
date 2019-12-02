@@ -323,21 +323,21 @@ class S3LetterPublisher implements LetterPublisher {
 
     private static <R> CompletableFuture<R> retry(Supplier<CompletableFuture<R>> action, Throwable throwable, int retry, String tunniste) {
         int secondsToWaitMultiplier = 10;
+        final int secondsToWait = retry * secondsToWaitMultiplier;
+        logger.warn(
+            String.format(
+                "%s : Operaatiossa tapahtui virhe '%s', uudelleenyritys # %s/%s , %s sekunnin päästä",
+                tunniste,
+                throwable.getMessage(),
+                retry + 1,
+                MAX_RETRIES,
+                secondsToWait),
+            throwable);
         if (retry >= MAX_RETRIES) return failedFuture(throwable);
         CompletableFuture<R> actionFuture;
         try {
             actionFuture = action.get();
         } catch (Exception e) {
-            int secondsToWait = retry * secondsToWaitMultiplier;
-            logger.warn(
-                String.format(
-                    "%s : Operaatiossa tapahtui virhe '%s', uudelleenyritys # %s/%s , %s sekunnin päästä",
-                    tunniste,
-                    e.getMessage(),
-                    retry + 1,
-                    MAX_RETRIES,
-                    secondsToWait),
-                e);
             return createRetryWithDelay(action, throwable, retry, tunniste, secondsToWait);
         }
 
@@ -345,19 +345,14 @@ class S3LetterPublisher implements LetterPublisher {
             .handleAsync((r, t) -> {
                 if (t != null) {
                     throwable.addSuppressed(t);
-                    int secondsToWait = retry * secondsToWaitMultiplier;
-                    logger.warn(
-                        String.format(
-                            "%s : Operaatiossa tapahtui virhe '%s', uudelleenyritys # %s/%s , %s sekunnin päästä",
-                            tunniste,
-                            t.getMessage(),
-                            retry + 1,
-                            MAX_RETRIES,
-                            secondsToWait),
-                        t);
                     return createRetryWithDelay(action, throwable, retry, tunniste, secondsToWait);
-                } else if (retry > 0) {
-                    logger.info(String.format("%s : onnistuttiin uudelleenyrityksellä %d/%d", tunniste, retry, MAX_RETRIES));
+                } else {
+                    logger.info(
+                        String.format(
+                            "%s : onnistuttiin uudelleenyrityksellä %d/%d",
+                            tunniste,
+                            retry + 1,
+                            MAX_RETRIES));
                 }
                 return CompletableFuture.completedFuture(r);
             }).thenCompose(java.util.function.Function.identity());
