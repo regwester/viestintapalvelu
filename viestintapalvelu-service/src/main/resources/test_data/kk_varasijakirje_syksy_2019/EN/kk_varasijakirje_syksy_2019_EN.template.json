@@ -187,7 +187,7 @@
     {
       "id": 5,
       "name": "vastaanotto_1",
-      "defaultValue": "<p>You have been accepted to the study place mentioned above in the autumn 2019 joint application to higher education.</p><p>If you are not using the email link or the My Studyinfo -service, fill and sign this notification and deliver it to the address stated below by 9th December 2019 at 3 pm (EET). If you have confirmed the place electronically, you do not have to send the notification of confirmation of a study place by post.</p><p><em>Concerning the study place mentioned above, I bindingly confirm the following (tick one box):</em></p>",
+      "defaultValue": "<p>You have been accepted to the study place mentioned above in the autumn 2019 joint application to higher education.</p><p>If you are not using the email link or the My Studyinfo -service, fill and sign this notification and deliver it to the address stated below within 10 days after you have been accepted to the study place (see the deadline on the first page). If you have confirmed the place electronically, you do not have to send the notification of confirmation of a study place by post.</p><p><em>Concerning the study place mentioned above, I bindingly confirm the following (tick one box):</em></p>",
       "mandatory": false
     },
     {
