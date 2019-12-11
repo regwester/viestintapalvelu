@@ -75,6 +75,7 @@ public class S3LetterPublisherTest {
             LetterReceiverLetter letterReceiverLetter = new LetterReceiverLetter();
             LetterReceivers letterReceivers = new LetterReceivers();
             letterReceivers.setOidApplication("1.2.3.4");
+            letterReceivers.setOidPerson("5.6.7.8");
             letterReceiverLetter.setLetterReceivers(letterReceivers);
             letterReceiverLetter.setLetter("letter".getBytes());
             letterReceiverLetter.setContentType(ContentTypes.CONTENT_TYPE_PDF);

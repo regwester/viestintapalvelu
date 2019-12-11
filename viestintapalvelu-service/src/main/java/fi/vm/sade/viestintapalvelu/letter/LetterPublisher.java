@@ -1,5 +1,6 @@
 package fi.vm.sade.viestintapalvelu.letter;
 
+import static java.util.concurrent.TimeUnit.SECONDS;
 import com.google.common.collect.Lists;
 
 import fi.vm.sade.viestintapalvelu.dao.LetterBatchDAO;
@@ -37,6 +38,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.ForkJoinPool;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public interface LetterPublisher {
@@ -135,6 +143,9 @@ class LocalLetterPublisher implements LetterPublisher {
 @Service
 @Profile("aws")
 class S3LetterPublisher implements LetterPublisher {
+    private static final int MAX_RETRIES = 5;
+    private static final int LETTER_PARTITION_SIZE = 20;
+    private static final int PUBLISH_LOGGING_FREQUENCY = 1000;
 
     private final LetterBatchDAO letterBatchDAO;
     private final LetterReceiverLetterDAO letterReceiverLetterDAO;
@@ -171,13 +182,20 @@ class S3LetterPublisher implements LetterPublisher {
     @Override
     @Transactional
     public int publishLetterBatch(long letterBatchId) throws Exception {
-        List<List<Long>> letterPartitions = Lists.partition(letterBatchDAO.getUnpublishedLetterIds(letterBatchId), 20);
+        List<Long> unpublishedLetterIds = letterBatchDAO.getUnpublishedLetterIds(letterBatchId);
+        List<List<Long>> letterPartitions = Lists.partition(unpublishedLetterIds, LETTER_PARTITION_SIZE);
+        logger.info(String.format("Publishing letter batch %d of size %d in %d partitions of up to %d each...",
+            letterBatchId, unpublishedLetterIds.size(), letterPartitions.size(), LETTER_PARTITION_SIZE));
         int counter = 0;
         for(List<Long> letters : letterPartitions) {
             List<CompletableFuture<PutObjectResponse>> completableFutures = publishLettersS3(letterBatchId, letters);
             CompletableFuture.allOf(completableFutures.toArray(new CompletableFuture[completableFutures.size()])).get();
             counter += letters.size();
+            if ((counter % PUBLISH_LOGGING_FREQUENCY) == 0) {
+                logger.info(String.format("...published %d/%d letters of batch %d so far...", counter, unpublishedLetterIds.size(), letterBatchId));
+            }
         }
+        logger.info(String.format("...published %d/%d letters of batch %d .", counter, unpublishedLetterIds.size(), letterBatchId));
         return counter;
     }
 
@@ -211,8 +229,29 @@ class S3LetterPublisher implements LetterPublisher {
     }
 
     private CompletableFuture<PutObjectResponse> addFileObject(final LetterReceiverLetter letter, String folderName) throws IOException {
-        final String oidApplication = letter.getLetterReceivers().getOidApplication();
-        final Optional<String> fileSuffix = ContentTypes.getFileSuffix(letter.getContentType());
+        Supplier<CompletableFuture<PutObjectResponse>> addFileObjectF = () -> {
+            try {
+                return addFileObjectF(
+                    letter,
+                    folderName,
+                    letter.getLetterReceivers().getOidApplication(),
+                    ContentTypes.getFileSuffix(letter.getContentType()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        };
+        return executeWithRetry(addFileObjectF, String.format("Hakijan %s kirjeen julkaisu", letter.getLetterReceivers().getOidPerson()));
+    }
+
+    private CompletableFuture<PutObjectResponse> addFileObjectF(LetterReceiverLetter letter, String folderName, String oidApplication, Optional<String> fileSuffix) throws IOException {
+        try {
+            return addFileObject(letter, folderName, oidApplication, fileSuffix);
+        } catch (Exception e) {
+            return failedFuture(e);
+        }
+    }
+
+    private CompletableFuture<PutObjectResponse> addFileObject(LetterReceiverLetter letter, String folderName, String oidApplication, Optional<String> fileSuffix) throws IOException {
         final Path tempFile = Files.createTempFile(oidApplication, fileSuffix.get());
         Files.write(tempFile, letter.getLetter(), StandardOpenOption.WRITE);
 
@@ -232,10 +271,11 @@ class S3LetterPublisher implements LetterPublisher {
 
         S3AsyncClient client = getClient();
         return client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
-            if(putObjectResponse == null) {
+            if (putObjectResponse == null) {
                 logger.error("Error saving LetterReceiverLetter {} to S3", letter.getId(), throwable);
+            } else {
+                letterReceiverLetterDAO.markAsPublished(letter.getId());
             }
-            letterReceiverLetterDAO.markAsPublished(letter.getId());
             try {
                 Files.deleteIfExists(tempFile);
             } catch (IOException e) {
@@ -247,10 +287,166 @@ class S3LetterPublisher implements LetterPublisher {
                 logger.error("Error closing S3 client", e);
             }
         });
-
     }
 
     private S3AsyncClient getClient() {
         return clientFactory.getClient(Region.of(region));
+    }
+
+    private static <R> CompletableFuture<R> executeWithRetry(Supplier<CompletableFuture<R>> action, String tunniste) {
+        CompletableFuture<R> actionFuture;
+        try {
+            actionFuture = action.get();
+        } catch (Exception e) {
+            logger.warn(
+                String.format(
+                    "%s : Operaatiossa tapahtui virhe '%s', yritetään uudelleen korkeintaan %s kertaa pitenevin välein",
+                    tunniste,
+                    e.getMessage(),
+                    MAX_RETRIES),
+                e);
+            return retry(action, e, 0, tunniste);
+        }
+        return actionFuture
+            .handleAsync((r, t) -> {
+                if (t != null) {
+                    return retry(action, t, 0, tunniste);
+                } else {
+                    return CompletableFuture.completedFuture(r);
+                }
+            }).thenCompose(java.util.function.Function.identity())
+            .whenComplete((r, t) -> {
+                if (t != null) {
+                    logger.info(String.format("%s : Kaikki uudelleenyritykset (%s kpl) on käytetty, ei yritetä enää. Virhe: %s", tunniste, MAX_RETRIES, t.getMessage()));
+                }
+            });
+    }
+
+    private static <R> CompletableFuture<R> retry(Supplier<CompletableFuture<R>> action, Throwable throwable, int retry, String tunniste) {
+        int secondsToWaitMultiplier = 10;
+        final int secondsToWait = retry * secondsToWaitMultiplier;
+        logger.warn(
+            String.format(
+                "%s : Operaatiossa tapahtui virhe '%s', uudelleenyritys # %s/%s , %s sekunnin päästä",
+                tunniste,
+                throwable.getMessage(),
+                retry + 1,
+                MAX_RETRIES,
+                secondsToWait),
+            throwable);
+        if (retry >= MAX_RETRIES) return failedFuture(throwable);
+        CompletableFuture<R> actionFuture;
+        try {
+            actionFuture = action.get();
+        } catch (Exception e) {
+            return createRetryWithDelay(action, throwable, retry, tunniste, secondsToWait);
+        }
+
+        return actionFuture
+            .handleAsync((r, t) -> {
+                if (t != null) {
+                    throwable.addSuppressed(t);
+                    return createRetryWithDelay(action, throwable, retry, tunniste, secondsToWait);
+                } else {
+                    logger.info(
+                        String.format(
+                            "%s : onnistuttiin uudelleenyrityksellä %d/%d",
+                            tunniste,
+                            retry + 1,
+                            MAX_RETRIES));
+                }
+                return CompletableFuture.completedFuture(r);
+            }).thenCompose(java.util.function.Function.identity());
+    }
+
+    private static <R> CompletableFuture<R> createRetryWithDelay(Supplier<CompletableFuture<R>> action, Throwable throwable, int retry, String tunniste, int secondsToWait) {
+        Executor delayedExecutor = new DelayedExecutor(secondsToWait, SECONDS, ASYNC_POOL);
+        return CompletableFuture.supplyAsync(() -> "OK", delayedExecutor)
+            .thenComposeAsync(x -> retry(action, throwable, retry + 1, tunniste));
+    }
+
+    /**
+     * TODO : Poista, kun saadaan käyttöön Java 9 tai uudempi
+     */
+    @Deprecated
+    private static <T> CompletableFuture<T> failedFuture(Throwable t) {
+        final CompletableFuture<T> cf = new CompletableFuture<>();
+        cf.completeExceptionally(t);
+        return cf;
+    }
+
+    /**
+     * TODO : Poista, kun saadaan käyttöön Java 9 tai uudempi
+     */
+    @Deprecated
+    private static final class DelayedExecutor implements Executor {
+            final long delay;
+            final TimeUnit unit;
+            final Executor executor;
+            DelayedExecutor(long delay, TimeUnit unit, Executor executor) {
+                this.delay = delay; this.unit = unit; this.executor = executor;
+            }
+            public void execute(Runnable r) {
+                Delayer.delay(new TaskSubmitter(executor, r), delay, unit);
+            }
+        }
+
+    /**
+     * TODO : Poista, kun saadaan käyttöön Java 9 tai uudempi
+     */
+    @Deprecated
+    private static final class Delayer {
+        static ScheduledFuture<?> delay(Runnable command, long delay,
+                                        TimeUnit unit) {
+            return delayer.schedule(command, delay, unit);
+        }
+
+        static final class DaemonThreadFactory implements ThreadFactory {
+            public Thread newThread(Runnable r) {
+                Thread t = new Thread(r);
+                t.setDaemon(true);
+                t.setName("CompletableFutureDelayScheduler");
+                return t;
+            }
+        }
+
+        static final ScheduledThreadPoolExecutor delayer;
+        static {
+            (delayer = new ScheduledThreadPoolExecutor(
+                1, new DaemonThreadFactory())).
+                setRemoveOnCancelPolicy(true);
+        }
+    }
+
+    /**
+     * TODO : Poista, kun saadaan käyttöön Java 9 tai uudempi
+     */
+    @Deprecated
+    private static final class TaskSubmitter implements Runnable {
+        final Executor executor;
+        final Runnable action;
+        TaskSubmitter(Executor executor, Runnable action) {
+            this.executor = executor;
+            this.action = action;
+        }
+        public void run() { executor.execute(action); }
+    }
+
+    private static final boolean USE_COMMON_POOL =
+        (ForkJoinPool.getCommonPoolParallelism() > 1);
+
+    /**
+     * Default executor -- ForkJoinPool.commonPool() unless it cannot
+     * support parallelism.
+     */
+    private static final Executor ASYNC_POOL = USE_COMMON_POOL ?
+        ForkJoinPool.commonPool() : new ThreadPerTaskExecutor();
+
+    /**
+     * TODO : Poista, kun saadaan käyttöön Java 9 tai uudempi
+     */
+    @Deprecated
+    static final class ThreadPerTaskExecutor implements Executor {
+        public void execute(Runnable r) { new Thread(r).start(); }
     }
 }
