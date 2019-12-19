@@ -31,5 +31,8 @@ viestintapalvelu-ui/src/main/webapp
 node_modules/
 node/
 
+## Java
+.java-version
+
 fakemailer/incoming/*
 fakemailer/bounces/*

@@ -156,8 +156,6 @@ public class ReportedMessageServiceTest {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         reportedMessage.setId(new Long(1));
 
-        when(mockedReportedMessageDAO.read(new Long(1))).thenReturn(reportedMessage);
-
         reportedMessage = reportedMessageService.getReportedMessage(new Long(10));
 
         assertNull(reportedMessage);

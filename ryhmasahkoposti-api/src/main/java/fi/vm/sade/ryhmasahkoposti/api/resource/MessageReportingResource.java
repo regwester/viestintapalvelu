@@ -94,7 +94,7 @@ public interface MessageReportingResource {
      */
     @PreAuthorize(SecurityConstants.READ)
     @Produces(MediaType.APPLICATION_JSON)
-    @Path(RestConstants.PATH_REPORT_MESSAGES_SEARCH)
+    @Path(RestConstants.PATH_REPORT_MESSAGES_SEARCH) // PETAR EVO OVDE JE ULAZ U TAJ SPORI URL
     @GET
     @ApiOperation(value = "Hakee hakuparametrin mukaiset käyttäjän ja hänen organisaationsa lähettämät ryhmäshköpostiviestit",
         notes = "Hakee halutun määrän  hakuparametrin mukaisia käyttäjän ja hänen organisaantionsa lähettämiä "

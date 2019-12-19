@@ -115,7 +115,7 @@ public class ReportedMessageDAOTest {
     }
 
     @Test
-    public void testReportedMessageFoundByRecipientName() {
+    public void testReportedMessageFoundByRecipientNameCaseInsensitiveSubstring() {  // PETAR I OVAJ TREBA DA USPE
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
@@ -126,8 +126,8 @@ public class ReportedMessageDAOTest {
         ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
         reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
-        reportedMessageQuery.setSearchArgument("Testi Oppilas");
-        reportedRecipientQuery.setRecipientName("Testi Oppilas");
+        reportedMessageQuery.setSearchArgument("<ignored>");
+        reportedRecipientQuery.setRecipientName("ppIl"); // should find it within "Testi Oppilas"
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
@@ -140,7 +140,7 @@ public class ReportedMessageDAOTest {
     }
 
     @Test
-    public void testReportedMessageFoundBySearchArgument() {
+    public void testReportedMessageFoundBySearchArgument() {  // PETAR I OVAJ TREBA DA USPE
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
@@ -295,7 +295,7 @@ public class ReportedMessageDAOTest {
     }
 
     @Test
-    public void testNumberOfRecordsMatchesBySearchingArgument() {
+    public void testNumberOfRecordsMatchesBySearchingArgument() { // PETAR EVO OVO JE TEST CASE KOJI TREBA DA NASTAVI DA RADI
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         reportedMessageDAO.insert(reportedMessage);
 
