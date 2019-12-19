@@ -25,7 +25,6 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
@@ -176,8 +175,8 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         return dft.print(dateLimit);
     }
 
-    private String safe(String s) {
-        return s.replace("'", "");
+    private String safelyQuote(String s) {
+        return "'" + s.replace("'", "") + "'";
     }
 
     private String createReportedMessagesSenderOrganizationOidWhereItem(List<String> organizationOids, String organizationOid) {
@@ -186,27 +185,19 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
                 return "true = false";
             } else {
                 String quotedOrganizationOidsList = organizationOids.stream().
-                        map(oid -> "'" + safe(oid) + "'").
+                        map(oid -> safelyQuote(oid)).
                         collect(Collectors.joining(", "));
                 return "lahettajan_organisaatio_oid in (" + quotedOrganizationOidsList + ")";
             }
         } else if (organizationOid != null) {
-            return "lahettajan_organisaatio_oid = '" + safe(organizationOid) + "'";
+            return "lahettajan_organisaatio_oid = " + safelyQuote(organizationOid);
         }
         return "";
     }
 
     private String createWhereItemIfExists(String clausePrefix, String value) {
         if (value != null) {
-            return clausePrefix + " '" + safe(value) + "'";
-        } else {
-            return "";
-        }
-    }
-
-    private String createWhereItemIfNotEmpty(String clausePrefix, String value) {
-        if (value != null && !safe(value).isEmpty()) {
-            return clausePrefix + " '" + safe(value) + "'";
+            return clausePrefix + " " + safelyQuote(value);
         } else {
             return "";
         }
@@ -216,56 +207,57 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         return items.stream().filter(t -> !t.isEmpty()).collect(Collectors.joining(" and "));
     }
 
-    /**
-     * Generates a query, like this incomplete example:
-     *
-     * select * from raportoitavaviesti m
-     * where to_tsvector('simple', m.viesti || m.prosessi || m.aihe) @@ '2018' and
-     *       m.aikaleima>'1-jan-18'
-     *
-     * union distinct
-     *
-     * select * from raportoitavaviesti m
-     * where exists (select 1 from raportoitavavastaanottaja r
-     *               where m.id = r.lahetettyviesti_id and
-     *                     to_tsvector('simple', r.hakunimi) @@ '2018') and
-     *       m.aikaleima>'1-jan-18'
-     *
-     * order by lahetysalkoi desc
-     * limit 500 offset 1;
-     */
     String createFindBySearchCriteriaQuery(ReportedMessageQueryDTO query) {
         ReportedRecipientQueryDTO reportedRecipientQuery = query.getReportedRecipientQueryDTO();
 
-        String selectClause = "SELECT * FROM raportoitavaviesti m ";
+        String selectClause = "SELECT DISTINCT * FROM raportoitavaviesti m";
+        String nativeSqlQuery = selectClause;
 
         String aikaleimaItem = createWhereItemIfExists("m.aikaleima > ", getDateLimitString());
-
+        boolean isThereSearchArgument = query.getSearchArgument() != null && !query.getSearchArgument().isEmpty();
         String reportedMessagesWhereClause = joinWhereItemsWithAnd(Arrays.asList(
                 createReportedMessagesSenderOrganizationOidWhereItem(query.getOrganizationOids(), query.getOrganizationOid()),
-                aikaleimaItem,
-                createWhereItemIfNotEmpty("to_tsvector('simple', m.viesti || m.prosessi || m.aihe) @@ ", query.getSearchArgument())
+                aikaleimaItem
         ));
-        String nativeSqlQuery = selectClause + " WHERE " + reportedMessagesWhereClause;
-
         String reportedRecipientsSubqueryWhereClause = joinWhereItemsWithAnd(Arrays.asList(
-                createWhereItemIfNotEmpty("to_tsvector('simple', r.hakunimi) @@ ", query.getSearchArgument()),
                 createWhereItemIfExists("r.vastaanottajan_oid = ", reportedRecipientQuery.getRecipientOid()),
                 createWhereItemIfExists("r.vastaanottajan_sahkopostiosoite = ", reportedRecipientQuery.getRecipientEmail()),
                 createWhereItemIfExists("r.henkilotunnus = ", reportedRecipientQuery.getRecipientSocialSecurityID())
         ));
 
-        if (!reportedRecipientsSubqueryWhereClause.isEmpty()) {
-            String reportRecipientsSubquery = "SELECT 1 FROM raportoitavavastaanottaja r " +
-                    " WHERE m.id = r.lahetettyviesti_id and " + reportedRecipientsSubqueryWhereClause;
-            nativeSqlQuery += " UNION DISTINCT " +
-                    selectClause + " WHERE " +
-                    joinWhereItemsWithAnd(Arrays.asList(
-                            createReportedMessagesSenderOrganizationOidWhereItem(query.getOrganizationOids(), query.getOrganizationOid()),
-                            aikaleimaItem,
-                            "EXISTS (" + reportRecipientsSubquery + ")"
-                    ));
+        if (isThereSearchArgument) {
+            String fullTextSearchReportedItem = "to_tsvector('simple', m.viesti || m.prosessi || m.aihe) @@ " +
+                                                safelyQuote(query.getSearchArgument());
+            String fullTextSearchRecipientsItem = "to_tsvector('simple', r.hakunimi) @@ " +
+                                                  safelyQuote(query.getSearchArgument());
+            String reportRecipientsSubqueryForFullTextSearchRecipeints =
+                    "SELECT 1 FROM raportoitavavastaanottaja r " +
+                            " WHERE m.id = r.lahetettyviesti_id AND " + fullTextSearchRecipientsItem;
+            if (reportedRecipientsSubqueryWhereClause.isEmpty()) {
+                nativeSqlQuery += " WHERE " + fullTextSearchReportedItem +
+                        " AND " + reportedMessagesWhereClause +
+                        " UNION DISTINCT " +
+                        selectClause + " WHERE " +
+                        "EXISTS (" + reportRecipientsSubqueryForFullTextSearchRecipeints + ") AND " +
+                        reportedMessagesWhereClause;
+            } else {
+                nativeSqlQuery += " WHERE " +
+                        "EXISTS (" + reportRecipientsSubqueryForFullTextSearchRecipeints +
+                        reportedRecipientsSubqueryWhereClause + ") AND " +
+                        reportedMessagesWhereClause;
+            }
+        } else {
+            if (reportedRecipientsSubqueryWhereClause.isEmpty()) {
+                nativeSqlQuery += " WHERE " + reportedMessagesWhereClause;
+            } else {
+                String reportRecipientsSubquery =
+                        "SELECT 1 FROM raportoitavavastaanottaja r " +
+                                " WHERE m.id = r.lahetettyviesti_id AND " + reportedRecipientsSubqueryWhereClause;
+                nativeSqlQuery += " WHERE " +
+                        "EXISTS (" + reportRecipientsSubquery + ") AND " + reportedMessagesWhereClause;
+            }
         }
+
         nativeSqlQuery += " ORDER BY lahetysalkoi DESC ";
         return nativeSqlQuery;
     }
