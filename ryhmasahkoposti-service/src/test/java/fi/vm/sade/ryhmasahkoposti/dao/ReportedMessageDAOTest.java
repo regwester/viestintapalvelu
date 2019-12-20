@@ -115,7 +115,7 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
-//    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
+    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testReportedMessageFoundByRecipientNameCaseInsensitiveSubstring() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -141,7 +141,7 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
- //   @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
+    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testReportedMessageFoundBySearchArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -297,7 +297,7 @@ public class ReportedMessageDAOTest {
         assertNotEquals(new Long(0), lkm);
     }
 
-//    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
+    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testNumberOfRecordsMatchesBySearchingArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
