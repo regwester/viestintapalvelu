@@ -229,9 +229,9 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         if (isThereSearchArgument) {
             String fullTextSearchReportedItem = "to_tsvector('simple', m.viesti || m.prosessi || m.aihe) @@ " +
-                                                safelyQuote(query.getSearchArgument());
+                                                safelyQuote(query.getSearchArgument().toLowerCase());
             String fullTextSearchRecipientsItem = "to_tsvector('simple', r.hakunimi) @@ " +
-                                                  safelyQuote(query.getSearchArgument());
+                                                  safelyQuote(query.getSearchArgument().toLowerCase());
             String reportRecipientsSubqueryForFullTextSearchRecipeints =
                     "SELECT 1 FROM raportoitavavastaanottaja r " +
                             " WHERE m.id = r.lahetettyviesti_id AND " + fullTextSearchRecipientsItem;
