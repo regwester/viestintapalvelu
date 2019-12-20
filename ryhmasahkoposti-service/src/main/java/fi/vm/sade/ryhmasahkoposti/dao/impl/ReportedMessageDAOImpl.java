@@ -15,6 +15,7 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
+import java.math.BigInteger;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -39,6 +40,7 @@ import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
@@ -130,7 +132,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
         Query q = getEntityManager().createNativeQuery(nativeSqlQuery);
 
-        return (Long)q.getSingleResult();
+        return Long.valueOf(q.getSingleResult().toString());
     }
 
     protected JPAQuery from(EntityPath<?>... o) {
