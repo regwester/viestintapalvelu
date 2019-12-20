@@ -204,7 +204,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
     }
 
     private String joinWhereItemsWithAnd(List<String> items) {
-        return items.stream().filter(t -> !t.isEmpty()).collect(Collectors.joining(" and "));
+        return items.stream().filter(t -> !t.isEmpty()).collect(Collectors.joining(" AND "));
     }
 
     String createFindBySearchCriteriaQuery(ReportedMessageQueryDTO query) {
@@ -259,6 +259,9 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         }
 
         nativeSqlQuery += " ORDER BY lahetysalkoi DESC ";
+
+        System.out.println("PETAR QUERY: " + nativeSqlQuery);
+
         return nativeSqlQuery;
     }
 }

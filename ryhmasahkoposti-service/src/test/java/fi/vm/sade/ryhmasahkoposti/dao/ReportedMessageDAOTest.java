@@ -115,7 +115,7 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
-    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
+//    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testReportedMessageFoundByRecipientNameCaseInsensitiveSubstring() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -128,7 +128,7 @@ public class ReportedMessageDAOTest {
         ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
         reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
-        reportedMessageQuery.setSearchArgument("<ignored>");
+        reportedMessageQuery.setSearchArgument("ppil");
         reportedRecipientQuery.setRecipientName("ppIl"); // should find it within "Testi Oppilas"
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
 
@@ -141,7 +141,7 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
-    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
+ //   @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testReportedMessageFoundBySearchArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -297,7 +297,7 @@ public class ReportedMessageDAOTest {
         assertNotEquals(new Long(0), lkm);
     }
 
-    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
+//    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testNumberOfRecordsMatchesBySearchingArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
