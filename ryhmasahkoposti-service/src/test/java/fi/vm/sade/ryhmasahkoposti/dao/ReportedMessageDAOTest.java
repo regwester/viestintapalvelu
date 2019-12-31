@@ -23,12 +23,12 @@ import static org.junit.Assert.assertTrue;
 
 import java.util.*;
 
-import org.junit.Ignore;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.*;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContextInitializer;
+import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
@@ -43,20 +43,19 @@ import fi.vm.sade.ryhmasahkoposti.api.dto.query.ReportedRecipientQueryDTO;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.testdata.RaportointipalveluTestData;
+import org.testcontainers.containers.PostgreSQLContainer;
 
 @RunWith(SpringJUnit4ClassRunner.class)
-@ContextConfiguration("/test-dao-context.xml")
+@ContextConfiguration("/test-dao-context-postgres.xml")
 @TestExecutionListeners(listeners = { DependencyInjectionTestExecutionListener.class, DirtiesContextTestExecutionListener.class,
         TransactionalTestExecutionListener.class })
-@Transactional(readOnly = true)
+@Transactional(readOnly = false)
 public class ReportedMessageDAOTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
 
     @Autowired
     private ReportedMessageDAO reportedMessageDAO;
-    @Autowired
-    private ReportedRecipientDAO reportedRecipientDAO;
 
     @Test
     public void testReportedMessageInsertWasSuccessful() {
@@ -115,9 +114,8 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
-    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
-    public void testReportedMessageFoundByRecipientNameCaseInsensitiveSubstring() {
+    public void testReportedMessageFoundByRecipientNameCaseInsensitiveWordSearch() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
         ReportedRecipient reportedRecipient = RaportointipalveluTestData.getReportedRecipient(reportedMessage);
         Set<ReportedRecipient> recipients = new HashSet<ReportedRecipient>();
@@ -128,8 +126,8 @@ public class ReportedMessageDAOTest {
         ReportedMessageQueryDTO reportedMessageQuery = new ReportedMessageQueryDTO();
         reportedMessageQuery.setOrganizationOid("1.2.246.562.10.00000000001");
         ReportedRecipientQueryDTO reportedRecipientQuery = new ReportedRecipientQueryDTO();
-        reportedMessageQuery.setSearchArgument("ppil");
-        reportedRecipientQuery.setRecipientName("ppIl"); // should find it within "Testi Oppilas"
+        reportedMessageQuery.setSearchArgument("oppilas");
+        reportedRecipientQuery.setRecipientName("oppIlas"); // should find it within "Testi Oppilas"
         reportedMessageQuery.setReportedRecipientQueryDTO(reportedRecipientQuery);
 
         PagingAndSortingDTO pagingAndSorting = RaportointipalveluTestData.getPagingAndSortingDTO();
@@ -141,7 +139,6 @@ public class ReportedMessageDAOTest {
         assertTrue(1 <= searchedReportedMessages.size());
     }
 
-    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testReportedMessageFoundBySearchArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();
@@ -297,7 +294,6 @@ public class ReportedMessageDAOTest {
         assertNotEquals(new Long(0), lkm);
     }
 
-    @Ignore // PETAR DE-IGNORE WHEN USE REAL DATABASE IN TESTING
     @Test
     public void testNumberOfRecordsMatchesBySearchingArgument() {
         ReportedMessage reportedMessage = RaportointipalveluTestData.getReportedMessage();

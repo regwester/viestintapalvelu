@@ -189,10 +189,10 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
                 String quotedOrganizationOidsList = organizationOids.stream().
                         map(oid -> safelyQuote(oid)).
                         collect(Collectors.joining(", "));
-                return "lahettajan_organisaatio_oid in (" + quotedOrganizationOidsList + ")";
+                return "m.lahettajan_organisaatio_oid in (" + quotedOrganizationOidsList + ")";
             }
         } else if (organizationOid != null) {
-            return "lahettajan_organisaatio_oid = " + safelyQuote(organizationOid);
+            return "m.lahettajan_organisaatio_oid = " + safelyQuote(organizationOid);
         }
         return "";
     }
@@ -228,7 +228,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         ));
 
         if (isThereSearchArgument) {
-            String fullTextSearchReportedItem = "to_tsvector('simple', m.viesti || m.prosessi || m.aihe) @@ " +
+            String fullTextSearchReportedItem = "to_tsvector('simple', m.viesti || ' ' || m.prosessi || ' ' || m.aihe) @@ " +
                                                 safelyQuote(query.getSearchArgument().toLowerCase());
             String fullTextSearchRecipientsItem = "to_tsvector('simple', r.hakunimi) @@ " +
                                                   safelyQuote(query.getSearchArgument().toLowerCase());
@@ -261,8 +261,6 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         }
 
         nativeSqlQuery += " ORDER BY lahetysalkoi DESC ";
-
-        System.out.println("PETAR QUERY: " + nativeSqlQuery);
 
         return nativeSqlQuery;
     }
