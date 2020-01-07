@@ -15,7 +15,9 @@
  **/
 package fi.vm.sade.ryhmasahkoposti.dao.impl;
 
+import java.math.BigInteger;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import fi.vm.sade.viestintapalvelu.dao.DAOUtil;
 import org.joda.time.DateTime;
@@ -24,11 +26,9 @@ import org.joda.time.format.DateTimeFormatter;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Repository;
 
-import com.mysema.query.BooleanBuilder;
 import com.mysema.query.jpa.impl.JPAQuery;
 import com.mysema.query.types.EntityPath;
 import com.mysema.query.types.OrderSpecifier;
-import com.mysema.query.types.template.BooleanTemplate;
 
 import fi.vm.sade.generic.dao.AbstractJpaDAOImpl;
 import fi.vm.sade.dto.PagingAndSortingDTO;
@@ -38,6 +38,9 @@ import fi.vm.sade.ryhmasahkoposti.dao.ReportedMessageDAO;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedMessage;
 import fi.vm.sade.ryhmasahkoposti.model.QReportedRecipient;
 import fi.vm.sade.ryhmasahkoposti.model.ReportedMessage;
+
+import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 
 import static com.mysema.query.types.expr.BooleanExpression.anyOf;
 
@@ -93,15 +96,12 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
     @Override
     public List<ReportedMessage> findBySearchCriteria(ReportedMessageQueryDTO query, PagingAndSortingDTO pagingAndSorting) {
-        ReportedRecipientQueryDTO reportedRecipientQuery = query.getReportedRecipientQueryDTO();
+        String nativeSqlQuery = createFindBySearchCriteriaQuery(query);
+        nativeSqlQuery += " LIMIT " + pagingAndSorting.getNumberOfRows() +
+                          " OFFSET " + pagingAndSorting.getFromIndex();
+        Query q = getEntityManager().createNativeQuery(nativeSqlQuery, ReportedMessage.class);
 
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery);
-        OrderSpecifier<?> orderBy = orderBy(pagingAndSorting);
-
-        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression)
-                .orderBy(orderBy).limit(pagingAndSorting.getNumberOfRows()).offset(pagingAndSorting.getFromIndex());
-
-        return findBySearchCriteria.list(reportedMessage);
+        return q.getResultList();
     }
 
     @Override
@@ -110,9 +110,7 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
             return 0L;
         }
 
-        DateTime dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays);
-        DateTimeFormatter dft = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
-        String dateString = dft.print(dateLimit);
+        String dateString = getDateLimitString();
 
         Map<String, Object> params = new HashMap<>();
         String findNumberOfReportedMessages = "SELECT COUNT(*) FROM ReportedMessage a WHERE a.timestamp > '" + dateString + "'";
@@ -122,7 +120,6 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         return DAOUtil.querySingleLong(getEntityManager(), params, findNumberOfReportedMessages);
     }
 
-
     @Override
     public Long findNumberOfUserMessages(String userOid) {
         JPAQuery query = new JPAQuery(getEntityManager());
@@ -131,13 +128,11 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
 
     @Override
     public Long findNumberOfReportedMessage(ReportedMessageQueryDTO query) {
-        ReportedRecipientQueryDTO reportedRecipientQuery = query.getReportedRecipientQueryDTO();
+        String nativeSqlQuery = "SELECT COUNT(*) FROM (" + createFindBySearchCriteriaQuery(query) + ") AS c";
 
-        BooleanBuilder whereExpression = whereExpressionForSearchCriteria(query, reportedRecipientQuery);
+        Query q = getEntityManager().createNativeQuery(nativeSqlQuery);
 
-        JPAQuery findBySearchCriteria = from(reportedMessage).distinct().leftJoin(reportedMessage.reportedRecipients, reportedRecipient).where(whereExpression);
-
-        return findBySearchCriteria.count();
+        return Long.valueOf(q.getSingleResult().toString());
     }
 
     protected JPAQuery from(EntityPath<?>... o) {
@@ -176,41 +171,97 @@ public class ReportedMessageDAOImpl extends AbstractJpaDAOImpl<ReportedMessage, 
         return reportedMessage.sendingStarted.asc();
     }
 
-    protected BooleanBuilder whereExpressionForSearchCriteria(ReportedMessageQueryDTO query, ReportedRecipientQueryDTO reportedRecipientQuery) {
-        BooleanBuilder booleanBuilder = new BooleanBuilder();
+    private String getDateLimitString() {
+        DateTime dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays);
+        DateTimeFormatter dft = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm:ss");
+        return dft.print(dateLimit);
+    }
 
-        if (query.getOrganizationOids() != null) {
-            if (query.getOrganizationOids().isEmpty()) {
-                booleanBuilder.and(BooleanTemplate.TRUE.eq(BooleanTemplate.FALSE));
+    private String safelyQuote(String s) {
+        return "'" + s.replace("'", "") + "'";
+    }
+
+    private String createReportedMessagesSenderOrganizationOidWhereItem(List<String> organizationOids, String organizationOid) {
+        if (organizationOids != null) {
+            if (organizationOids.isEmpty()) {
+                return "true = false";
             } else {
-                booleanBuilder.andAnyOf(DAOUtil.splittedInExpression(query.getOrganizationOids(), reportedMessage.senderOrganizationOid));
+                String quotedOrganizationOidsList = organizationOids.stream().
+                        map(oid -> safelyQuote(oid)).
+                        collect(Collectors.joining(", "));
+                return "m.lahettajan_organisaatio_oid in (" + quotedOrganizationOidsList + ")";
             }
-        } else if (query.getOrganizationOid() != null) {
-            booleanBuilder.and(reportedMessage.senderOrganizationOid.in(query.getOrganizationOid()));
+        } else if (organizationOid != null) {
+            return "m.lahettajan_organisaatio_oid = " + safelyQuote(organizationOid);
+        }
+        return "";
+    }
+
+    private String createWhereItemIfExists(String clausePrefix, String value) {
+        if (value != null) {
+            return clausePrefix + " " + safelyQuote(value);
+        } else {
+            return "";
+        }
+    }
+
+    private String joinWhereItemsWithAnd(List<String> items) {
+        return items.stream().filter(t -> !t.isEmpty()).collect(Collectors.joining(" AND "));
+    }
+
+    String createFindBySearchCriteriaQuery(ReportedMessageQueryDTO query) {
+        ReportedRecipientQueryDTO reportedRecipientQuery = query.getReportedRecipientQueryDTO();
+
+        String selectClause = "SELECT DISTINCT * FROM raportoitavaviesti m";
+        String nativeSqlQuery = selectClause;
+
+        String aikaleimaItem = createWhereItemIfExists("m.aikaleima > ", getDateLimitString());
+        boolean isThereSearchArgument = query.getSearchArgument() != null && !query.getSearchArgument().isEmpty();
+        String reportedMessagesWhereClause = joinWhereItemsWithAnd(Arrays.asList(
+                createReportedMessagesSenderOrganizationOidWhereItem(query.getOrganizationOids(), query.getOrganizationOid()),
+                aikaleimaItem
+        ));
+        String reportedRecipientsSubqueryWhereClause = joinWhereItemsWithAnd(Arrays.asList(
+                createWhereItemIfExists("r.vastaanottajan_oid = ", reportedRecipientQuery.getRecipientOid()),
+                createWhereItemIfExists("r.vastaanottajan_sahkopostiosoite = ", reportedRecipientQuery.getRecipientEmail()),
+                createWhereItemIfExists("r.henkilotunnus = ", reportedRecipientQuery.getRecipientSocialSecurityID())
+        ));
+
+        if (isThereSearchArgument) {
+            String fullTextSearchReportedItem = "to_tsvector('simple', m.viesti || ' ' || m.prosessi || ' ' || m.aihe) @@ " +
+                                                safelyQuote(query.getSearchArgument().toLowerCase());
+            String fullTextSearchRecipientsItem = "to_tsvector('simple', r.hakunimi) @@ " +
+                                                  safelyQuote(query.getSearchArgument().toLowerCase());
+            String reportRecipientsSubqueryForFullTextSearchRecipeints =
+                    "SELECT 1 FROM raportoitavavastaanottaja r " +
+                            " WHERE m.id = r.lahetettyviesti_id AND " + fullTextSearchRecipientsItem;
+            if (reportedRecipientsSubqueryWhereClause.isEmpty()) {
+                nativeSqlQuery += " WHERE " + fullTextSearchReportedItem +
+                        " AND " + reportedMessagesWhereClause +
+                        " UNION DISTINCT " +
+                        selectClause + " WHERE " +
+                        "EXISTS (" + reportRecipientsSubqueryForFullTextSearchRecipeints + ") AND " +
+                        reportedMessagesWhereClause;
+            } else {
+                nativeSqlQuery += " WHERE " +
+                        "EXISTS (" + reportRecipientsSubqueryForFullTextSearchRecipeints +
+                        reportedRecipientsSubqueryWhereClause + ") AND " +
+                        reportedMessagesWhereClause;
+            }
+        } else {
+            if (reportedRecipientsSubqueryWhereClause.isEmpty()) {
+                nativeSqlQuery += " WHERE " + reportedMessagesWhereClause;
+            } else {
+                String reportRecipientsSubquery =
+                        "SELECT 1 FROM raportoitavavastaanottaja r " +
+                                " WHERE m.id = r.lahetettyviesti_id AND " + reportedRecipientsSubqueryWhereClause;
+                nativeSqlQuery += " WHERE " +
+                        "EXISTS (" + reportRecipientsSubquery + ") AND " + reportedMessagesWhereClause;
+            }
         }
 
-        if (reportedRecipientQuery.getRecipientOid() != null) {
-            booleanBuilder.and(reportedRecipient.recipientOid.eq(reportedRecipientQuery.getRecipientOid()));
-        }
+        nativeSqlQuery += " ORDER BY lahetysalkoi DESC ";
 
-        if (reportedRecipientQuery.getRecipientEmail() != null) {
-            booleanBuilder.and(reportedRecipient.recipientEmail.eq(reportedRecipientQuery.getRecipientEmail()));
-        }
-
-        if (reportedRecipientQuery.getRecipientSocialSecurityID() != null) {
-            booleanBuilder.and(reportedRecipient.socialSecurityID.eq(reportedRecipientQuery.getRecipientSocialSecurityID()));
-        }
-
-        if (query.getSearchArgument() != null && !query.getSearchArgument().isEmpty()) {
-            booleanBuilder.andAnyOf(reportedRecipient.searchName.containsIgnoreCase(reportedRecipientQuery.getRecipientName()),
-                    reportedMessage.process.containsIgnoreCase(query.getSearchArgument()),
-                    reportedMessage.subject.containsIgnoreCase(query.getSearchArgument()),
-                    reportedMessage.message.containsIgnoreCase(query.getSearchArgument()));
-        }
-
-        Date dateLimit = DateTime.now().minusDays(reportedMessageFetchMaxAgeDays).toDate();
-        booleanBuilder.and(reportedMessage.timestamp.gt(dateLimit));
-
-        return booleanBuilder;
+        return nativeSqlQuery;
     }
 }

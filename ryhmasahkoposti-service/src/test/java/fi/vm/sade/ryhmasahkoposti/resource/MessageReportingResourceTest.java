@@ -77,7 +77,6 @@ public class MessageReportingResourceTest {
         Authentication authentication = Mockito.mock(Authentication.class);
         SecurityContext context = Mockito.mock(SecurityContext.class);
         Mockito.when(context.getAuthentication()).thenReturn(authentication);
-        Mockito.when(authentication.isAuthenticated()).thenReturn(true);
         Mockito.when(authentication.getName()).thenReturn("1.7.8.9.0");
         SecurityContextHolder.setContext(context);
 
