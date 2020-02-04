@@ -119,6 +119,7 @@ class OphS3Client {
                 .key(documentId.getDocumentId())
                 .build();
         AsyncRequestBody asyncRequestProvider = AsyncRequestBody.fromFile(tempFile);
+        /*
         try(S3AsyncClient client = getClient()) {
             CompletableFuture<PutObjectResponse> completableFuture = client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
                 try {
@@ -129,6 +130,25 @@ class OphS3Client {
             });
             return new AddObjectResponse<>(new DocumentId(documentId.getDocumentId()), completableFuture);
         }
+        */
+
+        S3AsyncClient client = getClient();
+        CompletableFuture<PutObjectResponse> completableFuture =  client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
+            if(putObjectResponse == null) {
+                log.error("Error saving file {} to S3", documentId.getDocumentId(), throwable);
+            }
+            try {
+                Files.deleteIfExists(tempFile);
+            } catch (IOException e) {
+                log.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
+            }
+            try {
+                client.close();
+            } catch (Exception e) {
+                log.error("Error closing S3 client", e);
+            }
+        });
+        return new AddObjectResponse<>(new DocumentId(documentId.getDocumentId()), completableFuture);
     }
 
     Download getObject(DocumentId documentId) {
