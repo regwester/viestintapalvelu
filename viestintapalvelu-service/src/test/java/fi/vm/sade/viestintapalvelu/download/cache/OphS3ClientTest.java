@@ -17,6 +17,7 @@ import org.springframework.core.env.Environment;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.regions.Region;
@@ -148,7 +149,7 @@ class TestClientFactory implements AWSS3ClientFactory {
 
         //get object mock
         when(mock.getObject(any(GetObjectRequest.class), any(AsyncResponseTransformer.class))).thenAnswer(ans -> {
-            return CompletableFuture.completedFuture(new byte[0]);
+            return CompletableFuture.completedFuture(ResponseBytes.fromByteArray(new Object(), new byte[0]));
         });
         return mock;
     }
