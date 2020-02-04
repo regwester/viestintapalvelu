@@ -255,9 +255,9 @@ public class PDFPrinterResource extends AsynchronousResource {
         }
     }
 
-    private void close(InputStream inputStream) {
+    private void close(InputStream inputStream) throws IOException {
         if (inputStream != null) {
-            close(inputStream);
+            inputStream.close();
         }
     }
 }
