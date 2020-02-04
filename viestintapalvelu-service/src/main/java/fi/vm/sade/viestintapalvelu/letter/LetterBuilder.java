@@ -219,7 +219,9 @@ public class LetterBuilder {
             data.put("palautusTimestampSv", palautusTimestampSv);
         }
         data.put("letterDate", new SimpleDateFormat("d.M.yyyy").format(new Date()));
-        data.put("syntymaaika", formatDate((String) data.get("syntymaaika")));
+        if(data.get("syntymaaika") != null) {
+            data.put("syntymaaika", formatDate((String) data.get("syntymaaika")));
+        }
         data.put("osoite", new HtmlAddressLabelDecorator(addressLabel));
         data.put("addressLabel", new XmlAddressLabelDecorator(addressLabel));
 
