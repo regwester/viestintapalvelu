@@ -228,7 +228,8 @@ public class PDFPrinterResource extends AsynchronousResource {
                     null,
                     getLanguage(pdf),
                     new PdfDocument.FrontPageData(pdf),
-                    null
+                    null,
+                    new PdfDocument.ContentData(pdf)
             );
             pdfs.add(doc);
         }

@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Component;
+import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.async.AsyncRequestBody;
 import software.amazon.awssdk.core.async.AsyncResponseTransformer;
 import software.amazon.awssdk.regions.Region;
@@ -119,25 +120,34 @@ class OphS3Client {
                 .key(documentId.getDocumentId())
                 .build();
         AsyncRequestBody asyncRequestProvider = AsyncRequestBody.fromFile(tempFile);
-        try(S3AsyncClient client = getClient()) {
-            CompletableFuture<PutObjectResponse> completableFuture = client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
-                try {
-                    Files.delete(tempFile);
-                } catch (IOException e) {
-                    log.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
-                }
-            });
-            return new AddObjectResponse<>(new DocumentId(documentId.getDocumentId()), completableFuture);
-        }
+
+        S3AsyncClient client = getClient();
+        CompletableFuture<PutObjectResponse> completableFuture =  client.putObject(request, asyncRequestProvider).whenComplete((putObjectResponse, throwable) -> {
+            if(putObjectResponse == null) {
+                log.error("Error saving file {} to S3", documentId.getDocumentId(), throwable);
+            }
+            try {
+                Files.deleteIfExists(tempFile);
+            } catch (IOException e) {
+                log.error("Error deleting temp file {}", tempFile.toAbsolutePath().toString(), e);
+            }
+            try {
+                client.close();
+            } catch (Exception e) {
+                log.error("Error closing S3 client", e);
+            }
+        });
+        return new AddObjectResponse<>(new DocumentId(documentId.getDocumentId()), completableFuture);
     }
 
     Download getObject(DocumentId documentId) {
         AsyncResponseTransformer handler = AsyncResponseTransformer.toBytes();
         try(S3AsyncClient client = getClient()) {
-            AsyncResponseTransformer<GetObjectResponse, byte[]> castHandler = (AsyncResponseTransformer<GetObjectResponse, byte[]>) handler;
-            CompletableFuture<byte[]> fullObject = getObjectContents(client, documentId, castHandler);
+            AsyncResponseTransformer<GetObjectResponse, ResponseBytes> castHandler = (AsyncResponseTransformer<GetObjectResponse, ResponseBytes>) handler;
+            CompletableFuture<ResponseBytes> fullObject = getObjectContents(client, documentId, castHandler);
             Header header = headObject(client, documentId).join();
-            return new Download(header.getContentType(), header.getFilename(), fullObject.join());
+            ResponseBytes responseBytes = fullObject.join();
+            return new Download(header.getContentType(), header.getFilename(), responseBytes.asByteArray());
         }
     }
 
@@ -179,7 +189,7 @@ class OphS3Client {
     }
 
 
-    private CompletableFuture<byte[]> getObjectContents(S3AsyncClient client, DocumentId id, AsyncResponseTransformer<GetObjectResponse, byte[]> asyncResponseHandler) {
+    private CompletableFuture<ResponseBytes> getObjectContents(S3AsyncClient client, DocumentId id, AsyncResponseTransformer<GetObjectResponse, ResponseBytes> asyncResponseHandler) {
         GetObjectRequest getObjectRequest = GetObjectRequest.builder().bucket(bucket).key(id.getDocumentId()).build();
         return client.getObject(getObjectRequest, asyncResponseHandler);
 
