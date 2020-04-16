@@ -148,6 +148,10 @@ class OphS3Client {
             Header header = headObject(client, documentId).join();
             ResponseBytes responseBytes = fullObject.join();
             return new Download(header.getContentType(), header.getFilename(), responseBytes.asByteArray());
+        } catch (Exception e) {
+            String key = documentId != null && !"".equals(documentId.getDocumentId()) ? documentId.getDocumentId() : "KEY_MISSING";
+            log.error("Error getting document ({}) from AWS S3", key, e);
+            throw e;
         }
     }
 
