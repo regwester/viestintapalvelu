@@ -100,6 +100,8 @@ public class EmailResourceImpl extends GenericResourceImpl implements EmailResou
     @Override
     public Response sendEmail(EmailData emailData, boolean sanitize) throws Exception {
         prepareSendEmail(emailData, sanitize);
+        System.out.println("emailData.getEmail().getSubject()" + emailData.getEmail().getSubject());
+        System.out.println("emailData.getEmail().getBody()" + emailData.getEmail().getBody());
         String sendId = Long.toString(groupEmailReportingService.addSendingGroupEmail(emailData));
         emailService.checkEmailQueues();
         log.debug("DB index is {}", sendId);
