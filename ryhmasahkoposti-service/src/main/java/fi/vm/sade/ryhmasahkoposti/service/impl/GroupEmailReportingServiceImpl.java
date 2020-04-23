@@ -136,6 +136,8 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail());
         if (templateDTO != null) {
             reportedMessage.setTemplateId(templateDTO.getId());
+            reportedMessage.setSubject(templateDTO.getName());
+            reportedMessage.setMessage(templateDTO.getContents().toString());
         }
         ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
         if (templateDTO != null) {
@@ -203,7 +205,7 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
                 log.info("Processed {}/{} emailRecipients of message {}", count, emailRecipients.size(), savedReportedMessage.getId());
             }
         }
-        log.info("Prosecced all {} emailRecipients of message {}.", emailRecipients.size(), savedReportedMessage.getId());
+        log.info("Processed all {} emailRecipients of message {}.", emailRecipients.size(), savedReportedMessage.getId());
         createSendQueues(recipients);
     }
 
