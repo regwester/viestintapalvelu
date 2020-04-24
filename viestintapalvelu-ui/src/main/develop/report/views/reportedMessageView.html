@@ -101,7 +101,9 @@
             </thead>
             <tbody>
             <tr ng-repeat="emailRecipient in reportedMessageDTO.emailRecipients">
-                <td ng-click="updateMessageBodyByRecipient()">{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
+                <td>
+                    <a href ng-click="updateMessageBodyByRecipient()">{{emailRecipient.lastName}},{{emailRecipient.firstName}}</a>
+                </td>
                 <td>{{emailRecipient.oid}}</td>
                 <td>{{emailRecipient.email}}</td>
                 <td ng-if="emailRecipient.sendSuccessful === '2'">
