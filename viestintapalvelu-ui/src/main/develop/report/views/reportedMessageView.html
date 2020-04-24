@@ -28,9 +28,9 @@
 
     <div class="row-fluid">
         <div class="span2">{{'reportedmessageview.otsikko.sisalto' | i18n}}</div>
-        <div class="span6" ng-if="reportedMessageDTO.body">
+        <div class="span6" ng-if="reportedMessageBody.body">
             <limited-paragraph
-                    content="reportedMessageDTO.body"
+                    content="reportedMessageBody.body"
                     show-button-text="{{ 'reportedmessageview.text.nayta_kaikki' | i18n }}"
                     hide-button-text="{{ 'reportedmessageview.text.piilota' | i18n }}"
                     limit="350"/>
@@ -101,7 +101,7 @@
             </thead>
             <tbody>
             <tr ng-repeat="emailRecipient in reportedMessageDTO.emailRecipients">
-                <td>{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
+                <td ng-click="updateMessageBodyByRecipient()">{{emailRecipient.lastName}},{{emailRecipient.firstName}}</td>
                 <td>{{emailRecipient.oid}}</td>
                 <td>{{emailRecipient.email}}</td>
                 <td ng-if="emailRecipient.sendSuccessful === '2'">

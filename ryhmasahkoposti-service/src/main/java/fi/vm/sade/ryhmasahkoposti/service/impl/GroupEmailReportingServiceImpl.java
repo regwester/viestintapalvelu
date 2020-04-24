@@ -136,8 +136,6 @@ public class GroupEmailReportingServiceImpl implements GroupEmailReportingServic
         ReportedMessage reportedMessage = reportedMessageConverter.convert(emailData.getEmail());
         if (templateDTO != null) {
             reportedMessage.setTemplateId(templateDTO.getId());
-            reportedMessage.setSubject(templateDTO.getName());
-            reportedMessage.setMessage(templateDTO.getContents().toString());
         }
         ReportedMessage savedReportedMessage = reportedMessageService.saveReportedMessage(reportedMessage);
         if (templateDTO != null) {

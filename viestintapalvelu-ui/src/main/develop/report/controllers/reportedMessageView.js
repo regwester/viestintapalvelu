@@ -3,7 +3,10 @@
 angular.module('report').controller('ReportedMessageViewCtrl',
   ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients',
     'ReportedMessageAndRecipientsSendingUnsuccessful', 'ReportedMessageAndRecipientsSendingBounced', 'ErrorDialog',
-    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients, ReportedMessageAndRecipientsSendingUnsuccessful, ReportedMessageAndRecipientsSendingBounced, ErrorDialog) {
+    'email',
+    function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients,
+                                     ReportedMessageAndRecipientsSendingUnsuccessful,
+                                     ReportedMessageAndRecipientsSendingBounced, ErrorDialog, email) {
       var polling, // promise returned by $interval
         POLLING_INTERVAL = 5 * 1000; // 5 seconds
 
@@ -52,6 +55,7 @@ angular.module('report').controller('ReportedMessageViewCtrl',
         ReportedMessageAndRecipients.get(parameters,
           function (result) {
             $scope.reportedMessageDTO = result;
+            $scope.reportedMessageBody = result.body;
           }, function (error) {
             ErrorDialog.showError(error);
           });
@@ -152,6 +156,10 @@ angular.module('report').controller('ReportedMessageViewCtrl',
         $scope.pagination.page = 1;
         $scope.fetch();
       };
+
+      $scope.updateMessageBodyByRecipient = function () {
+        $scope.reportedMessageBody = email.preview($scope.reportedMessageDTO);
+      }
 
       // Alustetaan ensimmäinen sivu
       $scope.fetch();
