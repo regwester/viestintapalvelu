@@ -3,10 +3,10 @@
 angular.module('report').controller('ReportedMessageViewCtrl',
   ['$scope', '$stateParams', '$state', '$interval', 'ReportedMessageAndRecipients',
     'ReportedMessageAndRecipientsSendingUnsuccessful', 'ReportedMessageAndRecipientsSendingBounced', 'ErrorDialog',
-    'email',
+    'EmailService',
     function ReportedMessageViewCtrl($scope, $stateParams, $state, $interval, ReportedMessageAndRecipients,
                                      ReportedMessageAndRecipientsSendingUnsuccessful,
-                                     ReportedMessageAndRecipientsSendingBounced, ErrorDialog, email) {
+                                     ReportedMessageAndRecipientsSendingBounced, ErrorDialog, EmailService) {
       var polling, // promise returned by $interval
         POLLING_INTERVAL = 5 * 1000; // 5 seconds
 
@@ -158,7 +158,8 @@ angular.module('report').controller('ReportedMessageViewCtrl',
       };
 
       $scope.updateMessageBodyByRecipient = function () {
-        $scope.reportedMessageBody = email.preview($scope.reportedMessageDTO);
+        $scope.reportedMessageBody = EmailService.preview($scope.reportedMessageDTO);
+        console.log('reportedMessageBody: ' + $scope.reportedMessageBody);
       }
 
       // Alustetaan ensimmäinen sivu
