@@ -54,15 +54,12 @@ read -d '' REQUEST_CONTENT << EOF
 EOF
 
 REQUEST_TEMPLATE_TEMP=$(mktemp)
-RAW_BODY_TEMP=$(mktemp)
 REQUEST_CONTENT_TEMP=$(mktemp)
 JQ_RAW_TEMP=$(mktemp)
 
 echo "$REQUEST_CONTENT" > $REQUEST_TEMPLATE_TEMP
 
-$(dirname $0)/tsv_to_html.bash -d '\t' > $RAW_BODY_TEMP
-
-jq -Rs < $RAW_BODY_TEMP > $JQ_RAW_TEMP
+jq -Rs > $JQ_RAW_TEMP
 
 jq --slurpfile texts $JQ_RAW_TEMP '.email.body=$texts[0]' $REQUEST_TEMPLATE_TEMP > $REQUEST_CONTENT_TEMP
 
@@ -74,5 +71,5 @@ curl "$API_URL" \
   -H "Caller-Id: 1.2.246.562.10.00000000001.kehittaja.$(whoami)" \
   --data @${REQUEST_CONTENT_TEMP}
 
-rm $REQUEST_TEMPLATE_TEMP $RAW_BODY_TEMP $REQUEST_CONTENT_TEMP $JQ_RAW_TEMP
+rm $REQUEST_TEMPLATE_TEMP $REQUEST_CONTENT_TEMP $JQ_RAW_TEMP
 
