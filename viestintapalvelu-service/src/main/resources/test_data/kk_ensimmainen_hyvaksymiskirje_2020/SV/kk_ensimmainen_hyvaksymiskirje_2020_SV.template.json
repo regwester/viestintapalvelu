@@ -181,7 +181,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "Meddelande om antagningsresultatet i gemensam ansökan till högskolorna hösten 2019",
+      "defaultValue": "Meddelande om antagning av studerande i högskolornas andra gemensamma ansökan våren 2020",
       "mandatory": false
     },
     {
@@ -217,7 +217,7 @@
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "Din situation i gemensam ansökan till högskolor hösten 2019",
+      "defaultValue": "Din situation i högskolornas andra gemensamma ansökan våren 2020",
       "mandatory": false
     }
   ]
