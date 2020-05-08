@@ -181,7 +181,7 @@
     {
       "id": 4,
       "name": "kirjeotsikko",
-      "defaultValue": "Notification of the student selection results in joint application to higher education autumn 2019",
+      "defaultValue": "Notification of the student selection results in the Joint application to higher education spring 2020",
       "mandatory": false
     },
     {
@@ -217,7 +217,7 @@
     {
       "id": 9,
       "name": "sivu_2_otsikko",
-      "defaultValue": "Your current situation in joint application to higher education autumn 2019",
+      "defaultValue": "Your current situation in the Joint application to higher education spring 2020",
       "mandatory": false
     }
   ]
