@@ -2,24 +2,30 @@
 
 set -o pipefail
 
-if [ -z $3 ]; then
-  echo "Usage: $0 <email address> <email subject> <ryhmasahkoposti JSESSIONID> [environment virkailija URL]"
+if [ -z "$5" ]; then
+  echo "Usage: $0 <email address> <email subject> <email header> <email footer> <ryhmasahkoposti JSESSIONID> [environment virkailija URL]"
   echo "...and let the contents come via stdin."
   exit 2
 fi
 
-RECIPIENT=$1
-SUBJECT=$2
-JSESSIONID=$3
-if [ -z $4 ]; then
+RECIPIENT="$1"
+SUBJECT="$2"
+HEADER="$3"
+FOOTER="$4"
+JSESSIONID="$5"
+if [ -z "$6" ]; then
   VIRKAILIJA_URL=https://virkailija.testiopintopolku.fi
 else
-  VIRKAILIJA_URL=$4
+  VIRKAILIJA_URL="$6"
 fi
 
 API_URL="${VIRKAILIJA_URL}/ryhmasahkoposti-service/email?sanitize=false"
 
-read -d '' REQUEST_CONTENT << EOF
+REQUEST_TEMPLATE_TEMP=$(mktemp)
+REQUEST_CONTENT_TEMP=$(mktemp)
+JQ_RAW_TEMP=$(mktemp)
+
+cat << EOF > "$REQUEST_TEMPLATE_TEMP"
 {
   "recipient": [
     {
@@ -53,15 +59,9 @@ read -d '' REQUEST_CONTENT << EOF
 }
 EOF
 
-REQUEST_TEMPLATE_TEMP=$(mktemp)
-REQUEST_CONTENT_TEMP=$(mktemp)
-JQ_RAW_TEMP=$(mktemp)
+(echo "<p>$HEADER</p>" && cat && echo "<p>$FOOTER</p>") | jq -Rs > "$JQ_RAW_TEMP"
 
-echo "$REQUEST_CONTENT" > $REQUEST_TEMPLATE_TEMP
-
-jq -Rs > $JQ_RAW_TEMP
-
-jq --slurpfile texts $JQ_RAW_TEMP '.email.body=$texts[0]' $REQUEST_TEMPLATE_TEMP > $REQUEST_CONTENT_TEMP
+jq --slurpfile texts "$JQ_RAW_TEMP" '.email.body=$texts[0]' "$REQUEST_TEMPLATE_TEMP" > "$REQUEST_CONTENT_TEMP"
 
 curl "$API_URL" \
   -v \
@@ -69,7 +69,6 @@ curl "$API_URL" \
   -H 'Accept: application/json' \
   -H 'Content-Type: application/json' \
   -H "Caller-Id: 1.2.246.562.10.00000000001.kehittaja.$(whoami)" \
-  --data @${REQUEST_CONTENT_TEMP}
+  --data @"$REQUEST_CONTENT_TEMP"
 
-rm $REQUEST_TEMPLATE_TEMP $REQUEST_CONTENT_TEMP $JQ_RAW_TEMP
-
+rm "$REQUEST_TEMPLATE_TEMP" "$REQUEST_CONTENT_TEMP" "$JQ_RAW_TEMP"
