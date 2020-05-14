@@ -59,7 +59,7 @@ cat << EOF > "$REQUEST_TEMPLATE_TEMP"
 }
 EOF
 
-(echo "<p>$HEADER</p>" && cat && echo "<p>$FOOTER</p>") | jq -Rs > "$JQ_RAW_TEMP"
+(echo "$HEADER" && cat && echo "$FOOTER") | jq -Rs > "$JQ_RAW_TEMP"
 
 jq --slurpfile texts "$JQ_RAW_TEMP" '.email.body=$texts[0]' "$REQUEST_TEMPLATE_TEMP" > "$REQUEST_CONTENT_TEMP"
 
