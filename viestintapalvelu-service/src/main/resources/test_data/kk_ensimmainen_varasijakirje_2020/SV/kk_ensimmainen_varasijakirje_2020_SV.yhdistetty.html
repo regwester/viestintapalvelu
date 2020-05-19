@@ -58,12 +58,14 @@
         <h1>$kirjeotsikko</h1>
 
         <section>
-            <dl>
-                <dt>Läroanstalt</dt>
-                <dd>$koulu</dd>
-                <dt>Ansökningsmål</dt>
-                <dd>$koulutus</dd>
-            </dl>
+            <h2>Ansökningsmål</h2>
+            <ol class="hakukohteet">
+                #foreach( $tulos in $tulokset )
+                #if($tulos.hyvaksytty=='true')
+                <li>$tulos.hakukohteenNimi - $tulos.organisaationNimi</li>
+                #end
+                #end
+            </ol>
 
             <p>Gratulerar! Du har blivit antagen som studerande till ovan nämnda studieplats i gemensam ansökan till högskolor hösten 2019</p>
 
@@ -121,48 +123,73 @@
         <section>
             <h2>$sivu_2_otsikko</h2>
 
-            <table>
-                <caption>Du ser här dina ansökningsmål i den ordning du satt dem i</caption>
-                <thead>
-                <tr>
-                    <th>Antagningsresultat</th>
-                    <th>Ansökningsmål</th>
-                    <th>Antagningssätt</th>
-                    <th>Dina poäng</th>
-                    <th>Lägsta godk.</th>
-                    <th>Reservpl.</th>
-                </tr>
-                </thead>
-
+            <ol class="tulokset">
                 #foreach( $tulos in $tulokset )
-                #set($hyvaksytty = "#if($tulos.hyvaksytty=='true')hyvaksytty#{else}#end")
-                #set($even = "#if($foreach.count % 2 == 0)even#{else}#end")
-                #set($jonojenmaara = $tulos.sijoitukset.size())
-                <tbody>
-                #foreach( $sijoitus in $tulos.sijoitukset )
-                <tr class="$hyvaksytty $even">
-                    #if($foreach.count == 1)
-                    <td rowspan="$jonojenmaara">$tulos.valinnanTulos</td>
-                    <td rowspan="$jonojenmaara">$tulos.organisaationNimi, $tulos.hakukohteenNimi<br/>
-                        #if($tulos.hylkaysperuste)<span class="hylkayssyy">Avslagsgrund: $tulos.hylkaysperuste</span>#end
-                        #if($tulos.peruuntumisenSyy)<span
-                                class="peruuntumisensyy">Annuleringsgrund: $tulos.peruuntumisenSyy</span>#end
-                    </td>
-                    #end
-                    <td>$sijoitus.nimi<br/></td>
-                    <td>#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end<br/></td>
-                    <td>#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end<br/></td>
-                    <td>#if($sijoitus.varasija)${sijoitus.varasija}#{else} - #end<br/></td>
-                </tr>
+                <li class="hakukohde">
+                    <div class="hakukohde-tiedot#if($tulos.hyvaksytty=='true') bold#end">
+                        <div class="hakukohde-nimi">$tulos.hakukohteenNimi - $tulos.organisaationNimi</div>
+                        <div class="hakukohde-tulos">
+                            <span class="bold">$tulos.valinnanTulos</span>
+                            #if($tulos.hylkaysperuste)<br /><span class="italic">$tulos.hylkaysperuste</span>#end
+                            #if($tulos.peruuntumisenSyy)<br /><span class="italic">$tulos.peruuntumisenSyy</span>#end
+                            #if($tulos.hyvaksymisenEhto)<br /><span class="italic">$tulos.hyvaksymisenEhto</span>#end
+                        </div>
+                    </div>
+                    <table class="valintatapajonot-table">
+                        <thead>
+                            <tr>
+                                <th class="sarake sarake-kapea">Antagningssätt</th>
+                                <th class="sarake sarake-kapea">Dina poäng</th>
+                                <th class="sarake sarake-kapea">Lägsta godkända poängantal</th>
+                                <th class="sarake sarake-levea">Antagningsresultat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            #foreach( $sijoitus in $tulos.sijoitukset )
+                            <tr>
+                                <th scope="row" class="sarake sarake-kapea">$sijoitus.nimi</th>
+                                <td class="sarake sarake-kapea">#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end</td>
+                                <td class="sarake sarake-kapea">#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end</td>
+                                <td class="sarake sarake-levea">
+                                    <span class="bold">$sijoitus.tila</span>
+                                    #if($sijoitus.tilanKuvaus)<br /><span class="italic">$sijoitus.tilanKuvaus</span>#end
+                                    #if($sijoitus.hyvaksymisenEhto)<br /><span class="italic">$sijoitus.hyvaksymisenEhto</span>#end
+                                </td>
+                            </tr>
+                            #end
+                        </tbody>
+                    </table>
+                    <ol class="valintatapajonot-list" aria-hidden="true" tabindex="-1">
+                        #foreach( $sijoitus in $tulos.sijoitukset )
+                        <li class="valintatapajono">
+                            <table class="valintatapajono-table">
+                                <tr>
+                                    <th scope="row" class="sarake">Antagningssätt</th>
+                                    <td class="sarake">$sijoitus.nimi</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="sarake">Dina poäng</th>
+                                    <td class="sarake">#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="sarake">Lägsta godkända poängantal</th>
+                                    <td class="sarake">#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end</td>
+                                </tr>
+                                <tr>
+                                    <th scope="row" class="sarake">Antagningsresultat</th>
+                                    <td class="sarake">
+                                        <span class="bold">$sijoitus.tila</span>
+                                        #if($sijoitus.tilanKuvaus)<br /><span class="italic">$sijoitus.tilanKuvaus</span>#end
+                                        #if($sijoitus.hyvaksymisenEhto)<br /><span class="italic">$sijoitus.hyvaksymisenEhto</span>#end
+                                    </td>
+                                </tr>
+                            </table>
+                        </li>
+                        #end
+                    </ol>
+                </li>
                 #end
-                </tbody>
-                #end
-                <tfoot>
-                <tr>
-                    <td colspan="6"></td>
-                </tr>
-                </tfoot>
-            </table>
+            </ol>
         </section>
 
         <section>
