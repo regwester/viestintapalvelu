@@ -132,6 +132,12 @@
             <p>Welcome to study!</p>
         </section>
 
+        #if($ohjeetUudelleOpiskelijalle)
+        <section>
+            <h2 id="ohjeet_uusille_opiskelijoille">Instructions for new students</h2>
+            <p><a href="$ohjeetUudelleOpiskelijalle">$ohjeetUudelleOpiskelijalle</a></p>
+        </section>
+
         <section>
             <h2>$sivu_2_otsikko</h2>
 
@@ -208,12 +214,7 @@
         </section>
     </article>
 
-    <article>
-        <section>
-            <h2 id="ohjeet_uusille_opiskelijoille">Instructions for new students</h2>
-            <p>#if($ohjeetUudelleOpiskelijalle)${ohjeetUudelleOpiskelijalle}#end</p>
-        </section>
-    </article>
+
 </main>
 
 </body>
