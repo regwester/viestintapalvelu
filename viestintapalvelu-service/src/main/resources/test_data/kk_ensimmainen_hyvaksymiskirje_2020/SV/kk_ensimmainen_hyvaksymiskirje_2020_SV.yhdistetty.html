@@ -108,7 +108,11 @@
 
             <p>Välkommen!</p>
         </section>
-
+        #if($ohjeetUudelleOpiskelijalle)
+        <section>
+            <h2 id="ohjeet_uusille_opiskelijoille">Anvisningar för nya studerande</h2>
+            <p><a href="$ohjeetUudelleOpiskelijalle">$ohjeetUudelleOpiskelijalle</a></p>
+        </section>
         <section>
             <h2>$sivu_2_otsikko</h2>
 
