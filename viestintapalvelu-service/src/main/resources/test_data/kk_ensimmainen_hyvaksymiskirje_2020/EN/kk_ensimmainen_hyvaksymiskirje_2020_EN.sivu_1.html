@@ -45,7 +45,11 @@
 <div>
     <h1>$kirjeotsikko</h1>    
     <p><b>Study Programme(s)</b></p>
-    <p>$koulutus, $koulu</p>
+    #foreach( $tulos in $tulokset )
+    #if($tulos.hyvaksytty=='true')
+    <p><b>$tulos.hakukohteenNimi - $tulos.organisaationNimi</b></p>
+    #end
+    #end
 
     $sisalto
     <h2>Instructions for new students</h2>

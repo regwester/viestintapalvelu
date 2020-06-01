@@ -48,7 +48,11 @@
 <div>
     <h1 name="hyvaksymiskirje">$kirjeotsikko</h1>
     <p><b>Hakukohteet</b></p>
-    <p>$koulutus, $koulu</p>
+    #foreach( $tulos in $tulokset )
+    #if($tulos.hyvaksytty=='true')
+    <p><b>$tulos.hakukohteenNimi - $tulos.organisaationNimi</b></p>
+    #end
+    #end
 
     $sisalto
     <h2>Ohjeet uusille opiskelijoille</h2>
