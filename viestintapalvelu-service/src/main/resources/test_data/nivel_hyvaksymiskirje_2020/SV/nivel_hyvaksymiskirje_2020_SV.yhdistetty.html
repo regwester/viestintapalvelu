@@ -1,0 +1,217 @@
+<!DOCTYPE html>
+<html lang="sv" dir="ltr">
+  <head>
+    <meta charset="utf-8"/>
+    <meta name="viewport" content="width=device-width"/>
+    <style type="text/css">$tyylit</style>
+    <title>Hyväksymiskirje</title>
+  </head>
+
+  <body>
+    <header role="banner">
+      <dl>
+        <dt>Datum</dt><dd>$letterDate</dd>
+        <dt>Mottagare</dt><dd>$osoite</dd>
+        <dt>Studerandenummer</dt><dd>$hakijaOid</dd>
+      </dl>
+    </header>
+
+    <main role="main">
+      <article>
+        <h1>$kirjeotsikko</h1>
+
+        <section>
+          <dl>
+            <dt>Läroanstalt</dt><dd>$koulu</dd>
+            <dt>Ansökningsmål</dt><dd>$koulutus</dd>
+          </dl>
+
+          <h2>
+            Gratulerar,
+          </h2>
+
+          <p>
+            du har blivit antagen som studerande vid ovannämnda utbildning.
+          </p>
+
+          <p>
+            Ta emot studieplatsen senast 16.8, för att inte gå miste om den.
+            Om du har angett din e-postadress i ansökningsblanketten, får du
+            en länk, med vilken du kan ta emot studieplatsen elektroniskt. Om
+            du har nätbankskoder, mobil ID eller ett elektroniskt ID-kort kan
+            du på adressen Studieinfo.fi logga in i tjänsten Min Studieinfo
+            och ta emot studieplatsen där. Läroanstalten kan dessutom be att
+            du tar emot studieplatsen skriftligt eller genom ett personligt
+            besök i läroanstalten.
+          </p>
+
+          <p>
+            På omstående sida av detta brev kan du se hur du har placerat dig
+            till dina andra ansökningsönskemål. Efter att du har blivit
+            antagen har dina eventuella lägre ansökningsmål automatiskt
+            annullerats. Du kan alltså inte längre bli antagen till dessa.
+            Till eventuella högre ansökningsönskemål kan du ännu bli antagen
+            från reservplats. Om du vill veta mer om antagningsgrunderna kan
+            du läsa om dem i beskrivningen av utbildningen i Studieinfo eller
+            fråga hos läroanstalten.
+          </p>
+        </section>
+
+        <section>
+          <h2>$liiteotsikko</h2>
+
+          <table class="tulokset-table">
+            <caption>Du ser här dina ansökningsmål i den ordning du satt dem i</caption>
+            <thead>
+              <tr>
+                <th class="sarake">Dina ansökningsmål</th>
+                <th class="sarake">Antagningsresultat</th>
+              </tr>
+            </thead>
+            <tbody>
+              #foreach( $tulos in $tulokset )
+              #set($even = "#if($foreach.count % 2 == 0)even#{else}#end")
+              <tr class="$even">
+                  <th scope="row" class="sarake#if($tulos.hyvaksytty=='true') bold#end">
+                      $tulos.organisaationNimi, $tulos.hakukohteenNimi
+                  </th>
+                <td class="sarake">
+                    <span#if($tulos.hyvaksytty=='true') class="bold"#end>$tulos.valinnanTulos</span>
+                    #if($tulos.hylkaysperuste)<br /><span>$tulos.hylkaysperuste</span>#end
+                </td>
+              </tr>
+              #end
+            </tbody>
+          </table>
+
+          <h3 class="tulokset-list-heading" aria-hidden="true">
+              Du ser här dina ansökningsmål i den ordning du satt dem i
+          </h3>
+          <ol class="tulokset-list" aria-hidden="true" tabindex="-1">
+              #foreach( $tulos in $tulokset )
+              <li class="tulokset-list-tulos">
+                  <div class="hakukohde-nimi#if($tulos.hyvaksytty=='true') bold#end">
+                      $tulos.organisaationNimi, $tulos.hakukohteenNimi
+                  </div>
+                  <table class="tulokset-list-table">
+                      <tr>
+                          <th scope="row" class="sarake">Antagningsresultat</th>
+                          <td class="sarake">
+                              <span#if($tulos.hyvaksytty=='true') class="bold"#end>$tulos.valinnanTulos</span>
+                              #if($tulos.hylkaysperuste)<br /><span>$tulos.hylkaysperuste</span>#end
+                          </td>
+                      </tr>
+                  </table>
+              </li>
+              #end
+          </ol>
+        </section>
+
+        <section>
+          <h2>Sä här läser du tabellen</h2>
+
+          <h3>Dina ansökningsmål</h3>
+
+          <p>
+            Dina ansökningsönskemål i den ordning som du har angett i din
+            ansökan.
+          </p>
+
+          <h3>Antagningsresultat</h3>
+
+          <p>
+            Antagningsresultatet kan vara godkänd, godkänd enligt prövning, på
+            reservplats, underkänd eller annullerad. Annullerad betyder att du
+            har blivit antagen till ett högre ansökningsmål.
+          </p>
+
+          <p>
+            Ditt ordningsnummer om du är på reservplats. Du kan inte vara på
+            reservplats till en utbildning om din antagningsuppgift är
+            underkänd eller annullerad.
+          </p>
+        </section>
+
+        <section>
+          <h2>Lisätietoa valinnan tuloksesta</h2>
+
+          <p>
+            Oppilaitokset päättävät itse siitä, millä perusteilla hakijat
+            valitaan koulutukseen. Voit tiedustella valintaperusteita suoraan
+            oppilaitoksesta.
+          </p>
+
+          <p>
+            Tilläggsinfo får du på
+            adressen <a href="https://studieinfo.fi">studieinfo.fi</a>. Om du
+            behöver hjälp med att tolka brevet eller om antagningen orsakar
+            frågor som inte klarnat via direkt kontakt till läroanstalten, kan
+            du kontakta Studieinfos ansökningstjänst
+            (<a href="mailto:info@studieinfo.fi">info@studieinfo.fi</a> eller
+            tfn <a href="tel:0295331010">029&nbsp;533&nbsp;1010<a/>).
+          </p>
+        </section>
+
+        <section>
+          <h2>Rätt att söka ändring</h2>
+
+          <p>
+            Du kan söka ändring till antagningsresultatet genom besvär hos
+            regionförvaltningsverket. Innan du ansöker om ändring bör du be om
+            ett överklagbart beslut av den läroanstalt som fattat beslutet om
+            antagningen. Du kan be om beslutet muntligt eller skriftligt. Du
+            bör be om beslutet inom 14 dagar från och med det att du har fått
+            detta meddelande för kännedom. Ändring i ett beslut söks genom
+            besvär hos det regionförvaltningsverk inom vars område
+            läroanstalten finns. Besvär som gäller svenskspråkig utbildning
+            riktas dock till Regionförvaltningsverket i Västra och Inre
+            Finland. Regionförvaltningsverkens adresser hittar du på omstående
+            sida i slutet av det här brevet. Kontakta Studieinfos
+            ansökningstjänst vid Utbildningsstyrelsen om du av någon orsak
+            inte beviljas beslutet av läroanstalten.
+          </p>
+
+          <h2>Regionförvaltningsverkens adressen</h2>
+
+          <ul class="avi-osoitteet">
+            <li>
+              Regionförvaltningsverket i Södra Finland<br />
+              PB 110<br />
+              00521 Helsingfors
+            </li>
+
+            <li>
+              Regionförvaltningsverket i Östra Finland<br />
+              PB 50<br />
+              50101 S:t Michel
+            </li>
+
+            <li>
+              Regionförvaltningsverket i Sydvästra Finland<br />
+              PB 22<br />
+              20801 Åbo
+            </li>
+
+            <li>
+              Regionförvaltningsverket i Västra och Inre Finland<br />
+              PB 200<br />
+              65101 Vasa
+            </li>
+
+            <li>
+              Regionförvaltningsverket i Norra Finland<br />
+              PB 293<br />
+              90101 Uleåborg
+            </li>
+
+            <li>
+              Regionförvaltningsverket i Lappland<br />
+              PB 8002<br />
+              96101 Rovaniemi
+            </li>
+          </ul>
+        </section>
+      </article>
+    </main>
+  </body>
+</html>
