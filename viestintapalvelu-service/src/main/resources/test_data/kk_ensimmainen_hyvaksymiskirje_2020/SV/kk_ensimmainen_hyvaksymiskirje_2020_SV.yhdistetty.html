@@ -123,13 +123,13 @@
             <ol class="tulokset">
                 #foreach( $tulos in $tulokset )
                 <li class="hakukohde">
-                    <div class="hakukohde-tiedot#if($tulos.hyvaksytty=='true') bold#end">
-                        <div class="hakukohde-nimi">$tulos.hakukohteenNimi - $tulos.organisaationNimi</div>
+                    <div class="hakukohde-tiedot">
+                        <div class="hakukohde-nimi#if($tulos.hyvaksytty=='true') bold#end">
+                            $tulos.hakukohteenNimi - $tulos.organisaationNimi
+                        </div>
                         <div class="hakukohde-tulos">
-                            <span class="bold">$tulos.valinnanTulos</span>
-                            #if($tulos.hylkaysperuste)<br /><span class="italic">$tulos.hylkaysperuste</span>#end
-                            #if($tulos.peruuntumisenSyy)<br /><span class="italic">$tulos.peruuntumisenSyy</span>#end
-                            #if($tulos.hyvaksymisenEhto)<br /><span class="italic">$tulos.hyvaksymisenEhto</span>#end
+                            <span#if($tulos.hyvaksytty=='true') class="bold"#end>$tulos.valinnanTulos</span>
+                            #if($tulos.hyvaksymisenEhto)<br /><span>$tulos.hyvaksymisenEhto</span>#end
                         </div>
                     </div>
                     <table class="valintatapajonot-table">
@@ -148,9 +148,9 @@
                                 <td class="sarake sarake-kapea">#if($sijoitus.pisteet.oma)${sijoitus.pisteet.oma}#{else} - #end</td>
                                 <td class="sarake sarake-kapea">#if($sijoitus.pisteet.minimi)${sijoitus.pisteet.minimi}#{else} - #end</td>
                                 <td class="sarake sarake-levea">
-                                    <span class="bold">$sijoitus.tila</span>
-                                    #if($sijoitus.tilanKuvaus)<br /><span class="italic">$sijoitus.tilanKuvaus</span>#end
-                                    #if($sijoitus.hyvaksymisenEhto)<br /><span class="italic">$sijoitus.hyvaksymisenEhto</span>#end
+                                    <span#if($sijoitus.hyvaksytty=='true') class="bold"#end>$sijoitus.tila</span>
+                                    #if($sijoitus.tilanKuvaus)<br /><span>$sijoitus.tilanKuvaus</span>#end
+                                    #if($sijoitus.hyvaksymisenEhto)<br /><span>$sijoitus.hyvaksymisenEhto</span>#end
                                 </td>
                             </tr>
                             #end
@@ -175,9 +175,9 @@
                                 <tr>
                                     <th scope="row" class="sarake">Antagningsresultat</th>
                                     <td class="sarake">
-                                        <span class="bold">$sijoitus.tila</span>
-                                        #if($sijoitus.tilanKuvaus)<br /><span class="italic">$sijoitus.tilanKuvaus</span>#end
-                                        #if($sijoitus.hyvaksymisenEhto)<br /><span class="italic">$sijoitus.hyvaksymisenEhto</span>#end
+                                        <span#if($sijoitus.hyvaksytty=='true') class="bold"#end>$sijoitus.tila</span>
+                                        #if($sijoitus.tilanKuvaus)<br /><span>$sijoitus.tilanKuvaus</span>#end
+                                        #if($sijoitus.hyvaksymisenEhto)<br /><span>$sijoitus.hyvaksymisenEhto</span>#end
                                     </td>
                                 </tr>
                             </table>
